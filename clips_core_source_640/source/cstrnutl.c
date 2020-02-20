@@ -31,7 +31,7 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/*            Eval support for run time and bload only.      */
+/*            CL_Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -52,10 +52,10 @@
 #include "cstrnutl.h"
 
 /************************************************/
-/* GetConstraintRecord: Creates and initializes */
+/* CL_GetConstraintRecord: Creates and initializes */
 /*   the values of a constraint record.         */
 /************************************************/
-struct constraintRecord *GetConstraintRecord(
+struct constraintRecord *CL_GetConstraintRecord(
   Environment *theEnv)
   {
    CONSTRAINT_RECORD *constraints;
@@ -66,7 +66,7 @@ struct constraintRecord *GetConstraintRecord(
    for (i = 0 ; i < sizeof(CONSTRAINT_RECORD) ; i++)
      { ((char *) constraints)[i] = '\0'; }
 
-   SetAnyAllowedFlags(constraints,true);
+   CL_SetAnyAllowedFlags(constraints,true);
 
    constraints->multifieldsAllowed = false;
    constraints->singlefieldsAllowed = true;
@@ -80,10 +80,10 @@ struct constraintRecord *GetConstraintRecord(
    constraints->instanceNameRestriction = false;
    constraints->classList = NULL;
    constraints->restrictionList = NULL;
-   constraints->minValue = GenConstant(theEnv,SYMBOL_TYPE,SymbolData(theEnv)->NegativeInfinity);
-   constraints->maxValue = GenConstant(theEnv,SYMBOL_TYPE,SymbolData(theEnv)->PositiveInfinity);
-   constraints->minFields = GenConstant(theEnv,INTEGER_TYPE,SymbolData(theEnv)->Zero);
-   constraints->maxFields = GenConstant(theEnv,SYMBOL_TYPE,SymbolData(theEnv)->PositiveInfinity);
+   constraints->minValue = CL_GenConstant(theEnv,SYMBOL_TYPE,SymbolData(theEnv)->NegativeInfinity);
+   constraints->maxValue = CL_GenConstant(theEnv,SYMBOL_TYPE,SymbolData(theEnv)->PositiveInfinity);
+   constraints->minFields = CL_GenConstant(theEnv,INTEGER_TYPE,SymbolData(theEnv)->Zero);
+   constraints->maxFields = CL_GenConstant(theEnv,SYMBOL_TYPE,SymbolData(theEnv)->PositiveInfinity);
    constraints->installed = false;
    constraints->bucket = 0;
    constraints->count = 0;
@@ -94,13 +94,13 @@ struct constraintRecord *GetConstraintRecord(
   }
 
 /********************************************************/
-/* SetAnyAllowedFlags: Sets the allowed type flags of a */
+/* CL_SetAnyAllowedFlags: Sets the allowed type flags of a */
 /*   constraint record to allow all types. If passed an */
 /*   argument of true, just the "any allowed" flag is   */
 /*   set to true. If passed an argument of false, then  */
 /*   all of the individual type flags are set to true.  */
 /********************************************************/
-void SetAnyAllowedFlags(
+void CL_SetAnyAllowedFlags(
   CONSTRAINT_RECORD *theConstraint,
   bool justOne)
   {
@@ -130,9 +130,9 @@ void SetAnyAllowedFlags(
   }
 
 /*****************************************************/
-/* CopyConstraintRecord: Copies a constraint record. */
+/* CL_CopyConstraintRecord: Copies a constraint record. */
 /*****************************************************/
-struct constraintRecord *CopyConstraintRecord(
+struct constraintRecord *CL_CopyConstraintRecord(
   Environment *theEnv,
   CONSTRAINT_RECORD *sourceConstraint)
   {
@@ -161,30 +161,30 @@ struct constraintRecord *CopyConstraintRecord(
    theConstraint->integerRestriction = sourceConstraint->integerRestriction;
    theConstraint->classRestriction = sourceConstraint->classRestriction;
    theConstraint->instanceNameRestriction = sourceConstraint->instanceNameRestriction;
-   theConstraint->classList = CopyExpression(theEnv,sourceConstraint->classList);
-   theConstraint->restrictionList = CopyExpression(theEnv,sourceConstraint->restrictionList);
-   theConstraint->minValue = CopyExpression(theEnv,sourceConstraint->minValue);
-   theConstraint->maxValue = CopyExpression(theEnv,sourceConstraint->maxValue);
-   theConstraint->minFields = CopyExpression(theEnv,sourceConstraint->minFields);
-   theConstraint->maxFields = CopyExpression(theEnv,sourceConstraint->maxFields);
+   theConstraint->classList = CL_CopyExpression(theEnv,sourceConstraint->classList);
+   theConstraint->restrictionList = CL_CopyExpression(theEnv,sourceConstraint->restrictionList);
+   theConstraint->minValue = CL_CopyExpression(theEnv,sourceConstraint->minValue);
+   theConstraint->maxValue = CL_CopyExpression(theEnv,sourceConstraint->maxValue);
+   theConstraint->minFields = CL_CopyExpression(theEnv,sourceConstraint->minFields);
+   theConstraint->maxFields = CL_CopyExpression(theEnv,sourceConstraint->maxFields);
    theConstraint->bucket = 0;
    theConstraint->installed = false;
    theConstraint->count = 0;
-   theConstraint->multifield = CopyConstraintRecord(theEnv,sourceConstraint->multifield);
+   theConstraint->multifield = CL_CopyConstraintRecord(theEnv,sourceConstraint->multifield);
    theConstraint->next = NULL;
 
    return(theConstraint);
   }
 
 /**************************************************************/
-/* SetAnyRestrictionFlags: Sets the restriction type flags of */
+/* CL_SetAnyRestrictionFlags: Sets the restriction type flags of */
 /*   a constraint record to indicate there are restriction on */
 /*   all types. If passed an argument of true, just the       */
 /*   "any restriction" flag is set to true. If passed an      */
 /*   argument of false, then all of the individual type       */
 /*   restriction flags are set to true.                       */
 /**************************************************************/
-void SetAnyRestrictionFlags(
+void CL_SetAnyRestrictionFlags(
   CONSTRAINT_RECORD *theConstraint,
   bool justOne)
   {
@@ -212,11 +212,11 @@ void SetAnyRestrictionFlags(
 #if (! RUN_TIME) && (! BLOAD_ONLY)
 
 /*****************************************************/
-/* SetConstraintType: Given a constraint type and a  */
+/* CL_SetConstraintType: Given a constraint type and a  */
 /*   constraint, sets the allowed type flags for the */
 /*   specified type in the constraint to true.       */
 /*****************************************************/
-bool SetConstraintType(
+bool CL_SetConstraintType(
   int theType,
   CONSTRAINT_RECORD *constraints)
   {
@@ -305,12 +305,12 @@ bool SetConstraintType(
 #endif /* (! RUN_TIME) && (! BLOAD_ONLY) */
 
 /*************************************************************/
-/* CompareNumbers: Given two numbers (which can be integers, */
+/* CL_CompareNumbers: Given two numbers (which can be integers, */
 /*   floats, or the symbols for positive/negative infinity)  */
 /*   returns the relationship between the numbers (greater   */
 /*   than, less than or equal).                              */
 /*************************************************************/
-int CompareNumbers(
+int CL_CompareNumbers(
   Environment *theEnv,
   int type1,
   void *vptr1,
@@ -402,12 +402,12 @@ int CompareNumbers(
   }
 
 /****************************************************************/
-/* ExpressionToConstraintRecord: Converts an expression into a  */
+/* CL_ExpressionToConstraintRecord: Converts an expression into a  */
 /*   constraint record. For example, an expression representing */
 /*   the symbol BLUE would be converted to a  record with       */
 /*   allowed types SYMBOL_TYPE and allow-values BLUE.                */
 /****************************************************************/
-CONSTRAINT_RECORD *ExpressionToConstraintRecord(
+CONSTRAINT_RECORD *CL_ExpressionToConstraintRecord(
   Environment *theEnv,
   struct expr *theExpression)
   {
@@ -420,7 +420,7 @@ CONSTRAINT_RECORD *ExpressionToConstraintRecord(
 
    if (theExpression == NULL)
      {
-      rv = GetConstraintRecord(theEnv);
+      rv = CL_GetConstraintRecord(theEnv);
       rv->anyAllowed = false;
       return(rv);
      }
@@ -440,18 +440,18 @@ CONSTRAINT_RECORD *ExpressionToConstraintRecord(
        (theExpression->type == GBL_VARIABLE) ||
        (theExpression->type == MF_GBL_VARIABLE))
      {
-      rv = GetConstraintRecord(theEnv);
+      rv = CL_GetConstraintRecord(theEnv);
       rv->multifieldsAllowed = true;
       return(rv);
      }
    else if (theExpression->type == FCALL)
-     { return(FunctionCallToConstraintRecord(theEnv,theExpression->value)); }
+     { return(CL_FunctionCallToConstraintRecord(theEnv,theExpression->value)); }
 
    /*============================================*/
    /* Convert a constant to a constraint record. */
    /*============================================*/
 
-   rv = GetConstraintRecord(theEnv);
+   rv = CL_GetConstraintRecord(theEnv);
    rv->anyAllowed = false;
 
    switch (theExpression->type)
@@ -491,35 +491,35 @@ CONSTRAINT_RECORD *ExpressionToConstraintRecord(
 
    if (rv->floatsAllowed || rv->integersAllowed || rv->symbolsAllowed ||
        rv->stringsAllowed || rv->instanceNamesAllowed)
-     { rv->restrictionList = GenConstant(theEnv,theExpression->type,theExpression->value); }
+     { rv->restrictionList = CL_GenConstant(theEnv,theExpression->type,theExpression->value); }
 
    return rv;
   }
 
 /*******************************************************/
-/* FunctionCallToConstraintRecord: Converts a function */
+/* CL_FunctionCallToConstraintRecord: Converts a function */
 /*   call to a constraint record. For example, the +   */
 /*   function when converted would be a constraint     */
 /*   record with allowed types INTEGER_TYPE and FLOAT_TYPE.      */
 /*******************************************************/
-CONSTRAINT_RECORD *FunctionCallToConstraintRecord(
+CONSTRAINT_RECORD *CL_FunctionCallToConstraintRecord(
   Environment *theEnv,
   void *theFunction)
   {
-   return ArgumentTypeToConstraintRecord(theEnv,UnknownFunctionType(theFunction));
+   return CL_ArgumentTypeToConstraintRecord(theEnv,UnknownFunctionType(theFunction));
   }
 
 /*********************************************/
-/* ArgumentTypeToConstraintRecord2: Uses the */
+/* CL_ArgumentTypeToConstraintRecord2: Uses the */
 /*   new argument type codes for 6.4.        */
 /*********************************************/
-CONSTRAINT_RECORD *ArgumentTypeToConstraintRecord(
+CONSTRAINT_RECORD *CL_ArgumentTypeToConstraintRecord(
   Environment *theEnv,
   unsigned bitTypes)
   {
    CONSTRAINT_RECORD *rv;
 
-   rv = GetConstraintRecord(theEnv);
+   rv = CL_GetConstraintRecord(theEnv);
    rv->anyAllowed = false;
 
    if (bitTypes & VOID_BIT)

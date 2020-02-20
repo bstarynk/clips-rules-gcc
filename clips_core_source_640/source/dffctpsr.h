@@ -21,7 +21,7 @@
 /*            compilers/operating systems (IBM_MCW and       */
 /*            MAC_MCW).                                      */
 /*                                                           */
-/*            GetConstructNameAndComment API change.         */
+/*            CL_GetConstructNameAndComment API change.         */
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
@@ -43,7 +43,7 @@
 
 #define _H_dffctpsr
 
-   bool                           ParseDeffacts(Environment *,const char *);
+   bool                           CL_ParseDeffacts(Environment *,const char *);
 
 #endif /* _H_dffctpsr */
 

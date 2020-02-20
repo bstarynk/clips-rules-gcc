@@ -97,7 +97,7 @@ struct patternParser
    void (*returnUserDataFunction)(Environment *,void *);
    void *(*copyUserDataFunction)(Environment *,void *);
    void (*markIRPatternFunction)(Environment *,struct patternNodeHeader *,bool);
-   void (*incrementalResetFunction)(Environment *);
+   void (*incrementalCL_ResetFunction)(Environment *);
    void (*codeReferenceFunction)(Environment *,void *,FILE *,unsigned int,unsigned int);
    int priority;
    struct patternParser *next;
@@ -119,10 +119,10 @@ struct patternData
    struct patternParser *ListOfPatternParsers;
    struct patternParser *PatternParserArray[MAX_POSITIONS];
    unsigned short NextPosition;
-   struct reservedSymbol *ListOfReservedPatternSymbols;
+   struct reservedSymbol *ListOfCL_ReservedPatternSymbols;
    bool WithinNotCE;
    int GlobalSalience;
-   bool GlobalAutoFocus;
+   bool GlobalAutoCL_Focus;
    struct expr *SalienceExpression;
    struct patternNodeHashEntry **PatternHashTable;
    unsigned long PatternHashTableSize;
@@ -130,26 +130,26 @@ struct patternData
 
 #define PatternData(theEnv) ((struct patternData *) GetEnvironmentData(theEnv,PATTERN_DATA))
 
-   void                           InitializePatterns(Environment *);
-   bool                           AddPatternParser(Environment *,struct patternParser *);
-   struct patternParser          *FindPatternParser(Environment *,const char *);
-   void                           DetachPattern(Environment *,unsigned short,struct patternNodeHeader *);
-   void                           GetNextPatternEntity(Environment *,
+   void                           CL_InitializePatterns(Environment *);
+   bool                           CL_AddPatternParser(Environment *,struct patternParser *);
+   struct patternParser          *CL_FindPatternParser(Environment *,const char *);
+   void                           CL_DetachPattern(Environment *,unsigned short,struct patternNodeHeader *);
+   void                           CL_GetNextPatternEntity(Environment *,
                                                        struct patternParser **,
                                                        struct patternEntity **);
-   struct patternParser          *GetPatternParser(Environment *,unsigned short);
-   struct lhsParseNode           *RestrictionParse(Environment *,const char *,struct token *,bool,
+   struct patternParser          *CL_GetPatternParser(Environment *,unsigned short);
+   struct lhsParseNode           *CL_RestrictionParse(Environment *,const char *,struct token *,bool,
                                                    CLIPSLexeme *,unsigned short,
                                                    struct constraintRecord *,unsigned short);
-   bool                           PostPatternAnalysis(Environment *,struct lhsParseNode *);
-   void                           PatternNodeHeaderToCode(Environment *,FILE *,struct patternNodeHeader *,
+   bool                           CL_PostPatternAnalysis(Environment *,struct lhsParseNode *);
+   void                           CL_PatternNodeHeaderToCode(Environment *,FILE *,struct patternNodeHeader *,
                                                           unsigned int,unsigned int);
-   void                           AddReservedPatternSymbol(Environment *,const char *,const char *);
-   bool                           ReservedPatternSymbol(Environment *,const char *,const char *);
-   void                           ReservedPatternSymbolErrorMsg(Environment *,const char *,const char *);
-   void                           AddHashedPatternNode(Environment *,void *,void *,unsigned short,void *);
-   bool                           RemoveHashedPatternNode(Environment *,void *,void *,unsigned short,void *);
-   void                          *FindHashedPatternNode(Environment *,void *,unsigned short,void *);
+   void                           CL_AddCL_ReservedPatternSymbol(Environment *,const char *,const char *);
+   bool                           CL_ReservedPatternSymbol(Environment *,const char *,const char *);
+   void                           CL_ReservedPatternSymbolErrorMsg(Environment *,const char *,const char *);
+   void                           CL_AddHashedPatternNode(Environment *,void *,void *,unsigned short,void *);
+   bool                           CL_RemoveHashedPatternNode(Environment *,void *,void *,unsigned short,void *);
+   void                          *CL_FindHashedPatternNode(Environment *,void *,unsigned short,void *);
 
 #endif /* _H_pattern */
 

@@ -73,53 +73,53 @@
 /***************************************/
 
    static struct functionDefinition **ReadNeededFunctions(Environment *,unsigned long *,bool *);
-   static struct functionDefinition  *FastFindFunction(Environment *,const char *,struct functionDefinition *);
-   static bool                        ClearBload(Environment *);
-   static void                        ClearBloadCallback(Environment *,void *);
-   static void                        AbortBload(Environment *);
-   static bool                        BloadOutOfMemoryFunction(Environment *,size_t);
-   static void                        DeallocateBloadData(Environment *);
+   static struct functionDefinition  *FastCL_FindFunction(Environment *,const char *,struct functionDefinition *);
+   static bool                        CL_ClearCL_Bload(Environment *);
+   static void                        CL_ClearCL_BloadCallback(Environment *,void *);
+   static void                        AbortCL_Bload(Environment *);
+   static bool                        CL_BloadOutOfMemoryFunction(Environment *,size_t);
+   static void                        DeallocateCL_BloadData(Environment *);
 
 /**********************************************/
-/* InitializeBloadData: Allocates environment */
+/* InitializeCL_BloadData: Allocates environment */
 /*    data for the bload command.             */
 /**********************************************/
-void InitializeBloadData(
+void InitializeCL_BloadData(
   Environment *theEnv)
   {
    char sizeBuffer[20];
    sprintf(sizeBuffer,"%2zu%2zu%2zu%2zu%2zu",sizeof(void *),sizeof(double),
                                              sizeof(int),sizeof(long),sizeof(long long));
 
-   AllocateEnvironmentData(theEnv,BLOAD_DATA,sizeof(struct bloadData),NULL);
-   AddEnvironmentCleanupFunction(theEnv,"bload",DeallocateBloadData,-1500);
-   AddClearFunction(theEnv,"bload",ClearBloadCallback,10000,NULL);
+   CL_AllocateEnvironmentData(theEnv,BLOAD_DATA,sizeof(struct bloadData),NULL);
+   CL_AddEnvironmentCleanupFunction(theEnv,"bload",DeallocateCL_BloadData,-1500);
+   CL_AddCL_ClearFunction(theEnv,"bload",CL_ClearCL_BloadCallback,10000,NULL);
 
-   BloadData(theEnv)->BinaryPrefixID = "\1\2\3\4CLIPS";
-   BloadData(theEnv)->BinaryVersionID = "V6.40";
-   BloadData(theEnv)->BinarySizes = (char *) genalloc(theEnv,strlen(sizeBuffer) + 1);
-   genstrcpy(BloadData(theEnv)->BinarySizes,sizeBuffer);
+   CL_BloadData(theEnv)->BinaryPrefixID = "\1\2\3\4CLIPS";
+   CL_BloadData(theEnv)->BinaryVersionID = "V6.40";
+   CL_BloadData(theEnv)->BinarySizes = (char *) CL_genalloc(theEnv,strlen(sizeBuffer) + 1);
+   CL_genstrcpy(CL_BloadData(theEnv)->BinarySizes,sizeBuffer);
   }
 
 /************************************************/
-/* DeallocateBloadData: Deallocates environment */
+/* DeallocateCL_BloadData: Deallocates environment */
 /*    data for the bload command.               */
 /************************************************/
-static void DeallocateBloadData(
+static void DeallocateCL_BloadData(
   Environment *theEnv)
   {
-   DeallocateVoidCallList(theEnv,BloadData(theEnv)->BeforeBloadFunctions);
-   DeallocateVoidCallList(theEnv,BloadData(theEnv)->AfterBloadFunctions);
-   DeallocateBoolCallList(theEnv,BloadData(theEnv)->ClearBloadReadyFunctions);
-   DeallocateVoidCallList(theEnv,BloadData(theEnv)->AbortBloadFunctions);
-   genfree(theEnv,BloadData(theEnv)->BinarySizes,strlen(BloadData(theEnv)->BinarySizes) + 1);
+   CL_DeallocateVoidCallList(theEnv,CL_BloadData(theEnv)->BeforeCL_BloadFunctions);
+   CL_DeallocateVoidCallList(theEnv,CL_BloadData(theEnv)->AfterCL_BloadFunctions);
+   CL_DeallocateBoolCallList(theEnv,CL_BloadData(theEnv)->CL_ClearCL_BloadReadyFunctions);
+   CL_DeallocateVoidCallList(theEnv,CL_BloadData(theEnv)->AbortCL_BloadFunctions);
+   CL_genfree(theEnv,CL_BloadData(theEnv)->BinarySizes,strlen(CL_BloadData(theEnv)->BinarySizes) + 1);
   }
 
 /****************************/
-/* Bload: C access routine  */
+/* CL_Bload: C access routine  */
 /*   for the bload command. */
 /****************************/
-bool Bload(
+bool CL_Bload(
   Environment *theEnv,
   const char *fileName)
   {
@@ -130,98 +130,98 @@ bool Bload(
    char sizesBuffer[20];
    char constructBuffer[CONSTRUCT_HEADER_SIZE];
    struct BinaryItem *biPtr;
-   struct voidCallFunctionItem *bfPtr;
+   struct voidCL_CallFunctionItem *bfPtr;
    
    /*=====================================*/
    /* If embedded, clear the error flags. */
    /*=====================================*/
    
-   if (EvaluationData(theEnv)->CurrentExpression == NULL)
-     { ResetErrorFlags(theEnv); }
+   if (CL_EvaluationData(theEnv)->CurrentExpression == NULL)
+     { CL_ResetErrorFlags(theEnv); }
 
    /*================*/
    /* Open the file. */
    /*================*/
 
-   if (GenOpenReadBinary(theEnv,"bload",fileName) == 0)
+   if (CL_GenOpenReadBinary(theEnv,"bload",fileName) == 0)
      {
-      OpenErrorMessage(theEnv,"bload",fileName);
+      CL_OpenErrorMessage(theEnv,"bload",fileName);
       return false;
      }
 
    /*=====================================*/
-   /* Determine if this is a binary file. */
+   /* DeteCL_rmine if this is a binary file. */
    /*=====================================*/
 
-   GenReadBinary(theEnv,IDbuffer,strlen(BloadData(theEnv)->BinaryPrefixID) + 1);
-   if (strcmp(IDbuffer,BloadData(theEnv)->BinaryPrefixID) != 0)
+   CL_GenReadBinary(theEnv,IDbuffer,strlen(CL_BloadData(theEnv)->BinaryPrefixID) + 1);
+   if (strcmp(IDbuffer,CL_BloadData(theEnv)->BinaryPrefixID) != 0)
      {
-      PrintErrorID(theEnv,"BLOAD",2,false);
-      WriteString(theEnv,STDERR,"File '");
-      WriteString(theEnv,STDERR,fileName);
-      WriteString(theEnv,STDERR,"' is not a binary construct file.\n");
-      GenCloseBinary(theEnv);
+      CL_PrintErrorID(theEnv,"BLOAD",2,false);
+      CL_WriteString(theEnv,STDERR,"File '");
+      CL_WriteString(theEnv,STDERR,fileName);
+      CL_WriteString(theEnv,STDERR,"' is not a binary construct file.\n");
+      CL_GenCloseBinary(theEnv);
       return false;
      }
 
    /*=======================================*/
-   /* Determine if it's a binary file using */
-   /* a format from a different version.    */
+   /* DeteCL_rmine if it's a binary file using */
+   /* a foCL_rmat from a different version.    */
    /*=======================================*/
 
-   GenReadBinary(theEnv,IDbuffer,strlen(BloadData(theEnv)->BinaryVersionID) + 1);
-   if (strcmp(IDbuffer,BloadData(theEnv)->BinaryVersionID) != 0)
+   CL_GenReadBinary(theEnv,IDbuffer,strlen(CL_BloadData(theEnv)->BinaryVersionID) + 1);
+   if (strcmp(IDbuffer,CL_BloadData(theEnv)->BinaryVersionID) != 0)
      {
-      PrintErrorID(theEnv,"BLOAD",3,false);
-      WriteString(theEnv,STDERR,"File '");
-      WriteString(theEnv,STDERR,fileName);
-      WriteString(theEnv,STDERR,"' is an incompatible binary construct file.\n");
-      GenCloseBinary(theEnv);
+      CL_PrintErrorID(theEnv,"BLOAD",3,false);
+      CL_WriteString(theEnv,STDERR,"File '");
+      CL_WriteString(theEnv,STDERR,fileName);
+      CL_WriteString(theEnv,STDERR,"' is an incompatible binary construct file.\n");
+      CL_GenCloseBinary(theEnv);
       return false;
      }
 
    /*===========================================*/
-   /* Determine if it's a binary file using the */
+   /* DeteCL_rmine if it's a binary file using the */
    /* correct size for pointers and numbers.    */
    /*===========================================*/
 
-   GenReadBinary(theEnv,sizesBuffer,strlen(BloadData(theEnv)->BinarySizes) + 1);
-   if (strcmp(sizesBuffer,BloadData(theEnv)->BinarySizes) != 0)
+   CL_GenReadBinary(theEnv,sizesBuffer,strlen(CL_BloadData(theEnv)->BinarySizes) + 1);
+   if (strcmp(sizesBuffer,CL_BloadData(theEnv)->BinarySizes) != 0)
      {
-      PrintErrorID(theEnv,"BLOAD",3,false);
-      WriteString(theEnv,STDERR,"File '");
-      WriteString(theEnv,STDERR,fileName);
-      WriteString(theEnv,STDERR,"' is an incompatible binary construct file.\n");
-      GenCloseBinary(theEnv);
+      CL_PrintErrorID(theEnv,"BLOAD",3,false);
+      CL_WriteString(theEnv,STDERR,"File '");
+      CL_WriteString(theEnv,STDERR,fileName);
+      CL_WriteString(theEnv,STDERR,"' is an incompatible binary construct file.\n");
+      CL_GenCloseBinary(theEnv);
       return false;
      }
 
    /*====================*/
-   /* Clear environment. */
+   /* CL_Clear environment. */
    /*====================*/
 
-   if (BloadData(theEnv)->BloadActive)
+   if (CL_BloadData(theEnv)->CL_BloadActive)
      {
-      if (ClearBload(theEnv) == false)
+      if (CL_ClearCL_Bload(theEnv) == false)
         {
-         GenCloseBinary(theEnv);
+         CL_GenCloseBinary(theEnv);
          return false;
         }
      }
 
    /*=================================*/
-   /* Determine if the KB environment */
+   /* DeteCL_rmine if the KB environment */
    /* was successfully cleared.       */
    /*=================================*/
 
-   if (ClearReady(theEnv) == false)
+   if (CL_ClearReady(theEnv) == false)
      {
-      GenCloseBinary(theEnv);
-      PrintErrorID(theEnv,"BLOAD",4,false);
-      WriteString(theEnv,STDERR,"The ");
-      WriteString(theEnv,STDERR,APPLICATION_NAME);
-      WriteString(theEnv,STDERR," environment could not be cleared.\n");
-      WriteString(theEnv,STDERR,"Binary load cannot continue.\n");
+      CL_GenCloseBinary(theEnv);
+      CL_PrintErrorID(theEnv,"BLOAD",4,false);
+      CL_WriteString(theEnv,STDERR,"The ");
+      CL_WriteString(theEnv,STDERR,APPLICATION_NAME);
+      CL_WriteString(theEnv,STDERR," environment could not be cleared.\n");
+      CL_WriteString(theEnv,STDERR,"Binary load cannot continue.\n");
       return false;
      }
 
@@ -230,23 +230,23 @@ bool Bload(
    /* executed before a bload occurs.  */
    /*==================================*/
 
-   ConstructData(theEnv)->ClearInProgress = true;
-   for (bfPtr = BloadData(theEnv)->BeforeBloadFunctions;
+   ConstructData(theEnv)->CL_ClearInProgress = true;
+   for (bfPtr = CL_BloadData(theEnv)->BeforeCL_BloadFunctions;
         bfPtr != NULL;
         bfPtr = bfPtr->next)
      { (*bfPtr->func)(theEnv,bfPtr->context); }
 
-   ConstructData(theEnv)->ClearInProgress = false;
+   ConstructData(theEnv)->CL_ClearInProgress = false;
 
    /*====================================================*/
    /* Read in the functions needed by this binary image. */
    /*====================================================*/
 
-   BloadData(theEnv)->FunctionArray = ReadNeededFunctions(theEnv,&numberOfFunctions,&error);
+   CL_BloadData(theEnv)->FunctionArray = ReadNeededFunctions(theEnv,&numberOfFunctions,&error);
    if (error)
      {
-      GenCloseBinary(theEnv);
-      AbortBload(theEnv);
+      CL_GenCloseBinary(theEnv);
+      AbortCL_Bload(theEnv);
       return false;
      }
 
@@ -254,23 +254,23 @@ bool Bload(
    /* Read in the atoms needed by this binary image. */
    /*================================================*/
 
-   ReadNeededAtomicValues(theEnv);
+   CL_ReadNeededAtomicValues(theEnv);
 
    /*===========================================*/
-   /* Determine the number of expressions to be */
+   /* DeteCL_rmine the number of expressions to be */
    /* read and allocate the appropriate space   */
    /*===========================================*/
 
-   AllocateExpressions(theEnv);
+   CL_AllocateExpressions(theEnv);
 
    /*==========================================================*/
    /* Read in the memory requirements of the constructs stored */
    /* in this binary image and allocate the necessary space    */
    /*==========================================================*/
 
-   for (GenReadBinary(theEnv,constructBuffer,CONSTRUCT_HEADER_SIZE);
-        strncmp(constructBuffer,BloadData(theEnv)->BinaryPrefixID,CONSTRUCT_HEADER_SIZE) != 0;
-        GenReadBinary(theEnv,constructBuffer,CONSTRUCT_HEADER_SIZE))
+   for (CL_GenReadBinary(theEnv,constructBuffer,CONSTRUCT_HEADER_SIZE);
+        strncmp(constructBuffer,CL_BloadData(theEnv)->BinaryPrefixID,CONSTRUCT_HEADER_SIZE) != 0;
+        CL_GenReadBinary(theEnv,constructBuffer,CONSTRUCT_HEADER_SIZE))
      {
       bool found;
 
@@ -281,7 +281,7 @@ bool Bload(
       /*================================================*/
 
       found = false;
-      for (biPtr = BsaveData(theEnv)->ListOfBinaryItems;
+      for (biPtr = CL_BsaveData(theEnv)->ListOfBinaryItems;
            biPtr != NULL;
            biPtr = biPtr->next)
         {
@@ -298,42 +298,42 @@ bool Bload(
 
       /*==========================================*/
       /* If the construct type wasn't found, skip */
-      /* the storage binary load information for  */
+      /* the storage binary load infoCL_rmation for  */
       /* this construct.                          */
       /*==========================================*/
 
       if (! found)
         {
-         GenReadBinary(theEnv,&space,sizeof(unsigned long));
-         GetSeekCurBinary(theEnv,(long) space);
+         CL_GenReadBinary(theEnv,&space,sizeof(unsigned long));
+         CL_GetSeekCurBinary(theEnv,(long) space);
          if (space != 0)
            {
-            WriteString(theEnv,STDOUT,"\nSkipping ");
-            WriteString(theEnv,STDOUT,constructBuffer);
-            WriteString(theEnv,STDOUT," constructs because of unavailability\n");
+            CL_WriteString(theEnv,STDOUT,"\nSkipping ");
+            CL_WriteString(theEnv,STDOUT,constructBuffer);
+            CL_WriteString(theEnv,STDOUT," constructs because of unavailability\n");
            }
         }
      }
 
    /*======================================*/
-   /* Refresh the pointers in expressions. */
+   /* CL_Refresh the pointers in expressions. */
    /*======================================*/
 
-   RefreshExpressions(theEnv);
+   CL_RefreshExpressions(theEnv);
 
    /*==========================*/
    /* Read in the constraints. */
    /*==========================*/
 
-   ReadNeededConstraints(theEnv);
+   CL_ReadNeededConstraints(theEnv);
 
    /*======================================================*/
    /* Read in the constructs stored in this binary image.  */
    /*======================================================*/
 
-   for (GenReadBinary(theEnv,constructBuffer,CONSTRUCT_HEADER_SIZE);
-        strncmp(constructBuffer,BloadData(theEnv)->BinaryPrefixID,CONSTRUCT_HEADER_SIZE) != 0;
-        GenReadBinary(theEnv,constructBuffer,CONSTRUCT_HEADER_SIZE))
+   for (CL_GenReadBinary(theEnv,constructBuffer,CONSTRUCT_HEADER_SIZE);
+        strncmp(constructBuffer,CL_BloadData(theEnv)->BinaryPrefixID,CONSTRUCT_HEADER_SIZE) != 0;
+        CL_GenReadBinary(theEnv,constructBuffer,CONSTRUCT_HEADER_SIZE))
      {
       bool found;
 
@@ -344,7 +344,7 @@ bool Bload(
       /*==================================================*/
 
       found = false;
-      for (biPtr = BsaveData(theEnv)->ListOfBinaryItems;
+      for (biPtr = CL_BsaveData(theEnv)->ListOfBinaryItems;
            biPtr != NULL;
            biPtr = biPtr->next)
         {
@@ -366,8 +366,8 @@ bool Bload(
 
       if (! found)
         {
-         GenReadBinary(theEnv,&space,sizeof(unsigned long));
-         GetSeekCurBinary(theEnv,(long) space);
+         CL_GenReadBinary(theEnv,&space,sizeof(unsigned long));
+         CL_GetSeekCurBinary(theEnv,(long) space);
         }
      }
 
@@ -375,26 +375,26 @@ bool Bload(
    /* Close the file. */
    /*=================*/
 
-   GenCloseBinary(theEnv);
+   CL_GenCloseBinary(theEnv);
 
    /*========================================*/
    /* Free up temporary storage used for the */
-   /* function and atomic value information. */
+   /* function and atomic value infoCL_rmation. */
    /*========================================*/
 
-   if (BloadData(theEnv)->FunctionArray != NULL)
+   if (CL_BloadData(theEnv)->FunctionArray != NULL)
      {
-      genfree(theEnv,BloadData(theEnv)->FunctionArray,
+      CL_genfree(theEnv,CL_BloadData(theEnv)->FunctionArray,
               sizeof(struct functionDefinition *) * numberOfFunctions);
      }
-   FreeAtomicValueStorage(theEnv);
+   CL_FreeAtomicValueStorage(theEnv);
 
    /*==================================*/
    /* Call the list of functions to be */
    /* executed after a bload occurs.   */
    /*==================================*/
 
-   for (bfPtr = BloadData(theEnv)->AfterBloadFunctions;
+   for (bfPtr = CL_BloadData(theEnv)->AfterCL_BloadFunctions;
         bfPtr != NULL;
         bfPtr = bfPtr->next)
      { (*bfPtr->func)(theEnv,bfPtr->context); }
@@ -404,7 +404,7 @@ bool Bload(
    /* load when a clear command is issued.  */
    /*=======================================*/
 
-   BloadData(theEnv)->BloadActive = true;
+   CL_BloadData(theEnv)->CL_BloadActive = true;
 
    /*=============================*/
    /* Return true to indicate the */
@@ -415,8 +415,8 @@ bool Bload(
   }
 
 /************************************************************
-  NAME         : BloadandRefresh
-  DESCRIPTION  : Loads and refreshes objects - will bload
+  NAME         : CL_BloadandCL_Refresh
+  DESCRIPTION  : CL_Loads and refreshes objects - will bload
                  all objects at once, if possible, but
                  will aslo work in increments if memory is
                  restricted
@@ -430,7 +430,7 @@ bool Bload(
   NOTES        : Assumes binary file pointer is positioned
                  for bloads of the objects
  ************************************************************/
-void BloadandRefresh(
+void CL_BloadandCL_Refresh(
   Environment *theEnv,
   unsigned long objcnt,
   size_t objsz,
@@ -444,19 +444,19 @@ void BloadandRefresh(
 
    if (objcnt == 0L) return;
 
-   oldOutOfMemoryFunction = SetOutOfMemoryFunction(theEnv,BloadOutOfMemoryFunction);
+   oldOutOfMemoryFunction = CL_SetOutOfMemoryFunction(theEnv,CL_BloadOutOfMemoryFunction);
    objsmaxread = objcnt;
    do
      {
       space = objsmaxread * objsz;
-      buf = (char *) genalloc(theEnv,space);
+      buf = (char *) CL_genalloc(theEnv,space);
       if (buf == NULL)
         {
          if ((objsmaxread / 2) == 0)
            {
             if ((*oldOutOfMemoryFunction)(theEnv,space) == true)
               {
-               SetOutOfMemoryFunction(theEnv,oldOutOfMemoryFunction);
+               CL_SetOutOfMemoryFunction(theEnv,oldOutOfMemoryFunction);
                return;
               }
            }
@@ -466,18 +466,18 @@ void BloadandRefresh(
      }
    while (buf == NULL);
 
-   SetOutOfMemoryFunction(theEnv,oldOutOfMemoryFunction);
+   CL_SetOutOfMemoryFunction(theEnv,oldOutOfMemoryFunction);
 
    i = 0L;
    do
      {
       objsread = (objsmaxread > (objcnt - i)) ? (objcnt - i) : objsmaxread;
-      GenReadBinary(theEnv,buf,objsread * objsz);
+      CL_GenReadBinary(theEnv,buf,objsread * objsz);
       for (bi = 0L ; bi < objsread ; bi++ , i++)
         (*objupdate)(theEnv,buf + objsz * bi,i);
      }
    while (i < objcnt);
-   genfree(theEnv,buf,space);
+   CL_genfree(theEnv,buf,space);
   }
 
 /**********************************************/
@@ -497,12 +497,12 @@ static struct functionDefinition **ReadNeededFunctions(
    bool functionsNotFound = false;
 
    /*===================================================*/
-   /* Determine the number of function names to be read */
+   /* DeteCL_rmine the number of function names to be read */
    /* and the space required for them.                  */
    /*===================================================*/
 
-   GenReadBinary(theEnv,numberOfFunctions,sizeof(long));
-   GenReadBinary(theEnv,&space,sizeof(unsigned long));
+   CL_GenReadBinary(theEnv,numberOfFunctions,sizeof(long));
+   CL_GenReadBinary(theEnv,&space,sizeof(unsigned long));
    if (*numberOfFunctions == 0)
      {
       *error = false;
@@ -513,31 +513,31 @@ static struct functionDefinition **ReadNeededFunctions(
    /* Allocate area for strings to be read. */
    /*=======================================*/
 
-   functionNames = (char *) genalloc(theEnv,space);
-   GenReadBinary(theEnv,functionNames,space);
+   functionNames = (char *) CL_genalloc(theEnv,space);
+   CL_GenReadBinary(theEnv,functionNames,space);
 
    /*====================================================*/
    /* Store the function pointers in the function array. */
    /*====================================================*/
 
    temp = sizeof(struct functionDefinition *) * *numberOfFunctions;
-   newFunctionArray = (struct functionDefinition **) genalloc(theEnv,temp);
+   newFunctionArray = (struct functionDefinition **) CL_genalloc(theEnv,temp);
    namePtr = functionNames;
    functionPtr = NULL;
    for (i = 0; i < *numberOfFunctions; i++)
      {
-      if ((functionPtr = FastFindFunction(theEnv,namePtr,functionPtr)) == NULL)
+      if ((functionPtr = FastCL_FindFunction(theEnv,namePtr,functionPtr)) == NULL)
         {
          if (! functionsNotFound)
            {
-            PrintErrorID(theEnv,"BLOAD",6,false);
-            WriteString(theEnv,STDERR,"The following undefined functions are ");
-            WriteString(theEnv,STDERR,"referenced by this binary image:\n");
+            CL_PrintErrorID(theEnv,"BLOAD",6,false);
+            CL_WriteString(theEnv,STDERR,"The following undefined functions are ");
+            CL_WriteString(theEnv,STDERR,"referenced by this binary image:\n");
            }
 
-         WriteString(theEnv,STDERR,"   ");
-         WriteString(theEnv,STDERR,namePtr);
-         WriteString(theEnv,STDERR,"\n");
+         CL_WriteString(theEnv,STDERR,"   ");
+         CL_WriteString(theEnv,STDERR,namePtr);
+         CL_WriteString(theEnv,STDERR,"\n");
          functionsNotFound = true;
         }
 
@@ -549,7 +549,7 @@ static struct functionDefinition **ReadNeededFunctions(
    /* Free the memory used by the name buffer. */
    /*==========================================*/
 
-   genfree(theEnv,functionNames,space);
+   CL_genfree(theEnv,functionNames,space);
 
    /*==================================================*/
    /* If any of the required functions were not found, */
@@ -558,7 +558,7 @@ static struct functionDefinition **ReadNeededFunctions(
 
    if (functionsNotFound)
      {
-      genfree(theEnv,newFunctionArray,temp);
+      CL_genfree(theEnv,newFunctionArray,temp);
       newFunctionArray = NULL;
      }
 
@@ -572,10 +572,10 @@ static struct functionDefinition **ReadNeededFunctions(
   }
 
 /*****************************************/
-/* FastFindFunction: Search the function */
+/* FastCL_FindFunction: Search the function */
 /*   list for a specific function.       */
 /*****************************************/
-static struct functionDefinition *FastFindFunction(
+static struct functionDefinition *FastCL_FindFunction(
   Environment *theEnv,
   const char *functionName,
   struct functionDefinition *lastFunction)
@@ -586,7 +586,7 @@ static struct functionDefinition *FastFindFunction(
    /* Get the function list. */
    /*========================*/
 
-   theList = GetFunctionList(theEnv);
+   theList = CL_GetFunctionList(theEnv);
    if (theList == NULL) { return NULL; }
 
    /*=======================================*/
@@ -620,36 +620,36 @@ static struct functionDefinition *FastFindFunction(
   }
 
 /******************************************/
-/* Bloaded: Returns true if the current   */
+/* CL_Bloaded: Returns true if the current   */
 /*   environment is the result of a bload */
 /*   command, otherwise returns false.    */
 /******************************************/
-bool Bloaded(
+bool CL_Bloaded(
   Environment *theEnv)
   {
-   return BloadData(theEnv)->BloadActive;
+   return CL_BloadData(theEnv)->CL_BloadActive;
   }
 
 /***************************************/
-/* ClearBloadCallback: Clears a binary */
+/* CL_ClearCL_BloadCallback: CL_Clears a binary */
 /*   image from the KB environment.    */
 /***************************************/
-static void ClearBloadCallback(
+static void CL_ClearCL_BloadCallback(
   Environment *theEnv,
   void *context)
   {
-   ClearBload(theEnv);
+   CL_ClearCL_Bload(theEnv);
   }
 
 /*************************************/
-/* ClearBload: Clears a binary image */
+/* CL_ClearCL_Bload: CL_Clears a binary image */
 /*   from the KB environment.        */
 /*************************************/
-static bool ClearBload(
+static bool CL_ClearCL_Bload(
   Environment *theEnv)
   {
    struct BinaryItem *biPtr;
-   struct boolCallFunctionItem *bfPtr;
+   struct boolCL_CallFunctionItem *bfPtr;
    bool ready, error;
 
    /*======================================*/
@@ -657,7 +657,7 @@ static bool ClearBload(
    /* no need to clear bload data.         */
    /*======================================*/
 
-   if (! BloadData(theEnv)->BloadActive)
+   if (! CL_BloadData(theEnv)->CL_BloadActive)
      { return true; }
 
    /*=================================================*/
@@ -665,7 +665,7 @@ static bool ClearBload(
    /*=================================================*/
 
    error = false;
-   for (bfPtr = BloadData(theEnv)->ClearBloadReadyFunctions;
+   for (bfPtr = CL_BloadData(theEnv)->CL_ClearCL_BloadReadyFunctions;
         bfPtr != NULL;
         bfPtr = bfPtr->next)
      {
@@ -675,13 +675,13 @@ static bool ClearBload(
         {
          if (! error)
            {
-            PrintErrorID(theEnv,"BLOAD",5,false);
-            WriteString(theEnv,STDERR,
+            CL_PrintErrorID(theEnv,"BLOAD",5,false);
+            CL_WriteString(theEnv,STDERR,
                        "Some constructs are still in use by the current binary image:\n");
            }
-         WriteString(theEnv,STDERR,"   ");
-         WriteString(theEnv,STDERR,bfPtr->name);
-         WriteString(theEnv,STDERR,"\n");
+         CL_WriteString(theEnv,STDERR,"   ");
+         CL_WriteString(theEnv,STDERR,bfPtr->name);
+         CL_WriteString(theEnv,STDERR,"\n");
          error = true;
         }
      }
@@ -694,7 +694,7 @@ static bool ClearBload(
 
    if (error == true)
      {
-      WriteString(theEnv,STDERR,"Binary clear cannot continue.\n");
+      CL_WriteString(theEnv,STDERR,"Binary clear cannot continue.\n");
       return false;
      }
 
@@ -702,7 +702,7 @@ static bool ClearBload(
    /* Call bload clear functions. */
    /*=============================*/
 
-   for (biPtr = BsaveData(theEnv)->ListOfBinaryItems;
+   for (biPtr = CL_BsaveData(theEnv)->ListOfBinaryItems;
         biPtr != NULL;
         biPtr = biPtr->next)
      { if (biPtr->clearFunction != NULL) (*biPtr->clearFunction)(theEnv); }
@@ -711,19 +711,19 @@ static bool ClearBload(
    /* Free bloaded expressions. */
    /*===========================*/
 
-   ClearBloadedExpressions(theEnv);
+   CL_ClearCL_BloadedExpressions(theEnv);
 
    /*===========================*/
    /* Free bloaded constraints. */
    /*===========================*/
 
-   ClearBloadedConstraints(theEnv);
+   CL_ClearCL_BloadedConstraints(theEnv);
 
    /*==================================*/
    /* Remove the bload clear function. */
    /*==================================*/
 
-   BloadData(theEnv)->BloadActive = false;
+   CL_BloadData(theEnv)->CL_BloadActive = false;
 
    /*====================================*/
    /* Return true to indicate the binary */
@@ -734,91 +734,91 @@ static bool ClearBload(
   }
 
 /*************************************************/
-/* AbortBload: Cleans up effects of before-bload */
+/* AbortCL_Bload: Cleans up effects of before-bload */
 /*   functions in event of failure.              */
 /*************************************************/
-static void AbortBload(
+static void AbortCL_Bload(
   Environment *theEnv)
   {
-   struct voidCallFunctionItem *bfPtr;
+   struct voidCL_CallFunctionItem *bfPtr;
 
-   for (bfPtr = BloadData(theEnv)->AbortBloadFunctions;
+   for (bfPtr = CL_BloadData(theEnv)->AbortCL_BloadFunctions;
         bfPtr != NULL;
         bfPtr = bfPtr->next)
      { (*bfPtr->func)(theEnv,bfPtr->context); }
   }
 
 /********************************************/
-/* AddBeforeBloadFunction: Adds a function  */
+/* CL_AddBeforeCL_BloadFunction: Adds a function  */
 /*   to the list of functions called before */
 /*   a binary load occurs.                  */
 /********************************************/
-void AddBeforeBloadFunction(
+void CL_AddBeforeCL_BloadFunction(
   Environment *theEnv,
   const char *name,
-  VoidCallFunction *func,
+  VoidCL_CallFunction *func,
   int priority,
   void *context)
   {
-   BloadData(theEnv)->BeforeBloadFunctions =
-     AddVoidFunctionToCallList(theEnv,name,priority,func,BloadData(theEnv)->BeforeBloadFunctions,context);
+   CL_BloadData(theEnv)->BeforeCL_BloadFunctions =
+     CL_AddCL_VoidFunctionToCallList(theEnv,name,priority,func,CL_BloadData(theEnv)->BeforeCL_BloadFunctions,context);
   }
 
 /*******************************************/
-/* AddAfterBloadFunction: Adds a function  */
+/* CL_AddAfterCL_BloadFunction: Adds a function  */
 /*   to the list of functions called after */
 /*   a binary load occurs.                 */
 /*******************************************/
-void AddAfterBloadFunction(
+void CL_AddAfterCL_BloadFunction(
   Environment *theEnv,
   const char *name,
-  VoidCallFunction *func,
+  VoidCL_CallFunction *func,
   int priority,
   void *context)
   {
-   BloadData(theEnv)->AfterBloadFunctions =
-      AddVoidFunctionToCallList(theEnv,name,priority,func,BloadData(theEnv)->AfterBloadFunctions,context);
+   CL_BloadData(theEnv)->AfterCL_BloadFunctions =
+      CL_AddCL_VoidFunctionToCallList(theEnv,name,priority,func,CL_BloadData(theEnv)->AfterCL_BloadFunctions,context);
   }
 
 /**************************************************/
-/* AddClearBloadReadyFunction: Adds a function to */
-/*   the list of functions called to determine if */
+/* CL_AddCL_ClearCL_BloadReadyFunction: Adds a function to */
+/*   the list of functions called to deteCL_rmine if */
 /*   a binary image can be cleared.               */
 /**************************************************/
-void AddClearBloadReadyFunction(
+void CL_AddCL_ClearCL_BloadReadyFunction(
   Environment *theEnv,
   const char *name,
-  BoolCallFunction *func,
+  BoolCL_CallFunction *func,
   int priority,
   void *context)
   {
-   BloadData(theEnv)->ClearBloadReadyFunctions =
-      AddBoolFunctionToCallList(theEnv,name,priority,func,
-                                BloadData(theEnv)->ClearBloadReadyFunctions,context);
+   CL_BloadData(theEnv)->CL_ClearCL_BloadReadyFunctions =
+      CL_AddBoolFunctionToCallList(theEnv,name,priority,func,
+                                CL_BloadData(theEnv)->CL_ClearCL_BloadReadyFunctions,context);
   }
 
 /*********************************************/
-/* AddAbortBloadFunction: Adds a function to */
+/* CL_AddAbortCL_BloadFunction: Adds a function to */
 /*   the list of functions called if a bload */
 /*   has to be aborted.                      */
 /*********************************************/
-void AddAbortBloadFunction(
+void CL_AddAbortCL_BloadFunction(
   Environment *theEnv,
   const char *name,
-  VoidCallFunction *func,
+  VoidCL_CallFunction *func,
   int priority,
   void *context)
   {
-   BloadData(theEnv)->AbortBloadFunctions =
-      AddVoidFunctionToCallList(theEnv,name,priority,func,
-                                BloadData(theEnv)->AbortBloadFunctions,context);
+   CL_BloadData(theEnv)->AbortCL_BloadFunctions =
+      CL_AddCL_VoidFunctionToCallList(theEnv,name,priority,func,
+                                CL_BloadData(theEnv)->AbortCL_BloadFunctions,context);
   }
 
 /*******************************************************
-  NAME         : BloadOutOfMemoryFunction
+  NAME         : CL_BloadOutOfMemoryFunction
   DESCRIPTION  : Memory function used by bload to
                    prevent exiting when out of
-                   memory - used by BloadandRefresh
+                   memory - used by CL_BloadandCL_Refresh
   INPUTS       : The memory request size (unused)
   RETURNS      : True (indicates a failure and for
                  the memory functions to simply
@@ -826,7 +826,7 @@ void AddAbortBloadFunction(
   SIDE EFFECTS : None
   NOTES        : None
  *******************************************************/
-static bool BloadOutOfMemoryFunction(
+static bool CL_BloadOutOfMemoryFunction(
   Environment *theEnv,
   size_t size)
   {
@@ -837,27 +837,27 @@ static bool BloadOutOfMemoryFunction(
   }
 
 /*****************************************************/
-/* CannotLoadWithBloadMessage: Generic error message */
+/* CannotCL_LoadWithCL_BloadMessage: Generic error message */
 /*   for indicating that a construct can't be loaded */
 /*   when a binary image is active.                  */
 /*****************************************************/
-void CannotLoadWithBloadMessage(
+void CannotCL_LoadWithCL_BloadMessage(
   Environment *theEnv,
   const char *constructName)
   {
-   PrintErrorID(theEnv,"BLOAD",1,true);
-   WriteString(theEnv,STDERR,"Cannot load ");
-   WriteString(theEnv,STDERR,constructName);
-   WriteString(theEnv,STDERR," construct with binary load in effect.\n");
+   CL_PrintErrorID(theEnv,"BLOAD",1,true);
+   CL_WriteString(theEnv,STDERR,"Cannot load ");
+   CL_WriteString(theEnv,STDERR,constructName);
+   CL_WriteString(theEnv,STDERR," construct with binary load in effect.\n");
   }
 
 #endif /* (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE) */
 
 /**************************************/
-/* BloadCommand: H/L access routine   */
+/* CL_BloadCommand: H/L access routine   */
 /*   for the bload command.           */
 /**************************************/
-void BloadCommand(
+void CL_BloadCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -865,10 +865,10 @@ void BloadCommand(
 #if (! RUN_TIME) && (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE)
    const char *fileName;
 
-   fileName = GetFileName(context);
+   fileName = CL_GetFileName(context);
    if (fileName != NULL)
      {
-      returnValue->lexemeValue = CreateBoolean(theEnv,Bload(theEnv,fileName));
+      returnValue->lexemeValue = CL_CreateBoolean(theEnv,CL_Bload(theEnv,fileName));
       return;
      }
 #else

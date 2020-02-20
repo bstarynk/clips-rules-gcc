@@ -71,18 +71,18 @@ struct procedureFunctionData
 
 #define ProcedureFunctionData(theEnv) ((struct procedureFunctionData *) GetEnvironmentData(theEnv,PRCDRFUN_DATA))
 
-   void                           ProceduralFunctionDefinitions(Environment *);
-   void                           WhileFunction(Environment *,UDFContext *,UDFValue *);
-   void                           LoopForCountFunction(Environment *,UDFContext *,UDFValue *);
-   void                           GetLoopCount(Environment *,UDFContext *,UDFValue *);
-   void                           IfFunction(Environment *,UDFContext *,UDFValue *);
-   void                           BindFunction(Environment *,UDFContext *,UDFValue *);
-   void                           PrognFunction(Environment *,UDFContext *,UDFValue *);
-   void                           ReturnFunction(Environment *,UDFContext *,UDFValue *);
-   void                           BreakFunction(Environment *,UDFContext *,UDFValue *);
-   void                           SwitchFunction(Environment *,UDFContext *,UDFValue *);
-   bool                           GetBoundVariable(Environment *,UDFValue *,CLIPSLexeme *);
-   void                           FlushBindList(Environment *,void *);
+   void                           CL_ProceduralFunctionDefinitions(Environment *);
+   void                           CL_WhileFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_LoopForCountFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_GetLoopCount(Environment *,UDFContext *,UDFValue *);
+   void                           CL_IfFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_BindFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_PrognFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_ReturnFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_BreakFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_SwitchFunction(Environment *,UDFContext *,UDFValue *);
+   bool                           CL_GetBoundVariable(Environment *,UDFValue *,CLIPSLexeme *);
+   void                           CL_FlushBindList(Environment *,void *);
 
 #endif /* _H_prcdrfun */
 

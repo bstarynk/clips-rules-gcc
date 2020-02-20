@@ -19,7 +19,7 @@
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
-/*      6.24: Added environment parameter to GenClose.       */
+/*      6.24: Added environment parameter to CL_GenClose.       */
 /*                                                           */
 /*            Corrected code to remove compiler warnings.    */
 /*                                                           */
@@ -50,11 +50,11 @@
 
 #include "symbol.h"
 
-   void                     PrintSymbolReference(Environment *,FILE *,CLIPSLexeme *);
-   void                     PrintFloatReference(Environment *,FILE *,CLIPSFloat *);
-   void                     PrintIntegerReference(Environment *,FILE *,CLIPSInteger *);
-   void                     PrintBitMapReference(Environment *,FILE *,CLIPSBitMap *);
-   void                     AtomicValuesToCode(Environment *,const char *,const char *,char *);
+   void                     CL_PrintSymbolReference(Environment *,FILE *,CLIPSLexeme *);
+   void                     CL_PrintFloatReference(Environment *,FILE *,CLIPSFloat *);
+   void                     CL_PrintIntegerReference(Environment *,FILE *,CLIPSInteger *);
+   void                     CL_PrintBitMapReference(Environment *,FILE *,CLIPSBitMap *);
+   void                     CL_AtomicValuesToCode(Environment *,const char *,const char *,char *);
 
 #endif /* _H_symblcmp */
 

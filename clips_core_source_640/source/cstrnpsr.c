@@ -26,7 +26,7 @@
 /*                                                           */
 /*            Renamed BOOLEAN macro type to intBool.         */
 /*                                                           */
-/*      6.30: Used gensprintf instead of sprintf.            */
+/*      6.30: Used CL_gensprintf instead of sprintf.            */
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
@@ -85,11 +85,11 @@
 #endif
 
 /********************************************************************/
-/* CheckConstraintParseConflicts: Determines if a constraint record */
+/* CL_CheckConstraintParseConflicts: DeteCL_rmines if a constraint record */
 /*   has any conflicts in the attribute specifications. Returns     */
 /*   true if no conflicts were detected, otherwise false.           */
 /********************************************************************/
-bool CheckConstraintParseConflicts(
+bool CL_CheckConstraintParseConflicts(
   Environment *theEnv,
   CONSTRAINT_RECORD *constraints)
   {
@@ -103,38 +103,38 @@ bool CheckConstraintParseConflicts(
    else if (constraints->symbolRestriction &&
             (constraints->symbolsAllowed == false))
      {
-      AttributeConflictErrorMessage(theEnv,"type","allowed-symbols");
+      CL_AttributeConflictErrorMessage(theEnv,"type","allowed-symbols");
       return false;
      }
    else if (constraints->stringRestriction &&
             (constraints->stringsAllowed == false))
      {
-      AttributeConflictErrorMessage(theEnv,"type","allowed-strings");
+      CL_AttributeConflictErrorMessage(theEnv,"type","allowed-strings");
       return false;
      }
    else if (constraints->integerRestriction &&
             (constraints->integersAllowed == false))
      {
-      AttributeConflictErrorMessage(theEnv,"type","allowed-integers/numbers");
+      CL_AttributeConflictErrorMessage(theEnv,"type","allowed-integers/numbers");
       return false;
      }
    else if (constraints->floatRestriction &&
             (constraints->floatsAllowed == false))
      {
-      AttributeConflictErrorMessage(theEnv,"type","allowed-floats/numbers");
+      CL_AttributeConflictErrorMessage(theEnv,"type","allowed-floats/numbers");
       return false;
      }
    else if (constraints->classRestriction &&
             (constraints->instanceAddressesAllowed == false) &&
             (constraints->instanceNamesAllowed == false))
      {
-      AttributeConflictErrorMessage(theEnv,"type","allowed-classes");
+      CL_AttributeConflictErrorMessage(theEnv,"type","allowed-classes");
       return false;
      }
    else if (constraints->instanceNameRestriction &&
             (constraints->instanceNamesAllowed == false))
      {
-      AttributeConflictErrorMessage(theEnv,"type","allowed-instance-names");
+      CL_AttributeConflictErrorMessage(theEnv,"type","allowed-instance-names");
       return false;
      }
    else if (constraints->anyRestriction)
@@ -145,9 +145,9 @@ bool CheckConstraintParseConflicts(
            theExp != NULL;
            theExp = theExp->nextArg)
         {
-         if (ConstraintCheckValue(theEnv,theExp->type,theExp->value,constraints) != NO_VIOLATION)
+         if (CL_ConstraintCheckValue(theEnv,theExp->type,theExp->value,constraints) != NO_VIOLATION)
            {
-            AttributeConflictErrorMessage(theEnv,"type","allowed-values");
+            CL_AttributeConflictErrorMessage(theEnv,"type","allowed-values");
             return false;
            }
         }
@@ -165,7 +165,7 @@ bool CheckConstraintParseConflicts(
           ((constraints->maxValue->type == FLOAT_TYPE) &&
            (constraints->floatsAllowed == false)))
         {
-         AttributeConflictErrorMessage(theEnv,"type","range");
+         CL_AttributeConflictErrorMessage(theEnv,"type","range");
          return false;
         }
      }
@@ -178,7 +178,7 @@ bool CheckConstraintParseConflicts(
           ((constraints->minValue->type == FLOAT_TYPE) &&
            (constraints->floatsAllowed == false)))
         {
-         AttributeConflictErrorMessage(theEnv,"type","range");
+         CL_AttributeConflictErrorMessage(theEnv,"type","range");
          return false;
         }
      }
@@ -193,7 +193,7 @@ bool CheckConstraintParseConflicts(
        (constraints->instanceNamesAllowed == false) &&
        (constraints->instanceAddressesAllowed == false))
      {
-      AttributeConflictErrorMessage(theEnv,"type","allowed-class");
+      CL_AttributeConflictErrorMessage(theEnv,"type","allowed-class");
       return false;
      }
 
@@ -205,30 +205,30 @@ bool CheckConstraintParseConflicts(
   }
 
 /********************************************************/
-/* AttributeConflictErrorMessage: Generic error message */
+/* CL_AttributeConflictErrorMessage: Generic error message */
 /*   for a constraint attribute conflict.               */
 /********************************************************/
-void AttributeConflictErrorMessage(
+void CL_AttributeConflictErrorMessage(
   Environment *theEnv,
   const char *attribute1,
   const char *attribute2)
   {
-   PrintErrorID(theEnv,"CSTRNPSR",1,true);
-   WriteString(theEnv,STDERR,"The '");
-   WriteString(theEnv,STDERR,attribute1);
-   WriteString(theEnv,STDERR,"' attribute conflicts with the '");
-   WriteString(theEnv,STDERR,attribute2);
-   WriteString(theEnv,STDERR,"' attribute.\n");
+   CL_PrintErrorID(theEnv,"CSTRNPSR",1,true);
+   CL_WriteString(theEnv,STDERR,"The '");
+   CL_WriteString(theEnv,STDERR,attribute1);
+   CL_WriteString(theEnv,STDERR,"' attribute conflicts with the '");
+   CL_WriteString(theEnv,STDERR,attribute2);
+   CL_WriteString(theEnv,STDERR,"' attribute.\n");
   }
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
 
 /***************************************************************************/
-/* InitializeConstraintParseRecord: Initializes the values of a constraint */
-/*   parse record which is used to determine whether one of the standard   */
+/* CL_InitializeConstraintParseRecord: Initializes the values of a constraint */
+/*   parse record which is used to deteCL_rmine whether one of the standard   */
 /*   constraint specifications has already been parsed.                    */
 /***************************************************************************/
-void InitializeConstraintParseRecord(
+void CL_InitializeConstraintParseRecord(
   CONSTRAINT_PARSE_RECORD *parsedConstraints)
   {
    parsedConstraints->type = false;
@@ -240,16 +240,16 @@ void InitializeConstraintParseRecord(
    parsedConstraints->allowedFloats = false;
    parsedConstraints->allowedNumbers = false;
    parsedConstraints->allowedValues = false;
-   parsedConstraints->allowedInstanceNames = false;
+   parsedConstraints->allowedCL_InstanceNames = false;
    parsedConstraints->allowedClasses = false;
    parsedConstraints->cardinality = false;
   }
 
 /************************************************************************/
-/* StandardConstraint: Returns true if the specified name is one of the */
+/* CL_StandardConstraint: Returns true if the specified name is one of the */
 /*   standard constraints parseable by the routines in this module.     */
 /************************************************************************/
-bool StandardConstraint(
+bool CL_StandardConstraint(
   const char *constraintName)
   {
    if ((strcmp(constraintName,"type") == 0) ||
@@ -271,10 +271,10 @@ bool StandardConstraint(
   }
 
 /***********************************************************************/
-/* ParseStandardConstraint: Parses a standard constraint. Returns true */
+/* CL_ParseCL_StandardConstraint: Parses a standard constraint. Returns true */
 /*   if the constraint was successfully parsed, otherwise false.       */
 /***********************************************************************/
-bool ParseStandardConstraint(
+bool CL_ParseCL_StandardConstraint(
   Environment *theEnv,
   const char *readSource,
   const char *constraintName,
@@ -285,12 +285,12 @@ bool ParseStandardConstraint(
    bool rv = false;
 
    /*=====================================================*/
-   /* Determine if the attribute has already been parsed. */
+   /* DeteCL_rmine if the attribute has already been parsed. */
    /*=====================================================*/
 
    if (GetAttributeParseValue(constraintName,parsedConstraints))
      {
-      AlreadyParsedErrorMessage(theEnv,"attribute ",constraintName);
+      CL_AlreadyParsedErrorMessage(theEnv,"attribute ",constraintName);
       return false;
      }
 
@@ -349,13 +349,13 @@ bool ParseStandardConstraint(
   }
 
 /***********************************************************/
-/* OverlayConstraint: Overlays fields of source constraint */
+/* CL_OverlayConstraint: Overlays fields of source constraint */
 /* record on destination based on which fields are set in  */
-/* the parsed constraint record. Assumes AddConstraint has */
+/* the parsed constraint record. Assumes CL_AddConstraint has */
 /* not yet been called for the destination constraint      */
 /* record.                                                 */
 /***********************************************************/
-void OverlayConstraint(
+void CL_OverlayConstraint(
   Environment *theEnv,
   CONSTRAINT_PARSE_RECORD *pc,
   CONSTRAINT_RECORD *cdst,
@@ -377,16 +377,16 @@ void OverlayConstraint(
 
    if (pc->range == 0)
      {
-      ReturnExpression(theEnv,cdst->minValue);
-      ReturnExpression(theEnv,cdst->maxValue);
-      cdst->minValue = CopyExpression(theEnv,csrc->minValue);
-      cdst->maxValue = CopyExpression(theEnv,csrc->maxValue);
+      CL_ReturnExpression(theEnv,cdst->minValue);
+      CL_ReturnExpression(theEnv,cdst->maxValue);
+      cdst->minValue = CL_CopyExpression(theEnv,csrc->minValue);
+      cdst->maxValue = CL_CopyExpression(theEnv,csrc->maxValue);
      }
 
    if (pc->allowedClasses == 0)
      {
-      ReturnExpression(theEnv,cdst->classList);
-      cdst->classList = CopyExpression(theEnv,csrc->classList);
+      CL_ReturnExpression(theEnv,cdst->classList);
+      cdst->classList = CL_CopyExpression(theEnv,csrc->classList);
      }
 
    if (pc->allowedValues == 0)
@@ -397,7 +397,7 @@ void OverlayConstraint(
           (pc->allowedIntegers == 0) &&
           (pc->allowedFloats == 0) &&
           (pc->allowedNumbers == 0) &&
-          (pc->allowedInstanceNames == 0))
+          (pc->allowedCL_InstanceNames == 0))
         {
          cdst->anyRestriction = csrc->anyRestriction;
          cdst->symbolRestriction = csrc->symbolRestriction;
@@ -406,7 +406,7 @@ void OverlayConstraint(
          cdst->integerRestriction = csrc->integerRestriction;
          cdst->classRestriction = csrc->classRestriction;
          cdst->instanceNameRestriction = csrc->instanceNameRestriction;
-         cdst->restrictionList = CopyExpression(theEnv,csrc->restrictionList);
+         cdst->restrictionList = CL_CopyExpression(theEnv,csrc->restrictionList);
         }
       else
         {
@@ -444,7 +444,7 @@ void OverlayConstraint(
             AddToRestrictionList(theEnv,INTEGER_TYPE,cdst,csrc);
             AddToRestrictionList(theEnv,FLOAT_TYPE,cdst,csrc);
            }
-         if ((pc->allowedInstanceNames == 0) && csrc->instanceNameRestriction)
+         if ((pc->allowedCL_InstanceNames == 0) && csrc->instanceNameRestriction)
            {
             cdst->instanceNameRestriction = 1;
             AddToRestrictionList(theEnv,INSTANCE_NAME_TYPE,cdst,csrc);
@@ -454,19 +454,19 @@ void OverlayConstraint(
 
    if (pc->cardinality == 0)
      {
-      ReturnExpression(theEnv,cdst->minFields);
-      ReturnExpression(theEnv,cdst->maxFields);
-      cdst->minFields = CopyExpression(theEnv,csrc->minFields);
-      cdst->maxFields = CopyExpression(theEnv,csrc->maxFields);
+      CL_ReturnExpression(theEnv,cdst->minFields);
+      CL_ReturnExpression(theEnv,cdst->maxFields);
+      cdst->minFields = CL_CopyExpression(theEnv,csrc->minFields);
+      cdst->maxFields = CL_CopyExpression(theEnv,csrc->maxFields);
      }
   }
 
 /**********************************************/
-/* OverlayConstraintParseRecord: Performs a   */
+/* CL_OverlayConstraintParseRecord: PerfoCL_rms a   */
 /*   field-wise "or" of the destination parse */
 /*   record with the source parse record.     */
 /**********************************************/
-void OverlayConstraintParseRecord(
+void CL_OverlayConstraintParseRecord(
   CONSTRAINT_PARSE_RECORD *dst,
   CONSTRAINT_PARSE_RECORD *src)
   {
@@ -479,7 +479,7 @@ void OverlayConstraintParseRecord(
    if (src->allowedFloats) dst->allowedFloats = true;
    if (src->allowedNumbers) dst->allowedNumbers = true;
    if (src->allowedValues) dst->allowedValues = true;
-   if (src->allowedInstanceNames) dst->allowedInstanceNames = true;
+   if (src->allowedCL_InstanceNames) dst->allowedCL_InstanceNames = true;
    if (src->allowedClasses) dst->allowedClasses = true;
    if (src->cardinality) dst->cardinality = true;
   }
@@ -500,7 +500,7 @@ static void AddToRestrictionList(
      {
       if (theExp->type == type)
         {
-         tmp = GenConstant(theEnv,theExp->type,theExp->value);
+         tmp = CL_GenConstant(theEnv,theExp->type,theExp->value);
          tmp->nextArg = cdst->restrictionList;
          cdst->restrictionList = tmp;
         }
@@ -537,7 +537,7 @@ static bool ParseAllowedValuesAttribute(
         (parsedConstraints->allowedIntegers) ||
         (parsedConstraints->allowedFloats) ||
         (parsedConstraints->allowedNumbers) ||
-        (parsedConstraints->allowedInstanceNames)))
+        (parsedConstraints->allowedCL_InstanceNames)))
      {
       if (parsedConstraints->allowedSymbols) tempPtr = "allowed-symbols";
       else if (parsedConstraints->allowedStrings) tempPtr = "allowed-strings";
@@ -545,7 +545,7 @@ static bool ParseAllowedValuesAttribute(
       else if (parsedConstraints->allowedIntegers) tempPtr = "allowed-integers";
       else if (parsedConstraints->allowedFloats) tempPtr = "allowed-floats";
       else if (parsedConstraints->allowedNumbers) tempPtr = "allowed-numbers";
-      else if (parsedConstraints->allowedInstanceNames) tempPtr = "allowed-instance-names";
+      else if (parsedConstraints->allowedCL_InstanceNames) tempPtr = "allowed-instance-names";
       NoConjunctiveUseError(theEnv,"allowed-values",tempPtr);
       return false;
      }
@@ -662,15 +662,15 @@ static bool ParseAllowedValuesAttribute(
    /* until a right parenthesis is encountered.        */
    /*==================================================*/
 
-   SavePPBuffer(theEnv," ");
-   GetToken(theEnv,readSource,&inputToken);
+   CL_SavePPBuffer(theEnv," ");
+   CL_GetToken(theEnv,readSource,&inputToken);
 
    while (inputToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      {
-      SavePPBuffer(theEnv," ");
+      CL_SavePPBuffer(theEnv," ");
 
       /*=============================================*/
-      /* Determine the type of the token just parsed */
+      /* DeteCL_rmine the type of the token just parsed */
       /* and if it is an appropriate value.          */
       /*=============================================*/
 
@@ -718,7 +718,7 @@ static bool ParseAllowedValuesAttribute(
 #endif
 
          case SF_VARIABLE_TOKEN:
-           if (strcmp(inputToken.printForm,"?VARIABLE") == 0)
+           if (strcmp(inputToken.printFoCL_rm,"?VARIABLE") == 0)
              {
               variableParsed = true;
               genType = SF_VARIABLE;
@@ -726,8 +726,8 @@ static bool ParseAllowedValuesAttribute(
            else
              {
               char tempBuffer[120];
-              gensprintf(tempBuffer,"%s attribute",constraintName);
-              SyntaxErrorMessage(theEnv,tempBuffer);
+              CL_gensprintf(tempBuffer,"%s attribute",constraintName);
+              CL_SyntaxErrorMessage(theEnv,tempBuffer);
               return false;
              }
 
@@ -736,8 +736,8 @@ static bool ParseAllowedValuesAttribute(
          default:
            {
             char tempBuffer[120];
-            gensprintf(tempBuffer,"%s attribute",constraintName);
-            SyntaxErrorMessage(theEnv,tempBuffer);
+            CL_gensprintf(tempBuffer,"%s attribute",constraintName);
+            CL_SyntaxErrorMessage(theEnv,tempBuffer);
            }
            return false;
         }
@@ -749,10 +749,10 @@ static bool ParseAllowedValuesAttribute(
 
       if (error)
         {
-         PrintErrorID(theEnv,"CSTRNPSR",4,true);
-         WriteString(theEnv,STDERR,"Value does not match the expected type for the '");
-         WriteString(theEnv,STDERR,constraintName);
-         WriteString(theEnv,STDERR,"' attribute.\n");
+         CL_PrintErrorID(theEnv,"CSTRNPSR",4,true);
+         CL_WriteString(theEnv,STDERR,"Value does not match the expected type for the '");
+         CL_WriteString(theEnv,STDERR,constraintName);
+         CL_WriteString(theEnv,STDERR,"' attribute.\n");
          return false;
         }
 
@@ -764,8 +764,8 @@ static bool ParseAllowedValuesAttribute(
       if (constantParsed && variableParsed)
         {
          char tempBuffer[120];
-         gensprintf(tempBuffer,"%s attribute",constraintName);
-         SyntaxErrorMessage(theEnv,tempBuffer);
+         CL_gensprintf(tempBuffer,"%s attribute",constraintName);
+         CL_SyntaxErrorMessage(theEnv,tempBuffer);
          return false;
         }
 
@@ -773,7 +773,7 @@ static bool ParseAllowedValuesAttribute(
       /* Add the constant to the restriction list. */
       /*===========================================*/
 
-      newValue = GenConstant(theEnv,genType,inputToken.value);
+      newValue = CL_GenConstant(theEnv,genType,inputToken.value);
       
       if (lastValue == NULL)
         {
@@ -790,7 +790,7 @@ static bool ParseAllowedValuesAttribute(
       /* Begin parsing the next allowed value. */
       /*=======================================*/
 
-      GetToken(theEnv,readSource,&inputToken);
+      CL_GetToken(theEnv,readSource,&inputToken);
      }
 
    /*======================================================*/
@@ -800,8 +800,8 @@ static bool ParseAllowedValuesAttribute(
    if ((! constantParsed) && (! variableParsed))
      {
       char tempBuffer[120];
-      gensprintf(tempBuffer,"%s attribute",constraintName);
-      SyntaxErrorMessage(theEnv,tempBuffer);
+      CL_gensprintf(tempBuffer,"%s attribute",constraintName);
+      CL_SyntaxErrorMessage(theEnv,tempBuffer);
       return false;
      }
 
@@ -859,9 +859,9 @@ static bool ParseAllowedValuesAttribute(
    /* Fix up pretty print representation. */
    /*=====================================*/
 
-   PPBackup(theEnv);
-   PPBackup(theEnv);
-   SavePPBuffer(theEnv,")");
+   CL_PPBackup(theEnv);
+   CL_PPBackup(theEnv);
+   CL_SavePPBuffer(theEnv,")");
 
    /*=======================================*/
    /* Return true to indicate the attribute */
@@ -880,13 +880,13 @@ static void NoConjunctiveUseError(
   const char *attribute1,
   const char *attribute2)
   {
-   PrintErrorID(theEnv,"CSTRNPSR",3,true);
-   WriteString(theEnv,STDERR,"The '");
-   WriteString(theEnv,STDERR,attribute1);
-   WriteString(theEnv,STDERR,"' attribute cannot be used ");
-   WriteString(theEnv,STDERR,"in conjunction with the '");
-   WriteString(theEnv,STDERR,attribute2);
-   WriteString(theEnv,STDERR,"' attribute.\n");
+   CL_PrintErrorID(theEnv,"CSTRNPSR",3,true);
+   CL_WriteString(theEnv,STDERR,"The '");
+   CL_WriteString(theEnv,STDERR,attribute1);
+   CL_WriteString(theEnv,STDERR,"' attribute cannot be used ");
+   CL_WriteString(theEnv,STDERR,"in conjunction with the '");
+   CL_WriteString(theEnv,STDERR,attribute2);
+   CL_WriteString(theEnv,STDERR,"' attribute.\n");
   }
 
 /**************************************************/
@@ -907,12 +907,12 @@ static bool ParseTypeAttribute(
    /* parenthesis is encountered.          */
    /*======================================*/
 
-   SavePPBuffer(theEnv," ");
-   for (GetToken(theEnv,readSource,&inputToken);
+   CL_SavePPBuffer(theEnv," ");
+   for (CL_GetToken(theEnv,readSource,&inputToken);
         inputToken.tknType != RIGHT_PARENTHESIS_TOKEN;
-        GetToken(theEnv,readSource,&inputToken))
+        CL_GetToken(theEnv,readSource,&inputToken))
      {
-      SavePPBuffer(theEnv," ");
+      CL_SavePPBuffer(theEnv," ");
 
       /*==================================*/
       /* If the token is a symbol then... */
@@ -926,7 +926,7 @@ static bool ParseTypeAttribute(
 
          if (variableParsed == true)
            {
-            SyntaxErrorMessage(theEnv,"type attribute");
+            CL_SyntaxErrorMessage(theEnv,"type attribute");
             return false;
            }
 
@@ -938,7 +938,7 @@ static bool ParseTypeAttribute(
          theType = GetConstraintTypeFromTypeName(inputToken.lexemeValue->contents);
          if (theType < 0)
            {
-            SyntaxErrorMessage(theEnv,"type attribute");
+            CL_SyntaxErrorMessage(theEnv,"type attribute");
             return false;
            }
 
@@ -948,9 +948,9 @@ static bool ParseTypeAttribute(
          /* already specified, then a error is generated.    */
          /*==================================================*/
 
-         if (SetConstraintType(theType,constraints))
+         if (CL_SetConstraintType(theType,constraints))
            {
-            SyntaxErrorMessage(theEnv,"type attribute");
+            CL_SyntaxErrorMessage(theEnv,"type attribute");
             return false;
            }
 
@@ -973,9 +973,9 @@ static bool ParseTypeAttribute(
          /* The only variable allowd is ?VARIABLE. */
          /*========================================*/
 
-         if (strcmp(inputToken.printForm,"?VARIABLE") != 0)
+         if (strcmp(inputToken.printFoCL_rm,"?VARIABLE") != 0)
            {
-            SyntaxErrorMessage(theEnv,"type attribute");
+            CL_SyntaxErrorMessage(theEnv,"type attribute");
             return false;
            }
 
@@ -986,7 +986,7 @@ static bool ParseTypeAttribute(
 
          if (typeParsed || variableParsed)
            {
-            SyntaxErrorMessage(theEnv,"type attribute");
+            CL_SyntaxErrorMessage(theEnv,"type attribute");
             return false;
            }
 
@@ -1004,7 +1004,7 @@ static bool ParseTypeAttribute(
 
        else
         {
-         SyntaxErrorMessage(theEnv,"type attribute");
+         CL_SyntaxErrorMessage(theEnv,"type attribute");
          return false;
         }
      }
@@ -1013,9 +1013,9 @@ static bool ParseTypeAttribute(
    /* Fix up pretty print representation. */
    /*=====================================*/
 
-   PPBackup(theEnv);
-   PPBackup(theEnv);
-   SavePPBuffer(theEnv,")");
+   CL_PPBackup(theEnv);
+   CL_PPBackup(theEnv);
+   CL_SavePPBuffer(theEnv,")");
 
    /*=======================================*/
    /* The type attribute must have a value. */
@@ -1023,7 +1023,7 @@ static bool ParseTypeAttribute(
 
    if ((! typeParsed) && (! variableParsed))
      {
-      SyntaxErrorMessage(theEnv,"type attribute");
+      CL_SyntaxErrorMessage(theEnv,"type attribute");
       return false;
      }
 
@@ -1051,7 +1051,7 @@ static bool ParseRangeCardinalityAttribute(
    const char *tempPtr = NULL;
 
    /*=================================*/
-   /* Determine if we're parsing the  */
+   /* DeteCL_rmine if we're parsing the  */
    /* range or cardinality attribute. */
    /*=================================*/
 
@@ -1073,9 +1073,9 @@ static bool ParseRangeCardinalityAttribute(
    if ((range == false) &&
        (multipleValuesAllowed == false))
      {
-      PrintErrorID(theEnv,"CSTRNPSR",5,true);
-      WriteString(theEnv,STDERR,"The 'cardinality' attribute ");
-      WriteString(theEnv,STDERR,"can only be used with multifield slots.\n");
+      CL_PrintErrorID(theEnv,"CSTRNPSR",5,true);
+      CL_WriteString(theEnv,STDERR,"The 'cardinality' attribute ");
+      CL_WriteString(theEnv,STDERR,"can only be used with multifield slots.\n");
       return false;
      }
 
@@ -1102,41 +1102,41 @@ static bool ParseRangeCardinalityAttribute(
    /* Parse the minimum value. */
    /*==========================*/
 
-   SavePPBuffer(theEnv," ");
-   GetToken(theEnv,readSource,&inputToken);
+   CL_SavePPBuffer(theEnv," ");
+   CL_GetToken(theEnv,readSource,&inputToken);
    if ((inputToken.tknType == INTEGER_TOKEN) || ((inputToken.tknType == FLOAT_TOKEN) && range))
      {
       if (range)
         {
-         ReturnExpression(theEnv,constraints->minValue);
+         CL_ReturnExpression(theEnv,constraints->minValue);
          if (inputToken.tknType == INTEGER_TOKEN)
-           { constraints->minValue = GenConstant(theEnv,INTEGER_TYPE,inputToken.value); }
+           { constraints->minValue = CL_GenConstant(theEnv,INTEGER_TYPE,inputToken.value); }
          else
-           { constraints->minValue = GenConstant(theEnv,FLOAT_TYPE,inputToken.value); }
+           { constraints->minValue = CL_GenConstant(theEnv,FLOAT_TYPE,inputToken.value); }
         }
       else
         {
          if (inputToken.integerValue->contents < 0LL)
            {
-            PrintErrorID(theEnv,"CSTRNPSR",6,true);
-            WriteString(theEnv,STDERR,"Minimum 'cardinality' value must be greater than or equal to zero.\n");
+            CL_PrintErrorID(theEnv,"CSTRNPSR",6,true);
+            CL_WriteString(theEnv,STDERR,"Minimum 'cardinality' value must be greater than or equal to zero.\n");
             return false;
            }
 
-         ReturnExpression(theEnv,constraints->minFields);
+         CL_ReturnExpression(theEnv,constraints->minFields);
          if (inputToken.tknType == INTEGER_TOKEN)
-           { constraints->minFields = GenConstant(theEnv,INTEGER_TYPE,inputToken.value); }
+           { constraints->minFields = CL_GenConstant(theEnv,INTEGER_TYPE,inputToken.value); }
          else
-           { constraints->minFields = GenConstant(theEnv,FLOAT_TYPE,inputToken.value); }
+           { constraints->minFields = CL_GenConstant(theEnv,FLOAT_TYPE,inputToken.value); }
         }
      }
-   else if ((inputToken.tknType == SF_VARIABLE_TOKEN) && (strcmp(inputToken.printForm,"?VARIABLE") == 0))
+   else if ((inputToken.tknType == SF_VARIABLE_TOKEN) && (strcmp(inputToken.printFoCL_rm,"?VARIABLE") == 0))
      { /* Do nothing. */ }
    else
      {
       char tempBuffer[120];
-      gensprintf(tempBuffer,"%s attribute",constraintName);
-      SyntaxErrorMessage(theEnv,tempBuffer);
+      CL_gensprintf(tempBuffer,"%s attribute",constraintName);
+      CL_SyntaxErrorMessage(theEnv,tempBuffer);
       return false;
      }
 
@@ -1144,34 +1144,34 @@ static bool ParseRangeCardinalityAttribute(
    /* Parse the maximum value. */
    /*==========================*/
 
-   SavePPBuffer(theEnv," ");
-   GetToken(theEnv,readSource,&inputToken);
+   CL_SavePPBuffer(theEnv," ");
+   CL_GetToken(theEnv,readSource,&inputToken);
    if ((inputToken.tknType == INTEGER_TOKEN) || ((inputToken.tknType == FLOAT_TOKEN) && range))
      {
       if (range)
         {
-         ReturnExpression(theEnv,constraints->maxValue);
+         CL_ReturnExpression(theEnv,constraints->maxValue);
          if (inputToken.tknType == INTEGER_TOKEN)
-           { constraints->maxValue = GenConstant(theEnv,INTEGER_TYPE,inputToken.value); }
+           { constraints->maxValue = CL_GenConstant(theEnv,INTEGER_TYPE,inputToken.value); }
          else
-           { constraints->maxValue = GenConstant(theEnv,FLOAT_TYPE,inputToken.value); }
+           { constraints->maxValue = CL_GenConstant(theEnv,FLOAT_TYPE,inputToken.value); }
         }
       else
         {
-         ReturnExpression(theEnv,constraints->maxFields);
+         CL_ReturnExpression(theEnv,constraints->maxFields);
          if (inputToken.tknType == INTEGER_TOKEN)
-           { constraints->maxFields = GenConstant(theEnv,INTEGER_TYPE,inputToken.value); }
+           { constraints->maxFields = CL_GenConstant(theEnv,INTEGER_TYPE,inputToken.value); }
          else
-           { constraints->maxFields = GenConstant(theEnv,FLOAT_TYPE,inputToken.value); }
+           { constraints->maxFields = CL_GenConstant(theEnv,FLOAT_TYPE,inputToken.value); }
         }
      }
-   else if ((inputToken.tknType == SF_VARIABLE_TOKEN) && (strcmp(inputToken.printForm,"?VARIABLE") == 0))
+   else if ((inputToken.tknType == SF_VARIABLE_TOKEN) && (strcmp(inputToken.printFoCL_rm,"?VARIABLE") == 0))
      { /* Do nothing. */ }
    else
      {
       char tempBuffer[120];
-      gensprintf(tempBuffer,"%s attribute",constraintName);
-      SyntaxErrorMessage(theEnv,tempBuffer);
+      CL_gensprintf(tempBuffer,"%s attribute",constraintName);
+      CL_SyntaxErrorMessage(theEnv,tempBuffer);
       return false;
      }
 
@@ -1179,10 +1179,10 @@ static bool ParseRangeCardinalityAttribute(
    /* Parse the closing parenthesis. */
    /*================================*/
 
-   GetToken(theEnv,readSource,&inputToken);
+   CL_GetToken(theEnv,readSource,&inputToken);
    if (inputToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      {
-      SyntaxErrorMessage(theEnv,"range attribute");
+      CL_SyntaxErrorMessage(theEnv,"range attribute");
       return false;
      }
 
@@ -1192,27 +1192,27 @@ static bool ParseRangeCardinalityAttribute(
 
    if (range)
      {
-      if (CompareNumbers(theEnv,constraints->minValue->type,
+      if (CL_CompareNumbers(theEnv,constraints->minValue->type,
                          constraints->minValue->value,
                          constraints->maxValue->type,
                          constraints->maxValue->value) == GREATER_THAN)
         {
-         PrintErrorID(theEnv,"CSTRNPSR",2,true);
-         WriteString(theEnv,STDERR,"Minimum 'range' value must be less than ");
-         WriteString(theEnv,STDERR,"or equal to the maximum 'range' value.\n");
+         CL_PrintErrorID(theEnv,"CSTRNPSR",2,true);
+         CL_WriteString(theEnv,STDERR,"Minimum 'range' value must be less than ");
+         CL_WriteString(theEnv,STDERR,"or equal to the maximum 'range' value.\n");
          return false;
         }
      }
    else
      {
-      if (CompareNumbers(theEnv,constraints->minFields->type,
+      if (CL_CompareNumbers(theEnv,constraints->minFields->type,
                          constraints->minFields->value,
                          constraints->maxFields->type,
                          constraints->maxFields->value) == GREATER_THAN)
         {
-         PrintErrorID(theEnv,"CSTRNPSR",2,true);
-         WriteString(theEnv,STDERR,"Minimum 'cardinality' value must be less than ");
-         WriteString(theEnv,STDERR,"or equal to the maximum 'cardinality' value.\n");
+         CL_PrintErrorID(theEnv,"CSTRNPSR",2,true);
+         CL_WriteString(theEnv,STDERR,"Minimum 'cardinality' value must be less than ");
+         CL_WriteString(theEnv,STDERR,"or equal to the maximum 'cardinality' value.\n");
          return false;
         }
      }
@@ -1290,7 +1290,7 @@ static bool GetAttributeParseValue(
    else if (strcmp(constraintName,"allowed-lexemes") == 0)
      { return(parsedConstraints->allowedLexemes); }
    else if (strcmp(constraintName,"allowed-instance-names") == 0)
-     { return(parsedConstraints->allowedInstanceNames); }
+     { return(parsedConstraints->allowedCL_InstanceNames); }
    else if (strcmp(constraintName,"allowed-classes") == 0)
      { return(parsedConstraints->allowedClasses); }
    else if (strcmp(constraintName,"allowed-integers") == 0)

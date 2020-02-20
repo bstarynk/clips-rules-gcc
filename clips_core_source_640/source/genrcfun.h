@@ -121,17 +121,17 @@ struct defgeneric
 struct defgenericData
   {
    Construct *DefgenericConstruct;
-   unsigned int DefgenericModuleIndex;
+   unsigned int CL_DefgenericModuleIndex;
    EntityRecord GenericEntityRecord;
 #if DEBUGGING_FUNCTIONS
-   bool WatchGenerics;
-   bool WatchMethods;
+   bool CL_WatchGenerics;
+   bool CL_WatchMethods;
 #endif
    Defgeneric *CurrentGeneric;
    Defmethod *CurrentMethod;
    UDFValue *GenericCurrentArgument;
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   unsigned OldGenericBusySave;
+   unsigned OldGenericBusyCL_Save;
 #endif
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
    struct CodeGeneratorItem *DefgenericCodeItem;
@@ -139,47 +139,47 @@ struct defgenericData
   };
 
 #define DefgenericData(theEnv) ((struct defgenericData *) GetEnvironmentData(theEnv,DEFGENERIC_DATA))
-#define SaveBusyCount(gfunc)    (DefgenericData(theEnv)->OldGenericBusySave = gfunc->busy)
-#define RestoreBusyCount(gfunc) (gfunc->busy = DefgenericData(theEnv)->OldGenericBusySave)
+#define CL_SaveBusyCount(gfunc)    (DefgenericData(theEnv)->OldGenericBusyCL_Save = gfunc->busy)
+#define RestoreBusyCount(gfunc) (gfunc->busy = DefgenericData(theEnv)->OldGenericBusyCL_Save)
 
 #if ! RUN_TIME
-   bool                           ClearDefgenericsReady(Environment *,void *);
-   void                          *AllocateDefgenericModule(Environment *);
-   void                           FreeDefgenericModule(Environment *,void *);
+   bool                           CL_ClearDefgenericsReady(Environment *,void *);
+   void                          *CL_AllocateCL_DefgenericModule(Environment *);
+   void                           FreeCL_DefgenericModule(Environment *,void *);
 #else
-   void                           DefgenericRunTimeInitialize(Environment *);
+   void                           DefgenericCL_RunTimeInitialize(Environment *);
 #endif
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
 
-   bool                           ClearDefmethods(Environment *);
-   bool                           RemoveAllExplicitMethods(Environment *,Defgeneric *);
-   void                           RemoveDefgeneric(Environment *,Defgeneric *);
-   bool                           ClearDefgenerics(Environment *);
-   void                           MethodAlterError(Environment *,Defgeneric *);
-   void                           DeleteMethodInfo(Environment *,Defgeneric *,Defmethod *);
-   void                           DestroyMethodInfo(Environment *,Defgeneric *,Defmethod *);
-   bool                           MethodsExecuting(Defgeneric *);
+   bool                           CL_ClearDefmethods(Environment *);
+   bool                           CL_RemoveAllExplicitMethods(Environment *,Defgeneric *);
+   void                           CL_RemoveDefgeneric(Environment *,Defgeneric *);
+   bool                           CL_ClearDefgenerics(Environment *);
+   void                           CL_MethodAlterError(Environment *,Defgeneric *);
+   void                           CL_DeleteMethodInfo(Environment *,Defgeneric *,Defmethod *);
+   void                           CL_DestroyMethodInfo(Environment *,Defgeneric *,Defmethod *);
+   bool                           CL_MethodsExecuting(Defgeneric *);
 #endif
 #if ! OBJECT_SYSTEM
    bool                           SubsumeType(int,int);
 #endif
 
-   unsigned short                 FindMethodByIndex(Defgeneric *,unsigned short);
+   unsigned short                 CL_FindMethodByIndex(Defgeneric *,unsigned short);
 #if DEBUGGING_FUNCTIONS || PROFILING_FUNCTIONS
-   void                           PrintMethod(Environment *,Defmethod *,StringBuilder *);
+   void                           CL_PrintMethod(Environment *,Defmethod *,StringCL_Builder *);
 #endif
 #if DEBUGGING_FUNCTIONS
-   void                           PreviewGeneric(Environment *,UDFContext *,UDFValue *);
+   void                           CL_PreviewGeneric(Environment *,UDFContext *,UDFValue *);
 #endif
-   Defgeneric                    *CheckGenericExists(Environment *,const char *,const char *);
-   unsigned short                 CheckMethodExists(Environment *,const char *,Defgeneric *,unsigned short);
+   Defgeneric                    *CL_CheckGenericExists(Environment *,const char *,const char *);
+   unsigned short                 CL_CheckMethodExists(Environment *,const char *,Defgeneric *,unsigned short);
 
 #if ! OBJECT_SYSTEM
    const char                    *TypeName(Environment *,int);
 #endif
 
-   void                           PrintGenericName(Environment *,const char *,Defgeneric *);
+   void                           CL_PrintGenericName(Environment *,const char *,Defgeneric *);
 
 #endif /* _H_genrcfun */
 

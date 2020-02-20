@@ -25,9 +25,9 @@
 /*                                                           */
 /*            Renamed BOOLEAN macro type to intBool.         */
 /*                                                           */
-/*            Added EnvGetActivationBasisPPForm function.    */
+/*            Added EnvCL_GetActivationBasisPPFoCL_rm function.    */
 /*                                                           */
-/*      6.30: Added salience groups to improve performance   */
+/*      6.30: Added salience groups to improve perfoCL_rmance   */
 /*            with large numbers of activations of different */
 /*            saliences.                                     */
 /*                                                           */
@@ -73,7 +73,7 @@ typedef enum
    WHEN_DEFINED,
    WHEN_ACTIVATED,
    EVERY_CYCLE
-  } SalienceEvaluationType;
+  } SalienceCL_EvaluationType;
 
 #define MAX_DEFRULE_SALIENCE  10000
 #define MIN_DEFRULE_SALIENCE -10000
@@ -109,55 +109,55 @@ struct salienceGroup
 struct agendaData
   {
 #if DEBUGGING_FUNCTIONS
-   bool WatchActivations;
+   bool CL_WatchActivations;
 #endif
    unsigned long NumberOfActivations;
    unsigned long long CurrentTimetag;
-   bool AgendaChanged;
-   SalienceEvaluationType SalienceEvaluation;
+   bool CL_AgendaChanged;
+   SalienceCL_EvaluationType SalienceCL_Evaluation;
    StrategyType Strategy;
   };
 
-#define AgendaData(theEnv) ((struct agendaData *) GetEnvironmentData(theEnv,AGENDA_DATA))
+#define CL_AgendaData(theEnv) ((struct agendaData *) GetEnvironmentData(theEnv,AGENDA_DATA))
 
 /****************************************/
 /* GLOBAL EXTERNAL FUNCTION DEFINITIONS */
 /****************************************/
 
-   void                    AddActivation(Environment *,Defrule *,PartialMatch *);
-   void                    ClearRuleFromAgenda(Environment *,Defrule *);
-   Activation             *GetNextActivation(Environment *,Activation *);
-   struct partialMatch    *GetActivationBasis(Environment *,Activation *);
-   const char             *ActivationRuleName(Activation *);
-   Defrule                *GetActivationRule(Environment *,Activation *);
-   int                     ActivationGetSalience(Activation *);
-   int                     ActivationSetSalience(Activation *,int);
-   void                    ActivationPPForm(Activation *,StringBuilder *);
-   void                    GetActivationBasisPPForm(Environment *,char *,size_t,Activation *);
-   bool                    MoveActivationToTop(Environment *,Activation *);
-   void                    DeleteActivation(Activation *);
-   bool                    DetachActivation(Environment *,Activation *);
-   void                    DeleteAllActivations(Defmodule *);
-   void                    Agenda(Environment *,const char *,Defmodule *);
-   void                    RemoveActivation(Environment *,Activation *,bool,bool);
-   void                    RemoveAllActivations(Environment *);
-   bool                    GetAgendaChanged(Environment *);
-   void                    SetAgendaChanged(Environment *,bool);
-   unsigned long           GetNumberOfActivations(Environment *);
-   SalienceEvaluationType  GetSalienceEvaluation(Environment *);
-   SalienceEvaluationType  SetSalienceEvaluation(Environment *,SalienceEvaluationType);
-   void                    RefreshAgenda(Defmodule *);
-   void                    RefreshAllAgendas(Environment *);
-   void                    ReorderAgenda(Defmodule *);
-   void                    ReorderAllAgendas(Environment *);
-   void                    InitializeAgenda(Environment *);
-   void                    SetSalienceEvaluationCommand(Environment *,UDFContext *,UDFValue *);
-   void                    GetSalienceEvaluationCommand(Environment *,UDFContext *,UDFValue *);
-   void                    RefreshAgendaCommand(Environment *,UDFContext *,UDFValue *);
-   void                    RefreshCommand(Environment *,UDFContext *,UDFValue *);
-   void                    Refresh(Defrule *);
+   void                    CL_AddActivation(Environment *,Defrule *,PartialMatch *);
+   void                    CL_ClearRuleFromCL_Agenda(Environment *,Defrule *);
+   Activation             *CL_GetNextActivation(Environment *,Activation *);
+   struct partialMatch    *CL_GetActivationBasis(Environment *,Activation *);
+   const char             *CL_ActivationRuleName(Activation *);
+   Defrule                *CL_GetActivationRule(Environment *,Activation *);
+   int                     CL_ActivationGetSalience(Activation *);
+   int                     CL_ActivationSetSalience(Activation *,int);
+   void                    CL_ActivationPPFoCL_rm(Activation *,StringCL_Builder *);
+   void                    CL_GetActivationBasisPPFoCL_rm(Environment *,char *,size_t,Activation *);
+   bool                    CL_MoveActivationToTop(Environment *,Activation *);
+   void                    CL_DeleteActivation(Activation *);
+   bool                    CL_DetachActivation(Environment *,Activation *);
+   void                    CL_DeleteAllActivations(Defmodule *);
+   void                    CL_Agenda(Environment *,const char *,Defmodule *);
+   void                    CL_RemoveActivation(Environment *,Activation *,bool,bool);
+   void                    CL_RemoveAllActivations(Environment *);
+   bool                    GetCL_AgendaChanged(Environment *);
+   void                    SetCL_AgendaChanged(Environment *,bool);
+   unsigned long           CL_GetNumberOfActivations(Environment *);
+   SalienceCL_EvaluationType  GetSalienceCL_Evaluation(Environment *);
+   SalienceCL_EvaluationType  SetSalienceCL_Evaluation(Environment *,SalienceCL_EvaluationType);
+   void                    CL_RefreshCL_Agenda(Defmodule *);
+   void                    CL_RefreshAllCL_Agendas(Environment *);
+   void                    ReorderCL_Agenda(Defmodule *);
+   void                    ReorderAllCL_Agendas(Environment *);
+   void                    InitializeCL_Agenda(Environment *);
+   void                    SetSalienceCL_EvaluationCommand(Environment *,UDFContext *,UDFValue *);
+   void                    GetSalienceCL_EvaluationCommand(Environment *,UDFContext *,UDFValue *);
+   void                    CL_RefreshCL_AgendaCommand(Environment *,UDFContext *,UDFValue *);
+   void                    CL_RefreshCommand(Environment *,UDFContext *,UDFValue *);
+   void                    CL_Refresh(Defrule *);
 #if DEBUGGING_FUNCTIONS
-   void                    AgendaCommand(Environment *,UDFContext *,UDFValue *);
+   void                    CL_AgendaCommand(Environment *,UDFContext *,UDFValue *);
 #endif
 
 #endif

@@ -26,7 +26,7 @@
 /*                                                           */
 /*            Added support for alpha memories.              */
 /*                                                           */
-/*            Added salience groups to improve performance   */
+/*            Added salience groups to improve perfoCL_rmance   */
 /*            with large numbers of activations of different */
 /*            saliences.                                     */
 /*                                                           */
@@ -57,7 +57,7 @@ struct bsaveDefrule
    int salience;
    unsigned short localVarCnt;
    unsigned int complexity      : 12;
-   unsigned int autoFocus       :  1;
+   unsigned int autoCL_Focus       :  1;
    unsigned long dynamicSalience;
    unsigned long actions;
    unsigned long logicalJoin;
@@ -80,7 +80,7 @@ struct bsavePatternNodeHeader
    unsigned int selector : 1;
   };
 
-struct bsaveDefruleModule
+struct bsaveCL_DefruleModule
   {
    struct bsaveDefmoduleItemHeader header;
   };
@@ -116,7 +116,7 @@ struct bsaveJoinNode
 
 struct defruleBinaryData
   {
-   unsigned long NumberOfDefruleModules;
+   unsigned long NumberOfCL_DefruleModules;
    unsigned long NumberOfDefrules;
    unsigned long NumberOfJoins;
    unsigned long NumberOfLinks;
@@ -130,18 +130,18 @@ struct defruleBinaryData
 
 #define DefruleBinaryData(theEnv) ((struct defruleBinaryData *) GetEnvironmentData(theEnv,RULEBIN_DATA))
 
-#define BloadDefrulePointer(x,i) ((Defrule *) ((i == ULONG_MAX) ? NULL : &x[i]))
-#define BsaveJoinIndex(joinPtr) ((joinPtr == NULL) ? ULONG_MAX :  ((struct joinNode *) joinPtr)->bsaveID)
-#define BloadJoinPointer(i) ((struct joinNode *) ((i == ULONG_MAX) ? NULL : &DefruleBinaryData(theEnv)->JoinArray[i]))
-#define BsaveJoinLinkIndex(linkPtr) ((linkPtr == NULL) ? ULONG_MAX :  ((struct joinLink *) linkPtr)->bsaveID)
-#define BloadJoinLinkPointer(i) ((struct joinLink *) ((i == ULONG_MAX) ? NULL : &DefruleBinaryData(theEnv)->LinkArray[i]))
+#define CL_BloadDefrulePointer(x,i) ((Defrule *) ((i == ULONG_MAX) ? NULL : &x[i]))
+#define CL_BsaveJoinIndex(joinPtr) ((joinPtr == NULL) ? ULONG_MAX :  ((struct joinNode *) joinPtr)->bsaveID)
+#define CL_BloadJoinPointer(i) ((struct joinNode *) ((i == ULONG_MAX) ? NULL : &DefruleBinaryData(theEnv)->JoinArray[i]))
+#define CL_BsaveJoinLinkIndex(linkPtr) ((linkPtr == NULL) ? ULONG_MAX :  ((struct joinLink *) linkPtr)->bsaveID)
+#define CL_BloadJoinLinkPointer(i) ((struct joinLink *) ((i == ULONG_MAX) ? NULL : &DefruleBinaryData(theEnv)->LinkArray[i]))
 
-   void                           DefruleBinarySetup(Environment *);
-   void                           UpdatePatternNodeHeader(Environment *,struct patternNodeHeader *,
+   void                           CL_DefruleBinarySetup(Environment *);
+   void                           CL_UpdatePatternNodeHeader(Environment *,struct patternNodeHeader *,
                                                                  struct bsavePatternNodeHeader *);
-   void                           AssignBsavePatternHeaderValues(Environment *,struct bsavePatternNodeHeader *,
+   void                           CL_AssignCL_BsavePatternHeaderValues(Environment *,struct bsavePatternNodeHeader *,
                                                                         struct patternNodeHeader *);
-   void                          *BloadDefruleModuleReference(Environment *,unsigned long);
+   void                          *CL_BloadCL_DefruleModuleReference(Environment *,unsigned long);
 
 #endif /* (! RUN_TIME) */
 

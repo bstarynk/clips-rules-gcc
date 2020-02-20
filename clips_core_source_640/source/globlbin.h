@@ -19,7 +19,7 @@
 /*                                                           */
 /*      6.30: Changed integer type/precision.                */
 /*                                                           */
-/*            Moved WatchGlobals global to defglobalData.    */
+/*            Moved CL_WatchGlobals global to defglobalData.    */
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
@@ -43,7 +43,7 @@ struct bsaveDefglobal
    unsigned long initial;
   };
 
-struct bsaveDefglobalModule
+struct bsaveCL_DefglobalModule
   {
    struct bsaveDefmoduleItemHeader header;
   };
@@ -55,15 +55,15 @@ struct defglobalBinaryData
    Defglobal *DefglobalArray;
    unsigned long NumberOfDefglobals;
    struct defglobalModule *ModuleArray;
-   unsigned long NumberOfDefglobalModules;
+   unsigned long NumberOfCL_DefglobalModules;
   };
 
 #define DefglobalBinaryData(theEnv) ((struct defglobalBinaryData *) GetEnvironmentData(theEnv,GLOBLBIN_DATA))
 
 #define DefglobalPointer(i) (&DefglobalBinaryData(theEnv)->DefglobalArray[i])
 
-   void                           DefglobalBinarySetup(Environment *);
-   void                          *BloadDefglobalModuleReference(Environment *,unsigned long);
+   void                           CL_DefglobalBinarySetup(Environment *);
+   void                          *CL_BloadCL_DefglobalModuleReference(Environment *,unsigned long);
 
 #endif /* _H_globlbin */
 

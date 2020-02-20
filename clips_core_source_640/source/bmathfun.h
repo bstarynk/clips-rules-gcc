@@ -47,17 +47,17 @@
 
 #include "evaluatn.h"
 
-   void                    BasicMathFunctionDefinitions(Environment *);
-   void                    AdditionFunction(Environment *,UDFContext *,UDFValue *);
-   void                    MultiplicationFunction(Environment *,UDFContext *,UDFValue *);
-   void                    SubtractionFunction(Environment *,UDFContext *,UDFValue *);
-   void                    DivisionFunction(Environment *,UDFContext *,UDFValue *);
-   void                    DivFunction(Environment *,UDFContext *,UDFValue *);
-   void                    IntegerFunction(Environment *,UDFContext *,UDFValue *);
-   void                    FloatFunction(Environment *,UDFContext *,UDFValue *);
-   void                    AbsFunction(Environment *,UDFContext *,UDFValue *);
-   void                    MinFunction(Environment *,UDFContext *,UDFValue *);
-   void                    MaxFunction(Environment *,UDFContext *,UDFValue *);
+   void                    CL_BasicMathFunctionDefinitions(Environment *);
+   void                    CL_AdditionFunction(Environment *,UDFContext *,UDFValue *);
+   void                    CL_MultiplicationFunction(Environment *,UDFContext *,UDFValue *);
+   void                    CL_SubtractionFunction(Environment *,UDFContext *,UDFValue *);
+   void                    CL_DivisionFunction(Environment *,UDFContext *,UDFValue *);
+   void                    CL_DivFunction(Environment *,UDFContext *,UDFValue *);
+   void                    CL_IntegerFunction(Environment *,UDFContext *,UDFValue *);
+   void                    CL_FloatFunction(Environment *,UDFContext *,UDFValue *);
+   void                    CL_AbsFunction(Environment *,UDFContext *,UDFValue *);
+   void                    CL_MinFunction(Environment *,UDFContext *,UDFValue *);
+   void                    CL_MaxFunction(Environment *,UDFContext *,UDFValue *);
 
 #endif
 

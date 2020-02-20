@@ -14,22 +14,22 @@
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
-/*      6.24: Added code to CreateEnvironment to free        */
+/*      6.24: Added code to CL_CreateEnvironment to free        */
 /*            already allocated data if one of the malloc    */
 /*            calls fail.                                    */
 /*                                                           */
-/*            Modified AllocateEnvironmentData to print a    */
+/*            Modified CL_AllocateEnvironmentData to print a    */
 /*            message if it was unable to allocate memory.   */
 /*                                                           */
 /*            Renamed BOOLEAN macro type to intBool.         */
 /*                                                           */
-/*            Added CreateRuntimeEnvironment function.       */
+/*            Added CL_CreateCL_RuntimeEnvironment function.       */
 /*                                                           */
-/*            Added support for context information when an  */
+/*            Added support for context infoCL_rmation when an  */
 /*            environment is created (i.e a pointer from the */
 /*            CLIPS environment to its parent environment).  */
 /*                                                           */
-/*      6.30: Added support for passing context information  */
+/*      6.30: Added support for passing context infoCL_rmation  */
 /*            to user defined functions and callback         */
 /*            functions.                                     */
 /*                                                           */
@@ -40,7 +40,7 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*            Removed deallocating message parameter from    */
-/*            EnvReleaseMem.                                 */
+/*            EnvCL_ReleaseMem.                                 */
 /*                                                           */
 /*            Removed support for BLOCK_MEMORY.              */
 /*                                                           */
@@ -56,7 +56,7 @@
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
-/*            Eval support for run time and bload only.      */
+/*            CL_Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -126,10 +126,10 @@
 #define SIZE_ENVIRONMENT_HASH  131
 
 /*******************************************************/
-/* AllocateEnvironmentData: Allocates environment data */
+/* CL_AllocateEnvironmentData: Allocates environment data */
 /*    for the specified environment data record.       */
 /*******************************************************/
-bool AllocateEnvironmentData(
+bool CL_AllocateEnvironmentData(
   Environment *theEnvironment,
   unsigned position,
   size_t size,
@@ -182,20 +182,20 @@ bool AllocateEnvironmentData(
   }
 
 /**********************************************/
-/* GetEnvironmentContext: Returns the context */
+/* CL_GetEnvironmentContext: Returns the context */
 /*   of the specified environment.            */
 /**********************************************/
-void *GetEnvironmentContext(
+void *CL_GetEnvironmentContext(
   Environment *theEnvironment)
   {
    return theEnvironment->context;
   }
 
 /*******************************************/
-/* SetEnvironmentContext: Sets the context */
+/* CL_SetEnvironmentContext: Sets the context */
 /*   of the specified environment.         */
 /*******************************************/
-void *SetEnvironmentContext(
+void *CL_SetEnvironmentContext(
   Environment *theEnvironment,
   void *theContext)
   {
@@ -209,10 +209,10 @@ void *SetEnvironmentContext(
   }
 
 /**************************************************/
-/* AddEnvironmentCleanupFunction: Adds a function */
+/* CL_AddEnvironmentCleanupFunction: Adds a function */
 /*   to the ListOfCleanupEnvironmentFunctions.    */
 /**************************************************/
-bool AddEnvironmentCleanupFunction(
+bool CL_AddEnvironmentCleanupFunction(
   Environment *theEnv,
   const char *name,
   EnvironmentCleanupFunction *functionPtr,

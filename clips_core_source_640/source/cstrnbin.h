@@ -41,14 +41,14 @@
 #include "evaluatn.h"
 #include "constrnt.h"
 
-#define ConstraintIndex(theConstraint) (((! GetDynamicConstraintChecking(theEnv)) || (theConstraint == NULL)) ? ULONG_MAX : (theConstraint->bsaveIndex))
+#define ConstraintIndex(theConstraint) (((! CL_GetDynamicConstraintChecking(theEnv)) || (theConstraint == NULL)) ? ULONG_MAX : (theConstraint->bsaveIndex))
 #define ConstraintPointer(i) (((i) == ULONG_MAX) ? NULL : (CONSTRAINT_RECORD *) &ConstraintData(theEnv)->ConstraintArray[i])
 
 #if BLOAD_AND_BSAVE
-   void                           WriteNeededConstraints(Environment *,FILE *);
+   void                           CL_WriteNeededConstraints(Environment *,FILE *);
 #endif
-   void                           ReadNeededConstraints(Environment *);
-   void                           ClearBloadedConstraints(Environment *);
+   void                           CL_ReadNeededConstraints(Environment *);
+   void                           CL_ClearCL_BloadedConstraints(Environment *);
 
 #endif /* _H_cstrnbin */
 

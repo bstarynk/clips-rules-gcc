@@ -19,11 +19,11 @@
 /*      6.24: Added the get-char, set-locale, and            */
 /*            read-number functions.                         */
 /*                                                           */
-/*            Modified printing of floats in the format      */
+/*            Modified printing of floats in the foCL_rmat      */
 /*            function to use the locale from the set-locale */
 /*            function.                                      */
 /*                                                           */
-/*            Moved IllegalLogicalNameMessage function to    */
+/*            Moved CL_IllegalLogicalNameMessage function to    */
 /*            argacces.c.                                    */
 /*                                                           */
 /*      6.30: Changed integer type/precision.                */
@@ -31,7 +31,7 @@
 /*            Support for long long integers.                */
 /*                                                           */
 /*            Removed the undocumented use of t in the       */
-/*            printout command to perform the same function  */
+/*            printout command to perfoCL_rm the same function  */
 /*            as crlf.                                       */
 /*                                                           */
 /*            Replaced EXT_IO and BASIC_IO compiler flags    */
@@ -44,11 +44,11 @@
 /*            compilers/operating systems (IBM_MCW and       */
 /*            MAC_MCW).                                      */
 /*                                                           */
-/*            Used gensprintf instead of sprintf.            */
+/*            Used CL_gensprintf instead of sprintf.            */
 /*                                                           */
 /*            Added put-char function.                       */
 /*                                                           */
-/*            Added SetFullCRLF which allows option to       */
+/*            Added CL_SetFullCRLF which allows option to       */
 /*            specify crlf as \n or \r\n.                    */
 /*                                                           */
 /*            Added AwaitingInput flag.                      */
@@ -82,29 +82,29 @@
 
 #define _H_iofun
 
-   void                           IOFunctionDefinitions(Environment *);
+   void                           CL_IOFunctionDefinitions(Environment *);
 #if IO_FUNCTIONS
-   bool                           SetFullCRLF(Environment *,bool);
-   void                           PrintoutFunction(Environment *,UDFContext *,UDFValue *);
-   void                           PrintFunction(Environment *,UDFContext *,UDFValue *);
-   void                           PrintlnFunction(Environment *,UDFContext *,UDFValue *);
-   void                           ReadFunction(Environment *,UDFContext *,UDFValue *);
-   void                           OpenFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CloseFunction(Environment *,UDFContext *,UDFValue *);
-   void                           FlushFunction(Environment *,UDFContext *,UDFValue *);
-   void                           RewindFunction(Environment *,UDFContext *,UDFValue *);
-   void                           TellFunction(Environment *,UDFContext *,UDFValue *);
-   void                           SeekFunction(Environment *,UDFContext *,UDFValue *);
-   void                           GetCharFunction(Environment *,UDFContext *,UDFValue *);
-   void                           UngetCharFunction(Environment *,UDFContext *,UDFValue *);
-   void                           PutCharFunction(Environment *,UDFContext *,UDFValue *);
-   void                           ReadlineFunction(Environment *,UDFContext *,UDFValue *);
-   void                           FormatFunction(Environment *,UDFContext *,UDFValue *);
-   void                           RemoveFunction(Environment *,UDFContext *,UDFValue *);
-   void                           ChdirFunction(Environment *,UDFContext *,UDFValue *);
-   void                           RenameFunction(Environment *,UDFContext *,UDFValue *);
-   void                           SetLocaleFunction(Environment *,UDFContext *,UDFValue *);
-   void                           ReadNumberFunction(Environment *,UDFContext *,UDFValue *);
+   bool                           CL_SetFullCRLF(Environment *,bool);
+   void                           CL_PrintoutFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_PrintFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_PrintlnFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_ReadFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_OpenFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_CloseFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_FlushFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_RewindFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_TellFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_SeekFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_GetCharFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_UngetCharFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_PutCharFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_ReadlineFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_FoCL_rmatFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_RemoveFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_ChdirFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_RenameFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_SetLocaleFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_ReadNumberFunction(Environment *,UDFContext *,UDFValue *);
 #endif
 
 #endif /* _H_iofun */

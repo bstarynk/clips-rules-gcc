@@ -41,8 +41,8 @@
 
 #include "dffnxfun.h"
 
-   void                           SetupDeffunctionsBload(Environment *);
-   void                          *BloadDeffunctionModuleReference(Environment *,unsigned long);
+   void                           CL_SetupDeffunctionsCL_Bload(Environment *);
+   void                          *CL_BloadCL_DeffunctionModuleReference(Environment *,unsigned long);
 
 #define DFFNXBIN_DATA 24
 
@@ -51,7 +51,7 @@ struct deffunctionBinaryData
    Deffunction *DeffunctionArray;
    unsigned long DeffunctionCount;
    unsigned long ModuleCount;
-   DeffunctionModuleData *ModuleArray;
+   CL_DeffunctionModuleData *ModuleArray;
   };
 
 #define DeffunctionBinaryData(theEnv) ((struct deffunctionBinaryData *) GetEnvironmentData(theEnv,DFFNXBIN_DATA))

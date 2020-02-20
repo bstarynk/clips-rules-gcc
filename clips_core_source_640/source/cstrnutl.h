@@ -39,15 +39,15 @@
 
 #include "constrnt.h"
 
-   struct constraintRecord       *GetConstraintRecord(Environment *);
-   int                            CompareNumbers(Environment *,int,void *,int,void *);
-   struct constraintRecord       *CopyConstraintRecord(Environment *,CONSTRAINT_RECORD *);
-   bool                           SetConstraintType(int,CONSTRAINT_RECORD *);
-   void                           SetAnyAllowedFlags(CONSTRAINT_RECORD *,bool);
-   void                           SetAnyRestrictionFlags(CONSTRAINT_RECORD *,bool);
-   CONSTRAINT_RECORD             *FunctionCallToConstraintRecord(Environment *,void *);
-   CONSTRAINT_RECORD             *ExpressionToConstraintRecord(Environment *,struct expr *);
-   CONSTRAINT_RECORD             *ArgumentTypeToConstraintRecord(Environment *,unsigned);
+   struct constraintRecord       *CL_GetConstraintRecord(Environment *);
+   int                            CL_CompareNumbers(Environment *,int,void *,int,void *);
+   struct constraintRecord       *CL_CopyConstraintRecord(Environment *,CONSTRAINT_RECORD *);
+   bool                           CL_SetConstraintType(int,CONSTRAINT_RECORD *);
+   void                           CL_SetAnyAllowedFlags(CONSTRAINT_RECORD *,bool);
+   void                           CL_SetAnyRestrictionFlags(CONSTRAINT_RECORD *,bool);
+   CONSTRAINT_RECORD             *CL_FunctionCallToConstraintRecord(Environment *,void *);
+   CONSTRAINT_RECORD             *CL_ExpressionToConstraintRecord(Environment *,struct expr *);
+   CONSTRAINT_RECORD             *CL_ArgumentTypeToConstraintRecord(Environment *,unsigned);
 
 #endif /* _H_cstrnutl */
 

@@ -70,7 +70,7 @@
 
 #include "evaluatn.h"
 
-struct joinInformation
+struct joinInfoCL_rmation
   {
    unsigned short whichCE;
    struct joinNode *theJoin;
@@ -88,25 +88,25 @@ typedef enum
    TERSE
   } Verbosity;
 
-   bool                           GetBetaMemoryResizing(Environment *);
-   bool                           SetBetaMemoryResizing(Environment *,bool);
-   void                           GetBetaMemoryResizingCommand(Environment *,UDFContext *,UDFValue *);
-   void                           SetBetaMemoryResizingCommand(Environment *,UDFContext *,UDFValue *);
-   void                           Matches(Defrule *,Verbosity,CLIPSValue *);
-   void                           JoinActivity(Environment *,Defrule *,int,UDFValue *);
-   void                           DefruleCommands(Environment *);
-   void                           MatchesCommand(Environment *,UDFContext *,UDFValue *);
-   void                           JoinActivityCommand(Environment *,UDFContext *,UDFValue *);
-   void                           TimetagFunction(Environment *,UDFContext *,UDFValue *);
-   unsigned short                 AlphaJoinCount(Environment *,Defrule *);
-   unsigned short                 BetaJoinCount(Environment *,Defrule *);
-   struct joinInformation        *CreateJoinArray(Environment *,unsigned short);
-   void                           FreeJoinArray(Environment *,struct joinInformation *,unsigned short);
-   void                           AlphaJoins(Environment *,Defrule *,unsigned short,struct joinInformation *);
-   void                           BetaJoins(Environment *,Defrule *,unsigned short,struct joinInformation *);
-   void                           JoinActivityResetCommand(Environment *,UDFContext *,UDFValue *);
-   void                           GetFocusFunction(Environment *,UDFContext *,UDFValue *);
-   Defmodule                     *GetFocus(Environment *);
+   bool                           CL_GetBetaMemoryResizing(Environment *);
+   bool                           CL_SetBetaMemoryResizing(Environment *,bool);
+   void                           CL_GetBetaMemoryResizingCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_SetBetaMemoryResizingCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_Matches(Defrule *,Verbosity,CLIPSValue *);
+   void                           CL_JoinActivity(Environment *,Defrule *,int,UDFValue *);
+   void                           CL_DefruleCommands(Environment *);
+   void                           CL_MatchesCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_JoinActivityCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_TimetagFunction(Environment *,UDFContext *,UDFValue *);
+   unsigned short                 CL_AlphaJoinCount(Environment *,Defrule *);
+   unsigned short                 CL_BetaJoinCount(Environment *,Defrule *);
+   struct joinInfoCL_rmation        *CL_CreateJoinArray(Environment *,unsigned short);
+   void                           CL_FreeJoinArray(Environment *,struct joinInfoCL_rmation *,unsigned short);
+   void                           CL_AlphaJoins(Environment *,Defrule *,unsigned short,struct joinInfoCL_rmation *);
+   void                           CL_BetaJoins(Environment *,Defrule *,unsigned short,struct joinInfoCL_rmation *);
+   void                           CL_JoinActivityCL_ResetCommand(Environment *,UDFContext *,UDFValue *);
+   void                           GetCL_FocusFunction(Environment *,UDFContext *,UDFValue *);
+   Defmodule                     *GetCL_Focus(Environment *);
 #if DEVELOPER
    void                           ShowJoinsCommand(Environment *,UDFContext *,UDFValue *);
    void                           RuleComplexityCommand(Environment *,UDFContext *,UDFValue *);

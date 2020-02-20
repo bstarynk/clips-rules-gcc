@@ -23,7 +23,7 @@
 /*      6.30: Added support for hashed memories.             */
 /*                                                           */
 /*            Added additional developer statistics to help  */
-/*            analyze join network performance.              */
+/*            analyze join network perfoCL_rmance.              */
 /*                                                           */
 /*            Removed pseudo-facts used in not CE.           */
 /*                                                           */
@@ -48,14 +48,14 @@
 #include "match.h"
 #include "network.h"
 
-   void                           NetworkAssert(Environment *,struct partialMatch *,struct joinNode *);
-   bool                           EvaluateJoinExpression(Environment *,struct expr *,struct joinNode *);
-   void                           NetworkAssertLeft(Environment *,struct partialMatch *,struct joinNode *,int);
-   void                           NetworkAssertRight(Environment *,struct partialMatch *,struct joinNode *,int);
-   void                           PPDrive(Environment *,struct partialMatch *,struct partialMatch *,struct joinNode *,int);
-   unsigned long                  BetaMemoryHashValue(Environment *,struct expr *,struct partialMatch *,struct partialMatch *,struct joinNode *);
-   bool                           EvaluateSecondaryNetworkTest(Environment *,struct partialMatch *,struct joinNode *);
-   void                           EPMDrive(Environment *,struct partialMatch *,struct joinNode *,int);
+   void                           NetworkCL_Assert(Environment *,struct partialMatch *,struct joinNode *);
+   bool                           CL_EvaluateJoinExpression(Environment *,struct expr *,struct joinNode *);
+   void                           NetworkCL_AssertLeft(Environment *,struct partialMatch *,struct joinNode *,int);
+   void                           NetworkCL_AssertRight(Environment *,struct partialMatch *,struct joinNode *,int);
+   void                           CL_PPDrive(Environment *,struct partialMatch *,struct partialMatch *,struct joinNode *,int);
+   unsigned long                  CL_BetaMemoryHashValue(Environment *,struct expr *,struct partialMatch *,struct partialMatch *,struct joinNode *);
+   bool                           CL_EvaluateSecondaryNetworkTest(Environment *,struct partialMatch *,struct joinNode *);
+   void                           CL_EPMDrive(Environment *,struct partialMatch *,struct joinNode *,int);
 
 #endif /* _H_drive */
 

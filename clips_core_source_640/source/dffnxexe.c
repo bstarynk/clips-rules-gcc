@@ -34,7 +34,7 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/*            Added GCBlockStart and GCBlockEnd functions    */
+/*            Added CL_GCBlockStart and CL_GCBlockEnd functions    */
 /*            for garbage collection blocks.                 */
 /*                                                           */
 /*************************************************************/
@@ -80,7 +80,7 @@
    static void                    UnboundDeffunctionErr(Environment *,const char *);
 
 #if DEBUGGING_FUNCTIONS
-   static void                    WatchDeffunction(Environment *,const char *);
+   static void                    CL_WatchDeffunction(Environment *,const char *);
 #endif
 
 /* =========================================
@@ -90,7 +90,7 @@
    ***************************************** */
 
 /****************************************************
-  NAME         : CallDeffunction
+  NAME         : CL_CallDeffunction
   DESCRIPTION  : Executes the body of a deffunction
   INPUTS       : 1) The deffunction
                  2) Argument expressions
@@ -98,9 +98,9 @@
   RETURNS      : Nothing useful
   SIDE EFFECTS : Deffunction executed and result
                  stored in data object buffer
-  NOTES        : Used in EvaluateExpression(theEnv,)
+  NOTES        : Used in CL_EvaluateExpression(theEnv,)
  ****************************************************/
-void CallDeffunction(
+void CL_CallDeffunction(
   Environment *theEnv,
   Deffunction *dptr,
   Expression *args,
@@ -114,67 +114,67 @@ void CallDeffunction(
 #endif
 
    returnValue->value = FalseSymbol(theEnv);
-   EvaluationData(theEnv)->EvaluationError = false;
-   if (EvaluationData(theEnv)->HaltExecution)
+   CL_EvaluationData(theEnv)->CL_EvaluationError = false;
+   if (CL_EvaluationData(theEnv)->CL_HaltExecution)
      return;
 
-   GCBlockStart(theEnv,&gcb);
+   CL_GCBlockStart(theEnv,&gcb);
 
-   oldce = ExecutingConstruct(theEnv);
-   SetExecutingConstruct(theEnv,true);
+   oldce = CL_ExecutingConstruct(theEnv);
+   SetCL_ExecutingConstruct(theEnv,true);
    previouslyExecutingDeffunction = DeffunctionData(theEnv)->ExecutingDeffunction;
    DeffunctionData(theEnv)->ExecutingDeffunction = dptr;
-   EvaluationData(theEnv)->CurrentEvaluationDepth++;
+   CL_EvaluationData(theEnv)->CurrentCL_EvaluationDepth++;
    dptr->executing++;
-   PushProcParameters(theEnv,args,CountArguments(args),DeffunctionName(dptr),
+   CL_PushProcParameters(theEnv,args,CL_CountArguments(args),CL_DeffunctionName(dptr),
                       "deffunction",UnboundDeffunctionErr);
-   if (EvaluationData(theEnv)->EvaluationError)
+   if (CL_EvaluationData(theEnv)->CL_EvaluationError)
      {
       dptr->executing--;
       DeffunctionData(theEnv)->ExecutingDeffunction = previouslyExecutingDeffunction;
-      EvaluationData(theEnv)->CurrentEvaluationDepth--;
+      CL_EvaluationData(theEnv)->CurrentCL_EvaluationDepth--;
 
-      GCBlockEndUDF(theEnv,&gcb,returnValue);
-      CallPeriodicTasks(theEnv);
+      CL_GCBlockEndUDF(theEnv,&gcb,returnValue);
+      CL_CallPeriodicTasks(theEnv);
 
-      SetExecutingConstruct(theEnv,oldce);
+      SetCL_ExecutingConstruct(theEnv,oldce);
       return;
      }
 
 #if DEBUGGING_FUNCTIONS
    if (dptr->trace)
-     WatchDeffunction(theEnv,BEGIN_TRACE);
+     CL_WatchDeffunction(theEnv,BEGIN_TRACE);
 #endif
 
 #if PROFILING_FUNCTIONS
-   StartProfile(theEnv,&profileFrame,
+   StartCL_Profile(theEnv,&profileFrame,
                 &dptr->header.usrData,
-                ProfileFunctionData(theEnv)->ProfileConstructs);
+                CL_ProfileFunctionData(theEnv)->CL_ProfileConstructs);
 #endif
 
-   EvaluateProcActions(theEnv,dptr->header.whichModule->theModule,
+   CL_EvaluateProcActions(theEnv,dptr->header.whichModule->theModule,
                        dptr->code,dptr->numberOfLocalVars,
                        returnValue,UnboundDeffunctionErr);
 
 #if PROFILING_FUNCTIONS
-    EndProfile(theEnv,&profileFrame);
+    CL_EndCL_Profile(theEnv,&profileFrame);
 #endif
 
 #if DEBUGGING_FUNCTIONS
    if (dptr->trace)
-     WatchDeffunction(theEnv,END_TRACE);
+     CL_WatchDeffunction(theEnv,END_TRACE);
 #endif
    ProcedureFunctionData(theEnv)->ReturnFlag = false;
 
    dptr->executing--;
-   PopProcParameters(theEnv);
+   CL_PopProcParameters(theEnv);
    DeffunctionData(theEnv)->ExecutingDeffunction = previouslyExecutingDeffunction;
-   EvaluationData(theEnv)->CurrentEvaluationDepth--;
+   CL_EvaluationData(theEnv)->CurrentCL_EvaluationDepth--;
 
-   GCBlockEndUDF(theEnv,&gcb,returnValue);
-   CallPeriodicTasks(theEnv);
+   CL_GCBlockEndUDF(theEnv,&gcb,returnValue);
+   CL_CallPeriodicTasks(theEnv);
 
-   SetExecutingConstruct(theEnv,oldce);
+   SetCL_ExecutingConstruct(theEnv,oldce);
   }
 
 /* =========================================
@@ -197,15 +197,15 @@ static void UnboundDeffunctionErr(
   Environment *theEnv,
   const char *logName)
   {
-   WriteString(theEnv,logName,"deffunction '");
-   WriteString(theEnv,logName,DeffunctionName(DeffunctionData(theEnv)->ExecutingDeffunction));
-   WriteString(theEnv,logName,"'.\n");
+   CL_WriteString(theEnv,logName,"deffunction '");
+   CL_WriteString(theEnv,logName,CL_DeffunctionName(DeffunctionData(theEnv)->ExecutingDeffunction));
+   CL_WriteString(theEnv,logName,"'.\n");
   }
 
 #if DEBUGGING_FUNCTIONS
 
 /***************************************************
-  NAME         : WatchDeffunction
+  NAME         : CL_WatchDeffunction
   DESCRIPTION  : Displays a message indicating when
                  a deffunction began and ended
                  execution
@@ -213,28 +213,28 @@ static void UnboundDeffunctionErr(
                  to print when deffunction starts
                  or finishes respectively
   RETURNS      : Nothing useful
-  SIDE EFFECTS : Watch message printed
+  SIDE EFFECTS : CL_Watch message printed
   NOTES        : None
  ***************************************************/
-static void WatchDeffunction(
+static void CL_WatchDeffunction(
   Environment *theEnv,
   const char *tstring)
   {
-   if (ConstructData(theEnv)->ClearReadyInProgress ||
-       ConstructData(theEnv)->ClearInProgress)
+   if (ConstructData(theEnv)->CL_ClearReadyInProgress ||
+       ConstructData(theEnv)->CL_ClearInProgress)
      { return; }
 
-   WriteString(theEnv,STDOUT,"DFN ");
-   WriteString(theEnv,STDOUT,tstring);
-   if (DeffunctionData(theEnv)->ExecutingDeffunction->header.whichModule->theModule != GetCurrentModule(theEnv))
+   CL_WriteString(theEnv,STDOUT,"DFN ");
+   CL_WriteString(theEnv,STDOUT,tstring);
+   if (DeffunctionData(theEnv)->ExecutingDeffunction->header.whichModule->theModule != CL_GetCurrentModule(theEnv))
      {
-      WriteString(theEnv,STDOUT,DeffunctionModule(DeffunctionData(theEnv)->ExecutingDeffunction));;
-      WriteString(theEnv,STDOUT,"::");
+      CL_WriteString(theEnv,STDOUT,CL_DeffunctionModule(DeffunctionData(theEnv)->ExecutingDeffunction));;
+      CL_WriteString(theEnv,STDOUT,"::");
      }
-   WriteString(theEnv,STDOUT,DeffunctionData(theEnv)->ExecutingDeffunction->header.name->contents);
-   WriteString(theEnv,STDOUT," ED:");
-   WriteInteger(theEnv,STDOUT,EvaluationData(theEnv)->CurrentEvaluationDepth);
-   PrintProcParamArray(theEnv,STDOUT);
+   CL_WriteString(theEnv,STDOUT,DeffunctionData(theEnv)->ExecutingDeffunction->header.name->contents);
+   CL_WriteString(theEnv,STDOUT," ED:");
+   CL_WriteInteger(theEnv,STDOUT,CL_EvaluationData(theEnv)->CurrentCL_EvaluationDepth);
+   CL_PrintProcParamArray(theEnv,STDOUT);
   }
 
 #endif

@@ -47,64 +47,64 @@
 /***************************************/
 
 #if BLOAD_AND_BSAVE
-   static void                    BsaveFind(Environment *);
-   static void                    BsaveExpressions(Environment *,FILE *);
-   static void                    BsaveStorage(Environment *,FILE *);
-   static void                    BsaveBinaryItem(Environment *,FILE *);
+   static void                    CL_BsaveFind(Environment *);
+   static void                    CL_BsaveExpressions(Environment *,FILE *);
+   static void                    CL_BsaveStorage(Environment *,FILE *);
+   static void                    CL_BsaveBinaryItem(Environment *,FILE *);
 #endif
-   static void                    BloadStorage(Environment *);
-   static void                    BloadBinaryItem(Environment *);
-   static void                    UpdateDeffactsModule(Environment *,void *,unsigned long);
+   static void                    CL_BloadStorage(Environment *);
+   static void                    CL_BloadBinaryItem(Environment *);
+   static void                    UpdateCL_DeffactsModule(Environment *,void *,unsigned long);
    static void                    UpdateDeffacts(Environment *,void *,unsigned long);
-   static void                    ClearBload(Environment *);
-   static void                    DeallocateDeffactsBloadData(Environment *);
+   static void                    CL_ClearCL_Bload(Environment *);
+   static void                    DeallocateDeffactsCL_BloadData(Environment *);
 
 /********************************************/
-/* DeffactsBinarySetup: Installs the binary */
+/* CL_DeffactsBinarySetup: Installs the binary */
 /*   save/load feature for deffacts.        */
 /********************************************/
-void DeffactsBinarySetup(
+void CL_DeffactsBinarySetup(
   Environment *theEnv)
   {
-   AllocateEnvironmentData(theEnv,DFFCTBIN_DATA,sizeof(struct deffactsBinaryData),DeallocateDeffactsBloadData);
+   CL_AllocateEnvironmentData(theEnv,DFFCTBIN_DATA,sizeof(struct deffactsBinaryData),DeallocateDeffactsCL_BloadData);
 #if BLOAD_AND_BSAVE
-   AddBinaryItem(theEnv,"deffacts",0,BsaveFind,BsaveExpressions,
-                             BsaveStorage,BsaveBinaryItem,
-                             BloadStorage,BloadBinaryItem,
-                             ClearBload);
+   CL_AddBinaryItem(theEnv,"deffacts",0,CL_BsaveFind,CL_BsaveExpressions,
+                             CL_BsaveStorage,CL_BsaveBinaryItem,
+                             CL_BloadStorage,CL_BloadBinaryItem,
+                             CL_ClearCL_Bload);
 #endif
 
 #if (BLOAD || BLOAD_ONLY)
-   AddBinaryItem(theEnv,"deffacts",0,NULL,NULL,NULL,NULL,
-                             BloadStorage,BloadBinaryItem,
-                             ClearBload);
+   CL_AddBinaryItem(theEnv,"deffacts",0,NULL,NULL,NULL,NULL,
+                             CL_BloadStorage,CL_BloadBinaryItem,
+                             CL_ClearCL_Bload);
 #endif
   }
 
 /********************************************************/
-/* DeallocateDeffactsBloadData: Deallocates environment */
+/* DeallocateDeffactsCL_BloadData: Deallocates environment */
 /*    data for the deffacts bsave functionality.        */
 /********************************************************/
-static void DeallocateDeffactsBloadData(
+static void DeallocateDeffactsCL_BloadData(
   Environment *theEnv)
   {
    size_t space;
 
    space = DeffactsBinaryData(theEnv)->NumberOfDeffacts * sizeof(Deffacts);
-   if (space != 0) genfree(theEnv,DeffactsBinaryData(theEnv)->DeffactsArray,space);
+   if (space != 0) CL_genfree(theEnv,DeffactsBinaryData(theEnv)->DeffactsArray,space);
 
-   space = DeffactsBinaryData(theEnv)->NumberOfDeffactsModules * sizeof(struct deffactsModule);
-   if (space != 0) genfree(theEnv,DeffactsBinaryData(theEnv)->ModuleArray,space);
+   space = DeffactsBinaryData(theEnv)->NumberOfCL_DeffactsModules * sizeof(struct deffactsModule);
+   if (space != 0) CL_genfree(theEnv,DeffactsBinaryData(theEnv)->ModuleArray,space);
   }
 
 #if BLOAD_AND_BSAVE
 
 /*********************************************************/
-/* BsaveFind: Counts the number of data structures which */
+/* CL_BsaveFind: Counts the number of data structures which */
 /*   must be saved in the binary image for the deffacts  */
 /*   in the current environment.                         */
 /*********************************************************/
-static void BsaveFind(
+static void CL_BsaveFind(
   Environment *theEnv)
   {
    Deffacts *theDeffacts;
@@ -116,8 +116,8 @@ static void BsaveFind(
    /* in the process of saving the binary image.            */
    /*=======================================================*/
 
-   SaveBloadCount(theEnv,DeffactsBinaryData(theEnv)->NumberOfDeffactsModules);
-   SaveBloadCount(theEnv,DeffactsBinaryData(theEnv)->NumberOfDeffacts);
+   CL_SaveCL_BloadCount(theEnv,DeffactsBinaryData(theEnv)->NumberOfCL_DeffactsModules);
+   CL_SaveCL_BloadCount(theEnv,DeffactsBinaryData(theEnv)->NumberOfDeffacts);
 
    /*========================================*/
    /* Set the count of deffacts and deffacts */
@@ -125,15 +125,15 @@ static void BsaveFind(
    /*========================================*/
 
    DeffactsBinaryData(theEnv)->NumberOfDeffacts = 0;
-   DeffactsBinaryData(theEnv)->NumberOfDeffactsModules = 0;
+   DeffactsBinaryData(theEnv)->NumberOfCL_DeffactsModules = 0;
 
    /*===========================*/
    /* Loop through each module. */
    /*===========================*/
 
-   for (theModule = GetNextDefmodule(theEnv,NULL);
+   for (theModule = CL_GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = GetNextDefmodule(theEnv,theModule))
+        theModule = CL_GetNextDefmodule(theEnv,theModule))
      {
       /*===============================================*/
       /* Set the current module to the module being    */
@@ -141,22 +141,22 @@ static void BsaveFind(
       /* modules encountered.                          */
       /*===============================================*/
 
-      SetCurrentModule(theEnv,theModule);
-      DeffactsBinaryData(theEnv)->NumberOfDeffactsModules++;
+      CL_SetCurrentModule(theEnv,theModule);
+      DeffactsBinaryData(theEnv)->NumberOfCL_DeffactsModules++;
 
       /*===================================================*/
       /* Loop through each deffacts in the current module. */
       /*===================================================*/
 
-      for (theDeffacts = GetNextDeffacts(theEnv,NULL);
+      for (theDeffacts = CL_GetNextDeffacts(theEnv,NULL);
            theDeffacts != NULL;
-           theDeffacts = GetNextDeffacts(theEnv,theDeffacts))
+           theDeffacts = CL_GetNextDeffacts(theEnv,theDeffacts))
         {
          /*======================================================*/
          /* Initialize the construct header for the binary save. */
          /*======================================================*/
 
-         MarkConstructHeaderNeededItems(&theDeffacts->header,DeffactsBinaryData(theEnv)->NumberOfDeffacts++);
+         CL_MarkConstructHeaderNeededItems(&theDeffacts->header,DeffactsBinaryData(theEnv)->NumberOfDeffacts++);
 
          /*============================================================*/
          /* Count the number of expressions contained in the deffacts' */
@@ -164,17 +164,17 @@ static void BsaveFind(
          /* as in use.                                                 */
          /*============================================================*/
 
-         ExpressionData(theEnv)->ExpressionCount += ExpressionSize(theDeffacts->assertList);
-         MarkNeededItems(theEnv,theDeffacts->assertList);
+         ExpressionData(theEnv)->ExpressionCount += CL_ExpressionSize(theDeffacts->assertList);
+         CL_MarkNeededItems(theEnv,theDeffacts->assertList);
         }
      }
   }
 
 /************************************************/
-/* BsaveExpressions: Saves the expressions used */
+/* CL_BsaveExpressions: CL_Saves the expressions used */
 /*   by deffacts to the binary save file.       */
 /************************************************/
-static void BsaveExpressions(
+static void CL_BsaveExpressions(
   Environment *theEnv,
   FILE *fp)
   {
@@ -185,33 +185,33 @@ static void BsaveExpressions(
    /* Loop through each module. */
    /*===========================*/
 
-   for (theModule = GetNextDefmodule(theEnv,NULL);
+   for (theModule = CL_GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = GetNextDefmodule(theEnv,theModule))
+        theModule = CL_GetNextDefmodule(theEnv,theModule))
      {
       /*======================================================*/
       /* Set the current module to the module being examined. */
       /*======================================================*/
 
-      SetCurrentModule(theEnv,theModule);
+      CL_SetCurrentModule(theEnv,theModule);
 
       /*==================================================*/
       /* Loop through each deffacts in the current module */
       /* and save the assertion list expression.          */
       /*==================================================*/
 
-      for (theDeffacts = GetNextDeffacts(theEnv,NULL);
+      for (theDeffacts = CL_GetNextDeffacts(theEnv,NULL);
            theDeffacts != NULL;
-           theDeffacts = GetNextDeffacts(theEnv,theDeffacts))
-        { BsaveExpression(theEnv,theDeffacts->assertList,fp); }
+           theDeffacts = CL_GetNextDeffacts(theEnv,theDeffacts))
+        { CL_BsaveExpression(theEnv,theDeffacts->assertList,fp); }
      }
   }
 
 /******************************************************/
-/* BsaveStorage: Writes out the storage requirements  */
+/* CL_BsaveStorage: CL_Writes out the storage requirements  */
 /*    for all deffacts structures to the binary file. */
 /******************************************************/
-static void BsaveStorage(
+static void CL_BsaveStorage(
   Environment *theEnv,
   FILE *fp)
   {
@@ -225,16 +225,16 @@ static void BsaveStorage(
    /*=================================================================*/
 
    space = sizeof(long) * 2;
-   GenWrite(&space,sizeof(size_t),fp);
-   GenWrite(&DeffactsBinaryData(theEnv)->NumberOfDeffacts,sizeof(long),fp);
-   GenWrite(&DeffactsBinaryData(theEnv)->NumberOfDeffactsModules,sizeof(long),fp);
+   CL_GenCL_Write(&space,sizeof(size_t),fp);
+   CL_GenCL_Write(&DeffactsBinaryData(theEnv)->NumberOfDeffacts,sizeof(long),fp);
+   CL_GenCL_Write(&DeffactsBinaryData(theEnv)->NumberOfCL_DeffactsModules,sizeof(long),fp);
   }
 
 /********************************************/
-/* BsaveBinaryItem: Writes out all deffacts */
+/* CL_BsaveBinaryItem: CL_Writes out all deffacts */
 /*   structures to the binary file.         */
 /********************************************/
-static void BsaveBinaryItem(
+static void CL_BsaveBinaryItem(
   Environment *theEnv,
   FILE *fp)
   {
@@ -242,58 +242,58 @@ static void BsaveBinaryItem(
    Deffacts *theDeffacts;
    struct bsaveDeffacts newDeffacts;
    Defmodule *theModule;
-   struct bsaveDeffactsModule tempDeffactsModule;
+   struct bsaveCL_DeffactsModule tempCL_DeffactsModule;
    struct deffactsModule *theModuleItem;
 
    /*=========================================================*/
-   /* Write out the amount of space taken up by the deffacts  */
+   /* CL_Write out the amount of space taken up by the deffacts  */
    /* and deffactsModule data structures in the binary image. */
    /*=========================================================*/
 
    space = DeffactsBinaryData(theEnv)->NumberOfDeffacts * sizeof(struct bsaveDeffacts) +
-           (DeffactsBinaryData(theEnv)->NumberOfDeffactsModules * sizeof(struct bsaveDeffactsModule));
-   GenWrite(&space,sizeof(size_t),fp);
+           (DeffactsBinaryData(theEnv)->NumberOfCL_DeffactsModules * sizeof(struct bsaveCL_DeffactsModule));
+   CL_GenCL_Write(&space,sizeof(size_t),fp);
 
    /*================================================*/
-   /* Write out each deffacts module data structure. */
+   /* CL_Write out each deffacts module data structure. */
    /*================================================*/
 
    DeffactsBinaryData(theEnv)->NumberOfDeffacts = 0;
-   for (theModule = GetNextDefmodule(theEnv,NULL);
+   for (theModule = CL_GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = GetNextDefmodule(theEnv,theModule))
+        theModule = CL_GetNextDefmodule(theEnv,theModule))
      {
-      SetCurrentModule(theEnv,theModule);
+      CL_SetCurrentModule(theEnv,theModule);
 
-      theModuleItem = (struct deffactsModule *) GetModuleItem(theEnv,NULL,DeffactsData(theEnv)->DeffactsModuleIndex);
-      AssignBsaveDefmdlItemHdrVals(&tempDeffactsModule.header,&theModuleItem->header);
-      GenWrite(&tempDeffactsModule,sizeof(struct bsaveDeffactsModule),fp);
+      theModuleItem = (struct deffactsModule *) CL_GetModuleItem(theEnv,NULL,DeffactsData(theEnv)->CL_DeffactsModuleIndex);
+      CL_AssignCL_BsaveDefmdlItemHdrVals(&tempCL_DeffactsModule.header,&theModuleItem->header);
+      CL_GenCL_Write(&tempCL_DeffactsModule,sizeof(struct bsaveCL_DeffactsModule),fp);
      }
 
    /*==========================*/
-   /* Write out each deffacts. */
+   /* CL_Write out each deffacts. */
    /*==========================*/
 
-   for (theModule = GetNextDefmodule(theEnv,NULL);
+   for (theModule = CL_GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = GetNextDefmodule(theEnv,theModule))
+        theModule = CL_GetNextDefmodule(theEnv,theModule))
      {
-      SetCurrentModule(theEnv,theModule);
+      CL_SetCurrentModule(theEnv,theModule);
 
-      for (theDeffacts = GetNextDeffacts(theEnv,NULL);
+      for (theDeffacts = CL_GetNextDeffacts(theEnv,NULL);
            theDeffacts != NULL;
-           theDeffacts = GetNextDeffacts(theEnv,theDeffacts))
+           theDeffacts = CL_GetNextDeffacts(theEnv,theDeffacts))
         {
-         AssignBsaveConstructHeaderVals(&newDeffacts.header,&theDeffacts->header);
+         CL_AssignCL_BsaveConstructHeaderVals(&newDeffacts.header,&theDeffacts->header);
          if (theDeffacts->assertList != NULL)
            {
             newDeffacts.assertList = ExpressionData(theEnv)->ExpressionCount;
-            ExpressionData(theEnv)->ExpressionCount += ExpressionSize(theDeffacts->assertList);
+            ExpressionData(theEnv)->ExpressionCount += CL_ExpressionSize(theDeffacts->assertList);
            }
          else
            { newDeffacts.assertList = ULONG_MAX; }
 
-         GenWrite(&newDeffacts,sizeof(struct bsaveDeffacts),fp);
+         CL_GenCL_Write(&newDeffacts,sizeof(struct bsaveDeffacts),fp);
         }
      }
 
@@ -304,44 +304,44 @@ static void BsaveBinaryItem(
    /* were overwritten by the binary save).                       */
    /*=============================================================*/
 
-   RestoreBloadCount(theEnv,&DeffactsBinaryData(theEnv)->NumberOfDeffactsModules);
-   RestoreBloadCount(theEnv,&DeffactsBinaryData(theEnv)->NumberOfDeffacts);
+   RestoreCL_BloadCount(theEnv,&DeffactsBinaryData(theEnv)->NumberOfCL_DeffactsModules);
+   RestoreCL_BloadCount(theEnv,&DeffactsBinaryData(theEnv)->NumberOfDeffacts);
   }
 
 #endif /* BLOAD_AND_BSAVE */
 
 /****************************************************/
-/* BloadStorage: Allocates storage requirements for */
+/* CL_BloadStorage: Allocates storage requirements for */
 /*   the deffacts used by this binary image.        */
 /****************************************************/
-static void BloadStorage(
+static void CL_BloadStorage(
   Environment *theEnv)
   {
    size_t space;
 
    /*=====================================================*/
-   /* Determine the number of deffacts and deffactsModule */
+   /* DeteCL_rmine the number of deffacts and deffactsModule */
    /* data structures to be read.                         */
    /*=====================================================*/
 
-   GenReadBinary(theEnv,&space,sizeof(size_t));
-   GenReadBinary(theEnv,&DeffactsBinaryData(theEnv)->NumberOfDeffacts,sizeof(long));
-   GenReadBinary(theEnv,&DeffactsBinaryData(theEnv)->NumberOfDeffactsModules,sizeof(long));
+   CL_GenReadBinary(theEnv,&space,sizeof(size_t));
+   CL_GenReadBinary(theEnv,&DeffactsBinaryData(theEnv)->NumberOfDeffacts,sizeof(long));
+   CL_GenReadBinary(theEnv,&DeffactsBinaryData(theEnv)->NumberOfCL_DeffactsModules,sizeof(long));
 
    /*===================================*/
    /* Allocate the space needed for the */
    /* deffactsModule data structures.   */
    /*===================================*/
 
-   if (DeffactsBinaryData(theEnv)->NumberOfDeffactsModules == 0)
+   if (DeffactsBinaryData(theEnv)->NumberOfCL_DeffactsModules == 0)
      {
       DeffactsBinaryData(theEnv)->DeffactsArray = NULL;
       DeffactsBinaryData(theEnv)->ModuleArray = NULL;
       return;
      }
 
-   space = DeffactsBinaryData(theEnv)->NumberOfDeffactsModules * sizeof(struct deffactsModule);
-   DeffactsBinaryData(theEnv)->ModuleArray = (struct deffactsModule *) genalloc(theEnv,space);
+   space = DeffactsBinaryData(theEnv)->NumberOfCL_DeffactsModules * sizeof(struct deffactsModule);
+   DeffactsBinaryData(theEnv)->ModuleArray = (struct deffactsModule *) CL_genalloc(theEnv,space);
 
    /*===================================*/
    /* Allocate the space needed for the */
@@ -355,14 +355,14 @@ static void BloadStorage(
      }
 
    space = (DeffactsBinaryData(theEnv)->NumberOfDeffacts * sizeof(Deffacts));
-   DeffactsBinaryData(theEnv)->DeffactsArray = (Deffacts *) genalloc(theEnv,space);
+   DeffactsBinaryData(theEnv)->DeffactsArray = (Deffacts *) CL_genalloc(theEnv,space);
   }
 
 /*****************************************************/
-/* BloadBinaryItem: Loads and refreshes the deffacts */
+/* CL_BloadBinaryItem: CL_Loads and refreshes the deffacts */
 /*   constructs used by this binary image.           */
 /*****************************************************/
-static void BloadBinaryItem(
+static void CL_BloadBinaryItem(
   Environment *theEnv)
   {
    size_t space;
@@ -373,43 +373,43 @@ static void BloadBinaryItem(
    /* is not available in the version being run).          */
    /*======================================================*/
 
-   GenReadBinary(theEnv,&space,sizeof(size_t));
+   CL_GenReadBinary(theEnv,&space,sizeof(size_t));
 
    /*============================================*/
    /* Read in the deffactsModule data structures */
    /* and refresh the pointers.                  */
    /*============================================*/
 
-   BloadandRefresh(theEnv,DeffactsBinaryData(theEnv)->NumberOfDeffactsModules,
-                   sizeof(struct bsaveDeffactsModule),UpdateDeffactsModule);
+   CL_BloadandCL_Refresh(theEnv,DeffactsBinaryData(theEnv)->NumberOfCL_DeffactsModules,
+                   sizeof(struct bsaveCL_DeffactsModule),UpdateCL_DeffactsModule);
 
    /*======================================*/
    /* Read in the deffacts data structures */
    /* and refresh the pointers.            */
    /*======================================*/
 
-   BloadandRefresh(theEnv,DeffactsBinaryData(theEnv)->NumberOfDeffacts,
+   CL_BloadandCL_Refresh(theEnv,DeffactsBinaryData(theEnv)->NumberOfDeffacts,
                    sizeof(struct bsaveDeffacts),UpdateDeffacts);
   }
 
 /***************************************************/
-/* UpdateDeffactsModule: Bload refresh routine for */
+/* UpdateCL_DeffactsModule: CL_Bload refresh routine for */
 /*   deffacts module data structures.              */
 /***************************************************/
-static void UpdateDeffactsModule(
+static void UpdateCL_DeffactsModule(
   Environment *theEnv,
   void *buf,
   unsigned long obji)
   {
-   struct bsaveDeffactsModule *bdmPtr;
+   struct bsaveCL_DeffactsModule *bdmPtr;
 
-   bdmPtr = (struct bsaveDeffactsModule *) buf;
-   UpdateDefmoduleItemHeader(theEnv,&bdmPtr->header,&DeffactsBinaryData(theEnv)->ModuleArray[obji].header,
+   bdmPtr = (struct bsaveCL_DeffactsModule *) buf;
+   CL_UpdateDefmoduleItemHeader(theEnv,&bdmPtr->header,&DeffactsBinaryData(theEnv)->ModuleArray[obji].header,
                              sizeof(Deffacts),DeffactsBinaryData(theEnv)->DeffactsArray);
   }
 
 /*********************************************/
-/* UpdateDeffacts: Bload refresh routine for */
+/* UpdateDeffacts: CL_Bload refresh routine for */
 /*   deffacts data structures.               */
 /*********************************************/
 static void UpdateDeffacts(
@@ -420,17 +420,17 @@ static void UpdateDeffacts(
    struct bsaveDeffacts *bdp;
 
    bdp = (struct bsaveDeffacts *) buf;
-   UpdateConstructHeader(theEnv,&bdp->header,&DeffactsBinaryData(theEnv)->DeffactsArray[obji].header,
+   CL_UpdateConstructHeader(theEnv,&bdp->header,&DeffactsBinaryData(theEnv)->DeffactsArray[obji].header,
                          DEFFACTS,sizeof(struct deffactsModule),DeffactsBinaryData(theEnv)->ModuleArray,
                          sizeof(Deffacts),DeffactsBinaryData(theEnv)->DeffactsArray);
    DeffactsBinaryData(theEnv)->DeffactsArray[obji].assertList = ExpressionPointer(bdp->assertList);
   }
 
 /**************************************/
-/* ClearBload: Deffacts clear routine */
+/* CL_ClearCL_Bload: Deffacts clear routine */
 /*   when a binary load is in effect. */
 /**************************************/
-static void ClearBload(
+static void CL_ClearCL_Bload(
   Environment *theEnv)
   {
    unsigned long i;
@@ -442,30 +442,30 @@ static void ClearBload(
    /*=============================================*/
 
    for (i = 0; i < DeffactsBinaryData(theEnv)->NumberOfDeffacts; i++)
-     { UnmarkConstructHeader(theEnv,&DeffactsBinaryData(theEnv)->DeffactsArray[i].header); }
+     { CL_UnmarkConstructHeader(theEnv,&DeffactsBinaryData(theEnv)->DeffactsArray[i].header); }
 
    /*=============================================================*/
    /* Deallocate the space used for the deffacts data structures. */
    /*=============================================================*/
 
    space = DeffactsBinaryData(theEnv)->NumberOfDeffacts * sizeof(Deffacts);
-   if (space != 0) genfree(theEnv,DeffactsBinaryData(theEnv)->DeffactsArray,space);
+   if (space != 0) CL_genfree(theEnv,DeffactsBinaryData(theEnv)->DeffactsArray,space);
    DeffactsBinaryData(theEnv)->NumberOfDeffacts = 0;
 
    /*====================================================================*/
    /* Deallocate the space used for the deffacts module data structures. */
    /*====================================================================*/
 
-   space = DeffactsBinaryData(theEnv)->NumberOfDeffactsModules * sizeof(struct deffactsModule);
-   if (space != 0) genfree(theEnv,DeffactsBinaryData(theEnv)->ModuleArray,space);
-   DeffactsBinaryData(theEnv)->NumberOfDeffactsModules = 0;
+   space = DeffactsBinaryData(theEnv)->NumberOfCL_DeffactsModules * sizeof(struct deffactsModule);
+   if (space != 0) CL_genfree(theEnv,DeffactsBinaryData(theEnv)->ModuleArray,space);
+   DeffactsBinaryData(theEnv)->NumberOfCL_DeffactsModules = 0;
   }
 
 /******************************************************/
-/* BloadDeffactsModuleReference: Returns the deffacts */
+/* CL_BloadCL_DeffactsModuleReference: Returns the deffacts */
 /*   module pointer for use with the bload function.  */
 /******************************************************/
-void *BloadDeffactsModuleReference(
+void *CL_BloadCL_DeffactsModuleReference(
   Environment *theEnv,
   unsigned long theIndex)
   {

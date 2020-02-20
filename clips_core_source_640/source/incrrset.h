@@ -31,7 +31,7 @@
 /*            compilers/operating systems (IBM_MCW and       */
 /*            MAC_MCW).                                      */
 /*                                                           */
-/*            Modified EnvSetIncrementalReset to check for   */
+/*            Modified EnvSetCL_IncrementalCL_Reset to check for   */
 /*            the existance of rules.                        */
 /*                                                           */
 /*            Converted API macros to function calls.        */
@@ -59,7 +59,7 @@
 
 #include "ruledef.h"
 
-   void                           IncrementalReset(Environment *,Defrule *);
+   void                           CL_IncrementalCL_Reset(Environment *,Defrule *);
 
 #endif /* _H_incrrset */
 

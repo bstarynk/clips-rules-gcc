@@ -16,23 +16,23 @@
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
-/*      6.23: Modified GenOpen to check the file length      */
+/*      6.23: Modified CL_GenOpen to check the file length      */
 /*            against the system constant FILENAME_MAX.      */
 /*                                                           */
 /*      6.24: Support for run-time programs directly passing */
 /*            the hash tables for initialization.            */
 /*                                                           */
-/*            Made gensystem functional for Xcode.           */
+/*            Made CL_gensystem functional for Xcode.           */
 /*                                                           */
-/*            Added BeforeOpenFunction and AfterOpenFunction */
+/*            Added BeforeCL_OpenFunction and AfterCL_OpenFunction */
 /*            hooks.                                         */
 /*                                                           */
-/*            Added environment parameter to GenClose.       */
-/*            Added environment parameter to GenOpen.        */
+/*            Added environment parameter to CL_GenClose.       */
+/*            Added environment parameter to CL_GenOpen.        */
 /*                                                           */
-/*            Updated UNIX_V gentime functionality.          */
+/*            Updated UNIX_V CL_gentime functionality.          */
 /*                                                           */
-/*            Removed GenOpen check against FILENAME_MAX.    */
+/*            Removed CL_GenOpen check against FILENAME_MAX.    */
 /*                                                           */
 /*      6.30: Changed integer type/precision.                */
 /*                                                           */
@@ -60,21 +60,21 @@
 /*                                                           */
 /*            Support for typed EXTERNAL_ADDRESS_TYPE.       */
 /*                                                           */
-/*            GenOpen function checks for UTF-8 Byte Order   */
+/*            CL_GenOpen function checks for UTF-8 Byte Order   */
 /*            Marker.                                        */
 /*                                                           */
-/*            Added gengetchar, genungetchar, genprintfile,  */
-/*            genstrcpy, genstrncpy, genstrcat, genstrncat,  */
-/*            and gensprintf functions.                      */
+/*            Added CL_gengetchar, CL_genungetchar, CL_genprintfile,  */
+/*            CL_genstrcpy, CL_genstrncpy, CL_genstrcat, CL_genstrncat,  */
+/*            and CL_gensprintf functions.                      */
 /*                                                           */
-/*            Added SetJmpBuffer function.                   */
+/*            Added CL_SetJmpBuffer function.                   */
 /*                                                           */
-/*            Added environment argument to genexit.         */
+/*            Added environment argument to CL_genexit.         */
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
-/*      6.40: Added genchdir function for changing the       */
+/*      6.40: Added CL_genchdir function for changing the       */
 /*            current directory.                             */
 /*                                                           */
 /*            Refactored code to reduce header dependencies  */
@@ -90,7 +90,7 @@
 /*            Removed ContinueEnvFunction, PauseEnvFunction, */
 /*            and RedrawScreenFunction callbacks.            */
 /*                                                           */
-/*            Completion code now returned by gensystem.     */
+/*            Completion code now returned by CL_gensystem.     */
 /*                                                           */
 /*            Added flush, rewind, tell, and seek functions. */
 /*                                                           */
@@ -105,41 +105,41 @@
 #include <stdio.h>
 #include <setjmp.h>
 
-   double                      gentime(void);
-   int                         gensystem(Environment *,const char *);
-   int                         GenOpenReadBinary(Environment *,const char *,const char *);
-   void                        GetSeekCurBinary(Environment *,long);
-   void                        GetSeekSetBinary(Environment *,long);
-   void                        GenTellBinary(Environment *,long *);
-   void                        GenCloseBinary(Environment *);
-   void                        GenReadBinary(Environment *,void *,size_t);
-   FILE                       *GenOpen(Environment *,const char *,const char *);
-   int                         GenClose(Environment *,FILE *);
-   int                         GenFlush(Environment *,FILE *);
-   void                        GenRewind(Environment *,FILE *);
-   long long                   GenTell(Environment *,FILE *);
-   int                         GenSeek(Environment *,FILE *,long,int);
-   void                        genexit(Environment *,int);
-   int                         genrand(void);
-   void                        genseed(unsigned int);
-   bool                        genremove(Environment *,const char *);
-   bool                        genrename(Environment *,const char *,const char *);
-   char                       *gengetcwd(char *,int);
-   void                        GenWrite(void *,size_t,FILE *);
-   int                       (*SetBeforeOpenFunction(Environment *,int (*)(Environment *)))(Environment *);
-   int                       (*SetAfterOpenFunction(Environment *,int (*)(Environment *)))(Environment *);
-   int                         gensprintf(char *,const char *,...);
-   char                       *genstrcpy(char *,const char *);
-   char                       *genstrncpy(char *,const char *,size_t);
-   char                       *genstrcat(char *,const char *);
-   char                       *genstrncat(char *,const char *,size_t);
-   int                         genchdir(Environment *,const char *);
-   void                        SetJmpBuffer(Environment *,jmp_buf *);
-   void                        genprintfile(Environment *,FILE *,const char *);
-   int                         gengetchar(Environment *);
-   int                         genungetchar(Environment *,int);
-   void                        InitializeSystemDependentData(Environment *);
-   void                        InitializeNonportableFeatures(Environment *);
+   double                      CL_gentime(void);
+   int                         CL_gensystem(Environment *,const char *);
+   int                         CL_GenOpenReadBinary(Environment *,const char *,const char *);
+   void                        CL_GetSeekCurBinary(Environment *,long);
+   void                        CL_GetSeekSetBinary(Environment *,long);
+   void                        CL_GenTellBinary(Environment *,long *);
+   void                        CL_GenCloseBinary(Environment *);
+   void                        CL_GenReadBinary(Environment *,void *,size_t);
+   FILE                       *CL_GenOpen(Environment *,const char *,const char *);
+   int                         CL_GenClose(Environment *,FILE *);
+   int                         CL_GenFlush(Environment *,FILE *);
+   void                        CL_GenRewind(Environment *,FILE *);
+   long long                   CL_GenTell(Environment *,FILE *);
+   int                         CL_GenSeek(Environment *,FILE *,long,int);
+   void                        CL_genexit(Environment *,int);
+   int                         CL_genrand(void);
+   void                        CL_genseed(unsigned int);
+   bool                        CL_genremove(Environment *,const char *);
+   bool                        CL_genrename(Environment *,const char *,const char *);
+   char                       *CL_gengetcwd(char *,int);
+   void                        CL_GenCL_Write(void *,size_t,FILE *);
+   int                       (*SetBeforeCL_OpenFunction(Environment *,int (*)(Environment *)))(Environment *);
+   int                       (*SetAfterCL_OpenFunction(Environment *,int (*)(Environment *)))(Environment *);
+   int                         CL_gensprintf(char *,const char *,...);
+   char                       *CL_genstrcpy(char *,const char *);
+   char                       *CL_genstrncpy(char *,const char *,size_t);
+   char                       *CL_genstrcat(char *,const char *);
+   char                       *CL_genstrncat(char *,const char *,size_t);
+   int                         CL_genchdir(Environment *,const char *);
+   void                        CL_SetJmpBuffer(Environment *,jmp_buf *);
+   void                        CL_genprintfile(Environment *,FILE *,const char *);
+   int                         CL_gengetchar(Environment *);
+   int                         CL_genungetchar(Environment *,int);
+   void                        CL_InitializeSystemDependentData(Environment *);
+   void                        CL_InitializeNonportableFeatures(Environment *);
 
 #endif /* _H_sysdep */
 

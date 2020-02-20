@@ -16,8 +16,8 @@
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
-/*      6.24: Added environment parameter to GenClose.       */
-/*            Added environment parameter to GenOpen.        */
+/*      6.24: Added environment parameter to CL_GenClose.       */
+/*            Added environment parameter to CL_GenOpen.        */
 /*                                                           */
 /*            Renamed BOOLEAN macro type to intBool.         */
 /*                                                           */
@@ -28,7 +28,7 @@
 /*            MAC_MCW).                                      */
 /*                                                           */
 /*            Added code for capturing errors/warnings       */
-/*            (EnvSetParserErrorCallback).                   */
+/*            (EnvCL_SetParserErrorCallback).                   */
 /*                                                           */
 /*            Fixed issue with save function when multiple   */
 /*            defmodules exist.                              */
@@ -43,7 +43,7 @@
 /*                                                           */
 /*            Added code to prevent a clear command from     */
 /*            being executed during fact assertions via      */
-/*            Increment/DecrementClearReadyLocks API.        */
+/*            Increment/DecrementCL_ClearReadyLocks API.        */
 /*                                                           */
 /*            Added code to keep track of pointers to        */
 /*            constructs that are contained externally to    */
@@ -62,7 +62,7 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/*            Modified EnvClear to return completion status. */
+/*            Modified EnvCL_Clear to return completion status. */
 /*                                                           */
 /*            File name/line count displayed for errors      */
 /*            and warnings during load command.              */
@@ -82,20 +82,20 @@ typedef struct construct Construct;
 #include "moduldef.h"
 #include "utility.h"
 
-typedef void SaveCallFunction(Environment *,Defmodule *,const char *,void *);
-typedef struct saveCallFunctionItem SaveCallFunctionItem;
+typedef void CL_SaveCL_CallFunction(Environment *,Defmodule *,const char *,void *);
+typedef struct saveCL_CallFunctionItem CL_SaveCL_CallFunctionItem;
 
 typedef void ParserErrorFunction(Environment *,const char *,const char *,const char *,long,void *);
-typedef bool BeforeResetFunction(Environment *);
+typedef bool BeforeCL_ResetFunction(Environment *);
 
 #define CHS (ConstructHeader *)
 
-struct saveCallFunctionItem
+struct saveCL_CallFunctionItem
   {
    const char *name;
-   SaveCallFunction *func;
+   CL_SaveCL_CallFunction *func;
    int priority;
-   SaveCallFunctionItem *next;
+   CL_SaveCL_CallFunctionItem *next;
    void *context;
   };
 
@@ -104,9 +104,9 @@ struct construct
    const char *constructName;
    const char *pluralName;
    bool (*parseFunction)(Environment *,const char *);
-   FindConstructFunction *findFunction;
+   CL_FindConstructFunction *findFunction;
    CLIPSLexeme *(*getConstructNameFunction)(ConstructHeader *);
-   const char *(*getPPFormFunction)(ConstructHeader *);
+   const char *(*getPPFoCL_rmFunction)(ConstructHeader *);
    struct defmoduleItemHeader *(*getModuleItemFunction)(ConstructHeader *);
    GetNextConstructFunction *getNextItemFunction;
    void (*setNextItemFunction)(ConstructHeader *,ConstructHeader *);
@@ -120,18 +120,18 @@ struct construct
 
 struct constructData
   {
-   bool ClearReadyInProgress;
-   bool ClearInProgress;
-   bool ResetReadyInProgress;
-   bool ResetInProgress;
-   short ClearReadyLocks;
+   bool CL_ClearReadyInProgress;
+   bool CL_ClearInProgress;
+   bool CL_ResetReadyInProgress;
+   bool CL_ResetInProgress;
+   short CL_ClearReadyLocks;
    int DanglingConstructs;
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   SaveCallFunctionItem *ListOfSaveFunctions;
-   bool PrintWhileLoading;
-   bool LoadInProgress;
-   bool WatchCompilations;
-   bool CheckSyntaxMode;
+   CL_SaveCL_CallFunctionItem *ListOfCL_SaveFunctions;
+   bool PrintWhileCL_Loading;
+   bool CL_LoadInProgress;
+   bool CL_WatchCompilations;
+   bool CL_CheckSyntaxMode;
    bool ParsingConstruct;
    char *ErrorString;
    char *WarningString;
@@ -149,31 +149,31 @@ struct constructData
    void *ParserErrorContext;
 #endif
    Construct *ListOfConstructs;
-   struct voidCallFunctionItem *ListOfResetFunctions;
-   struct voidCallFunctionItem *ListOfClearFunctions;
-   struct boolCallFunctionItem *ListOfClearReadyFunctions;
+   struct voidCL_CallFunctionItem *ListOfCL_ResetFunctions;
+   struct voidCL_CallFunctionItem *ListOfCL_ClearFunctions;
+   struct boolCL_CallFunctionItem *ListOfCL_ClearReadyFunctions;
    bool Executing;
-   BeforeResetFunction *BeforeResetCallback;
+   BeforeCL_ResetFunction *BeforeCL_ResetCallback;
   };
 
 #define ConstructData(theEnv) ((struct constructData *) GetEnvironmentData(theEnv,CONSTRUCT_DATA))
 
-   bool                           Clear(Environment *);
-   void                           Reset(Environment *);
-   bool                           Save(Environment *,const char *);
+   bool                           CL_Clear(Environment *);
+   void                           CL_Reset(Environment *);
+   bool                           CL_Save(Environment *,const char *);
 
-   void                           InitializeConstructData(Environment *);
-   bool                           AddResetFunction(Environment *,const char *,VoidCallFunction *,int,void *);
-   bool                           RemoveResetFunction(Environment *,const char *);
-   bool                           AddClearReadyFunction(Environment *,const char *,BoolCallFunction *,int,void *);
-   bool                           RemoveClearReadyFunction(Environment *,const char *);
-   bool                           AddClearFunction(Environment *,const char *,VoidCallFunction *,int,void *);
-   bool                           RemoveClearFunction(Environment *,const char *);
-   void                           IncrementClearReadyLocks(Environment *);
-   void                           DecrementClearReadyLocks(Environment *);
-   Construct                     *AddConstruct(Environment *,const char *,const char *,
+   void                           CL_InitializeConstructData(Environment *);
+   bool                           CL_AddCL_ResetFunction(Environment *,const char *,VoidCL_CallFunction *,int,void *);
+   bool                           CL_RemoveCL_ResetFunction(Environment *,const char *);
+   bool                           CL_AddCL_ClearReadyFunction(Environment *,const char *,BoolCL_CallFunction *,int,void *);
+   bool                           RemoveCL_ClearReadyFunction(Environment *,const char *);
+   bool                           CL_AddCL_ClearFunction(Environment *,const char *,VoidCL_CallFunction *,int,void *);
+   bool                           RemoveCL_ClearFunction(Environment *,const char *);
+   void                           IncrementCL_ClearReadyLocks(Environment *);
+   void                           DecrementCL_ClearReadyLocks(Environment *);
+   Construct                     *CL_AddConstruct(Environment *,const char *,const char *,
                                                bool (*)(Environment *,const char *),
-                                               FindConstructFunction *,
+                                               CL_FindConstructFunction *,
                                                CLIPSLexeme *(*)(ConstructHeader *),
                                                const char *(*)(ConstructHeader *),
                                                struct defmoduleItemHeader *(*)(ConstructHeader *),
@@ -182,32 +182,32 @@ struct constructData
                                                IsConstructDeletableFunction *,
                                                DeleteConstructFunction *,
                                                FreeConstructFunction *);
-   bool                           RemoveConstruct(Environment *,const char *);
-   void                           SetCompilationsWatch(Environment *,bool);
-   bool                           GetCompilationsWatch(Environment *);
-   void                           SetPrintWhileLoading(Environment *,bool);
-   bool                           GetPrintWhileLoading(Environment *);
-   void                           SetLoadInProgress(Environment *,bool);
-   bool                           GetLoadInProgress(Environment *);
-   bool                           ExecutingConstruct(Environment *);
-   void                           SetExecutingConstruct(Environment *,bool);
-   void                           InitializeConstructs(Environment *);
-   BeforeResetFunction           *SetBeforeResetFunction(Environment *,BeforeResetFunction *);
-   void                           ResetCommand(Environment *,UDFContext *,UDFValue *);
-   void                           ClearCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           ClearReady(Environment *);
-   Construct                     *FindConstruct(Environment *,const char *);
-   void                           DeinstallConstructHeader(Environment *,ConstructHeader *);
-   void                           DestroyConstructHeader(Environment *,ConstructHeader *);
-   ParserErrorFunction           *SetParserErrorCallback(Environment *,ParserErrorFunction *,void *);
+   bool                           CL_RemoveConstruct(Environment *,const char *);
+   void                           CL_SetCompilationsCL_Watch(Environment *,bool);
+   bool                           CL_GetCompilationsCL_Watch(Environment *);
+   void                           SetPrintWhileCL_Loading(Environment *,bool);
+   bool                           CL_GetPrintWhileCL_Loading(Environment *);
+   void                           SetCL_LoadInProgress(Environment *,bool);
+   bool                           CL_GetCL_LoadInProgress(Environment *);
+   bool                           CL_ExecutingConstruct(Environment *);
+   void                           SetCL_ExecutingConstruct(Environment *,bool);
+   void                           CL_InitializeConstructs(Environment *);
+   BeforeCL_ResetFunction           *SetBeforeCL_ResetFunction(Environment *,BeforeCL_ResetFunction *);
+   void                           CL_ResetCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_ClearCommand(Environment *,UDFContext *,UDFValue *);
+   bool                           CL_ClearReady(Environment *);
+   Construct                     *CL_FindConstruct(Environment *,const char *);
+   void                           CL_DeinstallConstructHeader(Environment *,ConstructHeader *);
+   void                           CL_DestroyConstructHeader(Environment *,ConstructHeader *);
+   ParserErrorFunction           *CL_SetParserErrorCallback(Environment *,ParserErrorFunction *,void *);
    
-   bool                           AddSaveFunction(Environment *,const char *,SaveCallFunction *,int,void *);
-   bool                           RemoveSaveFunction(Environment *,const char *);
-   SaveCallFunctionItem          *AddSaveFunctionToCallList(Environment *,const char *,int,
-                                                            SaveCallFunction *,SaveCallFunctionItem *,void *);
-   SaveCallFunctionItem          *RemoveSaveFunctionFromCallList(Environment *,const char *,
-                                                                 SaveCallFunctionItem *,bool *);
-   void                           DeallocateSaveCallList(Environment *,SaveCallFunctionItem *);
+   bool                           CL_AddCL_SaveFunction(Environment *,const char *,CL_SaveCL_CallFunction *,int,void *);
+   bool                           CL_RemoveCL_SaveFunction(Environment *,const char *);
+   CL_SaveCL_CallFunctionItem          *CL_AddCL_SaveFunctionToCallList(Environment *,const char *,int,
+                                                            CL_SaveCL_CallFunction *,CL_SaveCL_CallFunctionItem *,void *);
+   CL_SaveCL_CallFunctionItem          *CL_RemoveCL_SaveFunctionFromCallList(Environment *,const char *,
+                                                                 CL_SaveCL_CallFunctionItem *,bool *);
+   void                           CL_DeallocateCL_SaveCallList(Environment *,CL_SaveCL_CallFunctionItem *);
 
 #endif /* _H_constrct */
 

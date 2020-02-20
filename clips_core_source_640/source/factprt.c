@@ -51,10 +51,10 @@
 #include "factprt.h"
 
 /***************************************/
-/* PrintFactJNCompVars1: Print routine */
-/*   for the FactJNCompVars1 function. */
+/* PrintCL_FactJNCompVars1: Print routine */
+/*   for the CL_FactJNCompVars1 function. */
 /***************************************/
-void PrintFactJNCompVars1(
+void PrintCL_FactJNCompVars1(
   Environment *theEnv,
   const char *logicalName,
   void *theValue)
@@ -63,32 +63,32 @@ void PrintFactJNCompVars1(
    struct factCompVarsJN1Call *hack;
 
    hack = (struct factCompVarsJN1Call *) ((CLIPSBitMap *) theValue)->contents;
-   WriteString(theEnv,logicalName,"(fact-jn-cmp-vars1 ");
-   if (hack->pass) WriteString(theEnv,logicalName,"= ");
-   else WriteString(theEnv,logicalName,"<> ");
+   CL_WriteString(theEnv,logicalName,"(fact-jn-cmp-vars1 ");
+   if (hack->pass) CL_WriteString(theEnv,logicalName,"= ");
+   else CL_WriteString(theEnv,logicalName,"<> ");
 
-   WriteString(theEnv,logicalName,"p");
-   PrintUnsignedInteger(theEnv,logicalName,hack->pattern1 + 1);
+   CL_WriteString(theEnv,logicalName,"p");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->pattern1 + 1);
 
    if (hack->p1lhs)
-     { WriteString(theEnv,logicalName," L"); }
+     { CL_WriteString(theEnv,logicalName," L"); }
    else if (hack->p1rhs)
-     { WriteString(theEnv,logicalName," R"); }
+     { CL_WriteString(theEnv,logicalName," R"); }
 
-   WriteString(theEnv,logicalName," s");
-   PrintUnsignedInteger(theEnv,logicalName,hack->slot1);
+   CL_WriteString(theEnv,logicalName," s");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->slot1);
 
-   WriteString(theEnv,logicalName," p");
-   PrintUnsignedInteger(theEnv,logicalName,hack->pattern2 + 1);
+   CL_WriteString(theEnv,logicalName," p");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->pattern2 + 1);
 
    if (hack->p2lhs)
-     { WriteString(theEnv,logicalName," L"); }
+     { CL_WriteString(theEnv,logicalName," L"); }
    else if (hack->p2rhs)
-     { WriteString(theEnv,logicalName," R"); }
+     { CL_WriteString(theEnv,logicalName," R"); }
 
-   WriteString(theEnv,logicalName," s");
-   PrintUnsignedInteger(theEnv,logicalName,hack->slot2);
-   WriteString(theEnv,logicalName,")");
+   CL_WriteString(theEnv,logicalName," s");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->slot2);
+   CL_WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -99,10 +99,10 @@ void PrintFactJNCompVars1(
   }
 
 /***************************************/
-/* PrintFactJNCompVars2: Print routine */
-/*   for the FactJNCompVars2 function. */
+/* PrintCL_FactJNCompVars2: Print routine */
+/*   for the CL_FactJNCompVars2 function. */
 /***************************************/
-void PrintFactJNCompVars2(
+void PrintCL_FactJNCompVars2(
   Environment *theEnv,
   const char *logicalName,
   void *theValue)
@@ -111,44 +111,44 @@ void PrintFactJNCompVars2(
    struct factCompVarsJN2Call *hack;
 
    hack = (struct factCompVarsJN2Call *) ((CLIPSBitMap *) theValue)->contents;
-   WriteString(theEnv,logicalName,"(fact-jn-cmp-vars2 ");
-   if (hack->pass) WriteString(theEnv,logicalName,"= ");
-   else WriteString(theEnv,logicalName,"<> ");
+   CL_WriteString(theEnv,logicalName,"(fact-jn-cmp-vars2 ");
+   if (hack->pass) CL_WriteString(theEnv,logicalName,"= ");
+   else CL_WriteString(theEnv,logicalName,"<> ");
 
-   WriteString(theEnv,logicalName,"p");
-   PrintUnsignedInteger(theEnv,logicalName,hack->pattern1 + 1);
+   CL_WriteString(theEnv,logicalName,"p");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->pattern1 + 1);
 
    if (hack->p1lhs)
-     { WriteString(theEnv,logicalName," L"); }
+     { CL_WriteString(theEnv,logicalName," L"); }
    else if (hack->p1rhs)
-     { WriteString(theEnv,logicalName," R"); }
+     { CL_WriteString(theEnv,logicalName," R"); }
 
-   WriteString(theEnv,logicalName," s");
-   PrintUnsignedInteger(theEnv,logicalName,hack->slot1);
+   CL_WriteString(theEnv,logicalName," s");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->slot1);
 
-   if (hack->fromBeginning1) WriteString(theEnv,logicalName, " b");
-   else WriteString(theEnv,logicalName," e");
+   if (hack->fromBeginning1) CL_WriteString(theEnv,logicalName, " b");
+   else CL_WriteString(theEnv,logicalName," e");
 
-   WriteString(theEnv,logicalName," f");
-   PrintUnsignedInteger(theEnv,logicalName,hack->offset1);
+   CL_WriteString(theEnv,logicalName," f");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->offset1);
 
-   WriteString(theEnv,logicalName," p");
-   PrintUnsignedInteger(theEnv,logicalName,hack->pattern2 + 1);
+   CL_WriteString(theEnv,logicalName," p");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->pattern2 + 1);
 
    if (hack->p2lhs)
-     { WriteString(theEnv,logicalName," L"); }
+     { CL_WriteString(theEnv,logicalName," L"); }
    else if (hack->p2rhs)
-     { WriteString(theEnv,logicalName," R"); }
+     { CL_WriteString(theEnv,logicalName," R"); }
 
-   WriteString(theEnv,logicalName," s");
-   PrintUnsignedInteger(theEnv,logicalName,hack->slot2);
+   CL_WriteString(theEnv,logicalName," s");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->slot2);
 
-   if (hack->fromBeginning2) WriteString(theEnv,logicalName," b");
-   else WriteString(theEnv,logicalName," e");
+   if (hack->fromBeginning2) CL_WriteString(theEnv,logicalName," b");
+   else CL_WriteString(theEnv,logicalName," e");
 
-   WriteString(theEnv,logicalName," f");
-   PrintUnsignedInteger(theEnv,logicalName,hack->offset2);
-   WriteString(theEnv,logicalName,")");
+   CL_WriteString(theEnv,logicalName," f");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->offset2);
+   CL_WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -159,10 +159,10 @@ void PrintFactJNCompVars2(
   }
 
 /***************************************/
-/* PrintFactPNCompVars1: Print routine */
-/*   for the FactPNCompVars1 function. */
+/* PrintCL_FactPNCompVars1: Print routine */
+/*   for the CL_FactPNCompVars1 function. */
 /***************************************/
-void PrintFactPNCompVars1(
+void PrintCL_FactPNCompVars1(
   Environment *theEnv,
   const char *logicalName,
   void *theValue)
@@ -171,13 +171,13 @@ void PrintFactPNCompVars1(
    struct factCompVarsPN1Call *hack;
 
    hack = (struct factCompVarsPN1Call *) ((CLIPSBitMap *) theValue)->contents;
-   WriteString(theEnv,logicalName,"(fact-pn-cmp-vars ");
-   if (hack->pass) WriteString(theEnv,logicalName,"p ");
-   else WriteString(theEnv,logicalName,"n ");
-   PrintUnsignedInteger(theEnv,logicalName,hack->field1);
-   WriteString(theEnv,logicalName," ");
-   PrintUnsignedInteger(theEnv,logicalName,hack->field2);
-   WriteString(theEnv,logicalName,")");
+   CL_WriteString(theEnv,logicalName,"(fact-pn-cmp-vars ");
+   if (hack->pass) CL_WriteString(theEnv,logicalName,"p ");
+   else CL_WriteString(theEnv,logicalName,"n ");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->field1);
+   CL_WriteString(theEnv,logicalName," ");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->field2);
+   CL_WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -188,10 +188,10 @@ void PrintFactPNCompVars1(
   }
 
 /**************************************/
-/* PrintFactSlotLength: Print routine */
-/*   for the FactSlotLength function. */
+/* PrintCL_FactSlotLength: Print routine */
+/*   for the CL_FactSlotLength function. */
 /**************************************/
-void PrintFactSlotLength(
+void PrintCL_FactSlotLength(
   Environment *theEnv,
   const char *logicalName,
   void *theValue)
@@ -201,13 +201,13 @@ void PrintFactSlotLength(
 
    hack = (struct factCheckLengthPNCall *) ((CLIPSBitMap *) theValue)->contents;
 
-   WriteString(theEnv,logicalName,"(slot-length ");
-   PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
-   WriteString(theEnv,logicalName," ");
-   if (hack->exactly) WriteString(theEnv,logicalName,"= ");
-   else WriteString(theEnv,logicalName,">= ");
-   PrintUnsignedInteger(theEnv,logicalName,hack->minLength);
-   WriteString(theEnv,logicalName,")");
+   CL_WriteString(theEnv,logicalName,"(slot-length ");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
+   CL_WriteString(theEnv,logicalName," ");
+   if (hack->exactly) CL_WriteString(theEnv,logicalName,"= ");
+   else CL_WriteString(theEnv,logicalName,">= ");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->minLength);
+   CL_WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -218,10 +218,10 @@ void PrintFactSlotLength(
   }
 
 /*************************************/
-/* PrintFactJNGetVar1: Print routine */
+/* PrintCL_FactJNGetVar1: Print routine */
 /*   for the FactJNGetvar1 function. */
 /*************************************/
-void PrintFactJNGetVar1(
+void PrintCL_FactJNGetVar1(
   Environment *theEnv,
   const char *logicalName,
   void *theValue)
@@ -230,24 +230,24 @@ void PrintFactJNGetVar1(
    struct factGetVarJN1Call *hack;
 
    hack = (struct factGetVarJN1Call *) ((CLIPSBitMap *) theValue)->contents;
-   WriteString(theEnv,logicalName,"(fact-jn-getvar-1 ");
-   if (hack->factAddress) WriteString(theEnv,logicalName,"t ");
-   else WriteString(theEnv,logicalName,"f ");
-   if (hack->allFields) WriteString(theEnv,logicalName,"t ");
-   else WriteString(theEnv,logicalName,"f ");
+   CL_WriteString(theEnv,logicalName,"(fact-jn-getvar-1 ");
+   if (hack->factAddress) CL_WriteString(theEnv,logicalName,"t ");
+   else CL_WriteString(theEnv,logicalName,"f ");
+   if (hack->allFields) CL_WriteString(theEnv,logicalName,"t ");
+   else CL_WriteString(theEnv,logicalName,"f ");
 
-   WriteString(theEnv,logicalName,"p");
-   PrintUnsignedInteger(theEnv,logicalName,hack->whichPattern + 1);
-   WriteString(theEnv,logicalName," ");
-   PrintUnsignedInteger(theEnv,logicalName,hack->whichField);
-   WriteString(theEnv,logicalName," s");
-   PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
+   CL_WriteString(theEnv,logicalName,"p");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->whichPattern + 1);
+   CL_WriteString(theEnv,logicalName," ");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->whichField);
+   CL_WriteString(theEnv,logicalName," s");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
 
    if (hack->lhs)
-     { WriteString(theEnv,logicalName," L"); }
+     { CL_WriteString(theEnv,logicalName," L"); }
    else if (hack->rhs)
-     { WriteString(theEnv,logicalName," R"); }
-   WriteString(theEnv,logicalName,")");
+     { CL_WriteString(theEnv,logicalName," R"); }
+   CL_WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -258,10 +258,10 @@ void PrintFactJNGetVar1(
   }
 
 /*************************************/
-/* PrintFactJNGetVar2: Print routine */
+/* PrintCL_FactJNGetVar2: Print routine */
 /*   for the FactJNGetvar2 function. */
 /*************************************/
-void PrintFactJNGetVar2(
+void PrintCL_FactJNGetVar2(
   Environment *theEnv,
   const char *logicalName,
   void *theValue)
@@ -270,17 +270,17 @@ void PrintFactJNGetVar2(
    struct factGetVarJN2Call *hack;
 
    hack = (struct factGetVarJN2Call *) ((CLIPSBitMap *) theValue)->contents;
-   WriteString(theEnv,logicalName,"(fact-jn-getvar-2");
+   CL_WriteString(theEnv,logicalName,"(fact-jn-getvar-2");
 
-   WriteString(theEnv,logicalName," p");
-   PrintUnsignedInteger(theEnv,logicalName,hack->whichPattern + 1);
-   WriteString(theEnv,logicalName," s");
-   PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
+   CL_WriteString(theEnv,logicalName," p");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->whichPattern + 1);
+   CL_WriteString(theEnv,logicalName," s");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
    if (hack->lhs)
-     { WriteString(theEnv,logicalName," L"); }
+     { CL_WriteString(theEnv,logicalName," L"); }
    else if (hack->rhs)
-     { WriteString(theEnv,logicalName," R"); }
-   WriteString(theEnv,logicalName,")");
+     { CL_WriteString(theEnv,logicalName," R"); }
+   CL_WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -291,10 +291,10 @@ void PrintFactJNGetVar2(
   }
 
 /*************************************/
-/* PrintFactJNGetVar3: Print routine */
-/*   for the FactJNGetVar3 function. */
+/* PrintCL_FactJNGetVar3: Print routine */
+/*   for the CL_FactJNGetVar3 function. */
 /*************************************/
-void PrintFactJNGetVar3(
+void PrintCL_FactJNGetVar3(
   Environment *theEnv,
   const char *logicalName,
   void *theValue)
@@ -303,27 +303,27 @@ void PrintFactJNGetVar3(
    struct factGetVarJN3Call *hack;
 
    hack = (struct factGetVarJN3Call *) ((CLIPSBitMap *) theValue)->contents;
-   WriteString(theEnv,logicalName,"(fact-jn-getvar-3 ");
-   if (hack->fromBeginning) WriteString(theEnv,logicalName,"t ");
-   else WriteString(theEnv,logicalName,"f ");
-   if (hack->fromEnd) WriteString(theEnv,logicalName,"t ");
-   else WriteString(theEnv,logicalName,"f ");
+   CL_WriteString(theEnv,logicalName,"(fact-jn-getvar-3 ");
+   if (hack->fromBeginning) CL_WriteString(theEnv,logicalName,"t ");
+   else CL_WriteString(theEnv,logicalName,"f ");
+   if (hack->fromEnd) CL_WriteString(theEnv,logicalName,"t ");
+   else CL_WriteString(theEnv,logicalName,"f ");
 
-   PrintUnsignedInteger(theEnv,logicalName,hack->beginOffset);
-   WriteString(theEnv,logicalName," ");
-   PrintUnsignedInteger(theEnv,logicalName,hack->endOffset);
-   WriteString(theEnv,logicalName," ");
-   PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->beginOffset);
+   CL_WriteString(theEnv,logicalName," ");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->endOffset);
+   CL_WriteString(theEnv,logicalName," ");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
 
-   WriteString(theEnv,logicalName," p");
-   PrintUnsignedInteger(theEnv,logicalName,hack->whichPattern + 1);
+   CL_WriteString(theEnv,logicalName," p");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->whichPattern + 1);
 
    if (hack->lhs)
-     { WriteString(theEnv,logicalName," L"); }
+     { CL_WriteString(theEnv,logicalName," L"); }
    else if (hack->rhs)
-     { WriteString(theEnv,logicalName," R"); }
+     { CL_WriteString(theEnv,logicalName," R"); }
 
-   WriteString(theEnv,logicalName,")");
+   CL_WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -334,10 +334,10 @@ void PrintFactJNGetVar3(
   }
 
 /*************************************/
-/* PrintFactPNGetVar1: Print routine */
+/* PrintCL_FactPNGetVar1: Print routine */
 /*   for the FactPNGetvar1 function. */
 /*************************************/
-void PrintFactPNGetVar1(
+void PrintCL_FactPNGetVar1(
   Environment *theEnv,
   const char *logicalName,
   void *theValue)
@@ -346,16 +346,16 @@ void PrintFactPNGetVar1(
    struct factGetVarPN1Call *hack;
 
    hack = (struct factGetVarPN1Call *) ((CLIPSBitMap *) theValue)->contents;
-   WriteString(theEnv,logicalName,"(fact-pn-getvar-1 ");
-   if (hack->factAddress) WriteString(theEnv,logicalName,"t ");
-   else WriteString(theEnv,logicalName,"f ");
-   if (hack->allFields) WriteString(theEnv,logicalName,"t F");
-   else WriteString(theEnv,logicalName,"f F");
+   CL_WriteString(theEnv,logicalName,"(fact-pn-getvar-1 ");
+   if (hack->factAddress) CL_WriteString(theEnv,logicalName,"t ");
+   else CL_WriteString(theEnv,logicalName,"f ");
+   if (hack->allFields) CL_WriteString(theEnv,logicalName,"t F");
+   else CL_WriteString(theEnv,logicalName,"f F");
 
-   PrintUnsignedInteger(theEnv,logicalName,hack->whichField);
-   WriteString(theEnv,logicalName," S");
-   PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
-   WriteString(theEnv,logicalName,")");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->whichField);
+   CL_WriteString(theEnv,logicalName," S");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
+   CL_WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -366,10 +366,10 @@ void PrintFactPNGetVar1(
   }
 
 /*************************************/
-/* PrintFactPNGetVar2: Print routine */
+/* PrintCL_FactPNGetVar2: Print routine */
 /*   for the FactPNGetvar2 function. */
 /*************************************/
-void PrintFactPNGetVar2(
+void PrintCL_FactPNGetVar2(
   Environment *theEnv,
   const char *logicalName,
   void *theValue)
@@ -378,9 +378,9 @@ void PrintFactPNGetVar2(
    struct factGetVarPN2Call *hack;
 
    hack = (struct factGetVarPN2Call *) ((CLIPSBitMap *) theValue)->contents;
-   WriteString(theEnv,logicalName,"(fact-pn-getvar-2 S");
-   PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
-   WriteString(theEnv,logicalName,")");
+   CL_WriteString(theEnv,logicalName,"(fact-pn-getvar-2 S");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
+   CL_WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -391,10 +391,10 @@ void PrintFactPNGetVar2(
   }
 
 /*************************************/
-/* PrintFactPNGetVar3: Print routine */
+/* PrintCL_FactPNGetVar3: Print routine */
 /*   for the FactPNGetvar3 function. */
 /*************************************/
-void PrintFactPNGetVar3(
+void PrintCL_FactPNGetVar3(
   Environment *theEnv,
   const char *logicalName,
   void *theValue)
@@ -403,19 +403,19 @@ void PrintFactPNGetVar3(
    struct factGetVarPN3Call *hack;
 
    hack = (struct factGetVarPN3Call *) ((CLIPSBitMap *) theValue)->contents;
-   WriteString(theEnv,logicalName,"(fact-pn-getvar-3 ");
+   CL_WriteString(theEnv,logicalName,"(fact-pn-getvar-3 ");
 
-   if (hack->fromBeginning) WriteString(theEnv,logicalName,"t ");
-   else WriteString(theEnv,logicalName,"f ");
-   if (hack->fromEnd) WriteString(theEnv,logicalName,"t B");
-   else WriteString(theEnv,logicalName,"f B");
+   if (hack->fromBeginning) CL_WriteString(theEnv,logicalName,"t ");
+   else CL_WriteString(theEnv,logicalName,"f ");
+   if (hack->fromEnd) CL_WriteString(theEnv,logicalName,"t B");
+   else CL_WriteString(theEnv,logicalName,"f B");
 
-   PrintUnsignedInteger(theEnv,logicalName,hack->beginOffset);
-   WriteString(theEnv,logicalName," E");
-   PrintUnsignedInteger(theEnv,logicalName,hack->endOffset);
-   WriteString(theEnv,logicalName," S");
-   PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
-   WriteString(theEnv,logicalName,")");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->beginOffset);
+   CL_WriteString(theEnv,logicalName," E");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->endOffset);
+   CL_WriteString(theEnv,logicalName," S");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
+   CL_WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -426,10 +426,10 @@ void PrintFactPNGetVar3(
   }
 
 /***************************************/
-/* PrintFactPNConstant1: Print routine */
-/*   for the FactPNConstant1 function. */
+/* PrintCL_FactPNConstant1: Print routine */
+/*   for the CL_FactPNConstant1 function. */
 /***************************************/
-void PrintFactPNConstant1(
+void PrintCL_FactPNConstant1(
   Environment *theEnv,
   const char *logicalName,
   void *theValue)
@@ -439,15 +439,15 @@ void PrintFactPNConstant1(
 
    hack = (struct factConstantPN1Call *) ((CLIPSBitMap *) theValue)->contents;
 
-   WriteString(theEnv,logicalName,"(fact-pn-constant1 ");
+   CL_WriteString(theEnv,logicalName,"(fact-pn-constant1 ");
 
-   PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
 
-   if (hack->testForEquality) WriteString(theEnv,logicalName," = ");
-   else WriteString(theEnv,logicalName," != ");
+   if (hack->testForEquality) CL_WriteString(theEnv,logicalName," = ");
+   else CL_WriteString(theEnv,logicalName," != ");
 
-   PrintAtom(theEnv,logicalName,GetFirstArgument()->type,GetFirstArgument()->value);
-   WriteString(theEnv,logicalName,")");
+   CL_PrintAtom(theEnv,logicalName,GetFirstArgument()->type,GetFirstArgument()->value);
+   CL_WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -458,10 +458,10 @@ void PrintFactPNConstant1(
   }
 
 /***************************************/
-/* PrintFactPNConstant2: Print routine */
-/*   for the FactPNConstant2 function. */
+/* PrintCL_FactPNConstant2: Print routine */
+/*   for the CL_FactPNConstant2 function. */
 /***************************************/
-void PrintFactPNConstant2(
+void PrintCL_FactPNConstant2(
   Environment *theEnv,
   const char *logicalName,
   void *theValue)
@@ -471,19 +471,19 @@ void PrintFactPNConstant2(
 
    hack = (struct factConstantPN2Call *) ((CLIPSBitMap *) theValue)->contents;
 
-   WriteString(theEnv,logicalName,"(fact-pn-constant2 ");
+   CL_WriteString(theEnv,logicalName,"(fact-pn-constant2 ");
 
-   PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->whichSlot);
 
-   WriteString(theEnv,logicalName," ");
+   CL_WriteString(theEnv,logicalName," ");
 
-   PrintUnsignedInteger(theEnv,logicalName,hack->offset);
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->offset);
 
-   if (hack->testForEquality) WriteString(theEnv,logicalName," = ");
-   else WriteString(theEnv,logicalName," != ");
+   if (hack->testForEquality) CL_WriteString(theEnv,logicalName," = ");
+   else CL_WriteString(theEnv,logicalName," != ");
 
-   PrintAtom(theEnv,logicalName,GetFirstArgument()->type,GetFirstArgument()->value);
-   WriteString(theEnv,logicalName,")");
+   CL_PrintAtom(theEnv,logicalName,GetFirstArgument()->type,GetFirstArgument()->value);
+   CL_WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)

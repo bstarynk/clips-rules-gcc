@@ -78,35 +78,35 @@
    static void                        UpdateExpression(Environment *,void *,unsigned long);
 
 /***********************************************************/
-/* AllocateExpressions: Determines the amount of space     */
+/* CL_AllocateExpressions: DeteCL_rmines the amount of space     */
 /*   required for loading the binary image of expressions  */
 /*   and allocates that amount of space.                   */
 /***********************************************************/
-void AllocateExpressions(
+void CL_AllocateExpressions(
   Environment *theEnv)
   {
    size_t space;
 
-   GenReadBinary(theEnv,&ExpressionData(theEnv)->NumberOfExpressions,sizeof(long));
+   CL_GenReadBinary(theEnv,&ExpressionData(theEnv)->NumberOfExpressions,sizeof(long));
    if (ExpressionData(theEnv)->NumberOfExpressions == 0L)
      ExpressionData(theEnv)->ExpressionArray = NULL;
    else
      {
       space = ExpressionData(theEnv)->NumberOfExpressions * sizeof(struct expr);
-      ExpressionData(theEnv)->ExpressionArray = (struct expr *) genalloc(theEnv,space);
+      ExpressionData(theEnv)->ExpressionArray = (struct expr *) CL_genalloc(theEnv,space);
      }
   }
 
 /**********************************************/
-/* RefreshExpressions: Refreshes the pointers */
+/* CL_RefreshExpressions: CL_Refreshes the pointers */
 /*   used by the expression binary image.     */
 /**********************************************/
-void RefreshExpressions(
+void CL_RefreshExpressions(
   Environment *theEnv)
   {
    if (ExpressionData(theEnv)->ExpressionArray == NULL) return;
 
-   BloadandRefresh(theEnv,ExpressionData(theEnv)->NumberOfExpressions,
+   CL_BloadandCL_Refresh(theEnv,ExpressionData(theEnv)->NumberOfExpressions,
                    sizeof(BSAVE_EXPRESSION),UpdateExpression);
   }
 
@@ -134,7 +134,7 @@ static void UpdateExpression(
    switch(bexp->type)
      {
       case FCALL:
-        ExpressionData(theEnv)->ExpressionArray[obji].value = BloadData(theEnv)->FunctionArray[bexp->value];
+        ExpressionData(theEnv)->ExpressionArray[obji].value = CL_BloadData(theEnv)->FunctionArray[bexp->value];
         break;
 
       case GCALL:
@@ -203,14 +203,14 @@ static void UpdateExpression(
 #if DEFTEMPLATE_CONSTRUCT
       case FACT_ADDRESS_TYPE:
         ExpressionData(theEnv)->ExpressionArray[obji].value = &FactData(theEnv)->DummyFact;
-        RetainFact((Fact *) ExpressionData(theEnv)->ExpressionArray[obji].value);
+        CL_RetainFact((Fact *) ExpressionData(theEnv)->ExpressionArray[obji].value);
         break;
 #endif
 
 #if OBJECT_SYSTEM
       case INSTANCE_ADDRESS_TYPE:
         ExpressionData(theEnv)->ExpressionArray[obji].value = &InstanceData(theEnv)->DummyInstance;
-        RetainInstance((Instance *) ExpressionData(theEnv)->ExpressionArray[obji].value);
+        CL_RetainInstance((Instance *) ExpressionData(theEnv)->ExpressionArray[obji].value);
         break;
 #endif
 
@@ -222,8 +222,8 @@ static void UpdateExpression(
         break;
 
       default:
-        if (EvaluationData(theEnv)->PrimitivesArray[bexp->type] == NULL) break;
-        if (EvaluationData(theEnv)->PrimitivesArray[bexp->type]->bitMap)
+        if (CL_EvaluationData(theEnv)->PrimitivesArray[bexp->type] == NULL) break;
+        if (CL_EvaluationData(theEnv)->PrimitivesArray[bexp->type]->bitMap)
           {
            ExpressionData(theEnv)->ExpressionArray[obji].value = SymbolData(theEnv)->BitMapArray[bexp->value];
            IncrementBitMapCount((CLIPSBitMap *) ExpressionData(theEnv)->ExpressionArray[obji].value);
@@ -245,10 +245,10 @@ static void UpdateExpression(
   }
 
 /*********************************************/
-/* ClearBloadedExpressions: Clears the space */
+/* CL_ClearCL_BloadedExpressions: CL_Clears the space */
 /*   utilized by an expression binary image. */
 /*********************************************/
-void ClearBloadedExpressions(
+void CL_ClearCL_BloadedExpressions(
   Environment *theEnv)
   {
    unsigned long i;
@@ -266,24 +266,24 @@ void ClearBloadedExpressions(
          case STRING_TYPE          :
          case INSTANCE_NAME_TYPE   :
          case GBL_VARIABLE    :
-           ReleaseLexeme(theEnv,ExpressionData(theEnv)->ExpressionArray[i].lexemeValue);
+           CL_ReleaseLexeme(theEnv,ExpressionData(theEnv)->ExpressionArray[i].lexemeValue);
            break;
          case FLOAT_TYPE           :
-           ReleaseFloat(theEnv,ExpressionData(theEnv)->ExpressionArray[i].floatValue);
+           CL_ReleaseFloat(theEnv,ExpressionData(theEnv)->ExpressionArray[i].floatValue);
            break;
          case INTEGER_TYPE         :
-           ReleaseInteger(theEnv,ExpressionData(theEnv)->ExpressionArray[i].integerValue);
+           CL_ReleaseInteger(theEnv,ExpressionData(theEnv)->ExpressionArray[i].integerValue);
            break;
 
 #if DEFTEMPLATE_CONSTRUCT
          case FACT_ADDRESS_TYPE    :
-           ReleaseFact((Fact *) ExpressionData(theEnv)->ExpressionArray[i].value);
+           CL_ReleaseFact((Fact *) ExpressionData(theEnv)->ExpressionArray[i].value);
            break;
 #endif
 
 #if OBJECT_SYSTEM
          case INSTANCE_ADDRESS_TYPE :
-           ReleaseInstance((Instance *) ExpressionData(theEnv)->ExpressionArray[i].value);
+           CL_ReleaseInstance((Instance *) ExpressionData(theEnv)->ExpressionArray[i].value);
            break;
 #endif
 
@@ -291,9 +291,9 @@ void ClearBloadedExpressions(
            break;
 
          default:
-           if (EvaluationData(theEnv)->PrimitivesArray[ExpressionData(theEnv)->ExpressionArray[i].type] == NULL) break;
-           if (EvaluationData(theEnv)->PrimitivesArray[ExpressionData(theEnv)->ExpressionArray[i].type]->bitMap)
-             { DecrementBitMapReferenceCount(theEnv,(CLIPSBitMap *) ExpressionData(theEnv)->ExpressionArray[i].value); }
+           if (CL_EvaluationData(theEnv)->PrimitivesArray[ExpressionData(theEnv)->ExpressionArray[i].type] == NULL) break;
+           if (CL_EvaluationData(theEnv)->PrimitivesArray[ExpressionData(theEnv)->ExpressionArray[i].type]->bitMap)
+             { CL_DecrementBitMapReferenceCount(theEnv,(CLIPSBitMap *) ExpressionData(theEnv)->ExpressionArray[i].value); }
            break;
         }
      }
@@ -303,7 +303,7 @@ void ClearBloadedExpressions(
    /*===================================*/
 
    space = ExpressionData(theEnv)->NumberOfExpressions * sizeof(struct expr);
-   if (space != 0) genfree(theEnv,ExpressionData(theEnv)->ExpressionArray,space);
+   if (space != 0) CL_genfree(theEnv,ExpressionData(theEnv)->ExpressionArray,space);
    ExpressionData(theEnv)->ExpressionArray = 0;
   }
 
@@ -311,7 +311,7 @@ void ClearBloadedExpressions(
 #if BLOAD_AND_BSAVE
 
 /***************************************************
-  NAME         : FindHashedExpressions
+  NAME         : CL_FindHashedExpressions
   DESCRIPTION  : Sets the bsave expression array
                  indices for hashed expression nodes
                  and marks the items needed by
@@ -321,7 +321,7 @@ void ClearBloadedExpressions(
   SIDE EFFECTS : Atoms marked and ids set
   NOTES        : None
  ***************************************************/
-void FindHashedExpressions(
+void CL_FindHashedExpressions(
   Environment *theEnv)
   {
    unsigned i;
@@ -330,21 +330,21 @@ void FindHashedExpressions(
    for (i = 0 ; i < EXPRESSION_HASH_SIZE ; i++)
      for (exphash = ExpressionData(theEnv)->ExpressionHashTable[i] ; exphash != NULL ; exphash = exphash->next)
        {
-        MarkNeededItems(theEnv,exphash->exp);
+        CL_MarkNeededItems(theEnv,exphash->exp);
         exphash->bsaveID = ExpressionData(theEnv)->ExpressionCount;
-        ExpressionData(theEnv)->ExpressionCount += ExpressionSize(exphash->exp);
+        ExpressionData(theEnv)->ExpressionCount += CL_ExpressionSize(exphash->exp);
        }
   }
 
 /***************************************************
-  NAME         : BsaveHashedExpressions
-  DESCRIPTION  : Writes out hashed expressions
-  INPUTS       : Bsave file stream pointer
+  NAME         : CL_BsaveHashedExpressions
+  DESCRIPTION  : CL_Writes out hashed expressions
+  INPUTS       : CL_Bsave file stream pointer
   RETURNS      : Nothing useful
   SIDE EFFECTS : Expressions written
   NOTES        : None
  ***************************************************/
-void BsaveHashedExpressions(
+void CL_BsaveHashedExpressions(
   Environment *theEnv,
   FILE *fp)
   {
@@ -353,20 +353,20 @@ void BsaveHashedExpressions(
 
    for (i = 0 ; i < EXPRESSION_HASH_SIZE ; i++)
      for (exphash = ExpressionData(theEnv)->ExpressionHashTable[i] ; exphash != NULL ; exphash = exphash->next)
-       BsaveExpression(theEnv,exphash->exp,fp);
+       CL_BsaveExpression(theEnv,exphash->exp,fp);
   }
 
 /***************************************************************/
-/* BsaveConstructExpressions: Writes all expression needed by  */
+/* CL_BsaveConstructExpressions: CL_Writes all expression needed by  */
 /*   constructs for this binary image to the binary save file. */
 /***************************************************************/
-void BsaveConstructExpressions(
+void CL_BsaveConstructExpressions(
   Environment *theEnv,
   FILE *fp)
   {
    struct BinaryItem *biPtr;
 
-   for (biPtr = BsaveData(theEnv)->ListOfBinaryItems;
+   for (biPtr = CL_BsaveData(theEnv)->ListOfBinaryItems;
         biPtr != NULL;
         biPtr = biPtr->next)
      {
@@ -376,10 +376,10 @@ void BsaveConstructExpressions(
   }
 
 /***************************************/
-/* BsaveExpression: Recursively saves  */
+/* CL_BsaveExpression: Recursively saves  */
 /*   an expression to the binary file. */
 /***************************************/
-void BsaveExpression(
+void CL_BsaveExpression(
   Environment *theEnv,
   struct expr *testPtr,
   FILE *fp)
@@ -414,7 +414,7 @@ void BsaveExpression(
         { newTest.nextArg = ULONG_MAX; }
       else
         {
-         newIndex = ExpressionData(theEnv)->ExpressionCount + ExpressionSize(testPtr->argList);
+         newIndex = ExpressionData(theEnv)->ExpressionCount + CL_ExpressionSize(testPtr->argList);
          newTest.nextArg = newIndex;
         }
 
@@ -500,25 +500,25 @@ void BsaveExpression(
            break;
 
          default:
-           if (EvaluationData(theEnv)->PrimitivesArray[testPtr->type] == NULL) break;
-           if (EvaluationData(theEnv)->PrimitivesArray[testPtr->type]->bitMap)
+           if (CL_EvaluationData(theEnv)->PrimitivesArray[testPtr->type] == NULL) break;
+           if (CL_EvaluationData(theEnv)->PrimitivesArray[testPtr->type]->bitMap)
              { newTest.value = ((CLIPSBitMap *) testPtr->value)->bucket; }
            break;
         }
 
      /*===========================*/
-     /* Write out the expression. */
+     /* CL_Write out the expression. */
      /*===========================*/
 
-     GenWrite(&newTest,sizeof(BSAVE_EXPRESSION),fp);
+     CL_GenCL_Write(&newTest,sizeof(BSAVE_EXPRESSION),fp);
 
      /*==========================*/
-     /* Write out argument list. */
+     /* CL_Write out argument list. */
      /*==========================*/
 
      if (testPtr->argList != NULL)
        {
-        BsaveExpression(theEnv,testPtr->argList,fp);
+        CL_BsaveExpression(theEnv,testPtr->argList,fp);
        }
 
      testPtr = testPtr->nextArg;

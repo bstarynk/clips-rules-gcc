@@ -63,13 +63,13 @@
 #include "factlhs.h"
 
 /***********************************************/
-/* SequenceRestrictionParse: Parses an ordered */
+/* SequenceCL_RestrictionParse: Parses an ordered */
 /*   fact pattern conditional element.         */
 /*                                             */
 /*   <ordered-fact-pattern-CE>                 */
 /*             ::= (<symbol> <constraint>+)    */
 /***********************************************/
-struct lhsParseNode *SequenceRestrictionParse(
+struct lhsParseNode *SequenceCL_RestrictionParse(
   Environment *theEnv,
   const char *readSource,
   struct token *theToken)
@@ -81,13 +81,13 @@ struct lhsParseNode *SequenceRestrictionParse(
    /* Create the pattern node for the relation name. */
    /*================================================*/
 
-   topNode = GetLHSParseNode(theEnv);
+   topNode = CL_GetLHSParseNode(theEnv);
    topNode->pnType = SF_WILDCARD_NODE;
    topNode->negated = false;
    topNode->exists = false;
    topNode->index = NO_INDEX;
    topNode->slotNumber = 1;
-   topNode->bottom = GetLHSParseNode(theEnv);
+   topNode->bottom = CL_GetLHSParseNode(theEnv);
    topNode->bottom->pnType = SYMBOL_NODE;
    topNode->bottom->negated = false;
    topNode->bottom->exists = false;
@@ -98,25 +98,25 @@ struct lhsParseNode *SequenceRestrictionParse(
    /* with the first field of a pattern.                   */
    /*======================================================*/
 
-   SavePPBuffer(theEnv," ");
-   GetToken(theEnv,readSource,theToken);
+   CL_SavePPBuffer(theEnv," ");
+   CL_GetToken(theEnv,readSource,theToken);
    if ((theToken->tknType == OR_CONSTRAINT_TOKEN) ||
        (theToken->tknType == AND_CONSTRAINT_TOKEN))
      {
-      ReturnLHSParseNodes(theEnv,topNode);
-      SyntaxErrorMessage(theEnv,"the first field of a pattern");
+      CL_ReturnLHSParseNodes(theEnv,topNode);
+      CL_SyntaxErrorMessage(theEnv,"the first field of a pattern");
       return NULL;
      }
 
    /*============================================================*/
-   /* Treat the remaining constraints of an ordered fact pattern */
+   /* Treat the reCL_maining constraints of an ordered fact pattern */
    /* as if they were contained in a multifield slot.            */
    /*============================================================*/
 
-   nextField = RestrictionParse(theEnv,readSource,theToken,true,NULL,1,NULL,1);
+   nextField = CL_RestrictionParse(theEnv,readSource,theToken,true,NULL,1,NULL,1);
    if (nextField == NULL)
      {
-      ReturnLHSParseNodes(theEnv,topNode);
+      CL_ReturnLHSParseNodes(theEnv,topNode);
       return NULL;
      }
    topNode->right = nextField;
@@ -127,11 +127,11 @@ struct lhsParseNode *SequenceRestrictionParse(
 
    if (theToken->tknType != RIGHT_PARENTHESIS_TOKEN)
      {
-      PPBackup(theEnv);
-      SavePPBuffer(theEnv," ");
-      SavePPBuffer(theEnv,theToken->printForm);
-      SyntaxErrorMessage(theEnv,"fact patterns");
-      ReturnLHSParseNodes(theEnv,topNode);
+      CL_PPBackup(theEnv);
+      CL_SavePPBuffer(theEnv," ");
+      CL_SavePPBuffer(theEnv,theToken->printFoCL_rm);
+      CL_SyntaxErrorMessage(theEnv,"fact patterns");
+      CL_ReturnLHSParseNodes(theEnv,topNode);
       return NULL;
      }
 
@@ -142,9 +142,9 @@ struct lhsParseNode *SequenceRestrictionParse(
 
    if (nextField->bottom == NULL)
      {
-      PPBackup(theEnv);
-      PPBackup(theEnv);
-      SavePPBuffer(theEnv,")");
+      CL_PPBackup(theEnv);
+      CL_PPBackup(theEnv);
+      CL_SavePPBuffer(theEnv,")");
      }
 
    /*===================================*/
@@ -155,14 +155,14 @@ struct lhsParseNode *SequenceRestrictionParse(
   }
 
 /**********************************************************************/
-/* FactPatternParserFind: This function is the pattern find function  */
+/* CL_FactPatternParserFind: This function is the pattern find function  */
 /*   for facts. It tells the pattern parsing code that the specified  */
 /*   pattern can be parsed as a fact pattern. By default, any pattern */
 /*   beginning with a symbol can be parsed as a fact pattern. Since   */
 /*   all patterns begin with a symbol, it follows that all patterns   */
 /*   can be parsed as a fact pattern.                                 */
 /**********************************************************************/
-bool FactPatternParserFind(
+bool CL_FactPatternParserFind(
   CLIPSLexeme *theRelation)
   {
 #if MAC_XCD
@@ -172,10 +172,10 @@ bool FactPatternParserFind(
   }
 
 /******************************************************/
-/* FactPatternParse: This function is called to parse */
+/* CL_FactPatternParse: This function is called to parse */
 /*  both deftemplate and ordered fact patterns.       */
 /******************************************************/
-struct lhsParseNode *FactPatternParse(
+struct lhsParseNode *CL_FactPatternParse(
   Environment *theEnv,
   const char *readSource,
   struct token *theToken)
@@ -188,9 +188,9 @@ struct lhsParseNode *FactPatternParse(
    /* as part of the pattern's relation name. */
    /*=========================================*/
 
-   if (FindModuleSeparator(theToken->lexemeValue->contents))
+   if (CL_FindModuleSeparator(theToken->lexemeValue->contents))
      {
-      IllegalModuleSpecifierMessage(theEnv);
+      CL_IllegalModuleSpecifierMessage(theEnv);
       return NULL;
      }
 
@@ -199,12 +199,12 @@ struct lhsParseNode *FactPatternParse(
    /*=========================================================*/
 
    theDeftemplate = (Deftemplate *)
-                    FindImportedConstruct(theEnv,"deftemplate",NULL,theToken->lexemeValue->contents,
+                    CL_FindImportedConstruct(theEnv,"deftemplate",NULL,theToken->lexemeValue->contents,
                                           &count,true,NULL);
 
    if (count > 1)
      {
-      AmbiguousReferenceErrorMessage(theEnv,"deftemplate",theToken->lexemeValue->contents);
+      CL_AmbiguousReferenceErrorMessage(theEnv,"deftemplate",theToken->lexemeValue->contents);
       return NULL;
      }
 
@@ -216,15 +216,15 @@ struct lhsParseNode *FactPatternParse(
    if (theDeftemplate == NULL)
      {
 #if DEFMODULE_CONSTRUCT
-      if (FindImportExportConflict(theEnv,"deftemplate",GetCurrentModule(theEnv),theToken->lexemeValue->contents))
+      if (CL_FindImportExportConflict(theEnv,"deftemplate",CL_GetCurrentModule(theEnv),theToken->lexemeValue->contents))
         {
-         ImportExportConflictMessage(theEnv,"implied deftemplate",theToken->lexemeValue->contents,NULL,NULL);
+         CL_ImportExportConflictMessage(theEnv,"implied deftemplate",theToken->lexemeValue->contents,NULL,NULL);
          return NULL;
         }
 #endif /* DEFMODULE_CONSTRUCT */
 
-      if (! ConstructData(theEnv)->CheckSyntaxMode)
-        { theDeftemplate = CreateImpliedDeftemplate(theEnv,theToken->lexemeValue,true); }
+      if (! ConstructData(theEnv)->CL_CheckSyntaxMode)
+        { theDeftemplate = CL_CreateImpliedDeftemplate(theEnv,theToken->lexemeValue,true); }
       else
         { theDeftemplate = NULL; }
      }
@@ -235,13 +235,13 @@ struct lhsParseNode *FactPatternParse(
    /*===============================================*/
 
    if ((theDeftemplate != NULL) && (theDeftemplate->implied == false))
-     { return(DeftemplateLHSParse(theEnv,readSource,theDeftemplate)); }
+     { return(CL_DeftemplateLHSParse(theEnv,readSource,theDeftemplate)); }
 
    /*================================*/
    /* Parse an ordered fact pattern. */
    /*================================*/
 
-   return(SequenceRestrictionParse(theEnv,readSource,theToken));
+   return(SequenceCL_RestrictionParse(theEnv,readSource,theToken));
   }
 
 #endif /* DEFTEMPLATE_CONSTRUCT && DEFRULE_CONSTRUCT && (! RUN_TIME) && (! BLOAD_ONLY) */

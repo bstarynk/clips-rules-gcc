@@ -17,23 +17,23 @@
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
-/*      6.23: Modified GenOpen to check the file length      */
+/*      6.23: Modified CL_GenOpen to check the file length      */
 /*            against the system constant FILENAME_MAX.      */
 /*                                                           */
 /*      6.24: Support for run-time programs directly passing */
 /*            the hash tables for initialization.            */
 /*                                                           */
-/*            Made gensystem functional for Xcode.           */
+/*            Made CL_gensystem functional for Xcode.           */
 /*                                                           */
-/*            Added BeforeOpenFunction and AfterOpenFunction */
+/*            Added BeforeCL_OpenFunction and AfterCL_OpenFunction */
 /*            hooks.                                         */
 /*                                                           */
-/*            Added environment parameter to GenClose.       */
-/*            Added environment parameter to GenOpen.        */
+/*            Added environment parameter to CL_GenClose.       */
+/*            Added environment parameter to CL_GenOpen.        */
 /*                                                           */
-/*            Updated UNIX_V gentime functionality.          */
+/*            Updated UNIX_V CL_gentime functionality.          */
 /*                                                           */
-/*            Removed GenOpen check against FILENAME_MAX.    */
+/*            Removed CL_GenOpen check against FILENAME_MAX.    */
 /*                                                           */
 /*      6.30: Changed integer type/precision.                */
 /*                                                           */
@@ -61,25 +61,25 @@
 /*                                                           */
 /*            Support for typed EXTERNAL_ADDRESS_TYPE.       */
 /*                                                           */
-/*            GenOpen function checks for UTF-8 Byte Order   */
+/*            CL_GenOpen function checks for UTF-8 Byte Order   */
 /*            Marker.                                        */
 /*                                                           */
-/*            Added gengetchar, genungetchar, genprintfile,  */
-/*            genstrcpy, genstrncpy, genstrcat, genstrncat,  */
-/*            and gensprintf functions.                      */
+/*            Added CL_gengetchar, CL_genungetchar, CL_genprintfile,  */
+/*            CL_genstrcpy, CL_genstrncpy, CL_genstrcat, CL_genstrncat,  */
+/*            and CL_gensprintf functions.                      */
 /*                                                           */
-/*            Added SetJmpBuffer function.                   */
+/*            Added CL_SetJmpBuffer function.                   */
 /*                                                           */
-/*            Added environment argument to genexit.         */
+/*            Added environment argument to CL_genexit.         */
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
-/*      6.40: Added genchdir function for changing the       */
+/*      6.40: Added CL_genchdir function for changing the       */
 /*            current directory.                             */
 /*                                                           */
-/*            Modified gentime to return "comparable" epoch  */
-/*            based values across platforms.                 */
+/*            Modified CL_gentime to return "comparable" epoch  */
+/*            based values across platfoCL_rms.                 */
 /*                                                           */
 /*            Refactored code to reduce header dependencies  */
 /*            in sysdep.c.                                   */
@@ -91,20 +91,20 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
-/*            Moved CatchCtrlC to main.c.                    */
+/*            Moved CatchCtrlC to CL_main.c.                    */
 /*                                                           */
 /*            Removed VAX_VMS support.                       */
 /*                                                           */
 /*            Removed ContinueEnvFunction, PauseEnvFunction, */
 /*            and RedrawScreenFunction callbacks.            */
 /*                                                           */
-/*            Completion code now returned by gensystem.     */
+/*            Completion code now returned by CL_gensystem.     */
 /*                                                           */
 /*            Added flush, rewind, tell, and seek functions. */
 /*                                                           */
 /*            Removed fflush calls after printing.           */
 /*                                                           */
-/*            GenOpen, genchdir, genremove, and genrename    */
+/*            CL_GenOpen, CL_genchdir, CL_genremove, and CL_genrename    */
 /*            use wide character functions on Windows to     */
 /*            work properly with file and directory names    */
 /*            containing unicode characters.                 */
@@ -168,29 +168,29 @@ struct systemDependentData
 #if (! WIN_MVC)
    FILE *BinaryFP;
 #endif
-   int (*BeforeOpenFunction)(Environment *);
-   int (*AfterOpenFunction)(Environment *);
+   int (*BeforeCL_OpenFunction)(Environment *);
+   int (*AfterCL_OpenFunction)(Environment *);
    jmp_buf *jmpBuffer;
   };
 
 #define SystemDependentData(theEnv) ((struct systemDependentData *) GetEnvironmentData(theEnv,SYSTEM_DEPENDENT_DATA))
 
 /********************************************************/
-/* InitializeSystemDependentData: Allocates environment */
+/* CL_InitializeSystemDependentData: Allocates environment */
 /*    data for system dependent routines.               */
 /********************************************************/
-void InitializeSystemDependentData(
+void CL_InitializeSystemDependentData(
   Environment *theEnv)
   {
-   AllocateEnvironmentData(theEnv,SYSTEM_DEPENDENT_DATA,sizeof(struct systemDependentData),NULL);
+   CL_AllocateEnvironmentData(theEnv,SYSTEM_DEPENDENT_DATA,sizeof(struct systemDependentData),NULL);
   }
 
 /*********************************************************/
-/* gentime: A function to return a floating point number */
+/* CL_gentime: A function to return a floating point number */
 /*   which indicates the present time. Used internally   */
 /*   for timing rule firings and debugging.              */
 /*********************************************************/
-double gentime()
+double CL_gentime()
   {
 #if MAC_XCD || UNIX_V || DARWIN || LINUX || UNIX_7
    struct timeval now;
@@ -213,10 +213,10 @@ double gentime()
   }
 
 /*****************************************************/
-/* gensystem: Generic routine for passing a string   */
+/* CL_gensystem: Generic routine for passing a string   */
 /*   representing a command to the operating system. */
 /*****************************************************/
-int gensystem(
+int CL_gensystem(
   Environment *theEnv,
   const char *commandBuffer)
   {
@@ -224,20 +224,20 @@ int gensystem(
   }
 
 /*******************************************/
-/* gengetchar: Generic routine for getting */
+/* CL_gengetchar: Generic routine for getting */
 /*    a character from stdin.              */
 /*******************************************/
-int gengetchar(
+int CL_gengetchar(
   Environment *theEnv)
   {
    return(getc(stdin));
   }
 
 /***********************************************/
-/* genungetchar: Generic routine for ungetting */
+/* CL_genungetchar: Generic routine for ungetting */
 /*    a character from stdin.                  */
 /***********************************************/
-int genungetchar(
+int CL_genungetchar(
   Environment *theEnv,
   int theChar)
   {
@@ -245,10 +245,10 @@ int genungetchar(
   }
 
 /****************************************************/
-/* genprintfile: Generic routine for print a single */
+/* CL_genprintfile: Generic routine for print a single */
 /*   character string to a file (including stdout). */
 /****************************************************/
-void genprintfile(
+void CL_genprintfile(
   Environment *theEnv,
   FILE *fptr,
   const char *str)
@@ -257,12 +257,12 @@ void genprintfile(
   }
 
 /***********************************************************/
-/* InitializeNonportableFeatures: Initializes non-portable */
+/* CL_InitializeNonportableFeatures: Initializes non-portable */
 /*   features. Currently, the only non-portable feature    */
 /*   requiring initialization is the interrupt handler     */
 /*   which allows execution to be halted.                  */
 /***********************************************************/
-void InitializeNonportableFeatures(
+void CL_InitializeNonportableFeatures(
   Environment *theEnv)
   {
 #if MAC_XCD
@@ -271,9 +271,9 @@ void InitializeNonportableFeatures(
   }
 
 /**************************************/
-/* genexit:  A generic exit function. */
+/* CL_genexit:  A generic exit function. */
 /**************************************/
-void genexit(
+void CL_genexit(
   Environment *theEnv,
   int num)
   {
@@ -284,9 +284,9 @@ void genexit(
   }
 
 /**************************************/
-/* SetJmpBuffer: */
+/* CL_SetJmpBuffer: */
 /**************************************/
-void SetJmpBuffer(
+void CL_SetJmpBuffer(
   Environment *theEnv,
   jmp_buf *theJmpBuffer)
   {
@@ -294,9 +294,9 @@ void SetJmpBuffer(
   }
 
 /******************************************/
-/* genstrcpy: Generic genstrcpy function. */
+/* CL_genstrcpy: Generic CL_genstrcpy function. */
 /******************************************/
-char *genstrcpy(
+char *CL_genstrcpy(
   char *dest,
   const char *src)
   {
@@ -304,9 +304,9 @@ char *genstrcpy(
   }
 
 /********************************************/
-/* genstrncpy: Generic genstrncpy function. */
+/* CL_genstrncpy: Generic CL_genstrncpy function. */
 /********************************************/
-char *genstrncpy(
+char *CL_genstrncpy(
   char *dest,
   const char *src,
   size_t n)
@@ -315,9 +315,9 @@ char *genstrncpy(
   }
 
 /******************************************/
-/* genstrcat: Generic genstrcat function. */
+/* CL_genstrcat: Generic CL_genstrcat function. */
 /******************************************/
-char *genstrcat(
+char *CL_genstrcat(
   char *dest,
   const char *src)
   {
@@ -325,9 +325,9 @@ char *genstrcat(
   }
 
 /********************************************/
-/* genstrncat: Generic genstrncat function. */
+/* CL_genstrncat: Generic CL_genstrncat function. */
 /********************************************/
-char *genstrncat(
+char *CL_genstrncat(
   char *dest,
   const char *src,
   size_t n)
@@ -336,9 +336,9 @@ char *genstrncat(
   }
 
 /*****************************************/
-/* gensprintf: Generic sprintf function. */
+/* CL_gensprintf: Generic sprintf function. */
 /*****************************************/
-int gensprintf(
+int CL_gensprintf(
   char *buffer,
   const char *restrictStr,
   ...)
@@ -356,27 +356,27 @@ int gensprintf(
   }
 
 /******************************************************/
-/* genrand: Generic random number generator function. */
+/* CL_genrand: Generic random number generator function. */
 /******************************************************/
-int genrand()
+int CL_genrand()
   {
    return(rand());
   }
 
 /**********************************************************************/
-/* genseed: Generic function for seeding the random number generator. */
+/* CL_genseed: Generic function for seeding the random number generator. */
 /**********************************************************************/
-void genseed(
+void CL_genseed(
   unsigned int seed)
   {
    srand(seed);
   }
 
 /*********************************************/
-/* gengetcwd: Generic function for returning */
+/* CL_gengetcwd: Generic function for returning */
 /*   the current directory.                  */
 /*********************************************/
-char *gengetcwd(
+char *CL_gengetcwd(
   char *buffer,
   int buflength)
   {
@@ -390,11 +390,11 @@ char *gengetcwd(
   }
 
 /*************************************************/
-/* genchdir: Generic function for setting the    */
+/* CL_genchdir: Generic function for setting the    */
 /*   current directory. Returns 1 if successful, */
 /*   0 if unsuccessful, and -1 if unavailable.   */
 /*************************************************/
-int genchdir(
+int CL_genchdir(
   Environment *theEnv,
   const char *directory)
   {
@@ -427,22 +427,22 @@ int genchdir(
 
    wlength = MultiByteToWideChar(CP_UTF8,0,directory,-1,NULL,0);
 
-   wdirectory = (wchar_t *) genalloc(theEnv,wlength * sizeof(wchar_t)); 
+   wdirectory = (wchar_t *) CL_genalloc(theEnv,wlength * sizeof(wchar_t)); 
 
    MultiByteToWideChar(CP_UTF8,0,directory,-1,wdirectory,wlength);
 
    rv = _wchdir(wdirectory) + 1;
 
-   genfree(theEnv,wdirectory,wlength * sizeof(wchar_t));
+   CL_genfree(theEnv,wdirectory,wlength * sizeof(wchar_t));
 #endif
 
    return rv;
   }
 
 /****************************************************/
-/* genremove: Generic function for removing a file. */
+/* CL_genremove: Generic function for removing a file. */
 /****************************************************/
-bool genremove(
+bool CL_genremove(
   Environment *theEnv,
   const char *fileName)
   {
@@ -454,17 +454,17 @@ bool genremove(
 #if WIN_MVC
    wfnlength = MultiByteToWideChar(CP_UTF8,0,fileName,-1,NULL,0);
 
-   wfileName = (wchar_t *) genalloc(theEnv,wfnlength * sizeof(wchar_t)); 
+   wfileName = (wchar_t *) CL_genalloc(theEnv,wfnlength * sizeof(wchar_t)); 
 
    MultiByteToWideChar(CP_UTF8,0,fileName,-1,wfileName,wfnlength);
 
    if (_wremove(wfileName))
      { 
-      genfree(theEnv,wfileName,wfnlength * sizeof(wchar_t));
+      CL_genfree(theEnv,wfileName,wfnlength * sizeof(wchar_t));
       return false;
      }
 
-   genfree(theEnv,wfileName,wfnlength * sizeof(wchar_t));
+   CL_genfree(theEnv,wfileName,wfnlength * sizeof(wchar_t));
 #else
    if (remove(fileName)) return false;
 #endif
@@ -473,9 +473,9 @@ bool genremove(
   }
 
 /****************************************************/
-/* genrename: Generic function for renaming a file. */
+/* CL_genrename: Generic function for renaming a file. */
 /****************************************************/
-bool genrename(
+bool CL_genrename(
   Environment *theEnv,
   const char *oldFileName,
   const char *newFileName)
@@ -489,21 +489,21 @@ bool genrename(
    wofnlength = MultiByteToWideChar(CP_UTF8,0,oldFileName,-1,NULL,0);
    wnfnlength = MultiByteToWideChar(CP_UTF8,0,newFileName,-1,NULL,0);
 
-   woldFileName = (wchar_t *) genalloc(theEnv,wofnlength * sizeof(wchar_t)); 
-   wnewFileName = (wchar_t *) genalloc(theEnv,wnfnlength * sizeof(wchar_t)); 
+   woldFileName = (wchar_t *) CL_genalloc(theEnv,wofnlength * sizeof(wchar_t)); 
+   wnewFileName = (wchar_t *) CL_genalloc(theEnv,wnfnlength * sizeof(wchar_t)); 
 
    MultiByteToWideChar(CP_UTF8,0,oldFileName,-1,woldFileName,wofnlength);
    MultiByteToWideChar(CP_UTF8,0,newFileName,-1,wnewFileName,wnfnlength);
 
    if (_wrename(woldFileName,wnewFileName))
      { 
-      genfree(theEnv,woldFileName,wofnlength * sizeof(wchar_t));
-      genfree(theEnv,wnewFileName,wnfnlength * sizeof(wchar_t));
+      CL_genfree(theEnv,woldFileName,wofnlength * sizeof(wchar_t));
+      CL_genfree(theEnv,wnewFileName,wnfnlength * sizeof(wchar_t));
       return false;
      }
 
-   genfree(theEnv,woldFileName,wofnlength * sizeof(wchar_t));
-   genfree(theEnv,wnewFileName,wnfnlength * sizeof(wchar_t));
+   CL_genfree(theEnv,woldFileName,wofnlength * sizeof(wchar_t));
+   CL_genfree(theEnv,wnewFileName,wnfnlength * sizeof(wchar_t));
 #else
    if (rename(oldFileName,newFileName)) return false;
 #endif
@@ -512,37 +512,37 @@ bool genrename(
   }
 
 /***********************************/
-/* SetBeforeOpenFunction: Sets the */
-/*  value of BeforeOpenFunction.   */
+/* SetBeforeCL_OpenFunction: Sets the */
+/*  value of BeforeCL_OpenFunction.   */
 /***********************************/
-int (*SetBeforeOpenFunction(Environment *theEnv,
+int (*SetBeforeCL_OpenFunction(Environment *theEnv,
                                int (*theFunction)(Environment *)))(Environment *)
   {
    int (*tempFunction)(Environment *);
 
-   tempFunction = SystemDependentData(theEnv)->BeforeOpenFunction;
-   SystemDependentData(theEnv)->BeforeOpenFunction = theFunction;
+   tempFunction = SystemDependentData(theEnv)->BeforeCL_OpenFunction;
+   SystemDependentData(theEnv)->BeforeCL_OpenFunction = theFunction;
    return(tempFunction);
   }
 
 /**********************************/
-/* SetAfterOpenFunction: Sets the */
-/*  value of AfterOpenFunction.   */
+/* SetAfterCL_OpenFunction: Sets the */
+/*  value of AfterCL_OpenFunction.   */
 /**********************************/
-int (*SetAfterOpenFunction(Environment *theEnv,
+int (*SetAfterCL_OpenFunction(Environment *theEnv,
                               int (*theFunction)(Environment *)))(Environment *)
   {
    int (*tempFunction)(Environment *);
 
-   tempFunction = SystemDependentData(theEnv)->AfterOpenFunction;
-   SystemDependentData(theEnv)->AfterOpenFunction = theFunction;
+   tempFunction = SystemDependentData(theEnv)->AfterCL_OpenFunction;
+   SystemDependentData(theEnv)->AfterCL_OpenFunction = theFunction;
    return(tempFunction);
   }
 
 /*********************************************/
-/* GenOpen: Trap routine for opening a file. */
+/* CL_GenOpen: Trap routine for opening a file. */
 /*********************************************/
-FILE *GenOpen(
+FILE *CL_GenOpen(
   Environment *theEnv,
   const char *fileName,
   const char *accessType)
@@ -557,8 +557,8 @@ FILE *GenOpen(
    /* Invoke the before open function. */
    /*==================================*/
 
-   if (SystemDependentData(theEnv)->BeforeOpenFunction != NULL)
-     { (*SystemDependentData(theEnv)->BeforeOpenFunction)(theEnv); }
+   if (SystemDependentData(theEnv)->BeforeCL_OpenFunction != NULL)
+     { (*SystemDependentData(theEnv)->BeforeCL_OpenFunction)(theEnv); }
 
    /*================*/
    /* Open the file. */
@@ -568,16 +568,16 @@ FILE *GenOpen(
    wfnlength = MultiByteToWideChar(CP_UTF8,0,fileName,-1,NULL,0);
    watlength = MultiByteToWideChar(CP_UTF8,0,accessType,-1,NULL,0);
 
-   wfileName = (wchar_t *) genalloc(theEnv,wfnlength * sizeof(wchar_t)); 
-   waccessType = (wchar_t *) genalloc(theEnv,watlength * sizeof(wchar_t)); 
+   wfileName = (wchar_t *) CL_genalloc(theEnv,wfnlength * sizeof(wchar_t)); 
+   waccessType = (wchar_t *) CL_genalloc(theEnv,watlength * sizeof(wchar_t)); 
 
    MultiByteToWideChar(CP_UTF8,0,fileName,-1,wfileName,wfnlength);
    MultiByteToWideChar(CP_UTF8,0,accessType,-1,waccessType,watlength);
 
    _wfopen_s(&theFile,wfileName,waccessType);
 
-   genfree(theEnv,wfileName,wfnlength * sizeof(wchar_t));
-   genfree(theEnv,waccessType,watlength * sizeof(wchar_t));
+   CL_genfree(theEnv,wfileName,wfnlength * sizeof(wchar_t));
+   CL_genfree(theEnv,waccessType,watlength * sizeof(wchar_t));
 #else
    theFile = fopen(fileName,accessType);
 #endif
@@ -612,8 +612,8 @@ FILE *GenOpen(
    /* Invoke the after open function. */
    /*=================================*/
 
-   if (SystemDependentData(theEnv)->AfterOpenFunction != NULL)
-     { (*SystemDependentData(theEnv)->AfterOpenFunction)(theEnv); }
+   if (SystemDependentData(theEnv)->AfterCL_OpenFunction != NULL)
+     { (*SystemDependentData(theEnv)->AfterCL_OpenFunction)(theEnv); }
 
    /*===============================*/
    /* Return a pointer to the file. */
@@ -623,9 +623,9 @@ FILE *GenOpen(
   }
 
 /**********************************************/
-/* GenClose: Trap routine for closing a file. */
+/* CL_GenClose: Trap routine for closing a file. */
 /**********************************************/
-int GenClose(
+int CL_GenClose(
   Environment *theEnv,
   FILE *theFile)
   {
@@ -637,9 +637,9 @@ int GenClose(
   }
 
 /***********************************************/
-/* GenFlush: Trap routine for flushing a file. */
+/* CL_GenFlush: Trap routine for flushing a file. */
 /***********************************************/
-int GenFlush(
+int CL_GenFlush(
   Environment *theEnv,
   FILE *theFile)
   {
@@ -651,9 +651,9 @@ int GenFlush(
   }
 
 /*************************************************/
-/* GenRewind: Trap routine for rewinding a file. */
+/* CL_GenRewind: Trap routine for rewinding a file. */
 /*************************************************/
-void GenRewind(
+void CL_GenRewind(
   Environment *theEnv,
   FILE *theFile)
   {
@@ -661,9 +661,9 @@ void GenRewind(
   }
 
 /*************************************************/
-/* GenTell: Trap routine for the ftell function. */
+/* CL_GenTell: Trap routine for the ftell function. */
 /*************************************************/
-long long GenTell(
+long long CL_GenTell(
   Environment *theEnv,
   FILE *theFile)
   {
@@ -681,9 +681,9 @@ long long GenTell(
   }
 
 /*************************************************/
-/* GenSeek: Trap routine for the fseek function. */
+/* CL_GenSeek: Trap routine for the fseek function. */
 /*************************************************/
-int GenSeek(
+int CL_GenSeek(
   Environment *theEnv,
   FILE *theFile,
   long offset,
@@ -693,25 +693,25 @@ int GenSeek(
   }
 
 /************************************************************/
-/* GenOpenReadBinary: Generic and machine specific code for */
+/* CL_GenOpenReadBinary: Generic and machine specific code for */
 /*   opening a file for binary access. Only one file may be */
 /*   open at a time when using this function since the file */
 /*   pointer is stored in a global variable.                */
 /************************************************************/
-int GenOpenReadBinary(
+int CL_GenOpenReadBinary(
   Environment *theEnv,
   const char *funcName,
   const char *fileName)
   {
-   if (SystemDependentData(theEnv)->BeforeOpenFunction != NULL)
-     { (*SystemDependentData(theEnv)->BeforeOpenFunction)(theEnv); }
+   if (SystemDependentData(theEnv)->BeforeCL_OpenFunction != NULL)
+     { (*SystemDependentData(theEnv)->BeforeCL_OpenFunction)(theEnv); }
 
 #if WIN_MVC
    SystemDependentData(theEnv)->BinaryFileHandle = _open(fileName,O_RDONLY | O_BINARY);
    if (SystemDependentData(theEnv)->BinaryFileHandle == -1)
      {
-      if (SystemDependentData(theEnv)->AfterOpenFunction != NULL)
-        { (*SystemDependentData(theEnv)->AfterOpenFunction)(theEnv); }
+      if (SystemDependentData(theEnv)->AfterCL_OpenFunction != NULL)
+        { (*SystemDependentData(theEnv)->AfterCL_OpenFunction)(theEnv); }
       return 0;
      }
 #endif
@@ -719,23 +719,23 @@ int GenOpenReadBinary(
 #if (! WIN_MVC)
    if ((SystemDependentData(theEnv)->BinaryFP = fopen(fileName,"rb")) == NULL)
      {
-      if (SystemDependentData(theEnv)->AfterOpenFunction != NULL)
-        { (*SystemDependentData(theEnv)->AfterOpenFunction)(theEnv); }
+      if (SystemDependentData(theEnv)->AfterCL_OpenFunction != NULL)
+        { (*SystemDependentData(theEnv)->AfterCL_OpenFunction)(theEnv); }
       return 0;
      }
 #endif
 
-   if (SystemDependentData(theEnv)->AfterOpenFunction != NULL)
-     { (*SystemDependentData(theEnv)->AfterOpenFunction)(theEnv); }
+   if (SystemDependentData(theEnv)->AfterCL_OpenFunction != NULL)
+     { (*SystemDependentData(theEnv)->AfterCL_OpenFunction)(theEnv); }
 
    return 1;
   }
 
 /***********************************************/
-/* GenReadBinary: Generic and machine specific */
+/* CL_GenReadBinary: Generic and machine specific */
 /*   code for reading from a file.             */
 /***********************************************/
-void GenReadBinary(
+void CL_GenReadBinary(
   Environment *theEnv,
   void *dataPtr,
   size_t size)
@@ -761,10 +761,10 @@ void GenReadBinary(
   }
 
 /***************************************************/
-/* GetSeekCurBinary:  Generic and machine specific */
+/* CL_GetSeekCurBinary:  Generic and machine specific */
 /*   code for seeking a position in a file.        */
 /***************************************************/
-void GetSeekCurBinary(
+void CL_GetSeekCurBinary(
   Environment *theEnv,
   long offset)
   {
@@ -778,10 +778,10 @@ void GetSeekCurBinary(
   }
 
 /***************************************************/
-/* GetSeekSetBinary:  Generic and machine specific */
+/* CL_GetSeekSetBinary:  Generic and machine specific */
 /*   code for seeking a position in a file.        */
 /***************************************************/
-void GetSeekSetBinary(
+void CL_GetSeekSetBinary(
   Environment *theEnv,
   long offset)
   {
@@ -795,10 +795,10 @@ void GetSeekSetBinary(
   }
 
 /************************************************/
-/* GenTellBinary:  Generic and machine specific */
+/* CL_GenTellBinary:  Generic and machine specific */
 /*   code for telling a position in a file.     */
 /************************************************/
-void GenTellBinary(
+void CL_GenTellBinary(
   Environment *theEnv,
   long *offset)
   {
@@ -812,14 +812,14 @@ void GenTellBinary(
   }
 
 /****************************************/
-/* GenCloseBinary:  Generic and machine */
+/* CL_GenCloseBinary:  Generic and machine */
 /*   specific code for closing a file.  */
 /****************************************/
-void GenCloseBinary(
+void CL_GenCloseBinary(
   Environment *theEnv)
   {
-   if (SystemDependentData(theEnv)->BeforeOpenFunction != NULL)
-     { (*SystemDependentData(theEnv)->BeforeOpenFunction)(theEnv); }
+   if (SystemDependentData(theEnv)->BeforeCL_OpenFunction != NULL)
+     { (*SystemDependentData(theEnv)->BeforeCL_OpenFunction)(theEnv); }
 
 #if WIN_MVC
    _close(SystemDependentData(theEnv)->BinaryFileHandle);
@@ -829,15 +829,15 @@ void GenCloseBinary(
    fclose(SystemDependentData(theEnv)->BinaryFP);
 #endif
 
-   if (SystemDependentData(theEnv)->AfterOpenFunction != NULL)
-     { (*SystemDependentData(theEnv)->AfterOpenFunction)(theEnv); }
+   if (SystemDependentData(theEnv)->AfterCL_OpenFunction != NULL)
+     { (*SystemDependentData(theEnv)->AfterCL_OpenFunction)(theEnv); }
   }
 
 /***********************************************/
-/* GenWrite: Generic routine for writing to a  */
+/* CL_GenCL_Write: Generic routine for writing to a  */
 /*   file. No machine specific code as of yet. */
 /***********************************************/
-void GenWrite(
+void CL_GenCL_Write(
   void *dataPtr,
   size_t size,
   FILE *fp)

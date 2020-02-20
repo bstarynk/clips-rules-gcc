@@ -81,10 +81,10 @@
                                                 bool,bool,bool,struct expr *,struct expr *);
 
 /****************************************************************/
-/* ConstructJoins: Integrates a set of pattern and join tests   */
+/* CL_ConstructJoins: Integrates a set of pattern and join tests   */
 /*   associated with a rule into the pattern and join networks. */
 /****************************************************************/
-struct joinNode *ConstructJoins(
+struct joinNode *CL_ConstructJoins(
   Environment *theEnv,
   int logicalJoin,
   struct lhsParseNode *theLHS,
@@ -197,7 +197,7 @@ struct joinNode *ConstructJoins(
          joinFromTheRight = true;
          isExists = theLHS->existsNand;
 
-         lastRightJoin = ConstructJoins(theEnv,logicalJoin,theLHS,startDepth+1,lastJoin,tryToReuse,firstJoin);
+         lastRightJoin = CL_ConstructJoins(theEnv,logicalJoin,theLHS,startDepth+1,lastJoin,tryToReuse,firstJoin);
 
          rhsStruct = lastRightJoin;
          rhsType = 0;
@@ -242,7 +242,7 @@ struct joinNode *ConstructJoins(
         }
 
       /*======================================================*/
-      /* Determine if the join being added is a logical join. */
+      /* DeteCL_rmine if the join being added is a logical join. */
       /*======================================================*/
 
       if ((startDepth == 1) && (joinNumber == logicalJoin)) isLogical = true;
@@ -268,7 +268,7 @@ struct joinNode *ConstructJoins(
         { theLinks = lastRightJoin->nextLinks; }
 
       /*=======================================================*/
-      /* Determine if the next join to be added can be shared. */
+      /* DeteCL_rmine if the next join to be added can be shared. */
       /*=======================================================*/
 
       if ((tryToReuse == true) &&
@@ -278,8 +278,8 @@ struct joinNode *ConstructJoins(
                                         leftHash,rightHash)) != NULL) )
         {
 #if DEBUGGING_FUNCTIONS
-         if ((GetWatchItem(theEnv,"compilations") == 1) && GetPrintWhileLoading(theEnv))
-           { WriteString(theEnv,STDOUT,"=j"); }
+         if ((CL_GetCL_WatchItem(theEnv,"compilations") == 1) && CL_GetPrintWhileCL_Loading(theEnv))
+           { CL_WriteString(theEnv,STDOUT,"=j"); }
 #endif
          lastJoin = oldJoin;
         }
@@ -337,9 +337,9 @@ struct joinNode *ConstructJoins(
 
 #if DEBUGGING_FUNCTIONS
    if ((startDepth == 1) &&
-       (GetWatchItem(theEnv,"compilations") == 1) &&
-       GetPrintWhileLoading(theEnv))
-     { WriteString(theEnv,STDOUT,"\n"); }
+       (CL_GetCL_WatchItem(theEnv,"compilations") == 1) &&
+       CL_GetPrintWhileCL_Loading(theEnv))
+     { CL_WriteString(theEnv,STDOUT,"\n"); }
 #endif
 
    /*=============================*/
@@ -350,11 +350,11 @@ struct joinNode *ConstructJoins(
   }
 
 /****************************************************************/
-/* AttachTestCEsToPatternCEs: Attaches the expressions found in */
+/* CL_AttachTestCEsToPatternCEs: Attaches the expressions found in */
 /*   test CEs to the closest preceeding pattern CE that is not  */
 /*   negated and is at the same not/and depth.                  */
 /****************************************************************/
-void AttachTestCEsToPatternCEs(
+void CL_AttachTestCEsToPatternCEs(
   Environment *theEnv,
   struct lhsParseNode *theLHS)
   {
@@ -486,12 +486,12 @@ void AttachTestCEsToPatternCEs(
          if (lastNode->negated)
            {
             lastNode->secondaryNetworkTest =
-               CombineExpressions(theEnv,lastNode->secondaryNetworkTest,theLHS->networkTest);
+               CL_CombineExpressions(theEnv,lastNode->secondaryNetworkTest,theLHS->networkTest);
            }
          else
            {
             lastNode->networkTest =
-               CombineExpressions(theEnv,lastNode->networkTest,theLHS->networkTest);
+               CL_CombineExpressions(theEnv,lastNode->networkTest,theLHS->networkTest);
            }
         }
 
@@ -528,9 +528,9 @@ void AttachTestCEsToPatternCEs(
             lastNode->negated = true;
 
             lastNode->networkTest =
-               CombineExpressions(theEnv,lastNode->networkTest,lastNode->externalNetworkTest);
+               CL_CombineExpressions(theEnv,lastNode->networkTest,lastNode->externalNetworkTest);
             lastNode->networkTest =
-               CombineExpressions(theEnv,lastNode->networkTest,theLHS->networkTest);
+               CL_CombineExpressions(theEnv,lastNode->networkTest,theLHS->networkTest);
             lastNode->externalNetworkTest = NULL;
            }
 
@@ -549,7 +549,7 @@ void AttachTestCEsToPatternCEs(
                   (lastNode->existsNand == false))
            {
             lastNode->secondaryNetworkTest =
-               CombineExpressions(theEnv,lastNode->secondaryNetworkTest,theLHS->networkTest);
+               CL_CombineExpressions(theEnv,lastNode->secondaryNetworkTest,theLHS->networkTest);
            }
 
          /*================================================================*/
@@ -567,7 +567,7 @@ void AttachTestCEsToPatternCEs(
                   (lastNode->existsNand == false))
            {
             lastNode->secondaryNetworkTest =
-               CombineExpressions(theEnv,lastNode->secondaryNetworkTest,theLHS->networkTest);
+               CL_CombineExpressions(theEnv,lastNode->secondaryNetworkTest,theLHS->networkTest);
            }
 
          /*=============================================================*/
@@ -599,9 +599,9 @@ void AttachTestCEsToPatternCEs(
             /*===================================================*/
 
             lastNode->networkTest =
-               CombineExpressions(theEnv,lastNode->networkTest,lastNode->externalNetworkTest);
+               CL_CombineExpressions(theEnv,lastNode->networkTest,lastNode->externalNetworkTest);
             lastNode->networkTest =
-               CombineExpressions(theEnv,lastNode->networkTest,theLHS->networkTest);
+               CL_CombineExpressions(theEnv,lastNode->networkTest,theLHS->networkTest);
             lastNode->externalNetworkTest = NULL;
            }
 
@@ -621,7 +621,7 @@ void AttachTestCEsToPatternCEs(
                   (lastNode->existsNand == true))
            {
             lastNode->secondaryNetworkTest =
-               CombineExpressions(theEnv,lastNode->secondaryNetworkTest,theLHS->networkTest);
+               CL_CombineExpressions(theEnv,lastNode->secondaryNetworkTest,theLHS->networkTest);
            }
 
          /*======================================*/
@@ -652,9 +652,9 @@ void AttachTestCEsToPatternCEs(
             /*===================================================*/
 
             lastNode->secondaryNetworkTest =
-               CombineExpressions(theEnv,lastNode->secondaryNetworkTest,lastNode->externalNetworkTest);
+               CL_CombineExpressions(theEnv,lastNode->secondaryNetworkTest,lastNode->externalNetworkTest);
             lastNode->secondaryNetworkTest =
-               CombineExpressions(theEnv,lastNode->secondaryNetworkTest,theLHS->networkTest);
+               CL_CombineExpressions(theEnv,lastNode->secondaryNetworkTest,theLHS->networkTest);
             lastNode->externalNetworkTest = NULL;
            }
 
@@ -664,8 +664,8 @@ void AttachTestCEsToPatternCEs(
 
          else
            {
-            SystemError(theEnv,"RULEBLD",1);
-            ExitRouter(theEnv,EXIT_FAILURE);
+            CL_SystemError(theEnv,"RULEBLD",1);
+            CL_ExitRouter(theEnv,EXIT_FAILURE);
            }
         }
 
@@ -697,12 +697,12 @@ void AttachTestCEsToPatternCEs(
          if (lastNode->negated)
            {
             lastNode->secondaryNetworkTest =
-               CombineExpressions(theEnv,lastNode->secondaryNetworkTest,theLHS->networkTest);
+               CL_CombineExpressions(theEnv,lastNode->secondaryNetworkTest,theLHS->networkTest);
            }
          else
            {
             lastNode->networkTest =
-               CombineExpressions(theEnv,lastNode->networkTest,theLHS->networkTest);
+               CL_CombineExpressions(theEnv,lastNode->networkTest,theLHS->networkTest);
            }
         }
 
@@ -750,9 +750,9 @@ void AttachTestCEsToPatternCEs(
             lastNode->negated = true;
 
             lastNode->networkTest =
-               CombineExpressions(theEnv,lastNode->networkTest,lastNode->externalNetworkTest);
+               CL_CombineExpressions(theEnv,lastNode->networkTest,lastNode->externalNetworkTest);
             lastNode->networkTest =
-               CombineExpressions(theEnv,lastNode->networkTest,theLHS->networkTest);
+               CL_CombineExpressions(theEnv,lastNode->networkTest,theLHS->networkTest);
             lastNode->externalNetworkTest = NULL;
            }
 
@@ -771,7 +771,7 @@ void AttachTestCEsToPatternCEs(
                   (lastNode->existsNand == false))
            {
             lastNode->secondaryNetworkTest =
-               CombineExpressions(theEnv,lastNode->secondaryNetworkTest,theLHS->networkTest);
+               CL_CombineExpressions(theEnv,lastNode->secondaryNetworkTest,theLHS->networkTest);
            }
 
          /*================================================================*/
@@ -789,7 +789,7 @@ void AttachTestCEsToPatternCEs(
                   (lastNode->existsNand == false))
            {
             lastNode->secondaryNetworkTest =
-               CombineExpressions(theEnv,lastNode->secondaryNetworkTest,theLHS->networkTest);
+               CL_CombineExpressions(theEnv,lastNode->secondaryNetworkTest,theLHS->networkTest);
            }
 
          /*=============================================================*/
@@ -820,9 +820,9 @@ void AttachTestCEsToPatternCEs(
             lastNode->negated = true;
 
             lastNode->networkTest =
-               CombineExpressions(theEnv,lastNode->networkTest,lastNode->externalNetworkTest);
+               CL_CombineExpressions(theEnv,lastNode->networkTest,lastNode->externalNetworkTest);
             lastNode->networkTest =
-               CombineExpressions(theEnv,lastNode->networkTest,theLHS->networkTest);
+               CL_CombineExpressions(theEnv,lastNode->networkTest,theLHS->networkTest);
             lastNode->externalNetworkTest = NULL;
            }
 
@@ -843,7 +843,7 @@ void AttachTestCEsToPatternCEs(
                   (lastNode->existsNand == true))
            {
             lastNode->secondaryNetworkTest =
-               CombineExpressions(theEnv,lastNode->secondaryNetworkTest,theLHS->networkTest);
+               CL_CombineExpressions(theEnv,lastNode->secondaryNetworkTest,theLHS->networkTest);
            }
 
          /*======================================*/
@@ -863,7 +863,7 @@ void AttachTestCEsToPatternCEs(
                   (lastNode->existsNand == true))
            {
             lastNode->secondaryNetworkTest =
-               CombineExpressions(theEnv,lastNode->secondaryNetworkTest,theLHS->networkTest);
+               CL_CombineExpressions(theEnv,lastNode->secondaryNetworkTest,theLHS->networkTest);
            }
 
          /*==============================================*/
@@ -872,8 +872,8 @@ void AttachTestCEsToPatternCEs(
 
          else
            {
-            SystemError(theEnv,"RULEBLD",2);
-            ExitRouter(theEnv,EXIT_FAILURE);
+            CL_SystemError(theEnv,"RULEBLD",2);
+            CL_ExitRouter(theEnv,EXIT_FAILURE);
            }
         }
 
@@ -883,8 +883,8 @@ void AttachTestCEsToPatternCEs(
 
       else
         {
-         SystemError(theEnv,"RULEBLD",3);
-         ExitRouter(theEnv,EXIT_FAILURE);
+         CL_SystemError(theEnv,"RULEBLD",3);
+         CL_ExitRouter(theEnv,EXIT_FAILURE);
         }
 
       /*=================================================*/
@@ -896,13 +896,13 @@ void AttachTestCEsToPatternCEs(
       theLHS->bottom = NULL;
       lastNode->bottom = tempNode;
       lastNode->endNandDepth = theLHS->endNandDepth;
-      ReturnLHSParseNodes(theEnv,theLHS);
+      CL_ReturnLHSParseNodes(theEnv,theLHS);
       theLHS = tempNode;
      }
   }
 
 /********************************************************************/
-/* FindShareableJoin: Determines whether a join exists that can be  */
+/* FindShareableJoin: DeteCL_rmines whether a join exists that can be  */
 /*   reused for the join currently being added to the join network. */
 /*   Returns a pointer to the join to be shared if one if found,    */
 /*   otherwise returns a NULL pointer.                              */
@@ -939,7 +939,7 @@ static struct joinNode *FindShareableJoin(
       /*=========================================================*/
       /* If the join being tested for reuse is connected on the  */
       /* RHS to the end node of the pattern node associated with */
-      /* the join to be added, then determine if the join can    */
+      /* the join to be added, then deteCL_rmine if the join can    */
       /* be reused. If so, return the join.                      */
       /*=========================================================*/
 
@@ -981,7 +981,7 @@ static struct joinNode *FindShareableJoin(
   }
 
 /**************************************************************/
-/* TestJoinForReuse: Determines if the specified join can be  */
+/* TestJoinForReuse: DeteCL_rmines if the specified join can be  */
 /*   shared with a join being added for a rule being defined. */
 /*   Returns true if the join can be shared, otherwise false. */
 /**************************************************************/
@@ -1026,7 +1026,7 @@ static bool TestJoinForReuse(
 
    if ((isLogical == true) &&
        (testJoin->logicalJoin == false) &&
-       BetaMemoryNotEmpty(testJoin))
+       CL_BetaMemoryNotEmpty(testJoin))
      { return false; }
 
    /*===============================================================*/
@@ -1034,10 +1034,10 @@ static bool TestJoinForReuse(
    /* the networkTest expression stored with the join to be shared. */
    /*===============================================================*/
 
-   if (IdenticalExpression(testJoin->networkTest,joinTest) != true)
+   if (CL_IdenticalExpression(testJoin->networkTest,joinTest) != true)
      { return false; }
 
-   if (IdenticalExpression(testJoin->secondaryNetworkTest,secondaryJoinTest) != true)
+   if (CL_IdenticalExpression(testJoin->secondaryNetworkTest,secondaryJoinTest) != true)
      { return false; }
 
    /*====================================================================*/
@@ -1045,10 +1045,10 @@ static bool TestJoinForReuse(
    /* identical to the hashing values stored with the join to be shared. */
    /*====================================================================*/
 
-   if (IdenticalExpression(testJoin->leftHash,leftHash) != true)
+   if (CL_IdenticalExpression(testJoin->leftHash,leftHash) != true)
      { return false; }
 
-   if (IdenticalExpression(testJoin->rightHash,rightHash) != true)
+   if (CL_IdenticalExpression(testJoin->rightHash,rightHash) != true)
      { return false; }
 
    /*=============================================*/
@@ -1085,8 +1085,8 @@ static struct joinNode *CreateNewJoin(
    /*===============================================*/
 
 #if DEBUGGING_FUNCTIONS
-   if ((GetWatchItem(theEnv,"compilations") == 1) && GetPrintWhileLoading(theEnv))
-     { WriteString(theEnv,STDOUT,"+j"); }
+   if ((CL_GetCL_WatchItem(theEnv,"compilations") == 1) && CL_GetPrintWhileCL_Loading(theEnv))
+     { CL_WriteString(theEnv,STDOUT,"+j"); }
 #endif
 
    /*======================*/
@@ -1105,7 +1105,7 @@ static struct joinNode *CreateNewJoin(
       if (leftHash == NULL)
         {
          newJoin->leftMemory = get_struct(theEnv,betaMemory);
-         newJoin->leftMemory->beta = (struct partialMatch **) genalloc(theEnv,sizeof(struct partialMatch *));
+         newJoin->leftMemory->beta = (struct partialMatch **) CL_genalloc(theEnv,sizeof(struct partialMatch *));
          newJoin->leftMemory->beta[0] = NULL;
          newJoin->leftMemory->last = NULL;
          newJoin->leftMemory->size = 1;
@@ -1114,7 +1114,7 @@ static struct joinNode *CreateNewJoin(
       else
         {
          newJoin->leftMemory = get_struct(theEnv,betaMemory);
-         newJoin->leftMemory->beta = (struct partialMatch **) genalloc(theEnv,sizeof(struct partialMatch *) * INITIAL_BETA_HASH_SIZE);
+         newJoin->leftMemory->beta = (struct partialMatch **) CL_genalloc(theEnv,sizeof(struct partialMatch *) * INITIAL_BETA_HASH_SIZE);
          memset(newJoin->leftMemory->beta,0,sizeof(struct partialMatch *) * INITIAL_BETA_HASH_SIZE);
          newJoin->leftMemory->last = NULL;
          newJoin->leftMemory->size = INITIAL_BETA_HASH_SIZE;
@@ -1130,7 +1130,7 @@ static struct joinNode *CreateNewJoin(
 
       if ((lhsEntryStruct == NULL) && (existsRHSPattern || negatedRHSPattern || joinFromTheRight))
         {
-         newJoin->leftMemory->beta[0] = CreateEmptyPartialMatch(theEnv);
+         newJoin->leftMemory->beta[0] = CL_CreateEmptyPartialMatch(theEnv);
          newJoin->leftMemory->beta[0]->owner = newJoin;
          newJoin->leftMemory->count = 1;
         }
@@ -1143,8 +1143,8 @@ static struct joinNode *CreateNewJoin(
       if (leftHash == NULL)
         {
          newJoin->rightMemory = get_struct(theEnv,betaMemory);
-         newJoin->rightMemory->beta = (struct partialMatch **) genalloc(theEnv,sizeof(struct partialMatch *));
-         newJoin->rightMemory->last = (struct partialMatch **) genalloc(theEnv,sizeof(struct partialMatch *));
+         newJoin->rightMemory->beta = (struct partialMatch **) CL_genalloc(theEnv,sizeof(struct partialMatch *));
+         newJoin->rightMemory->last = (struct partialMatch **) CL_genalloc(theEnv,sizeof(struct partialMatch *));
          newJoin->rightMemory->beta[0] = NULL;
          newJoin->rightMemory->last[0] = NULL;
          newJoin->rightMemory->size = 1;
@@ -1153,8 +1153,8 @@ static struct joinNode *CreateNewJoin(
       else
         {
          newJoin->rightMemory = get_struct(theEnv,betaMemory);
-         newJoin->rightMemory->beta = (struct partialMatch **) genalloc(theEnv,sizeof(struct partialMatch *) * INITIAL_BETA_HASH_SIZE);
-         newJoin->rightMemory->last = (struct partialMatch **) genalloc(theEnv,sizeof(struct partialMatch *) * INITIAL_BETA_HASH_SIZE);
+         newJoin->rightMemory->beta = (struct partialMatch **) CL_genalloc(theEnv,sizeof(struct partialMatch *) * INITIAL_BETA_HASH_SIZE);
+         newJoin->rightMemory->last = (struct partialMatch **) CL_genalloc(theEnv,sizeof(struct partialMatch *) * INITIAL_BETA_HASH_SIZE);
          memset(newJoin->rightMemory->beta,0,sizeof(struct partialMatch *) * INITIAL_BETA_HASH_SIZE);
          memset(newJoin->rightMemory->last,0,sizeof(struct partialMatch *) * INITIAL_BETA_HASH_SIZE);
          newJoin->rightMemory->size = INITIAL_BETA_HASH_SIZE;
@@ -1164,9 +1164,9 @@ static struct joinNode *CreateNewJoin(
    else if (rhsEntryStruct == NULL)
      {
       newJoin->rightMemory = get_struct(theEnv,betaMemory);
-      newJoin->rightMemory->beta = (struct partialMatch **) genalloc(theEnv,sizeof(struct partialMatch *));
-      newJoin->rightMemory->last = (struct partialMatch **) genalloc(theEnv,sizeof(struct partialMatch *));
-      newJoin->rightMemory->beta[0] = CreateEmptyPartialMatch(theEnv);
+      newJoin->rightMemory->beta = (struct partialMatch **) CL_genalloc(theEnv,sizeof(struct partialMatch *));
+      newJoin->rightMemory->last = (struct partialMatch **) CL_genalloc(theEnv,sizeof(struct partialMatch *));
+      newJoin->rightMemory->beta[0] = CL_CreateEmptyPartialMatch(theEnv);
       newJoin->rightMemory->beta[0]->owner = newJoin;
       newJoin->rightMemory->beta[0]->rhsMemory = true;
       newJoin->rightMemory->last[0] = newJoin->rightMemory->beta[0];
@@ -1196,22 +1196,22 @@ static struct joinNode *CreateNewJoin(
    newJoin->memoryCompares = 0;
 
    /*==============================================*/
-   /* Install the expressions used to determine    */
+   /* Install the expressions used to deteCL_rmine    */
    /* if a partial match satisfies the constraints */
    /* associated with this join.                   */
    /*==============================================*/
 
-   newJoin->networkTest = AddHashedExpression(theEnv,joinTest);
-   newJoin->secondaryNetworkTest = AddHashedExpression(theEnv,secondaryJoinTest);
+   newJoin->networkTest = CL_AddHashedExpression(theEnv,joinTest);
+   newJoin->secondaryNetworkTest = CL_AddHashedExpression(theEnv,secondaryJoinTest);
 
    /*=====================================================*/
    /* Install the expression used to hash the beta memory */
-   /* partial match to determine the location to search   */
+   /* partial match to deteCL_rmine the location to search   */
    /* in the alpha memory.                                */
    /*=====================================================*/
 
-   newJoin->leftHash = AddHashedExpression(theEnv,leftHash);
-   newJoin->rightHash = AddHashedExpression(theEnv,rightHash);
+   newJoin->leftHash = CL_AddHashedExpression(theEnv,leftHash);
+   newJoin->rightHash = CL_AddHashedExpression(theEnv,rightHash);
 
    /*============================================================*/
    /* Initialize the values associated with the LHS of the join. */

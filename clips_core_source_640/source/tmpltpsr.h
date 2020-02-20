@@ -16,14 +16,14 @@
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
-/*      6.23: Added support for templates maintaining their  */
+/*      6.23: Added support for templates CL_maintaining their  */
 /*            own list of facts.                             */
 /*                                                           */
 /*      6.30: Removed conditional code for unsupported       */
 /*            compilers/operating systems (IBM_MCW and       */
 /*            MAC_MCW).                                      */
 /*                                                           */
-/*            GetConstructNameAndComment API change.         */
+/*            CL_GetConstructNameAndComment API change.         */
 /*                                                           */
 /*            Support for deftemplate slot facets.           */
 /*                                                           */
@@ -50,8 +50,8 @@
 #include "symbol.h"
 #include "tmpltdef.h"
 
-   bool                           ParseDeftemplate(Environment *,const char *);
-   void                           InstallDeftemplate(Environment *,Deftemplate *);
+   bool                           CL_ParseDeftemplate(Environment *,const char *);
+   void                           CL_InstallDeftemplate(Environment *,Deftemplate *);
 
 #endif /* _H_tmpltpsr */
 

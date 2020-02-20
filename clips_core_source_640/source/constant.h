@@ -72,7 +72,7 @@ typedef enum
   {
    LOCAL_SAVE,
    VISIBLE_SAVE
-  } SaveScope;
+  } CL_SaveScope;
 
 typedef enum
   {

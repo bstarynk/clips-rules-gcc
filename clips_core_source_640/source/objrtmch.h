@@ -123,7 +123,7 @@ struct objectAlphaNode
    CLIPSBitMap *classbmp,*slotbmp;
    OBJECT_PATTERN_NODE *patternNode;
    struct objectAlphaNode *nxtInGroup,
-                          *nxtTerminal;
+                          *nxtTeCL_rminal;
    unsigned long bsaveID;
   };
 
@@ -142,15 +142,15 @@ typedef struct objectMatchAction
    struct objectMatchAction *nxt;
   } OBJECT_MATCH_ACTION;
 
-   void                  ObjectMatchDelay(Environment *,UDFContext *,UDFValue *);
-   bool                  SetDelayObjectPatternMatching(Environment *,bool);
-   bool                  GetDelayObjectPatternMatching(Environment *);
-   OBJECT_PATTERN_NODE  *ObjectNetworkPointer(Environment *);
-   OBJECT_ALPHA_NODE    *ObjectNetworkTerminalPointer(Environment *);
-   void                  SetObjectNetworkPointer(Environment *,OBJECT_PATTERN_NODE *);
-   void                  SetObjectNetworkTerminalPointer(Environment *,OBJECT_ALPHA_NODE *);
-   void                  ObjectNetworkAction(Environment *,int,Instance *,int);
-   void                  ResetObjectMatchTimeTags(Environment *);
+   void                  CL_ObjectMatchDelay(Environment *,UDFContext *,UDFValue *);
+   bool                  CL_SetDelayObjectPatternMatching(Environment *,bool);
+   bool                  CL_GetDelayObjectPatternMatching(Environment *);
+   OBJECT_PATTERN_NODE  *CL_ObjectNetworkPointer(Environment *);
+   OBJECT_ALPHA_NODE    *CL_ObjectNetworkTeCL_rminalPointer(Environment *);
+   void                  SetCL_ObjectNetworkPointer(Environment *,OBJECT_PATTERN_NODE *);
+   void                  SetCL_ObjectNetworkTeCL_rminalPointer(Environment *,OBJECT_ALPHA_NODE *);
+   void                  CL_ObjectNetworkAction(Environment *,int,Instance *,int);
+   void                  CL_ResetObjectMatchTimeTags(Environment *);
 
 #endif /* DEFRULE_CONSTRUCT && OBJECT_SYSTEM */
 

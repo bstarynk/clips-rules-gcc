@@ -47,7 +47,7 @@ typedef struct defmessageHandler DefmessageHandler;
 
 typedef struct instanceSlot InstanceSlot;
 
-typedef struct instanceBuilder InstanceBuilder;
+typedef struct instanceCL_Builder InstanceCL_Builder;
 typedef struct instanceModifier InstanceModifier;
 
 /* Maximum # of simultaneous class hierarchy traversals
@@ -92,7 +92,7 @@ struct defclass
    unsigned system         : 1;
    unsigned abstract       : 1;
    unsigned reactive       : 1;
-   unsigned traceInstances : 1;
+   unsigned traceCL_Instances : 1;
    unsigned traceSlots     : 1;
    unsigned short id;
    unsigned busy;
@@ -116,13 +116,13 @@ struct defclass
    CLIPSBitMap *scopeMap;
 
    /*
-    * Links this defclass to each of the terminal alpha nodes which could be
+    * Links this defclass to each of the teCL_rminal alpha nodes which could be
     * affected by a modification to an instance of it. This saves having to
-    * iterate through every single terminal alpha for every single modification
+    * iterate through every single teCL_rminal alpha for every single modification
     * to an instance of a defclass.
     */
 #if DEFRULE_CONSTRUCT
-   CLASS_ALPHA_LINK *relevant_terminal_alpha_nodes;
+   CLASS_ALPHA_LINK *relevant_teCL_rminal_alpha_nodes;
 #endif
 
    char traversalRecord[TRAVERSAL_BYTES];
@@ -172,7 +172,7 @@ struct slotDescriptor
    unsigned multiple                 : 1;
    unsigned composite                : 1;
    unsigned noInherit                : 1;
-   unsigned noWrite                  : 1;
+   unsigned noCL_Write                  : 1;
    unsigned initializeOnly           : 1;
    unsigned dynamicDefault           : 1;
    unsigned defaultSpecified         : 1;
@@ -180,7 +180,7 @@ struct slotDescriptor
    unsigned reactive                 : 1;
    unsigned publicVisibility         : 1;
    unsigned createReadAccessor       : 1;
-   unsigned createWriteAccessor      : 1;
+   unsigned createCL_WriteAccessor      : 1;
    unsigned overrideMessageSpecified : 1;
    Defclass *cls;
    SLOT_NAME *slotName;
@@ -232,7 +232,7 @@ struct defmessageHandler
    Expression *actions;
   };
 
-struct instanceBuilder
+struct instanceCL_Builder
   {
    Environment *ibEnv;
    Defclass *ibDefclass;

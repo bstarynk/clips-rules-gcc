@@ -17,8 +17,8 @@
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
-/*      6.24: Added environment parameter to GenClose.       */
-/*            Added environment parameter to GenOpen.        */
+/*      6.24: Added environment parameter to CL_GenClose.       */
+/*            Added environment parameter to CL_GenOpen.        */
 /*                                                           */
 /*            Made the construct redefinition message more   */
 /*            prominent.                                     */
@@ -33,7 +33,7 @@
 /*                                                           */
 /*            Changed garbage collection algorithm.          */
 /*                                                           */
-/*            GetConstructNameAndComment API change.         */
+/*            CL_GetConstructNameAndComment API change.         */
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
@@ -41,11 +41,11 @@
 /*            Fixed linkage issue when BLOAD_ONLY compiler   */
 /*            flag is set to 1.                              */
 /*                                                           */
-/*      6.40: Added Env prefix to GetEvaluationError and     */
-/*            SetEvaluationError functions.                  */
+/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
+/*            SetCL_EvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to GetHaltExecution and       */
-/*            SetHaltExecution functions.                    */
+/*            Added Env prefix to CL_GetCL_HaltExecution and       */
+/*            SetCL_HaltExecution functions.                    */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -58,7 +58,7 @@
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
-/*            Added GCBlockStart and GCBlockEnd functions    */
+/*            Added CL_GCBlockStart and CL_GCBlockEnd functions    */
 /*            for garbage collection blocks.                 */
 /*                                                           */
 /*            File name/line count displayed for errors      */
@@ -95,17 +95,17 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static bool                    FindConstructBeginning(Environment *,const char *,struct token *,bool,bool *);
+   static bool                    CL_FindConstructBeginning(Environment *,const char *,struct token *,bool,bool *);
 
 /**********************************************************/
-/* Load: C access routine for the load command. Returns   */
+/* CL_Load: C access routine for the load command. Returns   */
 /*   LE_OPEN_FILE_ERROR if the file couldn't be opened,   */
 /*   LE_PARSING_ERROR if the file was opened but an error */
 /*   occurred while loading constructs, and LE_NO_ERROR   */
 /*   if the file was opened and no errors occured while   */
 /*   loading.                                             */
 /**********************************************************/
-LoadError Load(
+CL_LoadError CL_Load(
   Environment *theEnv,
   const char *fileName)
   {
@@ -117,7 +117,7 @@ LoadError Load(
    /* Open the file specified by file name. */
    /*=======================================*/
 
-   if ((theFile = GenOpen(theEnv,fileName,"r")) == NULL)
+   if ((theFile = CL_GenOpen(theEnv,fileName,"r")) == NULL)
      { return LE_OPEN_FILE_ERROR; }
 
    /*===================================================*/
@@ -126,28 +126,28 @@ LoadError Load(
    /* times.                                            */
    /*===================================================*/
 
-   SetFastLoad(theEnv,theFile);
+   SetFastCL_Load(theEnv,theFile);
 
-   oldParsingFileName = CopyString(theEnv,GetParsingFileName(theEnv));
-   SetParsingFileName(theEnv,fileName);
+   oldParsingFileName = CL_CopyString(theEnv,CL_GetParsingFileName(theEnv));
+   CL_SetParsingFileName(theEnv,fileName);
 
-   SetLoadInProgress(theEnv,true);
-   noErrorsDetected = LoadConstructsFromLogicalName(theEnv,(char *) theFile);
-   SetLoadInProgress(theEnv,false);
+   SetCL_LoadInProgress(theEnv,true);
+   noErrorsDetected = CL_LoadConstructsFromLogicalName(theEnv,(char *) theFile);
+   SetCL_LoadInProgress(theEnv,false);
 
-   SetParsingFileName(theEnv,oldParsingFileName);
-   DeleteString(theEnv,oldParsingFileName);
+   CL_SetParsingFileName(theEnv,oldParsingFileName);
+   CL_DeleteString(theEnv,oldParsingFileName);
 
-   SetWarningFileName(theEnv,NULL);
-   SetErrorFileName(theEnv,NULL);
+   CL_SetWarningFileName(theEnv,NULL);
+   CL_SetErrorFileName(theEnv,NULL);
 
-   SetFastLoad(theEnv,NULL);
+   SetFastCL_Load(theEnv,NULL);
 
    /*=================*/
    /* Close the file. */
    /*=================*/
 
-   GenClose(theEnv,theFile);
+   CL_GenClose(theEnv,theFile);
 
    /*=================================================*/
    /* If no errors occurred during the load, return   */
@@ -161,9 +161,9 @@ LoadError Load(
   }
 
 /*******************/
-/* LoadFromString: */
+/* CL_LoadFromString: */
 /*******************/
-bool LoadFromString(
+bool CL_LoadFromString(
   Environment *theEnv,
   const char *theString,
   size_t theMax)
@@ -175,30 +175,30 @@ bool LoadFromString(
    /* Initialize string router */
    /*==========================*/
 
-   if ((theMax == SIZE_MAX) ? (! OpenStringSource(theEnv,theStrRouter,theString,0)) :
-                              (! OpenTextSource(theEnv,theStrRouter,theString,0,theMax)))
+   if ((theMax == SIZE_MAX) ? (! CL_OpenStringSource(theEnv,theStrRouter,theString,0)) :
+                              (! CL_OpenTextSource(theEnv,theStrRouter,theString,0,theMax)))
      return false;
      
    /*======================*/
-   /* Load the constructs. */
+   /* CL_Load the constructs. */
    /*======================*/
 
-   rv = LoadConstructsFromLogicalName(theEnv,theStrRouter);
+   rv = CL_LoadConstructsFromLogicalName(theEnv,theStrRouter);
       
    /*=================*/
    /* Close router.   */
    /*=================*/
 
-   CloseStringSource(theEnv,theStrRouter);
+   CL_CloseStringSource(theEnv,theStrRouter);
 
    return rv;
   }
 
 /****************************************************/
-/* SetParsingFileName: Sets the file name currently */
+/* CL_SetParsingFileName: Sets the file name currently */
 /*   being parsed by the load/batch command.        */
 /****************************************************/
-void SetParsingFileName(
+void CL_SetParsingFileName(
   Environment *theEnv,
   const char *fileName)
   {
@@ -206,31 +206,31 @@ void SetParsingFileName(
 
    if (fileName != NULL)
      {
-      fileNameCopy = (char *) genalloc(theEnv,strlen(fileName) + 1);
-      genstrcpy(fileNameCopy,fileName);
+      fileNameCopy = (char *) CL_genalloc(theEnv,strlen(fileName) + 1);
+      CL_genstrcpy(fileNameCopy,fileName);
      }
 
    if (ConstructData(theEnv)->ParsingFileName != NULL)
-     { genfree(theEnv,ConstructData(theEnv)->ParsingFileName,strlen(ConstructData(theEnv)->ParsingFileName) + 1); }
+     { CL_genfree(theEnv,ConstructData(theEnv)->ParsingFileName,strlen(ConstructData(theEnv)->ParsingFileName) + 1); }
 
    ConstructData(theEnv)->ParsingFileName = fileNameCopy;
   }
 
 /*******************************************************/
-/* GetParsingFileName: Returns the file name currently */
+/* CL_GetParsingFileName: Returns the file name currently */
 /*   being parsed by the load/batch command.           */
 /*******************************************************/
-char *GetParsingFileName(
+char *CL_GetParsingFileName(
   Environment *theEnv)
   {
    return ConstructData(theEnv)->ParsingFileName;
   }
 
 /**********************************************/
-/* SetErrorFileName: Sets the file name       */
+/* CL_SetErrorFileName: Sets the file name       */
 /*   associated with the last error detected. */
 /**********************************************/
-void SetErrorFileName(
+void CL_SetErrorFileName(
   Environment *theEnv,
   const char *fileName)
   {
@@ -238,31 +238,31 @@ void SetErrorFileName(
 
    if (fileName != NULL)
      {
-      fileNameCopy = (char *) genalloc(theEnv,strlen(fileName) + 1);
-      genstrcpy(fileNameCopy,fileName);
+      fileNameCopy = (char *) CL_genalloc(theEnv,strlen(fileName) + 1);
+      CL_genstrcpy(fileNameCopy,fileName);
      }
 
    if (ConstructData(theEnv)->ErrorFileName != NULL)
-     { genfree(theEnv,ConstructData(theEnv)->ErrorFileName,strlen(ConstructData(theEnv)->ErrorFileName) + 1); }
+     { CL_genfree(theEnv,ConstructData(theEnv)->ErrorFileName,strlen(ConstructData(theEnv)->ErrorFileName) + 1); }
 
    ConstructData(theEnv)->ErrorFileName = fileNameCopy;
   }
 
 /**********************************************/
-/* GetErrorFileName: Returns the file name    */
+/* CL_GetErrorFileName: Returns the file name    */
 /*   associated with the last error detected. */
 /**********************************************/
-char *GetErrorFileName(
+char *CL_GetErrorFileName(
   Environment *theEnv)
   {
    return ConstructData(theEnv)->ErrorFileName;
   }
 
 /************************************************/
-/* SetWarningFileName: Sets the file name       */
+/* CL_SetWarningFileName: Sets the file name       */
 /*   associated with the last warning detected. */
 /************************************************/
-void SetWarningFileName(
+void CL_SetWarningFileName(
   Environment *theEnv,
   const char *fileName)
   {
@@ -270,35 +270,35 @@ void SetWarningFileName(
 
    if (fileName != NULL)
      {
-      fileNameCopy = (char *) genalloc(theEnv,strlen(fileName) + 1);
-      genstrcpy(fileNameCopy,fileName);
+      fileNameCopy = (char *) CL_genalloc(theEnv,strlen(fileName) + 1);
+      CL_genstrcpy(fileNameCopy,fileName);
      }
 
    if (ConstructData(theEnv)->WarningFileName != NULL)
-     { genfree(theEnv,ConstructData(theEnv)->WarningFileName,strlen(ConstructData(theEnv)->WarningFileName) + 1); }
+     { CL_genfree(theEnv,ConstructData(theEnv)->WarningFileName,strlen(ConstructData(theEnv)->WarningFileName) + 1); }
 
    ConstructData(theEnv)->WarningFileName = fileNameCopy;
   }
 
 /************************************************/
-/* GetWarningFileName: Returns the file name    */
+/* CL_GetWarningFileName: Returns the file name    */
 /*   associated with the last warning detected. */
 /************************************************/
-char *GetWarningFileName(
+char *CL_GetWarningFileName(
   Environment *theEnv)
   {
    return ConstructData(theEnv)->WarningFileName;
   }
 
 /*****************************************************************/
-/* LoadConstructsFromLogicalName: Loads a set of constructs into */
+/* CL_LoadConstructsFromLogicalName: CL_Loads a set of constructs into */
 /*   the current environment from a specified logical name.      */
 /*****************************************************************/
-bool LoadConstructsFromLogicalName(
+bool CL_LoadConstructsFromLogicalName(
   Environment *theEnv,
   const char *readSource)
   {
-   BuildError constructFlag;
+   CL_BuildError constructFlag;
    struct token theToken;
    bool noErrors = true;
    bool foundConstruct;
@@ -307,16 +307,16 @@ bool LoadConstructsFromLogicalName(
    const char *oldLineCountRouter;
 
    /*===================================================*/
-   /* Create a router to capture the error information. */
+   /* Create a router to capture the error infoCL_rmation. */
    /*===================================================*/
 
-   CreateErrorCaptureRouter(theEnv);
+   CL_CreateErrorCaptureRouter(theEnv);
 
    /*==============================*/
    /* Initialize the line counter. */
    /*==============================*/
 
-   oldLineCountValue = SetLineCount(theEnv,1);
+   oldLineCountValue = CL_SetLineCount(theEnv,1);
    oldLineCountRouter = RouterData(theEnv)->LineCountRouter;
    RouterData(theEnv)->LineCountRouter = readSource;
 
@@ -324,39 +324,39 @@ bool LoadConstructsFromLogicalName(
    /* If embedded, clear the error flags. */
    /*=====================================*/
    
-   if (EvaluationData(theEnv)->CurrentExpression == NULL)
-     { ResetErrorFlags(theEnv); }
+   if (CL_EvaluationData(theEnv)->CurrentExpression == NULL)
+     { CL_ResetErrorFlags(theEnv); }
 
    /*==========================================*/
    /* Set up the frame for garbage collection. */
    /*==========================================*/
 
-   GCBlockStart(theEnv,&gcb);
+   CL_GCBlockStart(theEnv,&gcb);
 
    /*========================================================*/
    /* Find the beginning of the first construct in the file. */
    /*========================================================*/
 
-   GetToken(theEnv,readSource,&theToken);
-   foundConstruct = FindConstructBeginning(theEnv,readSource,&theToken,false,&noErrors);
+   CL_GetToken(theEnv,readSource,&theToken);
+   foundConstruct = CL_FindConstructBeginning(theEnv,readSource,&theToken,false,&noErrors);
 
    /*==================================================*/
    /* Parse the file until the end of file is reached. */
    /*==================================================*/
 
-   while ((foundConstruct == true) && (GetHaltExecution(theEnv) == false))
+   while ((foundConstruct == true) && (CL_GetCL_HaltExecution(theEnv) == false))
      {
       /*===========================================================*/
-      /* Clear the pretty print buffer in preparation for parsing. */
+      /* CL_Clear the pretty print buffer in preparation for parsing. */
       /*===========================================================*/
 
-      FlushPPBuffer(theEnv);
+      CL_FlushPPBuffer(theEnv);
 
       /*======================*/
       /* Parse the construct. */
       /*======================*/
 
-      constructFlag = ParseConstruct(theEnv,theToken.lexemeValue->contents,readSource);
+      constructFlag = CL_ParseConstruct(theEnv,theToken.lexemeValue->contents,readSource);
 
       /*==============================================================*/
       /* If an error occurred while parsing, then find the beginning  */
@@ -367,15 +367,15 @@ bool LoadConstructsFromLogicalName(
 
       if (constructFlag == BE_PARSING_ERROR)
         {
-         WriteString(theEnv,STDERR,"\nERROR:\n");
-         WriteString(theEnv,STDERR,GetPPBuffer(theEnv));
-         WriteString(theEnv,STDERR,"\n");
+         CL_WriteString(theEnv,STDERR,"\nERROR:\n");
+         CL_WriteString(theEnv,STDERR,CL_GetPPBuffer(theEnv));
+         CL_WriteString(theEnv,STDERR,"\n");
 
-         FlushParsingMessages(theEnv);
+         CL_FlushParsingMessages(theEnv);
 
          noErrors = false;
-         GetToken(theEnv,readSource,&theToken);
-         foundConstruct = FindConstructBeginning(theEnv,readSource,&theToken,true,&noErrors);
+         CL_GetToken(theEnv,readSource,&theToken);
+         foundConstruct = CL_FindConstructBeginning(theEnv,readSource,&theToken,true,&noErrors);
         }
 
       /*======================================================*/
@@ -384,9 +384,9 @@ bool LoadConstructsFromLogicalName(
 
       else
         {
-         FlushParsingMessages(theEnv);
-         GetToken(theEnv,readSource,&theToken);
-         foundConstruct = FindConstructBeginning(theEnv,readSource,&theToken,false,&noErrors);
+         CL_FlushParsingMessages(theEnv);
+         CL_GetToken(theEnv,readSource,&theToken);
+         foundConstruct = CL_FindConstructBeginning(theEnv,readSource,&theToken,false,&noErrors);
         }
 
       /*=====================================================*/
@@ -396,13 +396,13 @@ bool LoadConstructsFromLogicalName(
       if (foundConstruct)
          { IncrementLexemeCount(theToken.value); }
 
-      CleanCurrentGarbageFrame(theEnv,NULL);
-      CallPeriodicTasks(theEnv);
+      CL_CleanCurrentGarbageFrame(theEnv,NULL);
+      CL_CallPeriodicTasks(theEnv);
 
-      YieldTime(theEnv);
+      CL_YieldTime(theEnv);
 
       if (foundConstruct)
-         { ReleaseLexeme(theEnv,theToken.lexemeValue); }
+         { CL_ReleaseLexeme(theEnv,theToken.lexemeValue); }
      }
 
    /*========================================================*/
@@ -411,34 +411,34 @@ bool LoadConstructsFromLogicalName(
    /*========================================================*/
 
 #if DEBUGGING_FUNCTIONS
-   if ((GetWatchItem(theEnv,"compilations") != 1) && GetPrintWhileLoading(theEnv))
+   if ((CL_GetCL_WatchItem(theEnv,"compilations") != 1) && CL_GetPrintWhileCL_Loading(theEnv))
 #else
-   if (GetPrintWhileLoading(theEnv))
+   if (CL_GetPrintWhileCL_Loading(theEnv))
 #endif
-     { WriteString(theEnv,STDOUT,"\n"); }
+     { CL_WriteString(theEnv,STDOUT,"\n"); }
 
    /*=============================================================*/
    /* Once the load is complete, destroy the pretty print buffer. */
    /* This frees up any memory that was used to create the pretty */
-   /* print forms for constructs during parsing. Thus calls to    */
+   /* print foCL_rms for constructs during parsing. Thus calls to    */
    /* the mem-used function will accurately reflect the amount of */
    /* memory being used after a load command.                     */
    /*=============================================================*/
 
-   DestroyPPBuffer(theEnv);
+   CL_DestroyPPBuffer(theEnv);
 
    /*======================================*/
    /* Remove the garbage collection frame. */
    /*======================================*/
 
-   GCBlockEnd(theEnv,&gcb);
-   CallPeriodicTasks(theEnv);
+   CL_GCBlockEnd(theEnv,&gcb);
+   CL_CallPeriodicTasks(theEnv);
 
    /*==============================*/
    /* Deactivate the line counter. */
    /*==============================*/
 
-   SetLineCount(theEnv,oldLineCountValue);
+   CL_SetLineCount(theEnv,oldLineCountValue);
    RouterData(theEnv)->LineCountRouter = oldLineCountRouter;
 
    /*===========================================*/
@@ -446,8 +446,8 @@ bool LoadConstructsFromLogicalName(
    /* and delete the error capture router.      */
    /*===========================================*/
 
-   FlushParsingMessages(theEnv);
-   DeleteErrorCaptureRouter(theEnv);
+   CL_FlushParsingMessages(theEnv);
+   CL_DeleteErrorCaptureRouter(theEnv);
 
    /*==========================================================*/
    /* Return a boolean flag which indicates whether any errors */
@@ -458,12 +458,12 @@ bool LoadConstructsFromLogicalName(
   }
 
 /********************************************************************/
-/* FindConstructBeginning: Searches for a left parenthesis followed */
+/* CL_FindConstructBeginning: Searches for a left parenthesis followed */
 /*   by the name of a valid construct. Used by the load command to  */
 /*   find the next construct to be parsed. Returns true is the      */
 /*   beginning of a construct was found, otherwise false.           */
 /********************************************************************/
-static bool FindConstructBeginning(
+static bool CL_FindConstructBeginning(
   Environment *theEnv,
   const char *readSource,
   struct token *theToken,
@@ -492,7 +492,7 @@ static bool FindConstructBeginning(
       /* The name of the construct follows the opening left parenthesis. */
       /* If it is the name of a valid construct, then return true.       */
       /* Otherwise, reset the flags to look for the beginning of a       */
-      /* construct. If error correction is being performed (i.e. the     */
+      /* construct. If error correction is being perfoCL_rmed (i.e. the     */
       /* last construct parsed had an error in it), then don't bother to */
       /* print an error message, otherwise, print an error message.      */
       /*=================================================================*/
@@ -503,7 +503,7 @@ static bool FindConstructBeginning(
          /* Is this a valid construct name (e.g., defrule, deffacts). */
          /*===========================================================*/
 
-         if (FindConstruct(theEnv,theToken->lexemeValue->contents) != NULL) return true;
+         if (CL_FindConstruct(theEnv,theToken->lexemeValue->contents) != NULL) return true;
 
          /*===============================================*/
          /* The construct name is invalid. Print an error */
@@ -514,8 +514,8 @@ static bool FindConstructBeginning(
            {
             errorCorrection = true;
             *noErrors = false;
-            PrintErrorID(theEnv,"CSTRCPSR",1,true);
-            WriteString(theEnv,STDERR,"Expected the beginning of a construct.\n");
+            CL_PrintErrorID(theEnv,"CSTRCPSR",1,true);
+            CL_WriteString(theEnv,STDERR,"Expected the beginning of a construct.\n");
            }
 
          /*======================================================*/
@@ -540,8 +540,8 @@ static bool FindConstructBeginning(
            {
             errorCorrection = true;
             *noErrors = false;
-            PrintErrorID(theEnv,"CSTRCPSR",1,true);
-            WriteString(theEnv,STDERR,"Expected the beginning of a construct.\n");
+            CL_PrintErrorID(theEnv,"CSTRCPSR",1,true);
+            CL_WriteString(theEnv,STDERR,"Expected the beginning of a construct.\n");
            }
 
          firstAttempt = false;
@@ -552,7 +552,7 @@ static bool FindConstructBeginning(
       /* Move on to the next token to be processed. */
       /*============================================*/
 
-      GetToken(theEnv,readSource,theToken);
+      CL_GetToken(theEnv,readSource,theToken);
      }
 
    /*===================================================================*/
@@ -582,9 +582,9 @@ static bool QueryErrorCallback(
   }
 
 /***********************************************************/
-/* WriteErrorCallback: Write routine for the error router. */
+/* CL_WriteErrorCallback: CL_Write routine for the error router. */
 /***********************************************************/
-static void WriteErrorCallback(
+static void CL_WriteErrorCallback(
   Environment *theEnv,
   const char *logicalName,
   const char *str,
@@ -593,28 +593,28 @@ static void WriteErrorCallback(
    if (strcmp(logicalName,STDERR) == 0)
      {
       ConstructData(theEnv)->ErrorString =
-         AppendToString(theEnv,str,ConstructData(theEnv)->ErrorString,
+         CL_AppendToString(theEnv,str,ConstructData(theEnv)->ErrorString,
                                    &ConstructData(theEnv)->CurErrPos,
                                    &ConstructData(theEnv)->MaxErrChars);
      }
    else if (strcmp(logicalName,STDWRN) == 0)
      {
       ConstructData(theEnv)->WarningString =
-         AppendToString(theEnv,str,ConstructData(theEnv)->WarningString,
+         CL_AppendToString(theEnv,str,ConstructData(theEnv)->WarningString,
                                    &ConstructData(theEnv)->CurWrnPos,
                                    &ConstructData(theEnv)->MaxWrnChars);
      }
 
-   DeactivateRouter(theEnv,"error-capture");
-   WriteString(theEnv,logicalName,str);
-   ActivateRouter(theEnv,"error-capture");
+   CL_DeactivateRouter(theEnv,"error-capture");
+   CL_WriteString(theEnv,logicalName,str);
+   CL_ActivateRouter(theEnv,"error-capture");
   }
 
 /***********************************************/
-/* CreateErrorCaptureRouter: Creates the error */
+/* CL_CreateErrorCaptureRouter: Creates the error */
 /*   capture router if it doesn't exists.      */
 /***********************************************/
-void CreateErrorCaptureRouter(
+void CL_CreateErrorCaptureRouter(
   Environment *theEnv)
   {
    /*===========================================================*/
@@ -632,8 +632,8 @@ void CreateErrorCaptureRouter(
 
    if (ConstructData(theEnv)->errorCaptureRouterCount == 0)
      {
-      AddRouter(theEnv,"error-capture",40,
-                QueryErrorCallback,WriteErrorCallback,
+      CL_AddRouter(theEnv,"error-capture",40,
+                QueryErrorCallback,CL_WriteErrorCallback,
                 NULL,NULL,NULL,NULL);
      }
 
@@ -646,10 +646,10 @@ void CreateErrorCaptureRouter(
   }
 
 /***********************************************/
-/* DeleteErrorCaptureRouter: Deletes the error */
+/* CL_DeleteErrorCaptureRouter: Deletes the error */
 /*   capture router if it exists.              */
 /***********************************************/
-void DeleteErrorCaptureRouter(
+void CL_DeleteErrorCaptureRouter(
    Environment *theEnv)
    {
    /*===========================================================*/
@@ -664,14 +664,14 @@ void DeleteErrorCaptureRouter(
     ConstructData(theEnv)->errorCaptureRouterCount--;
 
     if (ConstructData(theEnv)->errorCaptureRouterCount == 0)
-      { DeleteRouter(theEnv,"error-capture"); }
+      { CL_DeleteRouter(theEnv,"error-capture"); }
    }
 
 /*******************************************************/
-/* FlushParsingMessages: Invokes the callback routines */
+/* CL_FlushParsingMessages: Invokes the callback routines */
 /*   for any existing warning/error messages.          */
 /*******************************************************/
-void FlushParsingMessages(
+void CL_FlushParsingMessages(
   Environment *theEnv)
   {
    /*===========================================================*/
@@ -690,7 +690,7 @@ void FlushParsingMessages(
 
    if (ConstructData(theEnv)->ErrorString != NULL)
      {
-      (*ConstructData(theEnv)->ParserErrorCallback)(theEnv,GetErrorFileName(theEnv),
+      (*ConstructData(theEnv)->ParserErrorCallback)(theEnv,CL_GetErrorFileName(theEnv),
                                                            NULL,ConstructData(theEnv)->ErrorString,
                                                            ConstructData(theEnv)->ErrLineNumber,
                                                            ConstructData(theEnv)->ParserErrorContext);
@@ -698,7 +698,7 @@ void FlushParsingMessages(
 
    if (ConstructData(theEnv)->WarningString != NULL)
      {
-      (*ConstructData(theEnv)->ParserErrorCallback)(theEnv,GetWarningFileName(theEnv),
+      (*ConstructData(theEnv)->ParserErrorCallback)(theEnv,CL_GetWarningFileName(theEnv),
                                                            ConstructData(theEnv)->WarningString,NULL,
                                                            ConstructData(theEnv)->WrnLineNumber,
                                                            ConstructData(theEnv)->ParserErrorContext);
@@ -708,31 +708,31 @@ void FlushParsingMessages(
    /* Delete the error capture strings. */
    /*===================================*/
 
-   SetErrorFileName(theEnv,NULL);
+   CL_SetErrorFileName(theEnv,NULL);
    if (ConstructData(theEnv)->ErrorString != NULL)
-     { genfree(theEnv,ConstructData(theEnv)->ErrorString,strlen(ConstructData(theEnv)->ErrorString) + 1); }
+     { CL_genfree(theEnv,ConstructData(theEnv)->ErrorString,strlen(ConstructData(theEnv)->ErrorString) + 1); }
    ConstructData(theEnv)->ErrorString = NULL;
    ConstructData(theEnv)->CurErrPos = 0;
    ConstructData(theEnv)->MaxErrChars = 0;
 
-   SetWarningFileName(theEnv,NULL);
+   CL_SetWarningFileName(theEnv,NULL);
    if (ConstructData(theEnv)->WarningString != NULL)
-     { genfree(theEnv,ConstructData(theEnv)->WarningString,strlen(ConstructData(theEnv)->WarningString) + 1); }
+     { CL_genfree(theEnv,ConstructData(theEnv)->WarningString,strlen(ConstructData(theEnv)->WarningString) + 1); }
    ConstructData(theEnv)->WarningString = NULL;
    ConstructData(theEnv)->CurWrnPos = 0;
    ConstructData(theEnv)->MaxWrnChars = 0;
   }
 
 /***************************************/
-/* ParseConstruct: Parses a construct. */
+/* CL_ParseConstruct: Parses a construct. */
 /***************************************/
-BuildError ParseConstruct(
+CL_BuildError CL_ParseConstruct(
   Environment *theEnv,
   const char *name,
   const char *logicalName)
   {
    Construct *currentPtr;
-   BuildError rv;
+   CL_BuildError rv;
    bool ov;
    GCBlock gcb;
 
@@ -741,24 +741,24 @@ BuildError ParseConstruct(
    /* (e.g. defrule, deffacts).       */
    /*=================================*/
 
-   currentPtr = FindConstruct(theEnv,name);
+   currentPtr = CL_FindConstruct(theEnv,name);
    if (currentPtr == NULL) return BE_CONSTRUCT_NOT_FOUND_ERROR;
 
    /*==========================================*/
    /* Set up the frame for garbage collection. */
    /*==========================================*/
 
-   GCBlockStart(theEnv,&gcb);
+   CL_GCBlockStart(theEnv,&gcb);
 
    /*==================================*/
    /* Prepare the parsing environment. */
    /*==================================*/
 
-   ov = GetHaltExecution(theEnv);
-   SetEvaluationError(theEnv,false);
-   SetHaltExecution(theEnv,false);
-   ClearParsedBindNames(theEnv);
-   PushRtnBrkContexts(theEnv);
+   ov = CL_GetCL_HaltExecution(theEnv);
+   SetCL_EvaluationError(theEnv,false);
+   SetCL_HaltExecution(theEnv,false);
+   CL_ClearParsedBindNames(theEnv);
+   CL_PushRtnBrkContexts(theEnv);
    ExpressionData(theEnv)->ReturnContext = false;
    ExpressionData(theEnv)->BreakContext = false;
 
@@ -779,18 +779,18 @@ BuildError ParseConstruct(
    /* Restore environment settings. */
    /*===============================*/
 
-   PopRtnBrkContexts(theEnv);
+   CL_PopRtnBrkContexts(theEnv);
 
-   ClearParsedBindNames(theEnv);
-   SetPPBufferStatus(theEnv,false);
-   SetHaltExecution(theEnv,ov);
+   CL_ClearParsedBindNames(theEnv);
+   CL_SetPPBufferStatus(theEnv,false);
+   SetCL_HaltExecution(theEnv,ov);
 
    /*======================================*/
    /* Remove the garbage collection frame. */
    /*======================================*/
 
-   GCBlockEnd(theEnv,&gcb);
-   CallPeriodicTasks(theEnv);
+   CL_GCBlockEnd(theEnv,&gcb);
+   CL_CallPeriodicTasks(theEnv);
 
    /*==============================*/
    /* Return the status of parsing */
@@ -801,32 +801,32 @@ BuildError ParseConstruct(
   }
 
 /******************************************************/
-/* ImportExportConflictMessage: Generic error message */
+/* CL_ImportExportConflictMessage: Generic error message */
 /*   for an import/export module conflict detected    */
 /*   when a construct is being defined.               */
 /******************************************************/
-void ImportExportConflictMessage(
+void CL_ImportExportConflictMessage(
   Environment *theEnv,
   const char *constructName,
   const char *itemName,
   const char *causedByConstruct,
   const char *causedByName)
   {
-   PrintErrorID(theEnv,"CSTRCPSR",3,true);
-   WriteString(theEnv,STDERR,"Cannot define ");
-   WriteString(theEnv,STDERR,constructName);
-   WriteString(theEnv,STDERR," '");
-   WriteString(theEnv,STDERR,itemName);
-   WriteString(theEnv,STDERR,"' because of an import/export conflict");
+   CL_PrintErrorID(theEnv,"CSTRCPSR",3,true);
+   CL_WriteString(theEnv,STDERR,"Cannot define ");
+   CL_WriteString(theEnv,STDERR,constructName);
+   CL_WriteString(theEnv,STDERR," '");
+   CL_WriteString(theEnv,STDERR,itemName);
+   CL_WriteString(theEnv,STDERR,"' because of an import/export conflict");
 
-   if (causedByConstruct == NULL) WriteString(theEnv,STDERR,".\n");
+   if (causedByConstruct == NULL) CL_WriteString(theEnv,STDERR,".\n");
    else
      {
-      WriteString(theEnv,STDERR," caused by the ");
-      WriteString(theEnv,STDERR,causedByConstruct);
-      WriteString(theEnv,STDERR," '");
-      WriteString(theEnv,STDERR,causedByName);
-      WriteString(theEnv,STDERR,"'.\n");
+      CL_WriteString(theEnv,STDERR," caused by the ");
+      CL_WriteString(theEnv,STDERR,causedByConstruct);
+      CL_WriteString(theEnv,STDERR," '");
+      CL_WriteString(theEnv,STDERR,causedByName);
+      CL_WriteString(theEnv,STDERR,"'.\n");
      }
   }
 

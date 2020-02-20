@@ -48,28 +48,28 @@
 
 #define _H_prdctfun
 
-   void                           PredicateFunctionDefinitions(Environment *);
-   void                           EqFunction(Environment *,UDFContext *,UDFValue *);
-   void                           NeqFunction(Environment *,UDFContext *,UDFValue *);
-   void                           StringpFunction(Environment *,UDFContext *,UDFValue *);
-   void                           SymbolpFunction(Environment *,UDFContext *,UDFValue *);
-   void                           LexemepFunction(Environment *,UDFContext *,UDFValue *);
-   void                           NumberpFunction(Environment *,UDFContext *,UDFValue *);
-   void                           FloatpFunction(Environment *,UDFContext *,UDFValue *);
-   void                           IntegerpFunction(Environment *,UDFContext *,UDFValue *);
-   void                           MultifieldpFunction(Environment *,UDFContext *,UDFValue *);
-   void                           ExternalAddresspFunction(Environment *,UDFContext *,UDFValue *);
-   void                           NotFunction(Environment *,UDFContext *,UDFValue *);
-   void                           AndFunction(Environment *,UDFContext *,UDFValue *);
-   void                           OrFunction(Environment *,UDFContext *,UDFValue *);
-   void                           LessThanOrEqualFunction(Environment *,UDFContext *,UDFValue *);
-   void                           GreaterThanOrEqualFunction(Environment *,UDFContext *,UDFValue *);
-   void                           LessThanFunction(Environment *,UDFContext *,UDFValue *);
-   void                           GreaterThanFunction(Environment *,UDFContext *,UDFValue *);
-   void                           NumericEqualFunction(Environment *,UDFContext *,UDFValue *);
-   void                           NumericNotEqualFunction(Environment *,UDFContext *,UDFValue *);
-   void                           OddpFunction(Environment *,UDFContext *,UDFValue *);
-   void                           EvenpFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_PredicateFunctionDefinitions(Environment *);
+   void                           CL_EqFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_NeqFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_StringpFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_SymbolpFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_LexemepFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_NumberpFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_FloatpFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_IntegerpFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_MultifieldpFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_ExternalAddresspFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_NotFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_AndFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_OrFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_LessThanOrEqualFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_GreaterThanOrEqualFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_LessThanFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_GreaterThanFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_NumericEqualFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_NumericNotEqualFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_OddpFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_EvenpFunction(Environment *,UDFContext *,UDFValue *);
 
 #endif /* _H_prdctfun */
 

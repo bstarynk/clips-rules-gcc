@@ -8,7 +8,7 @@
 
 /*************************************************************/
 /* Purpose: Provides functions for parsing the default       */
-/*   attribute and determining default values based on       */
+/*   attribute and deteCL_rmining default values based on       */
 /*   slot constraints.                                       */
 /*                                                           */
 /* Principal Programmer(s):                                  */
@@ -48,8 +48,8 @@
 #include "constrnt.h"
 #include "evaluatn.h"
 
-   void                           DeriveDefaultFromConstraints(Environment *,CONSTRAINT_RECORD *,UDFValue *,bool,bool);
-   struct expr                   *ParseDefault(Environment *,const char *,bool,bool,bool,bool *,bool *,bool *);
+   void                           CL_DeriveDefaultFromConstraints(Environment *,CONSTRAINT_RECORD *,UDFValue *,bool,bool);
+   struct expr                   *CL_ParseDefault(Environment *,const char *,bool,bool,bool,bool *,bool *,bool *);
 
 #endif /* _H_default */
 

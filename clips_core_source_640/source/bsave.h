@@ -21,7 +21,7 @@
 /*                                                           */
 /*      6.30: Changed integer type/precision.                */
 /*                                                           */
-/*            Used genstrncpy instead of strncpy.            */
+/*            Used CL_genstrncpy instead of strncpy.            */
 /*                                                           */
 /*            Borland C (IBM_TBC) and Metrowerks CodeWarrior */
 /*            (MAC_MCW, IBM_MCW) are no longer supported.    */
@@ -96,21 +96,21 @@ struct bsaveData
   {
    struct BinaryItem *ListOfBinaryItems;
 #if BLOAD_AND_BSAVE
-   BLOADCNTSV *BloadCountSaveTop;
+   BLOADCNTSV *CL_BloadCountCL_SaveTop;
 #endif
   };
 
-#define BsaveData(theEnv) ((struct bsaveData *) GetEnvironmentData(theEnv,BSAVE_DATA))
+#define CL_BsaveData(theEnv) ((struct bsaveData *) GetEnvironmentData(theEnv,BSAVE_DATA))
 
-   void                    InitializeBsaveData(Environment *);
-   void                    BsaveCommand(Environment *,UDFContext *,UDFValue *);
+   void                    InitializeCL_BsaveData(Environment *);
+   void                    CL_BsaveCommand(Environment *,UDFContext *,UDFValue *);
 #if BLOAD_AND_BSAVE
-   bool                    Bsave(Environment *,const char *);
-   void                    MarkNeededItems(Environment *,struct expr *);
-   void                    SaveBloadCount(Environment *,unsigned long);
-   void                    RestoreBloadCount(Environment *,unsigned long *);
+   bool                    CL_Bsave(Environment *,const char *);
+   void                    CL_MarkNeededItems(Environment *,struct expr *);
+   void                    CL_SaveCL_BloadCount(Environment *,unsigned long);
+   void                    RestoreCL_BloadCount(Environment *,unsigned long *);
 #endif
-   bool                    AddBinaryItem(Environment *,const char *,int,
+   bool                    CL_AddBinaryItem(Environment *,const char *,int,
                                          void (*)(Environment *),
                                          void (*)(Environment *,FILE *),
                                          void (*)(Environment *,FILE *),

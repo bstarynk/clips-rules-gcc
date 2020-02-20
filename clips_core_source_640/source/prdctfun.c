@@ -59,39 +59,39 @@
 #include "prdctfun.h"
 
 /**************************************************/
-/* PredicateFunctionDefinitions: Defines standard */
+/* CL_PredicateFunctionDefinitions: Defines standard */
 /*   math and predicate functions.                */
 /**************************************************/
-void PredicateFunctionDefinitions(
+void CL_PredicateFunctionDefinitions(
   Environment *theEnv)
   {
 #if ! RUN_TIME
-   AddUDF(theEnv,"not","b",1,1,NULL,NotFunction,"NotFunction",NULL);
-   AddUDF(theEnv,"and","b",2,UNBOUNDED ,NULL,AndFunction,"AndFunction",NULL);
-   AddUDF(theEnv,"or","b",2,UNBOUNDED ,NULL,OrFunction,"OrFunction",NULL);
+   CL_AddUDF(theEnv,"not","b",1,1,NULL,CL_NotFunction,"CL_NotFunction",NULL);
+   CL_AddUDF(theEnv,"and","b",2,UNBOUNDED ,NULL,CL_AndFunction,"CL_AndFunction",NULL);
+   CL_AddUDF(theEnv,"or","b",2,UNBOUNDED ,NULL,CL_OrFunction,"CL_OrFunction",NULL);
 
-   AddUDF(theEnv,"eq","b",2,UNBOUNDED,NULL,EqFunction,"EqFunction",NULL);
-   AddUDF(theEnv,"neq","b",2,UNBOUNDED,NULL,NeqFunction,"NeqFunction",NULL);
+   CL_AddUDF(theEnv,"eq","b",2,UNBOUNDED,NULL,CL_EqFunction,"CL_EqFunction",NULL);
+   CL_AddUDF(theEnv,"neq","b",2,UNBOUNDED,NULL,CL_NeqFunction,"CL_NeqFunction",NULL);
 
-   AddUDF(theEnv,"<=","b",2,UNBOUNDED ,"ld",LessThanOrEqualFunction,"LessThanOrEqualFunction",NULL);
-   AddUDF(theEnv,">=","b",2,UNBOUNDED ,"ld",GreaterThanOrEqualFunction,"GreaterThanOrEqualFunction",NULL);
-   AddUDF(theEnv,"<","b",2,UNBOUNDED ,"ld",LessThanFunction,"LessThanFunction",NULL);
-   AddUDF(theEnv,">","b",2,UNBOUNDED ,"ld",GreaterThanFunction,"GreaterThanFunction",NULL);
-   AddUDF(theEnv,"=","b",2,UNBOUNDED ,"ld",NumericEqualFunction,"NumericEqualFunction",NULL);
-   AddUDF(theEnv,"<>","b",2,UNBOUNDED ,"ld",NumericNotEqualFunction,"NumericNotEqualFunction",NULL);
-   AddUDF(theEnv,"!=","b",2,UNBOUNDED ,"ld",NumericNotEqualFunction,"NumericNotEqualFunction",NULL);
+   CL_AddUDF(theEnv,"<=","b",2,UNBOUNDED ,"ld",CL_LessThanOrEqualFunction,"CL_LessThanOrEqualFunction",NULL);
+   CL_AddUDF(theEnv,">=","b",2,UNBOUNDED ,"ld",CL_GreaterThanOrEqualFunction,"CL_GreaterThanOrEqualFunction",NULL);
+   CL_AddUDF(theEnv,"<","b",2,UNBOUNDED ,"ld",CL_LessThanFunction,"CL_LessThanFunction",NULL);
+   CL_AddUDF(theEnv,">","b",2,UNBOUNDED ,"ld",CL_GreaterThanFunction,"CL_GreaterThanFunction",NULL);
+   CL_AddUDF(theEnv,"=","b",2,UNBOUNDED ,"ld",CL_NumericEqualFunction,"CL_NumericEqualFunction",NULL);
+   CL_AddUDF(theEnv,"<>","b",2,UNBOUNDED ,"ld",CL_NumericNotEqualFunction,"CL_NumericNotEqualFunction",NULL);
+   CL_AddUDF(theEnv,"!=","b",2,UNBOUNDED ,"ld",CL_NumericNotEqualFunction,"CL_NumericNotEqualFunction",NULL);
 
-   AddUDF(theEnv,"symbolp","b",1,1,NULL,SymbolpFunction,"SymbolpFunction",NULL);
-   AddUDF(theEnv,"stringp","b",1,1,NULL,StringpFunction,"StringpFunction",NULL);
-   AddUDF(theEnv,"lexemep","b",1,1,NULL,LexemepFunction,"LexemepFunction",NULL);
-   AddUDF(theEnv,"numberp","b",1,1,NULL,NumberpFunction,"NumberpFunction",NULL);
-   AddUDF(theEnv,"integerp","b",1,1,NULL,IntegerpFunction,"IntegerpFunction",NULL);
-   AddUDF(theEnv,"floatp","b",1,1,NULL,FloatpFunction,"FloatpFunction",NULL);
-   AddUDF(theEnv,"oddp","b",1,1,"l",OddpFunction,"OddpFunction",NULL);
-   AddUDF(theEnv,"evenp","b",1,1,"l",EvenpFunction,"EvenpFunction",NULL);
-   AddUDF(theEnv,"multifieldp","b",1,1,NULL,MultifieldpFunction,"MultifieldpFunction",NULL);
-   AddUDF(theEnv,"pointerp","b",1,1,NULL,ExternalAddresspFunction,"ExternalAddresspFunction",NULL);
-   AddUDF(theEnv,"external-addressp","b",1,1,NULL,ExternalAddresspFunction,"ExternalAddresspFunction",NULL);
+   CL_AddUDF(theEnv,"symbolp","b",1,1,NULL,CL_SymbolpFunction,"CL_SymbolpFunction",NULL);
+   CL_AddUDF(theEnv,"stringp","b",1,1,NULL,CL_StringpFunction,"CL_StringpFunction",NULL);
+   CL_AddUDF(theEnv,"lexemep","b",1,1,NULL,CL_LexemepFunction,"CL_LexemepFunction",NULL);
+   CL_AddUDF(theEnv,"numberp","b",1,1,NULL,CL_NumberpFunction,"CL_NumberpFunction",NULL);
+   CL_AddUDF(theEnv,"integerp","b",1,1,NULL,CL_IntegerpFunction,"CL_IntegerpFunction",NULL);
+   CL_AddUDF(theEnv,"floatp","b",1,1,NULL,CL_FloatpFunction,"CL_FloatpFunction",NULL);
+   CL_AddUDF(theEnv,"oddp","b",1,1,"l",CL_OddpFunction,"CL_OddpFunction",NULL);
+   CL_AddUDF(theEnv,"evenp","b",1,1,"l",CL_EvenpFunction,"CL_EvenpFunction",NULL);
+   CL_AddUDF(theEnv,"multifieldp","b",1,1,NULL,CL_MultifieldpFunction,"CL_MultifieldpFunction",NULL);
+   CL_AddUDF(theEnv,"pointerp","b",1,1,NULL,CL_ExternalAddresspFunction,"CL_ExternalAddresspFunction",NULL);
+   CL_AddUDF(theEnv,"external-addressp","b",1,1,NULL,CL_ExternalAddresspFunction,"CL_ExternalAddresspFunction",NULL);
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -100,10 +100,10 @@ void PredicateFunctionDefinitions(
   }
 
 /************************************/
-/* EqFunction: H/L access routine   */
+/* CL_EqFunction: H/L access routine   */
 /*   for the eq function.           */
 /************************************/
-void EqFunction(
+void CL_EqFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -113,10 +113,10 @@ void EqFunction(
    struct expr *theExpression;
 
    /*====================================*/
-   /* Determine the number of arguments. */
+   /* DeteCL_rmine the number of arguments. */
    /*====================================*/
 
-   numArgs = UDFArgumentCount(context);
+   numArgs = CL_UDFArgumentCount(context);
    if (numArgs == 0)
      {
       returnValue->lexemeValue = FalseSymbol(theEnv);
@@ -129,7 +129,7 @@ void EqFunction(
    /*==============================================*/
 
    theExpression = GetFirstArgument();
-   EvaluateExpression(theEnv,theExpression,&item);
+   CL_EvaluateExpression(theEnv,theExpression,&item);
 
    /*=====================================*/
    /* Compare all arguments to the first. */
@@ -139,7 +139,7 @@ void EqFunction(
    theExpression = GetNextArgument(theExpression);
    for (i = 2 ; i <= numArgs ; i++)
      {
-      EvaluateExpression(theEnv,theExpression,&nextItem);
+      CL_EvaluateExpression(theEnv,theExpression,&nextItem);
 
       if (nextItem.header->type != item.header->type)
         {
@@ -149,7 +149,7 @@ void EqFunction(
 
       if (nextItem.header->type == MULTIFIELD_TYPE)
         {
-         if (MultifieldDOsEqual(&nextItem,&item) == false)
+         if (MultifieldCL_DOsEqual(&nextItem,&item) == false)
            {
             returnValue->lexemeValue = FalseSymbol(theEnv);
             return;
@@ -173,10 +173,10 @@ void EqFunction(
   }
 
 /*************************************/
-/* NeqFunction: H/L access routine   */
+/* CL_NeqFunction: H/L access routine   */
 /*   for the neq function.           */
 /*************************************/
-void NeqFunction(
+void CL_NeqFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -186,10 +186,10 @@ void NeqFunction(
    struct expr *theExpression;
 
    /*====================================*/
-   /* Determine the number of arguments. */
+   /* DeteCL_rmine the number of arguments. */
    /*====================================*/
 
-   numArgs = UDFArgumentCount(context);
+   numArgs = CL_UDFArgumentCount(context);
    if (numArgs == 0)
      {
       returnValue->lexemeValue = FalseSymbol(theEnv);
@@ -202,7 +202,7 @@ void NeqFunction(
    /*==============================================*/
 
    theExpression = GetFirstArgument();
-   EvaluateExpression(theEnv,theExpression,&item);
+   CL_EvaluateExpression(theEnv,theExpression,&item);
 
    /*=====================================*/
    /* Compare all arguments to the first. */
@@ -213,12 +213,12 @@ void NeqFunction(
         i <= numArgs;
         i++, theExpression = GetNextArgument(theExpression))
      {
-      EvaluateExpression(theEnv,theExpression,&nextItem);
+      CL_EvaluateExpression(theEnv,theExpression,&nextItem);
       if (nextItem.header->type != item.header->type)
         { continue; }
       else if (nextItem.header->type == MULTIFIELD_TYPE)
         {
-         if (MultifieldDOsEqual(&nextItem,&item) == true)
+         if (MultifieldCL_DOsEqual(&nextItem,&item) == true)
            {
             returnValue->lexemeValue = FalseSymbol(theEnv);
             return;
@@ -240,17 +240,17 @@ void NeqFunction(
   }
 
 /*****************************************/
-/* StringpFunction: H/L access routine   */
+/* CL_StringpFunction: H/L access routine   */
 /*   for the stringp function.           */
 /*****************************************/
-void StringpFunction(
+void CL_StringpFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
    UDFValue item;
 
-   if (! UDFFirstArgument(context,ANY_TYPE_BITS,&item))
+   if (! CL_UDFFirstArgument(context,ANY_TYPE_BITS,&item))
      { return; }
 
    if (CVIsType(&item,STRING_BIT))
@@ -260,17 +260,17 @@ void StringpFunction(
   }
 
 /*****************************************/
-/* SymbolpFunction: H/L access routine   */
+/* CL_SymbolpFunction: H/L access routine   */
 /*   for the symbolp function.           */
 /*****************************************/
-void SymbolpFunction(
+void CL_SymbolpFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
    UDFValue item;
 
-   if (! UDFFirstArgument(context,ANY_TYPE_BITS,&item))
+   if (! CL_UDFFirstArgument(context,ANY_TYPE_BITS,&item))
      { return; }
 
    if (CVIsType(&item,SYMBOL_BIT))
@@ -280,17 +280,17 @@ void SymbolpFunction(
   }
 
 /*****************************************/
-/* LexemepFunction: H/L access routine   */
+/* CL_LexemepFunction: H/L access routine   */
 /*   for the lexemep function.           */
 /*****************************************/
-void LexemepFunction(
+void CL_LexemepFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
    UDFValue item;
 
-   if (! UDFFirstArgument(context,ANY_TYPE_BITS,&item))
+   if (! CL_UDFFirstArgument(context,ANY_TYPE_BITS,&item))
      { return; }
 
    if (CVIsType(&item,LEXEME_BITS))
@@ -300,17 +300,17 @@ void LexemepFunction(
   }
 
 /*****************************************/
-/* NumberpFunction: H/L access routine   */
+/* CL_NumberpFunction: H/L access routine   */
 /*   for the numberp function.           */
 /*****************************************/
-void NumberpFunction(
+void CL_NumberpFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
    UDFValue item;
 
-   if (! UDFFirstArgument(context,ANY_TYPE_BITS,&item))
+   if (! CL_UDFFirstArgument(context,ANY_TYPE_BITS,&item))
      { return; }
 
    if (CVIsType(&item,NUMBER_BITS))
@@ -320,17 +320,17 @@ void NumberpFunction(
   }
 
 /****************************************/
-/* FloatpFunction: H/L access routine   */
+/* CL_FloatpFunction: H/L access routine   */
 /*   for the floatp function.           */
 /****************************************/
-void FloatpFunction(
+void CL_FloatpFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
    UDFValue item;
 
-   if (! UDFFirstArgument(context,ANY_TYPE_BITS,&item))
+   if (! CL_UDFFirstArgument(context,ANY_TYPE_BITS,&item))
      { return; }
 
    if (CVIsType(&item,FLOAT_BIT))
@@ -340,17 +340,17 @@ void FloatpFunction(
   }
 
 /******************************************/
-/* IntegerpFunction: H/L access routine   */
+/* CL_IntegerpFunction: H/L access routine   */
 /*   for the integerp function.           */
 /******************************************/
-void IntegerpFunction(
+void CL_IntegerpFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
    UDFValue item;
 
-   if (! UDFFirstArgument(context,ANY_TYPE_BITS,&item))
+   if (! CL_UDFFirstArgument(context,ANY_TYPE_BITS,&item))
      { return; }
 
    if (CVIsType(&item,INTEGER_BIT))
@@ -360,17 +360,17 @@ void IntegerpFunction(
   }
 
 /*********************************************/
-/* MultifieldpFunction: H/L access routine   */
+/* CL_MultifieldpFunction: H/L access routine   */
 /*   for the multifieldp function.           */
 /*********************************************/
-void MultifieldpFunction(
+void CL_MultifieldpFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
    UDFValue item;
 
-   if (! UDFFirstArgument(context,ANY_TYPE_BITS,&item))
+   if (! CL_UDFFirstArgument(context,ANY_TYPE_BITS,&item))
      { return; }
 
    if (CVIsType(&item,MULTIFIELD_BIT))
@@ -380,17 +380,17 @@ void MultifieldpFunction(
   }
 
 /************************************************/
-/* ExternalAddresspFunction: H/L access routine */
+/* CL_ExternalAddresspFunction: H/L access routine */
 /*   for the external-addressp function.        */
 /************************************************/
-void ExternalAddresspFunction(
+void CL_ExternalAddresspFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
    UDFValue item;
 
-   if (! UDFFirstArgument(context,ANY_TYPE_BITS,&item))
+   if (! CL_UDFFirstArgument(context,ANY_TYPE_BITS,&item))
      { return; }
 
    if (CVIsType(&item,EXTERNAL_ADDRESS_BIT))
@@ -400,17 +400,17 @@ void ExternalAddresspFunction(
   }
 
 /***********************************/
-/* NotFunction: H/L access routine */
+/* CL_NotFunction: H/L access routine */
 /*   for the not function.         */
 /***********************************/
-void NotFunction(
+void CL_NotFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
    UDFValue theArg;
 
-   if (! UDFFirstArgument(context,ANY_TYPE_BITS,&theArg))
+   if (! CL_UDFFirstArgument(context,ANY_TYPE_BITS,&theArg))
      { return; }
 
    if (theArg.value == FalseSymbol(theEnv))
@@ -420,10 +420,10 @@ void NotFunction(
   }
 
 /*************************************/
-/* AndFunction: H/L access routine   */
+/* CL_AndFunction: H/L access routine   */
 /*   for the and function.           */
 /*************************************/
-void AndFunction(
+void CL_AndFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -432,7 +432,7 @@ void AndFunction(
 
    while (UDFHasNextArgument(context))
      {
-      if (! UDFNextArgument(context,ANY_TYPE_BITS,&theArg))
+      if (! CL_UDFNextArgument(context,ANY_TYPE_BITS,&theArg))
         { return; }
 
       if (theArg.value == FalseSymbol(theEnv))
@@ -446,10 +446,10 @@ void AndFunction(
   }
 
 /************************************/
-/* OrFunction: H/L access routine   */
+/* CL_OrFunction: H/L access routine   */
 /*   for the or function.           */
 /************************************/
-void OrFunction(
+void CL_OrFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -458,7 +458,7 @@ void OrFunction(
 
    while (UDFHasNextArgument(context))
      {
-      if (! UDFNextArgument(context,ANY_TYPE_BITS,&theArg))
+      if (! CL_UDFNextArgument(context,ANY_TYPE_BITS,&theArg))
         { return; }
 
       if (theArg.value != FalseSymbol(theEnv))
@@ -472,10 +472,10 @@ void OrFunction(
   }
 
 /*****************************************/
-/* LessThanOrEqualFunction: H/L access   */
+/* CL_LessThanOrEqualFunction: H/L access   */
 /*   routine for the <= function.        */
 /*****************************************/
-void LessThanOrEqualFunction(
+void CL_LessThanOrEqualFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -486,7 +486,7 @@ void LessThanOrEqualFunction(
    /* Get the first argument. */
    /*=========================*/
 
-   if (! UDFFirstArgument(context,NUMBER_BITS,&rv1))
+   if (! CL_UDFFirstArgument(context,NUMBER_BITS,&rv1))
      { return; }
 
    /*====================================================*/
@@ -496,7 +496,7 @@ void LessThanOrEqualFunction(
 
    while (UDFHasNextArgument(context))
      {
-      if (! UDFNextArgument(context,NUMBER_BITS,&rv2))
+      if (! CL_UDFNextArgument(context,NUMBER_BITS,&rv2))
         { return; }
 
       if (CVIsType(&rv1,INTEGER_BIT) && CVIsType(&rv2,INTEGER_BIT))
@@ -528,10 +528,10 @@ void LessThanOrEqualFunction(
   }
 
 /********************************************/
-/* GreaterThanOrEqualFunction: H/L access   */
+/* CL_GreaterThanOrEqualFunction: H/L access   */
 /*   routine for the >= function.           */
 /********************************************/
-void GreaterThanOrEqualFunction(
+void CL_GreaterThanOrEqualFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -542,7 +542,7 @@ void GreaterThanOrEqualFunction(
    /* Get the first argument. */
    /*=========================*/
 
-   if (! UDFFirstArgument(context,NUMBER_BITS,&rv1))
+   if (! CL_UDFFirstArgument(context,NUMBER_BITS,&rv1))
      { return; }
 
    /*===================================================*/
@@ -552,7 +552,7 @@ void GreaterThanOrEqualFunction(
 
    while (UDFHasNextArgument(context))
      {
-      if (! UDFNextArgument(context,NUMBER_BITS,&rv2))
+      if (! CL_UDFNextArgument(context,NUMBER_BITS,&rv2))
         { return; }
 
       if (CVIsType(&rv1,INTEGER_BIT) && CVIsType(&rv2,INTEGER_BIT))
@@ -584,10 +584,10 @@ void GreaterThanOrEqualFunction(
   }
 
 /**********************************/
-/* LessThanFunction: H/L access   */
+/* CL_LessThanFunction: H/L access   */
 /*   routine for the < function.  */
 /**********************************/
-void LessThanFunction(
+void CL_LessThanFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -598,7 +598,7 @@ void LessThanFunction(
    /* Get the first argument. */
    /*=========================*/
 
-   if (! UDFFirstArgument(context,NUMBER_BITS,&rv1))
+   if (! CL_UDFFirstArgument(context,NUMBER_BITS,&rv1))
      { return; }
 
    /*==========================================*/
@@ -609,7 +609,7 @@ void LessThanFunction(
 
    while (UDFHasNextArgument(context))
      {
-      if (! UDFNextArgument(context,NUMBER_BITS,&rv2))
+      if (! CL_UDFNextArgument(context,NUMBER_BITS,&rv2))
         { return; }
 
       if (CVIsType(&rv1,INTEGER_BIT) && CVIsType(&rv2,INTEGER_BIT))
@@ -641,10 +641,10 @@ void LessThanFunction(
   }
 
 /*************************************/
-/* GreaterThanFunction: H/L access   */
+/* CL_GreaterThanFunction: H/L access   */
 /*   routine for the > function.     */
 /*************************************/
-void GreaterThanFunction(
+void CL_GreaterThanFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -655,7 +655,7 @@ void GreaterThanFunction(
    /* Get the first argument. */
    /*=========================*/
 
-   if (! UDFFirstArgument(context,NUMBER_BITS,&rv1))
+   if (! CL_UDFFirstArgument(context,NUMBER_BITS,&rv1))
      { return; }
 
    /*==========================================*/
@@ -666,7 +666,7 @@ void GreaterThanFunction(
 
    while (UDFHasNextArgument(context))
      {
-      if (! UDFNextArgument(context,NUMBER_BITS,&rv2))
+      if (! CL_UDFNextArgument(context,NUMBER_BITS,&rv2))
         { return; }
 
       if (CVIsType(&rv1,INTEGER_BIT) && CVIsType(&rv2,INTEGER_BIT))
@@ -698,10 +698,10 @@ void GreaterThanFunction(
   }
 
 /**************************************/
-/* NumericEqualFunction: H/L access   */
+/* CL_NumericEqualFunction: H/L access   */
 /*   routine for the = function.      */
 /**************************************/
-void NumericEqualFunction(
+void CL_NumericEqualFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -712,7 +712,7 @@ void NumericEqualFunction(
    /* Get the first argument. */
    /*=========================*/
 
-   if (! UDFFirstArgument(context,NUMBER_BITS,&rv1))
+   if (! CL_UDFFirstArgument(context,NUMBER_BITS,&rv1))
      { return; }
 
    /*=================================================*/
@@ -722,7 +722,7 @@ void NumericEqualFunction(
 
    while (UDFHasNextArgument(context))
      {
-      if (! UDFNextArgument(context,NUMBER_BITS,&rv2))
+      if (! CL_UDFNextArgument(context,NUMBER_BITS,&rv2))
         { return; }
 
       if (CVIsType(&rv1,INTEGER_BIT) && CVIsType(&rv2,INTEGER_BIT))
@@ -752,10 +752,10 @@ void NumericEqualFunction(
   }
 
 /*****************************************/
-/* NumericNotEqualFunction: H/L access   */
+/* CL_NumericNotEqualFunction: H/L access   */
 /*   routine for the <> function.        */
 /*****************************************/
-void NumericNotEqualFunction(
+void CL_NumericNotEqualFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -766,7 +766,7 @@ void NumericNotEqualFunction(
    /* Get the first argument. */
    /*=========================*/
 
-   if (! UDFFirstArgument(context,NUMBER_BITS,&rv1))
+   if (! CL_UDFFirstArgument(context,NUMBER_BITS,&rv1))
      { return; }
 
    /*=================================================*/
@@ -776,7 +776,7 @@ void NumericNotEqualFunction(
 
    while (UDFHasNextArgument(context))
      {
-      if (! UDFNextArgument(context,NUMBER_BITS,&rv2))
+      if (! CL_UDFNextArgument(context,NUMBER_BITS,&rv2))
         { return; }
 
       if (CVIsType(&rv1,INTEGER_BIT) && CVIsType(&rv2,INTEGER_BIT))
@@ -806,10 +806,10 @@ void NumericNotEqualFunction(
   }
 
 /**************************************/
-/* OddpFunction: H/L access routine   */
+/* CL_OddpFunction: H/L access routine   */
 /*   for the oddp function.           */
 /**************************************/
-void OddpFunction(
+void CL_OddpFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -821,7 +821,7 @@ void OddpFunction(
    /* Check for the correct types of arguments. */
    /*===========================================*/
 
-   if (! UDFFirstArgument(context,INTEGER_BIT,&item))
+   if (! CL_UDFFirstArgument(context,INTEGER_BIT,&item))
      { return; }
 
    /*===========================*/
@@ -836,10 +836,10 @@ void OddpFunction(
   }
 
 /***************************************/
-/* EvenpFunction: H/L access routine   */
+/* CL_EvenpFunction: H/L access routine   */
 /*   for the evenp function.           */
 /***************************************/
-void EvenpFunction(
+void CL_EvenpFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -851,7 +851,7 @@ void EvenpFunction(
    /* Check for the correct types of arguments. */
    /*===========================================*/
 
-   if (! UDFFirstArgument(context,INTEGER_BIT,&item))
+   if (! CL_UDFFirstArgument(context,INTEGER_BIT,&item))
      { return; }
 
    /*===========================*/

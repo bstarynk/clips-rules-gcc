@@ -37,12 +37,12 @@
 /*                                                           */
 /*            Command history and editing support            */
 /*                                                           */
-/*            Used genstrcpy instead of strcpy.              */
+/*            Used CL_genstrcpy instead of strcpy.              */
 /*                                                           */
 /*            Added before command execution callback        */
 /*            function.                                      */
 /*                                                           */
-/*            Fixed RouteCommand return value.               */
+/*            Fixed CL_RouteCommand return value.               */
 /*                                                           */
 /*            Added AwaitingInput flag.                      */
 /*                                                           */
@@ -79,13 +79,13 @@ typedef void EventFunction(Environment *);
 
 struct commandLineData
   {
-   bool EvaluatingTopLevelCommand;
-   bool HaltCommandLoopBatch;
+   bool CL_EvaluatingCL_TopLevelCommand;
+   bool CL_HaltCL_CommandLoopCL_Batch;
 #if ! RUN_TIME
    struct expr *CurrentCommand;
    char *CommandString;
    size_t MaximumCharacters;
-   bool ParsingTopLevelCommand;
+   bool ParsingCL_TopLevelCommand;
    const char *BannerString;
    EventFunction *EventCallback;
    AfterPromptFunction *AfterPromptCallback;
@@ -95,33 +95,33 @@ struct commandLineData
 
 #define CommandLineData(theEnv) ((struct commandLineData *) GetEnvironmentData(theEnv,COMMANDLINE_DATA))
 
-   void                           InitializeCommandLineData(Environment *);
-   bool                           ExpandCommandString(Environment *,int);
-   void                           FlushCommandString(Environment *);
-   void                           SetCommandString(Environment *,const char *);
-   void                           AppendCommandString(Environment *,const char *);
-   void                           InsertCommandString(Environment *,const char *,unsigned);
-   char                          *GetCommandString(Environment *);
-   int                            CompleteCommand(const char *);
-   void                           CommandLoop(Environment *);
-   void                           CommandLoopBatch(Environment *);
-   void                           CommandLoopBatchDriver(Environment *);
-   void                           PrintPrompt(Environment *);
-   void                           PrintBanner(Environment *);
-   void                           SetAfterPromptFunction(Environment *,AfterPromptFunction *);
-   void                           SetBeforeCommandExecutionFunction(Environment *,BeforeCommandExecutionFunction *);
-   bool                           RouteCommand(Environment *,const char *,bool);
-   EventFunction                 *SetEventFunction(Environment *,EventFunction *);
-   bool                           TopLevelCommand(Environment *);
-   void                           AppendNCommandString(Environment *,const char *,unsigned);
-   void                           SetNCommandString(Environment *,const char *,unsigned);
-   const char                    *GetCommandCompletionString(Environment *,const char *,size_t);
-   bool                           ExecuteIfCommandComplete(Environment *);
-   void                           CommandLoopOnceThenBatch(Environment *);
-   bool                           CommandCompleteAndNotEmpty(Environment *);
-   void                           SetHaltCommandLoopBatch(Environment *,bool);
-   bool                           GetHaltCommandLoopBatch(Environment *);
-   void                           RerouteStdin(Environment *,int,char *[]);
+   void                           CL_InitializeCommandLineData(Environment *);
+   bool                           CL_ExpandCommandString(Environment *,int);
+   void                           CL_FlushCommandString(Environment *);
+   void                           CL_SetCommandString(Environment *,const char *);
+   void                           CL_AppendCommandString(Environment *,const char *);
+   void                           CL_InsertCommandString(Environment *,const char *,unsigned);
+   char                          *CL_GetCommandString(Environment *);
+   int                            CL_CompleteCommand(const char *);
+   void                           CL_CommandLoop(Environment *);
+   void                           CL_CommandLoopCL_Batch(Environment *);
+   void                           CL_CommandLoopCL_BatchDriver(Environment *);
+   void                           CL_PrintPrompt(Environment *);
+   void                           CL_PrintBanner(Environment *);
+   void                           CL_SetAfterPromptFunction(Environment *,AfterPromptFunction *);
+   void                           CL_SetBeforeCommandExecutionFunction(Environment *,BeforeCommandExecutionFunction *);
+   bool                           CL_RouteCommand(Environment *,const char *,bool);
+   EventFunction                 *CL_SetEventFunction(Environment *,EventFunction *);
+   bool                           CL_TopLevelCommand(Environment *);
+   void                           CL_AppendNCommandString(Environment *,const char *,unsigned);
+   void                           CL_SetNCommandString(Environment *,const char *,unsigned);
+   const char                    *CL_GetCommandCompletionString(Environment *,const char *,size_t);
+   bool                           CL_ExecuteIfCommandComplete(Environment *);
+   void                           CL_CommandLoopOnceThenCL_Batch(Environment *);
+   bool                           CL_CommandCompleteAndNotEmpty(Environment *);
+   void                           SetCL_HaltCL_CommandLoopCL_Batch(Environment *,bool);
+   bool                           GetCL_HaltCL_CommandLoopCL_Batch(Environment *);
+   void                           CL_RerouteStdin(Environment *,int,char *[]);
 
 #endif
 

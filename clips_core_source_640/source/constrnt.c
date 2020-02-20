@@ -47,7 +47,7 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/*            Eval support for run time and bload only.      */
+/*            CL_Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -80,33 +80,33 @@
    static void                     DeallocateConstraintData(Environment *);
 
 /*****************************************************/
-/* InitializeConstraints: Initializes the constraint */
+/* CL_InitializeConstraints: Initializes the constraint */
 /*   hash table to NULL and defines the static and   */
 /*   dynamic constraint access functions.            */
 /*****************************************************/
-void InitializeConstraints(
+void CL_InitializeConstraints(
   Environment *theEnv)
   {
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    int i;
 #endif
 
-   AllocateEnvironmentData(theEnv,CONSTRAINT_DATA,sizeof(struct constraintData),DeallocateConstraintData);
+   CL_AllocateEnvironmentData(theEnv,CONSTRAINT_DATA,sizeof(struct constraintData),DeallocateConstraintData);
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
 
     ConstraintData(theEnv)->ConstraintHashtable = (struct constraintRecord **)
-                          gm2(theEnv,sizeof (struct constraintRecord *) *
+                          CL_gm2(theEnv,sizeof (struct constraintRecord *) *
                                     SIZE_CONSTRAINT_HASH);
 
-    if (ConstraintData(theEnv)->ConstraintHashtable == NULL) ExitRouter(theEnv,EXIT_FAILURE);
+    if (ConstraintData(theEnv)->ConstraintHashtable == NULL) CL_ExitRouter(theEnv,EXIT_FAILURE);
 
     for (i = 0; i < SIZE_CONSTRAINT_HASH; i++) ConstraintData(theEnv)->ConstraintHashtable[i] = NULL;
 #endif
 
 #if (! RUN_TIME)
-   AddUDF(theEnv,"get-dynamic-constraint-checking","b",0,0,NULL,GDCCommand,"GDCCommand",NULL);
-   AddUDF(theEnv,"set-dynamic-constraint-checking","b",1,1,NULL,SDCCommand,"SDCCommand",NULL);
+   CL_AddUDF(theEnv,"get-dynamic-constraint-checking","b",0,0,NULL,CL_GDCCommand,"CL_GDCCommand",NULL);
+   CL_AddUDF(theEnv,"set-dynamic-constraint-checking","b",1,1,NULL,CL_SDCCommand,"CL_SDCCommand",NULL);
 #endif
   }
 
@@ -132,7 +132,7 @@ static void DeallocateConstraintData(
         }
      }
 
-   rm(theEnv,ConstraintData(theEnv)->ConstraintHashtable,
+   CL_rm(theEnv,ConstraintData(theEnv)->ConstraintHashtable,
       sizeof(struct constraintRecord *) * SIZE_CONSTRAINT_HASH);
 #else
 #if MAC_XCD
@@ -143,7 +143,7 @@ static void DeallocateConstraintData(
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE) && (! RUN_TIME)
    if (ConstraintData(theEnv)->NumberOfConstraints != 0)
      {
-      genfree(theEnv,ConstraintData(theEnv)->ConstraintArray,
+      CL_genfree(theEnv,ConstraintData(theEnv)->ConstraintArray,
               (sizeof(CONSTRAINT_RECORD) * ConstraintData(theEnv)->NumberOfConstraints));
      }
 #endif
@@ -162,12 +162,12 @@ static void ReturnConstraintRecord(
 
    if (! constraints->installed)
      {
-      ReturnExpression(theEnv,constraints->classList);
-      ReturnExpression(theEnv,constraints->restrictionList);
-      ReturnExpression(theEnv,constraints->maxValue);
-      ReturnExpression(theEnv,constraints->minValue);
-      ReturnExpression(theEnv,constraints->minFields);
-      ReturnExpression(theEnv,constraints->maxFields);
+      CL_ReturnExpression(theEnv,constraints->classList);
+      CL_ReturnExpression(theEnv,constraints->restrictionList);
+      CL_ReturnExpression(theEnv,constraints->maxValue);
+      CL_ReturnExpression(theEnv,constraints->minValue);
+      CL_ReturnExpression(theEnv,constraints->minFields);
+      CL_ReturnExpression(theEnv,constraints->maxFields);
      }
 
    ReturnConstraintRecord(theEnv,constraints->multifield);
@@ -186,21 +186,21 @@ static void DeinstallConstraintRecord(
   {
    if (constraints->installed)
      {
-      RemoveHashedExpression(theEnv,constraints->classList);
-      RemoveHashedExpression(theEnv,constraints->restrictionList);
-      RemoveHashedExpression(theEnv,constraints->maxValue);
-      RemoveHashedExpression(theEnv,constraints->minValue);
-      RemoveHashedExpression(theEnv,constraints->minFields);
-      RemoveHashedExpression(theEnv,constraints->maxFields);
+      CL_RemoveHashedExpression(theEnv,constraints->classList);
+      CL_RemoveHashedExpression(theEnv,constraints->restrictionList);
+      CL_RemoveHashedExpression(theEnv,constraints->maxValue);
+      CL_RemoveHashedExpression(theEnv,constraints->minValue);
+      CL_RemoveHashedExpression(theEnv,constraints->minFields);
+      CL_RemoveHashedExpression(theEnv,constraints->maxFields);
      }
    else
      {
-      ExpressionDeinstall(theEnv,constraints->classList);
-      ExpressionDeinstall(theEnv,constraints->restrictionList);
-      ExpressionDeinstall(theEnv,constraints->maxValue);
-      ExpressionDeinstall(theEnv,constraints->minValue);
-      ExpressionDeinstall(theEnv,constraints->minFields);
-      ExpressionDeinstall(theEnv,constraints->maxFields);
+      CL_ExpressionDeinstall(theEnv,constraints->classList);
+      CL_ExpressionDeinstall(theEnv,constraints->restrictionList);
+      CL_ExpressionDeinstall(theEnv,constraints->maxValue);
+      CL_ExpressionDeinstall(theEnv,constraints->minValue);
+      CL_ExpressionDeinstall(theEnv,constraints->minFields);
+      CL_ExpressionDeinstall(theEnv,constraints->maxFields);
      }
 
    if (constraints->multifield != NULL)
@@ -208,10 +208,10 @@ static void DeinstallConstraintRecord(
   }
 
 /******************************************/
-/* RemoveConstraint: Removes a constraint */
+/* CL_RemoveConstraint: Removes a constraint */
 /*   from the constraint hash table.      */
 /******************************************/
-void RemoveConstraint(
+void CL_RemoveConstraint(
   Environment *theEnv,
   struct constraintRecord *theConstraint)
   {
@@ -264,10 +264,10 @@ void RemoveConstraint(
 #if (! RUN_TIME) && (! BLOAD_ONLY)
 
 /***********************************/
-/* HashConstraint: Returns a hash  */
+/* CL_HashConstraint: Returns a hash  */
 /*   value for a given constraint. */
 /***********************************/
-unsigned long HashConstraint(
+unsigned long CL_HashConstraint(
   struct constraintRecord *theConstraint)
   {
    unsigned short i = 0;
@@ -300,25 +300,25 @@ unsigned long HashConstraint(
       (theConstraint->instanceNameRestriction * 7);
 
    for (tmpPtr = theConstraint->classList; tmpPtr != NULL; tmpPtr = tmpPtr->nextArg)
-     { count += GetAtomicHashValue(tmpPtr->type,tmpPtr->value,i++); }
+     { count += CL_GetAtomicHashValue(tmpPtr->type,tmpPtr->value,i++); }
 
    for (tmpPtr = theConstraint->restrictionList; tmpPtr != NULL; tmpPtr = tmpPtr->nextArg)
-     { count += GetAtomicHashValue(tmpPtr->type,tmpPtr->value,i++); }
+     { count += CL_GetAtomicHashValue(tmpPtr->type,tmpPtr->value,i++); }
 
    for (tmpPtr = theConstraint->minValue; tmpPtr != NULL; tmpPtr = tmpPtr->nextArg)
-     { count += GetAtomicHashValue(tmpPtr->type,tmpPtr->value,i++); }
+     { count += CL_GetAtomicHashValue(tmpPtr->type,tmpPtr->value,i++); }
 
    for (tmpPtr = theConstraint->maxValue; tmpPtr != NULL; tmpPtr = tmpPtr->nextArg)
-     { count += GetAtomicHashValue(tmpPtr->type,tmpPtr->value,i++); }
+     { count += CL_GetAtomicHashValue(tmpPtr->type,tmpPtr->value,i++); }
 
    for (tmpPtr = theConstraint->minFields; tmpPtr != NULL; tmpPtr = tmpPtr->nextArg)
-     { count += GetAtomicHashValue(tmpPtr->type,tmpPtr->value,i++); }
+     { count += CL_GetAtomicHashValue(tmpPtr->type,tmpPtr->value,i++); }
 
    for (tmpPtr = theConstraint->maxFields; tmpPtr != NULL; tmpPtr = tmpPtr->nextArg)
-     { count += GetAtomicHashValue(tmpPtr->type,tmpPtr->value,i++); }
+     { count += CL_GetAtomicHashValue(tmpPtr->type,tmpPtr->value,i++); }
 
    if (theConstraint->multifield != NULL)
-     { count += HashConstraint(theConstraint->multifield); }
+     { count += CL_HashConstraint(theConstraint->multifield); }
 
    hashValue = count % SIZE_CONSTRAINT_HASH;
 
@@ -421,10 +421,10 @@ static bool ConstraintCompare(
   }
 
 /************************************/
-/* AddConstraint: Adds a constraint */
+/* CL_AddConstraint: Adds a constraint */
 /*   to the constraint hash table.  */
 /************************************/
-struct constraintRecord *AddConstraint(
+struct constraintRecord *CL_AddConstraint(
   Environment *theEnv,
   struct constraintRecord *theConstraint)
   {
@@ -433,7 +433,7 @@ struct constraintRecord *AddConstraint(
 
    if (theConstraint == NULL) return NULL;
 
-   hashValue = HashConstraint(theConstraint);
+   hashValue = CL_HashConstraint(theConstraint);
 
    for (tmpPtr = ConstraintData(theEnv)->ConstraintHashtable[hashValue];
         tmpPtr != NULL;
@@ -467,28 +467,28 @@ static void InstallConstraintRecord(
   {
    struct expr *tempExpr;
 
-   tempExpr = AddHashedExpression(theEnv,constraints->classList);
-   ReturnExpression(theEnv,constraints->classList);
+   tempExpr = CL_AddHashedExpression(theEnv,constraints->classList);
+   CL_ReturnExpression(theEnv,constraints->classList);
    constraints->classList = tempExpr;
 
-   tempExpr = AddHashedExpression(theEnv,constraints->restrictionList);
-   ReturnExpression(theEnv,constraints->restrictionList);
+   tempExpr = CL_AddHashedExpression(theEnv,constraints->restrictionList);
+   CL_ReturnExpression(theEnv,constraints->restrictionList);
    constraints->restrictionList = tempExpr;
 
-   tempExpr = AddHashedExpression(theEnv,constraints->maxValue);
-   ReturnExpression(theEnv,constraints->maxValue);
+   tempExpr = CL_AddHashedExpression(theEnv,constraints->maxValue);
+   CL_ReturnExpression(theEnv,constraints->maxValue);
    constraints->maxValue = tempExpr;
 
-   tempExpr = AddHashedExpression(theEnv,constraints->minValue);
-   ReturnExpression(theEnv,constraints->minValue);
+   tempExpr = CL_AddHashedExpression(theEnv,constraints->minValue);
+   CL_ReturnExpression(theEnv,constraints->minValue);
    constraints->minValue = tempExpr;
 
-   tempExpr = AddHashedExpression(theEnv,constraints->minFields);
-   ReturnExpression(theEnv,constraints->minFields);
+   tempExpr = CL_AddHashedExpression(theEnv,constraints->minFields);
+   CL_ReturnExpression(theEnv,constraints->minFields);
    constraints->minFields = tempExpr;
 
-   tempExpr = AddHashedExpression(theEnv,constraints->maxFields);
-   ReturnExpression(theEnv,constraints->maxFields);
+   tempExpr = CL_AddHashedExpression(theEnv,constraints->maxFields);
+   CL_ReturnExpression(theEnv,constraints->maxFields);
    constraints->maxFields = tempExpr;
 
    if (constraints->multifield != NULL)
@@ -498,41 +498,41 @@ static void InstallConstraintRecord(
 #endif /* (! RUN_TIME) && (! BLOAD_ONLY) */
 
 /**********************************************/
-/* SDCCommand: H/L access routine for the     */
+/* CL_SDCCommand: H/L access routine for the     */
 /*   set-dynamic-constraint-checking command. */
 /**********************************************/
-void SDCCommand(
+void CL_SDCCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
    UDFValue theArg;
 
-   returnValue->lexemeValue = CreateBoolean(theEnv,GetDynamicConstraintChecking(theEnv));
+   returnValue->lexemeValue = CL_CreateBoolean(theEnv,CL_GetDynamicConstraintChecking(theEnv));
 
-   if (! UDFFirstArgument(context,ANY_TYPE_BITS,&theArg))
+   if (! CL_UDFFirstArgument(context,ANY_TYPE_BITS,&theArg))
      { return; }
 
-   SetDynamicConstraintChecking(theEnv,theArg.value != FalseSymbol(theEnv));
+   CL_SetDynamicConstraintChecking(theEnv,theArg.value != FalseSymbol(theEnv));
   }
 
 /**********************************************/
-/* GDCCommand: H/L access routine for the     */
+/* CL_GDCCommand: H/L access routine for the     */
 /*   get-dynamic-constraint-checking command. */
 /**********************************************/
-void GDCCommand(
+void CL_GDCCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
-   returnValue->lexemeValue = CreateBoolean(theEnv,GetDynamicConstraintChecking(theEnv));
+   returnValue->lexemeValue = CL_CreateBoolean(theEnv,CL_GetDynamicConstraintChecking(theEnv));
   }
 
 /******************************************************/
-/* SetDynamicConstraintChecking: C access routine     */
+/* CL_SetDynamicConstraintChecking: C access routine     */
 /*   for the set-dynamic-constraint-checking command. */
 /******************************************************/
-bool SetDynamicConstraintChecking(
+bool CL_SetDynamicConstraintChecking(
   Environment *theEnv,
   bool value)
   {
@@ -543,10 +543,10 @@ bool SetDynamicConstraintChecking(
   }
 
 /******************************************************/
-/* GetDynamicConstraintChecking: C access routine     */
+/* CL_GetDynamicConstraintChecking: C access routine     */
 /*   for the get-dynamic-constraint-checking command. */
 /******************************************************/
-bool GetDynamicConstraintChecking(
+bool CL_GetDynamicConstraintChecking(
   Environment *theEnv)
   {
    return(ConstraintData(theEnv)->DynamicConstraintChecking);

@@ -31,21 +31,21 @@
 #include "userdata.h"
 
 /*************************************************/
-/* InitializeUserDataData: Allocates environment */
+/* CL_InitializeUserDataData: Allocates environment */
 /*    data for user data routines.               */
 /*************************************************/
-void InitializeUserDataData(
+void CL_InitializeUserDataData(
   Environment *theEnv)
   {
-   AllocateEnvironmentData(theEnv,USER_DATA_DATA,sizeof(struct userDataData),NULL);
+   CL_AllocateEnvironmentData(theEnv,USER_DATA_DATA,sizeof(struct userDataData),NULL);
   }
 
 /******************************************************/
-/* InstallUserDataRecord: Installs a user data record */
+/* CL_InstallUserDataRecord: Installs a user data record */
 /*   in the user data record array and returns the    */
 /*   integer data ID associated with the record.      */
 /******************************************************/
-unsigned char InstallUserDataRecord(
+unsigned char CL_InstallUserDataRecord(
   Environment *theEnv,
   struct userDataRecord *theRecord)
   {
@@ -55,11 +55,11 @@ unsigned char InstallUserDataRecord(
   }
 
 /*****************************************************/
-/* FetchUserData: Searches for user data information */
+/* CL_FetchUserData: Searches for user data infoCL_rmation */
 /*   from a list of user data structures. A new user */
 /*   data structure is created if one is not found.  */
 /*****************************************************/
-struct userData *FetchUserData(
+struct userData *CL_FetchUserData(
   Environment *theEnv,
   unsigned char userDataID,
   struct userData **theList)
@@ -83,12 +83,12 @@ struct userData *FetchUserData(
   }
 
 /*****************************************************/
-/* TestUserData: Searches for user data information  */
+/* CL_TestUserData: Searches for user data infoCL_rmation  */
 /*   from a list of user data structures. NULL is    */
 /*   returned if the appropriate user data structure */
 /*   is not found.                                   */
 /*****************************************************/
-struct userData *TestUserData(
+struct userData *CL_TestUserData(
   unsigned char userDataID,
   struct userData *theList)
   {
@@ -106,9 +106,9 @@ struct userData *TestUserData(
   }
 
 /***************************************************************/
-/* ClearUserDataList: Deallocates a linked list of user data.  */
+/* CL_ClearUserDataList: Deallocates a linked list of user data.  */
 /***************************************************************/
-void ClearUserDataList(
+void CL_ClearUserDataList(
   Environment *theEnv,
   struct userData *theList)
   {
@@ -123,10 +123,10 @@ void ClearUserDataList(
   }
 
 /*************************************************/
-/* DeleteUserData: Removes user data information */
+/* CL_DeleteUserData: Removes user data infoCL_rmation */
 /*   from a list of user data structures.        */
 /*************************************************/
-struct userData *DeleteUserData(
+struct userData *CL_DeleteUserData(
   Environment *theEnv,
   unsigned char userDataID,
   struct userData *theList)

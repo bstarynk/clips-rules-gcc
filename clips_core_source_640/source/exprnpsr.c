@@ -41,7 +41,7 @@
 /*      6.31: Fixed bug where sequence expansion was always  */
 /*            occurring when using $ with global variables.  */
 /*                                                           */
-/*            Fast router used for ParseConstantArguments.   */
+/*            Fast router used for CL_ParseConstantArguments.   */
 /*                                                           */
 /*      6.40: Changed restrictions from char * to            */
 /*            CLIPSLexeme * to support strings               */
@@ -61,7 +61,7 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/*            Eval support for run time and bload only.      */
+/*            CL_Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -103,10 +103,10 @@
 #if (! RUN_TIME)
 
 /***************************************************/
-/* Function0Parse: Parses a function. Assumes that */
+/* CL_Function0Parse: Parses a function. Assumes that */
 /*   none of the function has been parsed yet.     */
 /***************************************************/
-struct expr *Function0Parse(
+struct expr *CL_Function0Parse(
   Environment *theEnv,
   const char *logicalName)
   {
@@ -117,10 +117,10 @@ struct expr *Function0Parse(
    /* All functions begin with a '('. */
    /*=================================*/
 
-   GetToken(theEnv,logicalName,&theToken);
+   CL_GetToken(theEnv,logicalName,&theToken);
    if (theToken.tknType != LEFT_PARENTHESIS_TOKEN)
      {
-      SyntaxErrorMessage(theEnv,"function calls");
+      CL_SyntaxErrorMessage(theEnv,"function calls");
       return NULL;
      }
 
@@ -128,17 +128,17 @@ struct expr *Function0Parse(
    /* Parse the rest of the function. */
    /*=================================*/
 
-   top = Function1Parse(theEnv,logicalName);
+   top = CL_Function1Parse(theEnv,logicalName);
    return(top);
   }
 
 #endif
 
 /*******************************************************/
-/* Function1Parse: Parses a function. Assumes that the */
+/* CL_Function1Parse: Parses a function. Assumes that the */
 /*   opening left parenthesis has already been parsed. */
 /*******************************************************/
-struct expr *Function1Parse(
+struct expr *CL_Function1Parse(
   Environment *theEnv,
   const char *logicalName)
   {
@@ -149,11 +149,11 @@ struct expr *Function1Parse(
    /* Get the function name. */
    /*========================*/
 
-   GetToken(theEnv,logicalName,&theToken);
+   CL_GetToken(theEnv,logicalName,&theToken);
    if (theToken.tknType != SYMBOL_TOKEN)
      {
-      PrintErrorID(theEnv,"EXPRNPSR",1,true);
-      WriteString(theEnv,STDERR,"A function name must be a symbol.\n");
+      CL_PrintErrorID(theEnv,"EXPRNPSR",1,true);
+      CL_WriteString(theEnv,STDERR,"A function name must be a symbol.\n");
       return NULL;
      }
 
@@ -161,16 +161,16 @@ struct expr *Function1Parse(
    /* Parse the rest of the function. */
    /*=================================*/
 
-   top = Function2Parse(theEnv,logicalName,theToken.lexemeValue->contents);
+   top = CL_Function2Parse(theEnv,logicalName,theToken.lexemeValue->contents);
    return(top);
   }
 
 /****************************************************/
-/* Function2Parse: Parses a function. Assumes that  */
+/* CL_Function2Parse: Parses a function. Assumes that  */
 /*   the opening left parenthesis and function name */
 /*   have already been parsed.                      */
 /****************************************************/
-struct expr *Function2Parse(
+struct expr *CL_Function2Parse(
   Environment *theEnv,
   const char *logicalName,
   const char *name)
@@ -191,10 +191,10 @@ struct expr *Function2Parse(
    /* Look for a module specifier. */
    /*==============================*/
 
-   if ((position = FindModuleSeparator(name)) != 0)
+   if ((position = CL_FindModuleSeparator(name)) != 0)
      {
-      moduleName = ExtractModuleName(theEnv,position,name);
-      constructName = ExtractConstructName(theEnv,position,name,SYMBOL_TYPE);
+      moduleName = CL_ExtractModuleName(theEnv,position,name);
+      constructName = CL_ExtractConstructName(theEnv,position,name,SYMBOL_TYPE);
       moduleSpecified = true;
      }
 
@@ -202,19 +202,19 @@ struct expr *Function2Parse(
    /* Has the function been defined? */
    /*================================*/
 
-   theFunction = FindFunction(theEnv,name);
+   theFunction = CL_FindFunction(theEnv,name);
 
 #if DEFGENERIC_CONSTRUCT
    if (moduleSpecified)
      {
-      if (ConstructExported(theEnv,"defgeneric",moduleName,constructName) ||
-          GetCurrentModule(theEnv) == FindDefmodule(theEnv,moduleName->contents))
-        { gfunc = FindDefgenericInModule(theEnv,name); }
+      if (CL_ConstructExported(theEnv,"defgeneric",moduleName,constructName) ||
+          CL_GetCurrentModule(theEnv) == CL_FindDefmodule(theEnv,moduleName->contents))
+        { gfunc = CL_FindDefgenericInModule(theEnv,name); }
       else
         { gfunc = NULL; }
      }
    else
-     { gfunc = LookupDefgenericInScope(theEnv,name); }
+     { gfunc = CL_LookupDefgenericInScope(theEnv,name); }
 #endif
 
 #if DEFFUNCTION_CONSTRUCT
@@ -226,14 +226,14 @@ struct expr *Function2Parse(
 #endif
      if (moduleSpecified)
        {
-        if (ConstructExported(theEnv,"deffunction",moduleName,constructName) ||
-            GetCurrentModule(theEnv) == FindDefmodule(theEnv,moduleName->contents))
-          { dptr = FindDeffunctionInModule(theEnv,name); }
+        if (CL_ConstructExported(theEnv,"deffunction",moduleName,constructName) ||
+            CL_GetCurrentModule(theEnv) == CL_FindDefmodule(theEnv,moduleName->contents))
+          { dptr = CL_FindDeffunctionInModule(theEnv,name); }
         else
           { dptr = NULL; }
        }
      else
-       { dptr = LookupDeffunctionInScope(theEnv,name); }
+       { dptr = CL_LookupDeffunctionInScope(theEnv,name); }
    else
      dptr = NULL;
 #endif
@@ -244,22 +244,22 @@ struct expr *Function2Parse(
 
 #if DEFFUNCTION_CONSTRUCT
    if (dptr != NULL)
-     top = GenConstant(theEnv,PCALL,dptr);
+     top = CL_GenConstant(theEnv,PCALL,dptr);
    else
 #endif
 #if DEFGENERIC_CONSTRUCT
    if (gfunc != NULL)
-     top = GenConstant(theEnv,GCALL,gfunc);
+     top = CL_GenConstant(theEnv,GCALL,gfunc);
    else
 #endif
    if (theFunction != NULL)
-     top = GenConstant(theEnv,FCALL,theFunction);
+     top = CL_GenConstant(theEnv,FCALL,theFunction);
    else
      {
-      PrintErrorID(theEnv,"EXPRNPSR",3,true);
-      WriteString(theEnv,STDERR,"Missing function declaration for '");
-      WriteString(theEnv,STDERR,name);
-      WriteString(theEnv,STDERR,"'.\n");
+      CL_PrintErrorID(theEnv,"EXPRNPSR",3,true);
+      CL_WriteString(theEnv,STDERR,"Missing function declaration for '");
+      CL_WriteString(theEnv,STDERR,name);
+      CL_WriteString(theEnv,STDERR,"'.\n");
       return NULL;
      }
 
@@ -267,7 +267,7 @@ struct expr *Function2Parse(
    /* Check to see if function has its own parsing routine. */
    /*=======================================================*/
 
-   PushRtnBrkContexts(theEnv);
+   CL_PushRtnBrkContexts(theEnv);
    ExpressionData(theEnv)->ReturnContext = false;
    ExpressionData(theEnv)->BreakContext = false;
 
@@ -278,12 +278,12 @@ struct expr *Function2Parse(
       if (theFunction->parser != NULL)
         {
          top = (*theFunction->parser)(theEnv,top,logicalName);
-         PopRtnBrkContexts(theEnv);
+         CL_PopRtnBrkContexts(theEnv);
          if (top == NULL) return NULL;
-         if (ReplaceSequenceExpansionOps(theEnv,top->argList,top,FindFunction(theEnv,"(expansion-call)"),
-                                         FindFunction(theEnv,"expand$")))
+         if (CL_ReplaceSequenceExpansionOps(theEnv,top->argList,top,CL_FindFunction(theEnv,"(expansion-call)"),
+                                         CL_FindFunction(theEnv,"expand$")))
            {
-            ReturnExpression(theEnv,top);
+            CL_ReturnExpression(theEnv,top);
             return NULL;
            }
          return(top);
@@ -294,14 +294,14 @@ struct expr *Function2Parse(
    /* Default parsing routine for functions. */
    /*========================================*/
 
-   top = CollectArguments(theEnv,top,logicalName);
-   PopRtnBrkContexts(theEnv);
+   top = CL_CollectArguments(theEnv,top,logicalName);
+   CL_PopRtnBrkContexts(theEnv);
    if (top == NULL) return NULL;
 
-   if (ReplaceSequenceExpansionOps(theEnv,top->argList,top,FindFunction(theEnv,"(expansion-call)"),
-                                    FindFunction(theEnv,"expand$")))
+   if (CL_ReplaceSequenceExpansionOps(theEnv,top->argList,top,CL_FindFunction(theEnv,"(expansion-call)"),
+                                    CL_FindFunction(theEnv,"expand$")))
      {
-      ReturnExpression(theEnv,top);
+      CL_ReturnExpression(theEnv,top);
       return NULL;
      }
 
@@ -310,7 +310,7 @@ struct expr *Function2Parse(
    /* its arguments cannot be checked until runtime.             */
    /*============================================================*/
 
-   if (top->value == FindFunction(theEnv,"(expansion-call)"))
+   if (top->value == CL_FindFunction(theEnv,"(expansion-call)"))
      { return(top); }
 
    /*============================*/
@@ -319,9 +319,9 @@ struct expr *Function2Parse(
 
    if (top->type == FCALL)
      {
-      if (CheckExpressionAgainstRestrictions(theEnv,top,theFunction,name))
+      if (CL_CheckExpressionAgainstRestrictions(theEnv,top,theFunction,name))
         {
-         ReturnExpression(theEnv,top);
+         CL_ReturnExpression(theEnv,top);
          return NULL;
         }
      }
@@ -329,9 +329,9 @@ struct expr *Function2Parse(
 #if DEFFUNCTION_CONSTRUCT
    else if (top->type == PCALL)
      {
-      if (CheckDeffunctionCall(theEnv,(Deffunction *) top->value,CountArguments(top->argList)) == false)
+      if (CL_CheckDeffunctionCall(theEnv,(Deffunction *) top->value,CL_CountArguments(top->argList)) == false)
         {
-         ReturnExpression(theEnv,top);
+         CL_ReturnExpression(theEnv,top);
          return NULL;
         }
      }
@@ -345,7 +345,7 @@ struct expr *Function2Parse(
   }
 
 /***********************************************************************
-  NAME         : ReplaceSequenceExpansionOps
+  NAME         : CL_ReplaceSequenceExpansionOps
   DESCRIPTION  : Replaces function calls which have multifield
                    references as arguments into a call to a
                    special function which expands the multifield
@@ -364,7 +364,7 @@ struct expr *Function2Parse(
                    refernce (i.e. ? instead of $? - the $ is
                    being treated as a special expansion operator)
  **********************************************************************/
-bool ReplaceSequenceExpansionOps(
+bool CL_ReplaceSequenceExpansionOps(
   Environment *theEnv,
   Expression *actions,
   Expression *fcallexp,
@@ -390,15 +390,15 @@ bool ReplaceSequenceExpansionOps(
          if ((fcallexp->type != FCALL) ? false :
              (fcallexp->functionValue->sequenceuseok == false))
            {
-            PrintErrorID(theEnv,"EXPRNPSR",4,false);
-            WriteString(theEnv,STDERR,"$ Sequence operator not a valid argument for function '");
-            WriteString(theEnv,STDERR,fcallexp->functionValue->callFunctionName->contents);
-            WriteString(theEnv,STDERR,"'.\n");
+            CL_PrintErrorID(theEnv,"EXPRNPSR",4,false);
+            CL_WriteString(theEnv,STDERR,"$ Sequence operator not a valid argument for function '");
+            CL_WriteString(theEnv,STDERR,fcallexp->functionValue->callFunctionName->contents);
+            CL_WriteString(theEnv,STDERR,"'.\n");
             return true;
            }
          if (fcallexp->value != expcall)
            {
-            theExp = GenConstant(theEnv,fcallexp->type,fcallexp->value);
+            theExp = CL_GenConstant(theEnv,fcallexp->type,fcallexp->value);
             theExp->argList = fcallexp->argList;
             theExp->nextArg = NULL;
             fcallexp->type = FCALL;
@@ -407,7 +407,7 @@ bool ReplaceSequenceExpansionOps(
            }
          if (actions->value != expmult)
            {
-            theExp = GenConstant(theEnv,SF_VARIABLE,actions->value);
+            theExp = CL_GenConstant(theEnv,SF_VARIABLE,actions->value);
             if (actions->type == MF_GBL_VARIABLE)
               theExp->type = GBL_VARIABLE;
             actions->argList = theExp;
@@ -423,7 +423,7 @@ bool ReplaceSequenceExpansionOps(
            theExp = actions;
          else
            theExp = fcallexp;
-         if (ReplaceSequenceExpansionOps(theEnv,actions->argList,theExp,expcall,expmult))
+         if (CL_ReplaceSequenceExpansionOps(theEnv,actions->argList,theExp,expcall,expmult))
            return true;
         }
       actions = actions->nextArg;
@@ -432,13 +432,13 @@ bool ReplaceSequenceExpansionOps(
   }
 
 /*************************************************/
-/* PushRtnBrkContexts: Saves the current context */
+/* CL_PushRtnBrkContexts: CL_Saves the current context */
 /*   for the break/return functions.             */
 /*************************************************/
-void PushRtnBrkContexts(
+void CL_PushRtnBrkContexts(
   Environment *theEnv)
   {
-   SavedContexts *svtmp;
+   CL_SavedContexts *svtmp;
 
    svtmp = get_struct(theEnv,savedContexts);
    svtmp->rtn = ExpressionData(theEnv)->ReturnContext;
@@ -448,13 +448,13 @@ void PushRtnBrkContexts(
   }
 
 /***************************************************/
-/* PopRtnBrkContexts: Restores the current context */
+/* CL_PopRtnBrkContexts: Restores the current context */
 /*   for the break/return functions.               */
 /***************************************************/
-void PopRtnBrkContexts(
+void CL_PopRtnBrkContexts(
   Environment *theEnv)
   {
-   SavedContexts *svtmp;
+   CL_SavedContexts *svtmp;
 
    ExpressionData(theEnv)->ReturnContext = ExpressionData(theEnv)->svContexts->rtn;
    ExpressionData(theEnv)->BreakContext = ExpressionData(theEnv)->svContexts->brk;
@@ -466,9 +466,9 @@ void PopRtnBrkContexts(
 #if (! RUN_TIME)
 
 /**********************/
-/* RestrictionExists: */
+/* CL_RestrictionExists: */
 /**********************/
-bool RestrictionExists(
+bool CL_RestrictionExists(
    const char *restrictionString,
    int position)
    {
@@ -495,12 +495,12 @@ bool RestrictionExists(
 #endif
 
 /*****************************************************************/
-/* CheckExpressionAgainstRestrictions: Compares the arguments to */
+/* CL_CheckExpressionAgainstRestrictions: Compares the arguments to */
 /*   a function to the set of restrictions for that function to  */
-/*   determine if any incompatibilities exist. If so, the value  */
+/*   deteCL_rmine if any incompatibilities exist. If so, the value  */
 /*   true is returned, otherwise false is returned.              */
 /*****************************************************************/
-FunctionArgumentsError CheckExpressionAgainstRestrictions(
+FunctionArgumentsError CL_CheckExpressionAgainstRestrictions(
   Environment *theEnv,
   struct expr *theExpression,
   struct functionDefinition *theFunction,
@@ -522,7 +522,7 @@ FunctionArgumentsError CheckExpressionAgainstRestrictions(
    /* Count the number of function arguments. */
    /*=========================================*/
 
-   argCount = CountArguments(theExpression->argList);
+   argCount = CL_CountArguments(theExpression->argList);
 
    /*======================================*/
    /* Get the minimum number of arguments. */
@@ -546,18 +546,18 @@ FunctionArgumentsError CheckExpressionAgainstRestrictions(
      {
       if (argCount != number1)
         {
-         ExpectedCountError(theEnv,functionName,EXACTLY,number1);
+         CL_ExpectedCountError(theEnv,functionName,EXACTLY,number1);
          return FAE_COUNT_ERROR;
         }
      }
    else if (argCount < number1)
      {
-      ExpectedCountError(theEnv,functionName,AT_LEAST,number1);
+      CL_ExpectedCountError(theEnv,functionName,AT_LEAST,number1);
       return FAE_COUNT_ERROR;
      }
    else if ((number2 != UNBOUNDED) && (argCount > number2))
      {
-      ExpectedCountError(theEnv,functionName,NO_MORE_THAN,number2);
+      CL_ExpectedCountError(theEnv,functionName,NO_MORE_THAN,number2);
       return FAE_COUNT_ERROR;
      }
 
@@ -571,7 +571,7 @@ FunctionArgumentsError CheckExpressionAgainstRestrictions(
    /* Check for the default argument types. */
    /*=======================================*/
 
-   PopulateRestriction(theEnv,&defaultRestriction2,ANY_TYPE_BITS,restrictions,0);
+   CL_PopulateRestriction(theEnv,&defaultRestriction2,ANY_TYPE_BITS,restrictions,0);
 
    /*======================*/
    /* Check each argument. */
@@ -581,12 +581,12 @@ FunctionArgumentsError CheckExpressionAgainstRestrictions(
         argPtr != NULL;
         argPtr = argPtr->nextArg)
      {
-      PopulateRestriction(theEnv,&argRestriction2,defaultRestriction2,restrictions,j);
+      CL_PopulateRestriction(theEnv,&argRestriction2,defaultRestriction2,restrictions,j);
 
-      if (CheckArgumentAgainstRestriction(theEnv,argPtr,argRestriction2))
+      if (CL_CheckArgumentAgainstRestriction(theEnv,argPtr,argRestriction2))
         {
-         ExpectedTypeError0(theEnv,functionName,j);
-         PrintTypesString(theEnv,STDERR,argRestriction2,true);
+         CL_ExpectedTypeError0(theEnv,functionName,j);
+         CL_PrintTypesString(theEnv,STDERR,argRestriction2,true);
          return FAE_TYPE_ERROR;
         }
 
@@ -597,10 +597,10 @@ FunctionArgumentsError CheckExpressionAgainstRestrictions(
   }
 
 /*******************************************************/
-/* CollectArguments: Parses and groups together all of */
+/* CL_CollectArguments: Parses and groups together all of */
 /*   the arguments for a function call expression.     */
 /*******************************************************/
-struct expr *CollectArguments(
+struct expr *CL_CollectArguments(
   Environment *theEnv,
   struct expr *top,
   const char *logicalName)
@@ -616,22 +616,22 @@ struct expr *CollectArguments(
 
    while (true)
      {
-      SavePPBuffer(theEnv," ");
+      CL_SavePPBuffer(theEnv," ");
 
       errorFlag = false;
-      nextOne = ArgumentParse(theEnv,logicalName,&errorFlag);
+      nextOne = CL_ArgumentParse(theEnv,logicalName,&errorFlag);
 
       if (errorFlag == true)
         {
-         ReturnExpression(theEnv,top);
+         CL_ReturnExpression(theEnv,top);
          return NULL;
         }
 
       if (nextOne == NULL)
         {
-         PPBackup(theEnv);
-         PPBackup(theEnv);
-         SavePPBuffer(theEnv,")");
+         CL_PPBackup(theEnv);
+         CL_PPBackup(theEnv);
+         CL_SavePPBuffer(theEnv,")");
          return(top);
         }
 
@@ -645,10 +645,10 @@ struct expr *CollectArguments(
   }
 
 /********************************************/
-/* ArgumentParse: Parses an argument within */
+/* CL_ArgumentParse: Parses an argument within */
 /*   a function call expression.            */
 /********************************************/
-struct expr *ArgumentParse(
+struct expr *CL_ArgumentParse(
   Environment *theEnv,
   const char *logicalName,
   bool *errorFlag)
@@ -660,7 +660,7 @@ struct expr *ArgumentParse(
    /* Grab a token. */
    /*===============*/
 
-   GetToken(theEnv,logicalName,&theToken);
+   CL_GetToken(theEnv,logicalName,&theToken);
 
    /*============================*/
    /* ')' counts as no argument. */
@@ -683,7 +683,7 @@ struct expr *ArgumentParse(
        (theToken.tknType == INSTANCE_NAME_TOKEN) ||
 #endif
        (theToken.tknType == FLOAT_TOKEN) || (theToken.tknType == INTEGER_TOKEN))
-     { return(GenConstant(theEnv,TokenTypeToType(theToken.tknType),theToken.value)); }
+     { return(CL_GenConstant(theEnv,CL_TokenTypeToType(theToken.tknType),theToken.value)); }
 
    /*======================*/
    /* Parse function call. */
@@ -691,23 +691,23 @@ struct expr *ArgumentParse(
 
    if (theToken.tknType != LEFT_PARENTHESIS_TOKEN)
      {
-      PrintErrorID(theEnv,"EXPRNPSR",2,true);
-      WriteString(theEnv,STDERR,"Expected a constant, variable, or expression.\n");
+      CL_PrintErrorID(theEnv,"EXPRNPSR",2,true);
+      CL_WriteString(theEnv,STDERR,"Expected a constant, variable, or expression.\n");
       *errorFlag = true;
       return NULL;
      }
 
-   top = Function1Parse(theEnv,logicalName);
+   top = CL_Function1Parse(theEnv,logicalName);
    if (top == NULL) *errorFlag = true;
    return(top);
   }
 
 /************************************************************/
-/* ParseAtomOrExpression: Parses an expression which may be */
+/* CL_ParseAtomOrExpression: Parses an expression which may be */
 /*   a function call, atomic value (string, symbol, etc.),  */
 /*   or variable (local or global).                         */
 /************************************************************/
-struct expr *ParseAtomOrExpression(
+struct expr *CL_ParseAtomOrExpression(
   Environment *theEnv,
   const char *logicalName,
   struct token *useToken)
@@ -718,7 +718,7 @@ struct expr *ParseAtomOrExpression(
    if (useToken == NULL)
      {
       thisToken = &theToken;
-      GetToken(theEnv,logicalName,thisToken);
+      CL_GetToken(theEnv,logicalName,thisToken);
      }
    else thisToken = useToken;
 
@@ -732,16 +732,16 @@ struct expr *ParseAtomOrExpression(
        (thisToken->tknType == MF_GBL_VARIABLE_TOKEN) ||
 #endif
        (thisToken->tknType == SF_VARIABLE_TOKEN) || (thisToken->tknType == MF_VARIABLE_TOKEN))
-     { rv = GenConstant(theEnv,TokenTypeToType(thisToken->tknType),thisToken->value); }
+     { rv = CL_GenConstant(theEnv,CL_TokenTypeToType(thisToken->tknType),thisToken->value); }
    else if (thisToken->tknType == LEFT_PARENTHESIS_TOKEN)
      {
-      rv = Function1Parse(theEnv,logicalName);
+      rv = CL_Function1Parse(theEnv,logicalName);
       if (rv == NULL) return NULL;
      }
    else
      {
-      PrintErrorID(theEnv,"EXPRNPSR",2,true);
-      WriteString(theEnv,STDERR,"Expected a constant, variable, or expression.\n");
+      CL_PrintErrorID(theEnv,"EXPRNPSR",2,true);
+      CL_WriteString(theEnv,STDERR,"Expected a constant, variable, or expression.\n");
       return NULL;
      }
 
@@ -749,11 +749,11 @@ struct expr *ParseAtomOrExpression(
   }
 
 /*********************************************/
-/* GroupActions: Groups together a series of */
+/* CL_GroupActions: Groups together a series of */
 /*   actions within a progn expression. Used */
 /*   for example to parse the RHS of a rule. */
 /*********************************************/
-struct expr *GroupActions(
+struct expr *CL_GroupActions(
   Environment *theEnv,
   const char *logicalName,
   struct token *theToken,
@@ -767,7 +767,7 @@ struct expr *GroupActions(
    /* Create the enclosing progn. */
    /*=============================*/
 
-   top = GenConstant(theEnv,FCALL,FindFunction(theEnv,"progn"));
+   top = CL_GenConstant(theEnv,FCALL,CL_FindFunction(theEnv,"progn"));
 
    /*========================================================*/
    /* Continue until all appropriate commands are processed. */
@@ -782,12 +782,12 @@ struct expr *GroupActions(
       /*================================================*/
 
       if (readFirstToken)
-        { GetToken(theEnv,logicalName,theToken); }
+        { CL_GetToken(theEnv,logicalName,theToken); }
       else
         { readFirstToken = true; }
 
       /*=================================================*/
-      /* Look to see if a symbol has terminated the list */
+      /* Look to see if a symbol has teCL_rminated the list */
       /* of actions (such as "else" in an if function).  */
       /*=================================================*/
 
@@ -806,7 +806,7 @@ struct expr *GroupActions(
 
       if (functionNameParsed)
         {
-         nextOne = Function2Parse(theEnv,logicalName,theToken->lexemeValue->contents);
+         nextOne = CL_Function2Parse(theEnv,logicalName,theToken->lexemeValue->contents);
          functionNameParsed = false;
         }
 
@@ -824,14 +824,14 @@ struct expr *GroupActions(
           (theToken->tknType == INSTANCE_NAME_TOKEN) ||
 #endif
           (theToken->tknType == SF_VARIABLE_TOKEN) || (theToken->tknType == MF_VARIABLE_TOKEN))
-        { nextOne = GenConstant(theEnv,TokenTypeToType(theToken->tknType),theToken->value); }
+        { nextOne = CL_GenConstant(theEnv,CL_TokenTypeToType(theToken->tknType),theToken->value); }
 
       /*=============================*/
       /* Otherwise parse a function. */
       /*=============================*/
 
       else if (theToken->tknType == LEFT_PARENTHESIS_TOKEN)
-        { nextOne = Function1Parse(theEnv,logicalName); }
+        { nextOne = CL_Function1Parse(theEnv,logicalName); }
 
       /*======================================*/
       /* Otherwise replace sequence expansion */
@@ -840,11 +840,11 @@ struct expr *GroupActions(
 
       else
         {
-         if (ReplaceSequenceExpansionOps(theEnv,top,NULL,
-                                         FindFunction(theEnv,"(expansion-call)"),
-                                         FindFunction(theEnv,"expand$")))
+         if (CL_ReplaceSequenceExpansionOps(theEnv,top,NULL,
+                                         CL_FindFunction(theEnv,"(expansion-call)"),
+                                         CL_FindFunction(theEnv,"expand$")))
            {
-            ReturnExpression(theEnv,top);
+            CL_ReturnExpression(theEnv,top);
             return NULL;
            }
 
@@ -859,7 +859,7 @@ struct expr *GroupActions(
       if (nextOne == NULL)
         {
          theToken->tknType = UNKNOWN_VALUE_TOKEN;
-         ReturnExpression(theEnv,top);
+         CL_ReturnExpression(theEnv,top);
          return NULL;
         }
 
@@ -870,14 +870,14 @@ struct expr *GroupActions(
 
       lastOne = nextOne;
 
-      PPCRAndIndent(theEnv);
+      CL_PPCRAndIndent(theEnv);
      }
   }
 
 /************************/
-/* PopulateRestriction: */
+/* CL_PopulateRestriction: */
 /************************/
-void PopulateRestriction(
+void CL_PopulateRestriction(
    Environment *theEnv,
    unsigned *restriction,
    unsigned defaultRestriction,
@@ -971,9 +971,9 @@ void PopulateRestriction(
           default:
             buffer[0] = theChar;
             buffer[1] = 0;
-            WriteString(theEnv,STDERR,"Invalid argument type character ");
-            WriteString(theEnv,STDERR,buffer);
-            WriteString(theEnv,STDERR,"\n");
+            CL_WriteString(theEnv,STDERR,"Invalid argument type character ");
+            CL_WriteString(theEnv,STDERR,buffer);
+            CL_WriteString(theEnv,STDERR,"\n");
             valuesRead++;
             break;
          }
@@ -992,10 +992,10 @@ void PopulateRestriction(
    }
 
 /*******************************************/
-/* ParseConstantArguments: Parses a string */
+/* CL_ParseConstantArguments: Parses a string */
 /*    into a set of constant expressions.  */
 /*******************************************/
-Expression *ParseConstantArguments(
+Expression *CL_ParseConstantArguments(
   Environment *theEnv,
   const char *argstr,
   bool *error)
@@ -1027,27 +1027,27 @@ Expression *ParseConstantArguments(
    /* Parse the constants. */
    /*======================*/
 
-   GetToken(theEnv,router,&tkn);
+   CL_GetToken(theEnv,router,&tkn);
    while (tkn.tknType != STOP_TOKEN)
      {
       if ((tkn.tknType != SYMBOL_TOKEN) && (tkn.tknType != STRING_TOKEN) &&
           (tkn.tknType != FLOAT_TOKEN) && (tkn.tknType != INTEGER_TOKEN) &&
           (tkn.tknType != INSTANCE_NAME_TOKEN))
         {
-         PrintErrorID(theEnv,"EXPRNPSR",6,false);
-         WriteString(theEnv,STDERR,"Only constant arguments allowed for external function call.\n");
-         ReturnExpression(theEnv,top);
+         CL_PrintErrorID(theEnv,"EXPRNPSR",6,false);
+         CL_WriteString(theEnv,STDERR,"Only constant arguments allowed for external function call.\n");
+         CL_ReturnExpression(theEnv,top);
          *error = true;
-         CloseStringSource(theEnv,router);
+         CL_CloseStringSource(theEnv,router);
          return NULL;
         }
-      tmp = GenConstant(theEnv,TokenTypeToType(tkn.tknType),tkn.value);
+      tmp = CL_GenConstant(theEnv,CL_TokenTypeToType(tkn.tknType),tkn.value);
       if (top == NULL)
         top = tmp;
       else
         bot->nextArg = tmp;
       bot = tmp;
-      GetToken(theEnv,router,&tkn);
+      CL_GetToken(theEnv,router,&tkn);
      }
 
    /*===========================================*/
@@ -1066,9 +1066,9 @@ Expression *ParseConstantArguments(
   }
 
 /************************/
-/* RemoveUnneededProgn: */
+/* CL_RemoveUnneededProgn: */
 /************************/
-struct expr *RemoveUnneededProgn(
+struct expr *CL_RemoveUnneededProgn(
   Environment *theEnv,
   struct expr *theExpression)
   {
@@ -1081,7 +1081,7 @@ struct expr *RemoveUnneededProgn(
 
    fptr = theExpression->functionValue;
 
-   if (fptr->functionPointer != PrognFunction)
+   if (fptr->functionPointer != CL_PrognFunction)
      { return(theExpression); }
 
    if ((theExpression->argList != NULL) &&
@@ -1091,7 +1091,7 @@ struct expr *RemoveUnneededProgn(
       theExpression = theExpression->argList;
       temp->argList = NULL;
       temp->nextArg = NULL;
-      ReturnExpression(theEnv,temp);
+      CL_ReturnExpression(theEnv,temp);
      }
 
    return(theExpression);

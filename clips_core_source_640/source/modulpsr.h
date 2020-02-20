@@ -18,7 +18,7 @@
 /*                                                           */
 /*      6.24: Renamed BOOLEAN macro type to intBool.         */
 /*                                                           */
-/*      6.30: GetConstructNameAndComment API change.         */
+/*      6.30: CL_GetConstructNameAndComment API change.         */
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
@@ -57,12 +57,12 @@ struct portConstructItem
    struct portConstructItem *next;
   };
 
-   void                           SetNumberOfDefmodules(Environment *,unsigned short);
-   void                           AddAfterModuleDefinedFunction(Environment *,const char *,VoidCallFunction *,int,void *);
-   bool                           ParseDefmodule(Environment *,const char *);
-   void                           AddPortConstructItem(Environment *,const char *,TokenType);
-   struct portConstructItem      *ValidPortConstructItem(Environment *,const char *);
-   bool                           FindImportExportConflict(Environment *,const char *,Defmodule *,const char *);
+   void                           CL_SetNumberOfDefmodules(Environment *,unsigned short);
+   void                           CL_AddAfterModuleDefinedFunction(Environment *,const char *,VoidCL_CallFunction *,int,void *);
+   bool                           CL_ParseDefmodule(Environment *,const char *);
+   void                           CL_AddPortConstructItem(Environment *,const char *,TokenType);
+   struct portConstructItem      *CL_ValidPortConstructItem(Environment *,const char *);
+   bool                           CL_FindImportExportConflict(Environment *,const char *,Defmodule *,const char *);
 
 #endif /* _H_modulpsr */
 

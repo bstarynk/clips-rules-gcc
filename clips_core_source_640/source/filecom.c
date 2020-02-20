@@ -20,8 +20,8 @@
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
-/*      6.24: Added environment parameter to GenClose.       */
-/*            Added environment parameter to GenOpen.        */
+/*      6.24: Added environment parameter to CL_GenClose.       */
+/*            Added environment parameter to CL_GenOpen.        */
 /*                                                           */
 /*            Renamed BOOLEAN macro type to intBool.         */
 /*                                                           */
@@ -50,11 +50,11 @@
 /*      6.40: Split inputSource to fileSource and            */
 /*            logicalSource.                                 */
 /*                                                           */
-/*            Added Env prefix to GetEvaluationError and     */
-/*            SetEvaluationError functions.                  */
+/*            Added Env prefix to GetCL_EvaluationError and     */
+/*            SetCL_EvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to GetHaltExecution and       */
-/*            SetHaltExecution functions.                    */
+/*            Added Env prefix to CL_GetCL_HaltExecution and       */
+/*            SetCL_HaltExecution functions.                    */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -100,31 +100,31 @@
    static void                    DeallocateFileCommandData(Environment *);
 
 /***************************************/
-/* FileCommandDefinitions: Initializes */
+/* CL_FileCommandDefinitions: Initializes */
 /*   file commands.                    */
 /***************************************/
-void FileCommandDefinitions(
+void CL_FileCommandDefinitions(
   Environment *theEnv)
   {
-   AllocateEnvironmentData(theEnv,FILECOM_DATA,sizeof(struct fileCommandData),DeallocateFileCommandData);
+   CL_AllocateEnvironmentData(theEnv,FILECOM_DATA,sizeof(struct fileCommandData),DeallocateFileCommandData);
 
 #if ! RUN_TIME
 #if DEBUGGING_FUNCTIONS
-   AddUDF(theEnv,"batch","b",1,1,"sy",BatchCommand,"BatchCommand",NULL);
-   AddUDF(theEnv,"batch*","b",1,1,"sy",BatchStarCommand,"BatchStarCommand",NULL);
-   AddUDF(theEnv,"dribble-on","b",1,1,"sy",DribbleOnCommand,"DribbleOnCommand",NULL);
-   AddUDF(theEnv,"dribble-off","b",0,0,NULL,DribbleOffCommand,"DribbleOffCommand",NULL);
-   AddUDF(theEnv,"save","b",1,1,"sy",SaveCommand,"SaveCommand",NULL);
+   CL_AddUDF(theEnv,"batch","b",1,1,"sy",CL_BatchCommand,"CL_BatchCommand",NULL);
+   CL_AddUDF(theEnv,"batch*","b",1,1,"sy",CL_BatchStarCommand,"CL_BatchStarCommand",NULL);
+   CL_AddUDF(theEnv,"dribble-on","b",1,1,"sy",CL_DribbleOnCommand,"CL_DribbleOnCommand",NULL);
+   CL_AddUDF(theEnv,"dribble-off","b",0,0,NULL,CL_DribbleOffCommand,"CL_DribbleOffCommand",NULL);
+   CL_AddUDF(theEnv,"save","b",1,1,"sy",CL_SaveCommand,"CL_SaveCommand",NULL);
 #endif
-   AddUDF(theEnv,"load","b",1,1,"sy",LoadCommand,"LoadCommand",NULL);
-   AddUDF(theEnv,"load*","b",1,1,"sy",LoadStarCommand,"LoadStarCommand",NULL);
+   CL_AddUDF(theEnv,"load","b",1,1,"sy",CL_LoadCommand,"CL_LoadCommand",NULL);
+   CL_AddUDF(theEnv,"load*","b",1,1,"sy",CL_LoadStarCommand,"CL_LoadStarCommand",NULL);
 #if BLOAD_AND_BSAVE
-   AddUDF(theEnv,"bsave","b",1,1,"sy",BsaveCommand,"BsaveCommand",NULL);
+   CL_AddUDF(theEnv,"bsave","b",1,1,"sy",CL_BsaveCommand,"CL_BsaveCommand",NULL);
 #endif
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE
-   InitializeBsaveData(theEnv);
-   InitializeBloadData(theEnv);
-   AddUDF(theEnv,"bload","b",1,1,"sy",BloadCommand,"BloadCommand",NULL);
+   InitializeCL_BsaveData(theEnv);
+   InitializeCL_BloadData(theEnv);
+   CL_AddUDF(theEnv,"bload","b",1,1,"sy",CL_BloadCommand,"CL_BloadCommand",NULL);
 #endif
 #endif
   }
@@ -138,175 +138,175 @@ static void DeallocateFileCommandData(
   {
    struct batchEntry *theEntry, *nextEntry;
 
-   theEntry = FileCommandData(theEnv)->TopOfBatchList;
+   theEntry = FileCommandData(theEnv)->TopOfCL_BatchList;
    while (theEntry != NULL)
      {
       nextEntry = theEntry->next;
 
       if (theEntry->batchType == FILE_BATCH)
-        { GenClose(theEnv,FileCommandData(theEnv)->TopOfBatchList->fileSource); }
+        { CL_GenClose(theEnv,FileCommandData(theEnv)->TopOfCL_BatchList->fileSource); }
       else
-        { rm(theEnv,(void *) theEntry->theString,strlen(theEntry->theString) + 1); }
+        { CL_rm(theEnv,(void *) theEntry->theString,strlen(theEntry->theString) + 1); }
 
-      DeleteString(theEnv,(char *) theEntry->fileName);
-      DeleteString(theEnv,(char *) theEntry->logicalSource);
+      CL_DeleteString(theEnv,(char *) theEntry->fileName);
+      CL_DeleteString(theEnv,(char *) theEntry->logicalSource);
       rtn_struct(theEnv,batchEntry,theEntry);
 
       theEntry = nextEntry;
      }
 
-   if (FileCommandData(theEnv)->BatchBuffer != NULL)
-     { rm(theEnv,FileCommandData(theEnv)->BatchBuffer,FileCommandData(theEnv)->BatchMaximumPosition); }
+   if (FileCommandData(theEnv)->CL_BatchBuffer != NULL)
+     { CL_rm(theEnv,FileCommandData(theEnv)->CL_BatchBuffer,FileCommandData(theEnv)->CL_BatchMaximumPosition); }
 
-   DeleteString(theEnv,FileCommandData(theEnv)->batchPriorParsingFile);
+   CL_DeleteString(theEnv,FileCommandData(theEnv)->batchPriorParsingFile);
    FileCommandData(theEnv)->batchPriorParsingFile = NULL;
 
 #if DEBUGGING_FUNCTIONS
    if (FileCommandData(theEnv)->DribbleBuffer != NULL)
-     { rm(theEnv,FileCommandData(theEnv)->DribbleBuffer,FileCommandData(theEnv)->DribbleMaximumPosition); }
+     { CL_rm(theEnv,FileCommandData(theEnv)->DribbleBuffer,FileCommandData(theEnv)->DribbleMaximumPosition); }
 
    if (FileCommandData(theEnv)->DribbleFP != NULL)
-     { GenClose(theEnv,FileCommandData(theEnv)->DribbleFP); }
+     { CL_GenClose(theEnv,FileCommandData(theEnv)->DribbleFP); }
 #endif
   }
 
 #if DEBUGGING_FUNCTIONS
 
 /******************************************/
-/* DribbleOnCommand: H/L access routine   */
+/* CL_DribbleOnCommand: H/L access routine   */
 /*   for the dribble-on command.          */
 /******************************************/
-void DribbleOnCommand(
+void CL_DribbleOnCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
    const char *fileName;
 
-   if ((fileName = GetFileName(context)) == NULL)
+   if ((fileName = CL_GetFileName(context)) == NULL)
      {
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
-   returnValue->lexemeValue = CreateBoolean(theEnv,DribbleOn(theEnv,fileName));
+   returnValue->lexemeValue = CL_CreateBoolean(theEnv,CL_DribbleOn(theEnv,fileName));
   }
 
 /*******************************************/
-/* DribbleOffCommand: H/L access  routine  */
+/* CL_DribbleOffCommand: H/L access  routine  */
 /*   for the dribble-off command.          */
 /*******************************************/
-void DribbleOffCommand(
+void CL_DribbleOffCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
-   returnValue->lexemeValue = CreateBoolean(theEnv,DribbleOff(theEnv));
+   returnValue->lexemeValue = CL_CreateBoolean(theEnv,CL_DribbleOff(theEnv));
   }
 
 #endif /* DEBUGGING_FUNCTIONS */
 
 /**************************************/
-/* BatchCommand: H/L access routine   */
+/* CL_BatchCommand: H/L access routine   */
 /*   for the batch command.           */
 /**************************************/
-void BatchCommand(
+void CL_BatchCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
    const char *fileName;
 
-   if ((fileName = GetFileName(context)) == NULL)
+   if ((fileName = CL_GetFileName(context)) == NULL)
      {
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
-   returnValue->lexemeValue = CreateBoolean(theEnv,OpenBatch(theEnv,fileName,false));
+   returnValue->lexemeValue = CL_CreateBoolean(theEnv,OpenCL_Batch(theEnv,fileName,false));
   }
 
 /******************************************/
-/* BatchStarCommand: H/L access routine   */
+/* CL_BatchStarCommand: H/L access routine   */
 /*   for the batch* command.              */
 /******************************************/
-void BatchStarCommand(
+void CL_BatchStarCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
    const char *fileName;
 
-   if ((fileName = GetFileName(context)) == NULL)
+   if ((fileName = CL_GetFileName(context)) == NULL)
      {
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
-   returnValue->lexemeValue = CreateBoolean(theEnv,BatchStar(theEnv,fileName));
+   returnValue->lexemeValue = CL_CreateBoolean(theEnv,CL_BatchStar(theEnv,fileName));
   }
 
 /***********************************************************/
-/* LoadCommand: H/L access routine for the load command.   */
+/* CL_LoadCommand: H/L access routine for the load command.   */
 /***********************************************************/
-void LoadCommand(
+void CL_LoadCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    const char *theFileName;
-   LoadError rv;
+   CL_LoadError rv;
 
-   if ((theFileName = GetFileName(context)) == NULL)
+   if ((theFileName = CL_GetFileName(context)) == NULL)
      {
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
-   if (CommandLineData(theEnv)->EvaluatingTopLevelCommand)
-     { SetPrintWhileLoading(theEnv,true); }
+   if (CommandLineData(theEnv)->CL_EvaluatingCL_TopLevelCommand)
+     { SetPrintWhileCL_Loading(theEnv,true); }
 
-   if ((rv = Load(theEnv,theFileName)) == LE_OPEN_FILE_ERROR)
+   if ((rv = CL_Load(theEnv,theFileName)) == LE_OPEN_FILE_ERROR)
      {
-      SetPrintWhileLoading(theEnv,false);
-      OpenErrorMessage(theEnv,"load",theFileName);
+      SetPrintWhileCL_Loading(theEnv,false);
+      CL_OpenErrorMessage(theEnv,"load",theFileName);
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
-   if (CommandLineData(theEnv)->EvaluatingTopLevelCommand)
-     { SetPrintWhileLoading(theEnv,false); }
+   if (CommandLineData(theEnv)->CL_EvaluatingCL_TopLevelCommand)
+     { SetPrintWhileCL_Loading(theEnv,false); }
 
    if (rv == LE_PARSING_ERROR) returnValue->lexemeValue = FalseSymbol(theEnv);
    else returnValue->lexemeValue = TrueSymbol(theEnv);
 #else
-   WriteString(theEnv,STDOUT,"Load is not available in this environment\n");
+   CL_WriteString(theEnv,STDOUT,"CL_Load is not available in this environment\n");
    returnValue->lexemeValue = FalseSymbol(theEnv);
 #endif
   }
 
 /****************************************************************/
-/* LoadStarCommand: H/L access routine for the load* command.   */
+/* CL_LoadStarCommand: H/L access routine for the load* command.   */
 /****************************************************************/
-void LoadStarCommand(
+void CL_LoadStarCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    const char *theFileName;
-   LoadError rv;
+   CL_LoadError rv;
 
-   if ((theFileName = GetFileName(context)) == NULL)
+   if ((theFileName = CL_GetFileName(context)) == NULL)
      {
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
-   if ((rv = Load(theEnv,theFileName)) == LE_OPEN_FILE_ERROR)
+   if ((rv = CL_Load(theEnv,theFileName)) == LE_OPEN_FILE_ERROR)
      {
-      OpenErrorMessage(theEnv,"load*",theFileName);
+      CL_OpenErrorMessage(theEnv,"load*",theFileName);
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
@@ -314,16 +314,16 @@ void LoadStarCommand(
    if (rv == LE_PARSING_ERROR) returnValue->lexemeValue = FalseSymbol(theEnv);
    else returnValue->lexemeValue = TrueSymbol(theEnv);
 #else
-   WriteString(theEnv,STDOUT,"Load* is not available in this environment\n");
+   CL_WriteString(theEnv,STDOUT,"CL_Load* is not available in this environment\n");
    returnValue->lexemeValue = FalseSymbol(theEnv);
 #endif
   }
 
 #if DEBUGGING_FUNCTIONS
 /*********************************************************/
-/* SaveCommand: H/L access routine for the save command. */
+/* CL_SaveCommand: H/L access routine for the save command. */
 /*********************************************************/
-void SaveCommand(
+void CL_SaveCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -331,22 +331,22 @@ void SaveCommand(
 #if (! BLOAD_ONLY) && (! RUN_TIME)
    const char *theFileName;
 
-   if ((theFileName = GetFileName(context)) == NULL)
+   if ((theFileName = CL_GetFileName(context)) == NULL)
      {
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
-   if (Save(theEnv,theFileName) == false)
+   if (CL_Save(theEnv,theFileName) == false)
      {
-      OpenErrorMessage(theEnv,"save",theFileName);
+      CL_OpenErrorMessage(theEnv,"save",theFileName);
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
    returnValue->lexemeValue = TrueSymbol(theEnv);
 #else
-   WriteString(theEnv,STDOUT,"Save is not available in this environment\n");
+   CL_WriteString(theEnv,STDOUT,"CL_Save is not available in this environment\n");
    returnValue->lexemeValue = FalseSymbol(theEnv);
 #endif
   }

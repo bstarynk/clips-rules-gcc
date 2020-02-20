@@ -25,7 +25,7 @@
 /*                                                           */
 /*            Changed integer type/precision.                */
 /*                                                           */
-/*            GetConstructNameAndComment API change.         */
+/*            CL_GetConstructNameAndComment API change.         */
 /*                                                           */
 /*            Added support for hashed memories.             */
 /*                                                           */
@@ -49,8 +49,8 @@
 
 #define _H_rulepsr
 
-   bool                           ParseDefrule(Environment *,const char *);
-   struct lhsParseNode           *FindVariable(CLIPSLexeme *,
+   bool                           CL_ParseDefrule(Environment *,const char *);
+   struct lhsParseNode           *CL_FindVariable(CLIPSLexeme *,
                                                struct lhsParseNode *);
 #if DEVELOPER && DEBUGGING_FUNCTIONS
    void                           DumpRuleAnalysis(Environment *,struct lhsParseNode *);

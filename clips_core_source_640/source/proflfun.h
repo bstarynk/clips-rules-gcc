@@ -16,7 +16,7 @@
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
-/*      6.23: Modified OutputProfileInfo to allow a before   */
+/*      6.23: Modified OutputCL_ProfileInfo to allow a before   */
 /*            and after prefix so that a string buffer does  */
 /*            not need to be created to contain the entire   */
 /*            prefix. This allows a buffer overflow problem  */
@@ -29,7 +29,7 @@
 /*            Corrected code to remove run-time program      */
 /*            compiler warnings.                             */
 /*                                                           */
-/*      6.30: Used gensprintf instead of sprintf.            */
+/*      6.30: Used CL_gensprintf instead of sprintf.            */
 /*                                                           */
 /*            Removed conditional code for unsupported       */
 /*            compilers/operating systems (IBM_TBC).         */
@@ -58,7 +58,7 @@
 
 #include "userdata.h"
 
-struct constructProfileInfo
+struct constructCL_ProfileInfo
   {
    struct userData usrData;
    long numberOfEntries;
@@ -73,45 +73,45 @@ struct profileFrameInfo
    unsigned int parentCall : 1;
    unsigned int profileOnExit : 1;
    double parentStartTime;
-   struct constructProfileInfo *oldProfileFrame;
+   struct constructCL_ProfileInfo *oldCL_ProfileFrame;
   };
 
 #define PROFLFUN_DATA 15
 
 struct profileFunctionData
   {
-   double ProfileStartTime;
-   double ProfileEndTime;
-   double ProfileTotalTime;
-   int LastProfileInfo;
+   double CL_ProfileStartTime;
+   double CL_ProfileEndTime;
+   double CL_ProfileTotalTime;
+   int LastCL_ProfileInfo;
    double PercentThreshold;
-   struct userDataRecord ProfileDataInfo;
-   unsigned char ProfileDataID;
-   bool ProfileUserFunctions;
-   bool ProfileConstructs;
-   struct constructProfileInfo *ActiveProfileFrame;
+   struct userDataRecord CL_ProfileDataInfo;
+   unsigned char CL_ProfileDataID;
+   bool CL_ProfileCL_UserFunctions;
+   bool CL_ProfileConstructs;
+   struct constructCL_ProfileInfo *ActiveCL_ProfileFrame;
    const char *OutputString;
   };
 
-#define ProfileFunctionData(theEnv) ((struct profileFunctionData *) GetEnvironmentData(theEnv,PROFLFUN_DATA))
+#define CL_ProfileFunctionData(theEnv) ((struct profileFunctionData *) GetEnvironmentData(theEnv,PROFLFUN_DATA))
 
-   void                           ConstructProfilingFunctionDefinitions(Environment *);
-   void                           ProfileCommand(Environment *,UDFContext *,UDFValue *);
-   void                           ProfileInfoCommand(Environment *,UDFContext *,UDFValue *);
-   void                           StartProfile(Environment *,struct profileFrameInfo *,
+   void                           CL_ConstructProfilingFunctionDefinitions(Environment *);
+   void                           CL_ProfileCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_ProfileInfoCommand(Environment *,UDFContext *,UDFValue *);
+   void                           StartCL_Profile(Environment *,struct profileFrameInfo *,
                                                struct userData **,bool);
-   void                           EndProfile(Environment *,struct profileFrameInfo *);
-   void                           ProfileResetCommand(Environment *,UDFContext *,UDFValue *);
-   void                           ResetProfileInfo(struct constructProfileInfo *);
+   void                           CL_EndCL_Profile(Environment *,struct profileFrameInfo *);
+   void                           CL_ProfileCL_ResetCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_ResetCL_ProfileInfo(struct constructCL_ProfileInfo *);
 
-   void                           SetProfilePercentThresholdCommand(Environment *,UDFContext *,UDFValue *);
-   double                         SetProfilePercentThreshold(Environment *,double);
-   void                           GetProfilePercentThresholdCommand(Environment *,UDFContext *,UDFValue *);
-   double                         GetProfilePercentThreshold(Environment *);
-   bool                           Profile(Environment *,const char *);
-   void                           DeleteProfileData(Environment *,void *);
-   void                          *CreateProfileData(Environment *);
-   const char                    *SetProfileOutputString(Environment *,const char *);
+   void                           SetCL_ProfilePercentThresholdCommand(Environment *,UDFContext *,UDFValue *);
+   double                         SetCL_ProfilePercentThreshold(Environment *,double);
+   void                           CL_GetCL_ProfilePercentThresholdCommand(Environment *,UDFContext *,UDFValue *);
+   double                         CL_GetCL_ProfilePercentThreshold(Environment *);
+   bool                           CL_Profile(Environment *,const char *);
+   void                           CL_DeleteCL_ProfileData(Environment *,void *);
+   void                          *CL_CreateCL_ProfileData(Environment *);
+   const char                    *SetCL_ProfileOutputString(Environment *,const char *);
 
 #endif /* _H_proflfun */
 

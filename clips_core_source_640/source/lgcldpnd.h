@@ -8,7 +8,7 @@
 
 /*************************************************************/
 /* Purpose: Provide support routines for managing truth      */
-/*   maintenance using the logical conditional element.      */
+/*   CL_maintenance using the logical conditional element.      */
 /*                                                           */
 /* Principal Programmer(s):                                  */
 /*      Gary D. Riley                                        */
@@ -54,18 +54,18 @@ struct dependency
 #include "entities.h"
 #include "match.h"
 
-   bool                           AddLogicalDependencies(Environment *,PatternEntity *,bool);
-   void                           RemoveEntityDependencies(Environment *,PatternEntity *);
-   void                           RemovePMDependencies(Environment *,PartialMatch *);
-   void                           DestroyPMDependencies(Environment *,PartialMatch *);
-   void                           RemoveLogicalSupport(Environment *,PartialMatch *);
-   void                           ForceLogicalRetractions(Environment *);
-   void                           Dependencies(Environment *,PatternEntity *);
-   void                           Dependents(Environment *,PatternEntity *);
-   void                           DependenciesCommand(Environment *,UDFContext *,UDFValue *);
-   void                           DependentsCommand(Environment *,UDFContext *,UDFValue *);
-   void                           ReturnEntityDependencies(Environment *,PatternEntity *);
-   PartialMatch                  *FindLogicalBind(struct joinNode *,PartialMatch *);
+   bool                           CL_AddLogicalCL_Dependencies(Environment *,PatternEntity *,bool);
+   void                           RemoveEntityCL_Dependencies(Environment *,PatternEntity *);
+   void                           RemovePMCL_Dependencies(Environment *,PartialMatch *);
+   void                           DestroyPMCL_Dependencies(Environment *,PartialMatch *);
+   void                           CL_RemoveLogicalSupport(Environment *,PartialMatch *);
+   void                           CL_ForceLogicalCL_Retractions(Environment *);
+   void                           CL_Dependencies(Environment *,PatternEntity *);
+   void                           CL_Dependents(Environment *,PatternEntity *);
+   void                           CL_DependenciesCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_DependentsCommand(Environment *,UDFContext *,UDFValue *);
+   void                           ReturnEntityCL_Dependencies(Environment *,PatternEntity *);
+   PartialMatch                  *CL_FindLogicalBind(struct joinNode *,PartialMatch *);
 
 #endif /* _H_lgcldpnd */
 

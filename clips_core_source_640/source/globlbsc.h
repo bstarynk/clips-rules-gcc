@@ -34,7 +34,7 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
-/*            Moved WatchGlobals global to defglobalData.    */
+/*            Moved CL_WatchGlobals global to defglobalData.    */
 /*                                                           */
 /*            Converted API macros to function calls.        */
 /*                                                           */
@@ -62,21 +62,21 @@
 #include "evaluatn.h"
 #include "globldef.h"
 
-   void                           DefglobalBasicCommands(Environment *);
-   void                           UndefglobalCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           Undefglobal(Defglobal *,Environment *);
-   void                           GetDefglobalListFunction(Environment *,UDFContext *,UDFValue *);
-   void                           GetDefglobalList(Environment *,CLIPSValue *,Defmodule *);
-   void                           DefglobalModuleFunction(Environment *,UDFContext *,UDFValue *);
-   void                           PPDefglobalCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           PPDefglobal(Environment *,const char *,const char *);
-   void                           ListDefglobalsCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_DefglobalBasicCommands(Environment *);
+   void                           CL_UndefglobalCommand(Environment *,UDFContext *,UDFValue *);
+   bool                           CL_Undefglobal(Defglobal *,Environment *);
+   void                           CL_GetDefglobalListFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_GetDefglobalList(Environment *,CLIPSValue *,Defmodule *);
+   void                           CL_DefglobalModuleFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_PPDefglobalCommand(Environment *,UDFContext *,UDFValue *);
+   bool                           CL_PPDefglobal(Environment *,const char *,const char *);
+   void                           CL_ListDefglobalsCommand(Environment *,UDFContext *,UDFValue *);
 #if DEBUGGING_FUNCTIONS
-   bool                           DefglobalGetWatch(Defglobal *);
-   void                           ListDefglobals(Environment *,const char *,Defmodule *);
-   void                           DefglobalSetWatch(Defglobal *,bool);
+   bool                           CL_DefglobalGetCL_Watch(Defglobal *);
+   void                           CL_ListDefglobals(Environment *,const char *,Defmodule *);
+   void                           CL_DefglobalSetCL_Watch(Defglobal *,bool);
 #endif
-   void                           ResetDefglobals(Environment *,void *);
+   void                           CL_ResetDefglobals(Environment *,void *);
 
 #endif /* _H_globlbsc */
 

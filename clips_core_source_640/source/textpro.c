@@ -25,13 +25,13 @@
 /*                                                           */
 /*      6.24: Added get-region function.                     */
 /*                                                           */
-/*            Added environment parameter to GenClose.       */
-/*            Added environment parameter to GenOpen.        */
+/*            Added environment parameter to CL_GenClose.       */
+/*            Added environment parameter to CL_GenOpen.        */
 /*                                                           */
 /*      6.30: Removed HELP_FUNCTIONS compilation flag and    */
 /*            associated functionality.                      */
 /*                                                           */
-/*            Used genstrcpy and genstrncpy instead of       */
+/*            Used CL_genstrcpy and CL_genstrncpy instead of       */
 /*            strcpy and strncpy.                            */
 /*                                                           */
 /*            Support for long long integers.                */
@@ -102,21 +102,21 @@
 /*=========================================================*/
 /*Status returns for the file loading and lookup functions */
 /*=========================================================*/
-#define NORMAL 0          /*Entry information found in file       */
+#define NORMAL 0          /*Entry infoCL_rmation found in file       */
 #define NO_FILE -10       /*File not found for reference          */
 #define NEW_FILE -15      /*File loaded onto internal lookup table*/
 #define OLD_FILE -20      /*File was already on the lookup table  */
 
-#define NO_TOPIC -25      /*No entry information was found in file*/
+#define NO_TOPIC -25      /*No entry infoCL_rmation was found in file*/
 #define EXIT -30          /*Branch-up from root; exit lookup table*/
 #define BRANCH_UP -35     /*Move up from subtopic entry to parent */
-#define BRANCH_DOWN -40   /*Move down from main topic to subtopic */
+#define BRANCH_DOWN -40   /*Move down from CL_main topic to subtopic */
 
 /*=================*/
 /*Entry data types */
 /*=================*/
 #define MENU -45    /*Entry has subtopics*/
-#define INFO -50    /*Entry is a leaf; contains only information*/
+#define INFO -50    /*Entry is a leaf; contains only infoCL_rmation*/
 
 /*==========================================*/
 /*Entry node type for internal lookup table */
@@ -139,7 +139,7 @@ struct lists
   {
    char file[NAMESIZE];       /*File name                                */
    struct entries *topics;    /*Address of list of entry topics for file */
-   struct entries *curr_menu; /*Address of current main topic in file    */
+   struct entries *curr_menu; /*Address of current CL_main topic in file    */
    struct lists *next;        /*Address of next file in the table        */
   };
 
@@ -150,7 +150,7 @@ struct lists
 #define BDLEN 12
 #define EDELIM "END-ENTRY"
 #define EDLEN 9
-#define BFORMAT "%d%1s%12s%s"   /*Format string for sscanf*/
+#define BFORMAT "%d%1s%12s%s"   /*FoCL_rmat string for sscanf*/
 #define LIT_DELIM ('$')
 
 #define OPEN_READ "r"
@@ -197,20 +197,20 @@ struct textProcessingData
 /*         2) caller-allocated buffer to contain an error message (if any)  */
 /*         3) size of error message buffer                                  */
 /* Output :                                                                 */
-/* This function attempts to load the file's topic information into the     */
-/* lookup table according to the format below :                             */
+/* This function attempts to load the file's topic infoCL_rmation into the     */
+/* lookup table according to the foCL_rmat below :                             */
 /*                                                                          */
 /* <level-num><entry-type-code>BEGIN-ENTRY-<topic-name>                     */
 /*                .                                                         */
 /*                .                                                         */
-/*    Entry information in the form in which                                */
+/*    Entry infoCL_rmation in the foCL_rm in which                                */
 /*    it is to be displayed when referenced.                                */
 /*                .                                                         */
 /*                .                                                         */
 /* END-ENTRY                                                                */
 /*                                                                          */
 /* The function returns the number of entries loaded if the entire file was */
-/*   was correctly formatted, else it returns -1.                           */
+/*   was correctly foCL_rmatted, else it returns -1.                           */
 /****************************************************************************/
 static int TextLookupFetch(
   Environment *theEnv,
@@ -224,25 +224,25 @@ static int TextLookupFetch(
    int line_ct;                  /*Line count - used for error messages   */
    int entries_ct;               /*Number of entries successfully loaded. */
 
-   fp = GenOpen(theEnv,file,OPEN_READ_BINARY);
+   fp = CL_GenOpen(theEnv,file,OPEN_READ_BINARY);
 
    if (fp == NULL)
      {
-      PrintErrorID(theEnv,"TEXTPRO",1,false);
-      WriteString(theEnv,STDERR,"Could not open file '");
-      WriteString(theEnv,STDERR,file);
-      WriteString(theEnv,STDERR,"'.\n");
+      CL_PrintErrorID(theEnv,"TEXTPRO",1,false);
+      CL_WriteString(theEnv,STDERR,"Could not open file '");
+      CL_WriteString(theEnv,STDERR,file);
+      CL_WriteString(theEnv,STDERR,"'.\n");
       return -1;
      }
 
    if ((lnode = NewFetchFile(theEnv,file)) == NULL)
      {
-      GenClose(theEnv,fp);
+      CL_GenClose(theEnv,fp);
 
-      PrintErrorID(theEnv,"TEXTPRO",2,false);
-      WriteString(theEnv,STDERR,"File '");
-      WriteString(theEnv,STDERR,file);
-      WriteString(theEnv,STDERR,"' already loaded.\n");
+      CL_PrintErrorID(theEnv,"TEXTPRO",2,false);
+      CL_WriteString(theEnv,STDERR,"File '");
+      CL_WriteString(theEnv,STDERR,file);
+      CL_WriteString(theEnv,STDERR,"' already loaded.\n");
       return -1;
      }
 
@@ -274,12 +274,12 @@ static int TextLookupFetch(
              }
            else
              {
-              GenClose(theEnv,fp);
+              CL_GenClose(theEnv,fp);
               TextLookupToss(theEnv,file);
-              PrintErrorID(theEnv,"TEXTPRO",8,false);
-              WriteString(theEnv,STDERR,"Line ");
-              WriteInteger(theEnv,STDERR,line_ct);
-              WriteString(theEnv,STDERR," : Unmatched end marker.\n");
+              CL_PrintErrorID(theEnv,"TEXTPRO",8,false);
+              CL_WriteString(theEnv,STDERR,"Line ");
+              CL_WriteInteger(theEnv,STDERR,line_ct);
+              CL_WriteString(theEnv,STDERR," : Unmatched end marker.\n");
               return(-1);
              }
           }
@@ -292,13 +292,13 @@ static int TextLookupFetch(
               }
             else
               {
-               GenClose(theEnv,fp);
+               CL_GenClose(theEnv,fp);
                TextLookupToss(theEnv,file);
 
-               PrintErrorID(theEnv,"TEXTPRO",4,false);
-               WriteString(theEnv,STDERR,"Line ");
-               WriteInteger(theEnv,STDERR,line_ct);
-               WriteString(theEnv,STDERR," : Previous entry not closed.\n");
+               CL_PrintErrorID(theEnv,"TEXTPRO",4,false);
+               CL_WriteString(theEnv,STDERR,"Line ");
+               CL_WriteInteger(theEnv,STDERR,line_ct);
+               CL_WriteString(theEnv,STDERR," : Previous entry not closed.\n");
 
                return(-1);
               }
@@ -314,15 +314,15 @@ static int TextLookupFetch(
           }
         }
      }
-   GenClose(theEnv,fp);
+   CL_GenClose(theEnv,fp);
    if (INFO_END == false)
      {
       TextLookupToss(theEnv,file);
 
-      PrintErrorID(theEnv,"TEXTPRO",4,false);
-      WriteString(theEnv,STDERR,"Line ");
-      WriteInteger(theEnv,STDERR,line_ct);
-      WriteString(theEnv,STDERR," : Previous entry not closed.\n");
+      CL_PrintErrorID(theEnv,"TEXTPRO",4,false);
+      CL_WriteString(theEnv,STDERR,"Line ");
+      CL_WriteInteger(theEnv,STDERR,line_ct);
+      CL_WriteString(theEnv,STDERR," : Previous entry not closed.\n");
 
       return(-1);
      }
@@ -375,18 +375,18 @@ static bool TextLookupToss(
      TextProcessingData(theEnv)->headings = clptr->next;
    else
      plptr->next = clptr->next;
-   rm(theEnv,clptr,sizeof(struct lists));
+   CL_rm(theEnv,clptr,sizeof(struct lists));
    return true;
   }
 
 /******************************************************************************/
 /*FUNCTION GET_ENTRIES :                                                      */
 /* Input : 1) name of file to be accessed for lookup of entry                 */
-/*         2) caller allocated buffer for main topic name                     */
+/*         2) caller allocated buffer for CL_main topic name                     */
 /*         3) name of the entry to be accessed in the file                    */
 /*         4) caller allocated buffer for a status code (see LOOKUP).         */
 /* Output : 1) returns a pointer into the stream of the lookup file which     */
-/*             indicates the starting position of the lookup information      */
+/*             indicates the starting position of the lookup infoCL_rmation      */
 /*             (NULL if the topic was not found)                              */
 /* This function passes its input directly to LOOKUP.  See its description    */
 /* for further detail.                                                        */
@@ -405,7 +405,7 @@ static FILE *GetEntries(
    offset = LookupEntry(theEnv,file,menu,name,code);
    if (offset < 0)
      return NULL;
-   fp = GenOpen(theEnv,file,OPEN_READ_BINARY);
+   fp = CL_GenOpen(theEnv,file,OPEN_READ_BINARY);
    if (fp == NULL)
      {
       *code = NO_FILE;
@@ -413,7 +413,7 @@ static FILE *GetEntries(
      }
    if (fseek(fp,offset,0) < 0)
      {
-      GenClose(theEnv,fp);
+      CL_GenClose(theEnv,fp);
       *code = NO_FILE;
       return NULL;
      }
@@ -475,14 +475,14 @@ static FILE *GetCurrentMenu(
       *status = NO_TOPIC;
       return NULL;
      }
-   if ((fp = GenOpen(theEnv,file,OPEN_READ_BINARY)) == NULL)
+   if ((fp = CL_GenOpen(theEnv,file,OPEN_READ_BINARY)) == NULL)
      {
       *status = NO_FILE;
       return NULL;
      }
    if (fseek(fp,lptr->curr_menu->offset,0) < 0)
      {
-      GenClose(theEnv,fp);
+      CL_GenClose(theEnv,fp);
       *status = NO_FILE;
       return NULL;
      }
@@ -514,7 +514,7 @@ static char *GrabString(
   {
    if (fgets(buf,bufsize,fp) == NULL)
      {
-      GenClose(theEnv,fp);
+      CL_GenClose(theEnv,fp);
       return NULL;
      }
    if ((buf[0] == LIT_DELIM) && (buf[1] == LIT_DELIM))
@@ -525,7 +525,7 @@ static char *GrabString(
    else if (findstr(buf,EDELIM) >= 0)
      {
       buf = NULL;
-      GenClose(theEnv,fp);
+      CL_GenClose(theEnv,fp);
      }
    return(buf);
   }
@@ -591,8 +591,8 @@ static struct lists *NewFetchFile(
       if (strcmp(lptr->file,file) == 0)
         return NULL;
      }
-   lnode = (struct lists *) gm2(theEnv,sizeof(struct lists));
-   genstrcpy(lnode->file,file);
+   lnode = (struct lists *) CL_gm2(theEnv,sizeof(struct lists));
+   CL_genstrcpy(lnode->file,file);
    lnode->topics = NULL;
    lnode->curr_menu = NULL;
    lnode->next = NULL;
@@ -636,18 +636,18 @@ static struct entries *AllocateEntryNode(
    /*Allocate a new node and scan the delimeter string for tree info */
    /*================================================================*/
 
-   enode = (struct entries *) gm2(theEnv,sizeof(struct entries));
+   enode = (struct entries *) CL_gm2(theEnv,sizeof(struct entries));
    if (sscanf(str,BFORMAT,
               &enode->level,t_code,bmarker,enode->name) != 4)
      {
-      rm(theEnv,enode,sizeof(struct entries));
-      GenClose(theEnv,fp);
+      CL_rm(theEnv,enode,sizeof(struct entries));
+      CL_GenClose(theEnv,fp);
       TextLookupToss(theEnv,file);
 
-      PrintErrorID(theEnv,"TEXTPRO",5,false);
-      WriteString(theEnv,STDERR,"Line ");
-      WriteInteger(theEnv,STDERR,line_ct);
-      WriteString(theEnv,STDERR," : Invalid delimeter string.\n");
+      CL_PrintErrorID(theEnv,"TEXTPRO",5,false);
+      CL_WriteString(theEnv,STDERR,"Line ");
+      CL_WriteInteger(theEnv,STDERR,line_ct);
+      CL_WriteString(theEnv,STDERR," : Invalid delimeter string.\n");
 
       return NULL;
      }
@@ -657,27 +657,27 @@ static struct entries *AllocateEntryNode(
      enode->type = INFO;
    else
      {
-      rm(theEnv,enode,sizeof(struct entries));
-      GenClose(theEnv,fp);
+      CL_rm(theEnv,enode,sizeof(struct entries));
+      CL_GenClose(theEnv,fp);
       TextLookupToss(theEnv,file);
 
-      PrintErrorID(theEnv,"TEXTPRO",6,false);
-      WriteString(theEnv,STDERR,"Line ");
-      WriteInteger(theEnv,STDERR,line_ct);
-      WriteString(theEnv,STDERR," : Invalid entry type.\n");
+      CL_PrintErrorID(theEnv,"TEXTPRO",6,false);
+      CL_WriteString(theEnv,STDERR,"Line ");
+      CL_WriteInteger(theEnv,STDERR,line_ct);
+      CL_WriteString(theEnv,STDERR," : Invalid entry type.\n");
 
       return NULL;
      }
    if (strcmp(bmarker,BDELIM) != 0)
      {
-      rm(theEnv,enode,sizeof(struct entries));
-      GenClose(theEnv,fp);
+      CL_rm(theEnv,enode,sizeof(struct entries));
+      CL_GenClose(theEnv,fp);
       TextLookupToss(theEnv,file);
 
-      PrintErrorID(theEnv,"TEXTPRO",5,false);
-      WriteString(theEnv,STDERR,"Line ");
-      WriteInteger(theEnv,STDERR,line_ct);
-      WriteString(theEnv,STDERR," : Invalid delimeter string.\n");
+      CL_PrintErrorID(theEnv,"TEXTPRO",5,false);
+      CL_WriteString(theEnv,STDERR,"Line ");
+      CL_WriteInteger(theEnv,STDERR,line_ct);
+      CL_WriteString(theEnv,STDERR," : Invalid delimeter string.\n");
 
       return NULL;
      }
@@ -743,14 +743,14 @@ static bool AttachLeaf(
        }
      else
        {
-        rm(theEnv,enode,sizeof(struct entries));
-        GenClose(theEnv,fp);
+        CL_rm(theEnv,enode,sizeof(struct entries));
+        CL_GenClose(theEnv,fp);
         TextLookupToss(theEnv,file);
 
-        PrintErrorID(theEnv,"TEXTPRO",7,false);
-        WriteString(theEnv,STDERR,"Line ");
-        WriteInteger(theEnv,STDERR,line_ct);
-        WriteString(theEnv,STDERR," : Non-menu entries cannot have subtopics.\n");
+        CL_PrintErrorID(theEnv,"TEXTPRO",7,false);
+        CL_WriteString(theEnv,STDERR,"Line ");
+        CL_WriteInteger(theEnv,STDERR,line_ct);
+        CL_WriteString(theEnv,STDERR," : Non-menu entries cannot have subtopics.\n");
 
         return false;
        }
@@ -823,7 +823,7 @@ static bool AttachLeaf(
 /******************************************************************************/
 /*FUNCTION LOOKUP :                                                           */
 /* Input : 1) name of entry-topic file to be used for reference               */
-/*         2) caller allocated buffer to contain the main topic name          */
+/*         2) caller allocated buffer to contain the CL_main topic name          */
 /*         3) name of the entry-topic to be found                             */
 /*         4) caller allocated buffer to store the return status              */
 /* Output : 1) offset from the beginning of the entry-topic file stream to the*/
@@ -837,7 +837,7 @@ static bool AttachLeaf(
 /*            level of the tree is already the root, all paths are set to NULL*/
 /*            (status EXIT).                                                  */
 /*         2) If an entry-topic is not found, the file position of the current*/
-/*            main topic (or menu) is returned (status NO_TOPIC).             */
+/*            CL_main topic (or menu) is returned (status NO_TOPIC).             */
 /******************************************************************************/
 static long LookupEntry(
   Environment *theEnv,
@@ -979,7 +979,7 @@ static void TossFunction(
         TossFunction(theEnv,eptr->child);
       prev = eptr;
       eptr = eptr->next;
-      rm(theEnv,prev,sizeof(struct entries));
+      CL_rm(theEnv,prev,sizeof(struct entries));
      }
   }
 
@@ -989,19 +989,19 @@ static void TossFunction(
 /*                          TEXT PROCESSING FUNCTIONS                       */
 /*                                                                          */
 /* The functions contained in this file can be called to handle             */
-/* external file referencing and accessing.  FetchCommand() loads a file    */
-/* onto an internal run-time lookup table, TossCommand() removes the file,  */
-/* PrintRegionCommand accesses the loaded file to display a requested       */
+/* external file referencing and accessing.  CL_FetchCommand() loads a file    */
+/* onto an internal run-time lookup table, CL_TossCommand() removes the file,  */
+/* CL_PrintRegionCommand accesses the loaded file to display a requested       */
 /* entry, and HelpFunction() provides an on-line help facility              */
 /* using the external help data file specified in the header file setup.h.  */
-/* For information on the format of the data file(s) required, see the      */
+/* For infoCL_rmation on the foCL_rmat of the data file(s) required, see the      */
 /* internal documentation in LOOKUP.C and the external documentation.       */
 /*                                                                          */
 /* For usage of these functions, see the external documentation.            */
 /****************************************************************************/
 /****************************************************************************/
 
-#define SCREEN_LN 22   /*Typical terminal screen length -- 22 lines*/
+#define SCREEN_LN 22   /*Typical teCL_rminal screen length -- 22 lines*/
                        /*Used for scrolling in the help facility   */
 
 /*==========================================*/
@@ -1032,13 +1032,13 @@ struct topics
 #if TEXTPRO_FUNCTIONS
 
 /***************************************************************************/
-/*FUNCTION FetchCommand : (H/L function fetch)                             */
+/*FUNCTION CL_FetchCommand : (H/L function fetch)                             */
 /* Input : Name of the file to be stored in the lookup table - passed via  */
 /*         the argument "stack" and result buffer                          */
 /* Output : This function loads a file into the internal lookup table and  */
 /*          returns a (float) boolean flag indicating failure or success.  */
 /***************************************************************************/
-void FetchCommand(
+void CL_FetchCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -1048,7 +1048,7 @@ void FetchCommand(
 
    returnValue->lexemeValue = FalseSymbol(theEnv);
 
-   if (! UDFFirstArgument(context,LEXEME_BITS,&theArg))
+   if (! CL_UDFFirstArgument(context,LEXEME_BITS,&theArg))
      { return; }
 
    load_ct = TextLookupFetch(theEnv,theArg.lexemeValue->contents);
@@ -1056,22 +1056,22 @@ void FetchCommand(
      {
       if (load_ct == 0)
         {
-         PrintErrorID(theEnv,"TEXTPRO",3,false);
-         WriteString(theEnv,STDERR,"No entries found.\n");
+         CL_PrintErrorID(theEnv,"TEXTPRO",3,false);
+         CL_WriteString(theEnv,STDERR,"No entries found.\n");
         }
 
       return;
      }
 
-   returnValue->integerValue = CreateInteger(theEnv,load_ct);
+   returnValue->integerValue = CL_CreateInteger(theEnv,load_ct);
   }
 
 /******************************************************************************/
-/*FUNCTION PrintRegionCommand : (H/L function print-region)                 */
+/*FUNCTION CL_PrintRegionCommand : (H/L function print-region)                 */
 /* Input : Via the argument "stack", logical name for the output, the name of the */
 /*         file to be accessed, and the name of the topic(s) to be looked up. */
 /* Output : This function accesses a previously loaded file and prints the    */
-/*          information of the topic entry requested to the screen.  The tree */
+/*          infoCL_rmation of the topic entry requested to the screen.  The tree */
 /*          structure must currently be at the correct level in order for the */
 /*          topic to be accessed.  To branch down the tree, each topic in the */
 /*          path to the one desired must be named.  Multiple arguments are    */
@@ -1079,11 +1079,11 @@ void FetchCommand(
 /*          To branch up the tree, the special topic character `^' must be    */
 /*          specified for each upwards branch.  Giving no topic name will     */
 /*          cause a single branch-up in the tree.  The `?' character given at */
-/*          the end of a path will return the current main topic menu.        */
+/*          the end of a path will return the current CL_main topic menu.        */
 /*                                                                            */
 /* For usage, see the external documentation.                                 */
 /******************************************************************************/
-void PrintRegionCommand(
+void CL_PrintRegionCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -1101,10 +1101,10 @@ void PrintRegionCommand(
    if ((status != NO_FILE) && (status != NO_TOPIC) && (status != EXIT))
      {
       if (strcmp(params->name,"t") == 0)
-        genstrcpy(params->name,STDOUT);
-      WriteString(theEnv,params->name,"\n");
+        CL_genstrcpy(params->name,STDOUT);
+      CL_WriteString(theEnv,params->name,"\n");
       while (GrabString(theEnv,fp,buf,256) != NULL)
-        WriteString(theEnv,params->name,buf);
+        CL_WriteString(theEnv,params->name,buf);
       com_code = true;
      }
    else
@@ -1116,27 +1116,27 @@ void PrintRegionCommand(
          closed.
          ================================================================== */
       if (fp != NULL)
-        GenClose(theEnv,fp);
+        CL_GenClose(theEnv,fp);
       com_code = false;
      }
 
    /* =======================================================
-      Release any space used by the user's topic request list
+      CL_Release any space used by the user's topic request list
       ======================================================= */
    while (params != NULL)
      {
       tptr = params;
       params = params->next;
-      rm(theEnv,tptr,sizeof(struct topics));
+      CL_rm(theEnv,tptr,sizeof(struct topics));
      }
 
-   returnValue->lexemeValue = CreateBoolean(theEnv,com_code);
+   returnValue->lexemeValue = CL_CreateBoolean(theEnv,com_code);
   }
 
 /***********************************************/
-/* GetRegionCommand : (H/L functionget-region) */
+/* CL_GetRegionCommand : (H/L functionget-region) */
 /***********************************************/
-void GetRegionCommand(
+void CL_GetRegionCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -1157,7 +1157,7 @@ void GetRegionCommand(
    if ((status != NO_FILE) && (status != NO_TOPIC) && (status != EXIT))
      {
       while (GrabString(theEnv,fp,buf,256) != NULL)
-        theString = AppendToString(theEnv,buf,theString,&oldPos,&oldMax);
+        theString = CL_AppendToString(theEnv,buf,theString,&oldPos,&oldMax);
      }
    else
      {
@@ -1168,21 +1168,21 @@ void GetRegionCommand(
          closed.
          ================================================================== */
       if (fp != NULL)
-        GenClose(theEnv,fp);
+        CL_GenClose(theEnv,fp);
      }
 
    /* =======================================================
-      Release any space used by the user's topic request list
+      CL_Release any space used by the user's topic request list
       ======================================================= */
    while (params != NULL)
      {
       tptr = params;
       params = params->next;
-      rm(theEnv,tptr,sizeof(struct topics));
+      CL_rm(theEnv,tptr,sizeof(struct topics));
      }
 
    if (theString == NULL)
-     { returnValue->lexemeValue = CreateString(theEnv,""); }
+     { returnValue->lexemeValue = CL_CreateString(theEnv,""); }
    else
      {
       sLength = strlen(theString);
@@ -1191,21 +1191,21 @@ void GetRegionCommand(
 		   ||
            ((theString[sLength-1] == '\n') && (theString[sLength-2] == '\r'))))
         { theString[sLength-2] = 0; }
-      returnValue->lexemeValue = CreateString(theEnv,theString);
+      returnValue->lexemeValue = CL_CreateString(theEnv,theString);
      }
 
    if (theString != NULL)
-     { genfree(theEnv,theString,oldMax); }
+     { CL_genfree(theEnv,theString,oldMax); }
   }
 
 /***************************************************************************/
-/*FUNCTION TossCommand : (H/L function toss)                             */
+/*FUNCTION CL_TossCommand : (H/L function toss)                             */
 /* Input : Name of the file to be deleted from the lookup table (passed via*/
 /*         the argument "stack")                                           */
 /* Output : This function deletes the named file from the lookup table and */
 /*          returns a (float) boolean flag indicating failure or success.  */
 /***************************************************************************/
-void TossCommand(
+void CL_TossCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -1213,12 +1213,12 @@ void TossCommand(
    const char *file;   /*Name of the file */
    UDFValue theArg;
 
-   if (! UDFFirstArgument(context,LEXEME_BITS,&theArg))
+   if (! CL_UDFFirstArgument(context,LEXEME_BITS,&theArg))
      { return; }
 
    file = theArg.lexemeValue->contents;
 
-   returnValue->lexemeValue = CreateBoolean(theEnv,TextLookupToss(theEnv,file));
+   returnValue->lexemeValue = CL_CreateBoolean(theEnv,TextLookupToss(theEnv,file));
   }
 
 #endif
@@ -1250,18 +1250,18 @@ static struct topics *GetCommandLineTopics(
 
    while (UDFHasNextArgument(context))
      {
-      tnode = (struct topics *) gm2(theEnv,sizeof(struct topics));
+      tnode = (struct topics *) CL_gm2(theEnv,sizeof(struct topics));
 
-      UDFNextArgument(context,ANY_TYPE_BITS,&val);
+      CL_UDFNextArgument(context,ANY_TYPE_BITS,&val);
 
       if ((val.header->type == SYMBOL_TYPE) || (val.header->type == STRING_TYPE))
-        genstrncpy(tnode->name,val.lexemeValue->contents,NAMESIZE-1);
+        CL_genstrncpy(tnode->name,val.lexemeValue->contents,NAMESIZE-1);
       else if (val.header->type == FLOAT_TYPE)
-        genstrncpy(tnode->name,FloatToString(theEnv,val.floatValue->contents),NAMESIZE-1);
+        CL_genstrncpy(tnode->name,CL_FloatToString(theEnv,val.floatValue->contents),NAMESIZE-1);
       else if (val.header->type == INTEGER_TYPE)
-        genstrncpy(tnode->name,LongIntegerToString(theEnv,val.integerValue->contents),NAMESIZE-1);
+        CL_genstrncpy(tnode->name,CL_LongIntegerToString(theEnv,val.integerValue->contents),NAMESIZE-1);
       else
-        genstrncpy(tnode->name,"***ERROR***",NAMESIZE-1);
+        CL_genstrncpy(tnode->name,"***ERROR***",NAMESIZE-1);
 
       tnode->next = NULL;
       tnode->end_list = NULL;
@@ -1295,7 +1295,7 @@ static struct topics *GetCommandLineTopics(
 static FILE *FindTopicInEntries(
   Environment *theEnv,
   const char *file,
-  struct topics *main_topic,
+  struct topics *CL_main_topic,
   char **menu,
   int *status)
   {
@@ -1303,16 +1303,16 @@ static FILE *FindTopicInEntries(
    struct topics *tptr,             /*Used to loop through the topic list  */
                  *end_list;         /*Address of the end of the topic list */
 
-   if (main_topic != NULL)
-     end_list = main_topic->end_list;
+   if (CL_main_topic != NULL)
+     end_list = CL_main_topic->end_list;
    else
      end_list = NULL;
-   tptr = main_topic;
+   tptr = CL_main_topic;
    if (tptr != end_list)
      do
        {
         if (fp != NULL)
-          GenClose(theEnv,fp);
+          CL_GenClose(theEnv,fp);
 
         /*======================*/
         /*Branch up in the tree */
@@ -1321,7 +1321,7 @@ static FILE *FindTopicInEntries(
           fp = GetEntries(theEnv,file,menu,NULL,status);
 
         /*=======================================================*/
-        /*Return the current main topic menu of the lookup table */
+        /*Return the current CL_main topic menu of the lookup table */
         /*=======================================================*/
         else if ((strcmp(tptr->name,"?") == 0) && (tptr->next == end_list))
           fp = GetCurrentMenu(theEnv,file,status);
@@ -1346,18 +1346,18 @@ static FILE *FindTopicInEntries(
   }
 
 /*******************************************/
-/* HelpFunctionDefinitions:                */
+/* CL_HelpFunctionDefinitions:                */
 /*******************************************/
-void HelpFunctionDefinitions(
+void CL_HelpFunctionDefinitions(
   Environment *theEnv)
   {
-   AllocateEnvironmentData(theEnv,TEXTPRO_DATA,sizeof(struct textProcessingData),DeallocateTextProcessingData);
+   CL_AllocateEnvironmentData(theEnv,TEXTPRO_DATA,sizeof(struct textProcessingData),DeallocateTextProcessingData);
 #if ! RUN_TIME
 #if TEXTPRO_FUNCTIONS
-   AddUDF(theEnv,"fetch","bl",1,1,"sy",FetchCommand,"FetchCommand",NULL);
-   AddUDF(theEnv,"toss","b",1,1,"sy",TossCommand,"TossCommand",NULL);
-   AddUDF(theEnv,"print-region","b",2,UNBOUNDED,"*;y;sy",PrintRegionCommand,"PrintRegionCommand",NULL);
-   AddUDF(theEnv,"get-region","s",1,UNBOUNDED,"*;sy",GetRegionCommand,"GetRegionCommand", NULL);
+   CL_AddUDF(theEnv,"fetch","bl",1,1,"sy",CL_FetchCommand,"CL_FetchCommand",NULL);
+   CL_AddUDF(theEnv,"toss","b",1,1,"sy",CL_TossCommand,"CL_TossCommand",NULL);
+   CL_AddUDF(theEnv,"print-region","b",2,UNBOUNDED,"*;y;sy",CL_PrintRegionCommand,"CL_PrintRegionCommand",NULL);
+   CL_AddUDF(theEnv,"get-region","s",1,UNBOUNDED,"*;sy",CL_GetRegionCommand,"CL_GetRegionCommand", NULL);
 #endif
 #endif
   }
@@ -1377,7 +1377,7 @@ static void DeallocateTextProcessingData(
       nextptr = clptr->next;
 
       TossFunction(theEnv,clptr->topics);
-      rm(theEnv,clptr,sizeof(struct lists));
+      CL_rm(theEnv,clptr,sizeof(struct lists));
 
       clptr = nextptr;
      }

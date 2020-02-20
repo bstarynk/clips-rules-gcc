@@ -68,27 +68,27 @@ struct bloadData
    const char *BinaryVersionID;
    char *BinarySizes;
    struct functionDefinition **FunctionArray;
-   bool BloadActive;
-   struct voidCallFunctionItem *BeforeBloadFunctions;
-   struct voidCallFunctionItem *AfterBloadFunctions;
-   struct boolCallFunctionItem *ClearBloadReadyFunctions;
-   struct voidCallFunctionItem *AbortBloadFunctions;
+   bool CL_BloadActive;
+   struct voidCL_CallFunctionItem *BeforeCL_BloadFunctions;
+   struct voidCL_CallFunctionItem *AfterCL_BloadFunctions;
+   struct boolCL_CallFunctionItem *CL_ClearCL_BloadReadyFunctions;
+   struct voidCL_CallFunctionItem *AbortCL_BloadFunctions;
   };
 
-#define BloadData(theEnv) ((struct bloadData *) GetEnvironmentData(theEnv,BLOAD_DATA))
+#define CL_BloadData(theEnv) ((struct bloadData *) GetEnvironmentData(theEnv,BLOAD_DATA))
 
-#define FunctionPointer(i) ((((i) == ULONG_MAX) ? NULL : BloadData(theEnv)->FunctionArray[i]))
+#define FunctionPointer(i) ((((i) == ULONG_MAX) ? NULL : CL_BloadData(theEnv)->FunctionArray[i]))
 
-   void                    InitializeBloadData(Environment *);
-   void                    BloadCommand(Environment *,UDFContext *,UDFValue *);
-   bool                    Bload(Environment *,const char *);
-   void                    BloadandRefresh(Environment *,unsigned long,size_t,void (*)(Environment *,void *,unsigned long));
-   bool                    Bloaded(Environment *);
-   void                    AddBeforeBloadFunction(Environment *,const char *,VoidCallFunction *,int,void *);
-   void                    AddAfterBloadFunction(Environment *,const char *,VoidCallFunction *,int,void *);
-   void                    AddClearBloadReadyFunction(Environment *,const char *,BoolCallFunction *,int,void *);
-   void                    AddAbortBloadFunction(Environment *,const char *,VoidCallFunction *,int,void *);
-   void                    CannotLoadWithBloadMessage(Environment *,const char *);
+   void                    InitializeCL_BloadData(Environment *);
+   void                    CL_BloadCommand(Environment *,UDFContext *,UDFValue *);
+   bool                    CL_Bload(Environment *,const char *);
+   void                    CL_BloadandCL_Refresh(Environment *,unsigned long,size_t,void (*)(Environment *,void *,unsigned long));
+   bool                    CL_Bloaded(Environment *);
+   void                    CL_AddBeforeCL_BloadFunction(Environment *,const char *,VoidCL_CallFunction *,int,void *);
+   void                    CL_AddAfterCL_BloadFunction(Environment *,const char *,VoidCL_CallFunction *,int,void *);
+   void                    CL_AddCL_ClearCL_BloadReadyFunction(Environment *,const char *,BoolCL_CallFunction *,int,void *);
+   void                    CL_AddAbortCL_BloadFunction(Environment *,const char *,VoidCL_CallFunction *,int,void *);
+   void                    CannotCL_LoadWithCL_BloadMessage(Environment *,const char *);
 
 #endif
 

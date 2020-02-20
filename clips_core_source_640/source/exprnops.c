@@ -20,7 +20,7 @@
 /*                                                           */
 /*      6.24: Renamed BOOLEAN macro type to intBool.         */
 /*                                                           */
-/*      6.30: Add NegateExpression function.                 */
+/*      6.30: Add CL_NegateExpression function.                 */
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
@@ -34,7 +34,7 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/*            Eval support for run time and bload only.      */
+/*            CL_Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -57,9 +57,9 @@
 #include "exprnops.h"
 
 /************************************/
-/* CheckArgumentAgainstRestriction: */
+/* CL_CheckArgumentAgainstRestriction: */
 /************************************/
-bool CheckArgumentAgainstRestriction(
+bool CL_CheckArgumentAgainstRestriction(
   Environment *theEnv,
   struct expr *theExpression,
   unsigned theRestriction)
@@ -71,24 +71,24 @@ bool CheckArgumentAgainstRestriction(
    /* argument passed to the function.            */
    /*=============================================*/
 
-   cr1 = ExpressionToConstraintRecord(theEnv,theExpression);
+   cr1 = CL_ExpressionToConstraintRecord(theEnv,theExpression);
 
    /*================================================*/
    /* Generate a constraint record based on the type */
    /* of argument expected by the function.          */
    /*================================================*/
 
-   cr2 = ArgumentTypeToConstraintRecord(theEnv,theRestriction);
+   cr2 = CL_ArgumentTypeToConstraintRecord(theEnv,theRestriction);
 
    /*===============================================*/
    /* Intersect the two constraint records and then */
    /* discard them.                                 */
    /*===============================================*/
 
-   cr3 = IntersectConstraints(theEnv,cr1,cr2);
+   cr3 = CL_IntersectConstraints(theEnv,cr1,cr2);
 
-   RemoveConstraint(theEnv,cr1);
-   RemoveConstraint(theEnv,cr2);
+   CL_RemoveConstraint(theEnv,cr1);
+   CL_RemoveConstraint(theEnv,cr2);
 
    /*====================================================*/
    /* If the intersection of the two constraint records  */
@@ -96,9 +96,9 @@ bool CheckArgumentAgainstRestriction(
    /* doesn't satisfy the restrictions for the argument. */
    /*====================================================*/
 
-   if (UnmatchableConstraint(cr3))
+   if (CL_UnmatchableConstraint(cr3))
      {
-      RemoveConstraint(theEnv,cr3);
+      CL_RemoveConstraint(theEnv,cr3);
       return true;
      }
 
@@ -106,15 +106,15 @@ bool CheckArgumentAgainstRestriction(
    /* The argument satisfies the function restrictions. */
    /*===================================================*/
 
-   RemoveConstraint(theEnv,cr3);
+   CL_RemoveConstraint(theEnv,cr3);
    return false;
   }
 
 /******************************************************/
-/* ConstantExpression: Returns true if the expression */
+/* CL_ConstantExpression: Returns true if the expression */
 /*   is a constant, otherwise false.                  */
 /******************************************************/
-bool ConstantExpression(
+bool CL_ConstantExpression(
   struct expr *testPtr)
   {
    while (testPtr != NULL)
@@ -132,10 +132,10 @@ bool ConstantExpression(
   }
 
 /******************************************/
-/* ConstantType: Returns true if the type */
+/* CL_ConstantType: Returns true if the type */
 /*   is a constant, otherwise false.      */
 /******************************************/
-bool ConstantType(
+bool CL_ConstantType(
   int theType)
   {
    switch (theType)
@@ -155,10 +155,10 @@ bool ConstantType(
   }
 
 /*****************************************************************************/
-/* IdenticalExpression: Determines if two expressions are identical. Returns */
+/* CL_IdenticalExpression: DeteCL_rmines if two expressions are identical. Returns */
 /*   true if the expressions are identical, otherwise false is returned.     */
 /*****************************************************************************/
-bool IdenticalExpression(
+bool CL_IdenticalExpression(
   struct expr *firstList,
   struct expr *secondList)
   {
@@ -185,7 +185,7 @@ bool IdenticalExpression(
       /* Compare the arguments lists. */
       /*==============================*/
 
-      if (IdenticalExpression(firstList->argList,secondList->argList) == false)
+      if (CL_IdenticalExpression(firstList->argList,secondList->argList) == false)
         { return false; }
      }
 
@@ -205,12 +205,12 @@ bool IdenticalExpression(
   }
 
 /****************************************************/
-/* CountArguments: Returns the number of structures */
+/* CL_CountArguments: Returns the number of structures */
 /*   stored in an expression as traversed through   */
 /*   the nextArg pointer but not the argList        */
 /*   pointer.                                       */
 /****************************************************/
-unsigned short CountArguments(
+unsigned short CL_CountArguments(
   struct expr *testPtr)
   {
    unsigned short size = 0;
@@ -227,7 +227,7 @@ unsigned short CountArguments(
 /******************************************/
 /* CopyExpresssion: Copies an expression. */
 /******************************************/
-struct expr *CopyExpression(
+struct expr *CL_CopyExpression(
   Environment *theEnv,
   struct expr *original)
   {
@@ -235,15 +235,15 @@ struct expr *CopyExpression(
 
    if (original == NULL) return NULL;
 
-   topLevel = GenConstant(theEnv,original->type,original->value);
-   topLevel->argList = CopyExpression(theEnv,original->argList);
+   topLevel = CL_GenConstant(theEnv,original->type,original->value);
+   topLevel->argList = CL_CopyExpression(theEnv,original->argList);
 
    last = topLevel;
    original = original->nextArg;
    while (original != NULL)
      {
-      next = GenConstant(theEnv,original->type,original->value);
-      next->argList = CopyExpression(theEnv,original->argList);
+      next = CL_GenConstant(theEnv,original->type,original->value);
+      next->argList = CL_CopyExpression(theEnv,original->argList);
 
       last->nextArg = next;
       last = next;
@@ -254,11 +254,11 @@ struct expr *CopyExpression(
   }
 
 /************************************************************/
-/* ExpressionContainsVariables: Determines if an expression */
+/* CL_ExpressionContainsVariables: DeteCL_rmines if an expression */
 /*   contains any variables. Returns true if the expression */
 /*   contains any variables, otherwise false is returned.   */
 /************************************************************/
-bool ExpressionContainsVariables(
+bool CL_ExpressionContainsVariables(
   struct expr *theExpression,
   bool globalsAreVariables)
   {
@@ -266,7 +266,7 @@ bool ExpressionContainsVariables(
      {
       if (theExpression->argList != NULL)
         {
-         if (ExpressionContainsVariables(theExpression->argList,globalsAreVariables))
+         if (CL_ExpressionContainsVariables(theExpression->argList,globalsAreVariables))
            { return true; }
         }
 
@@ -285,10 +285,10 @@ bool ExpressionContainsVariables(
   }
 
 /*****************************************/
-/* ExpressionSize: Returns the number of */
+/* CL_ExpressionSize: Returns the number of */
 /*   structures stored in an expression. */
 /*****************************************/
-unsigned long ExpressionSize(
+unsigned long CL_ExpressionSize(
   struct expr *testPtr)
   {
    unsigned long size = 0;
@@ -297,17 +297,17 @@ unsigned long ExpressionSize(
      {
       size++;
       if (testPtr->argList != NULL)
-        { size += ExpressionSize(testPtr->argList); }
+        { size += CL_ExpressionSize(testPtr->argList); }
       testPtr = testPtr->nextArg;
      }
    return size;
   }
 
 /************************************************/
-/* GenConstant: Generates a constant expression */
+/* CL_GenConstant: Generates a constant expression */
 /*   value of type string, symbol, or number.   */
 /************************************************/
-struct expr *GenConstant(
+struct expr *CL_GenConstant(
   Environment *theEnv,
   unsigned short type,
   void *value)
@@ -324,9 +324,9 @@ struct expr *GenConstant(
   }
 
 /*************************************************/
-/* PrintExpression: Pretty prints an expression. */
+/* CL_PrintExpression: Pretty prints an expression. */
 /*************************************************/
-void PrintExpression(
+void CL_PrintExpression(
   Environment *theEnv,
   const char *fileid,
   struct expr *theExpression)
@@ -342,41 +342,41 @@ void PrintExpression(
         {
          case SF_VARIABLE:
          case GBL_VARIABLE:
-            WriteString(theEnv,fileid,"?");
-            WriteString(theEnv,fileid,theExpression->lexemeValue->contents);
+            CL_WriteString(theEnv,fileid,"?");
+            CL_WriteString(theEnv,fileid,theExpression->lexemeValue->contents);
             break;
 
          case MF_VARIABLE:
          case MF_GBL_VARIABLE:
-            WriteString(theEnv,fileid,"$?");
-            WriteString(theEnv,fileid,theExpression->lexemeValue->contents);
+            CL_WriteString(theEnv,fileid,"$?");
+            CL_WriteString(theEnv,fileid,theExpression->lexemeValue->contents);
             break;
 
          case FCALL:
-           WriteString(theEnv,fileid,"(");
-           WriteString(theEnv,fileid,ExpressionFunctionCallName(theExpression)->contents);
-           if (theExpression->argList != NULL) { WriteString(theEnv,fileid," "); }
-           PrintExpression(theEnv,fileid,theExpression->argList);
-           WriteString(theEnv,fileid,")");
+           CL_WriteString(theEnv,fileid,"(");
+           CL_WriteString(theEnv,fileid,ExpressionFunctionCallName(theExpression)->contents);
+           if (theExpression->argList != NULL) { CL_WriteString(theEnv,fileid," "); }
+           CL_PrintExpression(theEnv,fileid,theExpression->argList);
+           CL_WriteString(theEnv,fileid,")");
            break;
 
          default:
-           oldExpression = EvaluationData(theEnv)->CurrentExpression;
-           EvaluationData(theEnv)->CurrentExpression = theExpression;
-           PrintAtom(theEnv,fileid,theExpression->type,theExpression->value);
-           EvaluationData(theEnv)->CurrentExpression = oldExpression;
+           oldExpression = CL_EvaluationData(theEnv)->CurrentExpression;
+           CL_EvaluationData(theEnv)->CurrentExpression = theExpression;
+           CL_PrintAtom(theEnv,fileid,theExpression->type,theExpression->value);
+           CL_EvaluationData(theEnv)->CurrentExpression = oldExpression;
            break;
         }
 
       theExpression = theExpression->nextArg;
-      if (theExpression != NULL) WriteString(theEnv,fileid," ");
+      if (theExpression != NULL) CL_WriteString(theEnv,fileid," ");
      }
 
    return;
   }
 
 /*************************************************************************/
-/* CombineExpressions: Combines two expressions into a single equivalent */
+/* CL_CombineExpressions: Combines two expressions into a single equivalent */
 /*   expression. Mainly serves to merge expressions containing "and"     */
 /*   and "or" expressions without unnecessary duplication of the "and"   */
 /*   and "or" expressions (i.e., two "and" expressions can be merged by  */
@@ -384,7 +384,7 @@ void PrintExpression(
 /*   is more efficient to add the arguments of one of the "and"          */
 /*   expressions to the list of arguments for the other and expression). */
 /*************************************************************************/
-struct expr *CombineExpressions(
+struct expr *CL_CombineExpressions(
   Environment *theEnv,
   struct expr *expr1,
   struct expr *expr2)
@@ -479,16 +479,16 @@ struct expr *CombineExpressions(
    /* to the argument list of that "and" expression.      */
    /*=====================================================*/
 
-   tempPtr = GenConstant(theEnv,FCALL,ExpressionData(theEnv)->PTR_AND);
+   tempPtr = CL_GenConstant(theEnv,FCALL,ExpressionData(theEnv)->PTR_AND);
    tempPtr->argList = expr1;
    expr1->nextArg = expr2;
    return(tempPtr);
   }
 
 /*********************/
-/* NegateExpression: */
+/* CL_NegateExpression: */
 /*********************/
-struct expr *NegateExpression(
+struct expr *CL_NegateExpression(
   Environment *theEnv,
   struct expr *theExpression)
   {
@@ -516,17 +516,17 @@ struct expr *NegateExpression(
    /* Wrap the expression within a "not" function call. */
    /*===================================================*/
 
-   tempPtr = GenConstant(theEnv,FCALL,ExpressionData(theEnv)->PTR_NOT);
+   tempPtr = CL_GenConstant(theEnv,FCALL,ExpressionData(theEnv)->PTR_NOT);
    tempPtr->argList = theExpression;
 
    return(tempPtr);
   }
 
 /********************************************************/
-/* AppendExpressions: Attaches an expression to the end */
+/* CL_AppendExpressions: Attaches an expression to the end */
 /*   of another expression's nextArg list.              */
 /********************************************************/
-struct expr *AppendExpressions(
+struct expr *CL_AppendExpressions(
   struct expr *expr1,
   struct expr *expr2)
   {

@@ -22,7 +22,7 @@
 /*                                                           */
 /*            Renamed BOOLEAN macro type to intBool.         */
 /*                                                           */
-/*            Added support for passing context information  */
+/*            Added support for passing context infoCL_rmation  */
 /*            to the router functions.                       */
 /*                                                           */
 /*      6.30: Fixed issues with passing context to routers.  */
@@ -37,7 +37,7 @@
 /*            Added STDOUT and STDIN logical name            */
 /*            definitions.                                   */
 /*                                                           */
-/*      6.40: Added InputBufferCount function.               */
+/*      6.40: Added CL_InputBufferCount function.               */
 /*                                                           */
 /*            Added check for reuse of existing router name. */
 /*                                                           */
@@ -73,9 +73,9 @@
 
 typedef struct router Router;
 typedef bool RouterQueryFunction(Environment *,const char *,void *);
-typedef void RouterWriteFunction(Environment *,const char *,const char *,void *);
+typedef void RouterCL_WriteFunction(Environment *,const char *,const char *,void *);
 typedef void RouterExitFunction(Environment *,int,void *);
-typedef int RouterReadFunction(Environment *,const char *,void *);
+typedef int RouterCL_ReadFunction(Environment *,const char *,void *);
 typedef int RouterUnreadFunction(Environment *,const char *,int,void *);
 
 extern const char *STDOUT;
@@ -92,9 +92,9 @@ struct router
    int priority;
    void *context;
    RouterQueryFunction *queryCallback;
-   RouterWriteFunction *writeCallback;
+   RouterCL_WriteFunction *writeCallback;
    RouterExitFunction *exitCallback;
-   RouterReadFunction *readCallback;
+   RouterCL_ReadFunction *readCallback;
    RouterUnreadFunction *unreadCallback;
    Router *next;
   };
@@ -109,37 +109,37 @@ struct routerData
    const char *FastCharGetString;
    long FastCharGetIndex;
    struct router *ListOfRouters;
-   FILE *FastLoadFilePtr;
-   FILE *FastSaveFilePtr;
+   FILE *FastCL_LoadFilePtr;
+   FILE *FastCL_SaveFilePtr;
    bool Abort;
   };
 
 #define RouterData(theEnv) ((struct routerData *) GetEnvironmentData(theEnv,ROUTER_DATA))
 
-   void                           InitializeDefaultRouters(Environment *);
-   void                           WriteString(Environment *,const char *,const char *);
-   void                           Write(Environment *,const char *);
-   void                           Writeln(Environment *,const char *);
-   int                            ReadRouter(Environment *,const char *);
-   int                            UnreadRouter(Environment *,const char *,int);
-   void                           ExitRouter(Environment *,int);
-   void                           AbortExit(Environment *);
-   bool                           AddRouter(Environment *,const char *,int,
-                                            RouterQueryFunction *,RouterWriteFunction *,
-                                            RouterReadFunction *,RouterUnreadFunction *,
+   void                           CL_InitializeDefaultRouters(Environment *);
+   void                           CL_WriteString(Environment *,const char *,const char *);
+   void                           CL_Write(Environment *,const char *);
+   void                           CL_Writeln(Environment *,const char *);
+   int                            CL_ReadRouter(Environment *,const char *);
+   int                            CL_UnreadRouter(Environment *,const char *,int);
+   void                           CL_ExitRouter(Environment *,int);
+   void                           CL_AbortExit(Environment *);
+   bool                           CL_AddRouter(Environment *,const char *,int,
+                                            RouterQueryFunction *,RouterCL_WriteFunction *,
+                                            RouterCL_ReadFunction *,RouterUnreadFunction *,
                                             RouterExitFunction *,void *);
-   bool                           DeleteRouter(Environment *,const char *);
-   bool                           QueryRouters(Environment *,const char *);
-   bool                           DeactivateRouter(Environment *,const char *);
-   bool                           ActivateRouter(Environment *,const char *);
-   void                           SetFastLoad(Environment *,FILE *);
-   void                           SetFastSave(Environment *,FILE *);
-   FILE                          *GetFastLoad(Environment *);
-   FILE                          *GetFastSave(Environment *);
-   void                           UnrecognizedRouterMessage(Environment *,const char *);
-   void                           PrintNRouter(Environment *,const char *,const char *,unsigned long);
-   size_t                         InputBufferCount(Environment *);
-   Router                        *FindRouter(Environment *,const char *);
-   bool                           PrintRouterExists(Environment *,const char *);
+   bool                           CL_DeleteRouter(Environment *,const char *);
+   bool                           CL_QueryRouters(Environment *,const char *);
+   bool                           CL_DeactivateRouter(Environment *,const char *);
+   bool                           CL_ActivateRouter(Environment *,const char *);
+   void                           SetFastCL_Load(Environment *,FILE *);
+   void                           SetFastCL_Save(Environment *,FILE *);
+   FILE                          *CL_GetFastCL_Load(Environment *);
+   FILE                          *CL_GetFastCL_Save(Environment *);
+   void                           CL_UnrecognizedRouterMessage(Environment *,const char *);
+   void                           CL_PrintNRouter(Environment *,const char *,const char *,unsigned long);
+   size_t                         CL_InputBufferCount(Environment *);
+   Router                        *CL_FindRouter(Environment *,const char *);
+   bool                           CL_PrintRouterExists(Environment *,const char *);
 
 #endif /* _H_router */

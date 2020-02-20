@@ -99,7 +99,7 @@
    static void                    PrintObjectGetVarPN2(Environment *,const char *,void *);
    static bool                    ObjectGetVarPNFunction2(Environment *,void *,UDFValue *);
    static void                    PrintObjectCmpConstant(Environment *,const char *,void *);
-   static void                    PrintSlotLengthTest(Environment *,const char *,void *);
+   static void                    CL_PrintSlotLengthTest(Environment *,const char *,void *);
    static bool                    SlotLengthTestFunction(Environment *,void *,UDFValue *);
    static void                    PrintPNSimpleCompareFunction1(Environment *,const char *,void *);
    static bool                    PNSimpleCompareFunction1(Environment *,void *,UDFValue *);
@@ -130,7 +130,7 @@
    ***************************************** */
 
 /***************************************************
-  NAME         : InstallObjectPrimitives
+  NAME         : CL_InstallObjectPrimitives
   DESCRIPTION  : Installs all the entity records
                  associated with object pattern
                  matching operations
@@ -139,7 +139,7 @@
   SIDE EFFECTS : Primitive operations installed
   NOTES        : None
  ***************************************************/
-void InstallObjectPrimitives(
+void CL_InstallObjectPrimitives(
   Environment *theEnv)
   {
    struct entityRecord objectGVInfo1 = { "OBJ_GET_SLOT_JNVAR1", OBJ_GET_SLOT_JNVAR1,0,1,0,
@@ -169,12 +169,12 @@ void InstallObjectPrimitives(
    struct entityRecord objectCmpConstantInfo = { "OBJ_PN_CONSTANT", OBJ_PN_CONSTANT,0,1,1,
                                                      PrintObjectCmpConstant,
                                                      PrintObjectCmpConstant,NULL,
-                                                     ObjectCmpConstantFunction,
+                                                     CL_ObjectCmpConstantFunction,
                                                      NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL };
 
    struct entityRecord lengthTestInfo = { "OBJ_SLOT_LENGTH", OBJ_SLOT_LENGTH,0,1,0,
-                                              PrintSlotLengthTest,
-                                              PrintSlotLengthTest,NULL,
+                                              CL_PrintSlotLengthTest,
+                                              CL_PrintSlotLengthTest,NULL,
                                               SlotLengthTestFunction,
                                               NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL };
 
@@ -214,7 +214,7 @@ void InstallObjectPrimitives(
                                                     JNSimpleCompareFunction3,
                                                     NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL };
 
-   AllocateEnvironmentData(theEnv,OBJECT_RETE_DATA,sizeof(struct objectReteData),DeallocateObjectReteData);
+   CL_AllocateEnvironmentData(theEnv,OBJECT_RETE_DATA,sizeof(struct objectReteData),DeallocateObjectReteData);
    ObjectReteData(theEnv)->CurrentObjectSlotLength = 1;
 
    memcpy(&ObjectReteData(theEnv)->ObjectGVInfo1,&objectGVInfo1,sizeof(struct entityRecord));
@@ -230,18 +230,18 @@ void InstallObjectPrimitives(
    memcpy(&ObjectReteData(theEnv)->JNSimpleCompareInfo2,&jNSimpleCompareInfo2,sizeof(struct entityRecord));
    memcpy(&ObjectReteData(theEnv)->JNSimpleCompareInfo3,&jNSimpleCompareInfo3,sizeof(struct entityRecord));
 
-   InstallPrimitive(theEnv,&ObjectReteData(theEnv)->ObjectGVInfo1,OBJ_GET_SLOT_JNVAR1);
-   InstallPrimitive(theEnv,&ObjectReteData(theEnv)->ObjectGVInfo2,OBJ_GET_SLOT_JNVAR2);
-   InstallPrimitive(theEnv,&ObjectReteData(theEnv)->ObjectGVPNInfo1,OBJ_GET_SLOT_PNVAR1);
-   InstallPrimitive(theEnv,&ObjectReteData(theEnv)->ObjectGVPNInfo2,OBJ_GET_SLOT_PNVAR2);
-   InstallPrimitive(theEnv,&ObjectReteData(theEnv)->ObjectCmpConstantInfo,OBJ_PN_CONSTANT);
-   InstallPrimitive(theEnv,&ObjectReteData(theEnv)->LengthTestInfo,OBJ_SLOT_LENGTH);
-   InstallPrimitive(theEnv,&ObjectReteData(theEnv)->PNSimpleCompareInfo1,OBJ_PN_CMP1);
-   InstallPrimitive(theEnv,&ObjectReteData(theEnv)->PNSimpleCompareInfo2,OBJ_PN_CMP2);
-   InstallPrimitive(theEnv,&ObjectReteData(theEnv)->PNSimpleCompareInfo3,OBJ_PN_CMP3);
-   InstallPrimitive(theEnv,&ObjectReteData(theEnv)->JNSimpleCompareInfo1,OBJ_JN_CMP1);
-   InstallPrimitive(theEnv,&ObjectReteData(theEnv)->JNSimpleCompareInfo2,OBJ_JN_CMP2);
-   InstallPrimitive(theEnv,&ObjectReteData(theEnv)->JNSimpleCompareInfo3,OBJ_JN_CMP3);
+   CL_InstallPrimitive(theEnv,&ObjectReteData(theEnv)->ObjectGVInfo1,OBJ_GET_SLOT_JNVAR1);
+   CL_InstallPrimitive(theEnv,&ObjectReteData(theEnv)->ObjectGVInfo2,OBJ_GET_SLOT_JNVAR2);
+   CL_InstallPrimitive(theEnv,&ObjectReteData(theEnv)->ObjectGVPNInfo1,OBJ_GET_SLOT_PNVAR1);
+   CL_InstallPrimitive(theEnv,&ObjectReteData(theEnv)->ObjectGVPNInfo2,OBJ_GET_SLOT_PNVAR2);
+   CL_InstallPrimitive(theEnv,&ObjectReteData(theEnv)->ObjectCmpConstantInfo,OBJ_PN_CONSTANT);
+   CL_InstallPrimitive(theEnv,&ObjectReteData(theEnv)->LengthTestInfo,OBJ_SLOT_LENGTH);
+   CL_InstallPrimitive(theEnv,&ObjectReteData(theEnv)->PNSimpleCompareInfo1,OBJ_PN_CMP1);
+   CL_InstallPrimitive(theEnv,&ObjectReteData(theEnv)->PNSimpleCompareInfo2,OBJ_PN_CMP2);
+   CL_InstallPrimitive(theEnv,&ObjectReteData(theEnv)->PNSimpleCompareInfo3,OBJ_PN_CMP3);
+   CL_InstallPrimitive(theEnv,&ObjectReteData(theEnv)->JNSimpleCompareInfo1,OBJ_JN_CMP1);
+   CL_InstallPrimitive(theEnv,&ObjectReteData(theEnv)->JNSimpleCompareInfo2,OBJ_JN_CMP2);
+   CL_InstallPrimitive(theEnv,&ObjectReteData(theEnv)->JNSimpleCompareInfo3,OBJ_JN_CMP3);
   }
 
 /*****************************************************/
@@ -254,7 +254,7 @@ static void DeallocateObjectReteData(
    OBJECT_PATTERN_NODE *theNetwork;
 
 #if BLOAD || BLOAD_AND_BSAVE
-   if (Bloaded(theEnv)) return;
+   if (CL_Bloaded(theEnv)) return;
 #endif
 
    theNetwork = ObjectReteData(theEnv)->ObjectPatternNetworkPointer;
@@ -302,7 +302,7 @@ static void DestroyObjectAlphaNodes(
      {
       nodePtr = theNode->nxtInGroup;
 
-      DestroyAlphaMemory(theEnv,&theNode->header,false);
+      CL_DestroyAlphaMemory(theEnv,&theNode->header,false);
 
 #if ! RUN_TIME
       rtn_struct(theEnv,objectAlphaNode,theNode);
@@ -313,7 +313,7 @@ static void DestroyObjectAlphaNodes(
   }
 
 /*****************************************************
-  NAME         : ObjectCmpConstantFunction
+  NAME         : CL_ObjectCmpConstantFunction
   DESCRIPTION  : Used to compare object slot values
                  against a constant
   INPUTS       : 1) The constant test bitmap
@@ -323,9 +323,9 @@ static void DestroyObjectAlphaNodes(
   SIDE EFFECTS : Buffer set to symbol TRUE if test
                  successful, false otherwise
   NOTES        : Called directly by
-                   EvaluatePatternExpression()
+                   CL_EvaluatePatternExpression()
  *****************************************************/
-bool ObjectCmpConstantFunction(
+bool CL_ObjectCmpConstantFunction(
   Environment *theEnv,
   void *theValue,
   UDFValue *theResult)
@@ -339,7 +339,7 @@ bool ObjectCmpConstantFunction(
    hack = (struct ObjectCmpPNConstant *) ((CLIPSBitMap *) theValue)->contents;
    if (hack->general)
      {
-      EvaluateExpression(theEnv,GetFirstArgument(),&theVar);
+      CL_EvaluateExpression(theEnv,GetFirstArgument(),&theVar);
       constantExp = GetFirstArgument()->nextArg;
      }
    else
@@ -391,26 +391,26 @@ static void PrintObjectGetVarJN1(
 
    if (hack->objectAddress)
      {
-      WriteString(theEnv,logicalName,"(obj-ptr ");
-      PrintUnsignedInteger(theEnv,logicalName,hack->whichPattern);
+      CL_WriteString(theEnv,logicalName,"(obj-ptr ");
+      CL_PrintUnsignedInteger(theEnv,logicalName,hack->whichPattern);
      }
    else if (hack->allFields)
      {
-      WriteString(theEnv,logicalName,"(obj-slot-contents ");
-      PrintUnsignedInteger(theEnv,logicalName,hack->whichPattern);
-      WriteString(theEnv,logicalName," ");
-      WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->whichSlot)->contents);
+      CL_WriteString(theEnv,logicalName,"(obj-slot-contents ");
+      CL_PrintUnsignedInteger(theEnv,logicalName,hack->whichPattern);
+      CL_WriteString(theEnv,logicalName," ");
+      CL_WriteString(theEnv,logicalName,CL_FindIDSlotName(theEnv,hack->whichSlot)->contents);
      }
    else
      {
-      WriteString(theEnv,logicalName,"(obj-slot-var ");
-      PrintUnsignedInteger(theEnv,logicalName,hack->whichPattern);
-      WriteString(theEnv,logicalName," ");
-      WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->whichSlot)->contents);
-      WriteString(theEnv,logicalName," ");
-      PrintUnsignedInteger(theEnv,logicalName,hack->whichField);
+      CL_WriteString(theEnv,logicalName,"(obj-slot-var ");
+      CL_PrintUnsignedInteger(theEnv,logicalName,hack->whichPattern);
+      CL_WriteString(theEnv,logicalName," ");
+      CL_WriteString(theEnv,logicalName,CL_FindIDSlotName(theEnv,hack->whichSlot)->contents);
+      CL_WriteString(theEnv,logicalName," ");
+      CL_PrintUnsignedInteger(theEnv,logicalName,hack->whichField);
      }
-   WriteString(theEnv,logicalName,")");
+   CL_WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -444,21 +444,21 @@ static void PrintObjectGetVarJN2(
    struct ObjectMatchVar2 *hack;
 
    hack = (struct ObjectMatchVar2 *) ((CLIPSBitMap *) theValue)->contents;
-   WriteString(theEnv,logicalName,"(obj-slot-quick-var ");
-   PrintUnsignedInteger(theEnv,logicalName,hack->whichPattern);
-   WriteString(theEnv,logicalName," ");
-   WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->whichSlot)->contents);
+   CL_WriteString(theEnv,logicalName,"(obj-slot-quick-var ");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->whichPattern);
+   CL_WriteString(theEnv,logicalName," ");
+   CL_WriteString(theEnv,logicalName,CL_FindIDSlotName(theEnv,hack->whichSlot)->contents);
    if (hack->fromBeginning)
      {
-      WriteString(theEnv,logicalName," B");
-      PrintUnsignedInteger(theEnv,logicalName,hack->beginningOffset + 1);
+      CL_WriteString(theEnv,logicalName," B");
+      CL_PrintUnsignedInteger(theEnv,logicalName,hack->beginningOffset + 1);
      }
    if (hack->fromEnd)
      {
-      WriteString(theEnv,logicalName," E");
-      PrintUnsignedInteger(theEnv,logicalName,hack->endOffset + 1);
+      CL_WriteString(theEnv,logicalName," E");
+      CL_PrintUnsignedInteger(theEnv,logicalName,hack->endOffset + 1);
      }
-   WriteString(theEnv,logicalName,")");
+   CL_WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -494,20 +494,20 @@ static void PrintObjectGetVarPN1(
    hack = (struct ObjectMatchVar1 *) ((CLIPSBitMap *) theValue)->contents;
 
    if (hack->objectAddress)
-     WriteString(theEnv,logicalName,"(ptn-obj-ptr ");
+     CL_WriteString(theEnv,logicalName,"(ptn-obj-ptr ");
    else if (hack->allFields)
      {
-      WriteString(theEnv,logicalName,"(ptn-obj-slot-contents ");
-      WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->whichSlot)->contents);
+      CL_WriteString(theEnv,logicalName,"(ptn-obj-slot-contents ");
+      CL_WriteString(theEnv,logicalName,CL_FindIDSlotName(theEnv,hack->whichSlot)->contents);
      }
    else
      {
-      WriteString(theEnv,logicalName,"(ptn-obj-slot-var ");
-      WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->whichSlot)->contents);
-      WriteString(theEnv,logicalName," ");
-      PrintUnsignedInteger(theEnv,logicalName,hack->whichField);
+      CL_WriteString(theEnv,logicalName,"(ptn-obj-slot-var ");
+      CL_WriteString(theEnv,logicalName,CL_FindIDSlotName(theEnv,hack->whichSlot)->contents);
+      CL_WriteString(theEnv,logicalName," ");
+      CL_PrintUnsignedInteger(theEnv,logicalName,hack->whichField);
      }
-   WriteString(theEnv,logicalName,")");
+   CL_WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -538,19 +538,19 @@ static void PrintObjectGetVarPN2(
    struct ObjectMatchVar2 *hack;
 
    hack = (struct ObjectMatchVar2 *) ((CLIPSBitMap *) theValue)->contents;
-   WriteString(theEnv,logicalName,"(ptn-obj-slot-quick-var ");
-   WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->whichSlot)->contents);
+   CL_WriteString(theEnv,logicalName,"(ptn-obj-slot-quick-var ");
+   CL_WriteString(theEnv,logicalName,CL_FindIDSlotName(theEnv,hack->whichSlot)->contents);
    if (hack->fromBeginning)
      {
-      WriteString(theEnv,logicalName," B");
-      PrintUnsignedInteger(theEnv,logicalName,(hack->beginningOffset + 1));
+      CL_WriteString(theEnv,logicalName," B");
+      CL_PrintUnsignedInteger(theEnv,logicalName,(hack->beginningOffset + 1));
      }
    if (hack->fromEnd)
      {
-      WriteString(theEnv,logicalName," E");
-      PrintUnsignedInteger(theEnv,logicalName,(hack->endOffset + 1));
+      CL_WriteString(theEnv,logicalName," E");
+      CL_PrintUnsignedInteger(theEnv,logicalName,(hack->endOffset + 1));
      }
-   WriteString(theEnv,logicalName,")");
+   CL_WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -582,18 +582,18 @@ static void PrintObjectCmpConstant(
 
    hack = (struct ObjectCmpPNConstant *) ((CLIPSBitMap *) theValue)->contents;
 
-   WriteString(theEnv,logicalName,"(obj-const ");
-   WriteString(theEnv,logicalName,hack->pass ? "p " : "n ");
+   CL_WriteString(theEnv,logicalName,"(obj-const ");
+   CL_WriteString(theEnv,logicalName,hack->pass ? "p " : "n ");
    if (hack->general)
-     PrintExpression(theEnv,logicalName,GetFirstArgument());
+     CL_PrintExpression(theEnv,logicalName,GetFirstArgument());
    else
      {
-      WriteString(theEnv,logicalName,hack->fromBeginning ? "B" : "E");
-      PrintUnsignedInteger(theEnv,logicalName,hack->offset);
-      WriteString(theEnv,logicalName," ");
-      PrintExpression(theEnv,logicalName,GetFirstArgument());
+      CL_WriteString(theEnv,logicalName,hack->fromBeginning ? "B" : "E");
+      CL_PrintUnsignedInteger(theEnv,logicalName,hack->offset);
+      CL_WriteString(theEnv,logicalName," ");
+      CL_PrintExpression(theEnv,logicalName,GetFirstArgument());
      }
-   WriteString(theEnv,logicalName,")");
+   CL_WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -603,7 +603,7 @@ static void PrintObjectCmpConstant(
 #endif
   }
 
-static void PrintSlotLengthTest(
+static void CL_PrintSlotLengthTest(
   Environment *theEnv,
   const char *logicalName,
   void *theValue)
@@ -613,13 +613,13 @@ static void PrintSlotLengthTest(
 
    hack = (struct ObjectMatchLength *) ((CLIPSBitMap *) theValue)->contents;
 
-   WriteString(theEnv,logicalName,"(obj-slot-len ");
+   CL_WriteString(theEnv,logicalName,"(obj-slot-len ");
    if (hack->exactly)
-     WriteString(theEnv,logicalName,"= ");
+     CL_WriteString(theEnv,logicalName,"= ");
    else
-     WriteString(theEnv,logicalName,">= ");
-   PrintUnsignedInteger(theEnv,logicalName,hack->minLength);
-   WriteString(theEnv,logicalName,")");
+     CL_WriteString(theEnv,logicalName,">= ");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->minLength);
+   CL_WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -656,12 +656,12 @@ static void PrintPNSimpleCompareFunction1(
 
    hack = (struct ObjectCmpPNSingleSlotVars1 *) ((CLIPSBitMap *) theValue)->contents;
 
-   WriteString(theEnv,logicalName,"(pslot-cmp1 ");
-   WriteString(theEnv,logicalName,hack->pass ? "p " : "n ");
-   WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->firstSlot)->contents);
-   WriteString(theEnv,logicalName," ");
-   WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->secondSlot)->contents);
-   WriteString(theEnv,logicalName,")");
+   CL_WriteString(theEnv,logicalName,"(pslot-cmp1 ");
+   CL_WriteString(theEnv,logicalName,hack->pass ? "p " : "n ");
+   CL_WriteString(theEnv,logicalName,CL_FindIDSlotName(theEnv,hack->firstSlot)->contents);
+   CL_WriteString(theEnv,logicalName," ");
+   CL_WriteString(theEnv,logicalName,CL_FindIDSlotName(theEnv,hack->secondSlot)->contents);
+   CL_WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -703,14 +703,14 @@ static void PrintPNSimpleCompareFunction2(
 
    hack = (struct ObjectCmpPNSingleSlotVars2 *) ((CLIPSBitMap *) theValue)->contents;
 
-   WriteString(theEnv,logicalName,"(pslot-cmp2 ");
-   WriteString(theEnv,logicalName,hack->pass ? "p " : "n ");
-   WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->firstSlot)->contents);
-   WriteString(theEnv,logicalName,hack->fromBeginning ? " B" : " E");
-   PrintUnsignedInteger(theEnv,logicalName,hack->offset);
-   WriteString(theEnv,logicalName," ");
-   WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->secondSlot)->contents);
-   WriteString(theEnv,logicalName,")");
+   CL_WriteString(theEnv,logicalName,"(pslot-cmp2 ");
+   CL_WriteString(theEnv,logicalName,hack->pass ? "p " : "n ");
+   CL_WriteString(theEnv,logicalName,CL_FindIDSlotName(theEnv,hack->firstSlot)->contents);
+   CL_WriteString(theEnv,logicalName,hack->fromBeginning ? " B" : " E");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->offset);
+   CL_WriteString(theEnv,logicalName," ");
+   CL_WriteString(theEnv,logicalName,CL_FindIDSlotName(theEnv,hack->secondSlot)->contents);
+   CL_WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -752,16 +752,16 @@ static void PrintPNSimpleCompareFunction3(
 
    hack = (struct ObjectCmpPNSingleSlotVars3 *) ((CLIPSBitMap *) theValue)->contents;
 
-   WriteString(theEnv,logicalName,"(pslot-cmp3 ");
-   WriteString(theEnv,logicalName,hack->pass ? "p " : "n ");
-   WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->firstSlot)->contents);
-   WriteString(theEnv,logicalName,hack->firstFromBeginning ? " B" : " E");
-   PrintUnsignedInteger(theEnv,logicalName,hack->firstOffset);
-   WriteString(theEnv,logicalName," ");
-   WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->secondSlot)->contents);
-   WriteString(theEnv,logicalName,hack->secondFromBeginning ? " B" : " E");
-   PrintUnsignedInteger(theEnv,logicalName,hack->secondOffset);
-   WriteString(theEnv,logicalName,")");
+   CL_WriteString(theEnv,logicalName,"(pslot-cmp3 ");
+   CL_WriteString(theEnv,logicalName,hack->pass ? "p " : "n ");
+   CL_WriteString(theEnv,logicalName,CL_FindIDSlotName(theEnv,hack->firstSlot)->contents);
+   CL_WriteString(theEnv,logicalName,hack->firstFromBeginning ? " B" : " E");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->firstOffset);
+   CL_WriteString(theEnv,logicalName," ");
+   CL_WriteString(theEnv,logicalName,CL_FindIDSlotName(theEnv,hack->secondSlot)->contents);
+   CL_WriteString(theEnv,logicalName,hack->secondFromBeginning ? " B" : " E");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->secondOffset);
+   CL_WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -803,16 +803,16 @@ static void PrintJNSimpleCompareFunction1(
 
    hack = (struct ObjectCmpJoinSingleSlotVars1 *) ((CLIPSBitMap *) theValue)->contents;
 
-   WriteString(theEnv,logicalName,"(jslot-cmp1 ");
-   WriteString(theEnv,logicalName,hack->pass ? "p " : "n ");
-   PrintUnsignedInteger(theEnv,logicalName,hack->firstPattern);
-   WriteString(theEnv,logicalName," ");
-   WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->firstSlot)->contents);
-   WriteString(theEnv,logicalName," ");
-   PrintUnsignedInteger(theEnv,logicalName,hack->secondPattern);
-   WriteString(theEnv,logicalName," ");
-   WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->secondSlot)->contents);
-   WriteString(theEnv,logicalName,")");
+   CL_WriteString(theEnv,logicalName,"(jslot-cmp1 ");
+   CL_WriteString(theEnv,logicalName,hack->pass ? "p " : "n ");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->firstPattern);
+   CL_WriteString(theEnv,logicalName," ");
+   CL_WriteString(theEnv,logicalName,CL_FindIDSlotName(theEnv,hack->firstSlot)->contents);
+   CL_WriteString(theEnv,logicalName," ");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->secondPattern);
+   CL_WriteString(theEnv,logicalName," ");
+   CL_WriteString(theEnv,logicalName,CL_FindIDSlotName(theEnv,hack->secondSlot)->contents);
+   CL_WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -858,18 +858,18 @@ static void PrintJNSimpleCompareFunction2(
 
    hack = (struct ObjectCmpJoinSingleSlotVars2 *) ((CLIPSBitMap *) theValue)->contents;
 
-   WriteString(theEnv,logicalName,"(jslot-cmp2 ");
-   WriteString(theEnv,logicalName,hack->pass ? "p " : "n ");
-   PrintUnsignedInteger(theEnv,logicalName,hack->firstPattern);
-   WriteString(theEnv,logicalName," ");
-   WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->firstSlot)->contents);
-   WriteString(theEnv,logicalName,hack->fromBeginning ? " B" : " E");
-   PrintUnsignedInteger(theEnv,logicalName,hack->offset);
-   WriteString(theEnv,logicalName," ");
-   PrintUnsignedInteger(theEnv,logicalName,hack->secondPattern);
-   WriteString(theEnv,logicalName," ");
-   WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->secondSlot)->contents);
-   WriteString(theEnv,logicalName,")");
+   CL_WriteString(theEnv,logicalName,"(jslot-cmp2 ");
+   CL_WriteString(theEnv,logicalName,hack->pass ? "p " : "n ");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->firstPattern);
+   CL_WriteString(theEnv,logicalName," ");
+   CL_WriteString(theEnv,logicalName,CL_FindIDSlotName(theEnv,hack->firstSlot)->contents);
+   CL_WriteString(theEnv,logicalName,hack->fromBeginning ? " B" : " E");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->offset);
+   CL_WriteString(theEnv,logicalName," ");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->secondPattern);
+   CL_WriteString(theEnv,logicalName," ");
+   CL_WriteString(theEnv,logicalName,CL_FindIDSlotName(theEnv,hack->secondSlot)->contents);
+   CL_WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -915,20 +915,20 @@ static void PrintJNSimpleCompareFunction3(
 
    hack = (struct ObjectCmpJoinSingleSlotVars3 *) ((CLIPSBitMap *) theValue)->contents;
 
-   WriteString(theEnv,logicalName,"(jslot-cmp3 ");
-   WriteString(theEnv,logicalName,hack->pass ? "p " : "n ");
-   PrintUnsignedInteger(theEnv,logicalName,hack->firstPattern);
-   WriteString(theEnv,logicalName," ");
-   WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->firstSlot)->contents);
-   WriteString(theEnv,logicalName,hack->firstFromBeginning ? " B" : " E");
-   PrintUnsignedInteger(theEnv,logicalName,hack->firstOffset);
-   WriteString(theEnv,logicalName," ");
-   PrintUnsignedInteger(theEnv,logicalName,hack->secondPattern);
-   WriteString(theEnv,logicalName," ");
-   WriteString(theEnv,logicalName,FindIDSlotName(theEnv,hack->secondSlot)->contents);
-   WriteString(theEnv,logicalName,hack->secondFromBeginning ? " B" : " E");
-   PrintUnsignedInteger(theEnv,logicalName,hack->secondOffset);
-   WriteString(theEnv,logicalName,")");
+   CL_WriteString(theEnv,logicalName,"(jslot-cmp3 ");
+   CL_WriteString(theEnv,logicalName,hack->pass ? "p " : "n ");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->firstPattern);
+   CL_WriteString(theEnv,logicalName," ");
+   CL_WriteString(theEnv,logicalName,CL_FindIDSlotName(theEnv,hack->firstSlot)->contents);
+   CL_WriteString(theEnv,logicalName,hack->firstFromBeginning ? " B" : " E");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->firstOffset);
+   CL_WriteString(theEnv,logicalName," ");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->secondPattern);
+   CL_WriteString(theEnv,logicalName," ");
+   CL_WriteString(theEnv,logicalName,CL_FindIDSlotName(theEnv,hack->secondSlot)->contents);
+   CL_WriteString(theEnv,logicalName,hack->secondFromBeginning ? " B" : " E");
+   CL_PrintUnsignedInteger(theEnv,logicalName,hack->secondOffset);
+   CL_WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -1057,7 +1057,7 @@ static void GetObjectValueGeneral(
      }
    if (matchVar->whichSlot == ISA_ID)
      {
-      returnValue->value = GetDefclassNamePointer(theInstance->cls);
+      returnValue->value = GetCL_DefclassNamePointer(theInstance->cls);
       return;
      }
    if (matchVar->whichSlot == NAME_ID)
@@ -1202,7 +1202,7 @@ static void GetObjectValueSimple(
 
 /****************************************************
   NAME         : CalculateSlotField
-  DESCRIPTION  : Determines the actual index into the
+  DESCRIPTION  : DeteCL_rmines the actual index into the
                  an object slot for a given pattern
                  variable
   INPUTS       : 1) The list of markers to examine

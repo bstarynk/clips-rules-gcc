@@ -19,7 +19,7 @@
 /*                                                           */
 /*      6.30: Changed integer type/precision.                */
 /*                                                           */
-/*            Used genstrcpy instead of strcpy.              */
+/*            Used CL_genstrcpy instead of strcpy.              */
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
@@ -50,28 +50,28 @@ struct prettyPrintData
    size_t IndentationDepth;
    size_t PPBufferPos;
    size_t PPBufferMax;
-   size_t PPBackupOnce;
-   size_t PPBackupTwice;
+   size_t CL_PPBackupOnce;
+   size_t CL_PPBackupTwice;
    char *PrettyPrintBuffer;
   };
 
 #define PrettyPrintData(theEnv) ((struct prettyPrintData *) GetEnvironmentData(theEnv,PRETTY_PRINT_DATA))
 
-   void                           InitializePrettyPrintData(Environment *);
-   void                           FlushPPBuffer(Environment *);
-   void                           DestroyPPBuffer(Environment *);
-   void                           SavePPBuffer(Environment *,const char *);
-   void                           PPBackup(Environment *);
-   char                          *CopyPPBuffer(Environment *);
-   char                          *GetPPBuffer(Environment *);
-   void                           PPCRAndIndent(Environment *);
-   void                           IncrementIndentDepth(Environment *,size_t);
-   void                           DecrementIndentDepth(Environment *,size_t);
-   void                           SetIndentDepth(Environment *,size_t);
-   void                           SetPPBufferStatus(Environment *,bool);
-   bool                           GetPPBufferStatus(Environment *);
-   bool                           SetPPBufferEnabled(Environment *,bool);
-   bool                           GetPPBufferEnabled(Environment *);
+   void                           CL_InitializePrettyPrintData(Environment *);
+   void                           CL_FlushPPBuffer(Environment *);
+   void                           CL_DestroyPPBuffer(Environment *);
+   void                           CL_SavePPBuffer(Environment *,const char *);
+   void                           CL_PPBackup(Environment *);
+   char                          *CL_CopyPPBuffer(Environment *);
+   char                          *CL_GetPPBuffer(Environment *);
+   void                           CL_PPCRAndIndent(Environment *);
+   void                           CL_IncrementIndentDepth(Environment *,size_t);
+   void                           CL_DecrementIndentDepth(Environment *,size_t);
+   void                           CL_SetIndentDepth(Environment *,size_t);
+   void                           CL_SetPPBufferStatus(Environment *,bool);
+   bool                           CL_GetPPBufferStatus(Environment *);
+   bool                           CL_SetPPBufferEnabled(Environment *,bool);
+   bool                           CL_GetPPBufferEnabled(Environment *);
 
 #endif
 

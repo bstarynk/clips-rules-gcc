@@ -19,7 +19,7 @@
 /*                                                           */
 /*      6.24: Added allowed-classes slot facet.              */
 /*                                                           */
-/*            Added environment parameter to GenClose.       */
+/*            Added environment parameter to CL_GenClose.       */
 /*                                                           */
 /*      6.30: Added support for path name argument to        */
 /*            constructs-to-c.                               */
@@ -47,10 +47,10 @@
 
 #include <stdio.h>
 
-   void                           PrintConstraintReference(Environment *,FILE *,CONSTRAINT_RECORD *,
+   void                           CL_PrintConstraintReference(Environment *,FILE *,CONSTRAINT_RECORD *,
                                                            unsigned int,unsigned int);
    void                           ConstraintRecordToCode(FILE *,CONSTRAINT_RECORD *);
-   void                           ConstraintsToCode(Environment *,const char *,const char *,char *,
+   void                           CL_ConstraintsToCode(Environment *,const char *,const char *,char *,
                                                     unsigned int,FILE *,unsigned int,unsigned int);
 
 #endif /* _H_cstrncmp */

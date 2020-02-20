@@ -57,21 +57,21 @@
                                                   unsigned int,FILE *,unsigned int,unsigned int);
    static void                    DeffactsToCode(Environment *,FILE *,Deffacts *,
                                                  unsigned int,unsigned int,unsigned int);
-   static void                    DeffactsModuleToCode(Environment *,FILE *,Defmodule *,
+   static void                    CL_DeffactsModuleToCode(Environment *,FILE *,Defmodule *,
                                                        unsigned int,unsigned int,unsigned int);
    static void                    CloseDeffactsFiles(Environment *,FILE *,FILE *,unsigned int);
    static void                    BeforeDeffactsToCode(Environment *);
    static void                    InitDeffactsCode(Environment *,FILE *,unsigned,unsigned int);
 
 /*************************************************************/
-/* DeffactsCompilerSetup: Initializes the deffacts construct */
+/* CL_DeffactsCompilerSetup: Initializes the deffacts construct */
 /*    for use with the constructs-to-c command.              */
 /*************************************************************/
-void DeffactsCompilerSetup(
+void CL_DeffactsCompilerSetup(
   Environment *theEnv)
   {
    DeffactsData(theEnv)->DeffactsCodeItem =
-      AddCodeGeneratorItem(theEnv,"deffacts",0,BeforeDeffactsToCode,
+      CL_AddCodeGeneratorItem(theEnv,"deffacts",0,BeforeDeffactsToCode,
                            InitDeffactsCode,ConstructToCode,2);
   }
 
@@ -83,11 +83,11 @@ void DeffactsCompilerSetup(
 static void BeforeDeffactsToCode(
   Environment *theEnv)
   {
-   MarkConstructBsaveIDs(theEnv,DeffactsData(theEnv)->DeffactsModuleIndex);
+   MarkConstructCL_BsaveIDs(theEnv,DeffactsData(theEnv)->CL_DeffactsModuleIndex);
   }
 
 /***********************************************/
-/* InitDeffactsCode: Writes out initialization */
+/* InitDeffactsCode: CL_Writes out initialization */
 /*   code for deffacts for a run-time module.  */
 /***********************************************/
 static void InitDeffactsCode(
@@ -101,7 +101,7 @@ static void InitDeffactsCode(
 #pragma unused(imageID)
 #pragma unused(theEnv)
 #endif
-   fprintf(initFP,"   DeffactsRunTimeInitialize(theEnv);\n");
+   fprintf(initFP,"   DeffactsCL_RunTimeInitialize(theEnv);\n");
   }
 
 /**********************************************************/
@@ -136,13 +136,13 @@ static bool ConstructToCode(
    /* C code representation to the file as they are traversed.        */
    /*=================================================================*/
 
-   for (theModule = GetNextDefmodule(theEnv,NULL);
+   for (theModule = CL_GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = GetNextDefmodule(theEnv,theModule))
+        theModule = CL_GetNextDefmodule(theEnv,theModule))
      {
-      SetCurrentModule(theEnv,theModule);
+      CL_SetCurrentModule(theEnv,theModule);
 
-      moduleFile = OpenFileIfNeeded(theEnv,moduleFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
+      moduleFile = CL_OpenFileIfNeeded(theEnv,moduleFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
                                     moduleArrayVersion,headerFP,
                                     "struct deffactsModule",ModulePrefix(DeffactsData(theEnv)->DeffactsCodeItem),
                                     false,NULL);
@@ -153,19 +153,19 @@ static bool ConstructToCode(
          return false;
         }
 
-      DeffactsModuleToCode(theEnv,moduleFile,theModule,imageID,maxIndices,moduleCount);
-      moduleFile = CloseFileIfNeeded(theEnv,moduleFile,&moduleArrayCount,&moduleArrayVersion,
+      CL_DeffactsModuleToCode(theEnv,moduleFile,theModule,imageID,maxIndices,moduleCount);
+      moduleFile = CL_CloseFileIfNeeded(theEnv,moduleFile,&moduleArrayCount,&moduleArrayVersion,
                                      maxIndices,NULL,NULL);
 
       /*===================================================*/
       /* Loop through each of the deffacts in this module. */
       /*===================================================*/
 
-      for (theDeffacts = GetNextDeffacts(theEnv,NULL);
+      for (theDeffacts = CL_GetNextDeffacts(theEnv,NULL);
            theDeffacts != NULL;
-           theDeffacts = GetNextDeffacts(theEnv,theDeffacts))
+           theDeffacts = CL_GetNextDeffacts(theEnv,theDeffacts))
         {
-         deffactsFile = OpenFileIfNeeded(theEnv,deffactsFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
+         deffactsFile = CL_OpenFileIfNeeded(theEnv,deffactsFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
                                          deffactsArrayVersion,headerFP,
                                          "Deffacts",ConstructPrefix(DeffactsData(theEnv)->DeffactsCodeItem),
                                          false,NULL);
@@ -177,7 +177,7 @@ static bool ConstructToCode(
 
          DeffactsToCode(theEnv,deffactsFile,theDeffacts,imageID,maxIndices,moduleCount);
          deffactsArrayCount++;
-         deffactsFile = CloseFileIfNeeded(theEnv,deffactsFile,&deffactsArrayCount,
+         deffactsFile = CL_CloseFileIfNeeded(theEnv,deffactsFile,&deffactsArrayCount,
                                           &deffactsArrayVersion,maxIndices,NULL,NULL);
         }
 
@@ -207,21 +207,21 @@ static void CloseDeffactsFiles(
    if (deffactsFile != NULL)
      {
       count = maxIndices;
-      CloseFileIfNeeded(theEnv,deffactsFile,&count,&arrayVersion,maxIndices,NULL,NULL);
+      CL_CloseFileIfNeeded(theEnv,deffactsFile,&count,&arrayVersion,maxIndices,NULL,NULL);
      }
 
    if (moduleFile != NULL)
      {
       count = maxIndices;
-      CloseFileIfNeeded(theEnv,moduleFile,&count,&arrayVersion,maxIndices,NULL,NULL);
+      CL_CloseFileIfNeeded(theEnv,moduleFile,&count,&arrayVersion,maxIndices,NULL,NULL);
      }
   }
 
 /**********************************************************/
-/* DeffactsModuleToCode: Writes the C code representation */
+/* CL_DeffactsModuleToCode: CL_Writes the C code representation */
 /*   of a single deffacts module to the specified file.   */
 /**********************************************************/
-static void DeffactsModuleToCode(
+static void CL_DeffactsModuleToCode(
   Environment *theEnv,
   FILE *theFile,
   Defmodule *theModule,
@@ -235,15 +235,15 @@ static void DeffactsModuleToCode(
 
    fprintf(theFile,"{");
 
-   ConstructModuleToCode(theEnv,theFile,theModule,imageID,maxIndices,
-                                  DeffactsData(theEnv)->DeffactsModuleIndex,
+   CL_ConstructModuleToCode(theEnv,theFile,theModule,imageID,maxIndices,
+                                  DeffactsData(theEnv)->CL_DeffactsModuleIndex,
                                   ConstructPrefix(DeffactsData(theEnv)->DeffactsCodeItem));
 
    fprintf(theFile,"}");
   }
 
 /*********************************************************/
-/* DeffactsToCode: Writes the C code representation of a */
+/* DeffactsToCode: CL_Writes the C code representation of a */
 /*   single deffacts construct to the specified file.    */
 /*********************************************************/
 static void DeffactsToCode(
@@ -260,25 +260,25 @@ static void DeffactsToCode(
 
    fprintf(theFile,"{");
 
-   ConstructHeaderToCode(theEnv,theFile,&theDeffacts->header,imageID,maxIndices,
+   CL_ConstructHeaderToCode(theEnv,theFile,&theDeffacts->header,imageID,maxIndices,
                          moduleCount,ModulePrefix(DeffactsData(theEnv)->DeffactsCodeItem),
                          ConstructPrefix(DeffactsData(theEnv)->DeffactsCodeItem));
 
    fprintf(theFile,",");
 
    /*=============*/
-   /* Assert List */
+   /* CL_Assert List */
    /*=============*/
 
-   ExpressionToCode(theEnv,theFile,theDeffacts->assertList);
+   CL_ExpressionToCode(theEnv,theFile,theDeffacts->assertList);
    fprintf(theFile,"}");
   }
 
 /**************************************************************/
-/* DeffactsCModuleReference: Writes the C code representation */
+/* CL_DeffactsCModuleReference: CL_Writes the C code representation */
 /*   of a reference to a deffacts module data structure.      */
 /**************************************************************/
-void DeffactsCModuleReference(
+void CL_DeffactsCModuleReference(
   Environment *theEnv,
   FILE *theFile,
   unsigned long count,

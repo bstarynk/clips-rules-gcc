@@ -28,7 +28,7 @@
 /*                                                           */
 /*            Changed garbage collection algorithm.          */
 /*                                                           */
-/*            Used genstrcpy and genstrcat instead of strcpy */
+/*            Used CL_genstrcpy and CL_genstrcat instead of strcpy */
 /*            and strcat.                                    */
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
@@ -61,7 +61,7 @@
 
 #define TestTraversalID(traversalRecord,id) TestBitMap(traversalRecord,id)
 #define SetTraversalID(traversalRecord,id) SetBitMap(traversalRecord,id)
-#define ClearTraversalID(traversalRecord,id) ClearBitMap(traversalRecord,id)
+#define CL_ClearTraversalID(traversalRecord,id) CL_ClearBitMap(traversalRecord,id)
 
 #define CLASS_TABLE_HASH_SIZE     167 // TBD Larger?
 #define SLOT_NAME_TABLE_HASH_SIZE 167 // TBD Larger?
@@ -71,51 +71,51 @@
 
 #define SLOT_NAME_NOT_FOUND USHRT_MAX
 
-   void                           IncrementDefclassBusyCount(Environment *,Defclass *);
-   void                           DecrementDefclassBusyCount(Environment *,Defclass *);
-   bool                           InstancesPurge(Environment *,void *);
+   void                           CL_IncrementDefclassBusyCount(Environment *,Defclass *);
+   void                           CL_DecrementDefclassBusyCount(Environment *,Defclass *);
+   bool                           CL_InstancesPurge(Environment *,void *);
 
 #if ! RUN_TIME
-   void                           InitializeClasses(Environment *);
+   void                           CL_InitializeClasses(Environment *);
 #endif
-   SlotDescriptor                *FindClassSlot(Defclass *,CLIPSLexeme *);
-   void                           ClassExistError(Environment *,const char *,const char *);
-   void                           DeleteClassLinks(Environment *,CLASS_LINK *);
-   void                           PrintClassName(Environment *,const char *,Defclass *,bool,bool);
+   SlotDescriptor                *CL_FindClassSlot(Defclass *,CLIPSLexeme *);
+   void                           CL_ClassExistError(Environment *,const char *,const char *);
+   void                           CL_DeleteClassLinks(Environment *,CLASS_LINK *);
+   void                           CL_PrintClassName(Environment *,const char *,Defclass *,bool,bool);
 
 #if DEBUGGING_FUNCTIONS || ((! BLOAD_ONLY) && (! RUN_TIME))
-   void                           PrintPackedClassLinks(Environment *,const char *,const char *,PACKED_CLASS_LINKS *);
+   void                           CL_PrintPackedClassLinks(Environment *,const char *,const char *,PACKED_CLASS_LINKS *);
 #endif
 
 #if ! RUN_TIME
-   void                           PutClassInTable(Environment *,Defclass *);
-   void                           RemoveClassFromTable(Environment *,Defclass *);
-   void                           AddClassLink(Environment *,PACKED_CLASS_LINKS *,Defclass *,bool,unsigned int);
-   void                           DeleteSubclassLink(Environment *,Defclass *,Defclass *);
-   void                           DeleteSuperclassLink(Environment *,Defclass *,Defclass *);
-   Defclass                      *NewClass(Environment *,CLIPSLexeme *);
-   void                           DeletePackedClassLinks(Environment *,PACKED_CLASS_LINKS *,bool);
-   void                           AssignClassID(Environment *,Defclass *);
-   SLOT_NAME                     *AddSlotName(Environment *,CLIPSLexeme *,unsigned short,bool);
-   void                           DeleteSlotName(Environment *,SLOT_NAME *);
-   void                           RemoveDefclass(Environment *,Defclass *);
-   void                           InstallClass(Environment *,Defclass *,bool);
+   void                           CL_PutClassInTable(Environment *,Defclass *);
+   void                           CL_RemoveClassFromTable(Environment *,Defclass *);
+   void                           CL_AddClassLink(Environment *,PACKED_CLASS_LINKS *,Defclass *,bool,unsigned int);
+   void                           CL_DeleteSubclassLink(Environment *,Defclass *,Defclass *);
+   void                           CL_DeleteSuperclassLink(Environment *,Defclass *,Defclass *);
+   Defclass                      *CL_NewClass(Environment *,CLIPSLexeme *);
+   void                           CL_DeletePackedClassLinks(Environment *,PACKED_CLASS_LINKS *,bool);
+   void                           CL_AssignClassID(Environment *,Defclass *);
+   SLOT_NAME                     *CL_AddSlotName(Environment *,CLIPSLexeme *,unsigned short,bool);
+   void                           CL_DeleteSlotName(Environment *,SLOT_NAME *);
+   void                           CL_RemoveDefclass(Environment *,Defclass *);
+   void                           CL_InstallClass(Environment *,Defclass *,bool);
 #endif
-   void                           DestroyDefclass(Environment *,Defclass *);
+   void                           CL_DestroyDefclass(Environment *,Defclass *);
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-   bool                           IsClassBeingUsed(Defclass *);
-   bool                           RemoveAllUserClasses(Environment *);
-   bool                           DeleteClassUAG(Environment *,Defclass *);
-   void                           MarkBitMapSubclasses(char *,Defclass *,int);
+   bool                           CL_IsClassBeingUsed(Defclass *);
+   bool                           CL_RemoveAllUserClasses(Environment *);
+   bool                           CL_DeleteClassUAG(Environment *,Defclass *);
+   void                           CL_MarkBitMapSubclasses(char *,Defclass *,int);
 #endif
 
-   unsigned short                 FindSlotNameID(Environment *,CLIPSLexeme *);
-   CLIPSLexeme                   *FindIDSlotName(Environment *,unsigned short);
-   SLOT_NAME                     *FindIDSlotNameHash(Environment *,unsigned short); 
-   int                            GetTraversalID(Environment *);
-   void                           ReleaseTraversalID(Environment *);
-   unsigned int                   HashClass(CLIPSLexeme *);
+   unsigned short                 CL_FindSlotNameID(Environment *,CLIPSLexeme *);
+   CLIPSLexeme                   *CL_FindIDSlotName(Environment *,unsigned short);
+   SLOT_NAME                     *CL_FindIDSlotNameHash(Environment *,unsigned short); 
+   int                            CL_GetTraversalID(Environment *);
+   void                           CL_ReleaseTraversalID(Environment *);
+   unsigned int                   CL_HashClass(CLIPSLexeme *);
 
 #define DEFCLASS_DATA 21
 
@@ -126,7 +126,7 @@
 struct defclassData
   {
    Construct *DefclassConstruct;
-   unsigned DefclassModuleIndex;
+   unsigned CL_DefclassModuleIndex;
    EntityRecord DefclassEntityRecord;
    Defclass *PrimitiveClassMap[PRIMITIVE_CLASSES];
    Defclass **ClassIDMap;
@@ -137,8 +137,8 @@ struct defclassData
    CLIPSLexeme *ISA_SYMBOL;
    CLIPSLexeme *NAME_SYMBOL;
 #if DEBUGGING_FUNCTIONS
-   bool WatchInstances;
-   bool WatchSlots;
+   bool CL_WatchCL_Instances;
+   bool CL_WatchSlots;
 #endif
    unsigned short CTID;
    struct token ObjectParseToken;

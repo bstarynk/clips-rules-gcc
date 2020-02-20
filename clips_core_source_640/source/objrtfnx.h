@@ -197,7 +197,7 @@ struct objectReteData
    struct entityRecord JNSimpleCompareInfo3;
    OBJECT_MATCH_ACTION *ObjectMatchActionQueue;
    OBJECT_PATTERN_NODE *ObjectPatternNetworkPointer;
-   OBJECT_ALPHA_NODE *ObjectPatternNetworkTerminalPointer;
+   OBJECT_ALPHA_NODE *ObjectPatternNetworkTeCL_rminalPointer;
    bool DelayObjectPatternMatching;
    unsigned long long CurrentObjectMatchTimeTag;
    unsigned long long UseEntityTimeTag;
@@ -208,8 +208,8 @@ struct objectReteData
 
 #define ObjectReteData(theEnv) ((struct objectReteData *) GetEnvironmentData(theEnv,OBJECT_RETE_DATA))
 
-   void                    InstallObjectPrimitives(Environment *);
-   bool                    ObjectCmpConstantFunction(Environment *,void *,UDFValue *);
+   void                    CL_InstallObjectPrimitives(Environment *);
+   bool                    CL_ObjectCmpConstantFunction(Environment *,void *,UDFValue *);
 
 #endif /* DEFRULE_CONSTRUCT && OBJECT_SYSTEM */
 

@@ -17,8 +17,8 @@
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
-/*      6.24: Added environment parameter to GenClose.       */
-/*            Added environment parameter to GenOpen.        */
+/*      6.24: Added environment parameter to CL_GenClose.       */
+/*            Added environment parameter to CL_GenOpen.        */
 /*                                                           */
 /*            Added pragmas to remove compilation warnings.  */
 /*                                                           */
@@ -26,7 +26,7 @@
 /*            compilers/operating systems (IBM_MCW,          */
 /*            MAC_MCW, and IBM_TBC).                         */
 /*                                                           */
-/*            Used gengetc and genungetchar rather than      */
+/*            Used gengetc and CL_genungetchar rather than      */
 /*            getc and ungetc.                               */
 /*                                                           */
 /*            Replaced BASIC_IO and ADVANCED_IO compiler     */
@@ -73,17 +73,17 @@ struct fileRouterData
 
 #define FileRouterData(theEnv) ((struct fileRouterData *) GetEnvironmentData(theEnv,FILE_ROUTER_DATA))
 
-   void                           InitializeFileRouter(Environment *);
-   FILE                          *FindFptr(Environment *,const char *);
-   bool                           OpenAFile(Environment *,const char *,const char *,const char *);
-   bool                           CloseAllFiles(Environment *);
-   bool                           CloseFile(Environment *,const char *);
-   bool                           FindFile(Environment *,const char *,void *);
-   bool                           FlushAllFiles(Environment *);
-   bool                           FlushFile(Environment *,const char *);
-   bool                           RewindFile(Environment *,const char *);
-   long long                      TellFile(Environment *,const char *);
-   bool                           SeekFile(Environment *,const char *,long,int);
+   void                           CL_InitializeFileRouter(Environment *);
+   FILE                          *CL_FindFptr(Environment *,const char *);
+   bool                           CL_OpenAFile(Environment *,const char *,const char *,const char *);
+   bool                           CL_CloseAllFiles(Environment *);
+   bool                           CL_CloseFile(Environment *,const char *);
+   bool                           CL_FindFile(Environment *,const char *,void *);
+   bool                           CL_FlushAllFiles(Environment *);
+   bool                           CL_FlushFile(Environment *,const char *);
+   bool                           CL_RewindFile(Environment *,const char *);
+   long long                      CL_TellFile(Environment *,const char *);
+   bool                           CL_SeekFile(Environment *,const char *,long,int);
 
 #endif /* _H_filertr */
 

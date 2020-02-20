@@ -25,11 +25,11 @@
 /*                                                           */
 /*      6.30: Renamed BOOLEAN macro type to intBool.         */
 /*                                                           */
-/*            GetConstructNameAndComment API change.         */
+/*            CL_GetConstructNameAndComment API change.         */
 /*                                                           */
 /*            Changed integer type/precision.                */
 /*                                                           */
-/*            Used gensprintf instead of sprintf.            */
+/*            Used CL_gensprintf instead of sprintf.            */
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
@@ -60,8 +60,8 @@
 
 #include "object.h"
 
-   bool             ParseDefmessageHandler(Environment *,const char *);
-   void             CreateGetAndPutHandlers(Environment *,SlotDescriptor *);
+   bool             CL_ParseDefmessageHandler(Environment *,const char *);
+   void             CL_CreateGetAndPutHandlers(Environment *,SlotDescriptor *);
 
 #endif /* OBJECT_SYSTEM && (! BLOAD_ONLY) && (! RUN_TIME) */
 

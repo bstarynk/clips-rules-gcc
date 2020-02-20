@@ -73,13 +73,13 @@
    static void                    DetachJoinsDriver(Environment *,Defrule *,bool);
 
 /**********************************************************************/
-/* ReturnDefrule: Returns a defrule data structure and its associated */
+/* CL_ReturnDefrule: Returns a defrule data structure and its associated */
 /*   data structures to the memory manager. Note that the first       */
 /*   disjunct of a rule is the only disjunct which allocates storage  */
-/*   for the rule's dynamic salience and pretty print form (so these  */
+/*   for the rule's dynamic salience and pretty print foCL_rm (so these  */
 /*   are only deallocated for the first disjunct).                    */
 /**********************************************************************/
-void ReturnDefrule(
+void CL_ReturnDefrule(
   Environment *theEnv,
   Defrule *theDefrule)
   {
@@ -102,11 +102,11 @@ void ReturnDefrule(
 #endif
 
    /*================================*/
-   /* Clear the agenda of all the    */
+   /* CL_Clear the agenda of all the    */
    /* activations added by the rule. */
    /*================================*/
 
-   ClearRuleFromAgenda(theEnv,theDefrule);
+   CL_ClearRuleFromCL_Agenda(theEnv,theDefrule);
 
    /*======================*/
    /* Get rid of the rule. */
@@ -122,29 +122,29 @@ void ReturnDefrule(
 
       /*=============================================*/
       /* If this is the first disjunct, get rid of   */
-      /* the dynamic salience and pretty print form. */
+      /* the dynamic salience and pretty print foCL_rm. */
       /*=============================================*/
 
       if (first)
         {
          if (theDefrule->dynamicSalience != NULL)
           {
-           ExpressionDeinstall(theEnv,theDefrule->dynamicSalience);
-           ReturnPackedExpression(theEnv,theDefrule->dynamicSalience);
+           CL_ExpressionDeinstall(theEnv,theDefrule->dynamicSalience);
+           CL_ReturnPackedExpression(theEnv,theDefrule->dynamicSalience);
            theDefrule->dynamicSalience = NULL;
           }
-         if (theDefrule->header.ppForm != NULL)
+         if (theDefrule->header.ppFoCL_rm != NULL)
            {
-            rm(theEnv,(void *) theDefrule->header.ppForm,strlen(theDefrule->header.ppForm) + 1);
-            theDefrule->header.ppForm = NULL;
+            CL_rm(theEnv,(void *) theDefrule->header.ppFoCL_rm,strlen(theDefrule->header.ppFoCL_rm) + 1);
+            theDefrule->header.ppFoCL_rm = NULL;
 
             /*=======================================================*/
             /* All of the rule disjuncts share the same pretty print */
-            /* form, so we want to avoid deleting it again.          */
+            /* foCL_rm, so we want to avoid deleting it again.          */
             /*=======================================================*/
 
             for (tmpPtr = theDefrule->disjunct; tmpPtr != NULL; tmpPtr = tmpPtr->disjunct)
-              { tmpPtr->header.ppForm = NULL; }
+              { tmpPtr->header.ppFoCL_rm = NULL; }
            }
 
          first = false;
@@ -155,13 +155,13 @@ void ReturnDefrule(
       /*===========================*/
 
       if (theDefrule->header.usrData != NULL)
-        { ClearUserDataList(theEnv,theDefrule->header.usrData); }
+        { CL_ClearUserDataList(theEnv,theDefrule->header.usrData); }
 
       /*===========================================*/
       /* Decrement the count for the defrule name. */
       /*===========================================*/
 
-      ReleaseLexeme(theEnv,theDefrule->header.name);
+      CL_ReleaseLexeme(theEnv,theDefrule->header.name);
 
       /*========================================*/
       /* Get rid of the the rule's RHS actions. */
@@ -169,8 +169,8 @@ void ReturnDefrule(
 
       if (theDefrule->actions != NULL)
         {
-         ExpressionDeinstall(theEnv,theDefrule->actions);
-         ReturnPackedExpression(theEnv,theDefrule->actions);
+         CL_ExpressionDeinstall(theEnv,theDefrule->actions);
+         CL_ReturnPackedExpression(theEnv,theDefrule->actions);
         }
 
       /*===============================*/
@@ -186,15 +186,15 @@ void ReturnDefrule(
    /* Free up partial matches. */
    /*==========================*/
 
-   if (EngineData(theEnv)->ExecutingRule == NULL) FlushGarbagePartialMatches(theEnv);
+   if (EngineData(theEnv)->ExecutingRule == NULL) CL_FlushGarbagePartialCL_Matches(theEnv);
 #endif
   }
 
 /********************************************************/
-/* DestroyDefrule: Action used to remove defrules       */
-/*   as a result of DestroyEnvironment.                 */
+/* CL_DestroyDefrule: Action used to remove defrules       */
+/*   as a result of CL_DestroyEnvironment.                 */
 /********************************************************/
-void DestroyDefrule(
+void CL_DestroyDefrule(
   Environment *theEnv,
   Defrule *theDefrule)
   {
@@ -211,21 +211,21 @@ void DestroyDefrule(
         {
 #if (! BLOAD_ONLY) && (! RUN_TIME)
          if (theDefrule->dynamicSalience != NULL)
-           { ReturnPackedExpression(theEnv,theDefrule->dynamicSalience); }
+           { CL_ReturnPackedExpression(theEnv,theDefrule->dynamicSalience); }
 
-         if (theDefrule->header.ppForm != NULL)
+         if (theDefrule->header.ppFoCL_rm != NULL)
            {
             Defrule *tmpPtr;
 
-            rm(theEnv,(void *) theDefrule->header.ppForm,strlen(theDefrule->header.ppForm) + 1);
+            CL_rm(theEnv,(void *) theDefrule->header.ppFoCL_rm,strlen(theDefrule->header.ppFoCL_rm) + 1);
 
             /*=======================================================*/
             /* All of the rule disjuncts share the same pretty print */
-            /* form, so we want to avoid deleting it again.          */
+            /* foCL_rm, so we want to avoid deleting it again.          */
             /*=======================================================*/
 
             for (tmpPtr = theDefrule->disjunct; tmpPtr != NULL; tmpPtr = tmpPtr->disjunct)
-              { tmpPtr->header.ppForm = NULL; }
+              { tmpPtr->header.ppFoCL_rm = NULL; }
            }
 #endif
 
@@ -233,11 +233,11 @@ void DestroyDefrule(
         }
 
       if (theDefrule->header.usrData != NULL)
-        { ClearUserDataList(theEnv,theDefrule->header.usrData); }
+        { CL_ClearUserDataList(theEnv,theDefrule->header.usrData); }
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
       if (theDefrule->actions != NULL)
-        { ReturnPackedExpression(theEnv,theDefrule->actions); }
+        { CL_ReturnPackedExpression(theEnv,theDefrule->actions); }
 #endif
 
       nextDisjunct = theDefrule->disjunct;
@@ -340,17 +340,17 @@ static void DetachJoins(
 
       if (destroy)
         {
-         DestroyBetaMemory(theEnv,join,LHS);
-         DestroyBetaMemory(theEnv,join,RHS);
+         CL_DestroyBetaMemory(theEnv,join,LHS);
+         CL_DestroyBetaMemory(theEnv,join,RHS);
         }
       else
         {
-         FlushBetaMemory(theEnv,join,LHS);
-         FlushBetaMemory(theEnv,join,RHS);
+         CL_FlushBetaMemory(theEnv,join,LHS);
+         CL_FlushBetaMemory(theEnv,join,RHS);
         }
 
-      ReturnLeftMemory(theEnv,join);
-      ReturnRightMemory(theEnv,join);
+      CL_ReturnLeftMemory(theEnv,join);
+      CL_ReturnRightMemory(theEnv,join);
 
       /*===================================*/
       /* Remove the expressions associated */
@@ -360,10 +360,10 @@ static void DetachJoins(
 #if (! RUN_TIME) && (! BLOAD_ONLY)
       if (! destroy)
         {
-         RemoveHashedExpression(theEnv,join->networkTest);
-         RemoveHashedExpression(theEnv,join->secondaryNetworkTest);
-         RemoveHashedExpression(theEnv,join->leftHash);
-         RemoveHashedExpression(theEnv,join->rightHash);
+         CL_RemoveHashedExpression(theEnv,join->networkTest);
+         CL_RemoveHashedExpression(theEnv,join->secondaryNetworkTest);
+         CL_RemoveHashedExpression(theEnv,join->leftHash);
+         CL_RemoveHashedExpression(theEnv,join->rightHash);
         }
 #endif
 
@@ -539,7 +539,7 @@ static void DetachJoins(
 /* RemoveIntranetworkLink: Removes the link between a join node in the */
 /*   join network and its corresponding pattern node in the pattern    */
 /*   network. If the pattern node is then no longer associated with    */
-/*   any other joins, it is removed using the function DetachPattern.  */
+/*   any other joins, it is removed using the function CL_DetachPattern.  */
 /***********************************************************************/
 static void RemoveIntranetworkLink(
   Environment *theEnv,
@@ -549,8 +549,8 @@ static void RemoveIntranetworkLink(
    struct joinNode *joinPtr, *lastJoin;
 
    /*================================================*/
-   /* Determine the pattern that enters this join.   */
-   /* Determine the list of joins which this pattern */
+   /* DeteCL_rmine the pattern that enters this join.   */
+   /* DeteCL_rmine the list of joins which this pattern */
    /* enters from the right.                         */
    /*================================================*/
 
@@ -583,12 +583,12 @@ static void RemoveIntranetworkLink(
      }
 
    /*===================================================*/
-   /* If the terminal node of the pattern doesn't point */
+   /* If the teCL_rminal node of the pattern doesn't point */
    /* to any joins, then start removing the pattern.    */
    /*===================================================*/
 
    if (patternPtr->entryJoin == NULL)
-     { DetachPattern(theEnv,join->rhsType,patternPtr); }
+     { CL_DetachPattern(theEnv,join->rhsType,patternPtr); }
   }
 
 #endif /* (! RUN_TIME) && (! BLOAD_ONLY) */

@@ -29,7 +29,7 @@
 /*      6.30: Updated ENTITY_RECORD definitions to include    */
 /*            additional NULL initializers.                   */
 /*                                                            */
-/*            Added ReleaseProcParameters call.               */
+/*            Added CL_ReleaseProcParameters call.               */
 /*                                                            */
 /*            Added tracked memory calls.                     */
 /*                                                            */
@@ -109,37 +109,37 @@ struct proceduralPrimitiveData
 
 #define ProceduralPrimitiveData(theEnv) ((struct proceduralPrimitiveData *) GetEnvironmentData(theEnv,PROCEDURAL_PRIMITIVE_DATA))
 
-   void                           InstallProcedurePrimitives(Environment *);
+   void                           CL_InstallProcedurePrimitives(Environment *);
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
 
 #if DEFFUNCTION_CONSTRUCT || OBJECT_SYSTEM
-   Expression                    *ParseProcParameters(Environment *,const char *,struct token *,Expression *,
+   Expression                    *CL_ParseProcParameters(Environment *,const char *,struct token *,Expression *,
                                                              CLIPSLexeme **,unsigned short *,unsigned short *,bool *,
                                                              bool (*)(Environment *,const char *));
 #endif
-   Expression                    *ParseProcActions(Environment *,const char *,const char *,struct token *,Expression *,CLIPSLexeme *,
+   Expression                    *CL_ParseProcActions(Environment *,const char *,const char *,struct token *,Expression *,CLIPSLexeme *,
                                                           int (*)(Environment *,Expression *,void *),
                                                           int (*)(Environment *,Expression *,void *),
                                                           unsigned short *,void *);
-   int                            ReplaceProcVars(Environment *,const char *,Expression *,Expression *,CLIPSLexeme *,
+   int                            CL_ReplaceProcVars(Environment *,const char *,Expression *,Expression *,CLIPSLexeme *,
                                                          int (*)(Environment *,Expression *,void *),void *);
 #if DEFGENERIC_CONSTRUCT
-   Expression                    *GenProcWildcardReference(Environment *,int);
+   Expression                    *CL_GenProcWildcardReference(Environment *,int);
 #endif
 #endif
 
-   void                           PushProcParameters(Environment *,Expression *,unsigned int,const char *,const char *,void (*)(Environment *,const char *));
-   void                           PopProcParameters(Environment *);
+   void                           CL_PushProcParameters(Environment *,Expression *,unsigned int,const char *,const char *,void (*)(Environment *,const char *));
+   void                           CL_PopProcParameters(Environment *);
 
 #if DEFGENERIC_CONSTRUCT
-   Expression                    *GetProcParamExpressions(Environment *);
+   Expression                    *CL_GetProcParamExpressions(Environment *);
 #endif
 
-   void                           EvaluateProcActions(Environment *,Defmodule *,Expression *,unsigned short,
+   void                           CL_EvaluateProcActions(Environment *,Defmodule *,Expression *,unsigned short,
                                                       UDFValue *,void (*)(Environment *,const char *));
-   void                           PrintProcParamArray(Environment *,const char *);
-   void                           GrabProcWildargs(Environment *,UDFValue *,unsigned int);
+   void                           CL_PrintProcParamArray(Environment *,const char *);
+   void                           CL_GrabProcWildargs(Environment *,UDFValue *,unsigned int);
 
 #endif /* _H_prccode */
 

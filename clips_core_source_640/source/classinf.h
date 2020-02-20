@@ -53,38 +53,38 @@
 
 #include "evaluatn.h"
 
-   void                           ClassAbstractPCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_ClassAbstractPCommand(Environment *,UDFContext *,UDFValue *);
 #if DEFRULE_CONSTRUCT
-   void                           ClassReactivePCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_ClassReactivePCommand(Environment *,UDFContext *,UDFValue *);
 #endif
-   Defclass                      *ClassInfoFnxArgs(UDFContext *,const char *,bool *);
-   void                           ClassSlotsCommand(Environment *,UDFContext *,UDFValue *);
-   void                           ClassSuperclassesCommand(Environment *,UDFContext *,UDFValue *);
-   void                           ClassSubclassesCommand(Environment *,UDFContext *,UDFValue *);
-   void                           GetDefmessageHandlersListCmd(Environment *,UDFContext *,UDFValue *);
-   void                           SlotFacetsCommand(Environment *,UDFContext *,UDFValue *);
-   void                           SlotSourcesCommand(Environment *,UDFContext *,UDFValue *);
-   void                           SlotTypesCommand(Environment *,UDFContext *,UDFValue *);
-   void                           SlotAllowedValuesCommand(Environment *,UDFContext *,UDFValue *);
-   void                           SlotAllowedClassesCommand(Environment *,UDFContext *,UDFValue *);
-   void                           SlotRangeCommand(Environment *,UDFContext *,UDFValue *);
-   void                           SlotCardinalityCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           ClassAbstractP(Defclass *);
+   Defclass                      *CL_ClassInfoFnxArgs(UDFContext *,const char *,bool *);
+   void                           CL_ClassSlotsCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_ClassSuperclassesCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_ClassSubclassesCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_GetDefmessageHandlersListCmd(Environment *,UDFContext *,UDFValue *);
+   void                           CL_SlotFacetsCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_SlotSourcesCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_SlotTypesCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_SlotAllowedValuesCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_SlotAllowedClassesCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_SlotRangeCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_SlotCardinalityCommand(Environment *,UDFContext *,UDFValue *);
+   bool                           CL_ClassAbstractP(Defclass *);
 #if DEFRULE_CONSTRUCT
-   bool                           ClassReactiveP(Defclass *);
+   bool                           CL_ClassReactiveP(Defclass *);
 #endif
-   void                           ClassSlots(Defclass *,CLIPSValue *,bool);
-   void                           GetDefmessageHandlerList(Environment *,Defclass *,CLIPSValue *,bool);
-   void                           ClassSuperclasses(Defclass *,CLIPSValue *,bool);
-   void                           ClassSubclasses(Defclass *,CLIPSValue *,bool);
-   void                           ClassSubclassAddresses(Environment *,Defclass *,UDFValue *,bool);
-   bool                           SlotFacets(Defclass *,const char *,CLIPSValue *);
-   bool                           SlotSources(Defclass *,const char *,CLIPSValue *);
-   bool                           SlotTypes(Defclass *,const char *,CLIPSValue *);
-   bool                           SlotAllowedValues(Defclass *,const char *,CLIPSValue *);
-   bool                           SlotAllowedClasses(Defclass *,const char *,CLIPSValue *);
-   bool                           SlotRange(Defclass *,const char *,CLIPSValue *);
-   bool                           SlotCardinality(Defclass *,const char *,CLIPSValue *);
+   void                           CL_ClassSlots(Defclass *,CLIPSValue *,bool);
+   void                           CL_GetDefmessageHandlerList(Environment *,Defclass *,CLIPSValue *,bool);
+   void                           CL_ClassSuperclasses(Defclass *,CLIPSValue *,bool);
+   void                           CL_ClassSubclasses(Defclass *,CLIPSValue *,bool);
+   void                           CL_ClassSubclassAddresses(Environment *,Defclass *,UDFValue *,bool);
+   bool                           CL_SlotFacets(Defclass *,const char *,CLIPSValue *);
+   bool                           CL_SlotSources(Defclass *,const char *,CLIPSValue *);
+   bool                           CL_SlotTypes(Defclass *,const char *,CLIPSValue *);
+   bool                           CL_SlotAllowedValues(Defclass *,const char *,CLIPSValue *);
+   bool                           CL_SlotAllowedClasses(Defclass *,const char *,CLIPSValue *);
+   bool                           CL_SlotRange(Defclass *,const char *,CLIPSValue *);
+   bool                           CL_SlotCardinality(Defclass *,const char *,CLIPSValue *);
 
 #endif /* _H_classinf */
 

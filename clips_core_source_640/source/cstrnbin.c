@@ -88,18 +88,18 @@ typedef struct bsaveConstraintRecord BSAVE_CONSTRAINT_RECORD;
 /***************************************/
 
 #if BLOAD_AND_BSAVE
-   static void                    CopyToBsaveConstraintRecord(Environment *,CONSTRAINT_RECORD *,BSAVE_CONSTRAINT_RECORD *);
+   static void                    CopyToCL_BsaveConstraintRecord(Environment *,CONSTRAINT_RECORD *,BSAVE_CONSTRAINT_RECORD *);
 #endif
-   static void                    CopyFromBsaveConstraintRecord(Environment *,void *,unsigned long);
+   static void                    CopyFromCL_BsaveConstraintRecord(Environment *,void *,unsigned long);
 
 #if BLOAD_AND_BSAVE
 
 /**************************************************/
-/* WriteNeededConstraints: Writes the constraints */
+/* CL_WriteNeededConstraints: CL_Writes the constraints */
 /*   in the constraint table to the binary image  */
 /*   currently being saved.                       */
 /**************************************************/
-void WriteNeededConstraints(
+void CL_WriteNeededConstraints(
   Environment *theEnv,
   FILE *fp)
   {
@@ -129,21 +129,21 @@ void WriteNeededConstraints(
    /* then no constraints are saved.              */
    /*=============================================*/
 
-   if ((! GetDynamicConstraintChecking(theEnv)) && (numberOfUsedConstraints != 0))
+   if ((! CL_GetDynamicConstraintChecking(theEnv)) && (numberOfUsedConstraints != 0))
      {
       numberOfUsedConstraints = 0;
-      PrintWarningID(theEnv,"CSTRNBIN",1,false);
-      WriteString(theEnv,STDWRN,"Constraints are not saved with a binary image\n");
-      WriteString(theEnv,STDWRN,"  when dynamic constraint checking is disabled.\n");
+      CL_PrintWarningID(theEnv,"CSTRNBIN",1,false);
+      CL_WriteString(theEnv,STDWRN,"Constraints are not saved with a binary image\n");
+      CL_WriteString(theEnv,STDWRN,"  when dynamic constraint checking is disabled.\n");
      }
 
    /*============================================*/
-   /* Write out the number of constraints in the */
+   /* CL_Write out the number of constraints in the */
    /* constraint table followed by each of the   */
    /* constraints in the constraint table.       */
    /*============================================*/
 
-   GenWrite(&numberOfUsedConstraints,sizeof(unsigned long),fp);
+   CL_GenCL_Write(&numberOfUsedConstraints,sizeof(unsigned long),fp);
    if (numberOfUsedConstraints == 0) return;
 
    for (i = 0 ; i < SIZE_CONSTRAINT_HASH; i++)
@@ -152,18 +152,18 @@ void WriteNeededConstraints(
            tmpPtr != NULL;
            tmpPtr = tmpPtr->next)
         {
-         CopyToBsaveConstraintRecord(theEnv,tmpPtr,&bsaveConstraints);
-         GenWrite(&bsaveConstraints,sizeof(BSAVE_CONSTRAINT_RECORD),fp);
+         CopyToCL_BsaveConstraintRecord(theEnv,tmpPtr,&bsaveConstraints);
+         CL_GenCL_Write(&bsaveConstraints,sizeof(BSAVE_CONSTRAINT_RECORD),fp);
         }
      }
   }
 
 /****************************************************/
-/* CopyToBsaveConstraintRecord: Copies a constraint */
+/* CopyToCL_BsaveConstraintRecord: Copies a constraint */
 /*   record to the data structure used for storing  */
 /*   constraints in a binary image.                 */
 /****************************************************/
-static void CopyToBsaveConstraintRecord(
+static void CopyToCL_BsaveConstraintRecord(
   Environment *theEnv,
   CONSTRAINT_RECORD *constraints,
   BSAVE_CONSTRAINT_RECORD *bsaveConstraints)
@@ -187,39 +187,39 @@ static void CopyToBsaveConstraintRecord(
    bsaveConstraints->classRestriction = constraints->classRestriction;
    bsaveConstraints->instanceNameRestriction = constraints->instanceNameRestriction;
 
-   bsaveConstraints->restrictionList = HashedExpressionIndex(theEnv,constraints->restrictionList);
-   bsaveConstraints->classList = HashedExpressionIndex(theEnv,constraints->classList);
-   bsaveConstraints->minValue = HashedExpressionIndex(theEnv,constraints->minValue);
-   bsaveConstraints->maxValue = HashedExpressionIndex(theEnv,constraints->maxValue);
-   bsaveConstraints->minFields = HashedExpressionIndex(theEnv,constraints->minFields);
-   bsaveConstraints->maxFields = HashedExpressionIndex(theEnv,constraints->maxFields);
+   bsaveConstraints->restrictionList = CL_HashedExpressionIndex(theEnv,constraints->restrictionList);
+   bsaveConstraints->classList = CL_HashedExpressionIndex(theEnv,constraints->classList);
+   bsaveConstraints->minValue = CL_HashedExpressionIndex(theEnv,constraints->minValue);
+   bsaveConstraints->maxValue = CL_HashedExpressionIndex(theEnv,constraints->maxValue);
+   bsaveConstraints->minFields = CL_HashedExpressionIndex(theEnv,constraints->minFields);
+   bsaveConstraints->maxFields = CL_HashedExpressionIndex(theEnv,constraints->maxFields);
   }
 
 #endif /* BLOAD_AND_BSAVE */
 
 /********************************************************/
-/* ReadNeededConstraints: Reads in the constraints used */
+/* CL_ReadNeededConstraints: Reads in the constraints used */
 /*   by the binary image currently being loaded.        */
 /********************************************************/
-void ReadNeededConstraints(
+void CL_ReadNeededConstraints(
   Environment *theEnv)
   {
-   GenReadBinary(theEnv,&ConstraintData(theEnv)->NumberOfConstraints,sizeof(unsigned long));
+   CL_GenReadBinary(theEnv,&ConstraintData(theEnv)->NumberOfConstraints,sizeof(unsigned long));
    if (ConstraintData(theEnv)->NumberOfConstraints == 0) return;
 
    ConstraintData(theEnv)->ConstraintArray = (CONSTRAINT_RECORD *)
-           genalloc(theEnv,(sizeof(CONSTRAINT_RECORD) * ConstraintData(theEnv)->NumberOfConstraints));
+           CL_genalloc(theEnv,(sizeof(CONSTRAINT_RECORD) * ConstraintData(theEnv)->NumberOfConstraints));
 
-   BloadandRefresh(theEnv,ConstraintData(theEnv)->NumberOfConstraints,sizeof(BSAVE_CONSTRAINT_RECORD),
-                   CopyFromBsaveConstraintRecord);
+   CL_BloadandCL_Refresh(theEnv,ConstraintData(theEnv)->NumberOfConstraints,sizeof(BSAVE_CONSTRAINT_RECORD),
+                   CopyFromCL_BsaveConstraintRecord);
   }
 
 /*****************************************************/
-/* CopyFromBsaveConstraintRecord: Copies values to a */
+/* CopyFromCL_BsaveConstraintRecord: Copies values to a */
 /*   constraint record from the data structure used  */
 /*   for storing constraints in a binary image.      */
 /*****************************************************/
-static void CopyFromBsaveConstraintRecord(
+static void CopyFromCL_BsaveConstraintRecord(
   Environment *theEnv,
   void *buf,
   unsigned long theIndex)
@@ -260,15 +260,15 @@ static void CopyFromBsaveConstraintRecord(
   }
 
 /********************************************************/
-/* ClearBloadedConstraints: Releases memory associated  */
+/* CL_ClearCL_BloadedConstraints: CL_Releases memory associated  */
 /*   with constraints loaded from binary image          */
 /********************************************************/
-void ClearBloadedConstraints(
+void CL_ClearCL_BloadedConstraints(
   Environment *theEnv)
   {
    if (ConstraintData(theEnv)->NumberOfConstraints != 0)
      {
-      genfree(theEnv,ConstraintData(theEnv)->ConstraintArray,
+      CL_genfree(theEnv,ConstraintData(theEnv)->ConstraintArray,
                      (sizeof(CONSTRAINT_RECORD) * ConstraintData(theEnv)->NumberOfConstraints));
       ConstraintData(theEnv)->NumberOfConstraints = 0;
      }

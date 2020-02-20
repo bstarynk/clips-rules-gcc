@@ -65,13 +65,13 @@ struct bsavePortItem
 
 #define ModulePointer(i) ((Defmodule *) (&DefmoduleData(theEnv)->DefmoduleArray[i]))
 
-   void                           DefmoduleBinarySetup(Environment *);
-   void                           UpdateDefmoduleItemHeader
+   void                           CL_DefmoduleBinarySetup(Environment *);
+   void                           CL_UpdateDefmoduleItemHeader
                                                  (Environment *,struct bsaveDefmoduleItemHeader *,
                                                   struct defmoduleItemHeader *,size_t,void *);
 
 #if BLOAD_AND_BSAVE
-   void                           AssignBsaveDefmdlItemHdrVals
+   void                           CL_AssignCL_BsaveDefmdlItemHdrVals
                                                  (struct bsaveDefmoduleItemHeader *,
                                                   struct defmoduleItemHeader *);
 #endif

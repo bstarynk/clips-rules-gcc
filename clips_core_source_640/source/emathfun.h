@@ -50,44 +50,44 @@
 
 #define _H_emathfun
 
-   void                           ExtendedMathFunctionDefinitions(Environment *);
+   void                           CL_ExtendedMathFunctionDefinitions(Environment *);
 #if EXTENDED_MATH_FUNCTIONS
-   void                           CosFunction(Environment *,UDFContext *,UDFValue *);
-   void                           SinFunction(Environment *,UDFContext *,UDFValue *);
-   void                           TanFunction(Environment *,UDFContext *,UDFValue *);
-   void                           SecFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CscFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CotFunction(Environment *,UDFContext *,UDFValue *);
-   void                           AcosFunction(Environment *,UDFContext *,UDFValue *);
-   void                           AsinFunction(Environment *,UDFContext *,UDFValue *);
-   void                           AtanFunction(Environment *,UDFContext *,UDFValue *);
-   void                           AsecFunction(Environment *,UDFContext *,UDFValue *);
-   void                           AcscFunction(Environment *,UDFContext *,UDFValue *);
-   void                           AcotFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CoshFunction(Environment *,UDFContext *,UDFValue *);
-   void                           SinhFunction(Environment *,UDFContext *,UDFValue *);
-   void                           TanhFunction(Environment *,UDFContext *,UDFValue *);
-   void                           SechFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CschFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CothFunction(Environment *,UDFContext *,UDFValue *);
-   void                           AcoshFunction(Environment *,UDFContext *,UDFValue *);
-   void                           AsinhFunction(Environment *,UDFContext *,UDFValue *);
-   void                           AtanhFunction(Environment *,UDFContext *,UDFValue *);
-   void                           AsechFunction(Environment *,UDFContext *,UDFValue *);
-   void                           AcschFunction(Environment *,UDFContext *,UDFValue *);
-   void                           AcothFunction(Environment *,UDFContext *,UDFValue *);
-   void                           RoundFunction(Environment *,UDFContext *,UDFValue *);
-   void                           ModFunction(Environment *,UDFContext *,UDFValue *);
-   void                           ExpFunction(Environment *,UDFContext *,UDFValue *);
-   void                           LogFunction(Environment *,UDFContext *,UDFValue *);
-   void                           Log10Function(Environment *,UDFContext *,UDFValue *);
-   void                           SqrtFunction(Environment *,UDFContext *,UDFValue *);
-   void                           PiFunction(Environment *,UDFContext *,UDFValue *);
-   void                           DegRadFunction(Environment *,UDFContext *,UDFValue *);
-   void                           RadDegFunction(Environment *,UDFContext *,UDFValue *);
-   void                           DegGradFunction(Environment *,UDFContext *,UDFValue *);
-   void                           GradDegFunction(Environment *,UDFContext *,UDFValue *);
-   void                           PowFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_CosFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_SinFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_TanFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_SecFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_CscFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_CotFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_AcosFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_AsinFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_AtanFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_AsecFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_AcscFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_AcotFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_CoshFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_SinhFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_TanhFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_SechFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_CschFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_CothFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_AcoshFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_AsinhFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_AtanhFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_AsechFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_AcschFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_AcothFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_RoundFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_ModFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_ExpFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_LogFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_Log10Function(Environment *,UDFContext *,UDFValue *);
+   void                           CL_SqrtFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_PiFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_DegRadFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_RadDegFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_DegGradFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_GradDegFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_PowFunction(Environment *,UDFContext *,UDFValue *);
 #endif
 
 #endif /* _H_emathfun */

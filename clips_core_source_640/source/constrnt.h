@@ -48,7 +48,7 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/*            Eval support for run time and bload only.      */
+/*            CL_Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -114,16 +114,16 @@ struct constraintData
 
 #define ConstraintData(theEnv) ((struct constraintData *) GetEnvironmentData(theEnv,CONSTRAINT_DATA))
 
-   void                           InitializeConstraints(Environment *);
-   void                           GDCCommand(Environment *,UDFContext *,UDFValue *);
-   void                           SDCCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           SetDynamicConstraintChecking(Environment *,bool);
-   bool                           GetDynamicConstraintChecking(Environment *);
+   void                           CL_InitializeConstraints(Environment *);
+   void                           CL_GDCCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_SDCCommand(Environment *,UDFContext *,UDFValue *);
+   bool                           CL_SetDynamicConstraintChecking(Environment *,bool);
+   bool                           CL_GetDynamicConstraintChecking(Environment *);
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-   unsigned long                  HashConstraint(struct constraintRecord *);
-   struct constraintRecord       *AddConstraint(Environment *,struct constraintRecord *);
+   unsigned long                  CL_HashConstraint(struct constraintRecord *);
+   struct constraintRecord       *CL_AddConstraint(Environment *,struct constraintRecord *);
 #endif
-   void                           RemoveConstraint(Environment *,struct constraintRecord *);
+   void                           CL_RemoveConstraint(Environment *,struct constraintRecord *);
 
 #endif
 

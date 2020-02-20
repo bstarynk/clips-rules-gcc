@@ -57,12 +57,12 @@
 
 #if OBJECT_SYSTEM
 
-   void                           SetupObjectSystem(Environment *);
+   void                           CL_SetupObjectSystem(Environment *);
 
 #if RUN_TIME
-   void                           ObjectsRunTimeInitialize(Environment *,Defclass *[],SLOT_NAME *[],Defclass *[],unsigned short);
+   void                           ObjectsCL_RunTimeInitialize(Environment *,Defclass *[],SLOT_NAME *[],Defclass *[],unsigned short);
 #else
-   void                           CreateSystemClasses(Environment *,void *);
+   void                           CL_CreateSystemClasses(Environment *,void *);
 #endif /* RUN_TIME */
 
 #endif /* OBJECT_SYSTEM */

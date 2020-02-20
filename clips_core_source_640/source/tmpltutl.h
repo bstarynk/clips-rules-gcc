@@ -16,20 +16,20 @@
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
-/*      6.23: Added support for templates maintaining their  */
+/*      6.23: Added support for templates CL_maintaining their  */
 /*            own list of facts.                             */
 /*                                                           */
 /*      6.24: Renamed BOOLEAN macro type to intBool.         */
 /*                                                           */
 /*            Added additional arguments to                  */
-/*            InvalidDeftemplateSlotMessage function.        */
+/*            CL_InvalidDeftemplateSlotMessage function.        */
 /*                                                           */
 /*            Added additional arguments to                  */
-/*            PrintTemplateFact function.                    */
+/*            CL_PrintTemplateFact function.                    */
 /*                                                           */
 /*      6.30: Support for long long integers.                */
 /*                                                           */
-/*            Used gensprintf instead of sprintf.            */
+/*            Used CL_gensprintf instead of sprintf.            */
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
@@ -43,7 +43,7 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
-/*            Watch facts for modify command only prints     */
+/*            CL_Watch facts for modify command only prints     */
 /*            changed slots.                                 */
 /*                                                           */
 /*************************************************************/
@@ -60,17 +60,17 @@
 #include "factmngr.h"
 #include "symbol.h"
 
-   void                           InvalidDeftemplateSlotMessage(Environment *,const char *,const char *,bool);
-   void                           SingleFieldSlotCardinalityError(Environment *,const char *);
-   void                           MultiIntoSingleFieldSlotError(Environment *,struct templateSlot *,Deftemplate *);
-   void                           CheckTemplateFact(Environment *,Fact *);
-   bool                           CheckRHSSlotTypes(Environment *,struct expr *,struct templateSlot *,const char *);
-   struct templateSlot           *GetNthSlot(Deftemplate *,long long);
-   int                            FindSlotPosition(Deftemplate *,CLIPSLexeme *);
-   void                           PrintTemplateFact(Environment *,const char *,Fact *,bool,bool,const char *);
-   void                           UpdateDeftemplateScope(Environment *);
-   struct templateSlot           *FindSlot(Deftemplate *,CLIPSLexeme *,unsigned short *);
-   Deftemplate                   *CreateImpliedDeftemplate(Environment *,CLIPSLexeme *,bool);
+   void                           CL_InvalidDeftemplateSlotMessage(Environment *,const char *,const char *,bool);
+   void                           CL_SingleFieldCL_SlotCardinalityError(Environment *,const char *);
+   void                           CL_MultiIntoSingleFieldSlotError(Environment *,struct templateSlot *,Deftemplate *);
+   void                           CL_CheckTemplateFact(Environment *,Fact *);
+   bool                           CL_CheckRHSCL_SlotTypes(Environment *,struct expr *,struct templateSlot *,const char *);
+   struct templateSlot           *CL_GetNthSlot(Deftemplate *,long long);
+   int                            CL_FindSlotPosition(Deftemplate *,CLIPSLexeme *);
+   void                           CL_PrintTemplateFact(Environment *,const char *,Fact *,bool,bool,const char *);
+   void                           CL_UpdateDeftemplateScope(Environment *);
+   struct templateSlot           *CL_FindSlot(Deftemplate *,CLIPSLexeme *,unsigned short *);
+   Deftemplate                   *CL_CreateImpliedDeftemplate(Environment *,CLIPSLexeme *,bool);
 
 #endif /* _H_tmpltutl */
 

@@ -18,7 +18,7 @@
 /*                                                           */
 /*      6.24: Renamed BOOLEAN macro type to intBool.         */
 /*                                                           */
-/*            Added environment parameter to GenClose.       */
+/*            Added environment parameter to CL_GenClose.       */
 /*                                                           */
 /*      6.30: Changed integer type/precision.                */
 /*                                                           */
@@ -63,9 +63,9 @@ struct objectCompilerData
 
 #define ObjectCompilerData(theEnv) ((struct objectCompilerData *) GetEnvironmentData(theEnv,OBJECT_COMPILER_DATA))
 
-   void                    SetupObjectsCompiler(Environment *);
-   void                    PrintClassReference(Environment *,FILE *,Defclass *,unsigned,unsigned);
-   void                    DefclassCModuleReference(Environment *,FILE *,unsigned long,unsigned int,unsigned int);
+   void                    CL_SetupObjectsCompiler(Environment *);
+   void                    CL_PrintClassReference(Environment *,FILE *,Defclass *,unsigned,unsigned);
+   void                    CL_DefclassCModuleReference(Environment *,FILE *,unsigned long,unsigned int,unsigned int);
 
 #endif /* _H_objcmp */
 

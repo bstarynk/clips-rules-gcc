@@ -77,7 +77,7 @@
    =========================================
    ***************************************** */
 
-   static void                    FormMethodsFromRestrictions(Environment *,Defgeneric *,struct functionDefinition *,Expression *);
+   static void                    FoCL_rmMethodsFromRestrictions(Environment *,Defgeneric *,struct functionDefinition *,Expression *);
    static RESTRICTION            *ParseRestrictionType(Environment *,unsigned);
    static Expression             *GenTypeExpression(Environment *,Expression *,int,int,const char *);
    static Expression             *ParseRestrictionCreateTypes(Environment *,CONSTRAINT_RECORD *);
@@ -89,7 +89,7 @@
    ***************************************** */
 
 /********************************************************
-  NAME         : AddImplicitMethods
+  NAME         : CL_AddImplicitMethods
   DESCRIPTION  : Adds a method(s) for a generic function
                    for an overloaded system function
   INPUTS       : A pointer to a gneeric function
@@ -98,21 +98,21 @@
   NOTES        : Method marked as system
                  Assumes no other methods already present
  ********************************************************/
-void AddImplicitMethods(
+void CL_AddImplicitMethods(
   Environment *theEnv,
   Defgeneric *gfunc)
   {
    struct functionDefinition *sysfunc;
    Expression action;
 
-   sysfunc = FindFunction(theEnv,gfunc->header.name->contents);
+   sysfunc = CL_FindFunction(theEnv,gfunc->header.name->contents);
    if (sysfunc == NULL)
      return;
    action.type = FCALL;
    action.value = sysfunc;
    action.nextArg = NULL;
    action.argList = NULL;
-   FormMethodsFromRestrictions(theEnv,gfunc,sysfunc,&action);
+   FoCL_rmMethodsFromRestrictions(theEnv,gfunc,sysfunc,&action);
   }
 
 /* =========================================
@@ -122,7 +122,7 @@ void AddImplicitMethods(
    ***************************************** */
 
 /**********************************************************************
-  NAME         : FormMethodsFromRestrictions
+  NAME         : FoCL_rmMethodsFromRestrictions
   DESCRIPTION  : Uses restriction string given in DefineFunction2()
                    for system function to create an equivalent method
   INPUTS       : 1) The generic function for the new methods
@@ -133,7 +133,7 @@ void AddImplicitMethods(
   SIDE EFFECTS : Implicit method(s) created
   NOTES        : None
  **********************************************************************/
-static void FormMethodsFromRestrictions(
+static void FoCL_rmMethodsFromRestrictions(
   Environment *theEnv,
   Defgeneric *gfunc,
   struct functionDefinition *sysfunc,
@@ -161,17 +161,17 @@ static void FormMethodsFromRestrictions(
 
    min = sysfunc->minArgs;
    max = sysfunc->maxArgs;
-   PopulateRestriction(theEnv,&defaultc2,ANY_TYPE_BITS,rstring,0);
+   CL_PopulateRestriction(theEnv,&defaultc2,ANY_TYPE_BITS,rstring,0);
 
    /*==================================================*/
-   /* Form a list of method restrictions corresponding */
+   /* FoCL_rm a list of method restrictions corresponding */
    /* to the minimum number of arguments.              */
    /*==================================================*/
 
    plist = bot = NULL;
    for (i = 0 ; i < min ; i++)
      {
-      PopulateRestriction(theEnv,&argRestriction2,defaultc2,rstring,i+1);
+      CL_PopulateRestriction(theEnv,&argRestriction2,defaultc2,rstring,i+1);
       rptr = ParseRestrictionType(theEnv,argRestriction2);
       tmp = get_struct(theEnv,expr);
       tmp->argList = (Expression *) rptr;
@@ -198,18 +198,18 @@ static void FormMethodsFromRestrictions(
    /*=====================================================*/
 
    i = 0;
-   while (RestrictionExists(rstring,min+i+1))
+   while (CL_RestrictionExists(rstring,min+i+1))
      {
       if ((min + i + 1) == max)
         {
-         if (! RestrictionExists(rstring,min+i+2))
+         if (! CL_RestrictionExists(rstring,min+i+2))
            {
-            PopulateRestriction(theEnv,&defaultc2,ANY_TYPE_BITS,rstring,min+i+1);
+            CL_PopulateRestriction(theEnv,&defaultc2,ANY_TYPE_BITS,rstring,min+i+1);
             break;
            }
         }
 
-      PopulateRestriction(theEnv,&argRestriction2,defaultc2,rstring,min+i+1);
+      CL_PopulateRestriction(theEnv,&argRestriction2,defaultc2,rstring,min+i+1);
       rptr = ParseRestrictionType(theEnv,argRestriction2);
 
       tmp = get_struct(theEnv,expr);
@@ -221,12 +221,12 @@ static void FormMethodsFromRestrictions(
         bot->nextArg = tmp;
       bot = tmp;
       i++;
-      if (RestrictionExists(rstring,min+i+1) ||
+      if (CL_RestrictionExists(rstring,min+i+1) ||
           ((min + i) == max))
         {
-         FindMethodByRestrictions(gfunc,plist,min + i,NULL,&mposn);
-         meth = AddMethod(theEnv,gfunc,NULL,mposn,0,plist,min + i,0,NULL,
-                          PackExpression(theEnv,actions),NULL,true);
+         CL_FindMethodByRestrictions(gfunc,plist,min + i,NULL,&mposn);
+         meth = CL_AddMethod(theEnv,gfunc,NULL,mposn,0,plist,min + i,0,NULL,
+                          CL_PackExpression(theEnv,actions),NULL,true);
          meth->system = 1;
         }
      }
@@ -252,11 +252,11 @@ static void FormMethodsFromRestrictions(
 
       if (max != UNBOUNDED)
         {
-         rptr->query = GenConstant(theEnv,FCALL,FindFunction(theEnv,"<="));
-         rptr->query->argList = GenConstant(theEnv,FCALL,FindFunction(theEnv,"length$"));
-         rptr->query->argList->argList = GenProcWildcardReference(theEnv,min + i + 1);
+         rptr->query = CL_GenConstant(theEnv,FCALL,CL_FindFunction(theEnv,"<="));
+         rptr->query->argList = CL_GenConstant(theEnv,FCALL,CL_FindFunction(theEnv,"length$"));
+         rptr->query->argList->argList = CL_GenProcWildcardReference(theEnv,min + i + 1);
          rptr->query->argList->nextArg =
-               GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,(long long) (max - min - i)));
+               CL_GenConstant(theEnv,INTEGER_TYPE,CL_CreateInteger(theEnv,(long long) (max - min - i)));
         }
       tmp = get_struct(theEnv,expr);
       tmp->argList = (Expression *) rptr;
@@ -265,9 +265,9 @@ static void FormMethodsFromRestrictions(
         plist = tmp;
       else
         bot->nextArg = tmp;
-      FindMethodByRestrictions(gfunc,plist,min + i + 1,TrueSymbol(theEnv),&mposn);
-      meth = AddMethod(theEnv,gfunc,NULL,mposn,0,plist,min + i + 1,0,TrueSymbol(theEnv),
-                       PackExpression(theEnv,actions),NULL,false);
+      CL_FindMethodByRestrictions(gfunc,plist,min + i + 1,TrueSymbol(theEnv),&mposn);
+      meth = CL_AddMethod(theEnv,gfunc,NULL,mposn,0,plist,min + i + 1,0,TrueSymbol(theEnv),
+                       CL_PackExpression(theEnv,actions),NULL,false);
       meth->system = 1;
      }
 
@@ -285,14 +285,14 @@ static void FormMethodsFromRestrictions(
         {
          bot = svBot->nextArg;
          svBot->nextArg = NULL;
-         DeleteTempRestricts(theEnv,bot);
+         CL_DeleteTempRestricts(theEnv,bot);
         }
-      FindMethodByRestrictions(gfunc,plist,min,NULL,&mposn);
-      meth = AddMethod(theEnv,gfunc,NULL,mposn,0,plist,min,0,NULL,
-                       PackExpression(theEnv,actions),NULL,true);
+      CL_FindMethodByRestrictions(gfunc,plist,min,NULL,&mposn);
+      meth = CL_AddMethod(theEnv,gfunc,NULL,mposn,0,plist,min,0,NULL,
+                       CL_PackExpression(theEnv,actions),NULL,true);
       meth->system = 1;
      }
-   DeleteTempRestricts(theEnv,plist);
+   CL_DeleteTempRestricts(theEnv,plist);
   }
 
 /*******************************/
@@ -367,11 +367,11 @@ static RESTRICTION *ParseRestrictionType(
 
    rptr = get_struct(theEnv,restriction);
    rptr->query = NULL;
-   rv = ArgumentTypeToConstraintRecord(theEnv,code);
+   rv = CL_ArgumentTypeToConstraintRecord(theEnv,code);
 
    types = ParseRestrictionCreateTypes(theEnv,rv);
-   RemoveConstraint(theEnv,rv);
-   PackRestrictionTypes(theEnv,rptr,types);
+   CL_RemoveConstraint(theEnv,rv);
+   CL_PackRestrictionTypes(theEnv,rptr,types);
    return(rptr);
   }
 
@@ -417,11 +417,11 @@ static Expression *GenTypeExpression(
 
 #if OBJECT_SYSTEM
    if (primitiveCode != -1)
-     tmp = GenConstant(theEnv,0,DefclassData(theEnv)->PrimitiveClassMap[primitiveCode]);
+     tmp = CL_GenConstant(theEnv,0,DefclassData(theEnv)->PrimitiveClassMap[primitiveCode]);
    else
-     tmp = GenConstant(theEnv,0,LookupDefclassByMdlOrScope(theEnv,COOLName));
+     tmp = CL_GenConstant(theEnv,0,CL_LookupDefclassByMdlOrScope(theEnv,COOLName));
 #else
-   tmp = GenConstant(theEnv,0,CreateInteger(theEnv,nonCOOLCode));
+   tmp = CL_GenConstant(theEnv,0,CL_CreateInteger(theEnv,nonCOOLCode));
 #endif
    tmp->nextArg = top;
    return(tmp);

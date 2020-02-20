@@ -43,9 +43,9 @@
 
 #include "globldef.h"
 
-   void                           DefglobalCompilerSetup(Environment *);
-   void                           DefglobalCModuleReference(Environment *,FILE *,unsigned long,unsigned int,unsigned int);
-   void                           DefglobalCConstructReference(Environment *,FILE *,Defglobal *,
+   void                           CL_DefglobalCompilerSetup(Environment *);
+   void                           CL_DefglobalCModuleReference(Environment *,FILE *,unsigned long,unsigned int,unsigned int);
+   void                           CL_DefglobalCConstructReference(Environment *,FILE *,Defglobal *,
                                                                unsigned int,unsigned int);
 
 #endif /* _H_globlcmp */

@@ -68,7 +68,7 @@
                                                   struct factPatternNode **,bool,bool);
    static struct factPatternNode    *CreateNewPatternNode(Environment *,struct lhsParseNode *,struct factPatternNode *,
                                                        struct factPatternNode *,bool,bool);
-   static void                       ClearPatternMatches(Environment *,struct factPatternNode *);
+   static void                       CL_ClearPatternCL_Matches(Environment *,struct factPatternNode *);
    static void                       DetachFactPattern(Environment *,struct patternNodeHeader *);
    static struct patternNodeHeader  *PlaceFactPattern(Environment *,struct lhsParseNode *);
    static struct lhsParseNode       *RemoveUnneededSlots(Environment *,struct lhsParseNode *);
@@ -76,17 +76,17 @@
 #endif
 
 /*********************************************************/
-/* InitializeFactPatterns: Adds fact patterns to the set */
+/* CL_InitializeFactPatterns: Adds fact patterns to the set */
 /*   of patterns recognized by the rule pattern parsing  */
 /*   and pattern/join network integration routines.      */
 /*********************************************************/
-void InitializeFactPatterns(
+void CL_InitializeFactPatterns(
   Environment *theEnv)
   {
 #if DEFRULE_CONSTRUCT
    struct patternParser *newPtr;
 
-   InitializeFactReteFunctions(theEnv);
+   CL_InitializeFactReteFunctions(theEnv);
 
    newPtr = get_struct(theEnv,patternParser);
 
@@ -95,19 +95,19 @@ void InitializeFactPatterns(
    newPtr->entityType = &FactData(theEnv)->FactInfo;
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   newPtr->recognizeFunction = FactPatternParserFind;
-   newPtr->parseFunction = FactPatternParse;
+   newPtr->recognizeFunction = CL_FactPatternParserFind;
+   newPtr->parseFunction = CL_FactPatternParse;
    newPtr->postAnalysisFunction = NULL;
    newPtr->addPatternFunction = PlaceFactPattern;
    newPtr->removePatternFunction = DetachFactPattern;
    newPtr->genJNConstantFunction = NULL;
-   newPtr->replaceGetJNValueFunction = FactReplaceGetvar;
-   newPtr->genGetJNValueFunction = FactGenGetvar;
-   newPtr->genCompareJNValuesFunction = FactJNVariableComparison;
-   newPtr->genPNConstantFunction = FactGenPNConstant;
-   newPtr->replaceGetPNValueFunction = FactReplaceGetfield;
-   newPtr->genGetPNValueFunction = FactGenGetfield;
-   newPtr->genComparePNValuesFunction = FactPNVariableComparison;
+   newPtr->replaceGetJNValueFunction = CL_FactReplaceGetvar;
+   newPtr->genGetJNValueFunction = CL_FactGenGetvar;
+   newPtr->genCompareJNValuesFunction = CL_FactJNVariableComparison;
+   newPtr->genPNConstantFunction = CL_FactGenPNConstant;
+   newPtr->replaceGetPNValueFunction = CL_FactReplaceGetfield;
+   newPtr->genGetPNValueFunction = CL_FactGenGetfield;
+   newPtr->genComparePNValuesFunction = CL_FactPNVariableComparison;
    newPtr->returnUserDataFunction = NULL;
    newPtr->copyUserDataFunction = NULL;
 #else
@@ -128,12 +128,12 @@ void InitializeFactPatterns(
    newPtr->copyUserDataFunction = NULL;
 #endif
 
-   newPtr->markIRPatternFunction = MarkFactPatternForIncrementalReset;
-   newPtr->incrementalResetFunction = FactsIncrementalReset;
+   newPtr->markIRPatternFunction = MarkFactPatternForCL_IncrementalCL_Reset;
+   newPtr->incrementalCL_ResetFunction = CL_FactsCL_IncrementalCL_Reset;
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
 #if CONSTRUCT_COMPILER
-   newPtr->codeReferenceFunction = FactPatternNodeReference;
+   newPtr->codeReferenceFunction = CL_FactPatternNodeReference;
 #else
    newPtr->codeReferenceFunction = NULL;
 #endif
@@ -141,7 +141,7 @@ void InitializeFactPatterns(
    newPtr->codeReferenceFunction = NULL;
 #endif
 
-   AddPatternParser(theEnv,newPtr);
+   CL_AddPatternParser(theEnv,newPtr);
 #endif
   }
 
@@ -187,9 +187,9 @@ static struct patternNodeHeader *PlaceFactPattern(
 
    if (thePattern->right->right == NULL)
      {
-      ReturnExpression(theEnv,thePattern->right->networkTest);
-      ReturnExpression(theEnv,thePattern->right->constantSelector);
-      ReturnExpression(theEnv,thePattern->right->constantValue);
+      CL_ReturnExpression(theEnv,thePattern->right->networkTest);
+      CL_ReturnExpression(theEnv,thePattern->right->constantSelector);
+      CL_ReturnExpression(theEnv,thePattern->right->constantValue);
       thePattern->right->networkTest = NULL;
       thePattern->right->constantSelector = NULL;
       thePattern->right->constantValue = NULL;
@@ -199,7 +199,7 @@ static struct patternNodeHeader *PlaceFactPattern(
       tempPattern = thePattern->right;
       thePattern->right = thePattern->right->right;
       tempPattern->right = NULL;
-	  ReturnLHSParseNodes(theEnv,tempPattern);
+	  CL_ReturnLHSParseNodes(theEnv,tempPattern);
      }
 
    /*====================================================*/
@@ -231,7 +231,7 @@ static struct patternNodeHeader *PlaceFactPattern(
    /*============================================================*/
 
    FactData(theEnv)->CurrentDeftemplate = (Deftemplate *)
-                        FindImportedConstruct(theEnv,"deftemplate",NULL,
+                        CL_FindImportedConstruct(theEnv,"deftemplate",NULL,
                                               deftemplateName,&count,
                                               true,NULL);
 
@@ -263,7 +263,7 @@ static struct patternNodeHeader *PlaceFactPattern(
         }
 
       /*============================================*/
-      /* Determine if the last pattern field within */
+      /* DeteCL_rmine if the last pattern field within */
       /* a multifield slot is being processed.      */
       /*============================================*/
 
@@ -378,8 +378,8 @@ static struct factPatternNode *FindPatternNode(
              (listOfNodes->header.endSlot == endSlot) &&
              (listOfNodes->whichField == thePattern->index) &&
              (listOfNodes->whichSlot == (thePattern->slotNumber - 1)) &&
-             IdenticalExpression(listOfNodes->networkTest,compareTest) &&
-             IdenticalExpression(listOfNodes->header.rightHash,thePattern->rightHash))
+             CL_IdenticalExpression(listOfNodes->networkTest,compareTest) &&
+             CL_IdenticalExpression(listOfNodes->header.rightHash,thePattern->rightHash))
            { return(listOfNodes); }
         }
       else if ((thePattern->pnType == MF_WILDCARD_NODE) || (thePattern->pnType == MF_VARIABLE_NODE))
@@ -389,8 +389,8 @@ static struct factPatternNode *FindPatternNode(
              (listOfNodes->leaveFields == thePattern->singleFieldsAfter) &&
              (listOfNodes->whichField == thePattern->index) &&
              (listOfNodes->whichSlot == (thePattern->slotNumber - 1)) &&
-             IdenticalExpression(listOfNodes->networkTest,compareTest) &&
-             IdenticalExpression(listOfNodes->header.rightHash,thePattern->rightHash))
+             CL_IdenticalExpression(listOfNodes->networkTest,compareTest) &&
+             CL_IdenticalExpression(listOfNodes->header.rightHash,thePattern->rightHash))
            { return(listOfNodes); }
         }
 
@@ -446,7 +446,7 @@ static struct lhsParseNode *RemoveUnneededSlots(
          else head = tempPattern->right;
 
          tempPattern->right = NULL;
-         ReturnLHSParseNodes(theEnv,tempPattern);
+         CL_ReturnLHSParseNodes(theEnv,tempPattern);
 
          if (lastPattern != NULL) tempPattern = lastPattern->right;
          else tempPattern = head;
@@ -470,7 +470,7 @@ static struct lhsParseNode *RemoveUnneededSlots(
          else head = tempPattern->right;
 
          tempPattern->right = NULL;
-         ReturnLHSParseNodes(theEnv,tempPattern);
+         CL_ReturnLHSParseNodes(theEnv,tempPattern);
 
          if (lastPattern != NULL) tempPattern = lastPattern->right;
          else tempPattern = head;
@@ -506,7 +506,7 @@ static struct lhsParseNode *RemoveUnneededSlots(
                (tempPattern->bottom == NULL))
         {
          tempPattern->pnType = SF_WILDCARD_NODE;
-         tempPattern->networkTest = FactGenCheckZeroLength(theEnv,tempPattern->slotNumber);
+         tempPattern->networkTest = CL_FactGenCheckZeroLength(theEnv,tempPattern->slotNumber);
          tempPattern->multifieldSlot = false;
          lastPattern = tempPattern;
          tempPattern = tempPattern->right;
@@ -522,19 +522,19 @@ static struct lhsParseNode *RemoveUnneededSlots(
         {
          /*=======================================================*/
          /* Add an expression to the first pattern restriction in */
-         /* the multifield slot that determines whether or not    */
+         /* the multifield slot that deteCL_rmines whether or not    */
          /* the fact's slot value contains the minimum number of  */
          /* required fields to satisfy the pattern restrictions   */
          /* for this slot. The length check is place before any   */
          /* other tests, so that preceeding checks do not have to */
-         /* determine if there are enough fields in the slot to   */
+         /* deteCL_rmine if there are enough fields in the slot to   */
          /* safely retrieve a value.                              */
          /*=======================================================*/
 
-         theTest = FactGenCheckLength(theEnv,tempPattern->bottom);
+         theTest = CL_FactGenCheckLength(theEnv,tempPattern->bottom);
          if (tempPattern->bottom->constantSelector != NULL)
-           { tempPattern->bottom->constantSelector->nextArg = CopyExpression(theEnv,theTest); }
-         theTest = CombineExpressions(theEnv,theTest,tempPattern->bottom->networkTest);
+           { tempPattern->bottom->constantSelector->nextArg = CL_CopyExpression(theEnv,theTest); }
+         theTest = CL_CombineExpressions(theEnv,theTest,tempPattern->bottom->networkTest);
          tempPattern->bottom->networkTest = theTest;
 
          /*=========================================================*/
@@ -555,7 +555,7 @@ static struct lhsParseNode *RemoveUnneededSlots(
             else head = tempPattern->right;
 
             tempPattern->right = NULL;
-            ReturnLHSParseNodes(theEnv,tempPattern);
+            CL_ReturnLHSParseNodes(theEnv,tempPattern);
 
             if (lastPattern != NULL) tempPattern = lastPattern->right;
             else tempPattern = head;
@@ -612,7 +612,7 @@ static struct factPatternNode *CreateNewPatternNode(
    newNode->rightNode = NULL;
    newNode->leftNode = NULL;
    newNode->leaveFields = thePattern->singleFieldsAfter;
-   InitializePatternHeader(theEnv,(struct patternNodeHeader *) &newNode->header);
+   CL_InitializePatternHeader(theEnv,(struct patternNodeHeader *) &newNode->header);
 
    if (thePattern->index > 0)
      { newNode->whichField = thePattern->index; }
@@ -642,18 +642,18 @@ static struct factPatternNode *CreateNewPatternNode(
    /*===========================================================*/
 
    if (constantSelector)
-     { newNode->networkTest = AddHashedExpression(theEnv,thePattern->constantValue); }
+     { newNode->networkTest = CL_AddHashedExpression(theEnv,thePattern->constantValue); }
    else if (thePattern->constantSelector != NULL)
-     { newNode->networkTest = AddHashedExpression(theEnv,thePattern->constantSelector); }
+     { newNode->networkTest = CL_AddHashedExpression(theEnv,thePattern->constantSelector); }
    else
-     { newNode->networkTest = AddHashedExpression(theEnv,thePattern->networkTest); }
+     { newNode->networkTest = CL_AddHashedExpression(theEnv,thePattern->networkTest); }
 
    /*==========================================*/
    /* Add the expression used for adding alpha */
    /* matches to the alpha memory.             */
    /*==========================================*/
 
-   newNode->header.rightHash = AddHashedExpression(theEnv,thePattern->rightHash);
+   newNode->header.rightHash = CL_AddHashedExpression(theEnv,thePattern->rightHash);
 
    /*===============================================*/
    /* Set the upper level pointer for the new node. */
@@ -662,7 +662,7 @@ static struct factPatternNode *CreateNewPatternNode(
    newNode->lastLevel = upperLevel;
 
    if ((upperLevel != NULL) && (upperLevel->header.selector))
-     { AddHashedPatternNode(theEnv,upperLevel,newNode,newNode->networkTest->type,newNode->networkTest->value); }
+     { CL_AddHashedPatternNode(theEnv,upperLevel,newNode,newNode->networkTest->type,newNode->networkTest->value); }
 
    /*======================================================*/
    /* If there are no nodes on this level, then attach the */
@@ -743,7 +743,7 @@ static void DetachFactPattern(
    /*=====================================================*/
 
    patternPtr = (struct factPatternNode *) thePattern;
-   ClearPatternMatches(theEnv,patternPtr);
+   CL_ClearPatternCL_Matches(theEnv,patternPtr);
 
    /*=======================================================*/
    /* If there are no joins entered from this pattern, then */
@@ -780,14 +780,14 @@ static void DetachFactPattern(
          else
            {
             if (upperLevel->header.selector)
-              { RemoveHashedPatternNode(theEnv,upperLevel,patternPtr,patternPtr->networkTest->type,patternPtr->networkTest->value); }
+              { CL_RemoveHashedPatternNode(theEnv,upperLevel,patternPtr,patternPtr->networkTest->type,patternPtr->networkTest->value); }
 
             upperLevel->nextLevel = NULL;
             if (upperLevel->header.stopNode) upperLevel = NULL;
            }
 
-         RemoveHashedExpression(theEnv,patternPtr->networkTest);
-         RemoveHashedExpression(theEnv,patternPtr->header.rightHash);
+         CL_RemoveHashedExpression(theEnv,patternPtr->networkTest);
+         CL_RemoveHashedExpression(theEnv,patternPtr->header.rightHash);
          rtn_struct(theEnv,factPatternNode,patternPtr);
         }
       else if (upperLevel->leftNode != NULL)
@@ -802,14 +802,14 @@ static void DetachFactPattern(
 
          if ((patternPtr->lastLevel != NULL) &&
              (patternPtr->lastLevel->header.selector))
-           { RemoveHashedPatternNode(theEnv,patternPtr->lastLevel,patternPtr,patternPtr->networkTest->type,patternPtr->networkTest->value); }
+           { CL_RemoveHashedPatternNode(theEnv,patternPtr->lastLevel,patternPtr,patternPtr->networkTest->type,patternPtr->networkTest->value); }
 
          upperLevel->leftNode->rightNode = upperLevel->rightNode;
          if (upperLevel->rightNode != NULL)
            { upperLevel->rightNode->leftNode = upperLevel->leftNode; }
 
-         RemoveHashedExpression(theEnv,patternPtr->networkTest);
-         RemoveHashedExpression(theEnv,patternPtr->header.rightHash);
+         CL_RemoveHashedExpression(theEnv,patternPtr->networkTest);
+         CL_RemoveHashedExpression(theEnv,patternPtr->header.rightHash);
          rtn_struct(theEnv,factPatternNode,patternPtr);
          upperLevel = NULL;
         }
@@ -828,14 +828,14 @@ static void DetachFactPattern(
          else
            {
            if (upperLevel->header.selector)
-              { RemoveHashedPatternNode(theEnv,upperLevel,patternPtr,patternPtr->networkTest->type,patternPtr->networkTest->value); }
+              { CL_RemoveHashedPatternNode(theEnv,upperLevel,patternPtr,patternPtr->networkTest->type,patternPtr->networkTest->value); }
 
             upperLevel->nextLevel = patternPtr->rightNode;
            }
          patternPtr->rightNode->leftNode = NULL;
 
-         RemoveHashedExpression(theEnv,patternPtr->networkTest);
-         RemoveHashedExpression(theEnv,patternPtr->header.rightHash);
+         CL_RemoveHashedExpression(theEnv,patternPtr->networkTest);
+         CL_RemoveHashedExpression(theEnv,patternPtr->header.rightHash);
          rtn_struct(theEnv,factPatternNode,patternPtr);
          upperLevel = NULL;
         }
@@ -845,10 +845,10 @@ static void DetachFactPattern(
 #endif
 
 /**************************************************************/
-/* DestroyFactPatternNetwork: Deallocates the data structures */
+/* CL_DestroyFactPatternNetwork: Deallocates the data structures */
 /*   associated with a fact pattern network.                  */
 /**************************************************************/
-void DestroyFactPatternNetwork(
+void CL_DestroyFactPatternNetwork(
   Environment *theEnv,
   struct factPatternNode *thePattern)
   {
@@ -860,13 +860,13 @@ void DestroyFactPatternNetwork(
      {
       patternPtr = thePattern->rightNode;
 
-      DestroyFactPatternNetwork(theEnv,thePattern->nextLevel);
+      CL_DestroyFactPatternNetwork(theEnv,thePattern->nextLevel);
 
-      DestroyAlphaMemory(theEnv,&thePattern->header,false);
+      CL_DestroyAlphaMemory(theEnv,&thePattern->header,false);
 
       if ((thePattern->lastLevel != NULL) &&
           (thePattern->lastLevel->header.selector))
-        { RemoveHashedPatternNode(theEnv,thePattern->lastLevel,thePattern,thePattern->networkTest->type,thePattern->networkTest->value); }
+        { CL_RemoveHashedPatternNode(theEnv,thePattern->lastLevel,thePattern,thePattern->networkTest->type,thePattern->networkTest->value); }
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
       rtn_struct(theEnv,factPatternNode,thePattern);
@@ -897,25 +897,25 @@ static void FindAndSetDeftemplatePatternNetwork(
    Defmodule *theModule;
 
    /*=======================================================*/
-   /* Save the current module since we will be changing it. */
+   /* CL_Save the current module since we will be changing it. */
    /*=======================================================*/
 
-   SaveCurrentModule(theEnv);
+   CL_SaveCurrentModule(theEnv);
 
    /*=======================================================*/
    /* Loop through every module looking for the deftemplate */
    /* associated with the specified root node.              */
    /*=======================================================*/
 
-   for (theModule = GetNextDefmodule(theEnv,NULL);
+   for (theModule = CL_GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = GetNextDefmodule(theEnv,theModule))
+        theModule = CL_GetNextDefmodule(theEnv,theModule))
      {
       /*======================================================*/
       /* Set the current module to the module being examined. */
       /*======================================================*/
 
-      SetCurrentModule(theEnv,theModule);
+      CL_SetCurrentModule(theEnv,theModule);
 
       /*======================================================*/
       /* Loop through every deftemplate in the current module */
@@ -923,9 +923,9 @@ static void FindAndSetDeftemplatePatternNetwork(
       /* specified root node.                                 */
       /*======================================================*/
 
-      for (theDeftemplate = GetNextDeftemplate(theEnv,NULL);
+      for (theDeftemplate = CL_GetNextDeftemplate(theEnv,NULL);
            theDeftemplate != NULL;
-           theDeftemplate = GetNextDeftemplate(theEnv,theDeftemplate))
+           theDeftemplate = CL_GetNextDeftemplate(theEnv,theDeftemplate))
         {
          /*===========================================================*/
          /* When the associated deftemplate is found, change its root */
@@ -935,7 +935,7 @@ static void FindAndSetDeftemplatePatternNetwork(
 
          if (theDeftemplate->patternNetwork == rootNode)
            {
-            RestoreCurrentModule(theEnv);
+            CL_RestoreCurrentModule(theEnv);
             theDeftemplate->patternNetwork = newRootNode;
             return;
            }
@@ -949,17 +949,17 @@ static void FindAndSetDeftemplatePatternNetwork(
    /* the links to the fact pattern network.                 */
    /*========================================================*/
 
-   RestoreCurrentModule(theEnv);
+   CL_RestoreCurrentModule(theEnv);
   }
 
 /***************************************************************/
-/* ClearPatternMatches: Clears the fact list of all pointers   */
+/* CL_ClearPatternCL_Matches: CL_Clears the fact list of all pointers   */
 /*   which point to a specific pattern.  The pointers are used */
 /*   to remember which patterns were matched by a fact to      */
 /*   make retraction easier.  When a rule is excised, the      */
 /*   pointers need to be removed.                              */
 /***************************************************************/
-static void ClearPatternMatches(
+static void CL_ClearPatternCL_Matches(
   Environment *theEnv,
   struct factPatternNode *patternPtr)
   {
@@ -970,9 +970,9 @@ static void ClearPatternMatches(
    /* Loop through every fact in the fact list. */
    /*===========================================*/
 
-   for (theFact = GetNextFact(theEnv,NULL);
+   for (theFact = CL_GetNextFact(theEnv,NULL);
         theFact != NULL;
-        theFact = GetNextFact(theEnv,theFact))
+        theFact = CL_GetNextFact(theEnv,theFact))
      {
       /*========================================*/
       /* Loop through every match for the fact. */

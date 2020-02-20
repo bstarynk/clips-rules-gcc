@@ -37,14 +37,14 @@
 /*            Added support for hashed memories.             */
 /*                                                           */
 /*            Added additional developer statistics to help  */
-/*            analyze join network performance.              */
+/*            analyze join network perfoCL_rmance.              */
 /*                                                           */
-/*            Added salience groups to improve performance   */
+/*            Added salience groups to improve perfoCL_rmance   */
 /*            with large numbers of activations of different */
 /*            saliences.                                     */
 /*                                                           */
-/*            Added EnvGetDisjunctCount and                  */
-/*            EnvGetNthDisjunct functions.                   */
+/*            Added EnvCL_GetDisjunctCount and                  */
+/*            EnvCL_GetNthDisjunct functions.                   */
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
@@ -93,7 +93,7 @@ struct defrule
    unsigned int afterBreakpoint :  1;
    unsigned int watchActivation :  1;
    unsigned int watchFiring     :  1;
-   unsigned int autoFocus       :  1;
+   unsigned int autoCL_Focus       :  1;
    unsigned int executing       :  1;
    struct expr *dynamicSalience;
    struct expr *actions;
@@ -126,7 +126,7 @@ struct defruleModule
 struct defruleData
   {
    Construct *DefruleConstruct;
-   unsigned DefruleModuleIndex;
+   unsigned CL_DefruleModuleIndex;
    unsigned long long CurrentEntityTimeTag;
    struct alphaMemoryHash **AlphaMemoryTable;
    bool BetaMemoryResizingFlag;
@@ -134,11 +134,11 @@ struct defruleData
    struct joinLink *LeftPrimeJoins;
 
 #if DEBUGGING_FUNCTIONS
-    bool WatchRules;
+    bool CL_WatchRules;
     int DeletedRuleDebugFlags;
 #endif
 #if DEVELOPER && (! RUN_TIME) && (! BLOAD_ONLY)
-    bool WatchRuleAnalysis;
+    bool CL_WatchRuleAnalysis;
 #endif
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
    struct CodeGeneratorItem *DefruleCodeItem;
@@ -156,23 +156,23 @@ struct defruleData
     NULL : \
     ((theJoin)->rightSideEntryStructure))
 
-   void                           InitializeDefrules(Environment *);
-   Defrule                       *FindDefrule(Environment *,const char *);
-   Defrule                       *FindDefruleInModule(Environment *,const char *);
-   Defrule                       *GetNextDefrule(Environment *,Defrule *);
-   struct defruleModule          *GetDefruleModuleItem(Environment *,Defmodule *);
-   bool                           DefruleIsDeletable(Defrule *);
+   void                           CL_InitializeDefrules(Environment *);
+   Defrule                       *CL_FindDefrule(Environment *,const char *);
+   Defrule                       *CL_FindDefruleInModule(Environment *,const char *);
+   Defrule                       *CL_GetNextDefrule(Environment *,Defrule *);
+   struct defruleModule          *GetCL_DefruleModuleItem(Environment *,Defmodule *);
+   bool                           CL_DefruleIsDeletable(Defrule *);
 #if RUN_TIME
-   void                           DefruleRunTimeInitialize(Environment *,struct joinLink *,struct joinLink *);
+   void                           DefruleCL_RunTimeInitialize(Environment *,struct joinLink *,struct joinLink *);
 #endif
 #if RUN_TIME || BLOAD_ONLY || BLOAD || BLOAD_AND_BSAVE
-   void                           AddBetaMemoriesToJoin(Environment *,struct joinNode *);
+   void                           CL_AddBetaMemoriesToJoin(Environment *,struct joinNode *);
 #endif
-   long                           GetDisjunctCount(Environment *,Defrule *);
-   Defrule                       *GetNthDisjunct(Environment *,Defrule *,long);
-   const char                    *DefruleModule(Defrule *);
-   const char                    *DefruleName(Defrule *);
-   const char                    *DefrulePPForm(Defrule *);
+   long                           CL_GetDisjunctCount(Environment *,Defrule *);
+   Defrule                       *CL_GetNthDisjunct(Environment *,Defrule *,long);
+   const char                    *CL_DefruleModule(Defrule *);
+   const char                    *CL_DefruleName(Defrule *);
+   const char                    *CL_DefrulePPFoCL_rm(Defrule *);
 
 #endif /* _H_ruledef */
 

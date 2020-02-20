@@ -25,11 +25,11 @@
 /*                                                           */
 /*      6.30: Changed integer type/precision.                */
 /*                                                           */
-/*            GetConstructNameAndComment API change.         */
+/*            CL_GetConstructNameAndComment API change.         */
 /*                                                           */
 /*            Support for long long integers.                */
 /*                                                           */
-/*            Used gensprintf instead of sprintf.            */
+/*            Used CL_gensprintf instead of sprintf.            */
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
@@ -119,7 +119,7 @@
    static CLIPSLexeme            *ParseMethodNameAndIndex(Environment *,const char *,unsigned short *,struct token *);
 
 #if DEBUGGING_FUNCTIONS
-   static void                    CreateDefaultGenericPPForm(Environment *,Defgeneric *);
+   static void                    CreateDefaultGenericPPFoCL_rm(Environment *,Defgeneric *);
 #endif
 
    static unsigned short          ParseMethodParameters(Environment *,const char *,Expression **,CLIPSLexeme **,struct token *);
@@ -142,7 +142,7 @@
    ***************************************** */
 
 /***************************************************************************
-  NAME         : ParseDefgeneric
+  NAME         : CL_ParseDefgeneric
   DESCRIPTION  : Parses the defgeneric construct
   INPUTS       : The input logical name
   RETURNS      : False if successful parse, true otherwise
@@ -150,7 +150,7 @@
   NOTES        : H/L Syntax :
                  (defgeneric <name> [<comment>])
  ***************************************************************************/
-bool ParseDefgeneric(
+bool CL_ParseDefgeneric(
   Environment *theEnv,
   const char *readSource)
   {
@@ -159,21 +159,21 @@ bool ParseDefgeneric(
    bool newGeneric;
    struct token genericInputToken;
 
-   SetPPBufferStatus(theEnv,true);
-   FlushPPBuffer(theEnv);
-   SavePPBuffer(theEnv,"(defgeneric ");
-   SetIndentDepth(theEnv,3);
+   CL_SetPPBufferStatus(theEnv,true);
+   CL_FlushPPBuffer(theEnv);
+   CL_SavePPBuffer(theEnv,"(defgeneric ");
+   CL_SetIndentDepth(theEnv,3);
 
 #if BLOAD || BLOAD_AND_BSAVE
-   if ((Bloaded(theEnv) == true) && (! ConstructData(theEnv)->CheckSyntaxMode))
+   if ((CL_Bloaded(theEnv) == true) && (! ConstructData(theEnv)->CL_CheckSyntaxMode))
      {
-      CannotLoadWithBloadMessage(theEnv,"defgeneric");
+      CannotCL_LoadWithCL_BloadMessage(theEnv,"defgeneric");
       return true;
      }
 #endif
 
-   gname = GetConstructNameAndComment(theEnv,readSource,&genericInputToken,"defgeneric",
-                                      (FindConstructFunction *) FindDefgenericInModule,
+   gname = CL_GetConstructNameAndComment(theEnv,readSource,&genericInputToken,"defgeneric",
+                                      (CL_FindConstructFunction *) CL_FindDefgenericInModule,
                                       NULL,"^",true,true,true,false);
    if (gname == NULL)
      return true;
@@ -183,30 +183,30 @@ bool ParseDefgeneric(
 
    if (genericInputToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      {
-      PrintErrorID(theEnv,"GENRCPSR",1,false);
-      WriteString(theEnv,STDERR,"Expected ')' to complete defgeneric.\n");
+      CL_PrintErrorID(theEnv,"GENRCPSR",1,false);
+      CL_WriteString(theEnv,STDERR,"Expected ')' to complete defgeneric.\n");
       return true;
      }
-   SavePPBuffer(theEnv,"\n");
+   CL_SavePPBuffer(theEnv,"\n");
 
    /* ========================================================
       If we're only checking syntax, don't add the
       successfully parsed deffacts to the KB.
       ======================================================== */
 
-   if (ConstructData(theEnv)->CheckSyntaxMode)
+   if (ConstructData(theEnv)->CL_CheckSyntaxMode)
      { return false; }
 
    gfunc = AddGeneric(theEnv,gname,&newGeneric);
 
 #if DEBUGGING_FUNCTIONS
-   SetDefgenericPPForm(theEnv,gfunc,GetConserveMemory(theEnv) ? NULL : CopyPPBuffer(theEnv));
+   SetCL_DefgenericPPFoCL_rm(theEnv,gfunc,CL_GetConserveMemory(theEnv) ? NULL : CL_CopyPPBuffer(theEnv));
 #endif
    return false;
   }
 
 /***************************************************************************
-  NAME         : ParseDefmethod
+  NAME         : CL_ParseDefmethod
   DESCRIPTION  : Parses the defmethod construct
   INPUTS       : The input logical name
   RETURNS      : False if successful parse, true otherwise
@@ -220,7 +220,7 @@ bool ParseDefgeneric(
                  <wildcard>    :== $?<name> |
                                    ($?<name> <type>* [<restriction-query>])
  ***************************************************************************/
-bool ParseDefmethod(
+bool CL_ParseDefmethod(
   Environment *theEnv,
   const char *readSource)
   {
@@ -239,15 +239,15 @@ bool ParseDefmethod(
    unsigned short theIndex;
    struct token genericInputToken;
 
-   SetPPBufferStatus(theEnv,true);
-   FlushPPBuffer(theEnv);
-   SetIndentDepth(theEnv,3);
-   SavePPBuffer(theEnv,"(defmethod ");
+   CL_SetPPBufferStatus(theEnv,true);
+   CL_FlushPPBuffer(theEnv);
+   CL_SetIndentDepth(theEnv,3);
+   CL_SavePPBuffer(theEnv,"(defmethod ");
 
 #if BLOAD || BLOAD_AND_BSAVE
-   if ((Bloaded(theEnv) == true) && (! ConstructData(theEnv)->CheckSyntaxMode))
+   if ((CL_Bloaded(theEnv) == true) && (! ConstructData(theEnv)->CL_CheckSyntaxMode))
      {
-      CannotLoadWithBloadMessage(theEnv,"defmethod");
+      CannotCL_LoadWithCL_BloadMessage(theEnv,"defmethod");
       return true;
      }
 #endif
@@ -266,60 +266,60 @@ bool ParseDefmethod(
    gfunc = AddGeneric(theEnv,gname,&newMethod);
 
 #if DEBUGGING_FUNCTIONS
-   if (newMethod && (! ConstructData(theEnv)->CheckSyntaxMode))
-      CreateDefaultGenericPPForm(theEnv,gfunc);
+   if (newMethod && (! ConstructData(theEnv)->CL_CheckSyntaxMode))
+      CreateDefaultGenericPPFoCL_rm(theEnv,gfunc);
 #endif
 
-   IncrementIndentDepth(theEnv,1);
+   CL_IncrementIndentDepth(theEnv,1);
    rcnt = ParseMethodParameters(theEnv,readSource,&params,&wildcard,&genericInputToken);
-   DecrementIndentDepth(theEnv,1);
+   CL_DecrementIndentDepth(theEnv,1);
    if (rcnt == PARAMETER_ERROR)
      goto DefmethodParseError;
-   PPCRAndIndent(theEnv);
+   CL_PPCRAndIndent(theEnv);
    for (tmp = params ; tmp != NULL ; tmp = tmp->nextArg)
      {
       ReplaceCurrentArgRefs(theEnv,((RESTRICTION *) tmp->argList)->query);
-      if (ReplaceProcVars(theEnv,"method",((RESTRICTION *) tmp->argList)->query,
+      if (CL_ReplaceProcVars(theEnv,"method",((RESTRICTION *) tmp->argList)->query,
                                   params,wildcard,NULL,NULL))
         {
-         DeleteTempRestricts(theEnv,params);
+         CL_DeleteTempRestricts(theEnv,params);
          goto DefmethodParseError;
         }
      }
-   meth = FindMethodByRestrictions(gfunc,params,rcnt,wildcard,&mposn);
+   meth = CL_FindMethodByRestrictions(gfunc,params,rcnt,wildcard,&mposn);
    error = false;
    if (meth != NULL)
      {
       if (meth->system)
         {
-         PrintErrorID(theEnv,"GENRCPSR",17,false);
-         WriteString(theEnv,STDERR,"Cannot replace the implicit system method #");
-         PrintUnsignedInteger(theEnv,STDERR,meth->index);
-         WriteString(theEnv,STDERR,".\n");
+         CL_PrintErrorID(theEnv,"GENRCPSR",17,false);
+         CL_WriteString(theEnv,STDERR,"Cannot replace the implicit system method #");
+         CL_PrintUnsignedInteger(theEnv,STDERR,meth->index);
+         CL_WriteString(theEnv,STDERR,".\n");
          error = true;
         }
       else if ((theIndex != 0) && (theIndex != meth->index))
         {
-         PrintErrorID(theEnv,"GENRCPSR",2,false);
-         WriteString(theEnv,STDERR,"New method #");
-         PrintUnsignedInteger(theEnv,STDERR,theIndex);
-         WriteString(theEnv,STDERR," would be indistinguishable from method #");
-         PrintUnsignedInteger(theEnv,STDERR,meth->index);
-         WriteString(theEnv,STDERR,".\n");
+         CL_PrintErrorID(theEnv,"GENRCPSR",2,false);
+         CL_WriteString(theEnv,STDERR,"New method #");
+         CL_PrintUnsignedInteger(theEnv,STDERR,theIndex);
+         CL_WriteString(theEnv,STDERR," would be indistinguishable from method #");
+         CL_PrintUnsignedInteger(theEnv,STDERR,meth->index);
+         CL_WriteString(theEnv,STDERR,".\n");
          error = true;
         }
      }
    else if (theIndex != 0)
      {
-      mi = FindMethodByIndex(gfunc,theIndex);
+      mi = CL_FindMethodByIndex(gfunc,theIndex);
       if (mi == METHOD_NOT_FOUND)
         mnew = true;
       else if (gfunc->methods[mi].system)
         {
-         PrintErrorID(theEnv,"GENRCPSR",17,false);
-         WriteString(theEnv,STDERR,"Cannot replace the implicit system method #");
-         PrintUnsignedInteger(theEnv,STDERR,theIndex);
-         WriteString(theEnv,STDERR,".\n");
+         CL_PrintErrorID(theEnv,"GENRCPSR",17,false);
+         CL_WriteString(theEnv,STDERR,"Cannot replace the implicit system method #");
+         CL_PrintUnsignedInteger(theEnv,STDERR,theIndex);
+         CL_WriteString(theEnv,STDERR,".\n");
          error = true;
         }
      }
@@ -327,11 +327,11 @@ bool ParseDefmethod(
      mnew = true;
    if (error)
      {
-      DeleteTempRestricts(theEnv,params);
+      CL_DeleteTempRestricts(theEnv,params);
       goto DefmethodParseError;
      }
    ExpressionData(theEnv)->ReturnContext = true;
-   actions = ParseProcActions(theEnv,"method",readSource,
+   actions = CL_ParseProcActions(theEnv,"method",readSource,
                               &genericInputToken,params,wildcard,
                               NULL,NULL,&lvars,NULL);
 
@@ -342,15 +342,15 @@ bool ParseDefmethod(
    if ((genericInputToken.tknType != RIGHT_PARENTHESIS_TOKEN) &&  /* DR0872 */
        (actions != NULL))
      {
-      SyntaxErrorMessage(theEnv,"defmethod");
-      DeleteTempRestricts(theEnv,params);
-      ReturnPackedExpression(theEnv,actions);
+      CL_SyntaxErrorMessage(theEnv,"defmethod");
+      CL_DeleteTempRestricts(theEnv,params);
+      CL_ReturnPackedExpression(theEnv,actions);
       goto DefmethodParseError;
      }
 
    if (actions == NULL)
      {
-      DeleteTempRestricts(theEnv,params);
+      CL_DeleteTempRestricts(theEnv,params);
       goto DefmethodParseError;
      }
 
@@ -359,48 +359,48 @@ bool ParseDefmethod(
    /* successfully parsed deffunction to the KB.   */
    /*==============================================*/
 
-   if (ConstructData(theEnv)->CheckSyntaxMode)
+   if (ConstructData(theEnv)->CL_CheckSyntaxMode)
      {
-      DeleteTempRestricts(theEnv,params);
-      ReturnPackedExpression(theEnv,actions);
+      CL_DeleteTempRestricts(theEnv,params);
+      CL_ReturnPackedExpression(theEnv,actions);
       if (newMethod)
         {
-         RemoveConstructFromModule(theEnv,&gfunc->header);
-         RemoveDefgeneric(theEnv,gfunc);
+         CL_RemoveConstructFromModule(theEnv,&gfunc->header);
+         CL_RemoveDefgeneric(theEnv,gfunc);
         }
       return false;
      }
 
-   PPBackup(theEnv);
-   PPBackup(theEnv);
-   SavePPBuffer(theEnv,genericInputToken.printForm);
-   SavePPBuffer(theEnv,"\n");
+   CL_PPBackup(theEnv);
+   CL_PPBackup(theEnv);
+   CL_SavePPBuffer(theEnv,genericInputToken.printFoCL_rm);
+   CL_SavePPBuffer(theEnv,"\n");
 
 #if DEBUGGING_FUNCTIONS
-   meth = AddMethod(theEnv,gfunc,meth,mposn,theIndex,params,rcnt,lvars,wildcard,actions,
-             GetConserveMemory(theEnv) ? NULL : CopyPPBuffer(theEnv),false);
+   meth = CL_AddMethod(theEnv,gfunc,meth,mposn,theIndex,params,rcnt,lvars,wildcard,actions,
+             CL_GetConserveMemory(theEnv) ? NULL : CL_CopyPPBuffer(theEnv),false);
 #else
-   meth = AddMethod(theEnv,gfunc,meth,mposn,theIndex,params,rcnt,lvars,wildcard,actions,NULL,false);
+   meth = CL_AddMethod(theEnv,gfunc,meth,mposn,theIndex,params,rcnt,lvars,wildcard,actions,NULL,false);
 #endif
-   DeleteTempRestricts(theEnv,params);
-   if (GetPrintWhileLoading(theEnv) && GetCompilationsWatch(theEnv) &&
-       (! ConstructData(theEnv)->CheckSyntaxMode))
+   CL_DeleteTempRestricts(theEnv,params);
+   if (CL_GetPrintWhileCL_Loading(theEnv) && CL_GetCompilationsCL_Watch(theEnv) &&
+       (! ConstructData(theEnv)->CL_CheckSyntaxMode))
      {
       const char *outRouter = STDOUT;
 
       if (mnew)
         {
-         WriteString(theEnv,outRouter,"   Method #");
-         PrintUnsignedInteger(theEnv,outRouter,meth->index);
-         WriteString(theEnv,outRouter," defined.\n");
+         CL_WriteString(theEnv,outRouter,"   Method #");
+         CL_PrintUnsignedInteger(theEnv,outRouter,meth->index);
+         CL_WriteString(theEnv,outRouter," defined.\n");
         }
       else
         {
          outRouter = STDWRN;
-         PrintWarningID(theEnv,"CSTRCPSR",1,true);
-         WriteString(theEnv,outRouter,"Method #");
-         PrintUnsignedInteger(theEnv,outRouter,meth->index);
-         WriteString(theEnv,outRouter," redefined.\n");
+         CL_PrintWarningID(theEnv,"CSTRCPSR",1,true);
+         CL_WriteString(theEnv,outRouter,"Method #");
+         CL_PrintUnsignedInteger(theEnv,outRouter,meth->index);
+         CL_WriteString(theEnv,outRouter," redefined.\n");
         }
      }
    return false;
@@ -408,16 +408,16 @@ bool ParseDefmethod(
 DefmethodParseError:
    if (newMethod)
      {
-      RemoveConstructFromModule(theEnv,&gfunc->header);
-      RemoveDefgeneric(theEnv,gfunc);
+      CL_RemoveConstructFromModule(theEnv,&gfunc->header);
+      CL_RemoveDefgeneric(theEnv,gfunc);
      }
    return true;
   }
 
 /************************************************************************
-  NAME         : AddMethod
+  NAME         : CL_AddMethod
   DESCRIPTION  : (Re)defines a new method for a generic
-                 If method already exists, deletes old information
+                 If method already exists, deletes old infoCL_rmation
                     before proceeding.
   INPUTS       : 1) The generic address
                  2) The old method address (can be NULL)
@@ -429,21 +429,21 @@ DefmethodParseError:
                  7) The number of locals vars reqd
                  8) The wildcard symbol (NULL if none)
                  9) Method actions
-                 10) Method pretty-print form
+                 10) Method pretty-print foCL_rm
                  11) A flag indicating whether to copy the
                      restriction types or just use the pointers
   RETURNS      : The new (old) method address
   SIDE EFFECTS : Method added to (or changed in) method array for generic
                  Restrictions repacked into new method
-                 Actions and pretty-print form attached
+                 Actions and pretty-print foCL_rm attached
   NOTES        : Assumes if a method is being redefined, its busy
                    count is 0!!
-                 IMPORTANT: Expects that FindMethodByRestrictions() has
-                   previously been called to determine if this method
+                 IMPORTANT: Expects that CL_FindMethodByRestrictions() has
+                   previously been called to deteCL_rmine if this method
                    is already present or not.  Arguments #1 and #2
                    should be the values obtained from FindMethod...().
  ************************************************************************/
-Defmethod *AddMethod(
+Defmethod *CL_AddMethod(
   Environment *theEnv,
   Defgeneric *gfunc,
   Defmethod *meth,
@@ -454,22 +454,22 @@ Defmethod *AddMethod(
   unsigned short lvars,
   CLIPSLexeme *wildcard,
   Expression *actions,
-  char *ppForm,
+  char *ppFoCL_rm,
   bool copyRestricts)
   {
    RESTRICTION *rptr, *rtmp;
    int i,j;
    unsigned short mai;
 
-   SaveBusyCount(gfunc);
+   CL_SaveBusyCount(gfunc);
    if (meth == NULL)
      {
-      mai = (mi != 0) ? FindMethodByIndex(gfunc,mi) : METHOD_NOT_FOUND;
+      mai = (mi != 0) ? CL_FindMethodByIndex(gfunc,mi) : METHOD_NOT_FOUND;
       if (mai == METHOD_NOT_FOUND)
         meth = AddGenericMethod(theEnv,gfunc,mposn,mi);
       else
         {
-         DeleteMethodInfo(theEnv,gfunc,&gfunc->methods[mai]);
+         CL_DeleteMethodInfo(theEnv,gfunc,&gfunc->methods[mai]);
          if (mai < mposn)
            {
             mposn--;
@@ -490,15 +490,15 @@ Defmethod *AddMethod(
       /* ================================
          The old trace state is preserved
          ================================ */
-      ExpressionDeinstall(theEnv,meth->actions);
-      ReturnPackedExpression(theEnv,meth->actions);
-      if (meth->header.ppForm != NULL)
-        rm(theEnv,(void *) meth->header.ppForm,(sizeof(char) * (strlen(meth->header.ppForm)+1)));
+      CL_ExpressionDeinstall(theEnv,meth->actions);
+      CL_ReturnPackedExpression(theEnv,meth->actions);
+      if (meth->header.ppFoCL_rm != NULL)
+        CL_rm(theEnv,(void *) meth->header.ppFoCL_rm,(sizeof(char) * (strlen(meth->header.ppFoCL_rm)+1)));
      }
    meth->system = 0;
    meth->actions = actions;
-   ExpressionInstall(theEnv,meth->actions);
-   meth->header.ppForm = ppForm;
+   CL_ExpressionInstall(theEnv,meth->actions);
+   meth->header.ppFoCL_rm = ppFoCL_rm;
    if (mposn == -1)
      {
       RestoreBusyCount(gfunc);
@@ -520,20 +520,20 @@ Defmethod *AddMethod(
      meth->minRestrictions = meth->maxRestrictions = rcnt;
    if (rcnt != 0)
      meth->restrictions = (RESTRICTION *)
-                          gm2(theEnv,(sizeof(RESTRICTION) * rcnt));
+                          CL_gm2(theEnv,(sizeof(RESTRICTION) * rcnt));
    else
      meth->restrictions = NULL;
    for (i = 0 ; i < rcnt ; i++)
      {
       rptr = &meth->restrictions[i];
       rtmp = (RESTRICTION *) params->argList;
-      rptr->query = PackExpression(theEnv,rtmp->query);
+      rptr->query = CL_PackExpression(theEnv,rtmp->query);
       rptr->tcnt = rtmp->tcnt;
       if (copyRestricts)
         {
          if (rtmp->types != NULL)
            {
-            rptr->types = (void **) gm2(theEnv,(rptr->tcnt * sizeof(void *)));
+            rptr->types = (void **) CL_gm2(theEnv,(rptr->tcnt * sizeof(void *)));
             GenCopyMemory(void *,rptr->tcnt,rptr->types,rtmp->types);
            }
          else
@@ -550,10 +550,10 @@ Defmethod *AddMethod(
          rtmp->tcnt = 0;
          rtmp->types = NULL;
         }
-      ExpressionInstall(theEnv,rptr->query);
+      CL_ExpressionInstall(theEnv,rptr->query);
       for (j = 0 ; j < rptr->tcnt ; j++)
 #if OBJECT_SYSTEM
-        IncrementDefclassBusyCount(theEnv,(Defclass *) rptr->types[j]);
+        CL_IncrementDefclassBusyCount(theEnv,(Defclass *) rptr->types[j]);
 #else
         IncrementIntegerCount((CLIPSInteger *) rptr->types[j]);
 #endif
@@ -564,7 +564,7 @@ Defmethod *AddMethod(
   }
 
 /*****************************************************
-  NAME         : PackRestrictionTypes
+  NAME         : CL_PackRestrictionTypes
   DESCRIPTION  : Takes the restriction type list
                    and packs it into a contiguous
                    array of void *.
@@ -574,7 +574,7 @@ Defmethod *AddMethod(
   SIDE EFFECTS : Array allocated & expressions freed
   NOTES        : None
  *****************************************************/
-void PackRestrictionTypes(
+void CL_PackRestrictionTypes(
   Environment *theEnv,
   RESTRICTION *rptr,
   Expression *types)
@@ -586,16 +586,16 @@ void PackRestrictionTypes(
    for (tmp = types ; tmp != NULL ; tmp = tmp->nextArg)
      rptr->tcnt++;
    if (rptr->tcnt != 0)
-     rptr->types = (void **) gm2(theEnv,(sizeof(void *) * rptr->tcnt));
+     rptr->types = (void **) CL_gm2(theEnv,(sizeof(void *) * rptr->tcnt));
    else
      rptr->types = NULL;
    for (i = 0 , tmp = types ; i < rptr->tcnt ; i++ , tmp = tmp->nextArg)
      rptr->types[i] = tmp->value;
-   ReturnExpression(theEnv,types);
+   CL_ReturnExpression(theEnv,types);
   }
 
 /***************************************************
-  NAME         : DeleteTempRestricts
+  NAME         : CL_DeleteTempRestricts
   DESCRIPTION  : Deallocates the method
                    temporary parameter list
   INPUTS       : The head of the list
@@ -603,7 +603,7 @@ void PackRestrictionTypes(
   SIDE EFFECTS : List deallocated
   NOTES        : None
  ***************************************************/
-void DeleteTempRestricts(
+void CL_DeleteTempRestricts(
   Environment *theEnv,
   Expression *phead)
   {
@@ -616,15 +616,15 @@ void DeleteTempRestricts(
       phead = phead->nextArg;
       rtmp = (RESTRICTION *) ptmp->argList;
       rtn_struct(theEnv,expr,ptmp);
-      ReturnExpression(theEnv,rtmp->query);
+      CL_ReturnExpression(theEnv,rtmp->query);
       if (rtmp->tcnt != 0)
-        rm(theEnv,rtmp->types,(sizeof(void *) * rtmp->tcnt));
+        CL_rm(theEnv,rtmp->types,(sizeof(void *) * rtmp->tcnt));
       rtn_struct(theEnv,restriction,rtmp);
      }
   }
 
 /**********************************************************
-  NAME         : FindMethodByRestrictions
+  NAME         : CL_FindMethodByRestrictions
   DESCRIPTION  : See if a method for the specified
                    generic satsifies the given restrictions
   INPUTS       : 1) Generic function
@@ -641,7 +641,7 @@ void DeleteTempRestricts(
                    already present
   NOTES        : None
  **********************************************************/
-Defmethod *FindMethodByRestrictions(
+Defmethod *CL_FindMethodByRestrictions(
   Defgeneric *gfunc,
   Expression *params,
   int rcnt,
@@ -684,19 +684,19 @@ Defmethod *FindMethodByRestrictions(
 
 /***********************************************************
   NAME         : ValidGenericName
-  DESCRIPTION  : Determines if a particular function name
+  DESCRIPTION  : DeteCL_rmines if a particular function name
                     can be overloaded
   INPUTS       : The name
   RETURNS      : True if OK, false otherwise
   SIDE EFFECTS : Error message printed
-  NOTES        : GetConstructNameAndComment() (called before
+  NOTES        : CL_GetConstructNameAndComment() (called before
                  this function) ensures that the defgeneric
                  name does not conflict with one from
                  another module
  ***********************************************************/
 static bool ValidGenericName(
   Environment *theEnv,
-  const char *theDefgenericName)
+  const char *theCL_DefgenericName)
   {
    Defgeneric *theDefgeneric;
 #if DEFFUNCTION_CONSTRUCT
@@ -710,10 +710,10 @@ static bool ValidGenericName(
    /* construct type, e.g, defclass, defrule, etc. */
    /*==============================================*/
 
-   if (FindConstruct(theEnv,theDefgenericName) != NULL)
+   if (CL_FindConstruct(theEnv,theCL_DefgenericName) != NULL)
      {
-      PrintErrorID(theEnv,"GENRCPSR",3,false);
-      WriteString(theEnv,STDERR,"Defgenerics are not allowed to replace constructs.\n");
+      CL_PrintErrorID(theEnv,"GENRCPSR",3,false);
+      CL_WriteString(theEnv,STDERR,"Defgenerics are not allowed to replace constructs.\n");
       return false;
      }
 
@@ -723,24 +723,24 @@ static bool ValidGenericName(
       a defffunction (either in this module or
       imported from another)
       ======================================== */
-   theDeffunction = LookupDeffunctionInScope(theEnv,theDefgenericName);
+   theDeffunction = CL_LookupDeffunctionInScope(theEnv,theCL_DefgenericName);
    if (theDeffunction != NULL)
      {
-      theModule = GetConstructModuleItem(&theDeffunction->header)->theModule;
-      if (theModule != GetCurrentModule(theEnv))
+      theModule = CL_GetConstructModuleItem(&theDeffunction->header)->theModule;
+      if (theModule != CL_GetCurrentModule(theEnv))
         {
-         PrintErrorID(theEnv,"GENRCPSR",4,false);
-         WriteString(theEnv,STDERR,"Deffunction '");
-         WriteString(theEnv,STDERR,DeffunctionName(theDeffunction));
-         WriteString(theEnv,STDERR,"' imported from module '");
-         WriteString(theEnv,STDERR,DefmoduleName(theModule));
-         WriteString(theEnv,STDERR,"' conflicts with this defgeneric.\n");
+         CL_PrintErrorID(theEnv,"GENRCPSR",4,false);
+         CL_WriteString(theEnv,STDERR,"Deffunction '");
+         CL_WriteString(theEnv,STDERR,CL_DeffunctionName(theDeffunction));
+         CL_WriteString(theEnv,STDERR,"' imported from module '");
+         CL_WriteString(theEnv,STDERR,CL_DefmoduleName(theModule));
+         CL_WriteString(theEnv,STDERR,"' conflicts with this defgeneric.\n");
          return false;
         }
       else
         {
-         PrintErrorID(theEnv,"GENRCPSR",5,false);
-         WriteString(theEnv,STDERR,"Defgenerics are not allowed to replace deffunctions.\n");
+         CL_PrintErrorID(theEnv,"GENRCPSR",5,false);
+         CL_WriteString(theEnv,STDERR,"Defgenerics are not allowed to replace deffunctions.\n");
         }
       return false;
      }
@@ -751,7 +751,7 @@ static bool ValidGenericName(
    /* this module (or is imported from another) */
    /*===========================================*/
 
-   theDefgeneric = FindDefgenericInModule(theEnv,theDefgenericName);
+   theDefgeneric = CL_FindDefgenericInModule(theEnv,theCL_DefgenericName);
    if (theDefgeneric != NULL)
      {
       /* ===========================================
@@ -759,9 +759,9 @@ static bool ValidGenericName(
          the current module is only valid if none
          of its methods are executing
          =========================================== */
-      if (MethodsExecuting(theDefgeneric))
+      if (CL_MethodsExecuting(theDefgeneric))
         {
-         MethodAlterError(theEnv,theDefgeneric);
+         CL_MethodAlterError(theEnv,theDefgeneric);
          return false;
         }
      }
@@ -770,14 +770,14 @@ static bool ValidGenericName(
       Only certain specific system functions
       may be overloaded by generic functions
       ======================================= */
-   systemFunction = FindFunction(theEnv,theDefgenericName);
+   systemFunction = CL_FindFunction(theEnv,theCL_DefgenericName);
    if ((systemFunction != NULL) ?
        (systemFunction->overloadable == false) : false)
      {
-      PrintErrorID(theEnv,"GENRCPSR",16,false);
-      WriteString(theEnv,STDERR,"The system function '");
-      WriteString(theEnv,STDERR,theDefgenericName);
-      WriteString(theEnv,STDERR,"' cannot be overloaded.\n");
+      CL_PrintErrorID(theEnv,"GENRCPSR",16,false);
+      CL_WriteString(theEnv,STDERR,"The system function '");
+      CL_WriteString(theEnv,STDERR,theCL_DefgenericName);
+      CL_WriteString(theEnv,STDERR,"' cannot be overloaded.\n");
       return false;
      }
    return true;
@@ -786,29 +786,29 @@ static bool ValidGenericName(
 #if DEBUGGING_FUNCTIONS
 
 /***************************************************
-  NAME         : CreateDefaultGenericPPForm
-  DESCRIPTION  : Adds a default pretty-print form
+  NAME         : CreateDefaultGenericPPFoCL_rm
+  DESCRIPTION  : Adds a default pretty-print foCL_rm
                  for a gneric function when it is
                  impliciylt created by the defn
                  of its first method
   INPUTS       : The generic function
   RETURNS      : Nothing useful
-  SIDE EFFECTS : Pretty-print form created and
+  SIDE EFFECTS : Pretty-print foCL_rm created and
                  attached.
   NOTES        : None
  ***************************************************/
-static void CreateDefaultGenericPPForm(
+static void CreateDefaultGenericPPFoCL_rm(
   Environment *theEnv,
   Defgeneric *gfunc)
   {
    const char *moduleName, *genericName;
    char *buf;
 
-   moduleName = DefmoduleName(GetCurrentModule(theEnv));
-   genericName = DefgenericName(gfunc);
-   buf = (char *) gm2(theEnv,(sizeof(char) * (strlen(moduleName) + strlen(genericName) + 17)));
-   gensprintf(buf,"(defgeneric %s::%s)\n",moduleName,genericName);
-   SetDefgenericPPForm(theEnv,gfunc,buf);
+   moduleName = CL_DefmoduleName(CL_GetCurrentModule(theEnv));
+   genericName = CL_DefgenericName(gfunc);
+   buf = (char *) CL_gm2(theEnv,(sizeof(char) * (strlen(moduleName) + strlen(genericName) + 17)));
+   CL_gensprintf(buf,"(defgeneric %s::%s)\n",moduleName,genericName);
+   SetCL_DefgenericPPFoCL_rm(theEnv,gfunc,buf);
   }
 
 #endif
@@ -833,8 +833,8 @@ static CLIPSLexeme *ParseMethodNameAndIndex(
    CLIPSLexeme *gname;
 
    *theIndex = 0;
-   gname = GetConstructNameAndComment(theEnv,readSource,genericInputToken,"defgeneric",
-                                      (FindConstructFunction *) FindDefgenericInModule,
+   gname = CL_GetConstructNameAndComment(theEnv,readSource,genericInputToken,"defgeneric",
+                                      (CL_FindConstructFunction *) CL_FindDefgenericInModule,
                                       NULL,"&",true,false,true,true);
    if (gname == NULL)
      return NULL;
@@ -842,29 +842,29 @@ static CLIPSLexeme *ParseMethodNameAndIndex(
      {
       unsigned short tmp;
 
-      PPBackup(theEnv);
-      PPBackup(theEnv);
-      SavePPBuffer(theEnv," ");
-      SavePPBuffer(theEnv,genericInputToken->printForm);
+      CL_PPBackup(theEnv);
+      CL_PPBackup(theEnv);
+      CL_SavePPBuffer(theEnv," ");
+      CL_SavePPBuffer(theEnv,genericInputToken->printFoCL_rm);
       tmp = (unsigned short) genericInputToken->integerValue->contents;
       if (tmp < 1)
         {
-         PrintErrorID(theEnv,"GENRCPSR",6,false);
-         WriteString(theEnv,STDERR,"Method index out of range.\n");
+         CL_PrintErrorID(theEnv,"GENRCPSR",6,false);
+         CL_WriteString(theEnv,STDERR,"Method index out of range.\n");
          return NULL;
         }
       *theIndex = tmp;
-      PPCRAndIndent(theEnv);
-      GetToken(theEnv,readSource,genericInputToken);
+      CL_PPCRAndIndent(theEnv);
+      CL_GetToken(theEnv,readSource,genericInputToken);
      }
    if (genericInputToken->tknType == STRING_TOKEN)
      {
-      PPBackup(theEnv);
-      PPBackup(theEnv);
-      SavePPBuffer(theEnv," ");
-      SavePPBuffer(theEnv,genericInputToken->printForm);
-      PPCRAndIndent(theEnv);
-      GetToken(theEnv,readSource,genericInputToken);
+      CL_PPBackup(theEnv);
+      CL_PPBackup(theEnv);
+      CL_SavePPBuffer(theEnv," ");
+      CL_SavePPBuffer(theEnv,genericInputToken->printFoCL_rm);
+      CL_PPCRAndIndent(theEnv);
+      CL_GetToken(theEnv,readSource,genericInputToken);
      }
    return(gname);
   }
@@ -901,18 +901,18 @@ static unsigned short ParseMethodParameters(
    *params = NULL;
    if (genericInputToken->tknType != LEFT_PARENTHESIS_TOKEN)
      {
-      PrintErrorID(theEnv,"GENRCPSR",7,false);
-      WriteString(theEnv,STDERR,"Expected a '(' to begin method parameter restrictions.\n");
+      CL_PrintErrorID(theEnv,"GENRCPSR",7,false);
+      CL_WriteString(theEnv,STDERR,"Expected a '(' to begin method parameter restrictions.\n");
       return PARAMETER_ERROR;
      }
-   GetToken(theEnv,readSource,genericInputToken);
+   CL_GetToken(theEnv,readSource,genericInputToken);
    while (genericInputToken->tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       if (*wildcard != NULL)
         {
-         DeleteTempRestricts(theEnv,phead);
-         PrintErrorID(theEnv,"PRCCODE",8,false);
-         WriteString(theEnv,STDERR,"No parameters allowed after wildcard parameter.\n");
+         CL_DeleteTempRestricts(theEnv,phead);
+         CL_PrintErrorID(theEnv,"PRCCODE",8,false);
+         CL_WriteString(theEnv,STDERR,"No parameters allowed after wildcard parameter.\n");
          return PARAMETER_ERROR;
         }
       if ((genericInputToken->tknType == SF_VARIABLE_TOKEN) ||
@@ -921,41 +921,41 @@ static unsigned short ParseMethodParameters(
          pname = genericInputToken->lexemeValue;
          if (DuplicateParameters(theEnv,phead,&pprv,pname))
            {
-            DeleteTempRestricts(theEnv,phead);
+            CL_DeleteTempRestricts(theEnv,phead);
             return PARAMETER_ERROR;
            }
          if (genericInputToken->tknType == MF_VARIABLE_TOKEN)
            *wildcard = pname;
          rtmp = get_struct(theEnv,restriction);
-         PackRestrictionTypes(theEnv,rtmp,NULL);
+         CL_PackRestrictionTypes(theEnv,rtmp,NULL);
          rtmp->query = NULL;
          phead = AddParameter(theEnv,phead,pprv,pname,rtmp);
          rcnt++;
         }
       else if (genericInputToken->tknType == LEFT_PARENTHESIS_TOKEN)
         {
-         GetToken(theEnv,readSource,genericInputToken);
+         CL_GetToken(theEnv,readSource,genericInputToken);
          if ((genericInputToken->tknType != SF_VARIABLE_TOKEN) &&
              (genericInputToken->tknType != MF_VARIABLE_TOKEN))
            {
-            DeleteTempRestricts(theEnv,phead);
-            PrintErrorID(theEnv,"GENRCPSR",8,false);
-            WriteString(theEnv,STDERR,"Expected a variable for parameter specification.\n");
+            CL_DeleteTempRestricts(theEnv,phead);
+            CL_PrintErrorID(theEnv,"GENRCPSR",8,false);
+            CL_WriteString(theEnv,STDERR,"Expected a variable for parameter specification.\n");
             return PARAMETER_ERROR;
            }
          pname = genericInputToken->lexemeValue;
          if (DuplicateParameters(theEnv,phead,&pprv,pname))
            {
-            DeleteTempRestricts(theEnv,phead);
+            CL_DeleteTempRestricts(theEnv,phead);
             return PARAMETER_ERROR;
            }
          if (genericInputToken->tknType == MF_VARIABLE_TOKEN)
            *wildcard = pname;
-         SavePPBuffer(theEnv," ");
+         CL_SavePPBuffer(theEnv," ");
          rtmp = ParseRestriction(theEnv,readSource);
          if (rtmp == NULL)
            {
-            DeleteTempRestricts(theEnv,phead);
+            CL_DeleteTempRestricts(theEnv,phead);
             return PARAMETER_ERROR;
            }
          phead = AddParameter(theEnv,phead,pprv,pname,rtmp);
@@ -963,19 +963,19 @@ static unsigned short ParseMethodParameters(
         }
       else
         {
-         DeleteTempRestricts(theEnv,phead);
-         PrintErrorID(theEnv,"GENRCPSR",9,false);
-         WriteString(theEnv,STDERR,"Expected a variable or '(' for parameter specification.\n");
+         CL_DeleteTempRestricts(theEnv,phead);
+         CL_PrintErrorID(theEnv,"GENRCPSR",9,false);
+         CL_WriteString(theEnv,STDERR,"Expected a variable or '(' for parameter specification.\n");
          return PARAMETER_ERROR;
         }
-      PPCRAndIndent(theEnv);
-      GetToken(theEnv,readSource,genericInputToken);
+      CL_PPCRAndIndent(theEnv);
+      CL_GetToken(theEnv,readSource,genericInputToken);
      }
    if (rcnt != 0)
      {
-      PPBackup(theEnv);
-      PPBackup(theEnv);
-      SavePPBuffer(theEnv,")");
+      CL_PPBackup(theEnv);
+      CL_PPBackup(theEnv);
+      CL_SavePPBuffer(theEnv,")");
      }
    *params = phead;
    return(rcnt);
@@ -1010,15 +1010,15 @@ static RESTRICTION *ParseRestriction(
    RESTRICTION *rptr;
    struct token genericInputToken;
 
-   GetToken(theEnv,readSource,&genericInputToken);
+   CL_GetToken(theEnv,readSource,&genericInputToken);
    while (genericInputToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       if (query != NULL)
         {
-         PrintErrorID(theEnv,"GENRCPSR",10,false);
-         WriteString(theEnv,STDERR,"Query must be last in parameter restriction.\n");
-         ReturnExpression(theEnv,query);
-         ReturnExpression(theEnv,types);
+         CL_PrintErrorID(theEnv,"GENRCPSR",10,false);
+         CL_WriteString(theEnv,STDERR,"Query must be last in parameter restriction.\n");
+         CL_ReturnExpression(theEnv,query);
+         CL_ReturnExpression(theEnv,types);
          return NULL;
         }
       if (genericInputToken.tknType == SYMBOL_TOKEN)
@@ -1026,8 +1026,8 @@ static RESTRICTION *ParseRestriction(
          new_types = ValidType(theEnv,genericInputToken.lexemeValue);
          if (new_types == NULL)
            {
-            ReturnExpression(theEnv,types);
-            ReturnExpression(theEnv,query);
+            CL_ReturnExpression(theEnv,types);
+            CL_ReturnExpression(theEnv,query);
             return NULL;
            }
          if (types == NULL)
@@ -1040,22 +1040,22 @@ static RESTRICTION *ParseRestriction(
                  {
                   if (tmp->value == tmp2->value)
                     {
-                     PrintErrorID(theEnv,"GENRCPSR",11,false);
+                     CL_PrintErrorID(theEnv,"GENRCPSR",11,false);
 #if OBJECT_SYSTEM
-                     WriteString(theEnv,STDERR,"Duplicate classes not allowed in parameter restriction.\n");
+                     CL_WriteString(theEnv,STDERR,"Duplicate classes not allowed in parameter restriction.\n");
 #else
-                     WriteString(theEnv,STDERR,"Duplicate types not allowed in parameter restriction.\n");
+                     CL_WriteString(theEnv,STDERR,"Duplicate types not allowed in parameter restriction.\n");
 #endif
-                     ReturnExpression(theEnv,query);
-                     ReturnExpression(theEnv,types);
-                     ReturnExpression(theEnv,new_types);
+                     CL_ReturnExpression(theEnv,query);
+                     CL_ReturnExpression(theEnv,types);
+                     CL_ReturnExpression(theEnv,new_types);
                      return NULL;
                     }
                   if (RedundantClasses(theEnv,tmp->value,tmp2->value))
                     {
-                     ReturnExpression(theEnv,query);
-                     ReturnExpression(theEnv,types);
-                     ReturnExpression(theEnv,new_types);
+                     CL_ReturnExpression(theEnv,query);
+                     CL_ReturnExpression(theEnv,types);
+                     CL_ReturnExpression(theEnv,new_types);
                      return NULL;
                     }
                  }
@@ -1066,56 +1066,56 @@ static RESTRICTION *ParseRestriction(
         }
       else if (genericInputToken.tknType == LEFT_PARENTHESIS_TOKEN)
         {
-         query = Function1Parse(theEnv,readSource);
+         query = CL_Function1Parse(theEnv,readSource);
          if (query == NULL)
            {
-            ReturnExpression(theEnv,types);
+            CL_ReturnExpression(theEnv,types);
             return NULL;
            }
-         if (GetParsedBindNames(theEnv) != NULL)
+         if (CL_GetParsedBindNames(theEnv) != NULL)
            {
-            PrintErrorID(theEnv,"GENRCPSR",12,false);
-            WriteString(theEnv,STDERR,"Binds are not allowed in query expressions.\n");
-            ReturnExpression(theEnv,query);
-            ReturnExpression(theEnv,types);
+            CL_PrintErrorID(theEnv,"GENRCPSR",12,false);
+            CL_WriteString(theEnv,STDERR,"Binds are not allowed in query expressions.\n");
+            CL_ReturnExpression(theEnv,query);
+            CL_ReturnExpression(theEnv,types);
             return NULL;
            }
         }
 #if DEFGLOBAL_CONSTRUCT
       else if (genericInputToken.tknType == GBL_VARIABLE_TOKEN)
-        query = GenConstant(theEnv,GBL_VARIABLE,genericInputToken.value);
+        query = CL_GenConstant(theEnv,GBL_VARIABLE,genericInputToken.value);
 #endif
       else
         {
-         PrintErrorID(theEnv,"GENRCPSR",13,false);
+         CL_PrintErrorID(theEnv,"GENRCPSR",13,false);
 #if OBJECT_SYSTEM
-         WriteString(theEnv,STDERR,"Expected a valid class name or query.\n");
+         CL_WriteString(theEnv,STDERR,"Expected a valid class name or query.\n");
 #else
-         WriteString(theEnv,STDERR,"Expected a valid type name or query.\n");
+         CL_WriteString(theEnv,STDERR,"Expected a valid type name or query.\n");
 #endif
-         ReturnExpression(theEnv,query);
-         ReturnExpression(theEnv,types);
+         CL_ReturnExpression(theEnv,query);
+         CL_ReturnExpression(theEnv,types);
          return NULL;
         }
-      SavePPBuffer(theEnv," ");
-      GetToken(theEnv,readSource,&genericInputToken);
+      CL_SavePPBuffer(theEnv," ");
+      CL_GetToken(theEnv,readSource,&genericInputToken);
      }
-   PPBackup(theEnv);
-   PPBackup(theEnv);
-   SavePPBuffer(theEnv,")");
+   CL_PPBackup(theEnv);
+   CL_PPBackup(theEnv);
+   CL_SavePPBuffer(theEnv,")");
    if ((types == NULL) && (query == NULL))
      {
-      PrintErrorID(theEnv,"GENRCPSR",13,false);
+      CL_PrintErrorID(theEnv,"GENRCPSR",13,false);
 #if OBJECT_SYSTEM
-      WriteString(theEnv,STDERR,"Expected a valid class name or query.\n");
+      CL_WriteString(theEnv,STDERR,"Expected a valid class name or query.\n");
 #else
-      WriteString(theEnv,STDERR,"Expected a valid type name or query.\n");
+      CL_WriteString(theEnv,STDERR,"Expected a valid type name or query.\n");
 #endif
       return NULL;
      }
    rptr = get_struct(theEnv,restriction);
    rptr->query = query;
-   PackRestrictionTypes(theEnv,rptr,types);
+   CL_PackRestrictionTypes(theEnv,rptr,types);
    return(rptr);
   }
 
@@ -1139,7 +1139,7 @@ static void ReplaceCurrentArgRefs(
           (strcmp(query->lexemeValue->contents,CURR_ARG_VAR) == 0))
         {
          query->type = FCALL;
-         query->value = FindFunction(theEnv,"(gnrc-current-arg)");
+         query->value = CL_FindFunction(theEnv,"(gnrc-current-arg)");
         }
       if (query->argList != NULL)
         ReplaceCurrentArgRefs(theEnv,query->argList);
@@ -1171,8 +1171,8 @@ static bool DuplicateParameters(
      {
       if (head->value == (void *) name)
         {
-         PrintErrorID(theEnv,"PRCCODE",7,false);
-         WriteString(theEnv,STDERR,"Duplicate parameter names not allowed.\n");
+         CL_PrintErrorID(theEnv,"PRCCODE",7,false);
+         CL_WriteString(theEnv,STDERR,"Duplicate parameter names not allowed.\n");
          return true;
         }
       *prv = head;
@@ -1206,7 +1206,7 @@ static Expression *AddParameter(
   {
    Expression *ptmp;
 
-   ptmp = GenConstant(theEnv,SYMBOL_TYPE,pname);
+   ptmp = CL_GenConstant(theEnv,SYMBOL_TYPE,pname);
    if (phead == NULL)
      phead = ptmp;
    else
@@ -1218,7 +1218,7 @@ static Expression *AddParameter(
 /**************************************************************
   NAME         : ValidType
   DESCRIPTION  : Examines the name of a restriction type and
-                   forms a list of integer-code expressions
+                   foCL_rms a list of integer-code expressions
                    corresponding to the primitive types
                  (or a Class address if COOL is installed)
   INPUTS       : The type name
@@ -1235,60 +1235,60 @@ static Expression *ValidType(
 #if OBJECT_SYSTEM
    Defclass *cls;
 
-   if (FindModuleSeparator(tname->contents))
-     IllegalModuleSpecifierMessage(theEnv);
+   if (CL_FindModuleSeparator(tname->contents))
+     CL_IllegalModuleSpecifierMessage(theEnv);
    else
      {
-      cls = LookupDefclassInScope(theEnv,tname->contents);
+      cls = LookupCL_DefclassInScope(theEnv,tname->contents);
       if (cls == NULL)
         {
-         PrintErrorID(theEnv,"GENRCPSR",14,false);
-         WriteString(theEnv,STDERR,"Unknown class in method.\n");
+         CL_PrintErrorID(theEnv,"GENRCPSR",14,false);
+         CL_WriteString(theEnv,STDERR,"Unknown class in method.\n");
          return NULL;
         }
-      return(GenConstant(theEnv,DEFCLASS_PTR,cls));
+      return(CL_GenConstant(theEnv,DEFCLASS_PTR,cls));
      }
 #else
    if (strcmp(tname->contents,INTEGER_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,INTEGER_TYPE)));
+     return(CL_GenConstant(theEnv,INTEGER_TYPE,CL_CreateInteger(theEnv,INTEGER_TYPE)));
    if (strcmp(tname->contents,FLOAT_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,FLOAT_TYPE)));
+     return(CL_GenConstant(theEnv,INTEGER_TYPE,CL_CreateInteger(theEnv,FLOAT_TYPE)));
    if (strcmp(tname->contents,SYMBOL_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,SYMBOL_TYPE)));
+     return(CL_GenConstant(theEnv,INTEGER_TYPE,CL_CreateInteger(theEnv,SYMBOL_TYPE)));
    if (strcmp(tname->contents,STRING_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,STRING_TYPE)));
+     return(CL_GenConstant(theEnv,INTEGER_TYPE,CL_CreateInteger(theEnv,STRING_TYPE)));
    if (strcmp(tname->contents,MULTIFIELD_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,MULTIFIELD_TYPE)));
+     return(CL_GenConstant(theEnv,INTEGER_TYPE,CL_CreateInteger(theEnv,MULTIFIELD_TYPE)));
    if (strcmp(tname->contents,EXTERNAL_ADDRESS_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,EXTERNAL_ADDRESS_TYPE)));
+     return(CL_GenConstant(theEnv,INTEGER_TYPE,CL_CreateInteger(theEnv,EXTERNAL_ADDRESS_TYPE)));
    if (strcmp(tname->contents,FACT_ADDRESS_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,FACT_ADDRESS_TYPE)));
+     return(CL_GenConstant(theEnv,INTEGER_TYPE,CL_CreateInteger(theEnv,FACT_ADDRESS_TYPE)));
    if (strcmp(tname->contents,NUMBER_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,NUMBER_TYPE_CODE)));
+     return(CL_GenConstant(theEnv,INTEGER_TYPE,CL_CreateInteger(theEnv,NUMBER_TYPE_CODE)));
    if (strcmp(tname->contents,LEXEME_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,LEXEME_TYPE_CODE)));
+     return(CL_GenConstant(theEnv,INTEGER_TYPE,CL_CreateInteger(theEnv,LEXEME_TYPE_CODE)));
    if (strcmp(tname->contents,ADDRESS_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,ADDRESS_TYPE_CODE)));
+     return(CL_GenConstant(theEnv,INTEGER_TYPE,CL_CreateInteger(theEnv,ADDRESS_TYPE_CODE)));
    if (strcmp(tname->contents,PRIMITIVE_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,PRIMITIVE_TYPE_CODE)));
+     return(CL_GenConstant(theEnv,INTEGER_TYPE,CL_CreateInteger(theEnv,PRIMITIVE_TYPE_CODE)));
    if (strcmp(tname->contents,OBJECT_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,OBJECT_TYPE_CODE)));
+     return(CL_GenConstant(theEnv,INTEGER_TYPE,CL_CreateInteger(theEnv,OBJECT_TYPE_CODE)));
    if (strcmp(tname->contents,INSTANCE_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,INSTANCE_TYPE_CODE)));
+     return(CL_GenConstant(theEnv,INTEGER_TYPE,CL_CreateInteger(theEnv,INSTANCE_TYPE_CODE)));
    if (strcmp(tname->contents,INSTANCE_NAME_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,INSTANCE_NAME_TYPE)));
+     return(CL_GenConstant(theEnv,INTEGER_TYPE,CL_CreateInteger(theEnv,INSTANCE_NAME_TYPE)));
    if (strcmp(tname->contents,INSTANCE_ADDRESS_TYPE_NAME) == 0)
-     return(GenConstant(theEnv,INTEGER_TYPE,CreateInteger(theEnv,INSTANCE_ADDRESS_TYPE)));
+     return(CL_GenConstant(theEnv,INTEGER_TYPE,CL_CreateInteger(theEnv,INSTANCE_ADDRESS_TYPE)));
 
-   PrintErrorID(theEnv,"GENRCPSR",14,false);
-   WriteString(theEnv,STDERR,"Unknown type in method.\n");
+   CL_PrintErrorID(theEnv,"GENRCPSR",14,false);
+   CL_WriteString(theEnv,STDERR,"Unknown type in method.\n");
 #endif
    return NULL;
   }
 
 /*************************************************************
   NAME         : RedundantClasses
-  DESCRIPTION  : Determines if one class (type) is
+  DESCRIPTION  : DeteCL_rmines if one class (type) is
                  subsumes (or is subsumed by) another.
   INPUTS       : Two void pointers which are class pointers
                  if COOL is installed or integer hash nodes
@@ -1305,10 +1305,10 @@ static bool RedundantClasses(
    const char *tname;
 
 #if OBJECT_SYSTEM
-   if (HasSuperclass((Defclass *) c1,(Defclass *) c2))
-     tname = DefclassName((Defclass *) c1);
-   else if (HasSuperclass((Defclass *) c2,(Defclass *) c1))
-     tname = DefclassName((Defclass *) c2);
+   if (CL_HasSuperclass((Defclass *) c1,(Defclass *) c2))
+     tname = CL_DefclassName((Defclass *) c1);
+   else if (CL_HasSuperclass((Defclass *) c2,(Defclass *) c1))
+     tname = CL_DefclassName((Defclass *) c2);
 #else
    if (SubsumeType(((CLIPSInteger *) c1)->contents,((CLIPSInteger *) c2)->contents))
      tname = TypeName(theEnv,((CLIPSInteger *) c1)->contents);
@@ -1317,10 +1317,10 @@ static bool RedundantClasses(
 #endif
    else
      return false;
-   PrintErrorID(theEnv,"GENRCPSR",15,false);
-   WriteString(theEnv,STDERR,"Class '");
-   WriteString(theEnv,STDERR,tname);
-   WriteString(theEnv,STDERR,"' is redundant.\n");
+   CL_PrintErrorID(theEnv,"GENRCPSR",15,false);
+   CL_WriteString(theEnv,STDERR,"Class '");
+   CL_WriteString(theEnv,STDERR,tname);
+   CL_WriteString(theEnv,STDERR,"' is redundant.\n");
    return true;
   }
 
@@ -1346,27 +1346,27 @@ static Defgeneric *AddGeneric(
   {
    Defgeneric *gfunc;
 
-   gfunc = FindDefgenericInModule(theEnv,name->contents);
+   gfunc = CL_FindDefgenericInModule(theEnv,name->contents);
    if (gfunc != NULL)
      {
       *newGeneric = false;
 
-      if (ConstructData(theEnv)->CheckSyntaxMode)
+      if (ConstructData(theEnv)->CL_CheckSyntaxMode)
         { return(gfunc); }
 
       /* ================================
          The old trace state is preserved
          ================================ */
-      RemoveConstructFromModule(theEnv,&gfunc->header);
+      CL_RemoveConstructFromModule(theEnv,&gfunc->header);
      }
    else
      {
       *newGeneric = true;
       gfunc = NewGeneric(theEnv,name);
       IncrementLexemeCount(name);
-      AddImplicitMethods(theEnv,gfunc);
+      CL_AddImplicitMethods(theEnv,gfunc);
      }
-   AddConstructToModule(&gfunc->header);
+   CL_AddConstructToModule(&gfunc->header);
    return(gfunc);
   }
 
@@ -1393,7 +1393,7 @@ static Defmethod *AddGenericMethod(
    Defmethod *narr;
    long b, e;
 
-   narr = (Defmethod *) gm2(theEnv,(sizeof(Defmethod) * (gfunc->mcnt+1)));
+   narr = (Defmethod *) CL_gm2(theEnv,(sizeof(Defmethod) * (gfunc->mcnt+1)));
    for (b = e = 0 ; b < gfunc->mcnt ; b++ , e++)
      {
       if (b == mposn)
@@ -1410,7 +1410,7 @@ static Defmethod *AddGenericMethod(
      }
    narr[mposn].busy = 0;
 #if DEBUGGING_FUNCTIONS
-   narr[mposn].trace = DefgenericData(theEnv)->WatchMethods;
+   narr[mposn].trace = DefgenericData(theEnv)->CL_WatchMethods;
 #endif
    narr[mposn].minRestrictions = 0;
    narr[mposn].maxRestrictions = 0;
@@ -1424,11 +1424,11 @@ static Defmethod *AddGenericMethod(
    narr[mposn].header.constructType = DEFMETHOD;
    narr[mposn].header.env = theEnv;
    narr[mposn].header.whichModule = gfunc->header.whichModule;
-   narr[mposn].header.ppForm = NULL;
+   narr[mposn].header.ppFoCL_rm = NULL;
    narr[mposn].header.usrData = NULL;
 
    if (gfunc->mcnt != 0)
-     rm(theEnv,gfunc->methods,(sizeof(Defmethod) * gfunc->mcnt));
+     CL_rm(theEnv,gfunc->methods,(sizeof(Defmethod) * gfunc->mcnt));
    gfunc->mcnt++;
    gfunc->methods = narr;
    return(&narr[mposn]);
@@ -1438,7 +1438,7 @@ static Defmethod *AddGenericMethod(
   NAME         : RestrictionsCompare
   DESCRIPTION  : Compares the restriction-expression list
                    with an existing methods restrictions to
-                   determine an ordering
+                   deteCL_rmine an ordering
   INPUTS       : 1) The parameter/restriction expression list
                  2) The total number of restrictions
                  3) The number of minimum restrictions
@@ -1500,7 +1500,7 @@ static int RestrictionsCompare(
          expressions must be identical as well for the restrictions
          to be the same
          ========================================================== */
-      if (IdenticalExpression(r1->query,r2->query) == false)
+      if (CL_IdenticalExpression(r1->query,r2->query) == false)
         diff = true;
       params = params->nextArg;
      }
@@ -1529,7 +1529,7 @@ static int RestrictionsCompare(
 
 /*****************************************************
   NAME         : TypeListCompare
-  DESCRIPTION  : Determines the precedence between
+  DESCRIPTION  : DeteCL_rmines the precedence between
                    the class lists on two restrictions
   INPUTS       : 1) Restriction address #1
                  2) Restriction address #2
@@ -1558,9 +1558,9 @@ static int TypeListCompare(
         {
          diff = true;
 #if OBJECT_SYSTEM
-         if (HasSuperclass((Defclass *) r1->types[i],(Defclass *) r2->types[i]))
+         if (CL_HasSuperclass((Defclass *) r1->types[i],(Defclass *) r2->types[i]))
            return(HIGHER_PRECEDENCE);
-         if (HasSuperclass((Defclass *) r2->types[i],(Defclass *) r1->types[i]))
+         if (CL_HasSuperclass((Defclass *) r2->types[i],(Defclass *) r1->types[i]))
            return(LOWER_PRECEDENCE);
 #else
          if (SubsumeType(((CLIPSInteger *) r1->types[i])->contents,((CLIPSInteger *) r2->types[i])->contents))
@@ -1595,13 +1595,13 @@ static Defgeneric *NewGeneric(
    Defgeneric *ngen;
 
    ngen = get_struct(theEnv,defgeneric);
-   InitializeConstructHeader(theEnv,"defgeneric",DEFGENERIC,&ngen->header,gname);
+   CL_InitializeConstructHeader(theEnv,"defgeneric",DEFGENERIC,&ngen->header,gname);
    ngen->busy = 0;
    ngen->new_index = 1;
    ngen->methods = NULL;
    ngen->mcnt = 0;
 #if DEBUGGING_FUNCTIONS
-   ngen->trace = DefgenericData(theEnv)->WatchGenerics;
+   ngen->trace = DefgenericData(theEnv)->CL_WatchGenerics;
 #endif
    return(ngen);
   }

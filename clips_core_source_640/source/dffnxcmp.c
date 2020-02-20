@@ -53,7 +53,7 @@
    static bool                    DeffunctionsToCode(Environment *,const char *,const char *,char *,
                                                      unsigned int,FILE *,unsigned int,unsigned int);
    static void                    CloseDeffunctionFiles(Environment *,FILE *,FILE *,unsigned int);
-   static void                    DeffunctionModuleToCode(Environment *,FILE *,Defmodule *,unsigned int,unsigned int);
+   static void                    CL_DeffunctionModuleToCode(Environment *,FILE *,Defmodule *,unsigned int,unsigned int);
    static void                    SingleDeffunctionToCode(Environment *,FILE *,Deffunction *,
                                                           unsigned int,unsigned int,unsigned int);
    static void                    InitDeffunctionCode(Environment *,FILE *,unsigned int,unsigned int);
@@ -65,7 +65,7 @@
    ***************************************** */
 
 /***************************************************
-  NAME         : SetupDeffunctionCompiler
+  NAME         : CL_SetupDeffunctionCompiler
   DESCRIPTION  : Initializes the construct compiler
                    item for deffunctions
   INPUTS       : None
@@ -73,16 +73,16 @@
   SIDE EFFECTS : Code generator item initialized
   NOTES        : None
  ***************************************************/
-void SetupDeffunctionCompiler(
+void CL_SetupDeffunctionCompiler(
   Environment *theEnv)
   {
-   DeffunctionData(theEnv)->DeffunctionCodeItem = AddCodeGeneratorItem(theEnv,"deffunctions",0,ReadyDeffunctionsForCode,
+   DeffunctionData(theEnv)->DeffunctionCodeItem = CL_AddCodeGeneratorItem(theEnv,"deffunctions",0,ReadyDeffunctionsForCode,
                                               InitDeffunctionCode,DeffunctionsToCode,2);
   }
 
 
 /***************************************************
-  NAME         : PrintDeffunctionReference
+  NAME         : CL_PrintDeffunctionReference
   DESCRIPTION  : Prints a reference to the run-time
                  deffunction array for the construct
                  compiler
@@ -95,7 +95,7 @@ void SetupDeffunctionCompiler(
   SIDE EFFECTS : Reference printed
   NOTES        : None
  ***************************************************/
-void PrintDeffunctionReference(
+void CL_PrintDeffunctionReference(
   Environment *theEnv,
   FILE *fp,
   Deffunction *dfPtr,
@@ -111,7 +111,7 @@ void PrintDeffunctionReference(
   }
 
 /****************************************************
-  NAME         : DeffunctionCModuleReference
+  NAME         : CL_DeffunctionCModuleReference
   DESCRIPTION  : Prints out a reference to a
                  deffunction module
   INPUTS       : 1) The output file
@@ -123,7 +123,7 @@ void PrintDeffunctionReference(
   SIDE EFFECTS : Deffunction module reference printed
   NOTES        : None
  ****************************************************/
-void DeffunctionCModuleReference(
+void CL_DeffunctionCModuleReference(
   Environment *theEnv,
   FILE *theFile,
   unsigned long count,
@@ -149,17 +149,17 @@ void DeffunctionCModuleReference(
                    for use in compiled expressions
   INPUTS       : None
   RETURNS      : Nothing useful
-  SIDE EFFECTS : BsaveIndices set
+  SIDE EFFECTS : CL_BsaveIndices set
   NOTES        : None
  ***************************************************/
 static void ReadyDeffunctionsForCode(
   Environment *theEnv)
   {
-   MarkConstructBsaveIDs(theEnv,DeffunctionData(theEnv)->DeffunctionModuleIndex);
+   MarkConstructCL_BsaveIDs(theEnv,DeffunctionData(theEnv)->CL_DeffunctionModuleIndex);
   }
 
 /**************************************************/
-/* InitDeffunctionCode: Writes out initialization */
+/* InitDeffunctionCode: CL_Writes out initialization */
 /*   code for deffunction for a run-time module.  */
 /**************************************************/
 static void InitDeffunctionCode(
@@ -173,12 +173,12 @@ static void InitDeffunctionCode(
 #pragma unused(imageID)
 #pragma unused(theEnv)
 #endif
-   fprintf(initFP,"   DeffunctionRunTimeInitialize(theEnv);\n");
+   fprintf(initFP,"   DeffunctionCL_RunTimeInitialize(theEnv);\n");
   }
 
 /*******************************************************
   NAME         : DeffunctionsToCode
-  DESCRIPTION  : Writes out static array code for
+  DESCRIPTION  : CL_Writes out static array code for
                    deffunctions
   INPUTS       : 1) The base name of the construct set
                  2) The base id for this construct
@@ -217,15 +217,15 @@ static bool DeffunctionsToCode(
       Loop through all the modules and all the deffunctions writing
       their C code representation to the file as they are traversed
       ============================================================= */
-   theModule = GetNextDefmodule(theEnv,NULL);
+   theModule = CL_GetNextDefmodule(theEnv,NULL);
 
    while (theModule != NULL)
      {
-      SetCurrentModule(theEnv,theModule);
+      CL_SetCurrentModule(theEnv,theModule);
 
-      moduleFile = OpenFileIfNeeded(theEnv,moduleFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
+      moduleFile = CL_OpenFileIfNeeded(theEnv,moduleFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
                                     moduleArrayVersion,headerFP,
-                                    "DeffunctionModuleData",ModulePrefix(DeffunctionData(theEnv)->DeffunctionCodeItem),
+                                    "CL_DeffunctionModuleData",ModulePrefix(DeffunctionData(theEnv)->DeffunctionCodeItem),
                                     false,NULL);
 
       if (moduleFile == NULL)
@@ -234,15 +234,15 @@ static bool DeffunctionsToCode(
          return false;
         }
 
-      DeffunctionModuleToCode(theEnv,moduleFile,theModule,imageID,maxIndices);
-      moduleFile = CloseFileIfNeeded(theEnv,moduleFile,&moduleArrayCount,&moduleArrayVersion,
+      CL_DeffunctionModuleToCode(theEnv,moduleFile,theModule,imageID,maxIndices);
+      moduleFile = CL_CloseFileIfNeeded(theEnv,moduleFile,&moduleArrayCount,&moduleArrayVersion,
                                      maxIndices,NULL,NULL);
 
-      theDeffunction = GetNextDeffunction(theEnv,NULL);
+      theDeffunction = CL_GetNextDeffunction(theEnv,NULL);
 
       while (theDeffunction != NULL)
         {
-         deffunctionFile = OpenFileIfNeeded(theEnv,deffunctionFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
+         deffunctionFile = CL_OpenFileIfNeeded(theEnv,deffunctionFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
                                             deffunctionArrayVersion,headerFP,
                                             "Deffunction",ConstructPrefix(DeffunctionData(theEnv)->DeffunctionCodeItem),
                                             false,NULL);
@@ -255,13 +255,13 @@ static bool DeffunctionsToCode(
          SingleDeffunctionToCode(theEnv,deffunctionFile,theDeffunction,imageID,
                                  maxIndices,moduleCount);
          deffunctionArrayCount++;
-         deffunctionFile = CloseFileIfNeeded(theEnv,deffunctionFile,&deffunctionArrayCount,
+         deffunctionFile = CL_CloseFileIfNeeded(theEnv,deffunctionFile,&deffunctionArrayCount,
                                              &deffunctionArrayVersion,maxIndices,NULL,NULL);
 
-         theDeffunction = GetNextDeffunction(theEnv,theDeffunction);
+         theDeffunction = CL_GetNextDeffunction(theEnv,theDeffunction);
         }
 
-      theModule = GetNextDefmodule(theEnv,theModule);
+      theModule = CL_GetNextDefmodule(theEnv,theModule);
       moduleCount++;
       moduleArrayCount++;
      }
@@ -295,19 +295,19 @@ static void CloseDeffunctionFiles(
    if (deffunctionFile != NULL)
      {
       count = maxIndices;
-      CloseFileIfNeeded(theEnv,deffunctionFile,&count,&arrayVersion,maxIndices,NULL,NULL);
+      CL_CloseFileIfNeeded(theEnv,deffunctionFile,&count,&arrayVersion,maxIndices,NULL,NULL);
      }
 
    if (moduleFile != NULL)
      {
       count = maxIndices;
-      CloseFileIfNeeded(theEnv,moduleFile,&count,&arrayVersion,maxIndices,NULL,NULL);
+      CL_CloseFileIfNeeded(theEnv,moduleFile,&count,&arrayVersion,maxIndices,NULL,NULL);
      }
   }
 
 /***************************************************
-  NAME         : DeffunctionModuleToCode
-  DESCRIPTION  : Writes out the C values for a
+  NAME         : CL_DeffunctionModuleToCode
+  DESCRIPTION  : CL_Writes out the C values for a
                  deffunction module item
   INPUTS       : 1) The output file
                  2) The module for the deffunctions
@@ -318,7 +318,7 @@ static void CloseDeffunctionFiles(
   SIDE EFFECTS : Deffunction module item written
   NOTES        : None
  ***************************************************/
-static void DeffunctionModuleToCode(
+static void CL_DeffunctionModuleToCode(
   Environment *theEnv,
   FILE *theFile,
   Defmodule *theModule,
@@ -326,14 +326,14 @@ static void DeffunctionModuleToCode(
   unsigned int maxIndices)
   {
    fprintf(theFile,"{");
-   ConstructModuleToCode(theEnv,theFile,theModule,imageID,maxIndices,
-                         DeffunctionData(theEnv)->DeffunctionModuleIndex,ConstructPrefix(DeffunctionData(theEnv)->DeffunctionCodeItem));
+   CL_ConstructModuleToCode(theEnv,theFile,theModule,imageID,maxIndices,
+                         DeffunctionData(theEnv)->CL_DeffunctionModuleIndex,ConstructPrefix(DeffunctionData(theEnv)->DeffunctionCodeItem));
    fprintf(theFile,"}");
   }
 
 /***************************************************
   NAME         : SingleDeffunctionToCode
-  DESCRIPTION  : Writes out a single deffunction's
+  DESCRIPTION  : CL_Writes out a single deffunction's
                  data to the file
   INPUTS       : 1) The output file
                  2) The deffunction
@@ -358,7 +358,7 @@ static void SingleDeffunctionToCode(
       ================== */
 
    fprintf(theFile,"{");
-   ConstructHeaderToCode(theEnv,theFile,&theDeffunction->header,imageID,maxIndices,moduleCount,
+   CL_ConstructHeaderToCode(theEnv,theFile,&theDeffunction->header,imageID,maxIndices,moduleCount,
                          ModulePrefix(DeffunctionData(theEnv)->DeffunctionCodeItem),
                          ConstructPrefix(DeffunctionData(theEnv)->DeffunctionCodeItem));
 
@@ -366,7 +366,7 @@ static void SingleDeffunctionToCode(
       Deffunction specific data
       ========================= */
    fprintf(theFile,",0,0,0,");
-   ExpressionToCode(theEnv,theFile,theDeffunction->code);
+   CL_ExpressionToCode(theEnv,theFile,theDeffunction->code);
    fprintf(theFile,",%d,%d,%d",
            theDeffunction->minNumberOfParameters,
            theDeffunction->maxNumberOfParameters,

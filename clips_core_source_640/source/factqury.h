@@ -94,15 +94,15 @@ struct factQueryData
 
 #define QUERY_DELIMITER_STRING     "(QDS)"
 
-   void                           SetupFactQuery(Environment *);
-   void                           GetQueryFact(Environment *,UDFContext *,UDFValue *);
-   void                           GetQueryFactSlot(Environment *,UDFContext *,UDFValue *);
-   void                           AnyFacts(Environment *,UDFContext *,UDFValue *);
-   void                           QueryFindFact(Environment *,UDFContext *,UDFValue *);
-   void                           QueryFindAllFacts(Environment *,UDFContext *,UDFValue *);
-   void                           QueryDoForFact(Environment *,UDFContext *,UDFValue *);
-   void                           QueryDoForAllFacts(Environment *,UDFContext *,UDFValue *);
-   void                           DelayedQueryDoForAllFacts(Environment *,UDFContext *,UDFValue *);
+   void                           CL_SetupFactQuery(Environment *);
+   void                           CL_GetQueryFact(Environment *,UDFContext *,UDFValue *);
+   void                           CL_GetQueryFactSlot(Environment *,UDFContext *,UDFValue *);
+   void                           CL_AnyCL_Facts(Environment *,UDFContext *,UDFValue *);
+   void                           CL_QueryFindFact(Environment *,UDFContext *,UDFValue *);
+   void                           QueryFindAllCL_Facts(Environment *,UDFContext *,UDFValue *);
+   void                           CL_QueryDoForFact(Environment *,UDFContext *,UDFValue *);
+   void                           QueryDoForAllCL_Facts(Environment *,UDFContext *,UDFValue *);
+   void                           CL_DelayedQueryDoForAllCL_Facts(Environment *,UDFContext *,UDFValue *);
 
 #endif /* FACT_SET_QUERIES */
 

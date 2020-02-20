@@ -17,7 +17,7 @@
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
-/*      6.24: Added environment parameter to GenClose.       */
+/*      6.24: Added environment parameter to CL_GenClose.       */
 /*                                                           */
 /*      6.30: Removed conditional code for unsupported       */
 /*            compilers/operating systems (IBM_MCW,          */
@@ -48,7 +48,7 @@
 
 #include "moduldef.h"
 
-   void                           DefmoduleCompilerSetup(Environment *);
-   void                           PrintDefmoduleReference(Environment *,FILE *,Defmodule *);
+   void                           CL_DefmoduleCompilerSetup(Environment *);
+   void                           CL_PrintDefmoduleReference(Environment *,FILE *,Defmodule *);
 
 #endif /* _H_modulcmp */

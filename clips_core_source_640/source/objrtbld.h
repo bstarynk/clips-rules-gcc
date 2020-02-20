@@ -56,7 +56,7 @@
 
 #if DEFRULE_CONSTRUCT && OBJECT_SYSTEM
 
-   void                    SetupObjectPatternStuff(Environment *);
+   void                    CL_SetupObjectPatternStuff(Environment *);
 
 #endif /* DEFRULE_CONSTRUCT && OBJECT_SYSTEM */
 

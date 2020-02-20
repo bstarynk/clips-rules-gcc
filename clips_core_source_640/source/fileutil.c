@@ -20,7 +20,7 @@
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
-/*      6.31: Fixed error in AppendDribble for older         */
+/*      6.31: Fixed error in CL_AppendDribble for older         */
 /*            compilers not allowing variable definition     */
 /*            within for statement.                          */
 /*                                                           */
@@ -61,14 +61,14 @@
    static int                     ReadDribbleCallback(Environment *,const char *,void *);
    static int                     UnreadDribbleCallback(Environment *,const char *,int,void *);
    static void                    ExitDribbleCallback(Environment *,int,void *);
-   static void                    WriteDribbleCallback(Environment *,const char *,const char *,void *);
+   static void                    CL_WriteDribbleCallback(Environment *,const char *,const char *,void *);
    static void                    PutcDribbleBuffer(Environment *,int);
 #endif
-   static bool                    QueryBatchCallback(Environment *,const char *,void *);
-   static int                     ReadBatchCallback(Environment *,const char *,void *);
-   static int                     UnreadBatchCallback(Environment *,const char *,int,void *);
-   static void                    ExitBatchCallback(Environment *,int,void *);
-   static void                    AddBatch(Environment *,bool,FILE *,const char *,int,const char *,const char *);
+   static bool                    QueryCL_BatchCallback(Environment *,const char *,void *);
+   static int                     ReadCL_BatchCallback(Environment *,const char *,void *);
+   static int                     UnreadCL_BatchCallback(Environment *,const char *,int,void *);
+   static void                    ExitCL_BatchCallback(Environment *,int,void *);
+   static void                    AddCL_Batch(Environment *,bool,FILE *,const char *,int,const char *,const char *);
 
 #if DEBUGGING_FUNCTIONS
 /****************************************/
@@ -94,25 +94,25 @@ static bool QueryDribbleCallback(
   }
 
 /******************/
-/* AppendDribble: */
+/* CL_AppendDribble: */
 /******************/
-void AppendDribble(
+void CL_AppendDribble(
   Environment *theEnv,
   const char *str)
   {
    int i;
 
-   if (! DribbleActive(theEnv)) return;
+   if (! CL_DribbleActive(theEnv)) return;
    
    for (i = 0 ; str[i] != EOS ; i++)
      { PutcDribbleBuffer(theEnv,str[i]); }
   }
 
 /****************************************/
-/* WriteDribbleCallback: Write callback */
+/* CL_WriteDribbleCallback: CL_Write callback */
 /*    for the dribble router.           */
 /****************************************/
-static void WriteDribbleCallback(
+static void CL_WriteDribbleCallback(
   Environment *theEnv,
   const char *logicalName,
   const char *str,
@@ -121,19 +121,19 @@ static void WriteDribbleCallback(
    int i;
 
    /*======================================*/
-   /* Send the output to the dribble file. */
+   /* CL_Send the output to the dribble file. */
    /*======================================*/
 
    for (i = 0 ; str[i] != EOS ; i++)
      { PutcDribbleBuffer(theEnv,str[i]); }
 
    /*===========================================================*/
-   /* Send the output to any routers interested in printing it. */
+   /* CL_Send the output to any routers interested in printing it. */
    /*===========================================================*/
 
-   DeactivateRouter(theEnv,"dribble");
-   WriteString(theEnv,logicalName,str);
-   ActivateRouter(theEnv,"dribble");
+   CL_DeactivateRouter(theEnv,"dribble");
+   CL_WriteString(theEnv,logicalName,str);
+   CL_ActivateRouter(theEnv,"dribble");
   }
 
 /**************************************/
@@ -152,9 +152,9 @@ static int ReadDribbleCallback(
    /* character from another active router.     */
    /*===========================================*/
 
-   DeactivateRouter(theEnv,"dribble");
-   rv = ReadRouter(theEnv,logicalName);
-   ActivateRouter(theEnv,"dribble");
+   CL_DeactivateRouter(theEnv,"dribble");
+   rv = CL_ReadRouter(theEnv,logicalName);
+   CL_ActivateRouter(theEnv,"dribble");
 
    /*==========================================*/
    /* Put the character retrieved from another */
@@ -220,7 +220,7 @@ static void PutcDribbleBuffer(
 
    else
      {
-      FileCommandData(theEnv)->DribbleBuffer = ExpandStringWithChar(theEnv,rv,FileCommandData(theEnv)->DribbleBuffer,
+      FileCommandData(theEnv)->DribbleBuffer = CL_ExpandStringWithChar(theEnv,rv,FileCommandData(theEnv)->DribbleBuffer,
                                            &FileCommandData(theEnv)->DribbleCurrentPosition,
                                            &FileCommandData(theEnv)->DribbleMaximumPosition,
                                            FileCommandData(theEnv)->DribbleMaximumPosition+BUFFER_SIZE);
@@ -251,9 +251,9 @@ static int UnreadDribbleCallback(
    /* ungetc request to the other active routers. */
    /*=============================================*/
 
-   DeactivateRouter(theEnv,"dribble");
-   rv = UnreadRouter(theEnv,logicalName,ch);
-   ActivateRouter(theEnv,"dribble");
+   CL_DeactivateRouter(theEnv,"dribble");
+   rv = CL_UnreadRouter(theEnv,logicalName,ch);
+   CL_ActivateRouter(theEnv,"dribble");
 
    /*==========================================*/
    /* Return the result of the ungetc request. */
@@ -278,14 +278,14 @@ static void ExitDribbleCallback(
    if (FileCommandData(theEnv)->DribbleCurrentPosition > 0)
      { fprintf(FileCommandData(theEnv)->DribbleFP,"%s",FileCommandData(theEnv)->DribbleBuffer); }
 
-   if (FileCommandData(theEnv)->DribbleFP != NULL) GenClose(theEnv,FileCommandData(theEnv)->DribbleFP);
+   if (FileCommandData(theEnv)->DribbleFP != NULL) CL_GenClose(theEnv,FileCommandData(theEnv)->DribbleFP);
   }
 
 /*********************************/
-/* DribbleOn: C access routine   */
+/* CL_DribbleOn: C access routine   */
 /*   for the dribble-on command. */
 /*********************************/
-bool DribbleOn(
+bool CL_DribbleOn(
   Environment *theEnv,
   const char *fileName)
   {
@@ -295,16 +295,16 @@ bool DribbleOn(
    /*==============================*/
 
    if (FileCommandData(theEnv)->DribbleFP != NULL)
-     { DribbleOff(theEnv); }
+     { CL_DribbleOff(theEnv); }
 
    /*========================*/
    /* Open the dribble file. */
    /*========================*/
 
-   FileCommandData(theEnv)->DribbleFP = GenOpen(theEnv,fileName,"w");
+   FileCommandData(theEnv)->DribbleFP = CL_GenOpen(theEnv,fileName,"w");
    if (FileCommandData(theEnv)->DribbleFP == NULL)
      {
-      OpenErrorMessage(theEnv,"dribble-on",fileName);
+      CL_OpenErrorMessage(theEnv,"dribble-on",fileName);
       return false;
      }
 
@@ -312,8 +312,8 @@ bool DribbleOn(
    /* Create the dribble router. */
    /*============================*/
 
-   AddRouter(theEnv,"dribble",40,
-             QueryDribbleCallback,WriteDribbleCallback,
+   CL_AddRouter(theEnv,"dribble",40,
+             QueryDribbleCallback,CL_WriteDribbleCallback,
              ReadDribbleCallback,UnreadDribbleCallback,
              ExitDribbleCallback,NULL);
 
@@ -339,10 +339,10 @@ bool DribbleOn(
   }
 
 /**********************************************/
-/* DribbleActive: Returns true if the dribble */
+/* CL_DribbleActive: Returns true if the dribble */
 /*   router is active, otherwise false.       */
 /**********************************************/
-bool DribbleActive(
+bool CL_DribbleActive(
   Environment *theEnv)
   {
    if (FileCommandData(theEnv)->DribbleFP != NULL) return true;
@@ -351,10 +351,10 @@ bool DribbleActive(
   }
 
 /**********************************/
-/* DribbleOff: C access routine   */
+/* CL_DribbleOff: C access routine   */
 /*   for the dribble-off command. */
 /**********************************/
-bool DribbleOff(
+bool CL_DribbleOff(
   Environment *theEnv)
   {
    bool rv = false;
@@ -379,8 +379,8 @@ bool DribbleOff(
      {
       if (FileCommandData(theEnv)->DribbleCurrentPosition > 0)
         { fprintf(FileCommandData(theEnv)->DribbleFP,"%s",FileCommandData(theEnv)->DribbleBuffer); }
-      DeleteRouter(theEnv,"dribble");
-      if (GenClose(theEnv,FileCommandData(theEnv)->DribbleFP) == 0) rv = true;
+      CL_DeleteRouter(theEnv,"dribble");
+      if (CL_GenClose(theEnv,FileCommandData(theEnv)->DribbleFP) == 0) rv = true;
      }
    else
      { rv = true; }
@@ -393,7 +393,7 @@ bool DribbleOff(
 
    if (FileCommandData(theEnv)->DribbleBuffer != NULL)
      {
-      rm(theEnv,FileCommandData(theEnv)->DribbleBuffer,FileCommandData(theEnv)->DribbleMaximumPosition);
+      CL_rm(theEnv,FileCommandData(theEnv)->DribbleBuffer,FileCommandData(theEnv)->DribbleMaximumPosition);
       FileCommandData(theEnv)->DribbleBuffer = NULL;
      }
 
@@ -411,10 +411,10 @@ bool DribbleOff(
 #endif /* DEBUGGING_FUNCTIONS */
 
 /**************************************/
-/* QueryBatchCallback: Query callback */
+/* QueryCL_BatchCallback: Query callback */
 /*    for the batch router.           */
 /**************************************/
-static bool QueryBatchCallback(
+static bool QueryCL_BatchCallback(
   Environment *theEnv,
   const char *logicalName,
   void *context)
@@ -430,22 +430,22 @@ static bool QueryBatchCallback(
   }
 
 /************************************/
-/* ReadBatchCallback: Read callback */
+/* ReadCL_BatchCallback: Read callback */
 /*    for the batch router.         */
 /************************************/
-static int ReadBatchCallback(
+static int ReadCL_BatchCallback(
   Environment *theEnv,
   const char *logicalName,
   void *context)
   {
-   return(LLGetcBatch(theEnv,logicalName,false));
+   return(LLGetcCL_Batch(theEnv,logicalName,false));
   }
 
 /***************************************************/
-/* LLGetcBatch: Lower level routine for retrieving */
+/* LLGetcCL_Batch: Lower level routine for retrieving */
 /*   a character when a batch file is active.      */
 /***************************************************/
-int LLGetcBatch(
+int LLGetcCL_Batch(
   Environment *theEnv,
   const char *logicalName,
   bool returnOnEOF)
@@ -459,33 +459,33 @@ int LLGetcBatch(
 
    while ((rv == EOF) && (flag == 1))
      {
-      if (FileCommandData(theEnv)->BatchType == FILE_BATCH)
-        { rv = getc(FileCommandData(theEnv)->BatchFileSource); }
+      if (FileCommandData(theEnv)->CL_BatchType == FILE_BATCH)
+        { rv = getc(FileCommandData(theEnv)->CL_BatchFileSource); }
       else
-        { rv = ReadRouter(theEnv,FileCommandData(theEnv)->BatchLogicalSource); }
+        { rv = CL_ReadRouter(theEnv,FileCommandData(theEnv)->CL_BatchLogicalSource); }
 
       if (rv == EOF)
         {
-         if (FileCommandData(theEnv)->BatchCurrentPosition > 0) WriteString(theEnv,STDOUT,(char *) FileCommandData(theEnv)->BatchBuffer);
-         flag = RemoveBatch(theEnv);
+         if (FileCommandData(theEnv)->CL_BatchCurrentPosition > 0) CL_WriteString(theEnv,STDOUT,(char *) FileCommandData(theEnv)->CL_BatchBuffer);
+         flag = RemoveCL_Batch(theEnv);
         }
      }
 
    /*=========================================================*/
    /* If the character retrieved is an end-of-file character, */
    /* then there are no batch files with character input      */
-   /* remaining. Remove the batch router.                     */
+   /* reCL_maining. Remove the batch router.                     */
    /*=========================================================*/
 
    if (rv == EOF)
      {
-      if (FileCommandData(theEnv)->BatchCurrentPosition > 0) WriteString(theEnv,STDOUT,(char *) FileCommandData(theEnv)->BatchBuffer);
-      DeleteRouter(theEnv,"batch");
-      RemoveBatch(theEnv);
+      if (FileCommandData(theEnv)->CL_BatchCurrentPosition > 0) CL_WriteString(theEnv,STDOUT,(char *) FileCommandData(theEnv)->CL_BatchBuffer);
+      CL_DeleteRouter(theEnv,"batch");
+      RemoveCL_Batch(theEnv);
       if (returnOnEOF == true)
         { return (EOF); }
       else
-        { return ReadRouter(theEnv,logicalName); }
+        { return CL_ReadRouter(theEnv,logicalName); }
      }
 
    /*========================================*/
@@ -494,8 +494,8 @@ int LLGetcBatch(
 
    if (RouterData(theEnv)->InputUngets == 0)
      {
-      FileCommandData(theEnv)->BatchBuffer = ExpandStringWithChar(theEnv,(char) rv,FileCommandData(theEnv)->BatchBuffer,&FileCommandData(theEnv)->BatchCurrentPosition,
-                                         &FileCommandData(theEnv)->BatchMaximumPosition,FileCommandData(theEnv)->BatchMaximumPosition+BUFFER_SIZE);
+      FileCommandData(theEnv)->CL_BatchBuffer = CL_ExpandStringWithChar(theEnv,(char) rv,FileCommandData(theEnv)->CL_BatchBuffer,&FileCommandData(theEnv)->CL_BatchCurrentPosition,
+                                         &FileCommandData(theEnv)->CL_BatchMaximumPosition,FileCommandData(theEnv)->CL_BatchMaximumPosition+BUFFER_SIZE);
      }
       
    /*======================================*/
@@ -505,13 +505,13 @@ int LLGetcBatch(
 
    if ((char) rv == '\n')
      {
-      WriteString(theEnv,STDOUT,(char *) FileCommandData(theEnv)->BatchBuffer);
-      FileCommandData(theEnv)->BatchCurrentPosition = 0;
-      if ((FileCommandData(theEnv)->BatchBuffer != NULL) && (FileCommandData(theEnv)->BatchMaximumPosition > BUFFER_SIZE))
+      CL_WriteString(theEnv,STDOUT,(char *) FileCommandData(theEnv)->CL_BatchBuffer);
+      FileCommandData(theEnv)->CL_BatchCurrentPosition = 0;
+      if ((FileCommandData(theEnv)->CL_BatchBuffer != NULL) && (FileCommandData(theEnv)->CL_BatchMaximumPosition > BUFFER_SIZE))
         {
-         rm(theEnv,FileCommandData(theEnv)->BatchBuffer,FileCommandData(theEnv)->BatchMaximumPosition);
-         FileCommandData(theEnv)->BatchMaximumPosition = 0;
-         FileCommandData(theEnv)->BatchBuffer = NULL;
+         CL_rm(theEnv,FileCommandData(theEnv)->CL_BatchBuffer,FileCommandData(theEnv)->CL_BatchMaximumPosition);
+         FileCommandData(theEnv)->CL_BatchMaximumPosition = 0;
+         FileCommandData(theEnv)->CL_BatchBuffer = NULL;
         }
      }
 
@@ -520,7 +520,7 @@ int LLGetcBatch(
    /*=============================*/
 
    if (((char) rv == '\r') || ((char) rv == '\n'))
-     { IncrementLineCount(theEnv); }
+     { CL_IncrementLineCount(theEnv); }
 
    /*=====================================================*/
    /* Return the character retrieved from the batch file. */
@@ -530,10 +530,10 @@ int LLGetcBatch(
   }
 
 /****************************************/
-/* UnreadBatchCallback: Unread callback */
+/* UnreadCL_BatchCallback: Unread callback */
 /*    for the batch router.             */
 /****************************************/
-static int UnreadBatchCallback(
+static int UnreadCL_BatchCallback(
   Environment *theEnv,
   const char *logicalName,
   int ch,
@@ -543,19 +543,19 @@ static int UnreadBatchCallback(
 #pragma unused(logicalName)
 #endif
 
-   if (FileCommandData(theEnv)->BatchCurrentPosition > 0) FileCommandData(theEnv)->BatchCurrentPosition--;
-   if (FileCommandData(theEnv)->BatchBuffer != NULL) FileCommandData(theEnv)->BatchBuffer[FileCommandData(theEnv)->BatchCurrentPosition] = EOS;
-   if (FileCommandData(theEnv)->BatchType == FILE_BATCH)
-     { return ungetc(ch,FileCommandData(theEnv)->BatchFileSource); }
+   if (FileCommandData(theEnv)->CL_BatchCurrentPosition > 0) FileCommandData(theEnv)->CL_BatchCurrentPosition--;
+   if (FileCommandData(theEnv)->CL_BatchBuffer != NULL) FileCommandData(theEnv)->CL_BatchBuffer[FileCommandData(theEnv)->CL_BatchCurrentPosition] = EOS;
+   if (FileCommandData(theEnv)->CL_BatchType == FILE_BATCH)
+     { return ungetc(ch,FileCommandData(theEnv)->CL_BatchFileSource); }
 
-   return UnreadRouter(theEnv,FileCommandData(theEnv)->BatchLogicalSource,ch);
+   return CL_UnreadRouter(theEnv,FileCommandData(theEnv)->CL_BatchLogicalSource,ch);
   }
 
 /************************************/
-/* ExitBatchCallback: Exit callback */
+/* ExitCL_BatchCallback: Exit callback */
 /*    for the batch router.         */
 /************************************/
-static void ExitBatchCallback(
+static void ExitCL_BatchCallback(
   Environment *theEnv,
   int num,
   void *context)
@@ -563,22 +563,22 @@ static void ExitBatchCallback(
 #if MAC_XCD
 #pragma unused(num,context)
 #endif
-   CloseAllBatchSources(theEnv);
+   CloseAllCL_BatchSources(theEnv);
   }
 
 /**************************************************/
-/* Batch: C access routine for the batch command. */
+/* CL_Batch: C access routine for the batch command. */
 /**************************************************/
-bool Batch(
+bool CL_Batch(
   Environment *theEnv,
   const char *fileName)
-  { return(OpenBatch(theEnv,fileName,false)); }
+  { return(OpenCL_Batch(theEnv,fileName,false)); }
 
 /***********************************************/
-/* OpenBatch: Adds a file to the list of files */
+/* OpenCL_Batch: Adds a file to the list of files */
 /*   opened with the batch command.            */
 /***********************************************/
-bool OpenBatch(
+bool OpenCL_Batch(
   Environment *theEnv,
   const char *fileName,
   bool placeAtEnd)
@@ -589,11 +589,11 @@ bool OpenBatch(
    /* Open the batch file. */
    /*======================*/
 
-   theFile = GenOpen(theEnv,fileName,"r");
+   theFile = CL_GenOpen(theEnv,fileName,"r");
 
    if (theFile == NULL)
      {
-      OpenErrorMessage(theEnv,"batch",fileName);
+      CL_OpenErrorMessage(theEnv,"batch",fileName);
       return false;
      }
 
@@ -602,19 +602,19 @@ bool OpenBatch(
    /* it doesn't already exist.  */
    /*============================*/
 
-   if (FileCommandData(theEnv)->TopOfBatchList == NULL)
+   if (FileCommandData(theEnv)->TopOfCL_BatchList == NULL)
      {
-      AddRouter(theEnv,"batch",20,QueryBatchCallback,NULL,
-                ReadBatchCallback,UnreadBatchCallback,
-                ExitBatchCallback,NULL);
+      CL_AddRouter(theEnv,"batch",20,QueryCL_BatchCallback,NULL,
+                ReadCL_BatchCallback,UnreadCL_BatchCallback,
+                ExitCL_BatchCallback,NULL);
      }
 
    /*===============================================================*/
    /* If a batch file is already open, save its current line count. */
    /*===============================================================*/
 
-   if (FileCommandData(theEnv)->TopOfBatchList != NULL)
-     { FileCommandData(theEnv)->TopOfBatchList->lineNumber = GetLineCount(theEnv); }
+   if (FileCommandData(theEnv)->TopOfCL_BatchList != NULL)
+     { FileCommandData(theEnv)->TopOfCL_BatchList->lineNumber = CL_GetLineCount(theEnv); }
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
 
@@ -622,17 +622,17 @@ bool OpenBatch(
    /* If this is the first batch file, remember the prior parsing file name. */
    /*========================================================================*/
 
-   if (FileCommandData(theEnv)->TopOfBatchList == NULL)
-     { FileCommandData(theEnv)->batchPriorParsingFile = CopyString(theEnv,GetParsingFileName(theEnv)); }
+   if (FileCommandData(theEnv)->TopOfCL_BatchList == NULL)
+     { FileCommandData(theEnv)->batchPriorParsingFile = CL_CopyString(theEnv,CL_GetParsingFileName(theEnv)); }
 
    /*=======================================================*/
    /* Create the error capture router if it does not exist. */
    /*=======================================================*/
 
-   SetParsingFileName(theEnv,fileName);
-   SetLineCount(theEnv,0);
+   CL_SetParsingFileName(theEnv,fileName);
+   CL_SetLineCount(theEnv,0);
 
-   CreateErrorCaptureRouter(theEnv);
+   CL_CreateErrorCaptureRouter(theEnv);
 #endif
 
    /*====================================*/
@@ -640,7 +640,7 @@ bool OpenBatch(
    /* the list of batch files opened.    */
    /*====================================*/
 
-   AddBatch(theEnv,placeAtEnd,theFile,NULL,FILE_BATCH,NULL,fileName);
+   AddCL_Batch(theEnv,placeAtEnd,theFile,NULL,FILE_BATCH,NULL,fileName);
 
    /*===================================*/
    /* Return true to indicate the batch */
@@ -651,39 +651,39 @@ bool OpenBatch(
   }
 
 /*****************************************************************/
-/* OpenStringBatch: Opens a string source for batch processing.  */
+/* OpenStringCL_Batch: Opens a string source for batch processing.  */
 /*   The memory allocated for the argument stringName must be    */
 /*   deallocated by the user. The memory allocated for theString */
 /*   will be deallocated by the batch routines when batch        */
 /*   processing for the  string is completed.                    */
 /*****************************************************************/
-bool OpenStringBatch(
+bool OpenStringCL_Batch(
   Environment *theEnv,
   const char *stringName,
   const char *theString,
   bool placeAtEnd)
   {
-   if (OpenStringSource(theEnv,stringName,theString,0) == false)
+   if (CL_OpenStringSource(theEnv,stringName,theString,0) == false)
      { return false; }
 
-   if (FileCommandData(theEnv)->TopOfBatchList == NULL)
+   if (FileCommandData(theEnv)->TopOfCL_BatchList == NULL)
      {
-      AddRouter(theEnv,"batch", 20,
-                QueryBatchCallback,NULL,
-                ReadBatchCallback,UnreadBatchCallback,
-                ExitBatchCallback,NULL);
+      CL_AddRouter(theEnv,"batch", 20,
+                QueryCL_BatchCallback,NULL,
+                ReadCL_BatchCallback,UnreadCL_BatchCallback,
+                ExitCL_BatchCallback,NULL);
      }
 
-   AddBatch(theEnv,placeAtEnd,NULL,stringName,STRING_BATCH,theString,NULL);
+   AddCL_Batch(theEnv,placeAtEnd,NULL,stringName,STRING_BATCH,theString,NULL);
 
    return true;
   }
 
 /*******************************************************/
-/* AddBatch: Creates the batch file data structure and */
+/* AddCL_Batch: Creates the batch file data structure and */
 /*   adds it to the list of opened batch files.        */
 /*******************************************************/
-static void AddBatch(
+static void AddCL_Batch(
   Environment *theEnv,
   bool placeAtEnd,
   FILE *theFileSource,
@@ -701,9 +701,9 @@ static void AddBatch(
    bptr = get_struct(theEnv,batchEntry);
    bptr->batchType = type;
    bptr->fileSource = theFileSource;
-   bptr->logicalSource = CopyString(theEnv,theLogicalSource);
+   bptr->logicalSource = CL_CopyString(theEnv,theLogicalSource);
    bptr->theString = theString;
-   bptr->fileName = CopyString(theEnv,theFileName);
+   bptr->fileName = CL_CopyString(theEnv,theFileName);
    bptr->lineNumber = 0;
    bptr->next = NULL;
 
@@ -711,97 +711,97 @@ static void AddBatch(
    /* Add the entry to the list. */
    /*============================*/
 
-   if (FileCommandData(theEnv)->TopOfBatchList == NULL)
+   if (FileCommandData(theEnv)->TopOfCL_BatchList == NULL)
      {
-      FileCommandData(theEnv)->TopOfBatchList = bptr;
-      FileCommandData(theEnv)->BottomOfBatchList = bptr;
-      FileCommandData(theEnv)->BatchType = type;
-      FileCommandData(theEnv)->BatchFileSource = theFileSource;
-      FileCommandData(theEnv)->BatchLogicalSource = bptr->logicalSource;
-      FileCommandData(theEnv)->BatchCurrentPosition = 0;
+      FileCommandData(theEnv)->TopOfCL_BatchList = bptr;
+      FileCommandData(theEnv)->BottomOfCL_BatchList = bptr;
+      FileCommandData(theEnv)->CL_BatchType = type;
+      FileCommandData(theEnv)->CL_BatchFileSource = theFileSource;
+      FileCommandData(theEnv)->CL_BatchLogicalSource = bptr->logicalSource;
+      FileCommandData(theEnv)->CL_BatchCurrentPosition = 0;
      }
    else if (placeAtEnd == false)
      {
-      bptr->next = FileCommandData(theEnv)->TopOfBatchList;
-      FileCommandData(theEnv)->TopOfBatchList = bptr;
-      FileCommandData(theEnv)->BatchType = type;
-      FileCommandData(theEnv)->BatchFileSource = theFileSource;
-      FileCommandData(theEnv)->BatchLogicalSource = bptr->logicalSource;
-      FileCommandData(theEnv)->BatchCurrentPosition = 0;
+      bptr->next = FileCommandData(theEnv)->TopOfCL_BatchList;
+      FileCommandData(theEnv)->TopOfCL_BatchList = bptr;
+      FileCommandData(theEnv)->CL_BatchType = type;
+      FileCommandData(theEnv)->CL_BatchFileSource = theFileSource;
+      FileCommandData(theEnv)->CL_BatchLogicalSource = bptr->logicalSource;
+      FileCommandData(theEnv)->CL_BatchCurrentPosition = 0;
      }
    else
      {
-      FileCommandData(theEnv)->BottomOfBatchList->next = bptr;
-      FileCommandData(theEnv)->BottomOfBatchList = bptr;
+      FileCommandData(theEnv)->BottomOfCL_BatchList->next = bptr;
+      FileCommandData(theEnv)->BottomOfCL_BatchList = bptr;
      }
   }
 
 /******************************************************************/
-/* RemoveBatch: Removes the top entry on the list of batch files. */
+/* RemoveCL_Batch: Removes the top entry on the list of batch files. */
 /******************************************************************/
-bool RemoveBatch(
+bool RemoveCL_Batch(
   Environment *theEnv)
   {
    struct batchEntry *bptr;
-   bool rv, fileBatch = false;
+   bool rv, fileCL_Batch = false;
 
-   if (FileCommandData(theEnv)->TopOfBatchList == NULL) return false;
+   if (FileCommandData(theEnv)->TopOfCL_BatchList == NULL) return false;
 
    /*==================================================*/
    /* Close the source from which batch input is read. */
    /*==================================================*/
 
-   if (FileCommandData(theEnv)->TopOfBatchList->batchType == FILE_BATCH)
+   if (FileCommandData(theEnv)->TopOfCL_BatchList->batchType == FILE_BATCH)
      {
-      fileBatch = true;
-      GenClose(theEnv,FileCommandData(theEnv)->TopOfBatchList->fileSource);
+      fileCL_Batch = true;
+      CL_GenClose(theEnv,FileCommandData(theEnv)->TopOfCL_BatchList->fileSource);
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-      FlushParsingMessages(theEnv);
-      DeleteErrorCaptureRouter(theEnv);
+      CL_FlushParsingMessages(theEnv);
+      CL_DeleteErrorCaptureRouter(theEnv);
 #endif
      }
    else
      {
-      CloseStringSource(theEnv,FileCommandData(theEnv)->TopOfBatchList->logicalSource);
-      rm(theEnv,(void *) FileCommandData(theEnv)->TopOfBatchList->theString,
-         strlen(FileCommandData(theEnv)->TopOfBatchList->theString) + 1);
+      CL_CloseStringSource(theEnv,FileCommandData(theEnv)->TopOfCL_BatchList->logicalSource);
+      CL_rm(theEnv,(void *) FileCommandData(theEnv)->TopOfCL_BatchList->theString,
+         strlen(FileCommandData(theEnv)->TopOfCL_BatchList->theString) + 1);
      }
 
    /*=================================*/
    /* Remove the entry from the list. */
    /*=================================*/
 
-   DeleteString(theEnv,(char *) FileCommandData(theEnv)->TopOfBatchList->fileName);
-   bptr = FileCommandData(theEnv)->TopOfBatchList;
-   FileCommandData(theEnv)->TopOfBatchList = FileCommandData(theEnv)->TopOfBatchList->next;
+   CL_DeleteString(theEnv,(char *) FileCommandData(theEnv)->TopOfCL_BatchList->fileName);
+   bptr = FileCommandData(theEnv)->TopOfCL_BatchList;
+   FileCommandData(theEnv)->TopOfCL_BatchList = FileCommandData(theEnv)->TopOfCL_BatchList->next;
 
-   DeleteString(theEnv,(char *) bptr->logicalSource);
+   CL_DeleteString(theEnv,(char *) bptr->logicalSource);
    rtn_struct(theEnv,batchEntry,bptr);
 
    /*========================================================*/
-   /* If there are no batch files remaining to be processed, */
+   /* If there are no batch files reCL_maining to be processed, */
    /* then free the space used by the batch buffer.          */
    /*========================================================*/
 
-   if (FileCommandData(theEnv)->TopOfBatchList == NULL)
+   if (FileCommandData(theEnv)->TopOfCL_BatchList == NULL)
      {
-      FileCommandData(theEnv)->BottomOfBatchList = NULL;
-      FileCommandData(theEnv)->BatchFileSource = NULL;
-      FileCommandData(theEnv)->BatchLogicalSource = NULL;
-      if (FileCommandData(theEnv)->BatchBuffer != NULL)
+      FileCommandData(theEnv)->BottomOfCL_BatchList = NULL;
+      FileCommandData(theEnv)->CL_BatchFileSource = NULL;
+      FileCommandData(theEnv)->CL_BatchLogicalSource = NULL;
+      if (FileCommandData(theEnv)->CL_BatchBuffer != NULL)
         {
-         rm(theEnv,FileCommandData(theEnv)->BatchBuffer,FileCommandData(theEnv)->BatchMaximumPosition);
-         FileCommandData(theEnv)->BatchBuffer = NULL;
+         CL_rm(theEnv,FileCommandData(theEnv)->CL_BatchBuffer,FileCommandData(theEnv)->CL_BatchMaximumPosition);
+         FileCommandData(theEnv)->CL_BatchBuffer = NULL;
         }
-      FileCommandData(theEnv)->BatchCurrentPosition = 0;
-      FileCommandData(theEnv)->BatchMaximumPosition = 0;
+      FileCommandData(theEnv)->CL_BatchCurrentPosition = 0;
+      FileCommandData(theEnv)->CL_BatchMaximumPosition = 0;
       rv = false;
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-      if (fileBatch)
+      if (fileCL_Batch)
         {
-         SetParsingFileName(theEnv,FileCommandData(theEnv)->batchPriorParsingFile);
-         DeleteString(theEnv,FileCommandData(theEnv)->batchPriorParsingFile);
+         CL_SetParsingFileName(theEnv,FileCommandData(theEnv)->batchPriorParsingFile);
+         CL_DeleteString(theEnv,FileCommandData(theEnv)->batchPriorParsingFile);
          FileCommandData(theEnv)->batchPriorParsingFile = NULL;
         }
 #endif
@@ -813,21 +813,21 @@ bool RemoveBatch(
 
    else
      {
-      FileCommandData(theEnv)->BatchType = FileCommandData(theEnv)->TopOfBatchList->batchType;
-      FileCommandData(theEnv)->BatchFileSource = FileCommandData(theEnv)->TopOfBatchList->fileSource;
-      FileCommandData(theEnv)->BatchLogicalSource = FileCommandData(theEnv)->TopOfBatchList->logicalSource;
-      FileCommandData(theEnv)->BatchCurrentPosition = 0;
+      FileCommandData(theEnv)->CL_BatchType = FileCommandData(theEnv)->TopOfCL_BatchList->batchType;
+      FileCommandData(theEnv)->CL_BatchFileSource = FileCommandData(theEnv)->TopOfCL_BatchList->fileSource;
+      FileCommandData(theEnv)->CL_BatchLogicalSource = FileCommandData(theEnv)->TopOfCL_BatchList->logicalSource;
+      FileCommandData(theEnv)->CL_BatchCurrentPosition = 0;
       rv = true;
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-      if (FileCommandData(theEnv)->TopOfBatchList->batchType == FILE_BATCH)
-        { SetParsingFileName(theEnv,FileCommandData(theEnv)->TopOfBatchList->fileName); }
+      if (FileCommandData(theEnv)->TopOfCL_BatchList->batchType == FILE_BATCH)
+        { CL_SetParsingFileName(theEnv,FileCommandData(theEnv)->TopOfCL_BatchList->fileName); }
 
-      SetLineCount(theEnv,FileCommandData(theEnv)->TopOfBatchList->lineNumber);
+      CL_SetLineCount(theEnv,FileCommandData(theEnv)->TopOfCL_BatchList->lineNumber);
 #endif
      }
 
    /*====================================================*/
-   /* Return true if a batch file if there are remaining */
+   /* Return true if a batch file if there are reCL_maining */
    /* batch files to be processed, otherwise false.      */
    /*====================================================*/
 
@@ -835,56 +835,56 @@ bool RemoveBatch(
   }
 
 /****************************************/
-/* BatchActive: Returns true if a batch */
+/* CL_BatchActive: Returns true if a batch */
 /*   file is open, otherwise false.     */
 /****************************************/
-bool BatchActive(
+bool CL_BatchActive(
   Environment *theEnv)
   {
-   if (FileCommandData(theEnv)->TopOfBatchList != NULL) return true;
+   if (FileCommandData(theEnv)->TopOfCL_BatchList != NULL) return true;
 
    return false;
   }
 
 /******************************************************/
-/* CloseAllBatchSources: Closes all open batch files. */
+/* CloseAllCL_BatchSources: Closes all open batch files. */
 /******************************************************/
-void CloseAllBatchSources(
+void CloseAllCL_BatchSources(
   Environment *theEnv)
   {
    /*================================================*/
    /* Free the batch buffer if it contains anything. */
    /*================================================*/
 
-   if (FileCommandData(theEnv)->BatchBuffer != NULL)
+   if (FileCommandData(theEnv)->CL_BatchBuffer != NULL)
      {
-      if (FileCommandData(theEnv)->BatchCurrentPosition > 0) WriteString(theEnv,STDOUT,(char *) FileCommandData(theEnv)->BatchBuffer);
-      rm(theEnv,FileCommandData(theEnv)->BatchBuffer,FileCommandData(theEnv)->BatchMaximumPosition);
-      FileCommandData(theEnv)->BatchBuffer = NULL;
-      FileCommandData(theEnv)->BatchCurrentPosition = 0;
-      FileCommandData(theEnv)->BatchMaximumPosition = 0;
+      if (FileCommandData(theEnv)->CL_BatchCurrentPosition > 0) CL_WriteString(theEnv,STDOUT,(char *) FileCommandData(theEnv)->CL_BatchBuffer);
+      CL_rm(theEnv,FileCommandData(theEnv)->CL_BatchBuffer,FileCommandData(theEnv)->CL_BatchMaximumPosition);
+      FileCommandData(theEnv)->CL_BatchBuffer = NULL;
+      FileCommandData(theEnv)->CL_BatchCurrentPosition = 0;
+      FileCommandData(theEnv)->CL_BatchMaximumPosition = 0;
      }
 
    /*==========================*/
    /* Delete the batch router. */
    /*==========================*/
 
-   DeleteRouter(theEnv,"batch");
+   CL_DeleteRouter(theEnv,"batch");
 
    /*=====================================*/
    /* Close each of the open batch files. */
    /*=====================================*/
 
-   while (RemoveBatch(theEnv))
+   while (RemoveCL_Batch(theEnv))
      { /* Do Nothing */ }
   }
 
 #if ! RUN_TIME
 
 /*******************************************************/
-/* BatchStar: C access routine for the batch* command. */
+/* CL_BatchStar: C access routine for the batch* command. */
 /*******************************************************/
-bool BatchStar(
+bool CL_BatchStar(
   Environment *theEnv,
   const char *fileName)
   {
@@ -902,11 +902,11 @@ bool BatchStar(
    /* Open the batch file. */
    /*======================*/
 
-   theFile = GenOpen(theEnv,fileName,"r");
+   theFile = CL_GenOpen(theEnv,fileName,"r");
 
    if (theFile == NULL)
      {
-      OpenErrorMessage(theEnv,"batch",fileName);
+      CL_OpenErrorMessage(theEnv,"batch",fileName);
       return false;
      }
 
@@ -915,23 +915,23 @@ bool BatchStar(
    /*======================================*/
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   oldParsingFileName = CopyString(theEnv,GetParsingFileName(theEnv));
-   SetParsingFileName(theEnv,fileName);
+   oldParsingFileName = CL_CopyString(theEnv,CL_GetParsingFileName(theEnv));
+   CL_SetParsingFileName(theEnv,fileName);
 
-   CreateErrorCaptureRouter(theEnv);
+   CL_CreateErrorCaptureRouter(theEnv);
 
-   oldLineCountValue = SetLineCount(theEnv,1);
+   oldLineCountValue = CL_SetLineCount(theEnv,1);
 #endif
 
    /*=====================================*/
    /* If embedded, clear the error flags. */
    /*=====================================*/
    
-   if (EvaluationData(theEnv)->CurrentExpression == NULL)
-     { ResetErrorFlags(theEnv); }
+   if (CL_EvaluationData(theEnv)->CurrentExpression == NULL)
+     { CL_ResetErrorFlags(theEnv); }
 
    /*=============================================*/
-   /* Evaluate commands from the file one by one. */
+   /* CL_Evaluate commands from the file one by one. */
    /*=============================================*/
 
    while (! done)
@@ -943,52 +943,52 @@ bool BatchStar(
          done = true;
         }
         
-      theString = ExpandStringWithChar(theEnv,inchar,theString,&position,
+      theString = CL_ExpandStringWithChar(theEnv,inchar,theString,&position,
                                        &maxChars,maxChars+80);
 
-      if (CompleteCommand(theString) != 0)
+      if (CL_CompleteCommand(theString) != 0)
         {
-         FlushPPBuffer(theEnv);
-         SetPPBufferStatus(theEnv,false);
-         RouteCommand(theEnv,theString,false);
-         FlushPPBuffer(theEnv);
-         SetHaltExecution(theEnv,false);
-         SetEvaluationError(theEnv,false);
-         FlushBindList(theEnv,NULL);
-         genfree(theEnv,theString,maxChars);
+         CL_FlushPPBuffer(theEnv);
+         CL_SetPPBufferStatus(theEnv,false);
+         CL_RouteCommand(theEnv,theString,false);
+         CL_FlushPPBuffer(theEnv);
+         SetCL_HaltExecution(theEnv,false);
+         SetCL_EvaluationError(theEnv,false);
+         CL_FlushBindList(theEnv,NULL);
+         CL_genfree(theEnv,theString,maxChars);
          theString = NULL;
          maxChars = 0;
          position = 0;
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-         FlushParsingMessages(theEnv);
+         CL_FlushParsingMessages(theEnv);
 #endif
         }
 
       if ((inchar == '\r') || (inchar == '\n'))
-        { IncrementLineCount(theEnv); }
+        { CL_IncrementLineCount(theEnv); }
      }
 
    if (theString != NULL)
-     { genfree(theEnv,theString,maxChars); }
+     { CL_genfree(theEnv,theString,maxChars); }
 
    /*=======================*/
    /* Close the batch file. */
    /*=======================*/
 
-   GenClose(theEnv,theFile);
+   CL_GenClose(theEnv,theFile);
 
    /*========================================*/
    /* Cleanup for capturing errors/warnings. */
    /*========================================*/
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   FlushParsingMessages(theEnv);
-   DeleteErrorCaptureRouter(theEnv);
+   CL_FlushParsingMessages(theEnv);
+   CL_DeleteErrorCaptureRouter(theEnv);
 
-   SetLineCount(theEnv,oldLineCountValue);
+   CL_SetLineCount(theEnv,oldLineCountValue);
 
-   SetParsingFileName(theEnv,oldParsingFileName);
-   DeleteString(theEnv,oldParsingFileName);
+   CL_SetParsingFileName(theEnv,oldParsingFileName);
+   CL_DeleteString(theEnv,oldParsingFileName);
 #endif
 
    return true;
@@ -997,15 +997,15 @@ bool BatchStar(
 #else
 
 /***********************************************/
-/* BatchStar: This is the non-functional stub  */
+/* CL_BatchStar: This is the non-functional stub  */
 /*   provided for use with a run-time version. */
 /***********************************************/
-bool BatchStar(
+bool CL_BatchStar(
   Environment *theEnv,
   const char *fileName)
   {
-   PrintErrorID(theEnv,"FILECOM",1,false);
-   WriteString(theEnv,STDERR,"Function batch* does not work in run time modules.\n");
+   CL_PrintErrorID(theEnv,"FILECOM",1,false);
+   CL_WriteString(theEnv,STDERR,"Function batch* does not work in run time modules.\n");
    return false;
   }
 

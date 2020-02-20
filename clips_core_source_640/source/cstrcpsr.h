@@ -17,8 +17,8 @@
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
-/*      6.24: Added environment parameter to GenClose.       */
-/*            Added environment parameter to GenOpen.        */
+/*      6.24: Added environment parameter to CL_GenClose.       */
+/*            Added environment parameter to CL_GenOpen.        */
 /*                                                           */
 /*            Made the construct redefinition message more   */
 /*            prominent.                                     */
@@ -33,7 +33,7 @@
 /*                                                           */
 /*            Changed garbage collection algorithm.          */
 /*                                                           */
-/*            GetConstructNameAndComment API change.         */
+/*            CL_GetConstructNameAndComment API change.         */
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
@@ -67,24 +67,24 @@ typedef enum
    LE_NO_ERROR = 0,
    LE_OPEN_FILE_ERROR,
    LE_PARSING_ERROR,
-  } LoadError;
+  } CL_LoadError;
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   LoadError                      Load(Environment *,const char *);
-   bool                           LoadConstructsFromLogicalName(Environment *,const char *);
-   bool                           LoadFromString(Environment *,const char *,size_t);
-   BuildError                     ParseConstruct(Environment *,const char *,const char *);
-   void                           ImportExportConflictMessage(Environment *,const char *,const char *,
+   CL_LoadError                      CL_Load(Environment *,const char *);
+   bool                           CL_LoadConstructsFromLogicalName(Environment *,const char *);
+   bool                           CL_LoadFromString(Environment *,const char *,size_t);
+   CL_BuildError                     CL_ParseConstruct(Environment *,const char *,const char *);
+   void                           CL_ImportExportConflictMessage(Environment *,const char *,const char *,
                                                               const char *,const char *);
-   void                           FlushParsingMessages(Environment *);
-   char                          *GetParsingFileName(Environment *);
-   void                           SetParsingFileName(Environment *,const char *);
-   char                          *GetErrorFileName(Environment *);
-   void                           SetErrorFileName(Environment *,const char *);
-   char                          *GetWarningFileName(Environment *);
-   void                           SetWarningFileName(Environment *,const char *);
-   void                           CreateErrorCaptureRouter(Environment *);
-   void                           DeleteErrorCaptureRouter(Environment *);
+   void                           CL_FlushParsingMessages(Environment *);
+   char                          *CL_GetParsingFileName(Environment *);
+   void                           CL_SetParsingFileName(Environment *,const char *);
+   char                          *CL_GetErrorFileName(Environment *);
+   void                           CL_SetErrorFileName(Environment *,const char *);
+   char                          *CL_GetWarningFileName(Environment *);
+   void                           CL_SetWarningFileName(Environment *,const char *);
+   void                           CL_CreateErrorCaptureRouter(Environment *);
+   void                           CL_DeleteErrorCaptureRouter(Environment *);
 #endif
 
 #endif

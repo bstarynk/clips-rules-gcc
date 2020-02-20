@@ -29,10 +29,10 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
-/*            Moved WatchGlobals global to defglobalData.    */
+/*            Moved CL_WatchGlobals global to defglobalData.    */
 /*                                                           */
-/*      6.40: Added Env prefix to GetEvaluationError and     */
-/*            SetEvaluationError functions.                  */
+/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
+/*            SetCL_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -43,7 +43,7 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/*            Eval support for run time and bload only.      */
+/*            CL_Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -85,10 +85,10 @@
 #endif
 
 /*********************************************************************/
-/* ParseDefglobal: Coordinates all actions necessary for the parsing */
+/* CL_ParseDefglobal: Coordinates all actions necessary for the parsing */
 /*   and creation of a defglobal into the current environment.       */
 /*********************************************************************/
-bool ParseDefglobal(
+bool CL_ParseDefglobal(
   Environment *theEnv,
   const char *readSource)
   {
@@ -103,10 +103,10 @@ bool ParseDefglobal(
    /* Pretty print buffer initialization. */
    /*=====================================*/
 
-   SetPPBufferStatus(theEnv,true);
-   FlushPPBuffer(theEnv);
-   SetIndentDepth(theEnv,3);
-   SavePPBuffer(theEnv,"(defglobal ");
+   CL_SetPPBufferStatus(theEnv,true);
+   CL_FlushPPBuffer(theEnv);
+   CL_SetIndentDepth(theEnv,3);
+   CL_SavePPBuffer(theEnv,"(defglobal ");
 
    /*=================================================*/
    /* Individual defglobal constructs can't be parsed */
@@ -114,9 +114,9 @@ bool ParseDefglobal(
    /*=================================================*/
 
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE
-   if ((Bloaded(theEnv) == true) && (! ConstructData(theEnv)->CheckSyntaxMode))
+   if ((CL_Bloaded(theEnv) == true) && (! ConstructData(theEnv)->CL_CheckSyntaxMode))
      {
-      CannotLoadWithBloadMessage(theEnv,"defglobal");
+      CannotCL_LoadWithCL_BloadMessage(theEnv,"defglobal");
       return true;
      }
 #endif
@@ -125,7 +125,7 @@ bool ParseDefglobal(
    /* Look for the module name. */
    /*===========================*/
 
-   GetToken(theEnv,readSource,&theToken);
+   CL_GetToken(theEnv,readSource,&theToken);
    if (theToken.tknType == SYMBOL_TOKEN)
      {
       /*=================================================*/
@@ -136,20 +136,20 @@ bool ParseDefglobal(
       /*=================================================*/
 
       tokenRead = false;
-      if (FindModuleSeparator(theToken.lexemeValue->contents))
+      if (CL_FindModuleSeparator(theToken.lexemeValue->contents))
         {
-         SyntaxErrorMessage(theEnv,"defglobal");
+         CL_SyntaxErrorMessage(theEnv,"defglobal");
          return true;
         }
 
       /*=================================*/
-      /* Determine if the module exists. */
+      /* DeteCL_rmine if the module exists. */
       /*=================================*/
 
-      theModule = FindDefmodule(theEnv,theToken.lexemeValue->contents);
+      theModule = CL_FindDefmodule(theEnv,theToken.lexemeValue->contents);
       if (theModule == NULL)
         {
-         CantFindItemErrorMessage(theEnv,"defmodule",theToken.lexemeValue->contents,true);
+         CL_CantFindItemErrorMessage(theEnv,"defmodule",theToken.lexemeValue->contents,true);
          return true;
         }
 
@@ -158,8 +158,8 @@ bool ParseDefglobal(
       /* current module to the specified module. */
       /*=========================================*/
 
-      SavePPBuffer(theEnv," ");
-      SetCurrentModule(theEnv,theModule);
+      CL_SavePPBuffer(theEnv," ");
+      CL_SetCurrentModule(theEnv,theModule);
      }
 
    /*===========================================*/
@@ -170,10 +170,10 @@ bool ParseDefglobal(
 
    else
      {
-      PPBackup(theEnv);
-      SavePPBuffer(theEnv,DefmoduleName(GetCurrentModule(theEnv)));
-      SavePPBuffer(theEnv," ");
-      SavePPBuffer(theEnv,theToken.printForm);
+      CL_PPBackup(theEnv);
+      CL_SavePPBuffer(theEnv,CL_DefmoduleName(CL_GetCurrentModule(theEnv)));
+      CL_SavePPBuffer(theEnv," ");
+      CL_SavePPBuffer(theEnv,theToken.printFoCL_rm);
      }
 
    /*======================*/
@@ -184,10 +184,10 @@ bool ParseDefglobal(
      {
       tokenRead = false;
 
-      FlushPPBuffer(theEnv);
-      SavePPBuffer(theEnv,"(defglobal ");
-      SavePPBuffer(theEnv,DefmoduleName(GetCurrentModule(theEnv)));
-      SavePPBuffer(theEnv," ");
+      CL_FlushPPBuffer(theEnv);
+      CL_SavePPBuffer(theEnv,"(defglobal ");
+      CL_SavePPBuffer(theEnv,CL_DefmoduleName(CL_GetCurrentModule(theEnv)));
+      CL_SavePPBuffer(theEnv," ");
      }
 
 #endif
@@ -225,56 +225,56 @@ static bool GetVariableDefinition(
    /* a closing parenthesis or a variable.   */
    /*========================================*/
 
-   if (! tokenRead) GetToken(theEnv,readSource,theToken);
+   if (! tokenRead) CL_GetToken(theEnv,readSource,theToken);
    if (theToken->tknType == RIGHT_PARENTHESIS_TOKEN) return false;
 
    if (theToken->tknType == SF_VARIABLE_TOKEN)
      {
-      SyntaxErrorMessage(theEnv,"defglobal");
+      CL_SyntaxErrorMessage(theEnv,"defglobal");
       *defglobalError = true;
       return false;
      }
    else if (theToken->tknType != GBL_VARIABLE_TOKEN)
      {
-      SyntaxErrorMessage(theEnv,"defglobal");
+      CL_SyntaxErrorMessage(theEnv,"defglobal");
       *defglobalError = true;
       return false;
      }
 
    variableName = theToken->lexemeValue;
 
-   SavePPBuffer(theEnv," ");
+   CL_SavePPBuffer(theEnv," ");
 
    /*================================*/
    /* Print out compilation message. */
    /*================================*/
 
 #if DEBUGGING_FUNCTIONS
-   if ((GetWatchItem(theEnv,"compilations") == 1) && GetPrintWhileLoading(theEnv))
+   if ((CL_GetCL_WatchItem(theEnv,"compilations") == 1) && CL_GetPrintWhileCL_Loading(theEnv))
      {
       const char *outRouter = STDOUT;
-      if (QFindDefglobal(theEnv,variableName) != NULL)
+      if (QCL_FindDefglobal(theEnv,variableName) != NULL)
         {
          outRouter = STDWRN;
-         PrintWarningID(theEnv,"CSTRCPSR",1,true);
-         WriteString(theEnv,outRouter,"Redefining defglobal: ");
+         CL_PrintWarningID(theEnv,"CSTRCPSR",1,true);
+         CL_WriteString(theEnv,outRouter,"Redefining defglobal: ");
         }
-      else WriteString(theEnv,outRouter,"Defining defglobal: ");
-      WriteString(theEnv,outRouter,variableName->contents);
-      WriteString(theEnv,outRouter,"\n");
+      else CL_WriteString(theEnv,outRouter,"Defining defglobal: ");
+      CL_WriteString(theEnv,outRouter,variableName->contents);
+      CL_WriteString(theEnv,outRouter,"\n");
      }
    else
 #endif
-     { if (GetPrintWhileLoading(theEnv)) WriteString(theEnv,STDOUT,":"); }
+     { if (CL_GetPrintWhileCL_Loading(theEnv)) CL_WriteString(theEnv,STDOUT,":"); }
 
    /*==================================================================*/
    /* Check for import/export conflicts from the construct definition. */
    /*==================================================================*/
 
 #if DEFMODULE_CONSTRUCT
-   if (FindImportExportConflict(theEnv,"defglobal",GetCurrentModule(theEnv),variableName->contents))
+   if (CL_FindImportExportConflict(theEnv,"defglobal",CL_GetCurrentModule(theEnv),variableName->contents))
      {
-      ImportExportConflictMessage(theEnv,"defglobal",variableName->contents,NULL,NULL);
+      CL_ImportExportConflictMessage(theEnv,"defglobal",variableName->contents,NULL,NULL);
       *defglobalError = true;
       return false;
      }
@@ -284,21 +284,21 @@ static bool GetVariableDefinition(
    /* The next token must be an =. */
    /*==============================*/
 
-   GetToken(theEnv,readSource,theToken);
-   if (strcmp(theToken->printForm,"=") != 0)
+   CL_GetToken(theEnv,readSource,theToken);
+   if (strcmp(theToken->printFoCL_rm,"=") != 0)
      {
-      SyntaxErrorMessage(theEnv,"defglobal");
+      CL_SyntaxErrorMessage(theEnv,"defglobal");
       *defglobalError = true;
       return false;
      }
 
-   SavePPBuffer(theEnv," ");
+   CL_SavePPBuffer(theEnv," ");
 
    /*======================================================*/
    /* Parse the expression to be assigned to the variable. */
    /*======================================================*/
 
-   assignPtr = ParseAtomOrExpression(theEnv,readSource,NULL);
+   assignPtr = CL_ParseAtomOrExpression(theEnv,readSource,NULL);
    if (assignPtr == NULL)
      {
       *defglobalError = true;
@@ -306,29 +306,29 @@ static bool GetVariableDefinition(
      }
 
    /*==========================*/
-   /* Evaluate the expression. */
+   /* CL_Evaluate the expression. */
    /*==========================*/
 
-   if (! ConstructData(theEnv)->CheckSyntaxMode)
+   if (! ConstructData(theEnv)->CL_CheckSyntaxMode)
      {
-      SetEvaluationError(theEnv,false);
-      if (EvaluateExpression(theEnv,assignPtr,&assignValue))
+      SetCL_EvaluationError(theEnv,false);
+      if (CL_EvaluateExpression(theEnv,assignPtr,&assignValue))
         {
-         ReturnExpression(theEnv,assignPtr);
+         CL_ReturnExpression(theEnv,assignPtr);
          *defglobalError = true;
          return false;
         }
      }
    else
-     { ReturnExpression(theEnv,assignPtr); }
+     { CL_ReturnExpression(theEnv,assignPtr); }
 
-   SavePPBuffer(theEnv,")");
+   CL_SavePPBuffer(theEnv,")");
 
    /*======================================*/
    /* Add the variable to the global list. */
    /*======================================*/
 
-   if (! ConstructData(theEnv)->CheckSyntaxMode)
+   if (! ConstructData(theEnv)->CL_CheckSyntaxMode)
      { AddDefglobal(theEnv,variableName,&assignValue,assignPtr); }
 
    /*==================================================*/
@@ -351,7 +351,7 @@ static void AddDefglobal(
    Defglobal *defglobalPtr;
    bool newGlobal = false;
 #if DEBUGGING_FUNCTIONS
-   bool globalHadWatch = false;
+   bool globalHadCL_Watch = false;
 #endif
 
    /*========================================================*/
@@ -360,7 +360,7 @@ static void AddDefglobal(
    /* been defined, then create a new data structure.        */
    /*========================================================*/
 
-   defglobalPtr = QFindDefglobal(theEnv,name);
+   defglobalPtr = QCL_FindDefglobal(theEnv,name);
    if (defglobalPtr == NULL)
      {
       newGlobal = true;
@@ -368,9 +368,9 @@ static void AddDefglobal(
      }
    else
      {
-      DeinstallConstructHeader(theEnv,&defglobalPtr->header);
+      CL_DeinstallConstructHeader(theEnv,&defglobalPtr->header);
 #if DEBUGGING_FUNCTIONS
-      globalHadWatch = defglobalPtr->watch;
+      globalHadCL_Watch = defglobalPtr->watch;
 #endif
      }
 
@@ -380,11 +380,11 @@ static void AddDefglobal(
 
    if (newGlobal == false)
      {
-      Release(theEnv,defglobalPtr->current.header);
+      CL_Release(theEnv,defglobalPtr->current.header);
       if (defglobalPtr->current.header->type == MULTIFIELD_TYPE)
-        { ReturnMultifield(theEnv,defglobalPtr->current.multifieldValue); }
+        { CL_ReturnMultifield(theEnv,defglobalPtr->current.multifieldValue); }
 
-      RemoveHashedExpression(theEnv,defglobalPtr->initial);
+      CL_RemoveHashedExpression(theEnv,defglobalPtr->initial);
      }
 
    /*=======================================*/
@@ -394,11 +394,11 @@ static void AddDefglobal(
    if (vPtr->header->type != MULTIFIELD_TYPE)
      { defglobalPtr->current.value = vPtr->value; }
    else
-     { defglobalPtr->current.value = CopyMultifield(theEnv,vPtr->multifieldValue); }
-   Retain(theEnv,defglobalPtr->current.header);
+     { defglobalPtr->current.value = CL_CopyMultifield(theEnv,vPtr->multifieldValue); }
+   CL_Retain(theEnv,defglobalPtr->current.header);
 
-   defglobalPtr->initial = AddHashedExpression(theEnv,ePtr);
-   ReturnExpression(theEnv,ePtr);
+   defglobalPtr->initial = CL_AddHashedExpression(theEnv,ePtr);
+   CL_ReturnExpression(theEnv,ePtr);
    DefglobalData(theEnv)->ChangeToGlobals = true;
 
    /*=================================*/
@@ -407,11 +407,11 @@ static void AddDefglobal(
    /*=================================*/
 
 #if DEBUGGING_FUNCTIONS
-   defglobalPtr->watch = globalHadWatch ? true : DefglobalData(theEnv)->WatchGlobals;
+   defglobalPtr->watch = globalHadCL_Watch ? true : DefglobalData(theEnv)->CL_WatchGlobals;
 #endif
 
    /*======================================*/
-   /* Save the name and pretty print form. */
+   /* CL_Save the name and pretty print foCL_rm. */
    /*======================================*/
 
    defglobalPtr->header.name = name;
@@ -420,11 +420,11 @@ static void AddDefglobal(
    defglobalPtr->header.env = theEnv;
    IncrementLexemeCount(name);
 
-   SavePPBuffer(theEnv,"\n");
-   if (GetConserveMemory(theEnv) == true)
-     { defglobalPtr->header.ppForm = NULL; }
+   CL_SavePPBuffer(theEnv,"\n");
+   if (CL_GetConserveMemory(theEnv) == true)
+     { defglobalPtr->header.ppFoCL_rm = NULL; }
    else
-     { defglobalPtr->header.ppForm = CopyPPBuffer(theEnv); }
+     { defglobalPtr->header.ppFoCL_rm = CL_CopyPPBuffer(theEnv); }
 
    defglobalPtr->inScope = true;
 
@@ -440,22 +440,22 @@ static void AddDefglobal(
 
    defglobalPtr->busyCount = 0;
    defglobalPtr->header.whichModule = (struct defmoduleItemHeader *)
-                               GetModuleItem(theEnv,NULL,FindModuleItem(theEnv,"defglobal")->moduleIndex);
+                               CL_GetModuleItem(theEnv,NULL,CL_FindModuleItem(theEnv,"defglobal")->moduleIndex);
 
    /*=============================================*/
    /* Add the defglobal to the list of defglobals */
    /* for the current module.                     */
    /*=============================================*/
 
-   AddConstructToModule(&defglobalPtr->header);
+   CL_AddConstructToModule(&defglobalPtr->header);
   }
 
 /*****************************************************************/
-/* ReplaceGlobalVariable: Replaces a global variable found in an */
+/* CL_ReplaceGlobalVariable: Replaces a global variable found in an */
 /*   expression with the appropriate primitive data type which   */
 /*   can later be used to retrieve the global variable's value.  */
 /*****************************************************************/
-bool ReplaceGlobalVariable(
+bool CL_ReplaceGlobalVariable(
   Environment *theEnv,
   struct expr *ePtr)
   {
@@ -467,7 +467,7 @@ bool ReplaceGlobalVariable(
    /*=================================*/
 
    theGlobal = (Defglobal *)
-               FindImportedConstruct(theEnv,"defglobal",NULL,ePtr->lexemeValue->contents,
+               CL_FindImportedConstruct(theEnv,"defglobal",NULL,ePtr->lexemeValue->contents,
                                      &count,true,NULL);
 
    /*=============================================*/
@@ -476,7 +476,7 @@ bool ReplaceGlobalVariable(
 
    if (theGlobal == NULL)
      {
-      GlobalReferenceErrorMessage(theEnv,ePtr->lexemeValue->contents);
+      CL_GlobalReferenceErrorMessage(theEnv,ePtr->lexemeValue->contents);
       return false;
      }
 
@@ -488,7 +488,7 @@ bool ReplaceGlobalVariable(
 
    if (count > 1)
      {
-      AmbiguousReferenceErrorMessage(theEnv,"defglobal",ePtr->lexemeValue->contents);
+      CL_AmbiguousReferenceErrorMessage(theEnv,"defglobal",ePtr->lexemeValue->contents);
       return false;
      }
 
@@ -506,17 +506,17 @@ bool ReplaceGlobalVariable(
 #endif /* (! RUN_TIME) && (! BLOAD_ONLY) */
 
 /*****************************************************************/
-/* GlobalReferenceErrorMessage: Prints an error message when a   */
+/* CL_GlobalReferenceErrorMessage: Prints an error message when a   */
 /*   symbolic reference to a global variable cannot be resolved. */
 /*****************************************************************/
-void GlobalReferenceErrorMessage(
+void CL_GlobalReferenceErrorMessage(
   Environment *theEnv,
   const char *variableName)
   {
-   PrintErrorID(theEnv,"GLOBLPSR",1,true);
-   WriteString(theEnv,STDERR,"\nGlobal variable ?*");
-   WriteString(theEnv,STDERR,variableName);
-   WriteString(theEnv,STDERR,"* was referenced, but is not defined.\n");
+   CL_PrintErrorID(theEnv,"GLOBLPSR",1,true);
+   CL_WriteString(theEnv,STDERR,"\nGlobal variable ?*");
+   CL_WriteString(theEnv,STDERR,variableName);
+   CL_WriteString(theEnv,STDERR,"* was referenced, but is not defined.\n");
   }
 
 #endif /* DEFGLOBAL_CONSTRUCT */

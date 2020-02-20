@@ -25,7 +25,7 @@
 /*            compilers/operating systems (IBM_MCW,          */
 /*            MAC_MCW, and IBM_TBC).                         */
 /*                                                           */
-/*            GetConstructNameAndComment API change.         */
+/*            CL_GetConstructNameAndComment API change.         */
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
@@ -84,7 +84,7 @@ typedef struct definstances
 struct definstancesData
   {
    Construct *DefinstancesConstruct;
-   unsigned DefinstancesModuleIndex;
+   unsigned CL_DefinstancesModuleIndex;
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
    struct CodeGeneratorItem *DefinstancesCodeItem;
 #endif
@@ -92,30 +92,30 @@ struct definstancesData
 
 #define DefinstancesData(theEnv) ((struct definstancesData *) GetEnvironmentData(theEnv,DEFINSTANCES_DATA))
 
-   const char                    *DefinstancesModule(Definstances *);
-   const char                    *DefinstancesModuleName(Environment *,Definstances *);
-   Definstances                  *FindDefinstances(Environment *,const char *);
-   Definstances                  *FindDefinstancesInModule(Environment *,const char *);
-   void                           GetDefinstancesList(Environment *,CLIPSValue *,Defmodule *);
-   const char                    *DefinstancesName(Definstances *);
-   CLIPSLexeme                   *GetDefinstancesNamePointer(Environment *,Definstances *);
-   const char                    *DefinstancesPPForm(Definstances *);
-   Definstances                  *GetNextDefinstances(Environment *,Definstances *);
-   bool                           DefinstancesIsDeletable(Definstances *);
-   void                           SetDefinstancesPPForm(Environment *,Definstances *,const char *);
-   bool                           Undefinstances(Definstances *,Environment *);
-   void                           GetDefinstancesListFunction(Environment *,UDFContext *,UDFValue *);
-   void                           GetDefinstancesModuleCommand(Environment *,UDFContext *,UDFValue *);
-   void                           SetupDefinstances(Environment *);
-   void                           UndefinstancesCommand(Environment *,UDFContext *,UDFValue *);
+   const char                    *CL_DefinstancesModule(Definstances *);
+   const char                    *CL_DefinstancesModuleName(Environment *,Definstances *);
+   Definstances                  *CL_FindDefinstances(Environment *,const char *);
+   Definstances                  *CL_FindDefinstancesInModule(Environment *,const char *);
+   void                           CL_GetDefinstancesList(Environment *,CLIPSValue *,Defmodule *);
+   const char                    *CL_DefinstancesName(Definstances *);
+   CLIPSLexeme                   *GetCL_DefinstancesNamePointer(Environment *,Definstances *);
+   const char                    *CL_DefinstancesPPFoCL_rm(Definstances *);
+   Definstances                  *CL_GetNextDefinstances(Environment *,Definstances *);
+   bool                           CL_DefinstancesIsDeletable(Definstances *);
+   void                           SetCL_DefinstancesPPFoCL_rm(Environment *,Definstances *,const char *);
+   bool                           CL_Undefinstances(Definstances *,Environment *);
+   void                           CL_GetDefinstancesListFunction(Environment *,UDFContext *,UDFValue *);
+   void                           GetCL_DefinstancesModuleCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_SetupDefinstances(Environment *);
+   void                           CL_UndefinstancesCommand(Environment *,UDFContext *,UDFValue *);
 #if DEBUGGING_FUNCTIONS
-   void                           PPDefinstancesCommand(Environment *,UDFContext *,UDFValue *);
-   void                           ListDefinstancesCommand(Environment *,UDFContext *,UDFValue *);
-   void                           ListDefinstances(Environment *,const char *,Defmodule *);
+   void                           CL_PPDefinstancesCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_ListDefinstancesCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_ListDefinstances(Environment *,const char *,Defmodule *);
 #endif
 
 #if RUN_TIME
-   void                           DefinstancesRunTimeInitialize(Environment *);
+   void                           DefinstancesCL_RunTimeInitialize(Environment *);
 #endif
 
 #endif /* DEFINSTANCES_CONSTRUCT */

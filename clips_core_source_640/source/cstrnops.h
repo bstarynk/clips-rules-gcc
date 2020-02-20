@@ -7,7 +7,7 @@
    /*******************************************************/
 
 /*************************************************************/
-/* Purpose: Provides functions for performing operations on  */
+/* Purpose: Provides functions for perfoCL_rming operations on  */
 /*   constraint records including computing the intersection */
 /*   and union of constraint records.                        */
 /*                                                           */
@@ -25,7 +25,7 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
-/*            Eval support for run time and bload only.      */
+/*            CL_Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -38,10 +38,10 @@
 #include "evaluatn.h"
 #include "constrnt.h"
 
-   struct constraintRecord       *IntersectConstraints(Environment *,struct constraintRecord *,struct constraintRecord *);
-   struct constraintRecord       *UnionConstraints(Environment *,struct constraintRecord *,struct constraintRecord *);
+   struct constraintRecord       *CL_IntersectConstraints(Environment *,struct constraintRecord *,struct constraintRecord *);
+   struct constraintRecord       *CL_UnionConstraints(Environment *,struct constraintRecord *,struct constraintRecord *);
 #if (! BLOAD_ONLY)
-   void                           RemoveConstantFromConstraint(Environment *,int,void *,CONSTRAINT_RECORD *);
+   void                           CL_RemoveConstantFromConstraint(Environment *,int,void *,CONSTRAINT_RECORD *);
 #endif
 
 #endif /* _H_cstrnops */

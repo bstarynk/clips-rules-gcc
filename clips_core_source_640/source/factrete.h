@@ -49,20 +49,20 @@
 
 #include "evaluatn.h"
 
-   bool                           FactPNGetVar1(Environment *,void *,UDFValue *);
-   bool                           FactPNGetVar2(Environment *,void *,UDFValue *);
-   bool                           FactPNGetVar3(Environment *,void *,UDFValue *);
-   bool                           FactJNGetVar1(Environment *,void *,UDFValue *);
-   bool                           FactJNGetVar2(Environment *,void *,UDFValue *);
-   bool                           FactJNGetVar3(Environment *,void *,UDFValue *);
-   bool                           FactSlotLength(Environment *,void *,UDFValue *);
-   bool                           FactJNCompVars1(Environment *,void *,UDFValue *);
-   bool                           FactJNCompVars2(Environment *,void *,UDFValue *);
-   bool                           FactPNCompVars1(Environment *,void *,UDFValue *);
-   bool                           FactPNConstant1(Environment *,void *,UDFValue *);
-   bool                           FactPNConstant2(Environment *,void *,UDFValue *);
-   bool                           FactStoreMultifield(Environment *,void *,UDFValue *);
-   size_t                         AdjustFieldPosition(Environment *,struct multifieldMarker *,
+   bool                           CL_FactPNGetVar1(Environment *,void *,UDFValue *);
+   bool                           CL_FactPNGetVar2(Environment *,void *,UDFValue *);
+   bool                           CL_FactPNGetVar3(Environment *,void *,UDFValue *);
+   bool                           CL_FactJNGetVar1(Environment *,void *,UDFValue *);
+   bool                           CL_FactJNGetVar2(Environment *,void *,UDFValue *);
+   bool                           CL_FactJNGetVar3(Environment *,void *,UDFValue *);
+   bool                           CL_FactSlotLength(Environment *,void *,UDFValue *);
+   bool                           CL_FactJNCompVars1(Environment *,void *,UDFValue *);
+   bool                           CL_FactJNCompVars2(Environment *,void *,UDFValue *);
+   bool                           CL_FactPNCompVars1(Environment *,void *,UDFValue *);
+   bool                           CL_FactPNConstant1(Environment *,void *,UDFValue *);
+   bool                           CL_FactPNConstant2(Environment *,void *,UDFValue *);
+   bool                           CL_FactStoreMultifield(Environment *,void *,UDFValue *);
+   size_t                         CL_AdjustFieldPosition(Environment *,struct multifieldMarker *,
                                                       unsigned short,unsigned short,size_t *);
 
 #endif

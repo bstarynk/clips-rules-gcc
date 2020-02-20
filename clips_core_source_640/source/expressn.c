@@ -38,7 +38,7 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
-/*            Eval support for run time and bload only.      */
+/*            CL_Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -76,23 +76,23 @@
    static void                    DeallocateExpressionData(Environment *);
 
 /**************************************************/
-/* InitExpressionData: Initializes the function   */
+/* CL_InitExpressionData: Initializes the function   */
 /*   pointers used in generating some expressions */
 /*   and the expression hash table.               */
 /**************************************************/
-void InitExpressionData(
+void CL_InitExpressionData(
   Environment *theEnv)
   {
    unsigned i;
 
-   AllocateEnvironmentData(theEnv,EXPRESSION_DATA,sizeof(struct expressionData),DeallocateExpressionData);
+   CL_AllocateEnvironmentData(theEnv,EXPRESSION_DATA,sizeof(struct expressionData),DeallocateExpressionData);
 
 #if ! RUN_TIME
-   InitExpressionPointers(theEnv);
+   CL_InitExpressionPointers(theEnv);
 #endif
 
    ExpressionData(theEnv)->ExpressionHashTable = (EXPRESSION_HN **)
-     gm2(theEnv,sizeof(EXPRESSION_HN *) * EXPRESSION_HASH_SIZE);
+     CL_gm2(theEnv,sizeof(EXPRESSION_HN *) * EXPRESSION_HASH_SIZE);
    for (i = 0 ; i < EXPRESSION_HASH_SIZE ; i++)
      ExpressionData(theEnv)->ExpressionHashTable[i] = NULL;
   }
@@ -108,7 +108,7 @@ static void DeallocateExpressionData(
    EXPRESSION_HN *tmpPtr, *nextPtr;
 
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE)
-   if (! Bloaded(theEnv))
+   if (! CL_Bloaded(theEnv))
 #endif
      {
       for (i = 0; i < EXPRESSION_HASH_SIZE; i++)
@@ -117,51 +117,51 @@ static void DeallocateExpressionData(
          while (tmpPtr != NULL)
            {
             nextPtr = tmpPtr->next;
-            ReturnPackedExpression(theEnv,tmpPtr->exp);
+            CL_ReturnPackedExpression(theEnv,tmpPtr->exp);
             rtn_struct(theEnv,exprHashNode,tmpPtr);
             tmpPtr = nextPtr;
            }
         }
      }
 
-   rm(theEnv,ExpressionData(theEnv)->ExpressionHashTable,
+   CL_rm(theEnv,ExpressionData(theEnv)->ExpressionHashTable,
       sizeof(EXPRESSION_HN *) * EXPRESSION_HASH_SIZE);
 
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE)
-   if ((ExpressionData(theEnv)->NumberOfExpressions != 0) && Bloaded(theEnv))
+   if ((ExpressionData(theEnv)->NumberOfExpressions != 0) && CL_Bloaded(theEnv))
      {
-      genfree(theEnv,ExpressionData(theEnv)->ExpressionArray,
+      CL_genfree(theEnv,ExpressionData(theEnv)->ExpressionArray,
               ExpressionData(theEnv)->NumberOfExpressions * sizeof(struct expr));
      }
 #endif
   }
 
 /****************************************************/
-/* InitExpressionPointers: Initializes the function */
+/* CL_InitExpressionPointers: Initializes the function */
 /*   pointers used in generating some expressions.  */
 /****************************************************/
-void InitExpressionPointers(
+void CL_InitExpressionPointers(
   Environment *theEnv)
   {
-   ExpressionData(theEnv)->PTR_AND = FindFunction(theEnv,"and");
-   ExpressionData(theEnv)->PTR_OR = FindFunction(theEnv,"or");
-   ExpressionData(theEnv)->PTR_EQ = FindFunction(theEnv,"eq");
-   ExpressionData(theEnv)->PTR_NEQ = FindFunction(theEnv,"neq");
-   ExpressionData(theEnv)->PTR_NOT = FindFunction(theEnv,"not");
+   ExpressionData(theEnv)->PTR_AND = CL_FindFunction(theEnv,"and");
+   ExpressionData(theEnv)->PTR_OR = CL_FindFunction(theEnv,"or");
+   ExpressionData(theEnv)->PTR_EQ = CL_FindFunction(theEnv,"eq");
+   ExpressionData(theEnv)->PTR_NEQ = CL_FindFunction(theEnv,"neq");
+   ExpressionData(theEnv)->PTR_NOT = CL_FindFunction(theEnv,"not");
 
    if ((ExpressionData(theEnv)->PTR_AND == NULL) || (ExpressionData(theEnv)->PTR_OR == NULL) ||
        (ExpressionData(theEnv)->PTR_EQ == NULL) || (ExpressionData(theEnv)->PTR_NEQ == NULL) || (ExpressionData(theEnv)->PTR_NOT == NULL))
      {
-      SystemError(theEnv,"EXPRESSN",1);
-      ExitRouter(theEnv,EXIT_FAILURE);
+      CL_SystemError(theEnv,"EXPRESSN",1);
+      CL_ExitRouter(theEnv,EXIT_FAILURE);
      }
   }
 
 /***************************************************/
-/* ExpressionInstall: Increments the busy count of */
+/* CL_ExpressionInstall: Increments the busy count of */
 /*   atomic data values found in an expression.    */
 /***************************************************/
-void ExpressionInstall(
+void CL_ExpressionInstall(
   Environment *theEnv,
   struct expr *expression)
   {
@@ -169,17 +169,17 @@ void ExpressionInstall(
 
    while (expression != NULL)
      {
-      AtomInstall(theEnv,expression->type,expression->value);
-      ExpressionInstall(theEnv,expression->argList);
+      CL_AtomInstall(theEnv,expression->type,expression->value);
+      CL_ExpressionInstall(theEnv,expression->argList);
       expression = expression->nextArg;
      }
   }
 
 /*****************************************************/
-/* ExpressionDeinstall: Decrements the busy count of */
+/* CL_ExpressionDeinstall: Decrements the busy count of */
 /*   atomic data values found in an expression.      */
 /*****************************************************/
-void ExpressionDeinstall(
+void CL_ExpressionDeinstall(
   Environment *theEnv,
   struct expr *expression)
   {
@@ -187,8 +187,8 @@ void ExpressionDeinstall(
 
    while (expression != NULL)
      {
-      AtomDeinstall(theEnv,expression->type,expression->value);
-      ExpressionDeinstall(theEnv,expression->argList);
+      CL_AtomDeinstall(theEnv,expression->type,expression->value);
+      CL_ExpressionDeinstall(theEnv,expression->argList);
       expression = expression->nextArg;
      }
   }
@@ -196,13 +196,13 @@ void ExpressionDeinstall(
 #if (! RUN_TIME)
 
 /***********************************************************************/
-/* PackExpression: Copies an expression (created using multiple memory */
+/* CL_PackExpression: Copies an expression (created using multiple memory */
 /*   requests) into an array (created using a single memory request)   */
-/*   while maintaining all appropriate links in the expression. A      */
+/*   while CL_maintaining all appropriate links in the expression. A      */
 /*   packed expression requires less total memory because it reduces   */
 /*   the overhead required for multiple memory allocations.            */
 /***********************************************************************/
-struct expr *PackExpression(
+struct expr *CL_PackExpression(
   Environment *theEnv,
   struct expr *original)
   {
@@ -211,7 +211,7 @@ struct expr *PackExpression(
    if (original == NULL) return NULL;
    
    packPtr = (struct expr *)
-             gm2(theEnv,sizeof (struct expr) * ExpressionSize(original));
+             CL_gm2(theEnv,sizeof (struct expr) * CL_ExpressionSize(original));
    ListToPacked(original,packPtr,0);
    
    return packPtr;
@@ -262,24 +262,24 @@ static unsigned long ListToPacked(
 #endif /* (! RUN_TIME) */
 
 /***************************************************************/
-/* ReturnPackedExpression: Returns a packed expression created */
-/*   using PackExpression to the memory manager.               */
+/* CL_ReturnPackedExpression: Returns a packed expression created */
+/*   using CL_PackExpression to the memory manager.               */
 /***************************************************************/
-void ReturnPackedExpression(
+void CL_ReturnPackedExpression(
   Environment *theEnv,
   struct expr *packPtr)
   {
    if (packPtr != NULL)
      {
-      rm(theEnv,packPtr,sizeof (struct expr) * ExpressionSize(packPtr));
+      CL_rm(theEnv,packPtr,sizeof (struct expr) * CL_ExpressionSize(packPtr));
      }
   }
 
 /***********************************************/
-/* ReturnExpression: Returns a multiply linked */
+/* CL_ReturnExpression: Returns a multiply linked */
 /*   list of expr data structures.             */
 /***********************************************/
-void ReturnExpression(
+void CL_ReturnExpression(
   Environment *theEnv,
   struct expr *waste)
   {
@@ -287,7 +287,7 @@ void ReturnExpression(
 
    while (waste != NULL)
      {
-      if (waste->argList != NULL) ReturnExpression(theEnv,waste->argList);
+      if (waste->argList != NULL) CL_ReturnExpression(theEnv,waste->argList);
       tmp = waste;
       waste = waste->nextArg;
       rtn_struct(theEnv,expr,tmp);
@@ -296,7 +296,7 @@ void ReturnExpression(
 
 /***************************************************
   NAME         : FindHashedExpression
-  DESCRIPTION  : Determines if a given expression
+  DESCRIPTION  : DeteCL_rmines if a given expression
                  is in the expression hash table
   INPUTS       : 1) The expression
                  2) A buffer to hold the hash
@@ -323,7 +323,7 @@ static EXPRESSION_HN *FindHashedExpression(
    exphash = ExpressionData(theEnv)->ExpressionHashTable[*hashval];
    while (exphash != NULL)
      {
-      if (IdenticalExpression(exphash->exp,theExp))
+      if (CL_IdenticalExpression(exphash->exp,theExp))
         return(exphash);
       *prv = exphash;
       exphash = exphash->next;
@@ -333,7 +333,7 @@ static EXPRESSION_HN *FindHashedExpression(
 
 /***************************************************
   NAME         : HashExpression
-  DESCRIPTION  : Assigns a deterministic number to
+  DESCRIPTION  : Assigns a deteCL_rministic number to
                  an expression
   INPUTS       : The expression
   RETURNS      : The "value" of the expression
@@ -364,7 +364,7 @@ static unsigned HashExpression(
   }
 
 /***************************************************
-  NAME         : RemoveHashedExpression
+  NAME         : CL_RemoveHashedExpression
   DESCRIPTION  : Removes a hashed expression from
                  the hash table
   INPUTS       : The expression
@@ -377,7 +377,7 @@ static unsigned HashExpression(
                  others, then the use count is
                  merely decremented
  ***************************************************/
-void RemoveHashedExpression(
+void CL_RemoveHashedExpression(
   Environment *theEnv,
   Expression *theExp)
   {
@@ -393,15 +393,15 @@ void RemoveHashedExpression(
      ExpressionData(theEnv)->ExpressionHashTable[hashval] = exphash->next;
    else
      prv->next = exphash->next;
-   ExpressionDeinstall(theEnv,exphash->exp);
-   ReturnPackedExpression(theEnv,exphash->exp);
+   CL_ExpressionDeinstall(theEnv,exphash->exp);
+   CL_ReturnPackedExpression(theEnv,exphash->exp);
    rtn_struct(theEnv,exprHashNode,exphash);
   }
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
 
 /*****************************************************
-  NAME         : AddHashedExpression
+  NAME         : CL_AddHashedExpression
   DESCRIPTION  : Adds a new expression to the
                  expression hash table (or increments
                  the use count if it is already there)
@@ -414,7 +414,7 @@ void RemoveHashedExpression(
                  routine copies, packs and installs
                  the given expression
  *****************************************************/
-Expression *AddHashedExpression(
+Expression *CL_AddHashedExpression(
   Environment *theEnv,
   Expression *theExp)
   {
@@ -431,8 +431,8 @@ Expression *AddHashedExpression(
    exphash = get_struct(theEnv,exprHashNode);
    exphash->hashval = hashval;
    exphash->count = 1;
-   exphash->exp = PackExpression(theEnv,theExp);
-   ExpressionInstall(theEnv,exphash->exp);
+   exphash->exp = CL_PackExpression(theEnv,theExp);
+   CL_ExpressionInstall(theEnv,exphash->exp);
    exphash->next = ExpressionData(theEnv)->ExpressionHashTable[exphash->hashval];
    ExpressionData(theEnv)->ExpressionHashTable[exphash->hashval] = exphash;
    exphash->bsaveID = 0L;
@@ -444,7 +444,7 @@ Expression *AddHashedExpression(
 #if (BLOAD_AND_BSAVE || BLOAD_ONLY || BLOAD || CONSTRUCT_COMPILER) && (! RUN_TIME)
 
 /***************************************************
-  NAME         : HashedExpressionIndex
+  NAME         : CL_HashedExpressionIndex
   DESCRIPTION  : Finds the expression bload array
                  index for a hashed expression
   INPUTS       : The expression
@@ -452,7 +452,7 @@ Expression *AddHashedExpression(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-unsigned long HashedExpressionIndex(
+unsigned long CL_HashedExpressionIndex(
   Environment *theEnv,
   Expression *theExp)
   {
@@ -468,10 +468,10 @@ unsigned long HashedExpressionIndex(
 #endif /* (BLOAD_AND_BSAVE || BLOAD_ONLY || BLOAD || CONSTRUCT_COMPILER) && (! RUN_TIME) */
 
 /********************************************************/
-/* SetSequenceOperatorRecognition: C access routine     */
+/* CL_SetSequenceOperatorRecognition: C access routine     */
 /*   for the set-sequence-operator-recognition function */
 /********************************************************/
-bool SetSequenceOperatorRecognition(
+bool CL_SetSequenceOperatorRecognition(
   Environment *theEnv,
   bool value)
   {
@@ -483,10 +483,10 @@ bool SetSequenceOperatorRecognition(
   }
 
 /********************************************************/
-/* GetSequenceOperatorRecognition: C access routine     */
+/* CL_GetSequenceOperatorRecognition: C access routine     */
 /*   for the Get-sequence-operator-recognition function */
 /********************************************************/
-bool GetSequenceOperatorRecognition(
+bool CL_GetSequenceOperatorRecognition(
   Environment *theEnv)
   {
    return ExpressionData(theEnv)->SequenceOpMode;

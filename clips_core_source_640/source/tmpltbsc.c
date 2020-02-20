@@ -93,67 +93,67 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    SaveDeftemplates(Environment *,Defmodule *,const char *,void *);
+   static void                    CL_SaveDeftemplates(Environment *,Defmodule *,const char *,void *);
 
 /*********************************************************************/
-/* DeftemplateBasicCommands: Initializes basic deftemplate commands. */
+/* CL_DeftemplateBasicCommands: Initializes basic deftemplate commands. */
 /*********************************************************************/
-void DeftemplateBasicCommands(
+void CL_DeftemplateBasicCommands(
   Environment *theEnv)
   {
-   AddSaveFunction(theEnv,"deftemplate",SaveDeftemplates,10,NULL);
+   CL_AddCL_SaveFunction(theEnv,"deftemplate",CL_SaveDeftemplates,10,NULL);
 
 #if ! RUN_TIME
-   AddUDF(theEnv,"get-deftemplate-list","m",0,1,"y",GetDeftemplateListFunction,"GetDeftemplateListFunction",NULL);
-   AddUDF(theEnv,"undeftemplate","v",1,1,"y",UndeftemplateCommand,"UndeftemplateCommand",NULL);
-   AddUDF(theEnv,"deftemplate-module","y",1,1,"y",DeftemplateModuleFunction,"DeftemplateModuleFunction",NULL);
+   CL_AddUDF(theEnv,"get-deftemplate-list","m",0,1,"y",CL_GetDeftemplateListFunction,"CL_GetDeftemplateListFunction",NULL);
+   CL_AddUDF(theEnv,"undeftemplate","v",1,1,"y",CL_UndeftemplateCommand,"CL_UndeftemplateCommand",NULL);
+   CL_AddUDF(theEnv,"deftemplate-module","y",1,1,"y",CL_DeftemplateModuleFunction,"CL_DeftemplateModuleFunction",NULL);
 
 #if DEBUGGING_FUNCTIONS
-   AddUDF(theEnv,"list-deftemplates","v",0,1,"y",ListDeftemplatesCommand,"ListDeftemplatesCommand",NULL);
-   AddUDF(theEnv,"ppdeftemplate","vs",1,2,";y;ldsyn",PPDeftemplateCommand,"PPDeftemplateCommand",NULL);
+   CL_AddUDF(theEnv,"list-deftemplates","v",0,1,"y",CL_ListDeftemplatesCommand,"CL_ListDeftemplatesCommand",NULL);
+   CL_AddUDF(theEnv,"ppdeftemplate","vs",1,2,";y;ldsyn",CL_PPDeftemplateCommand,"CL_PPDeftemplateCommand",NULL);
 #endif
 
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE)
-   DeftemplateBinarySetup(theEnv);
+   CL_DeftemplateBinarySetup(theEnv);
 #endif
 
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
-   DeftemplateCompilerSetup(theEnv);
+   CL_DeftemplateCompilerSetup(theEnv);
 #endif
 
 #endif
   }
 
 /**********************************************/
-/* SaveDeftemplates: Deftemplate save routine */
+/* CL_SaveDeftemplates: Deftemplate save routine */
 /*   for use with the save command.           */
 /**********************************************/
-static void SaveDeftemplates(
+static void CL_SaveDeftemplates(
   Environment *theEnv,
   Defmodule *theModule,
   const char *logicalName,
   void *context)
   {
-   SaveConstruct(theEnv,theModule,logicalName,DeftemplateData(theEnv)->DeftemplateConstruct);
+   CL_SaveConstruct(theEnv,theModule,logicalName,DeftemplateData(theEnv)->DeftemplateConstruct);
   }
 
 /**********************************************/
-/* UndeftemplateCommand: H/L access routine   */
+/* CL_UndeftemplateCommand: H/L access routine   */
 /*   for the undeftemplate command.           */
 /**********************************************/
-void UndeftemplateCommand(
+void CL_UndeftemplateCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
-   UndefconstructCommand(context,"undeftemplate",DeftemplateData(theEnv)->DeftemplateConstruct);
+   CL_UndefconstructCommand(context,"undeftemplate",DeftemplateData(theEnv)->DeftemplateConstruct);
   }
 
 /************************************/
-/* Undeftemplate: C access routine  */
+/* CL_Undeftemplate: C access routine  */
 /*   for the undeftemplate command. */
 /************************************/
-bool Undeftemplate(
+bool CL_Undeftemplate(
   Deftemplate *theDeftemplate,
   Environment *allEnv)
   {
@@ -162,120 +162,120 @@ bool Undeftemplate(
    if (theDeftemplate == NULL)
      {
       theEnv = allEnv;
-      return Undefconstruct(theEnv,NULL,DeftemplateData(theEnv)->DeftemplateConstruct);
+      return CL_Undefconstruct(theEnv,NULL,DeftemplateData(theEnv)->DeftemplateConstruct);
      }
    else
      {
       theEnv = theDeftemplate->header.env;
-      return Undefconstruct(theEnv,&theDeftemplate->header,DeftemplateData(theEnv)->DeftemplateConstruct);
+      return CL_Undefconstruct(theEnv,&theDeftemplate->header,DeftemplateData(theEnv)->DeftemplateConstruct);
      }
   }
 
 /****************************************************/
-/* GetDeftemplateListFunction: H/L access routine   */
+/* CL_GetDeftemplateListFunction: H/L access routine   */
 /*   for the get-deftemplate-list function.         */
 /****************************************************/
-void GetDeftemplateListFunction(
+void CL_GetDeftemplateListFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
-   GetConstructListFunction(context,returnValue,DeftemplateData(theEnv)->DeftemplateConstruct);
+   CL_GetConstructListFunction(context,returnValue,DeftemplateData(theEnv)->DeftemplateConstruct);
   }
 
 /********************************************/
-/* GetDeftemplateList: C access routine for */
+/* CL_GetDeftemplateList: C access routine for */
 /*   the get-deftemplate-list function.     */
 /********************************************/
-void GetDeftemplateList(
+void CL_GetDeftemplateList(
   Environment *theEnv,
   CLIPSValue *returnValue,
   Defmodule *theModule)
   {
    UDFValue result;
    
-   GetConstructList(theEnv,&result,DeftemplateData(theEnv)->DeftemplateConstruct,theModule);
-   NormalizeMultifield(theEnv,&result);
+   CL_GetConstructList(theEnv,&result,DeftemplateData(theEnv)->DeftemplateConstruct,theModule);
+   CL_NoCL_rmalizeMultifield(theEnv,&result);
    returnValue->value = result.value;
   }
 
 /***************************************************/
-/* DeftemplateModuleFunction: H/L access routine   */
+/* CL_DeftemplateModuleFunction: H/L access routine   */
 /*   for the deftemplate-module function.          */
 /***************************************************/
-void DeftemplateModuleFunction(
+void CL_DeftemplateModuleFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
-   returnValue->value = GetConstructModuleCommand(context,"deftemplate-module",DeftemplateData(theEnv)->DeftemplateConstruct);
+   returnValue->value = CL_GetConstructModuleCommand(context,"deftemplate-module",DeftemplateData(theEnv)->DeftemplateConstruct);
   }
 
 #if DEBUGGING_FUNCTIONS
 
 /**********************************************/
-/* PPDeftemplateCommand: H/L access routine   */
+/* CL_PPDeftemplateCommand: H/L access routine   */
 /*   for the ppdeftemplate command.           */
 /**********************************************/
-void PPDeftemplateCommand(
+void CL_PPDeftemplateCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
-   PPConstructCommand(context,"ppdeftemplate",DeftemplateData(theEnv)->DeftemplateConstruct,returnValue);
+   CL_PPConstructCommand(context,"ppdeftemplate",DeftemplateData(theEnv)->DeftemplateConstruct,returnValue);
   }
 
 /***************************************/
-/* PPDeftemplate: C access routine for */
+/* CL_PPDeftemplate: C access routine for */
 /*   the ppdeftemplate command.        */
 /***************************************/
-bool PPDeftemplate(
+bool CL_PPDeftemplate(
   Environment *theEnv,
   const char *deftemplateName,
   const char *logicalName)
   {
-   return(PPConstruct(theEnv,deftemplateName,logicalName,DeftemplateData(theEnv)->DeftemplateConstruct));
+   return(CL_PPConstruct(theEnv,deftemplateName,logicalName,DeftemplateData(theEnv)->DeftemplateConstruct));
   }
 
 /*************************************************/
-/* ListDeftemplatesCommand: H/L access routine   */
+/* CL_ListDeftemplatesCommand: H/L access routine   */
 /*   for the list-deftemplates command.          */
 /*************************************************/
-void ListDeftemplatesCommand(
+void CL_ListDeftemplatesCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
-   ListConstructCommand(context,DeftemplateData(theEnv)->DeftemplateConstruct);
+   CL_ListConstructCommand(context,DeftemplateData(theEnv)->DeftemplateConstruct);
   }
 
 /****************************************/
-/* ListDeftemplates: C access routine   */
+/* CL_ListDeftemplates: C access routine   */
 /*   for the list-deftemplates command. */
 /****************************************/
-void ListDeftemplates(
+void CL_ListDeftemplates(
   Environment *theEnv,
   const char *logicalName,
   Defmodule *theModule)
   {
-   ListConstruct(theEnv,DeftemplateData(theEnv)->DeftemplateConstruct,logicalName,theModule);
+   CL_ListConstruct(theEnv,DeftemplateData(theEnv)->DeftemplateConstruct,logicalName,theModule);
   }
 
 /********************************************************/
-/* DeftemplateGetWatch: C access routine for retrieving */
+/* CL_DeftemplateGetCL_Watch: C access routine for retrieving */
 /*   the current watch value of a deftemplate.          */
 /********************************************************/
-bool DeftemplateGetWatch(
+bool CL_DeftemplateGetCL_Watch(
   Deftemplate *theTemplate)
   {
    return theTemplate->watch;
   }
 
 /******************************************************/
-/* DeftemplateSetWatch:  C access routine for setting */
+/* CL_DeftemplateSetCL_Watch:  C access routine for setting */
 /*   the current watch value of a deftemplate.        */
 /******************************************************/
-void DeftemplateSetWatch(
+void CL_DeftemplateSetCL_Watch(
   Deftemplate *theTemplate,
   bool newState)
   {
@@ -283,10 +283,10 @@ void DeftemplateSetWatch(
   }
 
 /**********************************************************/
-/* DeftemplateWatchAccess: Access routine for setting the */
+/* CL_DeftemplateCL_WatchAccess: Access routine for setting the */
 /*   watch flag of a deftemplate via the watch command.   */
 /**********************************************************/
-bool DeftemplateWatchAccess(
+bool CL_DeftemplateCL_WatchAccess(
   Environment *theEnv,
   int code,
   bool newState,
@@ -296,16 +296,16 @@ bool DeftemplateWatchAccess(
 #pragma unused(code)
 #endif
 
-   return ConstructSetWatchAccess(theEnv,DeftemplateData(theEnv)->DeftemplateConstruct,newState,argExprs,
-                                  (ConstructGetWatchFunction *) DeftemplateGetWatch,
-                                  (ConstructSetWatchFunction *) DeftemplateSetWatch);
+   return CL_ConstructSetCL_WatchAccess(theEnv,DeftemplateData(theEnv)->DeftemplateConstruct,newState,argExprs,
+                                  (ConstructGetCL_WatchFunction *) CL_DeftemplateGetCL_Watch,
+                                  (ConstructSetCL_WatchFunction *) CL_DeftemplateSetCL_Watch);
   }
 
 /*************************************************************************/
-/* DeftemplateWatchPrint: Access routine for printing which deftemplates */
+/* CL_DeftemplateCL_WatchPrint: Access routine for printing which deftemplates */
 /*   have their watch flag set via the list-watch-items command.         */
 /*************************************************************************/
-bool DeftemplateWatchPrint(
+bool CL_DeftemplateCL_WatchPrint(
   Environment *theEnv,
   const char *logName,
   int code,
@@ -315,9 +315,9 @@ bool DeftemplateWatchPrint(
 #pragma unused(code)
 #endif
 
-   return ConstructPrintWatchAccess(theEnv,DeftemplateData(theEnv)->DeftemplateConstruct,logName,argExprs,
-                                    (ConstructGetWatchFunction *) DeftemplateGetWatch,
-                                    (ConstructSetWatchFunction *) DeftemplateSetWatch);
+   return CL_ConstructPrintCL_WatchAccess(theEnv,DeftemplateData(theEnv)->DeftemplateConstruct,logName,argExprs,
+                                    (ConstructGetCL_WatchFunction *) CL_DeftemplateGetCL_Watch,
+                                    (ConstructSetCL_WatchFunction *) CL_DeftemplateSetCL_Watch);
   }
 
 #endif /* DEBUGGING_FUNCTIONS */

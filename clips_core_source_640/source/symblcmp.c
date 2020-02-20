@@ -20,7 +20,7 @@
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
-/*      6.24: Added environment parameter to GenClose.       */
+/*      6.24: Added environment parameter to CL_GenClose.       */
 /*                                                           */
 /*            Corrected code to remove compiler warnings.    */
 /*                                                           */
@@ -78,10 +78,10 @@
    static void                        PrintCString(FILE *,const char *);
 
 /**************************************************************/
-/* AtomicValuesToCode: Driver routine for generating the code */
+/* CL_AtomicValuesToCode: Driver routine for generating the code */
 /*  used by the symbol, integer, float, and bit map tables.   */
 /**************************************************************/
-void AtomicValuesToCode(
+void CL_AtomicValuesToCode(
   Environment *theEnv,
   const char *fileName,
   const char *pathName,
@@ -89,7 +89,7 @@ void AtomicValuesToCode(
   {
    unsigned int version; // TBD Necessary?
 
-   SetAtomicValueIndices(theEnv,true);
+   CL_SetAtomicValueIndices(theEnv,true);
 
    HashTablesToCode(theEnv,fileName,pathName,fileNameBuffer);
 
@@ -125,7 +125,7 @@ static unsigned int SymbolHashNodesToCode(
    /* Count the total number of entries. */
    /*====================================*/
 
-   symbolTable = GetSymbolTable(theEnv);
+   symbolTable = CL_GetSymbolTable(theEnv);
    count = numberOfEntries = 0;
 
    for (i = 0; i < SYMBOL_HASH_SIZE; i++)
@@ -145,7 +145,7 @@ static unsigned int SymbolHashNodesToCode(
    /* Create the file. */
    /*==================*/
 
-   if ((fp = NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,version,false)) == NULL) return version;
+   if ((fp = CL_NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,version,false)) == NULL) return version;
 
    /*===================*/
    /* List the entries. */
@@ -191,13 +191,13 @@ static unsigned int SymbolHashNodesToCode(
          if ((count == numberOfEntries) || (j >= ConstructCompilerData(theEnv)->MaxIndices))
            {
             fprintf(fp,"}};\n");
-            GenClose(theEnv,fp);
+            CL_GenClose(theEnv,fp);
             j = 0;
             arrayVersion++;
             version++;
             if (count < numberOfEntries)
               {
-               if ((fp = NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,version,false)) == NULL)
+               if ((fp = CL_NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,version,false)) == NULL)
                  { return 0; }
                newHeader = true;
               }
@@ -236,7 +236,7 @@ static unsigned int BitMapHashNodesToCode(
    /* Count the total number of entries. */
    /*====================================*/
 
-   bitMapTable = GetBitMapTable(theEnv);
+   bitMapTable = CL_GetBitMapTable(theEnv);
    count = numberOfEntries = 0;
 
    for (i = 0; i < BITMAP_HASH_SIZE; i++)
@@ -256,7 +256,7 @@ static unsigned int BitMapHashNodesToCode(
    /* Create the file. */
    /*==================*/
 
-   if ((fp = NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,version,false)) == NULL) return version;
+   if ((fp = CL_NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,version,false)) == NULL) return version;
 
    /*===================*/
    /* List the entries. */
@@ -308,13 +308,13 @@ static unsigned int BitMapHashNodesToCode(
          if ((count == numberOfEntries) || (j >= ConstructCompilerData(theEnv)->MaxIndices))
            {
             fprintf(fp,"}};\n");
-            GenClose(theEnv,fp);
+            CL_GenClose(theEnv,fp);
             j = 0;
             arrayVersion++;
             version++;
             if (count < numberOfEntries)
               {
-               if ((fp = NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,version,false)) == NULL)
+               if ((fp = CL_NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,version,false)) == NULL)
                  { return 0; }
                newHeader = true;
               }
@@ -355,7 +355,7 @@ static unsigned int BitMapValuesToCode(
    /* Count the total number of entries. */
    /*====================================*/
 
-   bitMapTable = GetBitMapTable(theEnv);
+   bitMapTable = CL_GetBitMapTable(theEnv);
    count = numberOfEntries = 0;
 
    for (i = 0; i < BITMAP_HASH_SIZE; i++)
@@ -379,7 +379,7 @@ static unsigned int BitMapValuesToCode(
    /* Create the file. */
    /*==================*/
 
-   if ((fp = NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,version,false)) == NULL) return version;
+   if ((fp = CL_NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,version,false)) == NULL) return version;
 
    /*===================*/
    /* List the entries. */
@@ -422,13 +422,13 @@ static unsigned int BitMapValuesToCode(
          if ((count == numberOfEntries) || (j >= ConstructCompilerData(theEnv)->MaxIndices))
            {
             fprintf(fp,"};\n");
-            GenClose(theEnv,fp);
+            CL_GenClose(theEnv,fp);
             j = 0;
             arrayVersion++;
             version++;
             if (count < numberOfEntries)
               {
-               if ((fp = NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,version,false)) == NULL)
+               if ((fp = CL_NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,version,false)) == NULL)
                  { return 0; }
                newHeader = true;
               }
@@ -466,7 +466,7 @@ static unsigned int FloatHashNodesToCode(
    /* Count the total number of entries. */
    /*====================================*/
 
-   floatTable = GetFloatTable(theEnv);
+   floatTable = CL_GetFloatTable(theEnv);
    count = numberOfEntries = 0;
 
    for (i = 0; i < FLOAT_HASH_SIZE; i++)
@@ -486,7 +486,7 @@ static unsigned int FloatHashNodesToCode(
    /* Create the file. */
    /*==================*/
 
-   if ((fp = NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,version,false)) == NULL) return version;
+   if ((fp = CL_NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,version,false)) == NULL) return version;
 
    /*===================*/
    /* List the entries. */
@@ -519,7 +519,7 @@ static unsigned int FloatHashNodesToCode(
            }
 
          fprintf(fp,"%ld,1,0,0,%d,",hashPtr->count + 1,i);
-         fprintf(fp,"%s",FloatToString(theEnv,hashPtr->contents));
+         fprintf(fp,"%s",CL_FloatToString(theEnv,hashPtr->contents));
 
          count++;
          j++;
@@ -527,13 +527,13 @@ static unsigned int FloatHashNodesToCode(
          if ((count == numberOfEntries) || (j >= ConstructCompilerData(theEnv)->MaxIndices))
            {
             fprintf(fp,"}};\n");
-            GenClose(theEnv,fp);
+            CL_GenClose(theEnv,fp);
             j = 0;
             version++;
             arrayVersion++;
             if (count < numberOfEntries)
               {
-               if ((fp = NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,version,false)) == NULL)
+               if ((fp = CL_NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,version,false)) == NULL)
                  { return 0; }
                newHeader = true;
               }
@@ -571,7 +571,7 @@ static unsigned int IntegerHashNodesToCode(
    /* Count the total number of entries. */
    /*====================================*/
 
-   integerTable = GetIntegerTable(theEnv);
+   integerTable = CL_GetIntegerTable(theEnv);
    count = numberOfEntries = 0;
 
    for (i = 0; i < INTEGER_HASH_SIZE; i++)
@@ -591,7 +591,7 @@ static unsigned int IntegerHashNodesToCode(
    /* Create the file. */
    /*==================*/
 
-   if ((fp = NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,version,false)) == NULL) return version;
+   if ((fp = CL_NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,version,false)) == NULL) return version;
 
    /*===================*/
    /* List the entries. */
@@ -632,13 +632,13 @@ static unsigned int IntegerHashNodesToCode(
          if ((count == numberOfEntries) || (j >= ConstructCompilerData(theEnv)->MaxIndices))
            {
             fprintf(fp,"}};\n");
-            GenClose(theEnv,fp);
+            CL_GenClose(theEnv,fp);
             j = 0;
             version++;
             arrayVersion++;
             if (count < numberOfEntries)
               {
-               if ((fp = NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,version,false)) == NULL)
+               if ((fp = CL_NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,version,false)) == NULL)
                  { return 0; }
                newHeader = true;
               }
@@ -670,12 +670,12 @@ static int HashTablesToCode(
    CLIPSBitMap **bitMapTable;
 
    /*======================================*/
-   /* Write the code for the symbol table. */
+   /* CL_Write the code for the symbol table. */
    /*======================================*/
 
-   symbolTable = GetSymbolTable(theEnv);
+   symbolTable = CL_GetSymbolTable(theEnv);
 
-   if ((fp = NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,1,false)) == NULL)
+   if ((fp = CL_NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,1,false)) == NULL)
      { return 0; }
 
    fprintf(ConstructCompilerData(theEnv)->HeaderFP,"extern CLIPSLexeme *sht%d[];\n",ConstructCompilerData(theEnv)->ImageID);
@@ -683,22 +683,22 @@ static int HashTablesToCode(
 
    for (i = 0; i < SYMBOL_HASH_SIZE; i++)
       {
-       PrintSymbolReference(theEnv,fp,symbolTable[i]);
+       CL_PrintSymbolReference(theEnv,fp,symbolTable[i]);
 
        if (i + 1 != SYMBOL_HASH_SIZE) fprintf(fp,",\n");
       }
 
     fprintf(fp,"};\n");
 
-    GenClose(theEnv,fp);
+    CL_GenClose(theEnv,fp);
 
    /*=====================================*/
-   /* Write the code for the float table. */
+   /* CL_Write the code for the float table. */
    /*=====================================*/
 
-   floatTable = GetFloatTable(theEnv);
+   floatTable = CL_GetFloatTable(theEnv);
 
-   if ((fp = NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,2,false)) == NULL)
+   if ((fp = CL_NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,2,false)) == NULL)
      { return 0; }
 
    fprintf(ConstructCompilerData(theEnv)->HeaderFP,"extern CLIPSFloat *fht%d[];\n",ConstructCompilerData(theEnv)->ImageID);
@@ -707,22 +707,22 @@ static int HashTablesToCode(
    for (i = 0; i < FLOAT_HASH_SIZE; i++)
       {
        if (floatTable[i] == NULL) { fprintf(fp,"NULL"); }
-       else PrintFloatReference(theEnv,fp,floatTable[i]);
+       else CL_PrintFloatReference(theEnv,fp,floatTable[i]);
 
        if (i + 1 != FLOAT_HASH_SIZE) fprintf(fp,",\n");
       }
 
     fprintf(fp,"};\n");
 
-    GenClose(theEnv,fp);
+    CL_GenClose(theEnv,fp);
 
    /*=======================================*/
-   /* Write the code for the integer table. */
+   /* CL_Write the code for the integer table. */
    /*=======================================*/
 
-   integerTable = GetIntegerTable(theEnv);
+   integerTable = CL_GetIntegerTable(theEnv);
 
-   if ((fp = NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,3,false)) == NULL)
+   if ((fp = CL_NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,3,false)) == NULL)
      { return 0; }
 
    fprintf(ConstructCompilerData(theEnv)->HeaderFP,"extern CLIPSInteger *iht%d[];\n",ConstructCompilerData(theEnv)->ImageID);
@@ -731,22 +731,22 @@ static int HashTablesToCode(
    for (i = 0; i < INTEGER_HASH_SIZE; i++)
       {
        if (integerTable[i] == NULL) { fprintf(fp,"NULL"); }
-       else PrintIntegerReference(theEnv,fp,integerTable[i]);
+       else CL_PrintIntegerReference(theEnv,fp,integerTable[i]);
 
        if (i + 1 != INTEGER_HASH_SIZE) fprintf(fp,",\n");
       }
 
     fprintf(fp,"};\n");
 
-    GenClose(theEnv,fp);
+    CL_GenClose(theEnv,fp);
 
    /*======================================*/
-   /* Write the code for the bitmap table. */
+   /* CL_Write the code for the bitmap table. */
    /*======================================*/
 
-   bitMapTable = GetBitMapTable(theEnv);
+   bitMapTable = CL_GetBitMapTable(theEnv);
 
-   if ((fp = NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,4,false)) == NULL)
+   if ((fp = CL_NewCFile(theEnv,fileName,pathName,fileNameBuffer,1,4,false)) == NULL)
      { return 0; }
 
    fprintf(ConstructCompilerData(theEnv)->HeaderFP,"extern struct clipsBitMap *bmht%d[];\n",ConstructCompilerData(theEnv)->ImageID);
@@ -754,24 +754,24 @@ static int HashTablesToCode(
 
    for (i = 0; i < BITMAP_HASH_SIZE; i++)
       {
-       PrintBitMapReference(theEnv,fp,bitMapTable[i]);
+       CL_PrintBitMapReference(theEnv,fp,bitMapTable[i]);
 
        if (i + 1 != BITMAP_HASH_SIZE) fprintf(fp,",\n");
       }
 
     fprintf(fp,"};\n");
 
-    GenClose(theEnv,fp);
+    CL_GenClose(theEnv,fp);
 
     return 1;
    }
 
 /*****************************************************/
-/* PrintSymbolReference: Prints the C code reference */
+/* CL_PrintSymbolReference: Prints the C code reference */
 /*   address to the specified symbol (also used for  */
 /*   strings and instance names).                    */
 /*****************************************************/
-void PrintSymbolReference(
+void CL_PrintSymbolReference(
   Environment *theEnv,
   FILE *theFile,
   CLIPSLexeme *theSymbol)
@@ -784,10 +784,10 @@ void PrintSymbolReference(
   }
 
 /****************************************************/
-/* PrintFloatReference: Prints the C code reference */
+/* CL_PrintFloatReference: Prints the C code reference */
 /*   address to the specified float.                */
 /****************************************************/
-void PrintFloatReference(
+void CL_PrintFloatReference(
   Environment *theEnv,
   FILE *theFile,
   CLIPSFloat *theFloat)
@@ -799,10 +799,10 @@ void PrintFloatReference(
   }
 
 /******************************************************/
-/* PrintIntegerReference: Prints the C code reference */
+/* CL_PrintIntegerReference: Prints the C code reference */
 /*   address to the specified integer.                */
 /******************************************************/
-void PrintIntegerReference(
+void CL_PrintIntegerReference(
   Environment *theEnv,
   FILE *theFile,
   CLIPSInteger *theInteger)
@@ -814,10 +814,10 @@ void PrintIntegerReference(
   }
 
 /*****************************************************/
-/* PrintBitMapReference: Prints the C code reference */
+/* CL_PrintBitMapReference: Prints the C code reference */
 /*   address to the specified bit map.               */
 /*****************************************************/
-void PrintBitMapReference(
+void CL_PrintBitMapReference(
   Environment *theEnv,
   FILE *theFile,
   CLIPSBitMap *theBitMap)
@@ -831,7 +831,7 @@ void PrintBitMapReference(
 
 /*********************************************************/
 /* PrintCString: Prints KB strings in the appropriate    */
-/*   format for C (the " and \ characters are preceeded  */
+/*   foCL_rmat for C (the " and \ characters are preceeded  */
 /*   by a \ and carriage returns are replaced with \n).  */
 /*********************************************************/
 static void PrintCString(

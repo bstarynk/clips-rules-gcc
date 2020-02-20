@@ -43,14 +43,14 @@ struct bsaveConstructHeader
 #include "constrct.h"
 
 #if BLOAD_AND_BSAVE
-void MarkConstructHeaderNeededItems(ConstructHeader *,unsigned long);
-void AssignBsaveConstructHeaderVals(struct bsaveConstructHeader *,
+void CL_MarkConstructHeaderNeededItems(ConstructHeader *,unsigned long);
+void CL_AssignCL_BsaveConstructHeaderVals(struct bsaveConstructHeader *,
                                     ConstructHeader *);
 #endif
 
-void UpdateConstructHeader(Environment *,struct bsaveConstructHeader *,
+void CL_UpdateConstructHeader(Environment *,struct bsaveConstructHeader *,
                            ConstructHeader *,ConstructType,size_t,void *,size_t,void *);
-void UnmarkConstructHeader(Environment *,ConstructHeader *);
+void CL_UnmarkConstructHeader(Environment *,ConstructHeader *);
 
 #endif
 

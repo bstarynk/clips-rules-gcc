@@ -55,8 +55,8 @@ struct definstancesBinaryData
 
 #define DefinstancesBinaryData(theEnv) ((struct definstancesBinaryData *) GetEnvironmentData(theEnv,DFINSBIN_DATA))
 
-   void                           SetupDefinstancesBload(Environment *);
-   void                          *BloadDefinstancesModuleRef(Environment *,unsigned long);
+   void                           CL_SetupDefinstancesCL_Bload(Environment *);
+   void                          *CL_BloadCL_DefinstancesModuleRef(Environment *,unsigned long);
 
 #endif /* DEFINSTANCES_CONSTRUCT && (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE) */
 

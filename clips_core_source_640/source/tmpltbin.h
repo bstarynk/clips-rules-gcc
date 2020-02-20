@@ -17,7 +17,7 @@
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
-/*      6.23: Added support for templates maintaining their  */
+/*      6.23: Added support for templates CL_maintaining their  */
 /*            own list of facts.                             */
 /*                                                           */
 /*      6.30: Changed integer type/precision.                */
@@ -55,7 +55,7 @@ struct bsaveTemplateSlot
   };
 
 struct bsaveDeftemplate;
-struct bsaveDeftemplateModule;
+struct bsaveCL_DeftemplateModule;
 
 #include "cstrcbin.h"
 
@@ -70,7 +70,7 @@ struct bsaveDeftemplate
 
 #include "modulbin.h"
 
-struct bsaveDeftemplateModule
+struct bsaveCL_DeftemplateModule
   {
    struct bsaveDefmoduleItemHeader header;
   };
@@ -97,8 +97,8 @@ struct deftemplateBinaryData
 #include "tmpltdef.h"
 #endif
 
-   void                           DeftemplateBinarySetup(Environment *);
-   void                          *BloadDeftemplateModuleReference(Environment *,unsigned long);
+   void                           CL_DeftemplateBinarySetup(Environment *);
+   void                          *CL_BloadCL_DeftemplateModuleReference(Environment *,unsigned long);
 
 #endif /* (! RUN_TIME) */
 

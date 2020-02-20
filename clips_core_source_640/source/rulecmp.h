@@ -53,8 +53,8 @@
 #define JoinPrefix() ArbitraryPrefix(DefruleData(theEnv)->DefruleCodeItem,2)
 #define LinkPrefix() ArbitraryPrefix(DefruleData(theEnv)->DefruleCodeItem,3)
 
-   void                     DefruleCompilerSetup(Environment *);
-   void                     DefruleCModuleReference(Environment *,FILE *,unsigned long,unsigned int,unsigned int);
+   void                     CL_DefruleCompilerSetup(Environment *);
+   void                     CL_DefruleCModuleReference(Environment *,FILE *,unsigned long,unsigned int,unsigned int);
 
 #endif /* _H_rulecmp */
 

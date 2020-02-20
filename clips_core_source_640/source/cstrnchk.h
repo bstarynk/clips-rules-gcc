@@ -45,7 +45,7 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/*            Eval support for run time and bload only.      */
+/*            CL_Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -69,21 +69,21 @@ typedef enum
    ALLOWED_CLASSES_VIOLATION
   } ConstraintViolationType;
 
-   bool                           CheckCardinalityConstraint(Environment *,size_t,CONSTRAINT_RECORD *);
-   bool                           CheckAllowedValuesConstraint(int,void *,CONSTRAINT_RECORD *);
-   bool                           CheckAllowedClassesConstraint(Environment *,int,void *,CONSTRAINT_RECORD *);
-   ConstraintViolationType        ConstraintCheckExpressionChain(Environment *,struct expr *,
+   bool                           CL_CheckCardinalityConstraint(Environment *,size_t,CONSTRAINT_RECORD *);
+   bool                           CL_CheckAllowedValuesConstraint(int,void *,CONSTRAINT_RECORD *);
+   bool                           CL_CheckAllowedClassesConstraint(Environment *,int,void *,CONSTRAINT_RECORD *);
+   ConstraintViolationType        CL_ConstraintCheckExpressionChain(Environment *,struct expr *,
                                                                      CONSTRAINT_RECORD *);
-   void                           ConstraintViolationErrorMessage(Environment *,const char *,const char *,bool,
+   void                           CL_ConstraintViolationErrorMessage(Environment *,const char *,const char *,bool,
                                                                   unsigned short,CLIPSLexeme *,unsigned short,
                                                                   int,CONSTRAINT_RECORD *,bool);
-   ConstraintViolationType        ConstraintCheckValue(Environment *,int,void *,CONSTRAINT_RECORD *);
-   ConstraintViolationType        ConstraintCheckDataObject(Environment *,UDFValue *,CONSTRAINT_RECORD *);
+   ConstraintViolationType        CL_ConstraintCheckValue(Environment *,int,void *,CONSTRAINT_RECORD *);
+   ConstraintViolationType        CL_ConstraintCheckDataObject(Environment *,UDFValue *,CONSTRAINT_RECORD *);
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-   ConstraintViolationType        ConstraintCheckExpression(Environment *,struct expr *,
+   ConstraintViolationType        CL_ConstraintCheckExpression(Environment *,struct expr *,
                                                             CONSTRAINT_RECORD *);
 #endif
-   bool                           UnmatchableConstraint(struct constraintRecord *);
+   bool                           CL_UnmatchableConstraint(struct constraintRecord *);
 
 #endif /* _H_cstrnchk */
 

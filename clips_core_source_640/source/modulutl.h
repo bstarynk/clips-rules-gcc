@@ -19,7 +19,7 @@
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
-/*      6.30: Used genstrncpy instead of strncpy.            */
+/*      6.30: Used CL_genstrncpy instead of strncpy.            */
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
@@ -48,32 +48,32 @@ typedef void PrintItemFunction(Environment *,const char *,void *);
 #include "symbol.h"
 #include "scanner.h"
 
-   unsigned                       FindModuleSeparator(const char *);
-   CLIPSLexeme                   *ExtractModuleName(Environment *,unsigned,const char *);
-   CLIPSLexeme                   *ExtractConstructName(Environment *,unsigned,const char *,unsigned);
-   const char                    *ExtractModuleAndConstructName(Environment *,const char *);
-   ConstructHeader               *FindImportedConstruct(Environment *,const char *,Defmodule *,
+   unsigned                       CL_FindModuleSeparator(const char *);
+   CLIPSLexeme                   *CL_ExtractModuleName(Environment *,unsigned,const char *);
+   CLIPSLexeme                   *CL_ExtractConstructName(Environment *,unsigned,const char *,unsigned);
+   const char                    *CL_ExtractModuleAndConstructName(Environment *,const char *);
+   ConstructHeader               *CL_FindImportedConstruct(Environment *,const char *,Defmodule *,
                                                         const char *,unsigned int *,bool,Defmodule *);
-   void                           AmbiguousReferenceErrorMessage(Environment *,const char *,const char *);
-   void                           MarkModulesAsUnvisited(Environment *);
-   bool                           AllImportedModulesVisited(Environment *,Defmodule *);
-   void                           ListItemsDriver(Environment *,
+   void                           CL_AmbiguousReferenceErrorMessage(Environment *,const char *,const char *);
+   void                           CL_MarkModulesAsUnvisited(Environment *);
+   bool                           CL_AllImportedModulesVisited(Environment *,Defmodule *);
+   void                           CL_ListItemsDriver(Environment *,
                                                   const char *,Defmodule *,
                                                   const char *,const char *,
                                                   GetNextItemFunction *,
                                                   const char *(*)(void *),
                                                   PrintItemFunction *,
                                                   bool (*)(void *));
-   long                           DoForAllModules(Environment *,
+   long                           CL_DoForAllModules(Environment *,
                                                   void (*)(Defmodule *,void *),
                                                   int,void *);
-   bool                           ConstructExported(Environment *,const char *,CLIPSLexeme *,CLIPSLexeme *);
+   bool                           CL_ConstructExported(Environment *,const char *,CLIPSLexeme *,CLIPSLexeme *);
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   void                           RemoveConstructFromModule(Environment *,ConstructHeader *);
-   CLIPSLexeme                   *GetConstructNameAndComment(Environment *,const char *,
+   void                           CL_RemoveConstructFromModule(Environment *,ConstructHeader *);
+   CLIPSLexeme                   *CL_GetConstructNameAndComment(Environment *,const char *,
                                                              struct token *,const char *,
-                                                             FindConstructFunction *,
+                                                             CL_FindConstructFunction *,
                                                              DeleteConstructFunction *,
                                                              const char *,bool,bool,bool,bool);
 #endif /* (! RUN_TIME) && (! BLOAD_ONLY) */

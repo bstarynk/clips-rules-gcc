@@ -26,7 +26,7 @@
 /*            because of Unix compiler warnings of shadowed  */
 /*            definitions.                                   */
 /*                                                           */
-/*      6.24: Link error occurs for the SlotExistError       */
+/*      6.24: Link error occurs for the CL_SlotExistError       */
 /*            function when OBJECT_SYSTEM is set to 0 in     */
 /*            setup.h. DR0865                                */
 /*                                                           */
@@ -35,7 +35,7 @@
 /*                                                           */
 /*            Renamed BOOLEAN macro type to intBool.         */
 /*                                                           */
-/*            Moved EvaluateAndStoreInDataObject to          */
+/*            Moved CL_EvaluateAndStoreInDataObject to          */
 /*            evaluatn.c                                     */
 /*                                                           */
 /*      6.30: Removed conditional code for unsupported       */
@@ -90,38 +90,38 @@ typedef struct igarbage
 #define INSTANCE_TABLE_HASH_SIZE 8191
 #define InstanceSizeHeuristic(ins)      sizeof(Instance)
 
-   void                           RetainInstance(Instance *);
-   void                           ReleaseInstance(Instance *);
-   void                           IncrementInstanceCallback(Environment *,Instance *);
-   void                           DecrementInstanceCallback(Environment *,Instance *);
-   void                           InitializeInstanceTable(Environment *);
-   void                           CleanupInstances(Environment *,void *);
-   unsigned                       HashInstance(CLIPSLexeme *);
-   void                           DestroyAllInstances(Environment *,void *);
-   void                           RemoveInstanceData(Environment *,Instance *);
-   Instance                      *FindInstanceBySymbol(Environment *,CLIPSLexeme *);
-   Instance                      *FindInstanceInModule(Environment *,CLIPSLexeme *,Defmodule *,
+   void                           CL_RetainInstance(Instance *);
+   void                           CL_ReleaseInstance(Instance *);
+   void                           CL_IncrementInstanceCallback(Environment *,Instance *);
+   void                           CL_DecrementInstanceCallback(Environment *,Instance *);
+   void                           CL_InitializeInstanceTable(Environment *);
+   void                           CL_CleanupCL_Instances(Environment *,void *);
+   unsigned                       CL_HashInstance(CLIPSLexeme *);
+   void                           CL_DestroyAllCL_Instances(Environment *,void *);
+   void                           CL_RemoveInstanceData(Environment *,Instance *);
+   Instance                      *CL_FindInstanceBySymbol(Environment *,CLIPSLexeme *);
+   Instance                      *CL_FindInstanceInModule(Environment *,CLIPSLexeme *,Defmodule *,
                                                        Defmodule *,bool);
-   InstanceSlot                  *FindInstanceSlot(Environment *,Instance *,CLIPSLexeme *);
-   int                            FindInstanceTemplateSlot(Environment *,Defclass *,CLIPSLexeme *);
-   PutSlotError                   PutSlotValue(Environment *,Instance *,InstanceSlot *,UDFValue *,UDFValue *,const char *);
-   PutSlotError                   DirectPutSlotValue(Environment *,Instance *,InstanceSlot *,UDFValue *,UDFValue *);
-   PutSlotError                   ValidSlotValue(Environment *,UDFValue *,SlotDescriptor *,Instance *,const char *);
-   Instance                      *CheckInstance(UDFContext *);
-   void                           NoInstanceError(Environment *,const char *,const char *);
-   void                           StaleInstanceAddress(Environment *,const char *,int);
-   bool                           GetInstancesChanged(Environment *);
-   void                           SetInstancesChanged(Environment *,bool);
-   void                           PrintSlot(Environment *,const char *,SlotDescriptor *,Instance *,const char *);
-   void                           PrintInstanceNameAndClass(Environment *,const char *,Instance *,bool);
-   void                           PrintInstanceName(Environment *,const char *,Instance *);
-   void                           PrintInstanceLongForm(Environment *,const char *,Instance *);
+   InstanceSlot                  *CL_FindInstanceSlot(Environment *,Instance *,CLIPSLexeme *);
+   int                            CL_FindInstanceTemplateSlot(Environment *,Defclass *,CLIPSLexeme *);
+   PutSlotError                   CL_PutSlotValue(Environment *,Instance *,InstanceSlot *,UDFValue *,UDFValue *,const char *);
+   PutSlotError                   CL_DirectCL_PutSlotValue(Environment *,Instance *,InstanceSlot *,UDFValue *,UDFValue *);
+   PutSlotError                   CL_ValidSlotValue(Environment *,UDFValue *,SlotDescriptor *,Instance *,const char *);
+   Instance                      *CL_CheckInstance(UDFContext *);
+   void                           CL_NoInstanceError(Environment *,const char *,const char *);
+   void                           CL_StaleInstanceAddress(Environment *,const char *,int);
+   bool                           CL_GetCL_InstancesChanged(Environment *);
+   void                           SetCL_InstancesChanged(Environment *,bool);
+   void                           CL_PrintSlot(Environment *,const char *,SlotDescriptor *,Instance *,const char *);
+   void                           PrintCL_InstanceNameAndClass(Environment *,const char *,Instance *,bool);
+   void                           PrintCL_InstanceName(Environment *,const char *,Instance *);
+   void                           CL_PrintInstanceLongFoCL_rm(Environment *,const char *,Instance *);
 #if DEFRULE_CONSTRUCT && OBJECT_SYSTEM
-   void                           DecrementObjectBasisCount(Environment *,Instance *);
-   void                           IncrementObjectBasisCount(Environment *,Instance *);
-   void                           MatchObjectFunction(Environment *,Instance *);
-   bool                           NetworkSynchronized(Environment *,Instance *);
-   bool                           InstanceIsDeleted(Environment *,Instance *);
+   void                           CL_DecrementObjectBasisCount(Environment *,Instance *);
+   void                           CL_IncrementObjectBasisCount(Environment *,Instance *);
+   void                           CL_MatchObjectFunction(Environment *,Instance *);
+   bool                           CL_NetworkSynchronized(Environment *,Instance *);
+   bool                           CL_InstanceIsDeleted(Environment *,Instance *);
 #endif
 
 #endif /* _H_insfun */

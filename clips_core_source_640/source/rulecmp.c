@@ -67,7 +67,7 @@
                                                   unsigned int,FILE *,unsigned int,unsigned int);
    static void                    JoinToCode(Environment *,FILE *,struct joinNode *,unsigned int,unsigned int);
    static void                    LinkToCode(Environment *,FILE *,struct joinLink *,unsigned int,unsigned int);
-   static void                    DefruleModuleToCode(Environment *,FILE *,Defmodule *,unsigned int,unsigned int,unsigned int);
+   static void                    CL_DefruleModuleToCode(Environment *,FILE *,Defmodule *,unsigned int,unsigned int,unsigned int);
    static void                    DefruleToCode(Environment *,FILE *,Defrule *,unsigned int,unsigned int,unsigned int);
    static void                    CloseDefruleFiles(Environment *,FILE *,FILE *,FILE *,FILE*,unsigned int);
    static void                    BeforeDefrulesCode(Environment *);
@@ -81,13 +81,13 @@
                                                     FILE **,unsigned int *,unsigned int *,unsigned int *);
 
 /***********************************************************/
-/* DefruleCompilerSetup: Initializes the defrule construct */
+/* CL_DefruleCompilerSetup: Initializes the defrule construct */
 /*   for use with the constructs-to-c command.             */
 /***********************************************************/
-void DefruleCompilerSetup(
+void CL_DefruleCompilerSetup(
   Environment *theEnv)
   {
-   DefruleData(theEnv)->DefruleCodeItem = AddCodeGeneratorItem(theEnv,"defrules",0,BeforeDefrulesCode,
+   DefruleData(theEnv)->DefruleCodeItem = CL_AddCodeGeneratorItem(theEnv,"defrules",0,BeforeDefrulesCode,
                                           InitDefruleCode,ConstructToCode,4);
   }
 
@@ -101,7 +101,7 @@ static void BeforeDefrulesCode(
   {
    unsigned long moduleCount, ruleCount, joinCount, linkCount;
 
-   TagRuleNetwork(theEnv,&moduleCount,&ruleCount,&joinCount,&linkCount);
+   CL_TagRuleNetwork(theEnv,&moduleCount,&ruleCount,&joinCount,&linkCount);
   }
 
 /*********************************************************/
@@ -134,7 +134,7 @@ static bool ConstructToCode(
    fprintf(headerFP,"#include \"ruledef.h\"\n");
 
    /*======================================*/
-   /* Save the left and right prime links. */
+   /* CL_Save the left and right prime links. */
    /*======================================*/
 
    if (! TraverseJoinLinks(theEnv,DefruleData(theEnv)->LeftPrimeJoins,fileName,pathName,fileNameBuffer,fileID,headerFP,imageID,
@@ -157,21 +157,21 @@ static bool ConstructToCode(
    /* the file as they are traversed.                         */
    /*=========================================================*/
 
-   for (theModule = GetNextDefmodule(theEnv,NULL);
+   for (theModule = CL_GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = GetNextDefmodule(theEnv,theModule))
+        theModule = CL_GetNextDefmodule(theEnv,theModule))
      {
       /*=========================*/
       /* Set the current module. */
       /*=========================*/
 
-      SetCurrentModule(theEnv,theModule);
+      CL_SetCurrentModule(theEnv,theModule);
 
       /*==========================*/
-      /* Save the defrule module. */
+      /* CL_Save the defrule module. */
       /*==========================*/
 
-      moduleFile = OpenFileIfNeeded(theEnv,moduleFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
+      moduleFile = CL_OpenFileIfNeeded(theEnv,moduleFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
                                     moduleArrayVersion,headerFP,
                                     "struct defruleModule",ModulePrefix(DefruleData(theEnv)->DefruleCodeItem),
                                     false,NULL);
@@ -182,8 +182,8 @@ static bool ConstructToCode(
          return false;
         }
 
-      DefruleModuleToCode(theEnv,moduleFile,theModule,imageID,maxIndices,moduleCount);
-      moduleFile = CloseFileIfNeeded(theEnv,moduleFile,&moduleArrayCount,&moduleArrayVersion,
+      CL_DefruleModuleToCode(theEnv,moduleFile,theModule,imageID,maxIndices,moduleCount);
+      moduleFile = CL_CloseFileIfNeeded(theEnv,moduleFile,&moduleArrayCount,&moduleArrayVersion,
                                      maxIndices,NULL,NULL);
 
       /*=========================================*/
@@ -191,19 +191,19 @@ static bool ConstructToCode(
       /* their disjuncts) in the current module. */
       /*=========================================*/
 
-      for (theDefrule = GetNextDefrule(theEnv,NULL);
+      for (theDefrule = CL_GetNextDefrule(theEnv,NULL);
            theDefrule != NULL;
-           theDefrule = GetNextDefrule(theEnv,theDefrule))
+           theDefrule = CL_GetNextDefrule(theEnv,theDefrule))
         {
          for (theDisjunct = theDefrule;
               theDisjunct != NULL;
               theDisjunct = theDisjunct->disjunct)
            {
             /*===================================*/
-            /* Save the defrule data structures. */
+            /* CL_Save the defrule data structures. */
             /*===================================*/
 
-            defruleFile = OpenFileIfNeeded(theEnv,defruleFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
+            defruleFile = CL_OpenFileIfNeeded(theEnv,defruleFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
                                            defruleArrayVersion,headerFP,
                                            "Defrule",ConstructPrefix(DefruleData(theEnv)->DefruleCodeItem),
                                            false,NULL);
@@ -216,11 +216,11 @@ static bool ConstructToCode(
             DefruleToCode(theEnv,defruleFile,theDisjunct,imageID,maxIndices,
                            moduleCount);
             defruleArrayCount++;
-            defruleFile = CloseFileIfNeeded(theEnv,defruleFile,&defruleArrayCount,&defruleArrayVersion,
+            defruleFile = CL_CloseFileIfNeeded(theEnv,defruleFile,&defruleArrayCount,&defruleArrayVersion,
                                             maxIndices,NULL,NULL);
 
             /*================================*/
-            /* Save the join data structures. */
+            /* CL_Save the join data structures. */
             /*================================*/
 
             if (! RuleCompilerTraverseJoins(theEnv,theDisjunct->lastJoin,fileName,pathName,fileNameBuffer,fileID,headerFP,imageID,
@@ -269,7 +269,7 @@ static bool RuleCompilerTraverseJoins(
      {
       if (joinPtr->marked)
         {
-         *joinFile = OpenFileIfNeeded(theEnv,*joinFile,fileName,pathName,fileNameBuffer,fileID,imageID,fileCount,
+         *joinFile = CL_OpenFileIfNeeded(theEnv,*joinFile,fileName,pathName,fileNameBuffer,fileID,imageID,fileCount,
                                       *joinArrayVersion,headerFP,
                                       "struct joinNode",JoinPrefix(),false,NULL);
          if (*joinFile == NULL)
@@ -277,7 +277,7 @@ static bool RuleCompilerTraverseJoins(
 
          JoinToCode(theEnv,*joinFile,joinPtr,imageID,maxIndices);
          (*joinArrayCount)++;
-         *joinFile = CloseFileIfNeeded(theEnv,*joinFile,joinArrayCount,joinArrayVersion,
+         *joinFile = CL_CloseFileIfNeeded(theEnv,*joinFile,joinArrayCount,joinArrayVersion,
                                        maxIndices,NULL,NULL);
 
 
@@ -300,7 +300,7 @@ static bool RuleCompilerTraverseJoins(
   }
 
 /*******************************************************/
-/* TraverseJoinLinks: Writes out a list of join links. */
+/* TraverseJoinLinks: CL_Writes out a list of join links. */
 /*******************************************************/
 static bool TraverseJoinLinks(
   Environment *theEnv,
@@ -321,7 +321,7 @@ static bool TraverseJoinLinks(
         linkPtr != NULL;
         linkPtr = linkPtr->next)
      {
-      *linkFile = OpenFileIfNeeded(theEnv,*linkFile,fileName,pathName,fileNameBuffer,fileID,imageID,fileCount,
+      *linkFile = CL_OpenFileIfNeeded(theEnv,*linkFile,fileName,pathName,fileNameBuffer,fileID,imageID,fileCount,
                                    *linkArrayVersion,headerFP,
                                    "struct joinLink",LinkPrefix(),false,NULL);
 
@@ -330,7 +330,7 @@ static bool TraverseJoinLinks(
 
       LinkToCode(theEnv,*linkFile,linkPtr,imageID,maxIndices);
       (*linkArrayCount)++;
-      *linkFile = CloseFileIfNeeded(theEnv,*linkFile,linkArrayCount,linkArrayVersion,
+      *linkFile = CL_CloseFileIfNeeded(theEnv,*linkFile,linkArrayCount,linkArrayVersion,
                                     maxIndices,NULL,NULL);
      }
 
@@ -356,33 +356,33 @@ static void CloseDefruleFiles(
    if (linkFile != NULL)
      {
       count = maxIndices;
-      CloseFileIfNeeded(theEnv,linkFile,&count,&arrayVersion,maxIndices,NULL,NULL);
+      CL_CloseFileIfNeeded(theEnv,linkFile,&count,&arrayVersion,maxIndices,NULL,NULL);
      }
 
    if (joinFile != NULL)
      {
       count = maxIndices;
-      CloseFileIfNeeded(theEnv,joinFile,&count,&arrayVersion,maxIndices,NULL,NULL);
+      CL_CloseFileIfNeeded(theEnv,joinFile,&count,&arrayVersion,maxIndices,NULL,NULL);
      }
 
    if (defruleFile != NULL)
      {
       count = maxIndices;
-      CloseFileIfNeeded(theEnv,defruleFile,&count,&arrayVersion,maxIndices,NULL,NULL);
+      CL_CloseFileIfNeeded(theEnv,defruleFile,&count,&arrayVersion,maxIndices,NULL,NULL);
      }
 
    if (moduleFile != NULL)
      {
       count = maxIndices;
-      CloseFileIfNeeded(theEnv,moduleFile,&count,&arrayVersion,maxIndices,NULL,NULL);
+      CL_CloseFileIfNeeded(theEnv,moduleFile,&count,&arrayVersion,maxIndices,NULL,NULL);
      }
   }
 
 /*********************************************************/
-/* DefruleModuleToCode: Writes the C code representation */
+/* CL_DefruleModuleToCode: CL_Writes the C code representation */
 /*   of a single defrule module to the specified file.   */
 /*********************************************************/
-static void DefruleModuleToCode(
+static void CL_DefruleModuleToCode(
   Environment *theEnv,
   FILE *theFile,
   Defmodule *theModule,
@@ -396,15 +396,15 @@ static void DefruleModuleToCode(
 
    fprintf(theFile,"{");
 
-   ConstructModuleToCode(theEnv,theFile,theModule,imageID,maxIndices,
-                         DefruleData(theEnv)->DefruleModuleIndex,
+   CL_ConstructModuleToCode(theEnv,theFile,theModule,imageID,maxIndices,
+                         DefruleData(theEnv)->CL_DefruleModuleIndex,
                          ConstructPrefix(DefruleData(theEnv)->DefruleCodeItem));
 
    fprintf(theFile,",NULL}");
   }
 
 /**********************************************************/
-/* DefruleToCode: Writes the C code representation of a   */
+/* DefruleToCode: CL_Writes the C code representation of a   */
 /*   single defrule data structure to the specified file. */
 /**********************************************************/
 static void DefruleToCode(
@@ -421,7 +421,7 @@ static void DefruleToCode(
 
    fprintf(theFile,"{");
 
-   ConstructHeaderToCode(theEnv,theFile,&theDefrule->header,imageID,maxIndices,
+   CL_ConstructHeaderToCode(theEnv,theFile,&theDefrule->header,imageID,maxIndices,
                                   moduleCount,ModulePrefix(DefruleData(theEnv)->DefruleCodeItem),
                                   ConstructPrefix(DefruleData(theEnv)->DefruleCodeItem));
 
@@ -433,20 +433,20 @@ static void DefruleToCode(
                    theDefrule->salience,theDefrule->localVarCnt,
                    theDefrule->complexity,theDefrule->afterBreakpoint,
                    theDefrule->watchActivation,theDefrule->watchFiring,
-                   theDefrule->autoFocus,theDefrule->executing);
+                   theDefrule->autoCL_Focus,theDefrule->executing);
 
    /*==================*/
    /* Dynamic Salience */
    /*==================*/
 
-   ExpressionToCode(theEnv,theFile,theDefrule->dynamicSalience);
+   CL_ExpressionToCode(theEnv,theFile,theDefrule->dynamicSalience);
    fprintf(theFile,",");
 
    /*=============*/
    /* RHS Actions */
    /*=============*/
 
-   ExpressionToCode(theEnv,theFile,theDefrule->actions);
+   CL_ExpressionToCode(theEnv,theFile,theDefrule->actions);
    fprintf(theFile,",");
 
    /*=========================*/
@@ -490,7 +490,7 @@ static void DefruleToCode(
   }
 
 /***************************************************/
-/* JoinToCode: Writes the C code representation of */
+/* JoinToCode: CL_Writes the C code representation of */
 /*   a single join node to the specified file.     */
 /***************************************************/
 static void JoinToCode(
@@ -536,16 +536,16 @@ static void JoinToCode(
    /* Network Expression */
    /*====================*/
 
-   PrintHashedExpressionReference(theEnv,joinFile,theJoin->networkTest,imageID,maxIndices);
+   CL_PrintHashedExpressionReference(theEnv,joinFile,theJoin->networkTest,imageID,maxIndices);
    fprintf(joinFile,",");
 
-   PrintHashedExpressionReference(theEnv,joinFile,theJoin->secondaryNetworkTest,imageID,maxIndices);
+   CL_PrintHashedExpressionReference(theEnv,joinFile,theJoin->secondaryNetworkTest,imageID,maxIndices);
    fprintf(joinFile,",");
 
-   PrintHashedExpressionReference(theEnv,joinFile,theJoin->leftHash,imageID,maxIndices);
+   CL_PrintHashedExpressionReference(theEnv,joinFile,theJoin->leftHash,imageID,maxIndices);
    fprintf(joinFile,",");
 
-   PrintHashedExpressionReference(theEnv,joinFile,theJoin->rightHash,imageID,maxIndices);
+   CL_PrintHashedExpressionReference(theEnv,joinFile,theJoin->rightHash,imageID,maxIndices);
    fprintf(joinFile,",");
 
    /*============================*/
@@ -556,7 +556,7 @@ static void JoinToCode(
      { fprintf(joinFile,"NULL,"); }
    else if (theJoin->joinFromTheRight == false)
      {
-      theParser = GetPatternParser(theEnv,theJoin->rhsType);
+      theParser = CL_GetPatternParser(theEnv,theJoin->rhsType);
       if (theParser->codeReferenceFunction == NULL) fprintf(joinFile,"NULL,");
       else
         {
@@ -627,7 +627,7 @@ static void JoinToCode(
   }
 
 /***************************************************/
-/* LinkToCode: Writes the C code representation of */
+/* LinkToCode: CL_Writes the C code representation of */
 /*   a single join node to the specified file.     */
 /***************************************************/
 static void LinkToCode(
@@ -670,17 +670,17 @@ static void LinkToCode(
      }
 
    /*===========*/
-   /* Bsave ID. */
+   /* CL_Bsave ID. */
    /*===========*/
 
    fprintf(theFile,"0}");
   }
 
 /*************************************************************/
-/* DefruleCModuleReference: Writes the C code representation */
+/* CL_DefruleCModuleReference: CL_Writes the C code representation */
 /*   of a reference to a defrule module data structure.      */
 /*************************************************************/
-void DefruleCModuleReference(
+void CL_DefruleCModuleReference(
   Environment *theEnv,
   FILE *theFile,
   unsigned long count,
@@ -695,7 +695,7 @@ void DefruleCModuleReference(
 
 
 /*****************************************************************/
-/* InitDefruleCode: Writes out initialization code for defrules. */
+/* InitDefruleCode: CL_Writes out initialization code for defrules. */
 /*****************************************************************/
 static void InitDefruleCode(
   Environment *theEnv,
@@ -709,7 +709,7 @@ static void InitDefruleCode(
 #pragma unused(imageID)
 #endif
 
-   fprintf(initFP,"   DefruleRunTimeInitialize(theEnv,");
+   fprintf(initFP,"   DefruleCL_RunTimeInitialize(theEnv,");
 
    if (DefruleData(theEnv)->RightPrimeJoins == NULL)
      { fprintf(initFP,"NULL,"); }

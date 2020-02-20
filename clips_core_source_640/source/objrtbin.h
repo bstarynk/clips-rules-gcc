@@ -19,7 +19,7 @@
 /*      6.24: Converted INSTANCE_PATTERN_MATCHING to         */
 /*            DEFRULE_CONSTRUCT.                             */
 /*                                                           */
-/*            ResetObjectMatchTimeTags did not pass in the   */
+/*            CL_ResetObjectMatchTimeTags did not pass in the   */
 /*            environment argument when BLOAD_ONLY was set.  */
 /*                                                           */
 /*      6.30: Changed integer type/precision.                */
@@ -69,7 +69,7 @@ struct objectReteBinaryData
 
 #define ClassAlphaPointer(i)   ((i == ULONG_MAX) ? NULL : (CLASS_ALPHA_LINK *) &ObjectReteBinaryData(theEnv)->AlphaLinkArray[i])
 
-   void                    SetupObjectPatternsBload(Environment *);
+   void                    SetupObjectPatternsCL_Bload(Environment *);
 
 #endif /* DEFRULE_CONSTRUCT && OBJECT_SYSTEM */
 

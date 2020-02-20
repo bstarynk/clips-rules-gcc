@@ -28,7 +28,7 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
-/*            Moved WatchGlobals global to defglobalData.    */
+/*            Moved CL_WatchGlobals global to defglobalData.    */
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
@@ -49,9 +49,9 @@
 
 #include "expressn.h"
 
-   bool                    ParseDefglobal(Environment *,const char *);
-   bool                    ReplaceGlobalVariable(Environment *,struct expr *);
-   void                    GlobalReferenceErrorMessage(Environment *,const char *);
+   bool                    CL_ParseDefglobal(Environment *,const char *);
+   bool                    CL_ReplaceGlobalVariable(Environment *,struct expr *);
+   void                    CL_GlobalReferenceErrorMessage(Environment *,const char *);
 
 #endif /* _H_globlpsr */
 

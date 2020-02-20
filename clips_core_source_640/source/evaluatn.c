@@ -21,9 +21,9 @@
 /*                                                           */
 /*      6.24: Renamed BOOLEAN macro type to intBool.         */
 /*                                                           */
-/*            Added EvaluateAndStoreInDataObject function.   */
+/*            Added CL_EvaluateAndStoreInDataObject function.   */
 /*                                                           */
-/*      6.30: Added support for passing context information  */
+/*      6.30: Added support for passing context infoCL_rmation  */
 /*            to user defined functions.                     */
 /*                                                           */
 /*            Added support for external address hash table  */
@@ -42,11 +42,11 @@
 /*                                                           */
 /*            Converted API macros to function calls.        */
 /*                                                           */
-/*      6.40: Added Env prefix to GetEvaluationError and     */
-/*            SetEvaluationError functions.                  */
+/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
+/*            SetCL_EvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to GetHaltExecution and       */
-/*            SetHaltExecution functions.                    */
+/*            Added Env prefix to CL_GetCL_HaltExecution and       */
+/*            SetCL_HaltExecution functions.                    */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -63,7 +63,7 @@
 /*                                                           */
 /*            Removed DATA_OBJECT_ARRAY primitive type.      */
 /*                                                           */
-/*            Modified GetFunctionReference to handle module */
+/*            Modified CL_GetFunctionReference to handle module */
 /*            specifier for funcall.                         */
 /*                                                           */
 /*************************************************************/
@@ -111,7 +111,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    DeallocateEvaluationData(Environment *);
+   static void                    DeallocateCL_EvaluationData(Environment *);
    static void                    PrintCAddress(Environment *,const char *,void *);
    static void                    NewCAddress(UDFContext *,UDFValue *);
    /*
@@ -119,37 +119,37 @@
    */
 
 /**************************************************/
-/* InitializeEvaluationData: Allocates environment */
+/* InitializeCL_EvaluationData: Allocates environment */
 /*    data for expression evaluation.             */
 /**************************************************/
-void InitializeEvaluationData(
+void InitializeCL_EvaluationData(
   Environment *theEnv)
   {
    struct externalAddressType cPointer = { "C", PrintCAddress, PrintCAddress, NULL, NewCAddress, NULL };
 
-   AllocateEnvironmentData(theEnv,EVALUATION_DATA,sizeof(struct evaluationData),DeallocateEvaluationData);
+   CL_AllocateEnvironmentData(theEnv,EVALUATION_DATA,sizeof(struct evaluationData),DeallocateCL_EvaluationData);
 
-   InstallExternalAddressType(theEnv,&cPointer);
+   CL_InstallExternalAddressType(theEnv,&cPointer);
   }
 
 /*****************************************************/
-/* DeallocateEvaluationData: Deallocates environment */
+/* DeallocateCL_EvaluationData: Deallocates environment */
 /*    data for evaluation data.                      */
 /*****************************************************/
-static void DeallocateEvaluationData(
+static void DeallocateCL_EvaluationData(
   Environment *theEnv)
   {
    int i;
 
-   for (i = 0; i < EvaluationData(theEnv)->numberOfAddressTypes; i++)
-     { rtn_struct(theEnv,externalAddressType,EvaluationData(theEnv)->ExternalAddressTypes[i]); }
+   for (i = 0; i < CL_EvaluationData(theEnv)->numberOfAddressTypes; i++)
+     { rtn_struct(theEnv,externalAddressType,CL_EvaluationData(theEnv)->ExternalAddressTypes[i]); }
   }
 
 /**************************************************************/
-/* EvaluateExpression: Evaluates an expression. Returns false */
+/* CL_EvaluateExpression: CL_Evaluates an expression. Returns false */
 /*   if no errors occurred during evaluation, otherwise true. */
 /**************************************************************/
-bool EvaluateExpression(
+bool CL_EvaluateExpression(
   Environment *theEnv,
   struct expr *problem,
   UDFValue *returnValue)
@@ -168,7 +168,7 @@ bool EvaluateExpression(
    if (problem == NULL)
      {
       returnValue->value = FalseSymbol(theEnv);
-      return(EvaluationData(theEnv)->EvaluationError);
+      return(CL_EvaluationData(theEnv)->CL_EvaluationError);
      }
 
    switch (problem->type)
@@ -191,13 +191,13 @@ bool EvaluateExpression(
          fptr = problem->functionValue;
 
 #if PROFILING_FUNCTIONS
-         StartProfile(theEnv,&profileFrame,
+         StartCL_Profile(theEnv,&profileFrame,
                       &fptr->usrData,
-                      ProfileFunctionData(theEnv)->ProfileUserFunctions);
+                      CL_ProfileFunctionData(theEnv)->CL_ProfileCL_UserFunctions);
 #endif
 
-         oldArgument = EvaluationData(theEnv)->CurrentExpression;
-         EvaluationData(theEnv)->CurrentExpression = problem;
+         oldArgument = CL_EvaluationData(theEnv)->CurrentExpression;
+         CL_EvaluationData(theEnv)->CurrentExpression = problem;
 
          theUDFContext.environment = theEnv;
          theUDFContext.context = fptr->context;
@@ -211,10 +211,10 @@ bool EvaluateExpression(
            { returnValue->range = returnValue->multifieldValue->length; }
 
 #if PROFILING_FUNCTIONS
-        EndProfile(theEnv,&profileFrame);
+        CL_EndCL_Profile(theEnv,&profileFrame);
 #endif
 
-        EvaluationData(theEnv)->CurrentExpression = oldArgument;
+        CL_EvaluationData(theEnv)->CurrentExpression = oldArgument;
         break;
         }
 
@@ -226,160 +226,160 @@ bool EvaluateExpression(
 
      case MF_VARIABLE:
      case SF_VARIABLE:
-        if (GetBoundVariable(theEnv,returnValue,problem->lexemeValue) == false)
+        if (CL_GetBoundVariable(theEnv,returnValue,problem->lexemeValue) == false)
           {
-           PrintErrorID(theEnv,"EVALUATN",1,false);
-           WriteString(theEnv,STDERR,"Variable ");
+           CL_PrintErrorID(theEnv,"EVALUATN",1,false);
+           CL_WriteString(theEnv,STDERR,"Variable ");
            if (problem->type == MF_VARIABLE)
-             { WriteString(theEnv,STDERR,"$?"); }
+             { CL_WriteString(theEnv,STDERR,"$?"); }
            else
-             { WriteString(theEnv,STDERR,"?"); }
-           WriteString(theEnv,STDERR,problem->lexemeValue->contents);
-           WriteString(theEnv,STDERR," is unbound.\n");
+             { CL_WriteString(theEnv,STDERR,"?"); }
+           CL_WriteString(theEnv,STDERR,problem->lexemeValue->contents);
+           CL_WriteString(theEnv,STDERR," is unbound.\n");
            returnValue->value = FalseSymbol(theEnv);
-           SetEvaluationError(theEnv,true);
+           SetCL_EvaluationError(theEnv,true);
           }
         break;
 
       default:
-        if (EvaluationData(theEnv)->PrimitivesArray[problem->type] == NULL)
+        if (CL_EvaluationData(theEnv)->PrimitivesArray[problem->type] == NULL)
           {
-           SystemError(theEnv,"EVALUATN",3);
-           ExitRouter(theEnv,EXIT_FAILURE);
+           CL_SystemError(theEnv,"EVALUATN",3);
+           CL_ExitRouter(theEnv,EXIT_FAILURE);
           }
 
-        if (EvaluationData(theEnv)->PrimitivesArray[problem->type]->copyToEvaluate)
+        if (CL_EvaluationData(theEnv)->PrimitivesArray[problem->type]->copyToCL_Evaluate)
           {
            returnValue->value = problem->value;
            break;
           }
 
-        if (EvaluationData(theEnv)->PrimitivesArray[problem->type]->evaluateFunction == NULL)
+        if (CL_EvaluationData(theEnv)->PrimitivesArray[problem->type]->evaluateFunction == NULL)
           {
-           SystemError(theEnv,"EVALUATN",4);
-           ExitRouter(theEnv,EXIT_FAILURE);
+           CL_SystemError(theEnv,"EVALUATN",4);
+           CL_ExitRouter(theEnv,EXIT_FAILURE);
           }
 
-        oldArgument = EvaluationData(theEnv)->CurrentExpression;
-        EvaluationData(theEnv)->CurrentExpression = problem;
+        oldArgument = CL_EvaluationData(theEnv)->CurrentExpression;
+        CL_EvaluationData(theEnv)->CurrentExpression = problem;
 
 #if PROFILING_FUNCTIONS
-        StartProfile(theEnv,&profileFrame,
-                     &EvaluationData(theEnv)->PrimitivesArray[problem->type]->usrData,
-                     ProfileFunctionData(theEnv)->ProfileUserFunctions);
+        StartCL_Profile(theEnv,&profileFrame,
+                     &CL_EvaluationData(theEnv)->PrimitivesArray[problem->type]->usrData,
+                     CL_ProfileFunctionData(theEnv)->CL_ProfileCL_UserFunctions);
 #endif
 
-        (*EvaluationData(theEnv)->PrimitivesArray[problem->type]->evaluateFunction)(theEnv,problem->value,returnValue);
+        (*CL_EvaluationData(theEnv)->PrimitivesArray[problem->type]->evaluateFunction)(theEnv,problem->value,returnValue);
 
 #if PROFILING_FUNCTIONS
-        EndProfile(theEnv,&profileFrame);
+        CL_EndCL_Profile(theEnv,&profileFrame);
 #endif
 
-        EvaluationData(theEnv)->CurrentExpression = oldArgument;
+        CL_EvaluationData(theEnv)->CurrentExpression = oldArgument;
         break;
      }
      
-   return EvaluationData(theEnv)->EvaluationError;
+   return CL_EvaluationData(theEnv)->CL_EvaluationError;
   }
 
 /******************************************/
-/* InstallPrimitive: Installs a primitive */
+/* CL_InstallPrimitive: Installs a primitive */
 /*   data type in the primitives array.   */
 /******************************************/
-void InstallPrimitive(
+void CL_InstallPrimitive(
   Environment *theEnv,
   struct entityRecord *thePrimitive,
   int whichPosition)
   {
-   if (EvaluationData(theEnv)->PrimitivesArray[whichPosition] != NULL)
+   if (CL_EvaluationData(theEnv)->PrimitivesArray[whichPosition] != NULL)
      {
-      SystemError(theEnv,"EVALUATN",5);
-      ExitRouter(theEnv,EXIT_FAILURE);
+      CL_SystemError(theEnv,"EVALUATN",5);
+      CL_ExitRouter(theEnv,EXIT_FAILURE);
      }
 
-   EvaluationData(theEnv)->PrimitivesArray[whichPosition] = thePrimitive;
+   CL_EvaluationData(theEnv)->PrimitivesArray[whichPosition] = thePrimitive;
   }
 
 /******************************************************/
-/* InstallExternalAddressType: Installs an external   */
+/* CL_InstallExternalAddressType: Installs an external   */
 /*   address type in the external address type array. */
 /******************************************************/
-int InstallExternalAddressType(
+int CL_InstallExternalAddressType(
   Environment *theEnv,
   struct externalAddressType *theAddressType)
   {
    struct externalAddressType *copyEAT;
 
-   int rv = EvaluationData(theEnv)->numberOfAddressTypes;
+   int rv = CL_EvaluationData(theEnv)->numberOfAddressTypes;
 
-   if (EvaluationData(theEnv)->numberOfAddressTypes == MAXIMUM_EXTERNAL_ADDRESS_TYPES)
+   if (CL_EvaluationData(theEnv)->numberOfAddressTypes == MAXIMUM_EXTERNAL_ADDRESS_TYPES)
      {
-      SystemError(theEnv,"EVALUATN",6);
-      ExitRouter(theEnv,EXIT_FAILURE);
+      CL_SystemError(theEnv,"EVALUATN",6);
+      CL_ExitRouter(theEnv,EXIT_FAILURE);
      }
 
-   copyEAT = (struct externalAddressType *) genalloc(theEnv,sizeof(struct externalAddressType));
+   copyEAT = (struct externalAddressType *) CL_genalloc(theEnv,sizeof(struct externalAddressType));
    memcpy(copyEAT,theAddressType,sizeof(struct externalAddressType));
-   EvaluationData(theEnv)->ExternalAddressTypes[EvaluationData(theEnv)->numberOfAddressTypes++] = copyEAT;
+   CL_EvaluationData(theEnv)->ExternalAddressTypes[CL_EvaluationData(theEnv)->numberOfAddressTypes++] = copyEAT;
 
    return rv;
   }
 
 /*******************/
-/* ResetErrorFlags */
+/* CL_ResetErrorFlags */
 /*******************/
-void ResetErrorFlags(
+void CL_ResetErrorFlags(
   Environment *theEnv)
   {
-   EvaluationData(theEnv)->EvaluationError = false;
-   EvaluationData(theEnv)->HaltExecution = false;
+   CL_EvaluationData(theEnv)->CL_EvaluationError = false;
+   CL_EvaluationData(theEnv)->CL_HaltExecution = false;
   }
 
 /******************************************************/
-/* SetEvaluationError: Sets the EvaluationError flag. */
+/* SetCL_EvaluationError: Sets the CL_EvaluationError flag. */
 /******************************************************/
-void SetEvaluationError(
+void SetCL_EvaluationError(
   Environment *theEnv,
   bool value)
   {
-   EvaluationData(theEnv)->EvaluationError = value;
+   CL_EvaluationData(theEnv)->CL_EvaluationError = value;
    if (value == true)
-     { EvaluationData(theEnv)->HaltExecution = true; }
+     { CL_EvaluationData(theEnv)->CL_HaltExecution = true; }
   }
 
 /*********************************************************/
-/* GetEvaluationError: Returns the EvaluationError flag. */
+/* GetCL_EvaluationError: Returns the CL_EvaluationError flag. */
 /*********************************************************/
-bool GetEvaluationError(
+bool GetCL_EvaluationError(
   Environment *theEnv)
   {
-   return(EvaluationData(theEnv)->EvaluationError);
+   return(CL_EvaluationData(theEnv)->CL_EvaluationError);
   }
 
 /**************************************************/
-/* SetHaltExecution: Sets the HaltExecution flag. */
+/* SetCL_HaltExecution: Sets the CL_HaltExecution flag. */
 /**************************************************/
-void SetHaltExecution(
+void SetCL_HaltExecution(
   Environment *theEnv,
   bool value)
   {
-   EvaluationData(theEnv)->HaltExecution = value;
+   CL_EvaluationData(theEnv)->CL_HaltExecution = value;
   }
 
 /*****************************************************/
-/* GetHaltExecution: Returns the HaltExecution flag. */
+/* CL_GetCL_HaltExecution: Returns the CL_HaltExecution flag. */
 /*****************************************************/
-bool GetHaltExecution(
+bool CL_GetCL_HaltExecution(
   Environment *theEnv)
   {
-   return(EvaluationData(theEnv)->HaltExecution);
+   return(CL_EvaluationData(theEnv)->CL_HaltExecution);
   }
 
 /*****************************************************/
-/* ReturnValues: Returns a linked list of UDFValue */
+/* CL_ReturnValues: Returns a linked list of UDFValue */
 /*   structures to the pool of free memory.          */
 /*****************************************************/
-void ReturnValues(
+void CL_ReturnValues(
   Environment *theEnv,
   UDFValue *garbagePtr,
   bool decrementSupplementalInfo)
@@ -389,19 +389,19 @@ void ReturnValues(
    while (garbagePtr != NULL)
      {
       nextPtr = garbagePtr->next;
-      ReleaseUDFV(theEnv,garbagePtr);
+      CL_ReleaseUDFV(theEnv,garbagePtr);
       if ((garbagePtr->supplementalInfo != NULL) && decrementSupplementalInfo)
-        { ReleaseLexeme(theEnv,(CLIPSLexeme *) garbagePtr->supplementalInfo); }
+        { CL_ReleaseLexeme(theEnv,(CLIPSLexeme *) garbagePtr->supplementalInfo); }
       rtn_struct(theEnv,udfValue,garbagePtr);
       garbagePtr = nextPtr;
      }
   }
 
 /**************************************************/
-/* WriteCLIPSValue: Prints a CLIPSValue structure */
+/* CL_WriteCLIPSValue: Prints a CLIPSValue structure */
 /*   to the specified logical name.               */
 /**************************************************/
-void WriteCLIPSValue(
+void CL_WriteCLIPSValue(
   Environment *theEnv,
   const char *fileid,
   CLIPSValue *argPtr)
@@ -419,29 +419,29 @@ void WriteCLIPSValue(
       case INSTANCE_NAME_TYPE:
       case INSTANCE_ADDRESS_TYPE:
 #endif
-        PrintAtom(theEnv,fileid,argPtr->header->type,argPtr->value);
+        CL_PrintAtom(theEnv,fileid,argPtr->header->type,argPtr->value);
         break;
 
       case MULTIFIELD_TYPE:
-        PrintMultifieldDriver(theEnv,fileid,argPtr->multifieldValue,
+        CL_PrintMultifieldDriver(theEnv,fileid,argPtr->multifieldValue,
                               0,argPtr->multifieldValue->length,true);
         break;
 
       default:
-        WriteString(theEnv,fileid,"<UnknownPrintType");
-        WriteInteger(theEnv,fileid,argPtr->header->type);
-        WriteString(theEnv,fileid,">");
-        SetHaltExecution(theEnv,true);
-        SetEvaluationError(theEnv,true);
+        CL_WriteString(theEnv,fileid,"<UnknownPrintType");
+        CL_WriteInteger(theEnv,fileid,argPtr->header->type);
+        CL_WriteString(theEnv,fileid,">");
+        SetCL_HaltExecution(theEnv,true);
+        SetCL_EvaluationError(theEnv,true);
         break;
      }
   }
 
 /**********************************************/
-/* WriteUDFValue: Prints a UDFValue structure */
+/* CL_WriteUDFValue: Prints a UDFValue structure */
 /*   to the specified logical name.           */
 /**********************************************/
-void WriteUDFValue(
+void CL_WriteUDFValue(
   Environment *theEnv,
   const char *fileid,
   UDFValue *argPtr)
@@ -459,98 +459,98 @@ void WriteUDFValue(
       case INSTANCE_NAME_TYPE:
       case INSTANCE_ADDRESS_TYPE:
 #endif
-        PrintAtom(theEnv,fileid,argPtr->header->type,argPtr->value);
+        CL_PrintAtom(theEnv,fileid,argPtr->header->type,argPtr->value);
         break;
 
       case MULTIFIELD_TYPE:
-        PrintMultifieldDriver(theEnv,fileid,argPtr->multifieldValue,
+        CL_PrintMultifieldDriver(theEnv,fileid,argPtr->multifieldValue,
                               argPtr->begin,argPtr->range,true);
         break;
 
       default:
-        WriteString(theEnv,fileid,"<UnknownPrintType");
-        WriteInteger(theEnv,fileid,argPtr->header->type);
-        WriteString(theEnv,fileid,">");
-        SetHaltExecution(theEnv,true);
-        SetEvaluationError(theEnv,true);
+        CL_WriteString(theEnv,fileid,"<UnknownPrintType");
+        CL_WriteInteger(theEnv,fileid,argPtr->header->type);
+        CL_WriteString(theEnv,fileid,">");
+        SetCL_HaltExecution(theEnv,true);
+        SetCL_EvaluationError(theEnv,true);
         break;
      }
   }
 
 /*************************************************/
-/* SetMultifieldErrorValue: Creates a multifield */
+/* CL_SetMultifieldErrorValue: Creates a multifield */
 /*   value of length zero for error returns.     */
 /*************************************************/
-void SetMultifieldErrorValue(
+void CL_SetMultifieldErrorValue(
   Environment *theEnv,
   UDFValue *returnValue)
   {
-   returnValue->value = CreateMultifield(theEnv,0L);
+   returnValue->value = CL_CreateMultifield(theEnv,0L);
    returnValue->begin = 0;
    returnValue->range = 0;
   }
 
 /***********************************************/
-/* RetainUDFV: Increments the appropriate count */
+/* CL_RetainUDFV: Increments the appropriate count */
 /*   (in use) values for a UDFValue structure. */
 /***********************************************/
-void RetainUDFV(
+void CL_RetainUDFV(
   Environment *theEnv,
   UDFValue *vPtr)
   {
    if (vPtr->header->type == MULTIFIELD_TYPE)
-     { IncrementCLIPSValueMultifieldReferenceCount(theEnv,vPtr->multifieldValue); }
+     { CL_IncrementCLIPSValueMultifieldReferenceCount(theEnv,vPtr->multifieldValue); }
    else
-     { Retain(theEnv,vPtr->header); }
+     { CL_Retain(theEnv,vPtr->header); }
   }
 
 /***********************************************/
-/* RetainUDFV: Decrements the appropriate count */
+/* CL_RetainUDFV: Decrements the appropriate count */
 /*   (in use) values for a UDFValue structure. */
 /***********************************************/
-void ReleaseUDFV(
+void CL_ReleaseUDFV(
   Environment *theEnv,
   UDFValue *vPtr)
   {
    if (vPtr->header->type == MULTIFIELD_TYPE)
-     { DecrementCLIPSValueMultifieldReferenceCount(theEnv,vPtr->multifieldValue); }
+     { CL_DecrementCLIPSValueMultifieldReferenceCount(theEnv,vPtr->multifieldValue); }
    else
-     { Release(theEnv,vPtr->header); }
+     { CL_Release(theEnv,vPtr->header); }
   }
 
 /*************************************************/
-/* RetainCV: Increments the appropriate count    */
+/* CL_RetainCV: Increments the appropriate count    */
 /*   (in use) values for a CLIPSValue structure. */
 /*************************************************/
-void RetainCV(
+void CL_RetainCV(
   Environment *theEnv,
   CLIPSValue *vPtr)
   {
    if (vPtr->header->type == MULTIFIELD_TYPE)
-     { IncrementCLIPSValueMultifieldReferenceCount(theEnv,vPtr->multifieldValue); }
+     { CL_IncrementCLIPSValueMultifieldReferenceCount(theEnv,vPtr->multifieldValue); }
    else
-     { Retain(theEnv,vPtr->header); }
+     { CL_Retain(theEnv,vPtr->header); }
   }
 
 /*************************************************/
-/* ReleaseCV: Decrements the appropriate count   */
+/* CL_ReleaseCV: Decrements the appropriate count   */
 /*   (in use) values for a CLIPSValue structure. */
 /*************************************************/
-void ReleaseCV(
+void CL_ReleaseCV(
   Environment *theEnv,
   CLIPSValue *vPtr)
   {
    if (vPtr->header->type == MULTIFIELD_TYPE)
-     { DecrementCLIPSValueMultifieldReferenceCount(theEnv,vPtr->multifieldValue); }
+     { CL_DecrementCLIPSValueMultifieldReferenceCount(theEnv,vPtr->multifieldValue); }
    else
-     { Release(theEnv,vPtr->header); }
+     { CL_Release(theEnv,vPtr->header); }
   }
 
 /******************************************/
-/* Retain: Increments the reference count */
+/* CL_Retain: Increments the reference count */
 /*   of an atomic data type.              */
 /******************************************/
-void Retain(
+void CL_Retain(
   Environment *theEnv,
   TypeHeader *th)
   {
@@ -577,18 +577,18 @@ void Retain(
         break;
 
       case MULTIFIELD_TYPE:
-        RetainMultifield(theEnv,(Multifield *) th);
+        CL_RetainMultifield(theEnv,(Multifield *) th);
         break;
         
 #if OBJECT_SYSTEM
       case INSTANCE_ADDRESS_TYPE:
-        RetainInstance((Instance *) th);
+        CL_RetainInstance((Instance *) th);
         break;
 #endif
 
 #if DEFTEMPLATE_CONSTRUCT
       case FACT_ADDRESS_TYPE:
-        RetainFact((Fact *) th);
+        CL_RetainFact((Fact *) th);
         break;
 #endif
      
@@ -596,17 +596,17 @@ void Retain(
         break;
 
       default:
-        SystemError(theEnv,"EVALUATN",7);
-        ExitRouter(theEnv,EXIT_FAILURE);
+        CL_SystemError(theEnv,"EVALUATN",7);
+        CL_ExitRouter(theEnv,EXIT_FAILURE);
         break;
      }
   }
 
 /*************************************/
-/* Release: Decrements the reference */
+/* CL_Release: Decrements the reference */
 /*   count of an atomic data type.   */
 /*************************************/
-void Release(
+void CL_Release(
   Environment *theEnv,
   TypeHeader *th)
   {
@@ -617,34 +617,34 @@ void Release(
 #if OBJECT_SYSTEM
       case INSTANCE_NAME_TYPE:
 #endif
-        ReleaseLexeme(theEnv,(CLIPSLexeme *) th);
+        CL_ReleaseLexeme(theEnv,(CLIPSLexeme *) th);
         break;
 
       case FLOAT_TYPE:
-        ReleaseFloat(theEnv,(CLIPSFloat *) th);
+        CL_ReleaseFloat(theEnv,(CLIPSFloat *) th);
         break;
 
       case INTEGER_TYPE:
-        ReleaseInteger(theEnv,(CLIPSInteger *) th);
+        CL_ReleaseInteger(theEnv,(CLIPSInteger *) th);
         break;
 
       case EXTERNAL_ADDRESS_TYPE:
-        ReleaseExternalAddress(theEnv,(CLIPSExternalAddress *) th);
+        CL_ReleaseExternalAddress(theEnv,(CLIPSExternalAddress *) th);
         break;
 
       case MULTIFIELD_TYPE:
-        ReleaseMultifield(theEnv,(Multifield *) th);
+        CL_ReleaseMultifield(theEnv,(Multifield *) th);
         break;
         
 #if OBJECT_SYSTEM
       case INSTANCE_ADDRESS_TYPE:
-        ReleaseInstance((Instance *) th);
+        CL_ReleaseInstance((Instance *) th);
         break;
 #endif
      
 #if DEFTEMPLATE_CONSTRUCT
       case FACT_ADDRESS_TYPE:
-        ReleaseFact((Fact *) th);
+        CL_ReleaseFact((Fact *) th);
         break;
 #endif
 
@@ -652,17 +652,17 @@ void Release(
         break;
 
       default:
-        SystemError(theEnv,"EVALUATN",8);
-        ExitRouter(theEnv,EXIT_FAILURE);
+        CL_SystemError(theEnv,"EVALUATN",8);
+        CL_ExitRouter(theEnv,EXIT_FAILURE);
         break;
      }
   }
 
 /*****************************************/
-/* AtomInstall: Increments the reference */
+/* CL_AtomInstall: Increments the reference */
 /*   count of an atomic data type.       */
 /*****************************************/
-void AtomInstall(
+void CL_AtomInstall(
   Environment *theEnv,
   unsigned short type,
   void *vPtr)
@@ -693,26 +693,26 @@ void AtomInstall(
         break;
 
       case MULTIFIELD_TYPE:
-        RetainMultifield(theEnv,(Multifield *) vPtr);
+        CL_RetainMultifield(theEnv,(Multifield *) vPtr);
         break;
 
       case VOID_TYPE:
         break;
 
       default:
-        if (EvaluationData(theEnv)->PrimitivesArray[type] == NULL) break;
-        if (EvaluationData(theEnv)->PrimitivesArray[type]->bitMap) IncrementBitMapCount(vPtr);
-        else if (EvaluationData(theEnv)->PrimitivesArray[type]->incrementBusyCount)
-          { (*EvaluationData(theEnv)->PrimitivesArray[type]->incrementBusyCount)(theEnv,vPtr); }
+        if (CL_EvaluationData(theEnv)->PrimitivesArray[type] == NULL) break;
+        if (CL_EvaluationData(theEnv)->PrimitivesArray[type]->bitMap) IncrementBitMapCount(vPtr);
+        else if (CL_EvaluationData(theEnv)->PrimitivesArray[type]->incrementBusyCount)
+          { (*CL_EvaluationData(theEnv)->PrimitivesArray[type]->incrementBusyCount)(theEnv,vPtr); }
         break;
      }
   }
 
 /*******************************************/
-/* AtomDeinstall: Decrements the reference */
+/* CL_AtomDeinstall: Decrements the reference */
 /*   count of an atomic data type.         */
 /*******************************************/
-void AtomDeinstall(
+void CL_AtomDeinstall(
   Environment *theEnv,
   unsigned short type,
   void *vPtr)
@@ -727,41 +727,41 @@ void AtomDeinstall(
 #if OBJECT_SYSTEM
       case INSTANCE_NAME_TYPE:
 #endif
-        ReleaseLexeme(theEnv,(CLIPSLexeme *) vPtr);
+        CL_ReleaseLexeme(theEnv,(CLIPSLexeme *) vPtr);
         break;
 
       case FLOAT_TYPE:
-        ReleaseFloat(theEnv,(CLIPSFloat *) vPtr);
+        CL_ReleaseFloat(theEnv,(CLIPSFloat *) vPtr);
         break;
 
       case INTEGER_TYPE:
-        ReleaseInteger(theEnv,(CLIPSInteger *) vPtr);
+        CL_ReleaseInteger(theEnv,(CLIPSInteger *) vPtr);
         break;
 
       case EXTERNAL_ADDRESS_TYPE:
-        ReleaseExternalAddress(theEnv,(CLIPSExternalAddress *) vPtr);
+        CL_ReleaseExternalAddress(theEnv,(CLIPSExternalAddress *) vPtr);
         break;
 
       case MULTIFIELD_TYPE:
-        ReleaseMultifield(theEnv,(Multifield *) vPtr);
+        CL_ReleaseMultifield(theEnv,(Multifield *) vPtr);
         break;
 
       case VOID_TYPE:
         break;
 
       default:
-        if (EvaluationData(theEnv)->PrimitivesArray[type] == NULL) break;
-        if (EvaluationData(theEnv)->PrimitivesArray[type]->bitMap) DecrementBitMapReferenceCount(theEnv,(CLIPSBitMap *) vPtr);
-        else if (EvaluationData(theEnv)->PrimitivesArray[type]->decrementBusyCount)
-          { (*EvaluationData(theEnv)->PrimitivesArray[type]->decrementBusyCount)(theEnv,vPtr); }
+        if (CL_EvaluationData(theEnv)->PrimitivesArray[type] == NULL) break;
+        if (CL_EvaluationData(theEnv)->PrimitivesArray[type]->bitMap) CL_DecrementBitMapReferenceCount(theEnv,(CLIPSBitMap *) vPtr);
+        else if (CL_EvaluationData(theEnv)->PrimitivesArray[type]->decrementBusyCount)
+          { (*CL_EvaluationData(theEnv)->PrimitivesArray[type]->decrementBusyCount)(theEnv,vPtr); }
      }
   }
 
 /***************************************************/
-/* CopyDataObject: Copies the values from a source */
+/* CL_CopyDataObject: Copies the values from a source */
 /*   UDFValue to a destination UDFValue.           */
 /***************************************************/
-void CopyDataObject(
+void CL_CopyDataObject(
   Environment *theEnv,
   UDFValue *dst,
   UDFValue *src,
@@ -773,18 +773,18 @@ void CopyDataObject(
      }
    else
      {
-      DuplicateMultifield(theEnv,dst,src);
+      CL_DuplicateMultifield(theEnv,dst,src);
       if (garbageMultifield)
-        { AddToMultifieldList(theEnv,dst->multifieldValue); }
+        { CL_AddToMultifieldList(theEnv,dst->multifieldValue); }
      }
   }
 
 /***********************************************/
-/* TransferDataObjectValues: Copies the values */
+/* CL_TransferDataObjectValues: Copies the values */
 /*   directly from a source UDFValue to a    */
 /*   destination UDFValue.                   */
 /***********************************************/
-void TransferDataObjectValues(
+void CL_TransferDataObjectValues(
   UDFValue *dst,
   UDFValue *src)
   {
@@ -796,12 +796,12 @@ void TransferDataObjectValues(
   }
 
 /************************************************************************/
-/* ConvertValueToExpression: Converts the value stored in a data object */
+/* CL_ConvertValueToExpression: Converts the value stored in a data object */
 /*   into an expression. For multifield values, a chain of expressions  */
 /*   is generated and the chain is linked by the nextArg field. For a   */
 /*   single field value, a single expression is created.                */
 /************************************************************************/
-struct expr *ConvertValueToExpression(
+struct expr *CL_ConvertValueToExpression(
   Environment *theEnv,
   UDFValue *theValue)
   {
@@ -809,11 +809,11 @@ struct expr *ConvertValueToExpression(
    struct expr *head = NULL, *last = NULL, *newItem;
 
    if (theValue->header->type != MULTIFIELD_TYPE)
-     { return(GenConstant(theEnv,theValue->header->type,theValue->value)); }
+     { return(CL_GenConstant(theEnv,theValue->header->type,theValue->value)); }
 
    for (i = theValue->begin; i < (theValue->begin + theValue->range); i++)
      {
-      newItem = GenConstant(theEnv,theValue->multifieldValue->contents[i].header->type,
+      newItem = CL_GenConstant(theEnv,theValue->multifieldValue->contents[i].header->type,
                                    theValue->multifieldValue->contents[i].value);
       if (last == NULL) head = newItem;
       else last->nextArg = newItem;
@@ -821,16 +821,16 @@ struct expr *ConvertValueToExpression(
      }
 
    if (head == NULL)
-     return(GenConstant(theEnv,FCALL,FindFunction(theEnv,"create$")));
+     return(CL_GenConstant(theEnv,FCALL,CL_FindFunction(theEnv,"create$")));
 
    return(head);
   }
 
 /****************************************/
-/* GetAtomicHashValue: Returns the hash */
+/* CL_GetAtomicHashValue: Returns the hash */
 /*   value for an atomic data type.     */
 /****************************************/
-unsigned long GetAtomicHashValue(
+unsigned long CL_GetAtomicHashValue(
   unsigned short type,
   void *value,
   unsigned short position)
@@ -886,12 +886,12 @@ unsigned long GetAtomicHashValue(
   }
 
 /***********************************************************/
-/* FunctionReferenceExpression: Returns an expression with */
+/* CL_FunctionReferenceExpression: Returns an expression with */
 /*   an appropriate expression reference to the specified  */
 /*   name if it is the name of a deffunction, defgeneric,  */
 /*   or user/system defined function.                      */
 /***********************************************************/
-struct expr *FunctionReferenceExpression(
+struct expr *CL_FunctionReferenceExpression(
   Environment *theEnv,
   const char *name)
   {
@@ -908,8 +908,8 @@ struct expr *FunctionReferenceExpression(
    /*=====================================================*/
 
 #if DEFFUNCTION_CONSTRUCT
-   if ((dptr = LookupDeffunctionInScope(theEnv,name)) != NULL)
-     { return(GenConstant(theEnv,PCALL,dptr)); }
+   if ((dptr = CL_LookupDeffunctionInScope(theEnv,name)) != NULL)
+     { return(CL_GenConstant(theEnv,PCALL,dptr)); }
 #endif
 
    /*====================================================*/
@@ -917,8 +917,8 @@ struct expr *FunctionReferenceExpression(
    /*====================================================*/
 
 #if DEFGENERIC_CONSTRUCT
-   if ((gfunc = LookupDefgenericInScope(theEnv,name)) != NULL)
-     { return(GenConstant(theEnv,GCALL,gfunc)); }
+   if ((gfunc = CL_LookupDefgenericInScope(theEnv,name)) != NULL)
+     { return(CL_GenConstant(theEnv,GCALL,gfunc)); }
 #endif
 
    /*======================================*/
@@ -926,8 +926,8 @@ struct expr *FunctionReferenceExpression(
    /* a system or user defined function.   */
    /*======================================*/
 
-   if ((fptr = FindFunction(theEnv,name)) != NULL)
-     { return(GenConstant(theEnv,FCALL,fptr)); }
+   if ((fptr = CL_FindFunction(theEnv,name)) != NULL)
+     { return(CL_GenConstant(theEnv,FCALL,fptr)); }
 
    /*===================================================*/
    /* The specified function name is not a deffunction, */
@@ -938,12 +938,12 @@ struct expr *FunctionReferenceExpression(
   }
 
 /******************************************************************/
-/* GetFunctionReference: Fills an expression with an appropriate  */
+/* CL_GetFunctionReference: Fills an expression with an appropriate  */
 /*   expression reference to the specified name if it is the      */
 /*   name of a deffunction, defgeneric, or user/system defined    */
 /*   function.                                                    */
 /******************************************************************/
-bool GetFunctionReference(
+bool CL_GetFunctionReference(
   Environment *theEnv,
   const char *name,
   Expression *theReference)
@@ -968,10 +968,10 @@ bool GetFunctionReference(
    /* Look for a module specifier. */
    /*==============================*/
 
-   if ((position = FindModuleSeparator(name)) != 0)
+   if ((position = CL_FindModuleSeparator(name)) != 0)
      {
-      moduleName = ExtractModuleName(theEnv,position,name);
-      constructName = ExtractConstructName(theEnv,position,name,SYMBOL_TYPE);
+      moduleName = CL_ExtractModuleName(theEnv,position,name);
+      constructName = CL_ExtractConstructName(theEnv,position,name,SYMBOL_TYPE);
       moduleSpecified = true;
      }
 
@@ -982,10 +982,10 @@ bool GetFunctionReference(
 #if DEFGENERIC_CONSTRUCT
    if (moduleSpecified)
      {
-      if (ConstructExported(theEnv,"defgeneric",moduleName,constructName) ||
-          GetCurrentModule(theEnv) == FindDefmodule(theEnv,moduleName->contents))
+      if (CL_ConstructExported(theEnv,"defgeneric",moduleName,constructName) ||
+          CL_GetCurrentModule(theEnv) == CL_FindDefmodule(theEnv,moduleName->contents))
         {
-         if ((gfunc = FindDefgenericInModule(theEnv,name)) != NULL)
+         if ((gfunc = CL_FindDefgenericInModule(theEnv,name)) != NULL)
            {
             theReference->type = GCALL;
             theReference->value = gfunc;
@@ -995,7 +995,7 @@ bool GetFunctionReference(
      }
    else
      {
-      if ((gfunc = LookupDefgenericInScope(theEnv,name)) != NULL)
+      if ((gfunc = CL_LookupDefgenericInScope(theEnv,name)) != NULL)
         {
          theReference->type = GCALL;
          theReference->value = gfunc;
@@ -1011,10 +1011,10 @@ bool GetFunctionReference(
 #if DEFFUNCTION_CONSTRUCT
    if (moduleSpecified)
      {
-      if (ConstructExported(theEnv,"deffunction",moduleName,constructName) ||
-          GetCurrentModule(theEnv) == FindDefmodule(theEnv,moduleName->contents))
+      if (CL_ConstructExported(theEnv,"deffunction",moduleName,constructName) ||
+          CL_GetCurrentModule(theEnv) == CL_FindDefmodule(theEnv,moduleName->contents))
         {
-         if ((dptr = FindDeffunctionInModule(theEnv,name)) != NULL)
+         if ((dptr = CL_FindDeffunctionInModule(theEnv,name)) != NULL)
            {
             theReference->type = PCALL;
             theReference->value = dptr;
@@ -1024,7 +1024,7 @@ bool GetFunctionReference(
      }
    else
      {
-      if ((dptr = LookupDeffunctionInScope(theEnv,name)) != NULL)
+      if ((dptr = CL_LookupDeffunctionInScope(theEnv,name)) != NULL)
         {
          theReference->type = PCALL;
          theReference->value = dptr;
@@ -1038,7 +1038,7 @@ bool GetFunctionReference(
    /* a system or user defined function.   */
    /*======================================*/
 
-   if ((fptr = FindFunction(theEnv,name)) != NULL)
+   if ((fptr = CL_FindFunction(theEnv,name)) != NULL)
      {
       theReference->type = FCALL;
       theReference->value = fptr;
@@ -1054,9 +1054,9 @@ bool GetFunctionReference(
   }
 
 /*******************************************************/
-/* DOsEqual: Determines if two DATA_OBJECTS are equal. */
+/* CL_DOsEqual: DeteCL_rmines if two DATA_OBJECTS are equal. */
 /*******************************************************/
-bool DOsEqual(
+bool CL_DOsEqual(
   UDFValue *dobj1,
   UDFValue *dobj2)
   {
@@ -1065,7 +1065,7 @@ bool DOsEqual(
 
    if (dobj1->header->type == MULTIFIELD_TYPE)
      {
-      if (MultifieldDOsEqual(dobj1,dobj2) == false)
+      if (MultifieldCL_DOsEqual(dobj1,dobj2) == false)
         { return false; }
      }
    else if (dobj1->value != dobj2->value)
@@ -1075,8 +1075,8 @@ bool DOsEqual(
   }
 
 /***********************************************************
-  NAME         : EvaluateAndStoreInDataObject
-  DESCRIPTION  : Evaluates slot-value expressions
+  NAME         : CL_EvaluateAndStoreInDataObject
+  DESCRIPTION  : CL_Evaluates slot-value expressions
                    and stores the result in a
                    Kernel data object
   INPUTS       : 1) Flag indicating if multifields are OK
@@ -1089,7 +1089,7 @@ bool DOsEqual(
                  multifield values
   NOTES        : None
  ***********************************************************/
-bool EvaluateAndStoreInDataObject(
+bool CL_EvaluateAndStoreInDataObject(
   Environment *theEnv,
   bool mfp,
   Expression *theExp,
@@ -1101,18 +1101,18 @@ bool EvaluateAndStoreInDataObject(
 
    if (theExp == NULL)
      {
-      if (garbageSegment) val->value = CreateMultifield(theEnv,0L);
-      else val->value = CreateUnmanagedMultifield(theEnv,0L);
+      if (garbageSegment) val->value = CL_CreateMultifield(theEnv,0L);
+      else val->value = CL_CreateUnmanagedMultifield(theEnv,0L);
 
       return true;
      }
 
    if ((mfp == false) && (theExp->nextArg == NULL))
-     EvaluateExpression(theEnv,theExp,val);
+     CL_EvaluateExpression(theEnv,theExp,val);
    else
-     StoreInMultifield(theEnv,val,theExp,garbageSegment);
+     CL_StoreInMultifield(theEnv,val,theExp,garbageSegment);
 
-   return(EvaluationData(theEnv)->EvaluationError ? false : true);
+   return(CL_EvaluationData(theEnv)->CL_EvaluationError ? false : true);
   }
 
 /******************/
@@ -1125,11 +1125,11 @@ static void PrintCAddress(
   {
    char buffer[20];
 
-   WriteString(theEnv,logicalName,"<Pointer-C-");
+   CL_WriteString(theEnv,logicalName,"<Pointer-C-");
 
-   gensprintf(buffer,"%p",((CLIPSExternalAddress *) theValue)->contents);
-   WriteString(theEnv,logicalName,buffer);
-   WriteString(theEnv,logicalName,">");
+   CL_gensprintf(buffer,"%p",((CLIPSExternalAddress *) theValue)->contents);
+   CL_WriteString(theEnv,logicalName,buffer);
+   CL_WriteString(theEnv,logicalName,">");
   }
 
 /****************/
@@ -1142,50 +1142,50 @@ static void NewCAddress(
    unsigned int numberOfArguments;
    Environment *theEnv = context->environment;
 
-   numberOfArguments = UDFArgumentCount(context);
+   numberOfArguments = CL_UDFArgumentCount(context);
 
    if (numberOfArguments != 1)
      {
-      PrintErrorID(theEnv,"NEW",1,false);
-      WriteString(theEnv,STDERR,"Function new expected no additional arguments for the C external language type.\n");
-      SetEvaluationError(theEnv,true);
+      CL_PrintErrorID(theEnv,"NEW",1,false);
+      CL_WriteString(theEnv,STDERR,"Function new expected no additional arguments for the C external language type.\n");
+      SetCL_EvaluationError(theEnv,true);
       return;
      }
 
-   rv->value = CreateExternalAddress(theEnv,NULL,0);
+   rv->value = CL_CreateExternalAddress(theEnv,NULL,0);
   }
 
 /******************************/
-/* CreateFunctionCallBuilder: */
+/* CL_CreateFunctionCallCL_Builder: */
 /******************************/
-FunctionCallBuilder *CreateFunctionCallBuilder(
+FunctionCallCL_Builder *CL_CreateFunctionCallCL_Builder(
   Environment *theEnv,
   size_t theSize)
   {
-   FunctionCallBuilder *theFC;
+   FunctionCallCL_Builder *theFC;
 
    if (theEnv == NULL) return NULL;
    
-   theFC = get_struct(theEnv,functionCallBuilder);
+   theFC = get_struct(theEnv,functionCallCL_Builder);
    
    theFC->fcbEnv = theEnv;
-   theFC->bufferReset = theSize;
+   theFC->bufferCL_Reset = theSize;
    theFC->bufferMaximum = theSize;
    theFC->length = 0;
    
    if (theSize == 0)
      { theFC->contents = NULL; }
    else
-     { theFC->contents = (CLIPSValue *) gm2(theEnv,sizeof(CLIPSValue) * theSize); }
+     { theFC->contents = (CLIPSValue *) CL_gm2(theEnv,sizeof(CLIPSValue) * theSize); }
      
    return theFC;
   }
 
 /**********************/
-/* FCBAppendUDFValue: */
+/* CL_FCBAppendUDFValue: */
 /**********************/
-void FCBAppendUDFValue(
-  FunctionCallBuilder *theFCB,
+void CL_FCBAppendUDFValue(
+  FunctionCallCL_Builder *theFCB,
   UDFValue *theValue)
   {
    Environment *theEnv = theFCB->fcbEnv;
@@ -1200,7 +1200,7 @@ void FCBAppendUDFValue(
      { return; }
 
    /*=======================================*/
-   /* Determine the amount of space needed. */
+   /* DeteCL_rmine the amount of space needed. */
    /*=======================================*/
    
    neededSize = theFCB->length + 1;
@@ -1213,13 +1213,13 @@ void FCBAppendUDFValue(
      {
       newSize = neededSize * 2;
       
-      newArray = (CLIPSValue *) gm2(theEnv,sizeof(CLIPSValue) * newSize);
+      newArray = (CLIPSValue *) CL_gm2(theEnv,sizeof(CLIPSValue) * newSize);
       
       for (i = 0; i < theFCB->length; i++)
         { newArray[i] = theFCB->contents[i]; }
         
       if (theFCB->bufferMaximum != 0)
-        { rm(theFCB->fcbEnv,theFCB->contents,sizeof(CLIPSValue) * theFCB->bufferMaximum); }
+        { CL_rm(theFCB->fcbEnv,theFCB->contents,sizeof(CLIPSValue) * theFCB->bufferMaximum); }
         
       theFCB->bufferMaximum = newSize;
       theFCB->contents = newArray;
@@ -1233,21 +1233,21 @@ void FCBAppendUDFValue(
      {
       CLIPSValue newValue;
       
-      UDFToCLIPSValue(theEnv,theValue,&newValue);
+      CL_UDFToCLIPSValue(theEnv,theValue,&newValue);
       theFCB->contents[theFCB->length].value = newValue.value;
      }
    else
      { theFCB->contents[theFCB->length].value = theValue->value; }
      
-   Retain(theEnv,theFCB->contents[theFCB->length].header);
+   CL_Retain(theEnv,theFCB->contents[theFCB->length].header);
    theFCB->length++;
   }
 
 /**************/
-/* FCBAppend: */
+/* CL_FCBAppend: */
 /**************/
-void FCBAppend(
-  FunctionCallBuilder *theFCB,
+void CL_FCBAppend(
+  FunctionCallCL_Builder *theFCB,
   CLIPSValue *theValue)
   {
    Environment *theEnv = theFCB->fcbEnv;
@@ -1262,7 +1262,7 @@ void FCBAppend(
      { return; }
 
    /*=======================================*/
-   /* Determine the amount of space needed. */
+   /* DeteCL_rmine the amount of space needed. */
    /*=======================================*/
    
    neededSize = theFCB->length + 1;
@@ -1275,13 +1275,13 @@ void FCBAppend(
      {
       newSize = neededSize * 2;
       
-      newArray = (CLIPSValue *) gm2(theEnv,sizeof(CLIPSValue) * newSize);
+      newArray = (CLIPSValue *) CL_gm2(theEnv,sizeof(CLIPSValue) * newSize);
       
       for (i = 0; i < theFCB->length; i++)
         { newArray[i] = theFCB->contents[i]; }
         
       if (theFCB->bufferMaximum != 0)
-        { rm(theFCB->fcbEnv,theFCB->contents,sizeof(CLIPSValue) * theFCB->bufferMaximum); }
+        { CL_rm(theFCB->fcbEnv,theFCB->contents,sizeof(CLIPSValue) * theFCB->bufferMaximum); }
         
       theFCB->bufferMaximum = newSize;
       theFCB->contents = newArray;
@@ -1292,176 +1292,176 @@ void FCBAppend(
    /*===================================*/
 
    theFCB->contents[theFCB->length].value = theValue->value;
-   Retain(theEnv,theFCB->contents[theFCB->length].header);
+   CL_Retain(theEnv,theFCB->contents[theFCB->length].header);
    theFCB->length++;
   }
 
 /**************************/
-/* FCBAppendCLIPSInteger: */
+/* CL_FCBAppendCLIPSInteger: */
 /**************************/
-void FCBAppendCLIPSInteger(
-  FunctionCallBuilder *theFCB,
+void CL_FCBAppendCLIPSInteger(
+  FunctionCallCL_Builder *theFCB,
   CLIPSInteger *pv)
   {
    CLIPSValue theValue;
    
    theValue.integerValue = pv;
-   FCBAppend(theFCB,&theValue);
+   CL_FCBAppend(theFCB,&theValue);
   }
 
 /*********************/
-/* FCBAppendInteger: */
+/* CL_FCBAppendInteger: */
 /*********************/
-void FCBAppendInteger(
-  FunctionCallBuilder *theFCB,
+void CL_FCBAppendInteger(
+  FunctionCallCL_Builder *theFCB,
   long long intValue)
   {
    CLIPSValue theValue;
-   CLIPSInteger *pv = CreateInteger(theFCB->fcbEnv,intValue);
+   CLIPSInteger *pv = CL_CreateInteger(theFCB->fcbEnv,intValue);
    
    theValue.integerValue = pv;
-   FCBAppend(theFCB,&theValue);
+   CL_FCBAppend(theFCB,&theValue);
   }
 
 /************************/
-/* FCBAppendCLIPSFloat: */
+/* CL_FCBAppendCLIPSFloat: */
 /************************/
-void FCBAppendCLIPSFloat(
-  FunctionCallBuilder *theFCB,
+void CL_FCBAppendCLIPSFloat(
+  FunctionCallCL_Builder *theFCB,
   CLIPSFloat *pv)
   {
    CLIPSValue theValue;
    
    theValue.floatValue = pv;
-   FCBAppend(theFCB,&theValue);
+   CL_FCBAppend(theFCB,&theValue);
   }
 
 /*******************/
-/* FCBAppendFloat: */
+/* CL_FCBAppendFloat: */
 /*******************/
-void FCBAppendFloat(
-  FunctionCallBuilder *theFCB,
+void CL_FCBAppendFloat(
+  FunctionCallCL_Builder *theFCB,
   double floatValue)
   {
    CLIPSValue theValue;
-   CLIPSFloat *pv = CreateFloat(theFCB->fcbEnv,floatValue);
+   CLIPSFloat *pv = CL_CreateFloat(theFCB->fcbEnv,floatValue);
    
    theValue.floatValue = pv;
-   FCBAppend(theFCB,&theValue);
+   CL_FCBAppend(theFCB,&theValue);
   }
 
 /*************************/
-/* FCBAppendCLIPSLexeme: */
+/* CL_FCBAppendCLIPSLexeme: */
 /*************************/
-void FCBAppendCLIPSLexeme(
-  FunctionCallBuilder *theFCB,
+void CL_FCBAppendCLIPSLexeme(
+  FunctionCallCL_Builder *theFCB,
   CLIPSLexeme *pv)
   {
    CLIPSValue theValue;
    
    theValue.lexemeValue = pv;
-   FCBAppend(theFCB,&theValue);
+   CL_FCBAppend(theFCB,&theValue);
   }
 
 /********************/
-/* FCBAppendSymbol: */
+/* CL_FCBAppendSymbol: */
 /********************/
-void FCBAppendSymbol(
-  FunctionCallBuilder *theFCB,
+void CL_FCBAppendSymbol(
+  FunctionCallCL_Builder *theFCB,
   const char *strValue)
   {
    CLIPSValue theValue;
-   CLIPSLexeme *pv = CreateSymbol(theFCB->fcbEnv,strValue);
+   CLIPSLexeme *pv = CL_CreateSymbol(theFCB->fcbEnv,strValue);
    
    theValue.lexemeValue = pv;
-   FCBAppend(theFCB,&theValue);
+   CL_FCBAppend(theFCB,&theValue);
   }
 
 /********************/
-/* FCBAppendString: */
+/* CL_FCBAppendString: */
 /********************/
-void FCBAppendString(
-  FunctionCallBuilder *theFCB,
+void CL_FCBAppendString(
+  FunctionCallCL_Builder *theFCB,
   const char *strValue)
   {
    CLIPSValue theValue;
-   CLIPSLexeme *pv = CreateString(theFCB->fcbEnv,strValue);
+   CLIPSLexeme *pv = CL_CreateString(theFCB->fcbEnv,strValue);
    
    theValue.lexemeValue = pv;
-   FCBAppend(theFCB,&theValue);
+   CL_FCBAppend(theFCB,&theValue);
   }
 
 /**************************/
-/* FCBAppendInstanceName: */
+/* CL_FCBAppendCL_InstanceName: */
 /**************************/
-void FCBAppendInstanceName(
-  FunctionCallBuilder *theFCB,
+void CL_FCBAppendCL_InstanceName(
+  FunctionCallCL_Builder *theFCB,
   const char *strValue)
   {
    CLIPSValue theValue;
-   CLIPSLexeme *pv = CreateInstanceName(theFCB->fcbEnv,strValue);
+   CLIPSLexeme *pv = CL_CreateCL_InstanceName(theFCB->fcbEnv,strValue);
    
    theValue.lexemeValue = pv;
-   FCBAppend(theFCB,&theValue);
+   CL_FCBAppend(theFCB,&theValue);
   }
 
 /**********************************/
-/* FCBAppendCLIPSExternalAddress: */
+/* CL_FCBAppendCLIPSExternalAddress: */
 /**********************************/
-void FCBAppendCLIPSExternalAddress(
-  FunctionCallBuilder *theFCB,
+void CL_FCBAppendCLIPSExternalAddress(
+  FunctionCallCL_Builder *theFCB,
   CLIPSExternalAddress *pv)
   {
    CLIPSValue theValue;
    
    theValue.externalAddressValue = pv;
-   FCBAppend(theFCB,&theValue);
+   CL_FCBAppend(theFCB,&theValue);
   }
 
 /******************/
-/* FCBAppendFact: */
+/* CL_FCBAppendFact: */
 /******************/
-void FCBAppendFact(
-  FunctionCallBuilder *theFCB,
+void CL_FCBAppendFact(
+  FunctionCallCL_Builder *theFCB,
   Fact *pv)
   {
    CLIPSValue theValue;
    
    theValue.factValue = pv;
-   FCBAppend(theFCB,&theValue);
+   CL_FCBAppend(theFCB,&theValue);
   }
 
 /**********************/
-/* FCBAppendInstance: */
+/* CL_FCBAppendInstance: */
 /**********************/
-void FCBAppendInstance(
-  FunctionCallBuilder *theFCB,
+void CL_FCBAppendInstance(
+  FunctionCallCL_Builder *theFCB,
   Instance *pv)
   {
    CLIPSValue theValue;
    
    theValue.instanceValue = pv;
-   FCBAppend(theFCB,&theValue);
+   CL_FCBAppend(theFCB,&theValue);
   }
 
 /************************/
-/* FCBAppendMultifield: */
+/* CL_FCBAppendMultifield: */
 /************************/
-void FCBAppendMultifield(
-  FunctionCallBuilder *theFCB,
+void CL_FCBAppendMultifield(
+  FunctionCallCL_Builder *theFCB,
   Multifield *pv)
   {
    CLIPSValue theValue;
    
    theValue.multifieldValue = pv;
-   FCBAppend(theFCB,&theValue);
+   CL_FCBAppend(theFCB,&theValue);
   }
 
 /***********/
-/* FCBCall */
+/* CL_FCBCall */
 /***********/
-FunctionCallBuilderError FCBCall(
-  FunctionCallBuilder *theFCB,
+FunctionCallCL_BuilderError CL_FCBCall(
+  FunctionCallCL_Builder *theFCB,
   const char *functionName,
   CLIPSValue *returnValue)
   {
@@ -1483,17 +1483,17 @@ FunctionCallBuilderError FCBCall(
    /* Check to see if the function exists. */
    /*======================================*/
    
-   if (! GetFunctionReference(theFCB->fcbEnv,functionName,&theReference))
+   if (! CL_GetFunctionReference(theFCB->fcbEnv,functionName,&theReference))
      { return FCBE_FUNCTION_NOT_FOUND_ERROR; }
      
    /*============================================*/
    /* Functions with specialized parsers  cannot */
-   /* be used with a FunctionCallBuilder.        */
+   /* be used with a FunctionCallCL_Builder.        */
    /*============================================*/
    
    if (theReference.type == FCALL)
      {
-      theFunction = FindFunction(theFCB->fcbEnv,functionName);
+      theFunction = CL_FindFunction(theFCB->fcbEnv,functionName);
       if (theFunction->parser != NULL)
         { return FCBE_INVALID_FUNCTION_ERROR; }
      }
@@ -1514,7 +1514,7 @@ FunctionCallBuilderError FCBCall(
       
       if (theFCB->contents[i].header->type == MULTIFIELD_TYPE)
         {
-         nextAdd = GenConstant(theEnv,FCALL,FindFunction(theEnv,"create$"));
+         nextAdd = CL_GenConstant(theEnv,FCALL,CL_FindFunction(theEnv,"create$"));
          
          if (lastAdd == NULL)
            { theReference.argList = nextAdd; }
@@ -1526,7 +1526,7 @@ FunctionCallBuilderError FCBCall(
          multiAdd = NULL;
          for (j = 0; j < theFCB->contents[i].multifieldValue->length; j++)
            {
-            nextAdd = GenConstant(theEnv,theFCB->contents[i].multifieldValue->contents[j].header->type,
+            nextAdd = CL_GenConstant(theEnv,theFCB->contents[i].multifieldValue->contents[j].header->type,
                                          theFCB->contents[i].multifieldValue->contents[j].value);
                
             if (multiAdd == NULL)
@@ -1543,7 +1543,7 @@ FunctionCallBuilderError FCBCall(
       
       else
         {
-         nextAdd = GenConstant(theEnv,theFCB->contents[i].header->type,theFCB->contents[i].value);
+         nextAdd = CL_GenConstant(theEnv,theFCB->contents[i].header->type,theFCB->contents[i].value);
          
          if (lastAdd == NULL)
            { theReference.argList = nextAdd; }
@@ -1553,7 +1553,7 @@ FunctionCallBuilderError FCBCall(
         }
      }
       
-   ExpressionInstall(theEnv,&theReference);
+   CL_ExpressionInstall(theEnv,&theReference);
    
    /*===========================================================*/
    /* Verify a deffunction has the correct number of arguments. */
@@ -1562,10 +1562,10 @@ FunctionCallBuilderError FCBCall(
 #if DEFFUNCTION_CONSTRUCT
    if (theReference.type == PCALL)
      {
-      if (CheckDeffunctionCall(theEnv,(Deffunction *) theReference.value,CountArguments(theReference.argList)) == false)
+      if (CL_CheckDeffunctionCall(theEnv,(Deffunction *) theReference.value,CL_CountArguments(theReference.argList)) == false)
         {
-         ExpressionDeinstall(theEnv,&theReference);
-         ReturnExpression(theEnv,theReference.argList);
+         CL_ExpressionDeinstall(theEnv,&theReference);
+         CL_ReturnExpression(theEnv,theReference.argList);
          return FCBE_ARGUMENT_COUNT_ERROR;
         }
      }
@@ -1580,16 +1580,16 @@ FunctionCallBuilderError FCBCall(
    if (theReference.type == FCALL)
      {
       FunctionArgumentsError theError;
-      if ((theError = CheckExpressionAgainstRestrictions(theEnv,&theReference,theFunction,functionName)) != FAE_NO_ERROR)
+      if ((theError = CL_CheckExpressionAgainstRestrictions(theEnv,&theReference,theFunction,functionName)) != FAE_NO_ERROR)
         {
-         ExpressionDeinstall(theEnv,&theReference);
-         ReturnExpression(theEnv,theReference.argList);
+         CL_ExpressionDeinstall(theEnv,&theReference);
+         CL_ReturnExpression(theEnv,theReference.argList);
          if (theError == FAE_TYPE_ERROR) return FCBE_ARGUMENT_TYPE_ERROR;
          else if (theError == FAE_COUNT_ERROR) return FCBE_ARGUMENT_COUNT_ERROR;
          else
            {
-            SystemError(theEnv,"EVALUATN",9);
-            ExitRouter(theEnv,EXIT_FAILURE);
+            CL_SystemError(theEnv,"EVALUATN",9);
+            CL_ExitRouter(theEnv,EXIT_FAILURE);
            }
         }
      }
@@ -1598,108 +1598,108 @@ FunctionCallBuilderError FCBCall(
    /* Set up the frame for tracking garbage. */
    /*========================================*/
    
-   GCBlockStart(theEnv,&gcb);
+   CL_GCBlockStart(theEnv,&gcb);
 
    /*=====================================*/
    /* If embedded, clear the error flags. */
    /*=====================================*/
    
-   if (EvaluationData(theEnv)->CurrentExpression == NULL)
-     { ResetErrorFlags(theEnv); }
+   if (CL_EvaluationData(theEnv)->CurrentExpression == NULL)
+     { CL_ResetErrorFlags(theEnv); }
 
    /*======================*/
    /* Call the expression. */
    /*======================*/
 
-   EvaluateExpression(theEnv,&theReference,&udfReturnValue);
+   CL_EvaluateExpression(theEnv,&theReference,&udfReturnValue);
 
    /*====================================================*/
    /* Convert a partial multifield to a full multifield. */
    /*====================================================*/
    
-   NormalizeMultifield(theEnv,&udfReturnValue);
+   CL_NoCL_rmalizeMultifield(theEnv,&udfReturnValue);
    
    /*========================================*/
    /* Return the expression data structures. */
    /*========================================*/
 
-   ExpressionDeinstall(theEnv,&theReference);
-   ReturnExpression(theEnv,theReference.argList);
+   CL_ExpressionDeinstall(theEnv,&theReference);
+   CL_ReturnExpression(theEnv,theReference.argList);
 
    /*================================*/
    /* Restore the old garbage frame. */
    /*================================*/
    
    if (returnValue != NULL)
-     { GCBlockEndUDF(theEnv,&gcb,&udfReturnValue); }
+     { CL_GCBlockEndUDF(theEnv,&gcb,&udfReturnValue); }
    else
-     { GCBlockEnd(theEnv,&gcb); }
+     { CL_GCBlockEnd(theEnv,&gcb); }
      
    /*==========================================*/
-   /* Perform periodic cleanup if the eval was */
+   /* PerfoCL_rm periodic cleanup if the eval was */
    /* issued from an embedded controller.      */
    /*==========================================*/
 
-   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+   if (CL_EvaluationData(theEnv)->CurrentExpression == NULL)
      {
       if (returnValue != NULL)
-        { CleanCurrentGarbageFrame(theEnv,&udfReturnValue); }
+        { CL_CleanCurrentGarbageFrame(theEnv,&udfReturnValue); }
       else
-        { CleanCurrentGarbageFrame(theEnv,NULL); }
-      CallPeriodicTasks(theEnv);
+        { CL_CleanCurrentGarbageFrame(theEnv,NULL); }
+      CL_CallPeriodicTasks(theEnv);
      }
      
    if (returnValue != NULL)
      { returnValue->value = udfReturnValue.value; }
      
-   if (GetEvaluationError(theEnv)) return FCBE_PROCESSING_ERROR;
+   if (GetCL_EvaluationError(theEnv)) return FCBE_PROCESSING_ERROR;
 
    return FCBE_NO_ERROR;
   }
 
 /*************/
-/* FCBReset: */
+/* CL_FCBCL_Reset: */
 /*************/
-void FCBReset(
-  FunctionCallBuilder *theFCB)
+void CL_FCBCL_Reset(
+  FunctionCallCL_Builder *theFCB)
   {
    size_t i;
    
    for (i = 0; i < theFCB->length; i++)
-     { Release(theFCB->fcbEnv,theFCB->contents[i].header); }
+     { CL_Release(theFCB->fcbEnv,theFCB->contents[i].header); }
      
-   if (theFCB->bufferReset != theFCB->bufferMaximum)
+   if (theFCB->bufferCL_Reset != theFCB->bufferMaximum)
      {
       if (theFCB->bufferMaximum != 0)
-        { rm(theFCB->fcbEnv,theFCB->contents,sizeof(CLIPSValue) * theFCB->bufferMaximum); }
+        { CL_rm(theFCB->fcbEnv,theFCB->contents,sizeof(CLIPSValue) * theFCB->bufferMaximum); }
       
-      if (theFCB->bufferReset == 0)
+      if (theFCB->bufferCL_Reset == 0)
         { theFCB->contents = NULL; }
       else
-        { theFCB->contents = (CLIPSValue *) gm2(theFCB->fcbEnv,sizeof(CLIPSValue) * theFCB->bufferReset); }
+        { theFCB->contents = (CLIPSValue *) CL_gm2(theFCB->fcbEnv,sizeof(CLIPSValue) * theFCB->bufferCL_Reset); }
       
-      theFCB->bufferMaximum = theFCB->bufferReset;
+      theFCB->bufferMaximum = theFCB->bufferCL_Reset;
      }
      
    theFCB->length = 0;
   }
 
 /***************/
-/* FCBDispose: */
+/* CL_FCBDispose: */
 /***************/
-void FCBDispose(
-  FunctionCallBuilder *theFCB)
+void CL_FCBDispose(
+  FunctionCallCL_Builder *theFCB)
   {
    Environment *theEnv = theFCB->fcbEnv;
    size_t i;
    
    for (i = 0; i < theFCB->length; i++)
-     { Release(theFCB->fcbEnv,theFCB->contents[i].header); }
+     { CL_Release(theFCB->fcbEnv,theFCB->contents[i].header); }
    
    if (theFCB->bufferMaximum != 0)
-     { rm(theFCB->fcbEnv,theFCB->contents,sizeof(CLIPSValue) * theFCB->bufferMaximum); }
+     { CL_rm(theFCB->fcbEnv,theFCB->contents,sizeof(CLIPSValue) * theFCB->bufferMaximum); }
      
-   rtn_struct(theEnv,multifieldBuilder,theFCB);
+   rtn_struct(theEnv,multifieldCL_Builder,theFCB);
   }
 
 /*******************************/
@@ -1710,7 +1710,7 @@ static bool DiscardCAddress(
   Environment *theEnv,
   void *theValue)
   {
-   WriteString(theEnv,STDOUT,"Discarding C Address\n");
+   CL_WriteString(theEnv,STDOUT,"Discarding C Address\n");
 
    return true;
   }

@@ -21,7 +21,7 @@
 /*      6.24: Corrected code to remove run-time program      */
 /*            compiler warning.                              */
 /*                                                           */
-/*      6.30: Added support for passing context information  */
+/*      6.30: Added support for passing context infoCL_rmation  */
 /*            to user defined functions.                     */
 /*                                                           */
 /*            Support for long long integers.                */
@@ -49,7 +49,7 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/*            Eval support for run time and bload only.      */
+/*            CL_Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -81,20 +81,20 @@
    static void                    DeallocateExternalFunctionData(Environment *);
 #if (! RUN_TIME)
    static bool                    RemoveHashFunction(Environment *,struct functionDefinition *);
-   static AddUDFError             DefineFunction(Environment *,const char *,unsigned,void (*)(Environment *,UDFContext *,UDFValue *),
+   static CL_AddUDFError             DefineFunction(Environment *,const char *,unsigned,void (*)(Environment *,UDFContext *,UDFValue *),
                                                  const char *,unsigned short,unsigned short,const char *,void *);
 #endif
    static void                    PrintType(Environment *,const char *,int,int *,const char *);
    static void                    AssignErrorValue(UDFContext *);
 
 /*********************************************************/
-/* InitializeExternalFunctionData: Allocates environment */
+/* CL_InitializeExternalFunctionData: Allocates environment */
 /*    data for external functions.                       */
 /*********************************************************/
-void InitializeExternalFunctionData(
+void CL_InitializeExternalFunctionData(
   Environment *theEnv)
   {
-   AllocateEnvironmentData(theEnv,EXTERNAL_FUNCTION_DATA,sizeof(struct externalFunctionData),DeallocateExternalFunctionData);
+   CL_AllocateEnvironmentData(theEnv,EXTERNAL_FUNCTION_DATA,sizeof(struct externalFunctionData),DeallocateExternalFunctionData);
   }
 
 /***********************************************************/
@@ -133,17 +133,17 @@ static void DeallocateExternalFunctionData(
         }
      }
 
-   genfree(theEnv,ExternalFunctionData(theEnv)->FunctionHashtable,
+   CL_genfree(theEnv,ExternalFunctionData(theEnv)->FunctionHashtable,
            sizeof (struct FunctionHash *) * SIZE_FUNCTION_HASH);
   }
 
 #if (! RUN_TIME)
 
 /****************************************************/
-/* AddUDF: Used to define a system or user external */
+/* CL_AddUDF: Used to define a system or user external */
 /*   function so that the KB can access it.         */
 /****************************************************/
-AddUDFError AddUDF(
+CL_AddUDFError CL_AddUDF(
   Environment *theEnv,
   const char *clipsFunctionName,
   const char *returnTypes,
@@ -177,7 +177,7 @@ AddUDFError AddUDF(
            { return AUE_INVALID_RETURN_TYPE_ERROR; }
         }
 
-      PopulateRestriction(theEnv,&returnTypeBits,ANY_TYPE_BITS,returnTypes,0);
+      CL_PopulateRestriction(theEnv,&returnTypeBits,ANY_TYPE_BITS,returnTypes,0);
      }
    else
      { returnTypeBits = ANY_TYPE_BITS; }
@@ -191,7 +191,7 @@ AddUDFError AddUDF(
 /*   function so that the KB can access it. Allows argument  */
 /*   restrictions to be attached to the function.            */
 /*************************************************************/
-static AddUDFError DefineFunction(
+static CL_AddUDFError DefineFunction(
   Environment *theEnv,
   const char *name,
   unsigned returnTypeBits,
@@ -204,14 +204,14 @@ static AddUDFError DefineFunction(
   {
    struct functionDefinition *newFunction;
 
-   newFunction = FindFunction(theEnv,name);
+   newFunction = CL_FindFunction(theEnv,name);
    if (newFunction != NULL)
      { return AUE_FUNCTION_NAME_IN_USE_ERROR; }
 
    newFunction = get_struct(theEnv,functionDefinition);
-   newFunction->callFunctionName = CreateSymbol(theEnv,name);
+   newFunction->callFunctionName = CL_CreateSymbol(theEnv,name);
    IncrementLexemeCount(newFunction->callFunctionName);
-   newFunction->next = GetFunctionList(theEnv);
+   newFunction->next = CL_GetFunctionList(theEnv);
    ExternalFunctionData(theEnv)->ListOfFunctions = newFunction;
    AddHashFunction(theEnv,newFunction);
 
@@ -226,7 +226,7 @@ static AddUDFError DefineFunction(
      { newFunction->restrictions = NULL; }
    else
      {
-      newFunction->restrictions = CreateString(theEnv,restrictions);
+      newFunction->restrictions = CL_CreateString(theEnv,restrictions);
       IncrementLexemeCount(newFunction->restrictions);
      }
 
@@ -240,17 +240,17 @@ static AddUDFError DefineFunction(
   }
 
 /********************************************/
-/* RemoveUDF: Used to remove a function     */
+/* CL_RemoveUDF: Used to remove a function     */
 /*   definition from the list of functions. */
 /********************************************/
-bool RemoveUDF(
+bool CL_RemoveUDF(
   Environment *theEnv,
   const char *functionName)
   {
    CLIPSLexeme *findValue;
    struct functionDefinition *fPtr, *lastPtr = NULL;
 
-   findValue = FindSymbolHN(theEnv,functionName,SYMBOL_BIT);
+   findValue = CL_FindSymbolHN(theEnv,functionName,SYMBOL_BIT);
 
    for (fPtr = ExternalFunctionData(theEnv)->ListOfFunctions;
         fPtr != NULL;
@@ -258,7 +258,7 @@ bool RemoveUDF(
      {
       if (fPtr->callFunctionName == findValue)
         {
-         ReleaseLexeme(theEnv,fPtr->callFunctionName);
+         CL_ReleaseLexeme(theEnv,fPtr->callFunctionName);
          RemoveHashFunction(theEnv,fPtr);
 
          if (lastPtr == NULL)
@@ -267,8 +267,8 @@ bool RemoveUDF(
            { lastPtr->next = fPtr->next; }
 
          if (fPtr->restrictions != NULL)
-           { ReleaseLexeme(theEnv,fPtr->restrictions); }
-         ClearUserDataList(theEnv,fPtr->usrData);
+           { CL_ReleaseLexeme(theEnv,fPtr->restrictions); }
+         CL_ClearUserDataList(theEnv,fPtr->usrData);
          rtn_struct(theEnv,functionDefinition,fPtr);
          return true;
         }
@@ -290,7 +290,7 @@ static bool RemoveHashFunction(
    struct FunctionHash *fhPtr, *lastPtr = NULL;
    size_t hashValue;
 
-   hashValue = HashSymbol(fdPtr->callFunctionName->contents,SIZE_FUNCTION_HASH);
+   hashValue = CL_HashSymbol(fdPtr->callFunctionName->contents,SIZE_FUNCTION_HASH);
 
    for (fhPtr = ExternalFunctionData(theEnv)->FunctionHashtable[hashValue];
         fhPtr != NULL;
@@ -316,7 +316,7 @@ static bool RemoveHashFunction(
 #endif
 
 /***************************************************************************/
-/* AddFunctionParser: Associates a specialized expression parsing function */
+/* CL_AddFunctionParser: Associates a specialized expression parsing function */
 /*   with the function entry for a function which was defined using        */
 /*   DefineFunction. When this function is parsed, the specialized parsing */
 /*   function will be called to parse the arguments of the function. Only  */
@@ -324,17 +324,17 @@ static bool RemoveHashFunction(
 /*   routines. Generic functions and deffunctions can not have specialized */
 /*   parsing routines.                                                     */
 /***************************************************************************/
-bool AddFunctionParser(
+bool CL_AddFunctionParser(
   Environment *theEnv,
   const char *functionName,
   struct expr *(*fpPtr)(Environment *,struct expr *,const char *))
   {
    struct functionDefinition *fdPtr;
 
-   fdPtr = FindFunction(theEnv,functionName);
+   fdPtr = CL_FindFunction(theEnv,functionName);
    if (fdPtr == NULL)
      {
-      WriteString(theEnv,STDERR,"Function parsers can only be added for existing functions.\n");
+      CL_WriteString(theEnv,STDERR,"Function parsers can only be added for existing functions.\n");
       return false;
      }
 
@@ -347,19 +347,19 @@ bool AddFunctionParser(
 #if (! RUN_TIME)
 
 /*********************************************************************/
-/* RemoveFunctionParser: Removes a specialized expression parsing    */
+/* CL_RemoveFunctionParser: Removes a specialized expression parsing    */
 /*   function (if it exists) from the function entry for a function. */
 /*********************************************************************/
-bool RemoveFunctionParser(
+bool CL_RemoveFunctionParser(
   Environment *theEnv,
   const char *functionName)
   {
    struct functionDefinition *fdPtr;
 
-   fdPtr = FindFunction(theEnv,functionName);
+   fdPtr = CL_FindFunction(theEnv,functionName);
    if (fdPtr == NULL)
      {
-      WriteString(theEnv,STDERR,"Function parsers can only be removed from existing functions.\n");
+      CL_WriteString(theEnv,STDERR,"Function parsers can only be removed from existing functions.\n");
       return false;
      }
 
@@ -369,10 +369,10 @@ bool RemoveFunctionParser(
   }
 
 /*****************************************************************/
-/* FuncSeqOvlFlags: Makes a system function overloadable or not, */
+/* CL_FuncSeqOvlFlags: Makes a system function overloadable or not, */
 /* i.e. can the function be a method for a generic function.     */
 /*****************************************************************/
-bool FuncSeqOvlFlags(
+bool CL_FuncSeqOvlFlags(
   Environment *theEnv,
   const char *functionName,
   bool seqp,
@@ -380,10 +380,10 @@ bool FuncSeqOvlFlags(
   {
    struct functionDefinition *fdPtr;
 
-   fdPtr = FindFunction(theEnv,functionName);
+   fdPtr = CL_FindFunction(theEnv,functionName);
    if (fdPtr == NULL)
      {
-      WriteString(theEnv,STDERR,"Only existing functions can be marked as using sequence expansion arguments/overloadable or not.\n");
+      CL_WriteString(theEnv,STDERR,"Only existing functions can be marked as using sequence expansion arguments/overloadable or not.\n");
       return false;
      }
      
@@ -396,10 +396,10 @@ bool FuncSeqOvlFlags(
 #endif
 
 /***********************************************/
-/* GetNthRestriction: Returns the restriction  */
+/* CL_GetNthRestriction: Returns the restriction  */
 /*   type for the nth parameter of a function. */
 /***********************************************/
-unsigned GetNthRestriction(
+unsigned CL_GetNthRestriction(
   Environment *theEnv,
   struct functionDefinition *theFunction,
   unsigned int position)
@@ -412,26 +412,26 @@ unsigned GetNthRestriction(
    if (theFunction->restrictions == NULL) return(ANY_TYPE_BITS);
    restrictions = theFunction->restrictions->contents;
 
-   PopulateRestriction(theEnv,&df,ANY_TYPE_BITS,restrictions,0);
-   PopulateRestriction(theEnv,&rv,df,restrictions,position);
+   CL_PopulateRestriction(theEnv,&df,ANY_TYPE_BITS,restrictions,0);
+   CL_PopulateRestriction(theEnv,&rv,df,restrictions,position);
 
    return rv;
   }
 
 /*************************************************/
-/* GetFunctionList: Returns the ListOfFunctions. */
+/* CL_GetFunctionList: Returns the ListOfFunctions. */
 /*************************************************/
-struct functionDefinition *GetFunctionList(
+struct functionDefinition *CL_GetFunctionList(
   Environment *theEnv)
   {
    return(ExternalFunctionData(theEnv)->ListOfFunctions);
   }
 
 /**************************************************************/
-/* InstallFunctionList: Sets the ListOfFunctions and adds all */
+/* CL_InstallFunctionList: Sets the ListOfFunctions and adds all */
 /*   the function entries to the FunctionHashTable.           */
 /**************************************************************/
-void InstallFunctionList(
+void CL_InstallFunctionList(
   Environment *theEnv,
   struct functionDefinition *value)
   {
@@ -463,11 +463,11 @@ void InstallFunctionList(
   }
 
 /********************************************************/
-/* FindFunction: Returns a pointer to the corresponding */
+/* CL_FindFunction: Returns a pointer to the corresponding */
 /*   functionDefinition structure if a function name is */
 /*   in the function list, otherwise returns NULL.      */
 /********************************************************/
-struct functionDefinition *FindFunction(
+struct functionDefinition *CL_FindFunction(
   Environment *theEnv,
   const char *functionName)
   {
@@ -477,9 +477,9 @@ struct functionDefinition *FindFunction(
 
    if (ExternalFunctionData(theEnv)->FunctionHashtable == NULL) return NULL;
 
-   hashValue = HashSymbol(functionName,SIZE_FUNCTION_HASH);
+   hashValue = CL_HashSymbol(functionName,SIZE_FUNCTION_HASH);
 
-   findValue = FindSymbolHN(theEnv,functionName,SYMBOL_BIT);
+   findValue = CL_FindSymbolHN(theEnv,functionName,SYMBOL_BIT);
 
    for (fhPtr = ExternalFunctionData(theEnv)->FunctionHashtable[hashValue];
         fhPtr != NULL;
@@ -493,9 +493,9 @@ struct functionDefinition *FindFunction(
   }
 
 /********************************************************/
-/* GetUDFContext: Returns the context associated a UDF. */
+/* CL_GetUDFContext: Returns the context associated a UDF. */
 /********************************************************/
-void *GetUDFContext(
+void *CL_GetUDFContext(
   Environment *theEnv,
   const char *functionName)
   {
@@ -505,9 +505,9 @@ void *GetUDFContext(
 
    if (ExternalFunctionData(theEnv)->FunctionHashtable == NULL) return NULL;
 
-   hashValue = HashSymbol(functionName,SIZE_FUNCTION_HASH);
+   hashValue = CL_HashSymbol(functionName,SIZE_FUNCTION_HASH);
 
-   findValue = FindSymbolHN(theEnv,functionName,SYMBOL_BIT);
+   findValue = CL_FindSymbolHN(theEnv,functionName,SYMBOL_BIT);
 
    for (fhPtr = ExternalFunctionData(theEnv)->FunctionHashtable[hashValue];
         fhPtr != NULL;
@@ -530,7 +530,7 @@ static void InitializeFunctionHashTable(
    int i;
 
    ExternalFunctionData(theEnv)->FunctionHashtable = (struct FunctionHash **)
-                       gm2(theEnv,sizeof (struct FunctionHash *) *
+                       CL_gm2(theEnv,sizeof (struct FunctionHash *) *
                            SIZE_FUNCTION_HASH);
 
    for (i = 0; i < SIZE_FUNCTION_HASH; i++) ExternalFunctionData(theEnv)->FunctionHashtable[i] = NULL;
@@ -551,7 +551,7 @@ static void AddHashFunction(
    newhash = get_struct(theEnv,FunctionHash);
    newhash->fdPtr = fdPtr;
 
-   hashValue = HashSymbol(fdPtr->callFunctionName->contents,SIZE_FUNCTION_HASH);
+   hashValue = CL_HashSymbol(fdPtr->callFunctionName->contents,SIZE_FUNCTION_HASH);
 
    temp = ExternalFunctionData(theEnv)->FunctionHashtable[hashValue];
    ExternalFunctionData(theEnv)->FunctionHashtable[hashValue] = newhash;
@@ -559,20 +559,20 @@ static void AddHashFunction(
   }
 
 /*************************************************/
-/* GetMinimumArgs: Returns the minimum number of */
+/* CL_GetMinimumArgs: Returns the minimum number of */
 /*   arguments expected by an external function. */
 /*************************************************/
-int GetMinimumArgs(
+int CL_GetMinimumArgs(
   struct functionDefinition *theFunction)
   {
    return theFunction->minArgs;
   }
 
 /*************************************************/
-/* GetMaximumArgs: Returns the maximum number of */
+/* CL_GetMaximumArgs: Returns the maximum number of */
 /*   arguments expected by an external function. */
 /*************************************************/
-int GetMaximumArgs(
+int CL_GetMaximumArgs(
   struct functionDefinition *theFunction)
   {
    return theFunction->maxArgs;
@@ -587,17 +587,17 @@ void AssignErrorValue(
    if (context->theFunction->unknownReturnValueType & BOOLEAN_BIT)
      { context->returnValue->lexemeValue = context->environment->FalseSymbol; }
    else if (context->theFunction->unknownReturnValueType & STRING_BIT)
-     { context->returnValue->lexemeValue = CreateString(context->environment,""); }
+     { context->returnValue->lexemeValue = CL_CreateString(context->environment,""); }
    else if (context->theFunction->unknownReturnValueType & SYMBOL_BIT)
-     { context->returnValue->lexemeValue = CreateSymbol(context->environment,"nil"); }
+     { context->returnValue->lexemeValue = CL_CreateSymbol(context->environment,"nil"); }
    else if (context->theFunction->unknownReturnValueType & INTEGER_BIT)
-     { context->returnValue->integerValue = CreateInteger(context->environment,0); }
+     { context->returnValue->integerValue = CL_CreateInteger(context->environment,0); }
    else if (context->theFunction->unknownReturnValueType & FLOAT_BIT)
-     { context->returnValue->floatValue = CreateFloat(context->environment,0.0); }
+     { context->returnValue->floatValue = CL_CreateFloat(context->environment,0.0); }
    else if (context->theFunction->unknownReturnValueType & MULTIFIELD_BIT)
-     { SetMultifieldErrorValue(context->environment,context->returnValue); }
+     { CL_SetMultifieldErrorValue(context->environment,context->returnValue); }
    else if (context->theFunction->unknownReturnValueType & INSTANCE_NAME_BIT)
-     { context->returnValue->lexemeValue = CreateInstanceName(context->environment,"nil"); }
+     { context->returnValue->lexemeValue = CL_CreateCL_InstanceName(context->environment,"nil"); }
    else if (context->theFunction->unknownReturnValueType & FACT_ADDRESS_BIT)
      { context->returnValue->factValue = &FactData(context->environment)->DummyFact; }
 #if OBJECT_SYSTEM
@@ -605,21 +605,21 @@ void AssignErrorValue(
      { context->returnValue->value = &InstanceData(context->environment)->DummyInstance; }
 #endif
    else if (context->theFunction->unknownReturnValueType & EXTERNAL_ADDRESS_BIT)
-     { context->returnValue->value = CreateExternalAddress(context->environment,NULL,0); }
+     { context->returnValue->value = CL_CreateExternalAddress(context->environment,NULL,0); }
    else
      { context->returnValue->value = context->environment->VoidConstant; }
   }
 
 /*********************/
-/* UDFArgumentCount: */
+/* CL_UDFArgumentCount: */
 /*********************/
-unsigned int UDFArgumentCount(
+unsigned int CL_UDFArgumentCount(
   UDFContext *context)
   {
    unsigned int count = 0;
    struct expr *argPtr;
 
-   for (argPtr = EvaluationData(context->environment)->CurrentExpression->argList;
+   for (argPtr = CL_EvaluationData(context->environment)->CurrentExpression->argList;
         argPtr != NULL;
         argPtr = argPtr->nextArg)
      { count++; }
@@ -628,22 +628,22 @@ unsigned int UDFArgumentCount(
   }
 
 /*********************/
-/* UDFFirstArgument: */
+/* CL_UDFFirstArgument: */
 /*********************/
-bool UDFFirstArgument(
+bool CL_UDFFirstArgument(
   UDFContext *context,
   unsigned expectedType,
   UDFValue *returnValue)
   {
-   context->lastArg = EvaluationData(context->environment)->CurrentExpression->argList;
+   context->lastArg = CL_EvaluationData(context->environment)->CurrentExpression->argList;
    context->lastPosition = 1;
-   return UDFNextArgument(context,expectedType,returnValue);
+   return CL_UDFNextArgument(context,expectedType,returnValue);
   }
 
 /********************/
-/* UDFNextArgument: */
+/* CL_UDFNextArgument: */
 /********************/
-bool UDFNextArgument(
+bool CL_UDFNextArgument(
   UDFContext *context,
   unsigned expectedType,
   UDFValue *returnValue)
@@ -654,8 +654,8 @@ bool UDFNextArgument(
 
    if (argPtr == NULL)
      {
-      SetHaltExecution(theEnv,true);
-      SetEvaluationError(theEnv,true);
+      SetCL_HaltExecution(theEnv,true);
+      SetCL_EvaluationError(theEnv,true);
       return false;
      }
 
@@ -667,10 +667,10 @@ bool UDFNextArgument(
       case INTEGER_TYPE:
         returnValue->value = argPtr->value;
         if (expectedType & INTEGER_BIT) return true;
-        ExpectedTypeError0(theEnv,UDFContextFunctionName(context),argumentPosition);
-        PrintTypesString(theEnv,STDERR,expectedType,true);
-        SetHaltExecution(theEnv,true);
-        SetEvaluationError(theEnv,true);
+        CL_ExpectedTypeError0(theEnv,CL_UDFContextFunctionName(context),argumentPosition);
+        CL_PrintTypesString(theEnv,STDERR,expectedType,true);
+        SetCL_HaltExecution(theEnv,true);
+        SetCL_EvaluationError(theEnv,true);
         AssignErrorValue(context);
         return false;
         break;
@@ -678,10 +678,10 @@ bool UDFNextArgument(
       case FLOAT_TYPE:
         returnValue->value = argPtr->value;
         if (expectedType & FLOAT_BIT) return true;
-        ExpectedTypeError0(theEnv,UDFContextFunctionName(context),argumentPosition);
-        PrintTypesString(theEnv,STDERR,expectedType,true);
-        SetHaltExecution(theEnv,true);
-        SetEvaluationError(theEnv,true);
+        CL_ExpectedTypeError0(theEnv,CL_UDFContextFunctionName(context),argumentPosition);
+        CL_PrintTypesString(theEnv,STDERR,expectedType,true);
+        SetCL_HaltExecution(theEnv,true);
+        SetCL_EvaluationError(theEnv,true);
         AssignErrorValue(context);
         return false;
         break;
@@ -695,10 +695,10 @@ bool UDFNextArgument(
                (returnValue->lexemeValue == TrueSymbol(theEnv)))
              { return true; }
           }
-        ExpectedTypeError0(theEnv,UDFContextFunctionName(context),argumentPosition);
-        PrintTypesString(theEnv,STDERR,expectedType,true);
-        SetHaltExecution(theEnv,true);
-        SetEvaluationError(theEnv,true);
+        CL_ExpectedTypeError0(theEnv,CL_UDFContextFunctionName(context),argumentPosition);
+        CL_PrintTypesString(theEnv,STDERR,expectedType,true);
+        SetCL_HaltExecution(theEnv,true);
+        SetCL_EvaluationError(theEnv,true);
         AssignErrorValue(context);
         return false;
         break;
@@ -706,10 +706,10 @@ bool UDFNextArgument(
       case STRING_TYPE:
         returnValue->value = argPtr->value;
         if (expectedType & STRING_BIT) return true;
-        ExpectedTypeError0(theEnv,UDFContextFunctionName(context),argumentPosition);
-        PrintTypesString(theEnv,STDERR,expectedType,true);
-        SetHaltExecution(theEnv,true);
-        SetEvaluationError(theEnv,true);
+        CL_ExpectedTypeError0(theEnv,CL_UDFContextFunctionName(context),argumentPosition);
+        CL_PrintTypesString(theEnv,STDERR,expectedType,true);
+        SetCL_HaltExecution(theEnv,true);
+        SetCL_EvaluationError(theEnv,true);
         AssignErrorValue(context);
         return false;
         break;
@@ -717,23 +717,23 @@ bool UDFNextArgument(
       case INSTANCE_NAME_TYPE:
         returnValue->value = argPtr->value;
         if (expectedType & INSTANCE_NAME_BIT) return true;
-        ExpectedTypeError0(theEnv,UDFContextFunctionName(context),argumentPosition);
-        PrintTypesString(theEnv,STDERR,expectedType,true);
-        SetHaltExecution(theEnv,true);
-        SetEvaluationError(theEnv,true);
+        CL_ExpectedTypeError0(theEnv,CL_UDFContextFunctionName(context),argumentPosition);
+        CL_PrintTypesString(theEnv,STDERR,expectedType,true);
+        SetCL_HaltExecution(theEnv,true);
+        SetCL_EvaluationError(theEnv,true);
         AssignErrorValue(context);
         return false;
         break;
      }
 
-   EvaluateExpression(theEnv,argPtr,returnValue);
+   CL_EvaluateExpression(theEnv,argPtr,returnValue);
 
    switch (returnValue->header->type)
      {
       case VOID_TYPE:
         if (expectedType & VOID_BIT)
           {
-           if (EvaluationData(theEnv)->EvaluationError)
+           if (CL_EvaluationData(theEnv)->CL_EvaluationError)
              {
               AssignErrorValue(context);
               return false;
@@ -745,7 +745,7 @@ bool UDFNextArgument(
       case INTEGER_TYPE:
         if (expectedType & INTEGER_BIT)
           {
-           if (EvaluationData(theEnv)->EvaluationError)
+           if (CL_EvaluationData(theEnv)->CL_EvaluationError)
              {
               AssignErrorValue(context);
               return false;
@@ -757,7 +757,7 @@ bool UDFNextArgument(
       case FLOAT_TYPE:
         if (expectedType & FLOAT_BIT)
           {
-           if (EvaluationData(theEnv)->EvaluationError)
+           if (CL_EvaluationData(theEnv)->CL_EvaluationError)
              {
               AssignErrorValue(context);
               return false;
@@ -769,7 +769,7 @@ bool UDFNextArgument(
       case SYMBOL_TYPE:
         if (expectedType & SYMBOL_BIT)
           {
-           if (EvaluationData(theEnv)->EvaluationError)
+           if (CL_EvaluationData(theEnv)->CL_EvaluationError)
              {
               AssignErrorValue(context);
               return false;
@@ -779,7 +779,7 @@ bool UDFNextArgument(
           
         if (expectedType & BOOLEAN_BIT)
           {
-           if (EvaluationData(theEnv)->EvaluationError)
+           if (CL_EvaluationData(theEnv)->CL_EvaluationError)
              {
               AssignErrorValue(context);
               return false;
@@ -794,7 +794,7 @@ bool UDFNextArgument(
       case STRING_TYPE:
         if (expectedType & STRING_BIT)
           {
-           if (EvaluationData(theEnv)->EvaluationError)
+           if (CL_EvaluationData(theEnv)->CL_EvaluationError)
              {
               AssignErrorValue(context);
               return false;
@@ -806,7 +806,7 @@ bool UDFNextArgument(
       case INSTANCE_NAME_TYPE:
         if (expectedType & INSTANCE_NAME_BIT)
           {
-           if (EvaluationData(theEnv)->EvaluationError)
+           if (CL_EvaluationData(theEnv)->CL_EvaluationError)
              {
               AssignErrorValue(context);
               return false;
@@ -818,7 +818,7 @@ bool UDFNextArgument(
       case EXTERNAL_ADDRESS_TYPE:
         if (expectedType & EXTERNAL_ADDRESS_BIT)
           {
-           if (EvaluationData(theEnv)->EvaluationError)
+           if (CL_EvaluationData(theEnv)->CL_EvaluationError)
              {
               AssignErrorValue(context);
               return false;
@@ -830,7 +830,7 @@ bool UDFNextArgument(
       case FACT_ADDRESS_TYPE:
         if (expectedType & FACT_ADDRESS_BIT)
           {
-           if (EvaluationData(theEnv)->EvaluationError)
+           if (CL_EvaluationData(theEnv)->CL_EvaluationError)
              {
               AssignErrorValue(context);
               return false;
@@ -842,7 +842,7 @@ bool UDFNextArgument(
       case INSTANCE_ADDRESS_TYPE:
         if (expectedType & INSTANCE_ADDRESS_BIT)
           {
-           if (EvaluationData(theEnv)->EvaluationError)
+           if (CL_EvaluationData(theEnv)->CL_EvaluationError)
              {
               AssignErrorValue(context);
               return false;
@@ -854,7 +854,7 @@ bool UDFNextArgument(
       case MULTIFIELD_TYPE:
         if (expectedType & MULTIFIELD_BIT)
           {
-           if (EvaluationData(theEnv)->EvaluationError)
+           if (CL_EvaluationData(theEnv)->CL_EvaluationError)
              {
               AssignErrorValue(context);
               return false;
@@ -864,20 +864,20 @@ bool UDFNextArgument(
         break;
      }
 
-   ExpectedTypeError0(theEnv,UDFContextFunctionName(context),argumentPosition);
-   PrintTypesString(theEnv,STDERR,expectedType,true);
+   CL_ExpectedTypeError0(theEnv,CL_UDFContextFunctionName(context),argumentPosition);
+   CL_PrintTypesString(theEnv,STDERR,expectedType,true);
 
-   SetHaltExecution(theEnv,true);
-   SetEvaluationError(theEnv,true);
+   SetCL_HaltExecution(theEnv,true);
+   SetCL_EvaluationError(theEnv,true);
    AssignErrorValue(context);
 
    return false;
   }
 
 /*******************/
-/* UDFNthArgument: */
+/* CL_UDFNthArgument: */
 /*******************/
-bool UDFNthArgument(
+bool CL_UDFNthArgument(
   UDFContext *context,
   unsigned int argumentPosition,
   unsigned expectedType,
@@ -885,7 +885,7 @@ bool UDFNthArgument(
   {
    if (argumentPosition < context->lastPosition)
      {
-      context->lastArg = EvaluationData(context->environment)->CurrentExpression->argList;
+      context->lastArg = CL_EvaluationData(context->environment)->CurrentExpression->argList;
       context->lastPosition = 1;
      }
 
@@ -893,37 +893,37 @@ bool UDFNthArgument(
            context->lastArg = context->lastArg->nextArg)
      { context->lastPosition++; }
 
-   return UDFNextArgument(context,expectedType,returnValue);
+   return CL_UDFNextArgument(context,expectedType,returnValue);
   }
 
 /******************************/
-/* UDFInvalidArgumentMessage: */
+/* CL_UDFInvalidArgumentMessage: */
 /******************************/
-void UDFInvalidArgumentMessage(
+void CL_UDFInvalidArgumentMessage(
   UDFContext *context,
   const char *typeString)
   {
-   ExpectedTypeError1(context->environment,
-                      UDFContextFunctionName(context),
+   CL_ExpectedTypeError1(context->environment,
+                      CL_UDFContextFunctionName(context),
                       context->lastPosition-1,typeString);
   }
 
 /******************/
-/* UDFThrowError: */
+/* CL_UDFThrowError: */
 /******************/
-void UDFThrowError(
+void CL_UDFThrowError(
   UDFContext *context)
   {
    Environment *theEnv = context->environment;
 
-   SetHaltExecution(theEnv,true);
-   SetEvaluationError(theEnv,true);
+   SetCL_HaltExecution(theEnv,true);
+   SetCL_EvaluationError(theEnv,true);
   }
 
 /***************************/
-/* UDFContextFunctionName: */
+/* CL_UDFContextFunctionName: */
 /***************************/
-const char *UDFContextFunctionName(
+const char *CL_UDFContextFunctionName(
   UDFContext *context)
   {
    return context->theFunction->callFunctionName->contents;
@@ -941,26 +941,26 @@ static void PrintType(
   {
    if (*typesPrinted == 0)
      {
-      WriteString(theEnv,logicalName,typeName);
+      CL_WriteString(theEnv,logicalName,typeName);
       (*typesPrinted)++;
       return;
      }
 
    if (typeCount == 2)
-     { WriteString(theEnv,logicalName," or "); }
+     { CL_WriteString(theEnv,logicalName," or "); }
    else if (((*typesPrinted) + 1) == typeCount)
-     { WriteString(theEnv,logicalName,", or "); }
+     { CL_WriteString(theEnv,logicalName,", or "); }
    else
-     { WriteString(theEnv,logicalName,", "); }
+     { CL_WriteString(theEnv,logicalName,", "); }
 
-   WriteString(theEnv,logicalName,typeName);
+   CL_WriteString(theEnv,logicalName,typeName);
    (*typesPrinted)++;
   }
 
 /********************/
-/* PrintTypesString */
+/* CL_PrintTypesString */
 /********************/
-void PrintTypesString(
+void CL_PrintTypesString(
   Environment *theEnv,
   const char *logicalName,
   unsigned expectedType,
@@ -1012,5 +1012,5 @@ void PrintTypesString(
      { PrintType(theEnv,logicalName,typeCount,&typesPrinted,"multifield"); }
 
    if (printCRLF)
-     { WriteString(theEnv,logicalName,".\n"); }
+     { CL_WriteString(theEnv,logicalName,".\n"); }
   }

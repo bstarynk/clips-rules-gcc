@@ -18,8 +18,8 @@
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
-/*      6.24: Added environment parameter to GenClose.       */
-/*            Added environment parameter to GenOpen.        */
+/*      6.24: Added environment parameter to CL_GenClose.       */
+/*            Added environment parameter to CL_GenOpen.        */
 /*                                                           */
 /*            Renamed BOOLEAN macro type to intBool.         */
 /*                                                           */
@@ -65,7 +65,7 @@
 
 #include "entities.h"
 
-typedef struct batchEntry BatchEntry;
+typedef struct batchEntry CL_BatchEntry;
 
 /***************/
 /* STRUCTURES  */
@@ -79,7 +79,7 @@ struct batchEntry
    const char *theString;
    const char *fileName;
    long lineNumber;
-   BatchEntry *next;
+   CL_BatchEntry *next;
   };
 
 /***************/
@@ -102,27 +102,27 @@ struct fileCommandData
    size_t DribbleMaximumPosition;
    int (*DribbleStatusFunction)(Environment *,bool);
 #endif
-   int BatchType;
-   FILE *BatchFileSource;
-   const char *BatchLogicalSource;
-   char *BatchBuffer;
-   size_t BatchCurrentPosition;
-   size_t BatchMaximumPosition;
-   BatchEntry *TopOfBatchList;
-   BatchEntry *BottomOfBatchList;
+   int CL_BatchType;
+   FILE *CL_BatchFileSource;
+   const char *CL_BatchLogicalSource;
+   char *CL_BatchBuffer;
+   size_t CL_BatchCurrentPosition;
+   size_t CL_BatchMaximumPosition;
+   CL_BatchEntry *TopOfCL_BatchList;
+   CL_BatchEntry *BottomOfCL_BatchList;
    char *batchPriorParsingFile;
   };
 
 #define FileCommandData(theEnv) ((struct fileCommandData *) GetEnvironmentData(theEnv,FILECOM_DATA))
 
-   void                           FileCommandDefinitions(Environment *);
-   void                           BatchCommand(Environment *,UDFContext *,UDFValue *);
-   void                           BatchStarCommand(Environment *,UDFContext *,UDFValue *);
-   void                           LoadCommand(Environment *,UDFContext *,UDFValue *);
-   void                           LoadStarCommand(Environment *,UDFContext *,UDFValue *);
-   void                           SaveCommand(Environment *,UDFContext *,UDFValue *);
-   void                           DribbleOnCommand(Environment *,UDFContext *,UDFValue *);
-   void                           DribbleOffCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_FileCommandDefinitions(Environment *);
+   void                           CL_BatchCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_BatchStarCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_LoadCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_LoadStarCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_SaveCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_DribbleOnCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_DribbleOffCommand(Environment *,UDFContext *,UDFValue *);
 
 #endif /* _H_filecom */
 

@@ -20,8 +20,8 @@
 /*                                                           */
 /*      6.23: Correction for FalseSymbol/TrueSymbol. DR0859  */
 /*                                                           */
-/*      6.24: Added environment parameter to GenClose.       */
-/*            Added environment parameter to GenOpen.        */
+/*      6.24: Added environment parameter to CL_GenClose.       */
+/*            Added environment parameter to CL_GenOpen.        */
 /*                                                           */
 /*            Renamed BOOLEAN macro type to intBool.         */
 /*                                                           */
@@ -38,7 +38,7 @@
 /*                                                           */
 /*            Added code to prevent a clear command from     */
 /*            being executed during fact assertions via      */
-/*            Increment/DecrementClearReadyLocks API.        */
+/*            Increment/DecrementCL_ClearReadyLocks API.        */
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
@@ -63,21 +63,21 @@
 
 #include "evaluatn.h"
 
-   void                           FactCommandDefinitions(Environment *);
-   void                           AssertCommand(Environment *,UDFContext *,UDFValue *);
-   void                           RetractCommand(Environment *,UDFContext *,UDFValue *);
-   void                           AssertStringFunction(Environment *,UDFContext *,UDFValue *);
-   void                           FactsCommand(Environment *,UDFContext *,UDFValue *);
-   void                           Facts(Environment *,const char *,Defmodule *,long long,long long,long long);
-   void                           SetFactDuplicationCommand(Environment *,UDFContext *,UDFValue *);
-   void                           GetFactDuplicationCommand(Environment *,UDFContext *,UDFValue *);
-   void                           SaveFactsCommand(Environment *,UDFContext *,UDFValue *);
-   void                           LoadFactsCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           SaveFacts(Environment *,const char *,SaveScope);
-   bool                           SaveFactsDriver(Environment *,const char *,SaveScope,struct expr *);
-   bool                           LoadFacts(Environment *,const char *);
-   bool                           LoadFactsFromString(Environment *,const char *,size_t);
-   void                           FactIndexFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_FactCommandDefinitions(Environment *);
+   void                           CL_AssertCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_RetractCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_AssertStringFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_FactsCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_Facts(Environment *,const char *,Defmodule *,long long,long long,long long);
+   void                           CL_SetFactDuplicationCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_GetFactDuplicationCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_SaveCL_FactsCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_LoadCL_FactsCommand(Environment *,UDFContext *,UDFValue *);
+   bool                           CL_SaveCL_Facts(Environment *,const char *,CL_SaveScope);
+   bool                           CL_SaveCL_FactsDriver(Environment *,const char *,CL_SaveScope,struct expr *);
+   bool                           CL_LoadCL_Facts(Environment *,const char *);
+   bool                           CL_LoadCL_FactsFromString(Environment *,const char *,size_t);
+   void                           CL_FactIndexFunction(Environment *,UDFContext *,UDFValue *);
 
 #endif /* _H_factcom */
 

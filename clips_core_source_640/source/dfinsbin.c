@@ -7,7 +7,7 @@
    /*******************************************************/
 
 /*************************************************************/
-/* Purpose: Binary Load/Save Functions for Definstances      */
+/* Purpose: Binary CL_Load/CL_Save Functions for Definstances      */
 /*                                                           */
 /* Principal Programmer(s):                                  */
 /*      Brian L. Dantes                                      */
@@ -61,7 +61,7 @@
                MACROS AND TYPES
    =========================================
    ***************************************** */
-typedef struct bsaveDefinstancesModule
+typedef struct bsaveCL_DefinstancesModule
   {
    struct bsaveDefmoduleItemHeader header;
   } BSAVE_DEFINSTANCES_MODULE;
@@ -79,20 +79,20 @@ typedef struct bsaveDefinstances
    ***************************************** */
 
 #if BLOAD_AND_BSAVE
-   static void                    BsaveDefinstancesFind(Environment *);
+   static void                    CL_BsaveDefinstancesFind(Environment *);
    static void                    MarkDefinstancesItems(Environment *,ConstructHeader *,void *);
-   static void                    BsaveDefinstancesExpressions(Environment *,FILE *);
-   static void                    BsaveDefinstancesExpression(Environment *,ConstructHeader *,void *);
-   static void                    BsaveStorageDefinstances(Environment *,FILE *);
-   static void                    BsaveDefinstancesDriver(Environment *,FILE *);
-   static void                    BsaveDefinstances(Environment *,ConstructHeader *,void *);
+   static void                    CL_BsaveDefinstancesExpressions(Environment *,FILE *);
+   static void                    CL_BsaveDefinstancesExpression(Environment *,ConstructHeader *,void *);
+   static void                    CL_BsaveStorageDefinstances(Environment *,FILE *);
+   static void                    CL_BsaveDefinstancesDriver(Environment *,FILE *);
+   static void                    CL_BsaveDefinstances(Environment *,ConstructHeader *,void *);
 #endif
 
-   static void                    BloadStorageDefinstances(Environment *);
-   static void                    BloadDefinstances(Environment *);
-   static void                    UpdateDefinstancesModule(Environment *,void *,unsigned long);
+   static void                    CL_BloadStorageDefinstances(Environment *);
+   static void                    CL_BloadDefinstances(Environment *);
+   static void                    UpdateCL_DefinstancesModule(Environment *,void *,unsigned long);
    static void                    UpdateDefinstances(Environment *,void *,unsigned long);
-   static void                    ClearDefinstancesBload(Environment *);
+   static void                    CL_ClearDefinstancesCL_Bload(Environment *);
    static void                    DeallocateDefinstancesBinaryData(Environment *);
 
 /* =========================================
@@ -102,7 +102,7 @@ typedef struct bsaveDefinstances
    ***************************************** */
 
 /***********************************************************
-  NAME         : SetupDefinstancesBload
+  NAME         : CL_SetupDefinstancesCL_Bload
   DESCRIPTION  : Initializes data structures and
                    routines for binary loads of definstances
   INPUTS       : None
@@ -110,19 +110,19 @@ typedef struct bsaveDefinstances
   SIDE EFFECTS : Routines defined and structures initialized
   NOTES        : None
  ***********************************************************/
-void SetupDefinstancesBload(
+void CL_SetupDefinstancesCL_Bload(
   Environment *theEnv)
   {
-   AllocateEnvironmentData(theEnv,DFINSBIN_DATA,sizeof(struct definstancesBinaryData),DeallocateDefinstancesBinaryData);
+   CL_AllocateEnvironmentData(theEnv,DFINSBIN_DATA,sizeof(struct definstancesBinaryData),DeallocateDefinstancesBinaryData);
 #if BLOAD_AND_BSAVE
-   AddBinaryItem(theEnv,"definstances",0,BsaveDefinstancesFind,BsaveDefinstancesExpressions,
-                             BsaveStorageDefinstances,BsaveDefinstancesDriver,
-                             BloadStorageDefinstances,BloadDefinstances,
-                             ClearDefinstancesBload);
+   CL_AddBinaryItem(theEnv,"definstances",0,CL_BsaveDefinstancesFind,CL_BsaveDefinstancesExpressions,
+                             CL_BsaveStorageDefinstances,CL_BsaveDefinstancesDriver,
+                             CL_BloadStorageDefinstances,CL_BloadDefinstances,
+                             CL_ClearDefinstancesCL_Bload);
 #else
-   AddBinaryItem(theEnv,"definstances",0,NULL,NULL,NULL,NULL,
-                             BloadStorageDefinstances,BloadDefinstances,
-                             ClearDefinstancesBload);
+   CL_AddBinaryItem(theEnv,"definstances",0,NULL,NULL,NULL,NULL,
+                             CL_BloadStorageDefinstances,CL_BloadDefinstances,
+                             CL_ClearDefinstancesCL_Bload);
 #endif
   }
 
@@ -137,15 +137,15 @@ static void DeallocateDefinstancesBinaryData(
 
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE) && (! RUN_TIME)
    space = DefinstancesBinaryData(theEnv)->DefinstancesCount * sizeof(struct definstances);
-   if (space != 0) genfree(theEnv,DefinstancesBinaryData(theEnv)->DefinstancesArray,space);
+   if (space != 0) CL_genfree(theEnv,DefinstancesBinaryData(theEnv)->DefinstancesArray,space);
 
    space =  DefinstancesBinaryData(theEnv)->ModuleCount * sizeof(struct definstancesModule);
-   if (space != 0) genfree(theEnv,DefinstancesBinaryData(theEnv)->ModuleArray,space);
+   if (space != 0) CL_genfree(theEnv,DefinstancesBinaryData(theEnv)->ModuleArray,space);
 #endif
   }
 
 /***************************************************
-  NAME         : BloadDefinstancesModuleRef
+  NAME         : CL_BloadCL_DefinstancesModuleRef
   DESCRIPTION  : Returns a pointer to the
                  appropriate definstances module
   INPUTS       : The index of the module
@@ -153,7 +153,7 @@ static void DeallocateDefinstancesBinaryData(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-void *BloadDefinstancesModuleRef(
+void *CL_BloadCL_DefinstancesModuleRef(
   Environment *theEnv,
   unsigned long theIndex)
   {
@@ -169,7 +169,7 @@ void *BloadDefinstancesModuleRef(
 #if BLOAD_AND_BSAVE
 
 /***************************************************************************
-  NAME         : BsaveDefinstancesFind
+  NAME         : CL_BsaveDefinstancesFind
   DESCRIPTION  : For all definstances, this routine marks all
                    the needed symbols.
                  Also, it also counts the number of
@@ -183,17 +183,17 @@ void *BloadDefinstancesModuleRef(
   NOTES        : Also sets bsaveIndex for each definstances (assumes
                    definstances will be bsaved in order of binary list)
  ***************************************************************************/
-static void BsaveDefinstancesFind(
+static void CL_BsaveDefinstancesFind(
   Environment *theEnv)
   {
-   SaveBloadCount(theEnv,DefinstancesBinaryData(theEnv)->ModuleCount);
-   SaveBloadCount(theEnv,DefinstancesBinaryData(theEnv)->DefinstancesCount);
+   CL_SaveCL_BloadCount(theEnv,DefinstancesBinaryData(theEnv)->ModuleCount);
+   CL_SaveCL_BloadCount(theEnv,DefinstancesBinaryData(theEnv)->DefinstancesCount);
    DefinstancesBinaryData(theEnv)->DefinstancesCount = 0L;
 
-   DefinstancesBinaryData(theEnv)->ModuleCount = GetNumberOfDefmodules(theEnv);
+   DefinstancesBinaryData(theEnv)->ModuleCount = CL_GetNumberOfDefmodules(theEnv);
     
-   DoForAllConstructs(theEnv,MarkDefinstancesItems,
-                      DefinstancesData(theEnv)->DefinstancesModuleIndex,
+   CL_DoForAllConstructs(theEnv,MarkDefinstancesItems,
+                      DefinstancesData(theEnv)->CL_DefinstancesModuleIndex,
                       false,NULL);
   }
 
@@ -217,31 +217,31 @@ static void MarkDefinstancesItems(
 #pragma unused(userBuffer)
 #endif
 
-   MarkConstructHeaderNeededItems(theDefinstances,DefinstancesBinaryData(theEnv)->DefinstancesCount++);
-   ExpressionData(theEnv)->ExpressionCount += ExpressionSize(((Definstances *) theDefinstances)->mkinstance);
-   MarkNeededItems(theEnv,((Definstances *) theDefinstances)->mkinstance);
+   CL_MarkConstructHeaderNeededItems(theDefinstances,DefinstancesBinaryData(theEnv)->DefinstancesCount++);
+   ExpressionData(theEnv)->ExpressionCount += CL_ExpressionSize(((Definstances *) theDefinstances)->mkinstance);
+   CL_MarkNeededItems(theEnv,((Definstances *) theDefinstances)->mkinstance);
   }
 
 /***************************************************
-  NAME         : BsaveDefinstancesExpressions
-  DESCRIPTION  : Writes out all expressions needed
+  NAME         : CL_BsaveDefinstancesExpressions
+  DESCRIPTION  : CL_Writes out all expressions needed
                    by deffunctyions
   INPUTS       : The file pointer of the binary file
   RETURNS      : Nothing useful
   SIDE EFFECTS : File updated
   NOTES        : None
  ***************************************************/
-static void BsaveDefinstancesExpressions(
+static void CL_BsaveDefinstancesExpressions(
   Environment *theEnv,
   FILE *fp)
   {
-   DoForAllConstructs(theEnv,BsaveDefinstancesExpression,DefinstancesData(theEnv)->DefinstancesModuleIndex,
+   CL_DoForAllConstructs(theEnv,CL_BsaveDefinstancesExpression,DefinstancesData(theEnv)->CL_DefinstancesModuleIndex,
                       false,fp);
   }
 
 /***************************************************
-  NAME         : BsaveDefinstancesExpression
-  DESCRIPTION  : Saves the needed expressions for
+  NAME         : CL_BsaveDefinstancesExpression
+  DESCRIPTION  : CL_Saves the needed expressions for
                  a definstances bsave
   INPUTS       : 1) The definstances
                  2) Output data file pointer
@@ -249,17 +249,17 @@ static void BsaveDefinstancesExpressions(
   SIDE EFFECTS : Expressions saved
   NOTES        : None
  ***************************************************/
-static void BsaveDefinstancesExpression(
+static void CL_BsaveDefinstancesExpression(
   Environment *theEnv,
   ConstructHeader *theDefinstances,
   void *userBuffer)
   {
-   BsaveExpression(theEnv,((Definstances *) theDefinstances)->mkinstance,(FILE *) userBuffer);
+   CL_BsaveExpression(theEnv,((Definstances *) theDefinstances)->mkinstance,(FILE *) userBuffer);
   }
 
 /***********************************************************
-  NAME         : BsaveStorageDefinstances
-  DESCRIPTION  : Writes out number of each type of structure
+  NAME         : CL_BsaveStorageDefinstances
+  DESCRIPTION  : CL_Writes out number of each type of structure
                    required for definstances
                  Space required for counts (unsigned long)
   INPUTS       : File pointer of binary file
@@ -267,21 +267,21 @@ static void BsaveDefinstancesExpression(
   SIDE EFFECTS : Binary file adjusted
   NOTES        : None
  ***********************************************************/
-static void BsaveStorageDefinstances(
+static void CL_BsaveStorageDefinstances(
   Environment *theEnv,
   FILE *fp)
   {
    size_t space;
 
    space = sizeof(unsigned long) * 2;
-   GenWrite(&space,sizeof(size_t),fp);
-   GenWrite(&DefinstancesBinaryData(theEnv)->ModuleCount,sizeof(unsigned long),fp);
-   GenWrite(&DefinstancesBinaryData(theEnv)->DefinstancesCount,sizeof(unsigned long),fp);
+   CL_GenCL_Write(&space,sizeof(size_t),fp);
+   CL_GenCL_Write(&DefinstancesBinaryData(theEnv)->ModuleCount,sizeof(unsigned long),fp);
+   CL_GenCL_Write(&DefinstancesBinaryData(theEnv)->DefinstancesCount,sizeof(unsigned long),fp);
   }
 
 /*************************************************************************************
-  NAME         : BsaveDefinstancesDriver
-  DESCRIPTION  : Writes out definstances in binary format
+  NAME         : CL_BsaveDefinstancesDriver
+  DESCRIPTION  : CL_Writes out definstances in binary foCL_rmat
                  Space required (unsigned long)
                  All definstances (sizeof(Definstances) * Number of definstances)
   INPUTS       : File pointer of binary file
@@ -289,7 +289,7 @@ static void BsaveStorageDefinstances(
   SIDE EFFECTS : Binary file adjusted
   NOTES        : None
  *************************************************************************************/
-static void BsaveDefinstancesDriver(
+static void CL_BsaveDefinstancesDriver(
   Environment *theEnv,
   FILE *fp)
   {
@@ -300,43 +300,43 @@ static void BsaveDefinstancesDriver(
 
    space = ((sizeof(BSAVE_DEFINSTANCES_MODULE) * DefinstancesBinaryData(theEnv)->ModuleCount) +
             (sizeof(BSAVE_DEFINSTANCES) * DefinstancesBinaryData(theEnv)->DefinstancesCount));
-   GenWrite(&space,sizeof(size_t),fp);
+   CL_GenCL_Write(&space,sizeof(size_t),fp);
 
    /* =================================
-      Write out each definstances module
+      CL_Write out each definstances module
       ================================= */
    DefinstancesBinaryData(theEnv)->DefinstancesCount = 0L;
-   theModule = GetNextDefmodule(theEnv,NULL);
+   theModule = CL_GetNextDefmodule(theEnv,NULL);
    while (theModule != NULL)
      {
       theModuleItem = (DEFINSTANCES_MODULE *)
-                      GetModuleItem(theEnv,theModule,FindModuleItem(theEnv,"definstances")->moduleIndex);
-      AssignBsaveDefmdlItemHdrVals(&dummy_mitem.header,&theModuleItem->header);
-      GenWrite(&dummy_mitem,sizeof(BSAVE_DEFINSTANCES_MODULE),fp);
-      theModule = GetNextDefmodule(theEnv,theModule);
+                      CL_GetModuleItem(theEnv,theModule,CL_FindModuleItem(theEnv,"definstances")->moduleIndex);
+      CL_AssignCL_BsaveDefmdlItemHdrVals(&dummy_mitem.header,&theModuleItem->header);
+      CL_GenCL_Write(&dummy_mitem,sizeof(BSAVE_DEFINSTANCES_MODULE),fp);
+      theModule = CL_GetNextDefmodule(theEnv,theModule);
      }
 
    /*==============================*/
-   /* Write out each definstances. */
+   /* CL_Write out each definstances. */
    /*==============================*/
 
-   DoForAllConstructs(theEnv,BsaveDefinstances,DefinstancesData(theEnv)->DefinstancesModuleIndex,
+   CL_DoForAllConstructs(theEnv,CL_BsaveDefinstances,DefinstancesData(theEnv)->CL_DefinstancesModuleIndex,
                       false,fp);
 
-   RestoreBloadCount(theEnv,&DefinstancesBinaryData(theEnv)->ModuleCount);
-   RestoreBloadCount(theEnv,&DefinstancesBinaryData(theEnv)->DefinstancesCount);
+   RestoreCL_BloadCount(theEnv,&DefinstancesBinaryData(theEnv)->ModuleCount);
+   RestoreCL_BloadCount(theEnv,&DefinstancesBinaryData(theEnv)->DefinstancesCount);
   }
 
 /***************************************************
-  NAME         : BsaveDefinstances
-  DESCRIPTION  : Bsaves a definstances
+  NAME         : CL_BsaveDefinstances
+  DESCRIPTION  : CL_Bsaves a definstances
   INPUTS       : 1) The definstances
                  2) Output data file pointer
   RETURNS      : Nothing useful
   SIDE EFFECTS : Definstances saved
   NOTES        : None
  ***************************************************/
-static void BsaveDefinstances(
+static void CL_BsaveDefinstances(
   Environment *theEnv,
   ConstructHeader *theDefinstances,
   void *userBuffer)
@@ -344,21 +344,21 @@ static void BsaveDefinstances(
    Definstances *dptr = (Definstances *) theDefinstances;
    BSAVE_DEFINSTANCES dummy_df;
 
-   AssignBsaveConstructHeaderVals(&dummy_df.header,&dptr->header);
+   CL_AssignCL_BsaveConstructHeaderVals(&dummy_df.header,&dptr->header);
   if (dptr->mkinstance != NULL)
      {
       dummy_df.mkinstance = ExpressionData(theEnv)->ExpressionCount;
-      ExpressionData(theEnv)->ExpressionCount += ExpressionSize(dptr->mkinstance);
+      ExpressionData(theEnv)->ExpressionCount += CL_ExpressionSize(dptr->mkinstance);
      }
    else
     dummy_df.mkinstance = ULONG_MAX;
-   GenWrite(&dummy_df,sizeof(BSAVE_DEFINSTANCES),(FILE *) userBuffer);
+   CL_GenCL_Write(&dummy_df,sizeof(BSAVE_DEFINSTANCES),(FILE *) userBuffer);
   }
 
 #endif
 
 /***********************************************************************
-  NAME         : BloadStorageDefinstances
+  NAME         : CL_BloadStorageDefinstances
   DESCRIPTION  : This routine space required for definstances
                    structures and allocates space for them
   INPUTS       : Nothing
@@ -367,16 +367,16 @@ static void BsaveDefinstances(
   NOTES        : This routine makes no attempt to reset any pointers
                    within the structures
  ***********************************************************************/
-static void BloadStorageDefinstances(
+static void CL_BloadStorageDefinstances(
   Environment *theEnv)
   {
    size_t space;
 
-   GenReadBinary(theEnv,&space,sizeof(size_t));
+   CL_GenReadBinary(theEnv,&space,sizeof(size_t));
    if (space == 0L)
      return;
-   GenReadBinary(theEnv,&DefinstancesBinaryData(theEnv)->ModuleCount,sizeof(unsigned long));
-   GenReadBinary(theEnv,&DefinstancesBinaryData(theEnv)->DefinstancesCount,sizeof(unsigned long));
+   CL_GenReadBinary(theEnv,&DefinstancesBinaryData(theEnv)->ModuleCount,sizeof(unsigned long));
+   CL_GenReadBinary(theEnv,&DefinstancesBinaryData(theEnv)->DefinstancesCount,sizeof(unsigned long));
    if (DefinstancesBinaryData(theEnv)->ModuleCount == 0L)
      {
       DefinstancesBinaryData(theEnv)->ModuleArray = NULL;
@@ -385,7 +385,7 @@ static void BloadStorageDefinstances(
      }
 
    space = (DefinstancesBinaryData(theEnv)->ModuleCount * sizeof(DEFINSTANCES_MODULE));
-   DefinstancesBinaryData(theEnv)->ModuleArray = (DEFINSTANCES_MODULE *) genalloc(theEnv,space);
+   DefinstancesBinaryData(theEnv)->ModuleArray = (DEFINSTANCES_MODULE *) CL_genalloc(theEnv,space);
 
    if (DefinstancesBinaryData(theEnv)->DefinstancesCount == 0L)
      {
@@ -394,12 +394,12 @@ static void BloadStorageDefinstances(
      }
 
    space = (DefinstancesBinaryData(theEnv)->DefinstancesCount * sizeof(Definstances));
-   DefinstancesBinaryData(theEnv)->DefinstancesArray = (Definstances *) genalloc(theEnv,space);
+   DefinstancesBinaryData(theEnv)->DefinstancesArray = (Definstances *) CL_genalloc(theEnv,space);
   }
 
 /*********************************************************************
-  NAME         : BloadDefinstances
-  DESCRIPTION  : This routine reads definstances information from
+  NAME         : CL_BloadDefinstances
+  DESCRIPTION  : This routine reads definstances infoCL_rmation from
                    a binary file
                  This routine moves through the definstances
                    binary array updating pointers
@@ -408,21 +408,21 @@ static void BloadStorageDefinstances(
   SIDE EFFECTS : Pointers reset from array indices
   NOTES        : Assumes all loading is finished
  ********************************************************************/
-static void BloadDefinstances(
+static void CL_BloadDefinstances(
   Environment *theEnv)
   {
    size_t space;
 
-   GenReadBinary(theEnv,&space,sizeof(size_t));
-   BloadandRefresh(theEnv,DefinstancesBinaryData(theEnv)->ModuleCount,sizeof(BSAVE_DEFINSTANCES_MODULE),UpdateDefinstancesModule);
-   BloadandRefresh(theEnv,DefinstancesBinaryData(theEnv)->DefinstancesCount,sizeof(BSAVE_DEFINSTANCES),UpdateDefinstances);
+   CL_GenReadBinary(theEnv,&space,sizeof(size_t));
+   CL_BloadandCL_Refresh(theEnv,DefinstancesBinaryData(theEnv)->ModuleCount,sizeof(BSAVE_DEFINSTANCES_MODULE),UpdateCL_DefinstancesModule);
+   CL_BloadandCL_Refresh(theEnv,DefinstancesBinaryData(theEnv)->DefinstancesCount,sizeof(BSAVE_DEFINSTANCES),UpdateDefinstances);
   }
 
 /*******************************************************
-  NAME         : UpdateDefinstancesModule
+  NAME         : UpdateCL_DefinstancesModule
   DESCRIPTION  : Updates definstances module with binary
                  load data - sets pointers from
-                 offset information
+                 offset infoCL_rmation
   INPUTS       : 1) A pointer to the bloaded data
                  2) The index of the binary array
                     element to update
@@ -430,7 +430,7 @@ static void BloadDefinstances(
   SIDE EFFECTS : Definstances moudle pointers updated
   NOTES        : None
  *******************************************************/
-static void UpdateDefinstancesModule(
+static void UpdateCL_DefinstancesModule(
   Environment *theEnv,
   void *buf,
   unsigned long obji)
@@ -438,7 +438,7 @@ static void UpdateDefinstancesModule(
    BSAVE_DEFINSTANCES_MODULE *bdptr;
 
    bdptr = (BSAVE_DEFINSTANCES_MODULE *) buf;
-   UpdateDefmoduleItemHeader(theEnv,&bdptr->header,&DefinstancesBinaryData(theEnv)->ModuleArray[obji].header,
+   CL_UpdateDefmoduleItemHeader(theEnv,&bdptr->header,&DefinstancesBinaryData(theEnv)->ModuleArray[obji].header,
                              sizeof(Definstances),DefinstancesBinaryData(theEnv)->DefinstancesArray);
   }
 
@@ -446,7 +446,7 @@ static void UpdateDefinstancesModule(
   NAME         : UpdateDefinstances
   DESCRIPTION  : Updates definstances with binary
                  load data - sets pointers from
-                 offset information
+                 offset infoCL_rmation
   INPUTS       : 1) A pointer to the bloaded data
                  2) The index of the binary array
                     element to update
@@ -465,7 +465,7 @@ static void UpdateDefinstances(
    bdptr = (BSAVE_DEFINSTANCES *) buf;
    dfiptr = (Definstances *) &DefinstancesBinaryData(theEnv)->DefinstancesArray[obji];
 
-   UpdateConstructHeader(theEnv,&bdptr->header,&dfiptr->header,DEFINSTANCES,
+   CL_UpdateConstructHeader(theEnv,&bdptr->header,&dfiptr->header,DEFINSTANCES,
                          sizeof(DEFINSTANCES_MODULE),DefinstancesBinaryData(theEnv)->ModuleArray,
                          sizeof(Definstances),DefinstancesBinaryData(theEnv)->DefinstancesArray);
    dfiptr->mkinstance = ExpressionPointer(bdptr->mkinstance);
@@ -473,16 +473,16 @@ static void UpdateDefinstances(
   }
 
 /***************************************************************
-  NAME         : ClearDefinstancesBload
-  DESCRIPTION  : Release all binary-loaded definstances
+  NAME         : CL_ClearDefinstancesCL_Bload
+  DESCRIPTION  : CL_Release all binary-loaded definstances
                    structure arrays
-                 Resets definstances list to NULL
+                 CL_Resets definstances list to NULL
   INPUTS       : None
   RETURNS      : Nothing useful
   SIDE EFFECTS : Memory cleared
   NOTES        : Definstances name symbol counts decremented
  ***************************************************************/
-static void ClearDefinstancesBload(
+static void CL_ClearDefinstancesCL_Bload(
   Environment *theEnv)
   {
    unsigned long i;
@@ -491,16 +491,16 @@ static void ClearDefinstancesBload(
    space = (sizeof(DEFINSTANCES_MODULE) * DefinstancesBinaryData(theEnv)->ModuleCount);
    if (space == 0L)
      return;
-   genfree(theEnv,DefinstancesBinaryData(theEnv)->ModuleArray,space);
+   CL_genfree(theEnv,DefinstancesBinaryData(theEnv)->ModuleArray,space);
    DefinstancesBinaryData(theEnv)->ModuleArray = NULL;
    DefinstancesBinaryData(theEnv)->ModuleCount = 0L;
 
    for (i = 0 ; i < DefinstancesBinaryData(theEnv)->DefinstancesCount ; i++)
-     UnmarkConstructHeader(theEnv,&DefinstancesBinaryData(theEnv)->DefinstancesArray[i].header);
+     CL_UnmarkConstructHeader(theEnv,&DefinstancesBinaryData(theEnv)->DefinstancesArray[i].header);
    space = (sizeof(Definstances) * DefinstancesBinaryData(theEnv)->DefinstancesCount);
    if (space == 0)
      return;
-   genfree(theEnv,DefinstancesBinaryData(theEnv)->DefinstancesArray,space);
+   CL_genfree(theEnv,DefinstancesBinaryData(theEnv)->DefinstancesArray,space);
    DefinstancesBinaryData(theEnv)->DefinstancesArray = NULL;
    DefinstancesBinaryData(theEnv)->DefinstancesCount = 0L;
   }

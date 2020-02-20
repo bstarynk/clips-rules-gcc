@@ -42,7 +42,7 @@
 /*                                                           */
 /*            Support for long long integers.                */
 /*                                                           */
-/*            Used gensprintf instead of sprintf.            */
+/*            Used CL_gensprintf instead of sprintf.            */
 /*                                                           */
 /*            Support for modify callback function.          */
 /*                                                           */
@@ -57,14 +57,14 @@
 /*                                                           */
 /*            Added code to prevent a clear command from     */
 /*            being executed during fact assertions via      */
-/*            Increment/DecrementClearReadyLocks API.        */
+/*            Increment/DecrementCL_ClearReadyLocks API.        */
 /*                                                           */
 /*      6.31: Error messages are now generated when modify   */
 /*            and duplicate functions are given a retracted  */
 /*            fact.                                          */
 /*                                                           */
-/*      6.40: Added Env prefix to GetEvaluationError and     */
-/*            SetEvaluationError functions.                  */
+/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
+/*            SetCL_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -79,14 +79,14 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/*            Eval support for run time and bload only.      */
+/*            CL_Eval support for run time and bload only.      */
 /*                                                           */
-/*            Watch facts for modify command only prints     */
+/*            CL_Watch facts for modify command only prints     */
 /*            changed slots.                                 */
 /*                                                           */
 /*            Modify command preserves fact id and address.  */
 /*                                                           */
-/*            Assert returns duplicate fact. FALSE is now    */
+/*            CL_Assert returns duplicate fact. FALSE is now    */
 /*            returned only if an error occurs.              */
 /*                                                           */
 /*            For the modify command, specifying the fact    */
@@ -142,41 +142,41 @@
 #endif
 
 /****************************************************************/
-/* DeftemplateFunctions: Initializes the deftemplate functions. */
+/* CL_DeftemplateFunctions: Initializes the deftemplate functions. */
 /****************************************************************/
-void DeftemplateFunctions(
+void CL_DeftemplateFunctions(
   Environment *theEnv)
   {
 #if ! RUN_TIME
-   AddUDF(theEnv,"modify","bf",0,UNBOUNDED,"*;lf",ModifyCommand,"ModifyCommand",NULL);
-   AddUDF(theEnv,"duplicate","bf",0,UNBOUNDED,"*;lf",DuplicateCommand,"DuplicateCommand",NULL);
+   CL_AddUDF(theEnv,"modify","bf",0,UNBOUNDED,"*;lf",CL_ModifyCommand,"CL_ModifyCommand",NULL);
+   CL_AddUDF(theEnv,"duplicate","bf",0,UNBOUNDED,"*;lf",CL_DuplicateCommand,"CL_DuplicateCommand",NULL);
 
-   AddUDF(theEnv,"deftemplate-slot-names","bm",1,1,"y",DeftemplateSlotNamesFunction,"DeftemplateSlotNamesFunction",NULL);
-   AddUDF(theEnv,"deftemplate-slot-default-value","*",2,2,"y",DeftemplateSlotDefaultValueFunction,"DeftemplateSlotDefaultValueFunction",NULL);
-   AddUDF(theEnv,"deftemplate-slot-cardinality","*",2,2,"y",DeftemplateSlotCardinalityFunction,"DeftemplateSlotCardinalityFunction",NULL);
-   AddUDF(theEnv,"deftemplate-slot-allowed-values","*",2,2,"y",DeftemplateSlotAllowedValuesFunction,"DeftemplateSlotAllowedValuesFunction",NULL);
-   AddUDF(theEnv,"deftemplate-slot-range","*",2,2,"y",DeftemplateSlotRangeFunction,"DeftemplateSlotRangeFunction",NULL);
-   AddUDF(theEnv,"deftemplate-slot-types","*",2,2,"y",DeftemplateSlotTypesFunction,"DeftemplateSlotTypesFunction",NULL);
+   CL_AddUDF(theEnv,"deftemplate-slot-names","bm",1,1,"y",CL_DeftemplateSlotNamesFunction,"CL_DeftemplateSlotNamesFunction",NULL);
+   CL_AddUDF(theEnv,"deftemplate-slot-default-value","*",2,2,"y",CL_DeftemplateCL_SlotDefaultValueFunction,"CL_DeftemplateCL_SlotDefaultValueFunction",NULL);
+   CL_AddUDF(theEnv,"deftemplate-slot-cardinality","*",2,2,"y",CL_DeftemplateCL_SlotCardinalityFunction,"CL_DeftemplateCL_SlotCardinalityFunction",NULL);
+   CL_AddUDF(theEnv,"deftemplate-slot-allowed-values","*",2,2,"y",CL_DeftemplateCL_SlotAllowedValuesFunction,"CL_DeftemplateCL_SlotAllowedValuesFunction",NULL);
+   CL_AddUDF(theEnv,"deftemplate-slot-range","*",2,2,"y",CL_DeftemplateCL_SlotRangeFunction,"CL_DeftemplateCL_SlotRangeFunction",NULL);
+   CL_AddUDF(theEnv,"deftemplate-slot-types","*",2,2,"y",CL_DeftemplateCL_SlotTypesFunction,"CL_DeftemplateCL_SlotTypesFunction",NULL);
 
-   AddUDF(theEnv,"deftemplate-slot-multip","b",2,2,"y",DeftemplateSlotMultiPFunction,"DeftemplateSlotMultiPFunction",NULL);
-   AddUDF(theEnv,"deftemplate-slot-singlep","b",2,2,"y",DeftemplateSlotSinglePFunction,"DeftemplateSlotSinglePFunction",NULL);
-   AddUDF(theEnv,"deftemplate-slot-existp","b",2,2,"y",DeftemplateSlotExistPFunction,"DeftemplateSlotExistPFunction",NULL);
-   AddUDF(theEnv,"deftemplate-slot-defaultp","y",2,2,"y",DeftemplateSlotDefaultPFunction,"DeftemplateSlotDefaultPFunction",NULL);
+   CL_AddUDF(theEnv,"deftemplate-slot-multip","b",2,2,"y",CL_DeftemplateSlotMultiPFunction,"CL_DeftemplateSlotMultiPFunction",NULL);
+   CL_AddUDF(theEnv,"deftemplate-slot-singlep","b",2,2,"y",CL_DeftemplateSlotSinglePFunction,"CL_DeftemplateSlotSinglePFunction",NULL);
+   CL_AddUDF(theEnv,"deftemplate-slot-existp","b",2,2,"y",CL_DeftemplateCL_SlotExistPFunction,"CL_DeftemplateCL_SlotExistPFunction",NULL);
+   CL_AddUDF(theEnv,"deftemplate-slot-defaultp","y",2,2,"y",CL_DeftemplateCL_SlotDefaultPFunction,"CL_DeftemplateCL_SlotDefaultPFunction",NULL);
 
-   AddUDF(theEnv,"deftemplate-slot-facet-existp","b",3,3,"y",DeftemplateSlotFacetExistPFunction,"DeftemplateSlotFacetExistPFunction",NULL);
+   CL_AddUDF(theEnv,"deftemplate-slot-facet-existp","b",3,3,"y",CL_DeftemplateSlotFacetExistPFunction,"CL_DeftemplateSlotFacetExistPFunction",NULL);
 
-   AddUDF(theEnv,"deftemplate-slot-facet-value","*",3,3,"y",DeftemplateSlotFacetValueFunction,"DeftemplateSlotFacetValueFunction",NULL);
+   CL_AddUDF(theEnv,"deftemplate-slot-facet-value","*",3,3,"y",CL_DeftemplateSlotFacetValueFunction,"CL_DeftemplateSlotFacetValueFunction",NULL);
 
-   FuncSeqOvlFlags(theEnv,"modify",false,false);
-   FuncSeqOvlFlags(theEnv,"duplicate",false,false);
+   CL_FuncSeqOvlFlags(theEnv,"modify",false,false);
+   CL_FuncSeqOvlFlags(theEnv,"duplicate",false,false);
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
 #endif
 
-   AddFunctionParser(theEnv,"modify",ModifyParse);
-   AddFunctionParser(theEnv,"duplicate",DuplicateParse);
+   CL_AddFunctionParser(theEnv,"modify",CL_ModifyParse);
+   CL_AddFunctionParser(theEnv,"duplicate",CL_DuplicateParse);
   }
 
 /***************************/
@@ -194,16 +194,16 @@ static void FreeTemplateValueArray(
    for (i = 0; i < templatePtr->numberOfSlots; i++)
      {
       if (theValueArray[i].header->type == MULTIFIELD_TYPE)
-        { ReturnMultifield(theEnv,theValueArray[i].multifieldValue); }
+        { CL_ReturnMultifield(theEnv,theValueArray[i].multifieldValue); }
      }
 
-   rm(theEnv,theValueArray,sizeof(CLIPSValue) * templatePtr->numberOfSlots);
+   CL_rm(theEnv,theValueArray,sizeof(CLIPSValue) * templatePtr->numberOfSlots);
   }
 
 /*************************************************************/
-/* ModifyCommand: H/L access routine for the modify command. */
+/* CL_ModifyCommand: H/L access routine for the modify command. */
 /*************************************************************/
-void ModifyCommand(
+void CL_ModifyCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -228,14 +228,14 @@ void ModifyCommand(
    returnValue->lexemeValue = FalseSymbol(theEnv);
 
    /*==================================================*/
-   /* Evaluate the first argument which is used to get */
+   /* CL_Evaluate the first argument which is used to get */
    /* a pointer to the fact to be modified/duplicated. */
    /*==================================================*/
 
    testPtr = GetFirstArgument();
-   IncrementClearReadyLocks(theEnv);
-   EvaluateExpression(theEnv,testPtr,&computeResult);
-   DecrementClearReadyLocks(theEnv);
+   IncrementCL_ClearReadyLocks(theEnv);
+   CL_EvaluateExpression(theEnv,testPtr,&computeResult);
+   DecrementCL_ClearReadyLocks(theEnv);
 
    /*==============================================================*/
    /* If an integer is supplied, then treat it as a fact-index and */
@@ -247,12 +247,12 @@ void ModifyCommand(
       factNum = computeResult.integerValue->contents;
       if (factNum < 0)
         {
-         ExpectedTypeError2(theEnv,"modify",1);
-         SetEvaluationError(theEnv,true);
+         CL_ExpectedTypeError2(theEnv,"modify",1);
+         SetCL_EvaluationError(theEnv,true);
          return;
         }
 
-      oldFact = GetNextFact(theEnv,NULL);
+      oldFact = CL_GetNextFact(theEnv,NULL);
       while (oldFact != NULL)
         {
          if (oldFact->factIndex == factNum)
@@ -264,8 +264,8 @@ void ModifyCommand(
       if (oldFact == NULL)
         {
          char tempBuffer[20];
-         gensprintf(tempBuffer,"f-%lld",factNum);
-         CantFindItemErrorMessage(theEnv,"fact",tempBuffer,false);
+         CL_gensprintf(tempBuffer,"f-%lld",factNum);
+         CL_CantFindItemErrorMessage(theEnv,"fact",tempBuffer,false);
          return;
         }
      }
@@ -284,18 +284,18 @@ void ModifyCommand(
 
    else
      {
-      ExpectedTypeError2(theEnv,"modify",1);
-      SetEvaluationError(theEnv,true);
+      CL_ExpectedTypeError2(theEnv,"modify",1);
+      SetCL_EvaluationError(theEnv,true);
       return;
      }
 
    /*=====================================*/
-   /* Retracted facts cannot be modified. */
+   /* CL_Retracted facts cannot be modified. */
    /*=====================================*/
    
    if (oldFact->garbage)
      {
-      FactRetractedErrorMessage(theEnv,oldFact);
+      CL_FactCL_RetractedErrorMessage(theEnv,oldFact);
       return;
      }
      
@@ -318,9 +318,9 @@ void ModifyCommand(
      }
    else
      {
-      theValueArray = (CLIPSValue *) gm2(theEnv,sizeof(void *) * templatePtr->numberOfSlots);
-      changeMap = (char *) gm2(theEnv,CountToBitMapSize(templatePtr->numberOfSlots));
-      ClearBitString((void *) changeMap,CountToBitMapSize(templatePtr->numberOfSlots));
+      theValueArray = (CLIPSValue *) CL_gm2(theEnv,sizeof(void *) * templatePtr->numberOfSlots);
+      changeMap = (char *) CL_gm2(theEnv,CountToBitMapSize(templatePtr->numberOfSlots));
+      CL_ClearBitString((void *) changeMap,CountToBitMapSize(templatePtr->numberOfSlots));
      }
 
    /*================================================================*/
@@ -341,7 +341,7 @@ void ModifyCommand(
       /* If the slot identifier is an integer, then the slot was    */
       /* previously identified and its position within the template */
       /* was stored. Otherwise, the position of the slot within the */
-      /* deftemplate has to be determined by comparing the name of  */
+      /* deftemplate has to be deteCL_rmined by comparing the name of  */
       /* the slot against the list of slots for the deftemplate.    */
       /*============================================================*/
 
@@ -368,12 +368,12 @@ void ModifyCommand(
 
          if (! found)
            {
-            InvalidDeftemplateSlotMessage(theEnv,testPtr->lexemeValue->contents,
+            CL_InvalidDeftemplateSlotMessage(theEnv,testPtr->lexemeValue->contents,
                                           templatePtr->header.name->contents,true);
-            SetEvaluationError(theEnv,true);
+            SetCL_EvaluationError(theEnv,true);
             FreeTemplateValueArray(theEnv,theValueArray,templatePtr);
             if (changeMap != NULL)
-              { rm(theEnv,(void *) changeMap,CountToBitMapSize(templatePtr->numberOfSlots)); }
+              { CL_rm(theEnv,(void *) changeMap,CountToBitMapSize(templatePtr->numberOfSlots)); }
             return;
            }
         }
@@ -393,21 +393,21 @@ void ModifyCommand(
 
          if ((testPtr->argList == NULL) ? true : (testPtr->argList->nextArg != NULL))
            {
-            MultiIntoSingleFieldSlotError(theEnv,GetNthSlot(templatePtr,position),templatePtr);
+            CL_MultiIntoSingleFieldSlotError(theEnv,CL_GetNthSlot(templatePtr,position),templatePtr);
             FreeTemplateValueArray(theEnv,theValueArray,templatePtr);
             if (changeMap != NULL)
-              { rm(theEnv,(void *) changeMap,CountToBitMapSize(templatePtr->numberOfSlots)); }
+              { CL_rm(theEnv,(void *) changeMap,CountToBitMapSize(templatePtr->numberOfSlots)); }
             return;
            }
 
          /*===================================================*/
-         /* Evaluate the expression to be stored in the slot. */
+         /* CL_Evaluate the expression to be stored in the slot. */
          /*===================================================*/
 
-         IncrementClearReadyLocks(theEnv);
-         EvaluateExpression(theEnv,testPtr->argList,&computeResult);
-         SetEvaluationError(theEnv,false);
-         DecrementClearReadyLocks(theEnv);
+         IncrementCL_ClearReadyLocks(theEnv);
+         CL_EvaluateExpression(theEnv,testPtr->argList,&computeResult);
+         SetCL_EvaluationError(theEnv,false);
+         DecrementCL_ClearReadyLocks(theEnv);
 
          /*====================================================*/
          /* If the expression evaluated to a multifield value, */
@@ -417,10 +417,10 @@ void ModifyCommand(
 
          if (computeResult.header->type == MULTIFIELD_TYPE)
            {
-            MultiIntoSingleFieldSlotError(theEnv,GetNthSlot(templatePtr,position),templatePtr);
+            CL_MultiIntoSingleFieldSlotError(theEnv,CL_GetNthSlot(templatePtr,position),templatePtr);
             FreeTemplateValueArray(theEnv,theValueArray,templatePtr);
             if (changeMap != NULL)
-              { rm(theEnv,(void *) changeMap,CountToBitMapSize(templatePtr->numberOfSlots)); }
+              { CL_rm(theEnv,(void *) changeMap,CountToBitMapSize(templatePtr->numberOfSlots)); }
             return;
            }
 
@@ -444,20 +444,20 @@ void ModifyCommand(
       else
         {
          /*======================================*/
-         /* Determine the new value of the slot. */
+         /* DeteCL_rmine the new value of the slot. */
          /*======================================*/
 
-         IncrementClearReadyLocks(theEnv);
-         StoreInMultifield(theEnv,&computeResult,testPtr->argList,false);
-         SetEvaluationError(theEnv,false);
-         DecrementClearReadyLocks(theEnv);
+         IncrementCL_ClearReadyLocks(theEnv);
+         CL_StoreInMultifield(theEnv,&computeResult,testPtr->argList,false);
+         SetCL_EvaluationError(theEnv,false);
+         DecrementCL_ClearReadyLocks(theEnv);
 
          /*=============================*/
          /* Store the value in the slot */
          /*=============================*/
 
          if ((oldFact->theProposition.contents[position].header->type != computeResult.header->type) ||
-             (! MultifieldsEqual((Multifield *) oldFact->theProposition.contents[position].value,(Multifield *) computeResult.value)))
+             (! CL_MultifieldsEqual((Multifield *) oldFact->theProposition.contents[position].value,(Multifield *) computeResult.value)))
            {
             theValueArray[position].value = computeResult.value;
             replacementCount++;
@@ -465,7 +465,7 @@ void ModifyCommand(
               { SetBitMap(changeMap,position); }
            }
          else
-           { ReturnMultifield(theEnv,computeResult.multifieldValue); }
+           { CL_ReturnMultifield(theEnv,computeResult.multifieldValue); }
         }
 
       testPtr = testPtr->nextArg;
@@ -473,15 +473,15 @@ void ModifyCommand(
 
    /*==================================*/
    /* If no slots have changed, then a */
-   /* retract/assert is not performed. */
+   /* retract/assert is not perfoCL_rmed. */
    /*==================================*/
 
    if (replacementCount == 0)
      {
       if (theValueArray != NULL)
-        { rm(theEnv,theValueArray,sizeof(void *) * templatePtr->numberOfSlots); }
+        { CL_rm(theEnv,theValueArray,sizeof(void *) * templatePtr->numberOfSlots); }
       if (changeMap != NULL)
-        { rm(theEnv,(void *) changeMap,CountToBitMapSize(templatePtr->numberOfSlots)); }
+        { CL_rm(theEnv,(void *) changeMap,CountToBitMapSize(templatePtr->numberOfSlots)); }
       
       returnValue->value = oldFact;
       return;
@@ -491,7 +491,7 @@ void ModifyCommand(
    /* Replace the old values with the values. */
    /*=========================================*/
    
-   if ((oldFact = ReplaceFact(theEnv,oldFact,theValueArray,changeMap)) != NULL)
+   if ((oldFact = CL_ReplaceFact(theEnv,oldFact,theValueArray,changeMap)) != NULL)
      { returnValue->factValue = oldFact; }
 
    /*=============================*/
@@ -499,18 +499,18 @@ void ModifyCommand(
    /*=============================*/
 
    if (theValueArray != NULL)
-     { rm(theEnv,theValueArray,sizeof(void *) * templatePtr->numberOfSlots); }
+     { CL_rm(theEnv,theValueArray,sizeof(void *) * templatePtr->numberOfSlots); }
 
    if (changeMap != NULL)
-     { rm(theEnv,(void *) changeMap,CountToBitMapSize(templatePtr->numberOfSlots)); }
+     { CL_rm(theEnv,(void *) changeMap,CountToBitMapSize(templatePtr->numberOfSlots)); }
 
    return;
   }
 
 /****************/
-/* ReplaceFact: */
+/* CL_ReplaceFact: */
 /****************/
-Fact *ReplaceFact(
+Fact *CL_ReplaceFact(
   Environment *theEnv,
   Fact *oldFact,
   CLIPSValue *theValueArray,
@@ -527,7 +527,7 @@ Fact *ReplaceFact(
 
    if (FactData(theEnv)->ListOfModifyFunctions != NULL)
      {
-      ModifyCallFunctionItem *theModifyFunction;
+      ModifyCL_CallFunctionItem *theModifyFunction;
       
       for (theModifyFunction = FactData(theEnv)->ListOfModifyFunctions;
            theModifyFunction != NULL;
@@ -547,10 +547,10 @@ Fact *ReplaceFact(
    templatePosition = oldFact->previousTemplateFact;
    
    /*===================*/
-   /* Retract the fact. */
+   /* CL_Retract the fact. */
    /*===================*/
 
-   RetractDriver(theEnv,oldFact,true,changeMap);
+   CL_RetractDriver(theEnv,oldFact,true,changeMap);
    oldFact->garbage = false;
 
    /*======================================*/
@@ -561,28 +561,28 @@ Fact *ReplaceFact(
      {
       if (theValueArray[i].voidValue != VoidConstant(theEnv))
         {
-         AtomDeinstall(theEnv,oldFact->theProposition.contents[i].header->type,oldFact->theProposition.contents[i].value);
+         CL_AtomDeinstall(theEnv,oldFact->theProposition.contents[i].header->type,oldFact->theProposition.contents[i].value);
          
          if (oldFact->theProposition.contents[i].header->type == MULTIFIELD_TYPE)
            {
             Multifield *theSegment = oldFact->theProposition.contents[i].multifieldValue;
             if (theSegment->busyCount == 0)
-              { ReturnMultifield(theEnv,theSegment); }
+              { CL_ReturnMultifield(theEnv,theSegment); }
             else
-              { AddToMultifieldList(theEnv,theSegment); }
+              { CL_AddToMultifieldList(theEnv,theSegment); }
            }
 
          oldFact->theProposition.contents[i].value = theValueArray[i].value;
          
-         AtomInstall(theEnv,oldFact->theProposition.contents[i].header->type,oldFact->theProposition.contents[i].value);
+         CL_AtomInstall(theEnv,oldFact->theProposition.contents[i].header->type,oldFact->theProposition.contents[i].value);
         }
      }
 
    /*======================*/
-   /* Assert the new fact. */
+   /* CL_Assert the new fact. */
    /*======================*/
 
-   theFact = AssertDriver(oldFact,oldFact->factIndex,factListPosition,templatePosition,changeMap);
+   theFact = CL_AssertDriver(oldFact,oldFact->factIndex,factListPosition,templatePosition,changeMap);
 
    /*===============================================*/
    /* Call registered modify notification functions */
@@ -591,7 +591,7 @@ Fact *ReplaceFact(
 
    if (FactData(theEnv)->ListOfModifyFunctions != NULL)
      {
-      ModifyCallFunctionItem *theModifyFunction;
+      ModifyCL_CallFunctionItem *theModifyFunction;
 
       for (theModifyFunction = FactData(theEnv)->ListOfModifyFunctions;
            theModifyFunction != NULL;
@@ -605,9 +605,9 @@ Fact *ReplaceFact(
   }
 
 /*******************************************************************/
-/* DuplicateCommand: H/L access routine for the duplicate command. */
+/* CL_DuplicateCommand: H/L access routine for the duplicate command. */
 /*******************************************************************/
-void DuplicateCommand(
+void CL_DuplicateCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -629,14 +629,14 @@ void DuplicateCommand(
    returnValue->lexemeValue = FalseSymbol(theEnv);
 
    /*==================================================*/
-   /* Evaluate the first argument which is used to get */
+   /* CL_Evaluate the first argument which is used to get */
    /* a pointer to the fact to be modified/duplicated. */
    /*==================================================*/
 
    testPtr = GetFirstArgument();
-   IncrementClearReadyLocks(theEnv);
-   EvaluateExpression(theEnv,testPtr,&computeResult);
-   DecrementClearReadyLocks(theEnv);
+   IncrementCL_ClearReadyLocks(theEnv);
+   CL_EvaluateExpression(theEnv,testPtr,&computeResult);
+   DecrementCL_ClearReadyLocks(theEnv);
 
    /*==============================================================*/
    /* If an integer is supplied, then treat it as a fact-index and */
@@ -648,12 +648,12 @@ void DuplicateCommand(
       factNum = computeResult.integerValue->contents;
       if (factNum < 0)
         {
-         ExpectedTypeError2(theEnv,"duplicate",1);
-         SetEvaluationError(theEnv,true);
+         CL_ExpectedTypeError2(theEnv,"duplicate",1);
+         SetCL_EvaluationError(theEnv,true);
          return;
         }
 
-      oldFact = GetNextFact(theEnv,NULL);
+      oldFact = CL_GetNextFact(theEnv,NULL);
       while (oldFact != NULL)
         {
          if (oldFact->factIndex == factNum)
@@ -665,8 +665,8 @@ void DuplicateCommand(
       if (oldFact == NULL)
         {
          char tempBuffer[20];
-         gensprintf(tempBuffer,"f-%lld",factNum);
-         CantFindItemErrorMessage(theEnv,"fact",tempBuffer,false);
+         CL_gensprintf(tempBuffer,"f-%lld",factNum);
+         CL_CantFindItemErrorMessage(theEnv,"fact",tempBuffer,false);
          return;
         }
      }
@@ -685,18 +685,18 @@ void DuplicateCommand(
 
    else
      {
-      ExpectedTypeError2(theEnv,"duplicate",1);
-      SetEvaluationError(theEnv,true);
+      CL_ExpectedTypeError2(theEnv,"duplicate",1);
+      SetCL_EvaluationError(theEnv,true);
       return;
      }
 
    /*=======================================*/
-   /* Retracted facts cannot be duplicated. */
+   /* CL_Retracted facts cannot be duplicated. */
    /*=======================================*/
    
    if (oldFact->garbage)
      {
-      FactRetractedErrorMessage(theEnv,oldFact);
+      CL_FactCL_RetractedErrorMessage(theEnv,oldFact);
       return;
      }
 
@@ -712,7 +712,7 @@ void DuplicateCommand(
    /* Duplicate the values from the old fact (skipping multifields). */
    /*================================================================*/
 
-   newFact = CreateFactBySize(theEnv,oldFact->theProposition.length);
+   newFact = CL_CreateFactBySize(theEnv,oldFact->theProposition.length);
    newFact->whichDeftemplate = templatePtr;
    for (i = 0; i < oldFact->theProposition.length; i++)
      {
@@ -733,7 +733,7 @@ void DuplicateCommand(
       /* If the slot identifier is an integer, then the slot was    */
       /* previously identified and its position within the template */
       /* was stored. Otherwise, the position of the slot within the */
-      /* deftemplate has to be determined by comparing the name of  */
+      /* deftemplate has to be deteCL_rmined by comparing the name of  */
       /* the slot against the list of slots for the deftemplate.    */
       /*============================================================*/
 
@@ -760,10 +760,10 @@ void DuplicateCommand(
 
          if (! found)
            {
-            InvalidDeftemplateSlotMessage(theEnv,testPtr->lexemeValue->contents,
+            CL_InvalidDeftemplateSlotMessage(theEnv,testPtr->lexemeValue->contents,
                                           templatePtr->header.name->contents,true);
-            SetEvaluationError(theEnv,true);
-            ReturnFact(theEnv,newFact);
+            SetCL_EvaluationError(theEnv,true);
+            CL_ReturnFact(theEnv,newFact);
             return;
            }
         }
@@ -783,19 +783,19 @@ void DuplicateCommand(
 
          if ((testPtr->argList == NULL) ? true : (testPtr->argList->nextArg != NULL))
            {
-            MultiIntoSingleFieldSlotError(theEnv,GetNthSlot(templatePtr,position),templatePtr);
-            ReturnFact(theEnv,newFact);
+            CL_MultiIntoSingleFieldSlotError(theEnv,CL_GetNthSlot(templatePtr,position),templatePtr);
+            CL_ReturnFact(theEnv,newFact);
             return;
            }
 
          /*===================================================*/
-         /* Evaluate the expression to be stored in the slot. */
+         /* CL_Evaluate the expression to be stored in the slot. */
          /*===================================================*/
 
-         IncrementClearReadyLocks(theEnv);
-         EvaluateExpression(theEnv,testPtr->argList,&computeResult);
-         SetEvaluationError(theEnv,false);
-         DecrementClearReadyLocks(theEnv);
+         IncrementCL_ClearReadyLocks(theEnv);
+         CL_EvaluateExpression(theEnv,testPtr->argList,&computeResult);
+         SetCL_EvaluationError(theEnv,false);
+         DecrementCL_ClearReadyLocks(theEnv);
 
          /*====================================================*/
          /* If the expression evaluated to a multifield value, */
@@ -805,8 +805,8 @@ void DuplicateCommand(
 
          if (computeResult.header->type == MULTIFIELD_TYPE)
            {
-            ReturnFact(theEnv,newFact);
-            MultiIntoSingleFieldSlotError(theEnv,GetNthSlot(templatePtr,position),templatePtr);
+            CL_ReturnFact(theEnv,newFact);
+            CL_MultiIntoSingleFieldSlotError(theEnv,CL_GetNthSlot(templatePtr,position),templatePtr);
             return;
            }
 
@@ -824,13 +824,13 @@ void DuplicateCommand(
       else
         {
          /*======================================*/
-         /* Determine the new value of the slot. */
+         /* DeteCL_rmine the new value of the slot. */
          /*======================================*/
 
-         IncrementClearReadyLocks(theEnv);
-         StoreInMultifield(theEnv,&computeResult,testPtr->argList,false);
-         SetEvaluationError(theEnv,false);
-         DecrementClearReadyLocks(theEnv);
+         IncrementCL_ClearReadyLocks(theEnv);
+         CL_StoreInMultifield(theEnv,&computeResult,testPtr->argList,false);
+         SetCL_EvaluationError(theEnv,false);
+         DecrementCL_ClearReadyLocks(theEnv);
 
          /*=============================*/
          /* Store the value in the slot */
@@ -854,15 +854,15 @@ void DuplicateCommand(
 
         {
          newFact->theProposition.contents[i].value =
-            CopyMultifield(theEnv,oldFact->theProposition.contents[i].multifieldValue);
+            CL_CopyMultifield(theEnv,oldFact->theProposition.contents[i].multifieldValue);
         }
      }
 
    /*===============================*/
-   /* Perform the duplicate action. */
+   /* PerfoCL_rm the duplicate action. */
    /*===============================*/
 
-   theFact = AssertDriver(newFact,0,NULL,NULL,NULL);
+   theFact = CL_AssertDriver(newFact,0,NULL,NULL,NULL);
 
    /*========================================*/
    /* The asserted fact is the return value. */
@@ -879,10 +879,10 @@ void DuplicateCommand(
   }
 
 /****************************************************/
-/* DeftemplateSlotNamesFunction: H/L access routine */
+/* CL_DeftemplateSlotNamesFunction: H/L access routine */
 /*   for the deftemplate-slot-names function.       */
 /****************************************************/
-void DeftemplateSlotNamesFunction(
+void CL_DeftemplateSlotNamesFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -901,13 +901,13 @@ void DeftemplateSlotNamesFunction(
    /* Get the reference to the deftemplate. */
    /*=======================================*/
 
-   deftemplateName = GetConstructName(context,"deftemplate-slot-names","deftemplate name");
+   deftemplateName = CL_GetConstructName(context,"deftemplate-slot-names","deftemplate name");
    if (deftemplateName == NULL) return;
 
-   theDeftemplate = FindDeftemplate(theEnv,deftemplateName);
+   theDeftemplate = CL_FindDeftemplate(theEnv,deftemplateName);
    if (theDeftemplate == NULL)
      {
-      CantFindItemErrorMessage(theEnv,"deftemplate",deftemplateName,true);
+      CL_CantFindItemErrorMessage(theEnv,"deftemplate",deftemplateName,true);
       return;
      }
 
@@ -915,15 +915,15 @@ void DeftemplateSlotNamesFunction(
    /* Get the slot names. */
    /*=====================*/
 
-   DeftemplateSlotNames(theDeftemplate,&cv);
-   CLIPSToUDFValue(&cv,returnValue);
+   CL_DeftemplateSlotNames(theDeftemplate,&cv);
+   CL_CLIPSToUDFValue(&cv,returnValue);
   }
 
 /**********************************************/
-/* DeftemplateSlotNames: C access routine for */
+/* CL_DeftemplateSlotNames: C access routine for */
 /*   the deftemplate-slot-names function.     */
 /**********************************************/
-void DeftemplateSlotNames(
+void CL_DeftemplateSlotNames(
   Deftemplate *theDeftemplate,
   CLIPSValue *returnValue)
   {
@@ -939,8 +939,8 @@ void DeftemplateSlotNames(
 
    if (theDeftemplate->implied)
      {
-      theList = CreateMultifield(theEnv,1);
-      theList->contents[0].lexemeValue = CreateSymbol(theEnv,"implied");
+      theList = CL_CreateMultifield(theEnv,1);
+      theList->contents[0].lexemeValue = CL_CreateSymbol(theEnv,"implied");
       returnValue->value = theList;
       return;
      }
@@ -958,7 +958,7 @@ void DeftemplateSlotNames(
    /* Create a multifield value in which to store the slot names. */
    /*=============================================================*/
 
-   theList = CreateMultifield(theEnv,count);
+   theList = CL_CreateMultifield(theEnv,count);
    returnValue->value = theList;
 
    /*===============================================*/
@@ -974,10 +974,10 @@ void DeftemplateSlotNames(
   }
 
 /*******************************************************/
-/* DeftemplateSlotDefaultPFunction: H/L access routine */
+/* CL_DeftemplateCL_SlotDefaultPFunction: H/L access routine */
 /*   for the deftemplate-slot-defaultp function.       */
 /*******************************************************/
-void DeftemplateSlotDefaultPFunction(
+void CL_DeftemplateCL_SlotDefaultPFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -1001,21 +1001,21 @@ void DeftemplateSlotDefaultPFunction(
    /* Does the slot have a default? */
    /*===============================*/
 
-   defaultType = DeftemplateSlotDefaultP(theDeftemplate,slotName->contents);
+   defaultType = CL_DeftemplateCL_SlotDefaultP(theDeftemplate,slotName->contents);
 
    if (defaultType == STATIC_DEFAULT)
-     { returnValue->lexemeValue = CreateSymbol(theEnv,"static"); }
+     { returnValue->lexemeValue = CL_CreateSymbol(theEnv,"static"); }
    else if (defaultType == DYNAMIC_DEFAULT)
-     { returnValue->lexemeValue = CreateSymbol(theEnv,"dynamic"); }
+     { returnValue->lexemeValue = CL_CreateSymbol(theEnv,"dynamic"); }
    else
      { returnValue->lexemeValue = FalseSymbol(theEnv); }
   }
 
 /*************************************************/
-/* DeftemplateSlotDefaultP: C access routine for */
+/* CL_DeftemplateCL_SlotDefaultP: C access routine for */
 /*   the deftemplate-slot-defaultp function.     */
 /*************************************************/
-DefaultType DeftemplateSlotDefaultP(
+DefaultType CL_DeftemplateCL_SlotDefaultP(
   Deftemplate *theDeftemplate,
   const char *slotName)
   {
@@ -1035,8 +1035,8 @@ DefaultType DeftemplateSlotDefaultP(
         }
       else
         {
-         SetEvaluationError(theEnv,true);
-         InvalidDeftemplateSlotMessage(theEnv,slotName,
+         SetCL_EvaluationError(theEnv,true);
+         CL_InvalidDeftemplateSlotMessage(theEnv,slotName,
                                        theDeftemplate->header.name->contents,false);
          return NO_DEFAULT;
         }
@@ -1047,10 +1047,10 @@ DefaultType DeftemplateSlotDefaultP(
    /* list of slots defined for the deftemplate. */
    /*============================================*/
 
-   else if ((theSlot = FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),NULL)) == NULL)
+   else if ((theSlot = CL_FindSlot(theDeftemplate,CL_CreateSymbol(theEnv,slotName),NULL)) == NULL)
      {
-      SetEvaluationError(theEnv,true);
-      InvalidDeftemplateSlotMessage(theEnv,slotName,
+      SetCL_EvaluationError(theEnv,true);
+      CL_InvalidDeftemplateSlotMessage(theEnv,slotName,
                                     theDeftemplate->header.name->contents,false);
       return NO_DEFAULT;
      }
@@ -1068,10 +1068,10 @@ DefaultType DeftemplateSlotDefaultP(
   }
 
 /*************************************************************/
-/* DeftemplateSlotDefaultValueFunction: H/L access routine   */
+/* CL_DeftemplateCL_SlotDefaultValueFunction: H/L access routine   */
 /*   for the deftemplate-slot-default-value function.        */
 /*************************************************************/
-void DeftemplateSlotDefaultValueFunction(
+void CL_DeftemplateCL_SlotDefaultValueFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -1095,15 +1095,15 @@ void DeftemplateSlotDefaultValueFunction(
    /* Get the deftemplate slot default value. */
    /*=========================================*/
 
-   DeftemplateSlotDefaultValue(theDeftemplate,slotName->contents,&cv);
-   CLIPSToUDFValue(&cv,returnValue);
+   CL_DeftemplateCL_SlotDefaultValue(theDeftemplate,slotName->contents,&cv);
+   CL_CLIPSToUDFValue(&cv,returnValue);
   }
 
 /******************************************************/
-/* DeftemplateSlotDefaultValue: C access routine for  */
+/* CL_DeftemplateCL_SlotDefaultValue: C access routine for  */
 /*   the deftemplate-slot-default-value function.     */
 /******************************************************/
-bool DeftemplateSlotDefaultValue(
+bool CL_DeftemplateCL_SlotDefaultValue(
   Deftemplate *theDeftemplate,
   const char *slotName,
   CLIPSValue *theValue)
@@ -1127,13 +1127,13 @@ bool DeftemplateSlotDefaultValue(
      {
       if (strcmp(slotName,"implied") == 0)
         {
-         theValue->value = CreateMultifield(theEnv,0L);
+         theValue->value = CL_CreateMultifield(theEnv,0L);
          return true;
         }
       else
         {
-         SetEvaluationError(theEnv,true);
-         InvalidDeftemplateSlotMessage(theEnv,slotName,
+         SetCL_EvaluationError(theEnv,true);
+         CL_InvalidDeftemplateSlotMessage(theEnv,slotName,
                                        theDeftemplate->header.name->contents,false);
          return false;
         }
@@ -1144,10 +1144,10 @@ bool DeftemplateSlotDefaultValue(
    /* list of slots defined for the deftemplate. */
    /*============================================*/
 
-   else if ((theSlot = FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),NULL)) == NULL)
+   else if ((theSlot = CL_FindSlot(theDeftemplate,CL_CreateSymbol(theEnv,slotName),NULL)) == NULL)
      {
-      SetEvaluationError(theEnv,true);
-      InvalidDeftemplateSlotMessage(theEnv,slotName,
+      SetCL_EvaluationError(theEnv,true);
+      CL_InvalidDeftemplateSlotMessage(theEnv,slotName,
                                     theDeftemplate->header.name->contents,false);
       return false;
      }
@@ -1157,10 +1157,10 @@ bool DeftemplateSlotDefaultValue(
    /*=======================================*/
 
    if (theSlot->noDefault)
-     { theValue->value = CreateSymbol(theEnv,"?NONE"); }
-   else if (DeftemplateSlotDefault(theEnv,theDeftemplate,theSlot,&tempDO,true))
+     { theValue->value = CL_CreateSymbol(theEnv,"?NONE"); }
+   else if (CL_DeftemplateSlotDefault(theEnv,theDeftemplate,theSlot,&tempDO,true))
      {
-      NormalizeMultifield(theEnv,&tempDO);
+      CL_NoCL_rmalizeMultifield(theEnv,&tempDO);
       theValue->value = tempDO.value;
      }
    else
@@ -1170,10 +1170,10 @@ bool DeftemplateSlotDefaultValue(
   }
 
 /**********************************************************/
-/* DeftemplateSlotCardinalityFunction: H/L access routine */
+/* CL_DeftemplateCL_SlotCardinalityFunction: H/L access routine */
 /*   for the deftemplate-slot-cardinality function.       */
 /**********************************************************/
-void DeftemplateSlotCardinalityFunction(
+void CL_DeftemplateCL_SlotCardinalityFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -1189,7 +1189,7 @@ void DeftemplateSlotCardinalityFunction(
    slotName = CheckDeftemplateAndSlotArguments(context,&theDeftemplate);
    if (slotName == NULL)
      {
-      SetMultifieldErrorValue(theEnv,returnValue);
+      CL_SetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
 
@@ -1197,15 +1197,15 @@ void DeftemplateSlotCardinalityFunction(
    /* Get the deftemplate slot cardinality. */
    /*=======================================*/
 
-   DeftemplateSlotCardinality(theDeftemplate,slotName->contents,&cv);
-   CLIPSToUDFValue(&cv,returnValue);
+   CL_DeftemplateCL_SlotCardinality(theDeftemplate,slotName->contents,&cv);
+   CL_CLIPSToUDFValue(&cv,returnValue);
   }
 
 /****************************************************/
-/* DeftemplateSlotCardinality: C access routine for */
+/* CL_DeftemplateCL_SlotCardinality: C access routine for */
 /*   the deftemplate-slot-cardinality function.     */
 /****************************************************/
-bool DeftemplateSlotCardinality(
+bool CL_DeftemplateCL_SlotCardinality(
   Deftemplate *theDeftemplate,
   const char *slotName,
   CLIPSValue *returnValue)
@@ -1222,16 +1222,16 @@ bool DeftemplateSlotCardinality(
      {
       if (strcmp(slotName,"implied") == 0)
         {
-         returnValue->value = CreateMultifield(theEnv,2L);
+         returnValue->value = CL_CreateMultifield(theEnv,2L);
          returnValue->multifieldValue->contents[0].integerValue = SymbolData(theEnv)->Zero;
          returnValue->multifieldValue->contents[1].lexemeValue = SymbolData(theEnv)->PositiveInfinity;
          return true;
         }
       else
         {
-         returnValue->multifieldValue = CreateMultifield(theEnv,0L);
-         SetEvaluationError(theEnv,true);
-         InvalidDeftemplateSlotMessage(theEnv,slotName,
+         returnValue->multifieldValue = CL_CreateMultifield(theEnv,0L);
+         SetCL_EvaluationError(theEnv,true);
+         CL_InvalidDeftemplateSlotMessage(theEnv,slotName,
                                        theDeftemplate->header.name->contents,false);
          return false;
         }
@@ -1242,11 +1242,11 @@ bool DeftemplateSlotCardinality(
    /* list of slots defined for the deftemplate. */
    /*============================================*/
 
-   else if ((theSlot = FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),NULL)) == NULL)
+   else if ((theSlot = CL_FindSlot(theDeftemplate,CL_CreateSymbol(theEnv,slotName),NULL)) == NULL)
      {
-      returnValue->multifieldValue = CreateMultifield(theEnv,0L);
-      SetEvaluationError(theEnv,true);
-      InvalidDeftemplateSlotMessage(theEnv,slotName,
+      returnValue->multifieldValue = CL_CreateMultifield(theEnv,0L);
+      SetCL_EvaluationError(theEnv,true);
+      CL_InvalidDeftemplateSlotMessage(theEnv,slotName,
                                     theDeftemplate->header.name->contents,false);
       return false;
      }
@@ -1257,11 +1257,11 @@ bool DeftemplateSlotCardinality(
 
    if (theSlot->multislot == 0)
      {
-      returnValue->multifieldValue = CreateMultifield(theEnv,0L);
+      returnValue->multifieldValue = CL_CreateMultifield(theEnv,0L);
       return true;
      }
 
-   returnValue->value = CreateMultifield(theEnv,2L);
+   returnValue->value = CL_CreateMultifield(theEnv,2L);
 
    if (theSlot->constraints != NULL)
      {
@@ -1278,10 +1278,10 @@ bool DeftemplateSlotCardinality(
   }
 
 /************************************************************/
-/* DeftemplateSlotAllowedValuesFunction: H/L access routine */
+/* CL_DeftemplateCL_SlotAllowedValuesFunction: H/L access routine */
 /*   for the deftemplate-slot-allowed-values function.      */
 /************************************************************/
-void DeftemplateSlotAllowedValuesFunction(
+void CL_DeftemplateCL_SlotAllowedValuesFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -1297,7 +1297,7 @@ void DeftemplateSlotAllowedValuesFunction(
    slotName = CheckDeftemplateAndSlotArguments(context,&theDeftemplate);
    if (slotName == NULL)
      {
-      SetMultifieldErrorValue(theEnv,returnValue);
+      CL_SetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
 
@@ -1305,15 +1305,15 @@ void DeftemplateSlotAllowedValuesFunction(
    /* Get the deftemplate slot allowed values. */
    /*==========================================*/
 
-   DeftemplateSlotAllowedValues(theDeftemplate,slotName->contents,&result);
-   CLIPSToUDFValue(&result,returnValue);
+   CL_DeftemplateCL_SlotAllowedValues(theDeftemplate,slotName->contents,&result);
+   CL_CLIPSToUDFValue(&result,returnValue);
   }
 
 /*******************************************************/
-/* DeftemplateSlotAllowedValues: C access routine      */
+/* CL_DeftemplateCL_SlotAllowedValues: C access routine      */
 /*   for the deftemplate-slot-allowed-values function. */
 /*******************************************************/
-bool DeftemplateSlotAllowedValues(
+bool CL_DeftemplateCL_SlotAllowedValues(
   Deftemplate *theDeftemplate,
   const char *slotName,
   CLIPSValue *returnValue)
@@ -1337,9 +1337,9 @@ bool DeftemplateSlotAllowedValues(
         }
       else
         {
-         returnValue->multifieldValue = CreateMultifield(theEnv,0L);
-         SetEvaluationError(theEnv,true);
-         InvalidDeftemplateSlotMessage(theEnv,slotName,
+         returnValue->multifieldValue = CL_CreateMultifield(theEnv,0L);
+         SetCL_EvaluationError(theEnv,true);
+         CL_InvalidDeftemplateSlotMessage(theEnv,slotName,
                                        theDeftemplate->header.name->contents,false);
          return false;
         }
@@ -1350,11 +1350,11 @@ bool DeftemplateSlotAllowedValues(
    /* list of slots defined for the deftemplate. */
    /*============================================*/
 
-   else if ((theSlot = FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),NULL)) == NULL)
+   else if ((theSlot = CL_FindSlot(theDeftemplate,CL_CreateSymbol(theEnv,slotName),NULL)) == NULL)
      {
-      returnValue->multifieldValue = CreateMultifield(theEnv,0L);
-      SetEvaluationError(theEnv,true);
-      InvalidDeftemplateSlotMessage(theEnv,slotName,
+      returnValue->multifieldValue = CL_CreateMultifield(theEnv,0L);
+      SetCL_EvaluationError(theEnv,true);
+      CL_InvalidDeftemplateSlotMessage(theEnv,slotName,
                                     theDeftemplate->header.name->contents,false);
       return false;
      }
@@ -1369,7 +1369,7 @@ bool DeftemplateSlotAllowedValues(
       return true;
      }
 
-   returnValue->value = CreateMultifield(theEnv,ExpressionSize(theSlot->constraints->restrictionList));
+   returnValue->value = CL_CreateMultifield(theEnv,CL_ExpressionSize(theSlot->constraints->restrictionList));
    i = 0;
 
    theExp = theSlot->constraints->restrictionList;
@@ -1384,10 +1384,10 @@ bool DeftemplateSlotAllowedValues(
   }
 
 /****************************************************/
-/* DeftemplateSlotRangeFunction: H/L access routine */
+/* CL_DeftemplateCL_SlotRangeFunction: H/L access routine */
 /*   for the deftemplate-slot-range function.       */
 /****************************************************/
-void DeftemplateSlotRangeFunction(
+void CL_DeftemplateCL_SlotRangeFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -1403,7 +1403,7 @@ void DeftemplateSlotRangeFunction(
    slotName = CheckDeftemplateAndSlotArguments(context,&theDeftemplate);
    if (slotName == NULL)
      {
-      SetMultifieldErrorValue(theEnv,returnValue);
+      CL_SetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
 
@@ -1411,15 +1411,15 @@ void DeftemplateSlotRangeFunction(
    /* Get the deftemplate slot range. */
    /*=================================*/
 
-   DeftemplateSlotRange(theDeftemplate,slotName->contents,&cv);
-   CLIPSToUDFValue(&cv,returnValue);
+   CL_DeftemplateCL_SlotRange(theDeftemplate,slotName->contents,&cv);
+   CL_CLIPSToUDFValue(&cv,returnValue);
   }
 
 /**********************************************/
-/* DeftemplateSlotRange: C access routine for */
+/* CL_DeftemplateCL_SlotRange: C access routine for */
 /*   the deftemplate-slot-range function.     */
 /**********************************************/
-bool DeftemplateSlotRange(
+bool CL_DeftemplateCL_SlotRange(
   Deftemplate *theDeftemplate,
   const char *slotName,
   CLIPSValue *returnValue)
@@ -1436,7 +1436,7 @@ bool DeftemplateSlotRange(
      {
       if (strcmp(slotName,"implied") == 0)
         {
-         returnValue->value = CreateMultifield(theEnv,2L);
+         returnValue->value = CL_CreateMultifield(theEnv,2L);
          returnValue->multifieldValue->contents[0].lexemeValue =
             SymbolData(theEnv)->NegativeInfinity;
          returnValue->multifieldValue->contents[1].lexemeValue =
@@ -1445,9 +1445,9 @@ bool DeftemplateSlotRange(
         }
       else
         {
-         returnValue->multifieldValue = CreateMultifield(theEnv,0L);
-         SetEvaluationError(theEnv,true);
-         InvalidDeftemplateSlotMessage(theEnv,slotName,
+         returnValue->multifieldValue = CL_CreateMultifield(theEnv,0L);
+         SetCL_EvaluationError(theEnv,true);
+         CL_InvalidDeftemplateSlotMessage(theEnv,slotName,
                                        theDeftemplate->header.name->contents,false);
          return false;
         }
@@ -1458,11 +1458,11 @@ bool DeftemplateSlotRange(
    /* list of slots defined for the deftemplate. */
    /*============================================*/
 
-   else if ((theSlot = FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),NULL)) == NULL)
+   else if ((theSlot = CL_FindSlot(theDeftemplate,CL_CreateSymbol(theEnv,slotName),NULL)) == NULL)
      {
-      returnValue->multifieldValue = CreateMultifield(theEnv,0L);
-      SetEvaluationError(theEnv,true);
-      InvalidDeftemplateSlotMessage(theEnv,slotName,
+      returnValue->multifieldValue = CL_CreateMultifield(theEnv,0L);
+      SetCL_EvaluationError(theEnv,true);
+      CL_InvalidDeftemplateSlotMessage(theEnv,slotName,
                                     theDeftemplate->header.name->contents,false);
       return false;
      }
@@ -1475,7 +1475,7 @@ bool DeftemplateSlotRange(
        (theSlot->constraints->anyAllowed || theSlot->constraints->floatsAllowed ||
         theSlot->constraints->integersAllowed))
      {
-      returnValue->value = CreateMultifield(theEnv,2L);
+      returnValue->value = CL_CreateMultifield(theEnv,2L);
       returnValue->multifieldValue->contents[0].value = theSlot->constraints->minValue->value;
       returnValue->multifieldValue->contents[1].value = theSlot->constraints->maxValue->value;
      }
@@ -1486,10 +1486,10 @@ bool DeftemplateSlotRange(
   }
 
 /****************************************************/
-/* DeftemplateSlotTypesFunction: H/L access routine */
+/* CL_DeftemplateCL_SlotTypesFunction: H/L access routine */
 /*   for the deftemplate-slot-types function.       */
 /****************************************************/
-void DeftemplateSlotTypesFunction(
+void CL_DeftemplateCL_SlotTypesFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -1505,7 +1505,7 @@ void DeftemplateSlotTypesFunction(
    slotName = CheckDeftemplateAndSlotArguments(context,&theDeftemplate);
    if (slotName == NULL)
      {
-      SetMultifieldErrorValue(theEnv,returnValue);
+      CL_SetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
 
@@ -1513,15 +1513,15 @@ void DeftemplateSlotTypesFunction(
    /* Get the deftemplate slot types. */
    /*=================================*/
 
-   DeftemplateSlotTypes(theDeftemplate,slotName->contents,&cv);
-   CLIPSToUDFValue(&cv,returnValue);
+   CL_DeftemplateCL_SlotTypes(theDeftemplate,slotName->contents,&cv);
+   CL_CLIPSToUDFValue(&cv,returnValue);
   }
 
 /**********************************************/
-/* DeftemplateSlotTypes: C access routine for */
+/* CL_DeftemplateCL_SlotTypes: C access routine for */
 /*   the deftemplate-slot-types function.     */
 /**********************************************/
-bool DeftemplateSlotTypes(
+bool CL_DeftemplateCL_SlotTypes(
   Deftemplate *theDeftemplate,
   const char *slotName,
   CLIPSValue *returnValue)
@@ -1540,9 +1540,9 @@ bool DeftemplateSlotTypes(
      {
       if (strcmp(slotName,"implied") != 0)
         {
-         returnValue->multifieldValue = CreateMultifield(theEnv,0L);
-         SetEvaluationError(theEnv,true);
-         InvalidDeftemplateSlotMessage(theEnv,slotName,
+         returnValue->multifieldValue = CL_CreateMultifield(theEnv,0L);
+         SetCL_EvaluationError(theEnv,true);
+         CL_InvalidDeftemplateSlotMessage(theEnv,slotName,
                                        theDeftemplate->header.name->contents,false);
          return false;
         }
@@ -1553,17 +1553,17 @@ bool DeftemplateSlotTypes(
    /* list of slots defined for the deftemplate. */
    /*============================================*/
 
-   else if ((theSlot = FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),NULL)) == NULL)
+   else if ((theSlot = CL_FindSlot(theDeftemplate,CL_CreateSymbol(theEnv,slotName),NULL)) == NULL)
      {
-      returnValue->multifieldValue = CreateMultifield(theEnv,0L);
-      SetEvaluationError(theEnv,true);
-      InvalidDeftemplateSlotMessage(theEnv,slotName,
+      returnValue->multifieldValue = CL_CreateMultifield(theEnv,0L);
+      SetCL_EvaluationError(theEnv,true);
+      CL_InvalidDeftemplateSlotMessage(theEnv,slotName,
                                     theDeftemplate->header.name->contents,false);
       return false;
      }
 
    /*==============================================*/
-   /* If the slot has no constraint information or */
+   /* If the slot has no constraint infoCL_rmation or */
    /* there is no type restriction, then all types */
    /* are allowed for the slot.                    */
    /*==============================================*/
@@ -1599,49 +1599,49 @@ bool DeftemplateSlotTypes(
    /* Return the allowed types for the slot. */
    /*========================================*/
 
-   returnValue->value = CreateMultifield(theEnv,numTypes);
+   returnValue->value = CL_CreateMultifield(theEnv,numTypes);
 
    i = 0;
 
    if (allTypes || theSlot->constraints->floatsAllowed)
      {
-      returnValue->multifieldValue->contents[i++].lexemeValue = CreateSymbol(theEnv,"FLOAT");
+      returnValue->multifieldValue->contents[i++].lexemeValue = CL_CreateSymbol(theEnv,"FLOAT");
      }
 
    if (allTypes || theSlot->constraints->integersAllowed)
      {
-      returnValue->multifieldValue->contents[i++].lexemeValue = CreateSymbol(theEnv,"INTEGER");
+      returnValue->multifieldValue->contents[i++].lexemeValue = CL_CreateSymbol(theEnv,"INTEGER");
      }
 
    if (allTypes || theSlot->constraints->symbolsAllowed)
      {
-      returnValue->multifieldValue->contents[i++].lexemeValue = CreateSymbol(theEnv,"SYMBOL");
+      returnValue->multifieldValue->contents[i++].lexemeValue = CL_CreateSymbol(theEnv,"SYMBOL");
      }
 
    if (allTypes || theSlot->constraints->stringsAllowed)
      {
-      returnValue->multifieldValue->contents[i++].lexemeValue = CreateSymbol(theEnv,"STRING");
+      returnValue->multifieldValue->contents[i++].lexemeValue = CL_CreateSymbol(theEnv,"STRING");
      }
 
    if (allTypes || theSlot->constraints->externalAddressesAllowed)
      {
-      returnValue->multifieldValue->contents[i++].lexemeValue = CreateSymbol(theEnv,"EXTERNAL-ADDRESS");
+      returnValue->multifieldValue->contents[i++].lexemeValue = CL_CreateSymbol(theEnv,"EXTERNAL-ADDRESS");
      }
 
    if (allTypes || theSlot->constraints->factAddressesAllowed)
      {
-      returnValue->multifieldValue->contents[i++].lexemeValue = CreateSymbol(theEnv,"FACT-ADDRESS");
+      returnValue->multifieldValue->contents[i++].lexemeValue = CL_CreateSymbol(theEnv,"FACT-ADDRESS");
      }
 
 #if OBJECT_SYSTEM
    if (allTypes || theSlot->constraints->instanceAddressesAllowed)
      {
-      returnValue->multifieldValue->contents[i++].lexemeValue = CreateSymbol(theEnv,"INSTANCE-ADDRESS");
+      returnValue->multifieldValue->contents[i++].lexemeValue = CL_CreateSymbol(theEnv,"INSTANCE-ADDRESS");
      }
 
    if (allTypes || theSlot->constraints->instanceNamesAllowed)
      {
-      returnValue->multifieldValue->contents[i++].lexemeValue = CreateSymbol(theEnv,"INSTANCE-NAME");
+      returnValue->multifieldValue->contents[i++].lexemeValue = CL_CreateSymbol(theEnv,"INSTANCE-NAME");
      }
 #endif
 
@@ -1649,10 +1649,10 @@ bool DeftemplateSlotTypes(
   }
 
 /*****************************************************/
-/* DeftemplateSlotMultiPFunction: H/L access routine */
+/* CL_DeftemplateSlotMultiPFunction: H/L access routine */
 /*   for the deftemplate-slot-multip function.       */
 /*****************************************************/
-void DeftemplateSlotMultiPFunction(
+void CL_DeftemplateSlotMultiPFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -1675,14 +1675,14 @@ void DeftemplateSlotMultiPFunction(
    /* Is the slot a multifield slot? */
    /*================================*/
 
-   returnValue->lexemeValue = CreateBoolean(theEnv,DeftemplateSlotMultiP(theDeftemplate,slotName->contents));
+   returnValue->lexemeValue = CL_CreateBoolean(theEnv,CL_DeftemplateSlotMultiP(theDeftemplate,slotName->contents));
   }
 
 /***********************************************/
-/* DeftemplateSlotMultiP: C access routine for */
+/* CL_DeftemplateSlotMultiP: C access routine for */
 /*   the deftemplate-slot-multip function.     */
 /***********************************************/
-bool DeftemplateSlotMultiP(
+bool CL_DeftemplateSlotMultiP(
   Deftemplate *theDeftemplate,
   const char *slotName)
   {
@@ -1700,8 +1700,8 @@ bool DeftemplateSlotMultiP(
         { return true; }
       else
         {
-         SetEvaluationError(theEnv,true);
-         InvalidDeftemplateSlotMessage(theEnv,slotName,
+         SetCL_EvaluationError(theEnv,true);
+         CL_InvalidDeftemplateSlotMessage(theEnv,slotName,
                                        theDeftemplate->header.name->contents,false);
          return false;
         }
@@ -1712,10 +1712,10 @@ bool DeftemplateSlotMultiP(
    /* list of slots defined for the deftemplate. */
    /*============================================*/
 
-   else if ((theSlot = FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),NULL)) == NULL)
+   else if ((theSlot = CL_FindSlot(theDeftemplate,CL_CreateSymbol(theEnv,slotName),NULL)) == NULL)
      {
-      SetEvaluationError(theEnv,true);
-      InvalidDeftemplateSlotMessage(theEnv,slotName,
+      SetCL_EvaluationError(theEnv,true);
+      CL_InvalidDeftemplateSlotMessage(theEnv,slotName,
                                     theDeftemplate->header.name->contents,false);
       return false;
      }
@@ -1728,10 +1728,10 @@ bool DeftemplateSlotMultiP(
   }
 
 /******************************************************/
-/* DeftemplateSlotSinglePFunction: H/L access routine */
+/* CL_DeftemplateSlotSinglePFunction: H/L access routine */
 /*   for the deftemplate-slot-singlep function.       */
 /******************************************************/
-void DeftemplateSlotSinglePFunction(
+void CL_DeftemplateSlotSinglePFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -1754,14 +1754,14 @@ void DeftemplateSlotSinglePFunction(
    /* Is the slot a single field slot? */
    /*==================================*/
 
-   returnValue->lexemeValue = CreateBoolean(theEnv,DeftemplateSlotSingleP(theDeftemplate,slotName->contents));
+   returnValue->lexemeValue = CL_CreateBoolean(theEnv,CL_DeftemplateSlotSingleP(theDeftemplate,slotName->contents));
   }
 
 /************************************************/
-/* DeftemplateSlotSingleP: C access routine for */
+/* CL_DeftemplateSlotSingleP: C access routine for */
 /*   the deftemplate-slot-singlep function.     */
 /************************************************/
-bool DeftemplateSlotSingleP(
+bool CL_DeftemplateSlotSingleP(
   Deftemplate *theDeftemplate,
   const char *slotName)
   {
@@ -1779,8 +1779,8 @@ bool DeftemplateSlotSingleP(
         { return false; }
       else
         {
-         SetEvaluationError(theEnv,true);
-         InvalidDeftemplateSlotMessage(theEnv,slotName,
+         SetCL_EvaluationError(theEnv,true);
+         CL_InvalidDeftemplateSlotMessage(theEnv,slotName,
                                        theDeftemplate->header.name->contents,false);
          return false;
         }
@@ -1791,10 +1791,10 @@ bool DeftemplateSlotSingleP(
    /* list of slots defined for the deftemplate. */
    /*============================================*/
 
-   else if ((theSlot = FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),NULL)) == NULL)
+   else if ((theSlot = CL_FindSlot(theDeftemplate,CL_CreateSymbol(theEnv,slotName),NULL)) == NULL)
      {
-      SetEvaluationError(theEnv,true);
-      InvalidDeftemplateSlotMessage(theEnv,slotName,
+      SetCL_EvaluationError(theEnv,true);
+      CL_InvalidDeftemplateSlotMessage(theEnv,slotName,
                                     theDeftemplate->header.name->contents,false);
       return false;
      }
@@ -1807,10 +1807,10 @@ bool DeftemplateSlotSingleP(
   }
 
 /*****************************************************/
-/* DeftemplateSlotExistPFunction: H/L access routine */
+/* CL_DeftemplateCL_SlotExistPFunction: H/L access routine */
 /*   for the deftemplate-slot-existp function.       */
 /*****************************************************/
-void DeftemplateSlotExistPFunction(
+void CL_DeftemplateCL_SlotExistPFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -1833,14 +1833,14 @@ void DeftemplateSlotExistPFunction(
    /* Does the slot exist? */
    /*======================*/
 
-   returnValue->lexemeValue = CreateBoolean(theEnv,DeftemplateSlotExistP(theDeftemplate,slotName->contents));
+   returnValue->lexemeValue = CL_CreateBoolean(theEnv,CL_DeftemplateCL_SlotExistP(theDeftemplate,slotName->contents));
   }
 
 /***********************************************/
-/* DeftemplateSlotExistP: C access routine for */
+/* CL_DeftemplateCL_SlotExistP: C access routine for */
 /*   the deftemplate-slot-existp function.     */
 /***********************************************/
-bool DeftemplateSlotExistP(
+bool CL_DeftemplateCL_SlotExistP(
   Deftemplate *theDeftemplate,
   const char *slotName)
   {
@@ -1864,7 +1864,7 @@ bool DeftemplateSlotExistP(
    /* list of slots defined for the deftemplate. */
    /*============================================*/
 
-   else if (FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),NULL) == NULL)
+   else if (CL_FindSlot(theDeftemplate,CL_CreateSymbol(theEnv,slotName),NULL) == NULL)
      { return false; }
 
    /*==================*/
@@ -1875,10 +1875,10 @@ bool DeftemplateSlotExistP(
   }
 
 /**********************************************************/
-/* DeftemplateSlotFacetExistPFunction: H/L access routine */
+/* CL_DeftemplateSlotFacetExistPFunction: H/L access routine */
 /*   for the deftemplate-slot-facet-existp function.      */
 /**********************************************************/
-void DeftemplateSlotFacetExistPFunction(
+void CL_DeftemplateSlotFacetExistPFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -1902,7 +1902,7 @@ void DeftemplateSlotFacetExistPFunction(
    /* Get the name of the facet. */
    /*============================*/
 
-   if (! UDFNextArgument(context,SYMBOL_BIT,&facetName))
+   if (! CL_UDFNextArgument(context,SYMBOL_BIT,&facetName))
      {
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
@@ -1912,14 +1912,14 @@ void DeftemplateSlotFacetExistPFunction(
    /* Does the slot exist? */
    /*======================*/
 
-   returnValue->lexemeValue = CreateBoolean(theEnv,DeftemplateSlotFacetExistP(theEnv,theDeftemplate,slotName->contents,facetName.lexemeValue->contents));
+   returnValue->lexemeValue = CL_CreateBoolean(theEnv,CL_DeftemplateSlotFacetExistP(theEnv,theDeftemplate,slotName->contents,facetName.lexemeValue->contents));
   }
 
 /****************************************************/
-/* DeftemplateSlotFacetExistP: C access routine for */
+/* CL_DeftemplateSlotFacetExistP: C access routine for */
 /*   the deftemplate-slot-facet-existp function.    */
 /****************************************************/
-bool DeftemplateSlotFacetExistP(
+bool CL_DeftemplateSlotFacetExistP(
   Environment *theEnv,
   Deftemplate *theDeftemplate,
   const char *slotName,
@@ -1941,14 +1941,14 @@ bool DeftemplateSlotFacetExistP(
    /* list of slots defined for the deftemplate. */
    /*============================================*/
 
-   else if ((theSlot = FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),NULL)) == NULL)
+   else if ((theSlot = CL_FindSlot(theDeftemplate,CL_CreateSymbol(theEnv,slotName),NULL)) == NULL)
      { return false; }
 
    /*=======================*/
    /* Search for the facet. */
    /*=======================*/
 
-   facetHN = FindSymbolHN(theEnv,facetName,SYMBOL_BIT);
+   facetHN = CL_FindSymbolHN(theEnv,facetName,SYMBOL_BIT);
    for (tempFacet = theSlot->facetList;
         tempFacet != NULL;
         tempFacet = tempFacet->nextArg)
@@ -1965,10 +1965,10 @@ bool DeftemplateSlotFacetExistP(
   }
 
 /*********************************************************/
-/* DeftemplateSlotFacetValueFunction: H/L access routine */
+/* CL_DeftemplateSlotFacetValueFunction: H/L access routine */
 /*   for the deftemplate-slot-facet-value function.      */
 /*********************************************************/
-void DeftemplateSlotFacetValueFunction(
+void CL_DeftemplateSlotFacetValueFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -1995,21 +1995,21 @@ void DeftemplateSlotFacetValueFunction(
    /* Get the name of the facet. */
    /*============================*/
 
-   if (! UDFNthArgument(context,3,SYMBOL_BIT,&facetName))
+   if (! CL_UDFNthArgument(context,3,SYMBOL_BIT,&facetName))
      { return; }
 
    /*===========================*/
    /* Retrieve the facet value. */
    /*===========================*/
 
-   DeftemplateSlotFacetValue(theEnv,theDeftemplate,slotName->contents,facetName.lexemeValue->contents,returnValue);
+   CL_DeftemplateSlotFacetValue(theEnv,theDeftemplate,slotName->contents,facetName.lexemeValue->contents,returnValue);
   }
 
 /****************************************************/
-/* DeftemplateSlotFacetValue: C access routine      */
+/* CL_DeftemplateSlotFacetValue: C access routine      */
 /*   for the deftemplate-slot-facet-value function. */
 /****************************************************/
-bool DeftemplateSlotFacetValue(
+bool CL_DeftemplateSlotFacetValue(
   Environment *theEnv,
   Deftemplate *theDeftemplate,
   const char *slotName,
@@ -2032,21 +2032,21 @@ bool DeftemplateSlotFacetValue(
    /* list of slots defined for the deftemplate. */
    /*============================================*/
 
-   else if ((theSlot = FindSlot(theDeftemplate,CreateSymbol(theEnv,slotName),NULL)) == NULL)
+   else if ((theSlot = CL_FindSlot(theDeftemplate,CL_CreateSymbol(theEnv,slotName),NULL)) == NULL)
      { return false; }
 
    /*=======================*/
    /* Search for the facet. */
    /*=======================*/
 
-   facetHN = FindSymbolHN(theEnv,facetName,SYMBOL_BIT);
+   facetHN = CL_FindSymbolHN(theEnv,facetName,SYMBOL_BIT);
    for (tempFacet = theSlot->facetList;
         tempFacet != NULL;
         tempFacet = tempFacet->nextArg)
      {
       if (tempFacet->value == facetHN)
         {
-         EvaluateExpression(theEnv,tempFacet->argList,rv);
+         CL_EvaluateExpression(theEnv,tempFacet->argList,rv);
          return true;
         }
      }
@@ -2074,15 +2074,15 @@ static CLIPSLexeme *CheckDeftemplateAndSlotArguments(
    /* Get the reference to the deftemplate. */
    /*=======================================*/
 
-   if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg))
+   if (! CL_UDFFirstArgument(context,SYMBOL_BIT,&theArg))
      { return NULL; }
 
    deftemplateName = theArg.lexemeValue->contents;
 
-   *theDeftemplate = FindDeftemplate(theEnv,deftemplateName);
+   *theDeftemplate = CL_FindDeftemplate(theEnv,deftemplateName);
    if (*theDeftemplate == NULL)
      {
-      CantFindItemErrorMessage(theEnv,"deftemplate",deftemplateName,true);
+      CL_CantFindItemErrorMessage(theEnv,"deftemplate",deftemplateName,true);
       return NULL;
      }
 
@@ -2090,7 +2090,7 @@ static CLIPSLexeme *CheckDeftemplateAndSlotArguments(
    /* Get the name of the slot. */
    /*===========================*/
 
-   if (! UDFNextArgument(context,SYMBOL_BIT,&theArg))
+   if (! CL_UDFNextArgument(context,SYMBOL_BIT,&theArg))
      { return NULL; }
 
    return theArg.lexemeValue;
@@ -2099,7 +2099,7 @@ static CLIPSLexeme *CheckDeftemplateAndSlotArguments(
 #if (! RUN_TIME) && (! BLOAD_ONLY)
 
 /***************************************************************/
-/* UpdateModifyDuplicate: Changes the modify/duplicate command */
+/* CL_UpdateModifyDuplicate: Changes the modify/duplicate command */
 /*   found on the RHS of a rule such that the positions of the */
 /*   slots for replacement are stored rather than the slot     */
 /*   name which allows quicker replacement of slots. This      */
@@ -2108,7 +2108,7 @@ static CLIPSLexeme *CheckDeftemplateAndSlotArguments(
 /*   know which type of deftemplate is going to be replaced    */
 /*   until you actually do the replacement of slots).          */
 /***************************************************************/
-bool UpdateModifyDuplicate(
+bool CL_UpdateModifyDuplicate(
   Environment *theEnv,
   struct expr *top,
   const char *name,
@@ -2120,14 +2120,14 @@ bool UpdateModifyDuplicate(
    struct templateSlot *slotPtr;
 
    /*========================================*/
-   /* Determine the fact-address or index to */
+   /* DeteCL_rmine the fact-address or index to */
    /* be retracted by the modify command.    */
    /*========================================*/
 
    functionArgs = top->argList;
    if (functionArgs->type == SF_VARIABLE)
      {
-      if (SearchParsedBindNames(theEnv,functionArgs->lexemeValue) != 0)
+      if (CL_SearchParsedBindNames(theEnv,functionArgs->lexemeValue) != 0)
         { return true; }
       templateName = FindTemplateForFactAddress(functionArgs->lexemeValue,
                                                 (struct lhsParseNode *) vTheLHS);
@@ -2142,7 +2142,7 @@ bool UpdateModifyDuplicate(
    /*========================================*/
 
    theDeftemplate = (Deftemplate *)
-                    LookupConstruct(theEnv,DeftemplateData(theEnv)->DeftemplateConstruct,
+                    CL_LookupConstruct(theEnv,DeftemplateData(theEnv)->DeftemplateConstruct,
                                     templateName->contents,
                                     false);
 
@@ -2161,9 +2161,9 @@ bool UpdateModifyDuplicate(
       /* Does the slot exist? */
       /*======================*/
 
-      if ((slotPtr = FindSlot(theDeftemplate,tempArg->lexemeValue,NULL)) == NULL)
+      if ((slotPtr = CL_FindSlot(theDeftemplate,tempArg->lexemeValue,NULL)) == NULL)
         {
-         InvalidDeftemplateSlotMessage(theEnv,tempArg->lexemeValue->contents,
+         CL_InvalidDeftemplateSlotMessage(theEnv,tempArg->lexemeValue->contents,
                                        theDeftemplate->header.name->contents,true);
          return false;
         }
@@ -2176,25 +2176,25 @@ bool UpdateModifyDuplicate(
         {
          if (tempArg->argList == NULL)
            {
-            SingleFieldSlotCardinalityError(theEnv,slotPtr->slotName->contents);
+            CL_SingleFieldCL_SlotCardinalityError(theEnv,slotPtr->slotName->contents);
             return false;
            }
          else if (tempArg->argList->nextArg != NULL)
            {
-            SingleFieldSlotCardinalityError(theEnv,slotPtr->slotName->contents);
+            CL_SingleFieldCL_SlotCardinalityError(theEnv,slotPtr->slotName->contents);
             return false;
            }
          else if (tempArg->argList->type == FCALL)
            {
             if ((ExpressionUnknownFunctionType(tempArg->argList) & SINGLEFIELD_BITS) == 0)
               {
-               SingleFieldSlotCardinalityError(theEnv,slotPtr->slotName->contents);
+               CL_SingleFieldCL_SlotCardinalityError(theEnv,slotPtr->slotName->contents);
                return false;
               }
            }
          else if (tempArg->argList->type == MF_VARIABLE)
            {
-            SingleFieldSlotCardinalityError(theEnv,slotPtr->slotName->contents);
+            CL_SingleFieldCL_SlotCardinalityError(theEnv,slotPtr->slotName->contents);
             return false;
            }
         }
@@ -2203,7 +2203,7 @@ bool UpdateModifyDuplicate(
       /* Are the slot restrictions satisfied? */
       /*======================================*/
 
-      if (CheckRHSSlotTypes(theEnv,tempArg->argList,slotPtr,name) == 0)
+      if (CL_CheckRHSCL_SlotTypes(theEnv,tempArg->argList,slotPtr,name) == 0)
         return false;
 
       /*=============================================*/
@@ -2211,7 +2211,7 @@ bool UpdateModifyDuplicate(
       /*=============================================*/
 
       tempArg->type = INTEGER_TYPE;
-      tempArg->value = CreateInteger(theEnv,(long long) (FindSlotPosition(theDeftemplate,tempArg->lexemeValue) - 1));
+      tempArg->value = CL_CreateInteger(theEnv,(long long) (CL_FindSlotPosition(theDeftemplate,tempArg->lexemeValue) - 1));
 
       tempArg = tempArg->nextArg;
      }
@@ -2273,9 +2273,9 @@ static CLIPSLexeme *FindTemplateForFactAddress(
 #endif
 
 /*******************************************/
-/* ModifyParse: Parses the modify command. */
+/* CL_ModifyParse: Parses the modify command. */
 /*******************************************/
-struct expr *ModifyParse(
+struct expr *CL_ModifyParse(
   Environment *theEnv,
   struct expr *top,
   const char *logicalName)
@@ -2284,9 +2284,9 @@ struct expr *ModifyParse(
   }
 
 /*************************************************/
-/* DuplicateParse: Parses the duplicate command. */
+/* CL_DuplicateParse: Parses the duplicate command. */
 /*************************************************/
-struct expr *DuplicateParse(
+struct expr *CL_DuplicateParse(
   Environment *theEnv,
   struct expr *top,
   const char *logicalName)
@@ -2314,26 +2314,26 @@ static struct expr *ModAndDupParse(
    /* Parse the fact-address or index to the modify/duplicate command. */
    /*==================================================================*/
 
-   SavePPBuffer(theEnv," ");
-   GetToken(theEnv,logicalName,&theToken);
+   CL_SavePPBuffer(theEnv," ");
+   CL_GetToken(theEnv,logicalName,&theToken);
 
    if ((theToken.tknType == SF_VARIABLE_TOKEN) || (theToken.tknType == GBL_VARIABLE_TOKEN))
-     { nextOne = GenConstant(theEnv,TokenTypeToType(theToken.tknType),theToken.value); }
+     { nextOne = CL_GenConstant(theEnv,CL_TokenTypeToType(theToken.tknType),theToken.value); }
    else if (theToken.tknType == INTEGER_TOKEN)
-     { nextOne = GenConstant(theEnv,INTEGER_TYPE,theToken.value); }
+     { nextOne = CL_GenConstant(theEnv,INTEGER_TYPE,theToken.value); }
    else if (theToken.tknType == LEFT_PARENTHESIS_TOKEN)
      {
-      nextOne = Function1Parse(theEnv,logicalName);
+      nextOne = CL_Function1Parse(theEnv,logicalName);
       if (nextOne == NULL)
         {
-         ReturnExpression(theEnv,top);
+         CL_ReturnExpression(theEnv,top);
          return NULL;
         }
      }
    else
      {
-      ExpectedTypeError2(theEnv,name,1);
-      ReturnExpression(theEnv,top);
+      CL_ExpectedTypeError2(theEnv,name,1);
+      CL_ReturnExpression(theEnv,top);
       return NULL;
      }
 
@@ -2341,15 +2341,15 @@ static struct expr *ModAndDupParse(
    nextOne = top->argList;
 
    /*=======================================================*/
-   /* Parse the remaining modify/duplicate slot specifiers. */
+   /* Parse the reCL_maining modify/duplicate slot specifiers. */
    /*=======================================================*/
 
-   GetToken(theEnv,logicalName,&theToken);
+   CL_GetToken(theEnv,logicalName,&theToken);
    while (theToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      {
-      PPBackup(theEnv);
-      SavePPBuffer(theEnv," ");
-      SavePPBuffer(theEnv,theToken.printForm);
+      CL_PPBackup(theEnv);
+      CL_SavePPBuffer(theEnv," ");
+      CL_SavePPBuffer(theEnv,theToken.printFoCL_rm);
 
       /*=================================================*/
       /* Slot definition begins with a left parenthesis. */
@@ -2357,8 +2357,8 @@ static struct expr *ModAndDupParse(
 
       if (theToken.tknType != LEFT_PARENTHESIS_TOKEN)
         {
-         SyntaxErrorMessage(theEnv,"duplicate/modify function");
-         ReturnExpression(theEnv,top);
+         CL_SyntaxErrorMessage(theEnv,"duplicate/modify function");
+         CL_ReturnExpression(theEnv,top);
          return NULL;
         }
 
@@ -2366,11 +2366,11 @@ static struct expr *ModAndDupParse(
       /* The slot name must be a symbol. */
       /*=================================*/
 
-      GetToken(theEnv,logicalName,&theToken);
+      CL_GetToken(theEnv,logicalName,&theToken);
       if (theToken.tknType != SYMBOL_TOKEN)
         {
-         SyntaxErrorMessage(theEnv,"duplicate/modify function");
-         ReturnExpression(theEnv,top);
+         CL_SyntaxErrorMessage(theEnv,"duplicate/modify function");
+         CL_ReturnExpression(theEnv,top);
          return NULL;
         }
 
@@ -2384,8 +2384,8 @@ static struct expr *ModAndDupParse(
         {
          if (tempSlot->value == theToken.value)
            {
-            AlreadyParsedErrorMessage(theEnv,"slot ",theToken.lexemeValue->contents);
-            ReturnExpression(theEnv,top);
+            CL_AlreadyParsedErrorMessage(theEnv,"slot ",theToken.lexemeValue->contents);
+            CL_ReturnExpression(theEnv,top);
             return NULL;
            }
         }
@@ -2394,7 +2394,7 @@ static struct expr *ModAndDupParse(
       /* Add the slot name to the list of slots. */
       /*=========================================*/
 
-      nextOne->nextArg = GenConstant(theEnv,SYMBOL_TYPE,theToken.value);
+      nextOne->nextArg = CL_GenConstant(theEnv,SYMBOL_TYPE,theToken.value);
       nextOne = nextOne->nextArg;
 
       /*====================================================*/
@@ -2406,14 +2406,14 @@ static struct expr *ModAndDupParse(
       done = false;
       while (! done)
         {
-         SavePPBuffer(theEnv," ");
-         newField = GetAssertArgument(theEnv,logicalName,&theToken,&error,
+         CL_SavePPBuffer(theEnv," ");
+         newField = GetCL_AssertArgument(theEnv,logicalName,&theToken,&error,
                                       RIGHT_PARENTHESIS_TOKEN,false,&printError);
 
          if (error)
            {
-            if (printError) SyntaxErrorMessage(theEnv,"deftemplate pattern");
-            ReturnExpression(theEnv,top);
+            if (printError) CL_SyntaxErrorMessage(theEnv,"deftemplate pattern");
+            CL_ReturnExpression(theEnv,top);
             return NULL;
            }
 
@@ -2433,21 +2433,21 @@ static struct expr *ModAndDupParse(
 
       if (theToken.tknType != RIGHT_PARENTHESIS_TOKEN)
         {
-         SyntaxErrorMessage(theEnv,"duplicate/modify function");
-         ReturnExpression(theEnv,top);
-         ReturnExpression(theEnv,firstField);
+         CL_SyntaxErrorMessage(theEnv,"duplicate/modify function");
+         CL_ReturnExpression(theEnv,top);
+         CL_ReturnExpression(theEnv,firstField);
          return NULL;
         }
       else
         {
-         PPBackup(theEnv);
-         PPBackup(theEnv);
-         SavePPBuffer(theEnv,")");
+         CL_PPBackup(theEnv);
+         CL_PPBackup(theEnv);
+         CL_SavePPBuffer(theEnv,")");
         }
 
       nextOne->argList = firstField;
 
-      GetToken(theEnv,logicalName,&theToken);
+      CL_GetToken(theEnv,logicalName,&theToken);
      }
 
    /*================================================*/

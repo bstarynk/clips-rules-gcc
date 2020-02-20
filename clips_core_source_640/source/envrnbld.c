@@ -88,14 +88,14 @@
 /* GLOBAL EXTERNAL FUNCTION DEFINITIONS */
 /****************************************/
 
-   extern void                    UserFunctions(Environment *);
+   extern void                    CL_UserFunctions(Environment *);
 
 /***************************************/
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
    static void                    RemoveEnvironmentCleanupFunctions(struct environmentData *);
-   static Environment            *CreateEnvironmentDriver(CLIPSLexeme **,CLIPSFloat **,
+   static Environment            *CL_CreateEnvironmentDriver(CLIPSLexeme **,CLIPSFloat **,
                                                           CLIPSInteger **,CLIPSBitMap **,
                                                           CLIPSExternalAddress **,
                                                           struct functionDefinition *);
@@ -107,33 +107,33 @@
                                                            struct functionDefinition *);
 
 /************************************************************/
-/* CreateEnvironment: Creates an environment data structure */
+/* CL_CreateEnvironment: Creates an environment data structure */
 /*   and initializes its content to zero/null.              */
 /************************************************************/
-Environment *CreateEnvironment()
+Environment *CL_CreateEnvironment()
   {
-   return CreateEnvironmentDriver(NULL,NULL,NULL,NULL,NULL,NULL);
+   return CL_CreateEnvironmentDriver(NULL,NULL,NULL,NULL,NULL,NULL);
   }
 
 /**********************************************************/
-/* CreateRuntimeEnvironment: Creates an environment data  */
+/* CL_CreateCL_RuntimeEnvironment: Creates an environment data  */
 /*   structure and initializes its content to zero/null.  */
 /**********************************************************/
-Environment *CreateRuntimeEnvironment(
+Environment *CL_CreateCL_RuntimeEnvironment(
   CLIPSLexeme **symbolTable,
   CLIPSFloat **floatTable,
   CLIPSInteger **integerTable,
   CLIPSBitMap **bitmapTable,
   struct functionDefinition *functions)
   {
-   return CreateEnvironmentDriver(symbolTable,floatTable,integerTable,bitmapTable,NULL,functions);
+   return CL_CreateEnvironmentDriver(symbolTable,floatTable,integerTable,bitmapTable,NULL,functions);
   }
 
 /*********************************************************/
-/* CreateEnvironmentDriver: Creates an environment data  */
+/* CL_CreateEnvironmentDriver: Creates an environment data  */
 /*   structure and initializes its content to zero/null. */
 /*********************************************************/
-Environment *CreateEnvironmentDriver(
+Environment *CL_CreateEnvironmentDriver(
   CLIPSLexeme **symbolTable,
   CLIPSFloat **floatTable,
   CLIPSInteger **integerTable,
@@ -189,16 +189,16 @@ Environment *CreateEnvironmentDriver(
    InitializeEnvironment(theEnvironment,symbolTable,floatTable,integerTable,
                          bitmapTable,externalAddressTable,functions);
       
-   CleanCurrentGarbageFrame(theEnvironment,NULL);
+   CL_CleanCurrentGarbageFrame(theEnvironment,NULL);
 
    return theEnvironment;
   }
 
 /**********************************************/
-/* DestroyEnvironment: Destroys the specified */
+/* CL_DestroyEnvironment: Destroys the specified */
 /*   environment returning all of its memory. */
 /**********************************************/
-bool DestroyEnvironment(
+bool CL_DestroyEnvironment(
   Environment *theEnvironment)
   {
    struct environmentCleanupFunction *cleanupPtr;
@@ -206,7 +206,7 @@ bool DestroyEnvironment(
    struct memoryData *theMemData;
    bool rv = true;
 /*
-   if (EvaluationData(theEnvironment)->CurrentExpression != NULL)
+   if (CL_EvaluationData(theEnvironment)->CurrentExpression != NULL)
      { return false; }
 
 #if DEFRULE_CONSTRUCT
@@ -216,7 +216,7 @@ bool DestroyEnvironment(
 */
    theMemData = MemoryData(theEnvironment);
 
-   ReleaseMem(theEnvironment,-1);
+   CL_ReleaseMem(theEnvironment,-1);
 
    for (i = 0; i < MAXIMUM_ENVIRONMENT_POSITIONS; i++)
      {
@@ -233,7 +233,7 @@ bool DestroyEnvironment(
 
    RemoveEnvironmentCleanupFunctions(theEnvironment);
 
-   ReleaseMem(theEnvironment,-1);
+   CL_ReleaseMem(theEnvironment,-1);
 
    if ((theMemData->MemoryAmount != 0) || (theMemData->MemoryCalls != 0))
      {
@@ -281,7 +281,7 @@ static void RemoveEnvironmentCleanupFunctions(
   }
 
 /**************************************************/
-/* InitializeEnvironment: Performs initialization */
+/* InitializeEnvironment: PerfoCL_rms initialization */
 /*   of the KB environment.                       */
 /**************************************************/
 static void InitializeEnvironment(
@@ -303,90 +303,90 @@ static void InitializeEnvironment(
    /* Initialize the memory manager. */
    /*================================*/
 
-   InitializeMemory(theEnvironment);
+   CL_InitializeMemory(theEnvironment);
 
    /*===================================================*/
    /* Initialize environment data for various features. */
    /*===================================================*/
 
-   InitializeCommandLineData(theEnvironment);
+   CL_InitializeCommandLineData(theEnvironment);
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
-   InitializeConstructCompilerData(theEnvironment);
+   CL_InitializeConstructCompilerData(theEnvironment);
 #endif
-   InitializeConstructData(theEnvironment);
-   InitializeEvaluationData(theEnvironment);
-   InitializeExternalFunctionData(theEnvironment);
-   InitializePrettyPrintData(theEnvironment);
-   InitializePrintUtilityData(theEnvironment);
-   InitializeScannerData(theEnvironment);
-   InitializeSystemDependentData(theEnvironment);
-   InitializeUserDataData(theEnvironment);
-   InitializeUtilityData(theEnvironment);
+   CL_InitializeConstructData(theEnvironment);
+   InitializeCL_EvaluationData(theEnvironment);
+   CL_InitializeExternalFunctionData(theEnvironment);
+   CL_InitializePrettyPrintData(theEnvironment);
+   CL_InitializePrintUtilityData(theEnvironment);
+   CL_InitializeScannerData(theEnvironment);
+   CL_InitializeSystemDependentData(theEnvironment);
+   CL_InitializeUserDataData(theEnvironment);
+   CL_InitializeUtilityData(theEnvironment);
 #if DEBUGGING_FUNCTIONS
-   InitializeWatchData(theEnvironment);
+   CL_InitializeCL_WatchData(theEnvironment);
 #endif
 
    /*===============================================*/
    /* Initialize the hash tables for atomic values. */
    /*===============================================*/
 
-   InitializeAtomTables(theEnvironment,symbolTable,floatTable,integerTable,bitmapTable,externalAddressTable);
+   CL_InitializeAtomTables(theEnvironment,symbolTable,floatTable,integerTable,bitmapTable,externalAddressTable);
 
    /*=========================================*/
    /* Initialize file and string I/O routers. */
    /*=========================================*/
 
-   InitializeDefaultRouters(theEnvironment);
+   CL_InitializeDefaultRouters(theEnvironment);
 
    /*=========================================================*/
    /* Initialize some system dependent features such as time. */
    /*=========================================================*/
 
-   InitializeNonportableFeatures(theEnvironment);
+   CL_InitializeNonportableFeatures(theEnvironment);
 
    /*=============================================*/
    /* Register system and user defined functions. */
    /*=============================================*/
 
    if (functions != NULL)
-     { InstallFunctionList(theEnvironment,functions); }
+     { CL_InstallFunctionList(theEnvironment,functions); }
 
    SystemFunctionDefinitions(theEnvironment);
-   UserFunctions(theEnvironment);
+   CL_UserFunctions(theEnvironment);
 
    /*====================================*/
    /* Initialize the constraint manager. */
    /*====================================*/
 
-   InitializeConstraints(theEnvironment);
+   CL_InitializeConstraints(theEnvironment);
 
    /*==========================================*/
    /* Initialize the expression hash table and */
    /* pointers to specific functions.          */
    /*==========================================*/
 
-   InitExpressionData(theEnvironment);
+   CL_InitExpressionData(theEnvironment);
 
    /*===================================*/
    /* Initialize the construct manager. */
    /*===================================*/
 
 #if ! RUN_TIME
-   InitializeConstructs(theEnvironment);
+   CL_InitializeConstructs(theEnvironment);
 #endif
 
    /*=====================================*/
    /* Initialize the defmodule construct. */
    /*=====================================*/
 
-   AllocateDefmoduleGlobals(theEnvironment);
+   CL_AllocateDefmoduleGlobals(theEnvironment);
 
    /*===================================*/
    /* Initialize the defrule construct. */
    /*===================================*/
 
 #if DEFRULE_CONSTRUCT
-   InitializeDefrules(theEnvironment);
+   CL_InitializeDefrules(theEnvironment);
 #endif
 
    /*====================================*/
@@ -394,7 +394,7 @@ static void InitializeEnvironment(
    /*====================================*/
 
 #if DEFFACTS_CONSTRUCT
-   InitializeDeffacts(theEnvironment);
+   CL_InitializeDeffacts(theEnvironment);
 #endif
 
    /*=====================================================*/
@@ -402,7 +402,7 @@ static void InitializeEnvironment(
    /*=====================================================*/
 
 #if DEFGENERIC_CONSTRUCT
-   SetupGenericFunctions(theEnvironment);
+   CL_SetupGenericFunctions(theEnvironment);
 #endif
 
    /*=======================================*/
@@ -410,7 +410,7 @@ static void InitializeEnvironment(
    /*=======================================*/
 
 #if DEFFUNCTION_CONSTRUCT
-   SetupDeffunctions(theEnvironment);
+   CL_SetupDeffunctions(theEnvironment);
 #endif
 
    /*=====================================*/
@@ -418,7 +418,7 @@ static void InitializeEnvironment(
    /*=====================================*/
 
 #if DEFGLOBAL_CONSTRUCT
-   InitializeDefglobals(theEnvironment);
+   CL_InitializeDefglobals(theEnvironment);
 #endif
 
    /*=======================================*/
@@ -426,7 +426,7 @@ static void InitializeEnvironment(
    /*=======================================*/
 
 #if DEFTEMPLATE_CONSTRUCT
-   InitializeDeftemplates(theEnvironment);
+   CL_InitializeDeftemplates(theEnvironment);
 #endif
 
    /*=============================*/
@@ -434,14 +434,14 @@ static void InitializeEnvironment(
    /*=============================*/
 
 #if OBJECT_SYSTEM
-   SetupObjectSystem(theEnvironment);
+   CL_SetupObjectSystem(theEnvironment);
 #endif
 
    /*=====================================*/
    /* Initialize the defmodule construct. */
    /*=====================================*/
 
-   InitializeDefmodules(theEnvironment);
+   CL_InitializeDefmodules(theEnvironment);
 
    /*======================================================*/
    /* Register commands and functions for development use. */
@@ -456,7 +456,7 @@ static void InitializeEnvironment(
    /* used by procedural code in constructs.  */
    /*=========================================*/
 
-   InstallProcedurePrimitives(theEnvironment);
+   CL_InstallProcedurePrimitives(theEnvironment);
 
    /*==============================================*/
    /* Install keywords in the symbol table so that */
@@ -469,7 +469,7 @@ static void InitializeEnvironment(
    /* Issue a clear command. */
    /*========================*/
 
-   Clear(theEnvironment);
+   CL_Clear(theEnvironment);
 
    /*=============================*/
    /* Initialization is complete. */
@@ -485,47 +485,47 @@ static void InitializeEnvironment(
 static void SystemFunctionDefinitions(
   Environment *theEnv)
   {
-   ProceduralFunctionDefinitions(theEnv);
-   MiscFunctionDefinitions(theEnv);
+   CL_ProceduralFunctionDefinitions(theEnv);
+   CL_MiscFunctionDefinitions(theEnv);
 
 #if IO_FUNCTIONS
-   IOFunctionDefinitions(theEnv);
+   CL_IOFunctionDefinitions(theEnv);
 #endif
 
-   PredicateFunctionDefinitions(theEnv);
-   BasicMathFunctionDefinitions(theEnv);
-   FileCommandDefinitions(theEnv);
-   SortFunctionDefinitions(theEnv);
+   CL_PredicateFunctionDefinitions(theEnv);
+   CL_BasicMathFunctionDefinitions(theEnv);
+   CL_FileCommandDefinitions(theEnv);
+   CL_SortFunctionDefinitions(theEnv);
 
 #if DEBUGGING_FUNCTIONS
-   WatchFunctionDefinitions(theEnv);
+   CL_WatchFunctionDefinitions(theEnv);
 #endif
 
 #if MULTIFIELD_FUNCTIONS
-   MultifieldFunctionDefinitions(theEnv);
+   CL_MultifieldFunctionDefinitions(theEnv);
 #endif
 
 #if STRING_FUNCTIONS
-   StringFunctionDefinitions(theEnv);
+   CL_StringFunctionDefinitions(theEnv);
 #endif
 
 #if EXTENDED_MATH_FUNCTIONS
-   ExtendedMathFunctionDefinitions(theEnv);
+   CL_ExtendedMathFunctionDefinitions(theEnv);
 #endif
 
 #if TEXTPRO_FUNCTIONS
-   HelpFunctionDefinitions(theEnv);
+   CL_HelpFunctionDefinitions(theEnv);
 #endif
 
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
-   ConstructsToCCommandDefinition(theEnv);
+   CL_ConstructsToCCommandDefinition(theEnv);
 #endif
 
 #if PROFILING_FUNCTIONS
-   ConstructProfilingFunctionDefinitions(theEnv);
+   CL_ConstructProfilingFunctionDefinitions(theEnv);
 #endif
 
-   ParseFunctionDefinitions(theEnv);
+   CL_ParseFunctionDefinitions(theEnv);
   }
 
 /*********************************************/
@@ -543,223 +543,223 @@ static void InitializeKeywords(
    /* construct keywords */
    /*====================*/
 
-   ts = CreateSymbol(theEnv,"defrule");
+   ts = CL_CreateSymbol(theEnv,"defrule");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"defglobal");
+   ts = CL_CreateSymbol(theEnv,"defglobal");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"deftemplate");
+   ts = CL_CreateSymbol(theEnv,"deftemplate");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"deffacts");
+   ts = CL_CreateSymbol(theEnv,"deffacts");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"deffunction");
+   ts = CL_CreateSymbol(theEnv,"deffunction");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"defmethod");
+   ts = CL_CreateSymbol(theEnv,"defmethod");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"defgeneric");
+   ts = CL_CreateSymbol(theEnv,"defgeneric");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"defclass");
+   ts = CL_CreateSymbol(theEnv,"defclass");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"defmessage-handler");
+   ts = CL_CreateSymbol(theEnv,"defmessage-handler");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"definstances");
+   ts = CL_CreateSymbol(theEnv,"definstances");
    IncrementLexemeCount(ts);
 
    /*=======================*/
    /* set-strategy keywords */
    /*=======================*/
 
-   ts = CreateSymbol(theEnv,"depth");
+   ts = CL_CreateSymbol(theEnv,"depth");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"breadth");
+   ts = CL_CreateSymbol(theEnv,"breadth");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"lex");
+   ts = CL_CreateSymbol(theEnv,"lex");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"mea");
+   ts = CL_CreateSymbol(theEnv,"mea");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"simplicity");
+   ts = CL_CreateSymbol(theEnv,"simplicity");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"complexity");
+   ts = CL_CreateSymbol(theEnv,"complexity");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"random");
+   ts = CL_CreateSymbol(theEnv,"random");
    IncrementLexemeCount(ts);
 
    /*==================================*/
    /* set-salience-evaluation keywords */
    /*==================================*/
 
-   ts = CreateSymbol(theEnv,"when-defined");
+   ts = CL_CreateSymbol(theEnv,"when-defined");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"when-activated");
+   ts = CL_CreateSymbol(theEnv,"when-activated");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"every-cycle");
+   ts = CL_CreateSymbol(theEnv,"every-cycle");
    IncrementLexemeCount(ts);
 
    /*======================*/
    /* deftemplate keywords */
    /*======================*/
 
-   ts = CreateSymbol(theEnv,"field");
+   ts = CL_CreateSymbol(theEnv,"field");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"multifield");
+   ts = CL_CreateSymbol(theEnv,"multifield");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"default");
+   ts = CL_CreateSymbol(theEnv,"default");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"type");
+   ts = CL_CreateSymbol(theEnv,"type");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"allowed-symbols");
+   ts = CL_CreateSymbol(theEnv,"allowed-symbols");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"allowed-strings");
+   ts = CL_CreateSymbol(theEnv,"allowed-strings");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"allowed-numbers");
+   ts = CL_CreateSymbol(theEnv,"allowed-numbers");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"allowed-integers");
+   ts = CL_CreateSymbol(theEnv,"allowed-integers");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"allowed-floats");
+   ts = CL_CreateSymbol(theEnv,"allowed-floats");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"allowed-values");
+   ts = CL_CreateSymbol(theEnv,"allowed-values");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"min-number-of-elements");
+   ts = CL_CreateSymbol(theEnv,"min-number-of-elements");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"max-number-of-elements");
+   ts = CL_CreateSymbol(theEnv,"max-number-of-elements");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"NONE");
+   ts = CL_CreateSymbol(theEnv,"NONE");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"VARIABLE");
+   ts = CL_CreateSymbol(theEnv,"VARIABLE");
    IncrementLexemeCount(ts);
 
    /*==================*/
    /* defrule keywords */
    /*==================*/
 
-   ts = CreateSymbol(theEnv,"declare");
+   ts = CL_CreateSymbol(theEnv,"declare");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"salience");
+   ts = CL_CreateSymbol(theEnv,"salience");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"test");
+   ts = CL_CreateSymbol(theEnv,"test");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"or");
+   ts = CL_CreateSymbol(theEnv,"or");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"and");
+   ts = CL_CreateSymbol(theEnv,"and");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"not");
+   ts = CL_CreateSymbol(theEnv,"not");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"logical");
+   ts = CL_CreateSymbol(theEnv,"logical");
    IncrementLexemeCount(ts);
 
    /*===============*/
    /* COOL keywords */
    /*===============*/
 
-   ts = CreateSymbol(theEnv,"is-a");
+   ts = CL_CreateSymbol(theEnv,"is-a");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"role");
+   ts = CL_CreateSymbol(theEnv,"role");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"abstract");
+   ts = CL_CreateSymbol(theEnv,"abstract");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"concrete");
+   ts = CL_CreateSymbol(theEnv,"concrete");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"pattern-match");
+   ts = CL_CreateSymbol(theEnv,"pattern-match");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"reactive");
+   ts = CL_CreateSymbol(theEnv,"reactive");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"non-reactive");
+   ts = CL_CreateSymbol(theEnv,"non-reactive");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"slot");
+   ts = CL_CreateSymbol(theEnv,"slot");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"field");
+   ts = CL_CreateSymbol(theEnv,"field");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"multiple");
+   ts = CL_CreateSymbol(theEnv,"multiple");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"single");
+   ts = CL_CreateSymbol(theEnv,"single");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"storage");
+   ts = CL_CreateSymbol(theEnv,"storage");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"shared");
+   ts = CL_CreateSymbol(theEnv,"shared");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"local");
+   ts = CL_CreateSymbol(theEnv,"local");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"access");
+   ts = CL_CreateSymbol(theEnv,"access");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"read");
+   ts = CL_CreateSymbol(theEnv,"read");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"write");
+   ts = CL_CreateSymbol(theEnv,"write");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"read-only");
+   ts = CL_CreateSymbol(theEnv,"read-only");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"read-write");
+   ts = CL_CreateSymbol(theEnv,"read-write");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"initialize-only");
+   ts = CL_CreateSymbol(theEnv,"initialize-only");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"propagation");
+   ts = CL_CreateSymbol(theEnv,"propagation");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"inherit");
+   ts = CL_CreateSymbol(theEnv,"inherit");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"no-inherit");
+   ts = CL_CreateSymbol(theEnv,"no-inherit");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"source");
+   ts = CL_CreateSymbol(theEnv,"source");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"composite");
+   ts = CL_CreateSymbol(theEnv,"composite");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"exclusive");
+   ts = CL_CreateSymbol(theEnv,"exclusive");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"allowed-lexemes");
+   ts = CL_CreateSymbol(theEnv,"allowed-lexemes");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"allowed-instances");
+   ts = CL_CreateSymbol(theEnv,"allowed-instances");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"around");
+   ts = CL_CreateSymbol(theEnv,"around");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"before");
+   ts = CL_CreateSymbol(theEnv,"before");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"primary");
+   ts = CL_CreateSymbol(theEnv,"primary");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"after");
+   ts = CL_CreateSymbol(theEnv,"after");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"of");
+   ts = CL_CreateSymbol(theEnv,"of");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"self");
+   ts = CL_CreateSymbol(theEnv,"self");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"visibility");
+   ts = CL_CreateSymbol(theEnv,"visibility");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"override-message");
+   ts = CL_CreateSymbol(theEnv,"override-message");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"private");
+   ts = CL_CreateSymbol(theEnv,"private");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"public");
+   ts = CL_CreateSymbol(theEnv,"public");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"create-accessor");
+   ts = CL_CreateSymbol(theEnv,"create-accessor");
    IncrementLexemeCount(ts);
 
    /*================*/
    /* watch keywords */
    /*================*/
 
-   ts = CreateSymbol(theEnv,"compilations");
+   ts = CL_CreateSymbol(theEnv,"compilations");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"deffunctions");
+   ts = CL_CreateSymbol(theEnv,"deffunctions");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"globals");
+   ts = CL_CreateSymbol(theEnv,"globals");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"rules");
+   ts = CL_CreateSymbol(theEnv,"rules");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"activations");
+   ts = CL_CreateSymbol(theEnv,"activations");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"statistics");
+   ts = CL_CreateSymbol(theEnv,"statistics");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"facts");
+   ts = CL_CreateSymbol(theEnv,"facts");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"generic-functions");
+   ts = CL_CreateSymbol(theEnv,"generic-functions");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"methods");
+   ts = CL_CreateSymbol(theEnv,"methods");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"instances");
+   ts = CL_CreateSymbol(theEnv,"instances");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"slots");
+   ts = CL_CreateSymbol(theEnv,"slots");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"messages");
+   ts = CL_CreateSymbol(theEnv,"messages");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"message-handlers");
+   ts = CL_CreateSymbol(theEnv,"message-handlers");
    IncrementLexemeCount(ts);
-   ts = CreateSymbol(theEnv,"focus");
+   ts = CL_CreateSymbol(theEnv,"focus");
    IncrementLexemeCount(ts);
 #else
 #if MAC_XCD

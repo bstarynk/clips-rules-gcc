@@ -19,7 +19,7 @@
 /*      6.24: Converted INSTANCE_PATTERN_MATCHING to         */
 /*            DEFRULE_CONSTRUCT.                             */
 /*                                                           */
-/*            Added environment parameter to GenClose.       */
+/*            Added environment parameter to CL_GenClose.       */
 /*                                                           */
 /*      6.30: Added support for path name argument to        */
 /*            constructs-to-c.                               */
@@ -52,10 +52,10 @@
 
 #include <stdio.h>
 
-   void                    ObjectPatternsCompilerSetup(Environment *);
-   void                    ObjectPatternNodeReference(Environment *,void *,FILE *,
+   void                    CL_ObjectPatternsCompilerSetup(Environment *);
+   void                    CL_ObjectPatternNodeReference(Environment *,void *,FILE *,
                                                       unsigned int,unsigned int);
-   void                    ClassAlphaLinkReference(Environment *,void *,FILE *,
+   void                    CL_ClassAlphaLinkReference(Environment *,void *,FILE *,
                                                    unsigned int,unsigned int);
 
 #endif /* DEFRULE_CONSTRUCT && OBJECT_SYSTEM && (! RUN_TIME) && CONSTRUCT_COMPILER */

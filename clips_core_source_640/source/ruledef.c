@@ -37,14 +37,14 @@
 /*            Added support for hashed memories.             */
 /*                                                           */
 /*            Added additional developer statistics to help  */
-/*            analyze join network performance.              */
+/*            analyze join network perfoCL_rmance.              */
 /*                                                           */
-/*            Added salience groups to improve performance   */
+/*            Added salience groups to improve perfoCL_rmance   */
 /*            with large numbers of activations of different */
 /*            saliences.                                     */
 /*                                                           */
-/*            Added EnvGetDisjunctCount and                  */
-/*            EnvGetNthDisjunct functions.                   */
+/*            Added EnvCL_GetDisjunctCount and                  */
+/*            EnvCL_GetNthDisjunct functions.                   */
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
@@ -102,53 +102,53 @@
 
    static void                   *AllocateModule(Environment *);
    static void                    ReturnModule(Environment *,void *);
-   static void                    InitializeDefruleModules(Environment *);
+   static void                    InitializeCL_DefruleModules(Environment *);
    static void                    DeallocateDefruleData(Environment *);
-   static void                    DestroyDefruleAction(Environment *,ConstructHeader *,void *);
+   static void                    CL_DestroyDefruleAction(Environment *,ConstructHeader *,void *);
 #if RUN_TIME
    static void                    AddBetaMemoriesToRule(Environment *,struct joinNode *);
 #endif
 
 /**********************************************************/
-/* InitializeDefrules: Initializes the defrule construct. */
+/* CL_InitializeDefrules: Initializes the defrule construct. */
 /**********************************************************/
-void InitializeDefrules(
+void CL_InitializeDefrules(
   Environment *theEnv)
   {
    unsigned long i;
-   AllocateEnvironmentData(theEnv,DEFRULE_DATA,sizeof(struct defruleData),DeallocateDefruleData);
+   CL_AllocateEnvironmentData(theEnv,DEFRULE_DATA,sizeof(struct defruleData),DeallocateDefruleData);
 
-   InitializeEngine(theEnv);
-   InitializeAgenda(theEnv);
-   InitializePatterns(theEnv);
-   InitializeDefruleModules(theEnv);
+   CL_InitializeEngine(theEnv);
+   InitializeCL_Agenda(theEnv);
+   CL_InitializePatterns(theEnv);
+   InitializeCL_DefruleModules(theEnv);
 
-   AddReservedPatternSymbol(theEnv,"and",NULL);
-   AddReservedPatternSymbol(theEnv,"not",NULL);
-   AddReservedPatternSymbol(theEnv,"or",NULL);
-   AddReservedPatternSymbol(theEnv,"test",NULL);
-   AddReservedPatternSymbol(theEnv,"logical",NULL);
-   AddReservedPatternSymbol(theEnv,"exists",NULL);
-   AddReservedPatternSymbol(theEnv,"forall",NULL);
+   CL_AddCL_ReservedPatternSymbol(theEnv,"and",NULL);
+   CL_AddCL_ReservedPatternSymbol(theEnv,"not",NULL);
+   CL_AddCL_ReservedPatternSymbol(theEnv,"or",NULL);
+   CL_AddCL_ReservedPatternSymbol(theEnv,"test",NULL);
+   CL_AddCL_ReservedPatternSymbol(theEnv,"logical",NULL);
+   CL_AddCL_ReservedPatternSymbol(theEnv,"exists",NULL);
+   CL_AddCL_ReservedPatternSymbol(theEnv,"forall",NULL);
 
-   DefruleBasicCommands(theEnv);
+   CL_DefruleBasicCommands(theEnv);
 
-   DefruleCommands(theEnv);
+   CL_DefruleCommands(theEnv);
 
    DefruleData(theEnv)->DefruleConstruct =
-      AddConstruct(theEnv,"defrule","defrules",
-                   ParseDefrule,
-                   (FindConstructFunction *) FindDefrule,
-                   GetConstructNamePointer,GetConstructPPForm,
-                   GetConstructModuleItem,
-                   (GetNextConstructFunction *) GetNextDefrule,
-                   SetNextConstruct,
-                   (IsConstructDeletableFunction *) DefruleIsDeletable,
-                   (DeleteConstructFunction *) Undefrule,
-                   (FreeConstructFunction *) ReturnDefrule);
+      CL_AddConstruct(theEnv,"defrule","defrules",
+                   CL_ParseDefrule,
+                   (CL_FindConstructFunction *) CL_FindDefrule,
+                   CL_GetConstructNamePointer,CL_GetConstructPPFoCL_rm,
+                   CL_GetConstructModuleItem,
+                   (GetNextConstructFunction *) CL_GetNextDefrule,
+                   CL_SetNextConstruct,
+                   (IsConstructDeletableFunction *) CL_DefruleIsDeletable,
+                   (DeleteConstructFunction *) CL_Undefrule,
+                   (FreeConstructFunction *) CL_ReturnDefrule);
 
    DefruleData(theEnv)->AlphaMemoryTable = (ALPHA_MEMORY_HASH **)
-                  gm2(theEnv,sizeof (ALPHA_MEMORY_HASH *) * ALPHA_MEMORY_HASH_SIZE);
+                  CL_gm2(theEnv,sizeof (ALPHA_MEMORY_HASH *) * ALPHA_MEMORY_HASH_SIZE);
 
    for (i = 0; i < ALPHA_MEMORY_HASH_SIZE; i++) DefruleData(theEnv)->AlphaMemoryTable[i] = NULL;
 
@@ -171,20 +171,20 @@ static void DeallocateDefruleData(
    struct salienceGroup *theGroup, *tmpGroup;
 
 #if BLOAD || BLOAD_AND_BSAVE
-   if (Bloaded(theEnv))
+   if (CL_Bloaded(theEnv))
      { return; }
 #endif
 
-   DoForAllConstructs(theEnv,DestroyDefruleAction,
-                      DefruleData(theEnv)->DefruleModuleIndex,false,NULL);
+   CL_DoForAllConstructs(theEnv,CL_DestroyDefruleAction,
+                      DefruleData(theEnv)->CL_DefruleModuleIndex,false,NULL);
 
-   for (theModule = GetNextDefmodule(theEnv,NULL);
+   for (theModule = CL_GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = GetNextDefmodule(theEnv,theModule))
+        theModule = CL_GetNextDefmodule(theEnv,theModule))
      {
       theModuleItem = (struct defruleModule *)
-                      GetModuleItem(theEnv,theModule,
-                                    DefruleData(theEnv)->DefruleModuleIndex);
+                      CL_GetModuleItem(theEnv,theModule,
+                                    DefruleData(theEnv)->CL_DefruleModuleIndex);
 
       theActivation = theModuleItem->agenda;
       while (theActivation != NULL)
@@ -211,14 +211,14 @@ static void DeallocateDefruleData(
 #endif
      }
 
-   rm(theEnv,DefruleData(theEnv)->AlphaMemoryTable,sizeof (ALPHA_MEMORY_HASH *) * ALPHA_MEMORY_HASH_SIZE);
+   CL_rm(theEnv,DefruleData(theEnv)->AlphaMemoryTable,sizeof (ALPHA_MEMORY_HASH *) * ALPHA_MEMORY_HASH_SIZE);
   }
 
 /********************************************************/
-/* DestroyDefruleAction: Action used to remove defrules */
-/*   as a result of DestroyEnvironment.                 */
+/* CL_DestroyDefruleAction: Action used to remove defrules */
+/*   as a result of CL_DestroyEnvironment.                 */
 /********************************************************/
-static void DestroyDefruleAction(
+static void CL_DestroyDefruleAction(
   Environment *theEnv,
   ConstructHeader *theConstruct,
   void *buffer)
@@ -228,30 +228,30 @@ static void DestroyDefruleAction(
 #endif
    Defrule *theDefrule = (Defrule *) theConstruct;
 
-   DestroyDefrule(theEnv,theDefrule);
+   CL_DestroyDefrule(theEnv,theDefrule);
   }
 
 /*****************************************************/
-/* InitializeDefruleModules: Initializes the defrule */
+/* InitializeCL_DefruleModules: Initializes the defrule */
 /*   construct for use with the defmodule construct. */
 /*****************************************************/
-static void InitializeDefruleModules(
+static void InitializeCL_DefruleModules(
   Environment *theEnv)
   {
-   DefruleData(theEnv)->DefruleModuleIndex = RegisterModuleItem(theEnv,"defrule",
+   DefruleData(theEnv)->CL_DefruleModuleIndex = CL_RegisterModuleItem(theEnv,"defrule",
                                     AllocateModule,
                                     ReturnModule,
 #if BLOAD_AND_BSAVE || BLOAD || BLOAD_ONLY
-                                    BloadDefruleModuleReference,
+                                    CL_BloadCL_DefruleModuleReference,
 #else
                                     NULL,
 #endif
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
-                                    DefruleCModuleReference,
+                                    CL_DefruleCModuleReference,
 #else
                                     NULL,
 #endif
-                                    (FindConstructFunction *) FindDefruleInModule);
+                                    (CL_FindConstructFunction *) CL_FindDefruleInModule);
   }
 
 /***********************************************/
@@ -275,66 +275,66 @@ static void ReturnModule(
   Environment *theEnv,
   void *theItem)
   {
-   FreeConstructHeaderModule(theEnv,(struct defmoduleItemHeader *) theItem,DefruleData(theEnv)->DefruleConstruct);
+   CL_FreeConstructHeaderModule(theEnv,(struct defmoduleItemHeader *) theItem,DefruleData(theEnv)->DefruleConstruct);
    rtn_struct(theEnv,defruleModule,theItem);
   }
 
 /************************************************************/
-/* GetDefruleModuleItem: Returns a pointer to the defmodule */
+/* GetCL_DefruleModuleItem: Returns a pointer to the defmodule */
 /*  item for the specified defrule or defmodule.            */
 /************************************************************/
-struct defruleModule *GetDefruleModuleItem(
+struct defruleModule *GetCL_DefruleModuleItem(
   Environment *theEnv,
   Defmodule *theModule)
   {
-   return((struct defruleModule *) GetConstructModuleItemByIndex(theEnv,theModule,DefruleData(theEnv)->DefruleModuleIndex));
+   return((struct defruleModule *) CL_GetConstructModuleItemByIndex(theEnv,theModule,DefruleData(theEnv)->CL_DefruleModuleIndex));
   }
 
 /****************************************************************/
-/* FindDefrule: Searches for a defrule in the list of defrules. */
+/* CL_FindDefrule: Searches for a defrule in the list of defrules. */
 /*   Returns a pointer to the defrule if found, otherwise NULL. */
 /****************************************************************/
-Defrule *FindDefrule(
+Defrule *CL_FindDefrule(
   Environment *theEnv,
   const char *defruleName)
   {
-   return (Defrule *) FindNamedConstructInModuleOrImports(theEnv,defruleName,DefruleData(theEnv)->DefruleConstruct);
+   return (Defrule *) CL_FindNamedConstructInModuleOrImports(theEnv,defruleName,DefruleData(theEnv)->DefruleConstruct);
   }
 
 /************************************************************************/
-/* FindDefruleInModule: Searches for a defrule in the list of defrules. */
+/* CL_FindDefruleInModule: Searches for a defrule in the list of defrules. */
 /*   Returns a pointer to the defrule if found, otherwise NULL.         */
 /************************************************************************/
-Defrule *FindDefruleInModule(
+Defrule *CL_FindDefruleInModule(
   Environment *theEnv,
   const char *defruleName)
   {
-   return (Defrule *) FindNamedConstructInModule(theEnv,defruleName,DefruleData(theEnv)->DefruleConstruct);
+   return (Defrule *) CL_FindNamedConstructInModule(theEnv,defruleName,DefruleData(theEnv)->DefruleConstruct);
   }
 
 /************************************************************/
-/* GetNextDefrule: If passed a NULL pointer, returns the    */
+/* CL_GetNextDefrule: If passed a NULL pointer, returns the    */
 /*   first defrule in the ListOfDefrules. Otherwise returns */
 /*   the next defrule following the defrule passed as an    */
 /*   argument.                                              */
 /************************************************************/
-Defrule *GetNextDefrule(
+Defrule *CL_GetNextDefrule(
   Environment *theEnv,
   Defrule *defrulePtr)
   {
-   return (Defrule *) GetNextConstructItem(theEnv,&defrulePtr->header,DefruleData(theEnv)->DefruleModuleIndex);
+   return (Defrule *) CL_GetNextConstructItem(theEnv,&defrulePtr->header,DefruleData(theEnv)->CL_DefruleModuleIndex);
   }
 
 /******************************************************/
-/* DefruleIsDeletable: Returns true if a particular   */
+/* CL_DefruleIsDeletable: Returns true if a particular   */
 /*   defrule can be deleted, otherwise returns false. */
 /******************************************************/
-bool DefruleIsDeletable(
+bool CL_DefruleIsDeletable(
   Defrule *theDefrule)
   {
    Environment *theEnv = theDefrule->header.env;
 
-   if (! ConstructsDeletable(theEnv))
+   if (! CL_ConstructsDeletable(theEnv))
      { return false; }
 
    for ( ;
@@ -348,10 +348,10 @@ bool DefruleIsDeletable(
   }
 
 /********************************************************/
-/* GetDisjunctCount: Returns the number of disjuncts of */
-/*   a rule (permutations caused by the use of or CEs). */
+/* CL_GetDisjunctCount: Returns the number of disjuncts of */
+/*   a rule (peCL_rmutations caused by the use of or CEs). */
 /********************************************************/
-long GetDisjunctCount(
+long CL_GetDisjunctCount(
   Environment *theEnv,
   Defrule *theDefrule)
   {
@@ -366,11 +366,11 @@ long GetDisjunctCount(
   }
 
 /*******************************************************/
-/* GetNthDisjunct: Returns the nth disjunct of a rule. */
+/* CL_GetNthDisjunct: Returns the nth disjunct of a rule. */
 /*   The disjunct indices run from 1 to N rather than  */
 /*   0 to N - 1.                                       */
 /*******************************************************/
-Defrule *GetNthDisjunct(
+Defrule *CL_GetNthDisjunct(
   Environment *theEnv,
   Defrule *theDefrule,
   long index)
@@ -392,10 +392,10 @@ Defrule *GetNthDisjunct(
 #if RUN_TIME
 
 /******************************************/
-/* DefruleRunTimeInitialize:  Initializes */
+/* DefruleCL_RunTimeInitialize:  Initializes */
 /*   defrule in a run-time module.        */
 /******************************************/
-void DefruleRunTimeInitialize(
+void DefruleCL_RunTimeInitialize(
   Environment *theEnv,
   struct joinLink *rightPrime,
   struct joinLink *leftPrime)
@@ -406,16 +406,16 @@ void DefruleRunTimeInitialize(
    DefruleData(theEnv)->RightPrimeJoins = rightPrime;
    DefruleData(theEnv)->LeftPrimeJoins = leftPrime;
 
-   SaveCurrentModule(theEnv);
+   CL_SaveCurrentModule(theEnv);
 
-   for (theModule = GetNextDefmodule(theEnv,NULL);
+   for (theModule = CL_GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = GetNextDefmodule(theEnv,theModule))
+        theModule = CL_GetNextDefmodule(theEnv,theModule))
      {
-      SetCurrentModule(theEnv,theModule);
-      for (theRule = GetNextDefrule(theEnv,NULL);
+      CL_SetCurrentModule(theEnv,theModule);
+      for (theRule = CL_GetNextDefrule(theEnv,NULL);
            theRule != NULL;
-           theRule = GetNextDefrule(theEnv,theRule))
+           theRule = CL_GetNextDefrule(theEnv,theRule))
         {
          for (theDisjunct = theRule;
               theDisjunct != NULL;
@@ -427,7 +427,7 @@ void DefruleRunTimeInitialize(
         }
      }
 
-   RestoreCurrentModule(theEnv);
+   CL_RestoreCurrentModule(theEnv);
   }
 
 
@@ -438,7 +438,7 @@ static void AddBetaMemoriesToRule(
   Environment *theEnv,
   struct joinNode *theNode)
   {
-   AddBetaMemoriesToJoin(theEnv,theNode);
+   CL_AddBetaMemoriesToJoin(theEnv,theNode);
 
    if (theNode->lastLevel != NULL)
      { AddBetaMemoriesToRule(theEnv,theNode->lastLevel); }
@@ -452,9 +452,9 @@ static void AddBetaMemoriesToRule(
 #if RUN_TIME || BLOAD_ONLY || BLOAD || BLOAD_AND_BSAVE
 
 /**************************/
-/* AddBetaMemoriesToJoin: */
+/* CL_AddBetaMemoriesToJoin: */
 /**************************/
-void AddBetaMemoriesToJoin(
+void CL_AddBetaMemoriesToJoin(
   Environment *theEnv,
   struct joinNode *theNode)
   {
@@ -466,7 +466,7 @@ void AddBetaMemoriesToJoin(
       if (theNode->leftHash == NULL)
         {
          theNode->leftMemory = get_struct(theEnv,betaMemory);
-         theNode->leftMemory->beta = (struct partialMatch **) genalloc(theEnv,sizeof(struct partialMatch *));
+         theNode->leftMemory->beta = (struct partialMatch **) CL_genalloc(theEnv,sizeof(struct partialMatch *));
          theNode->leftMemory->beta[0] = NULL;
          theNode->leftMemory->size = 1;
          theNode->leftMemory->count = 0;
@@ -475,7 +475,7 @@ void AddBetaMemoriesToJoin(
       else
         {
          theNode->leftMemory = get_struct(theEnv,betaMemory);
-         theNode->leftMemory->beta = (struct partialMatch **) genalloc(theEnv,sizeof(struct partialMatch *) * INITIAL_BETA_HASH_SIZE);
+         theNode->leftMemory->beta = (struct partialMatch **) CL_genalloc(theEnv,sizeof(struct partialMatch *) * INITIAL_BETA_HASH_SIZE);
          memset(theNode->leftMemory->beta,0,sizeof(struct partialMatch *) * INITIAL_BETA_HASH_SIZE);
          theNode->leftMemory->size = INITIAL_BETA_HASH_SIZE;
          theNode->leftMemory->count = 0;
@@ -484,7 +484,7 @@ void AddBetaMemoriesToJoin(
 
       if (theNode->firstJoin && (theNode->patternIsExists || theNode-> patternIsNegated || theNode->joinFromTheRight))
         {
-         theNode->leftMemory->beta[0] = CreateEmptyPartialMatch(theEnv);
+         theNode->leftMemory->beta[0] = CL_CreateEmptyPartialMatch(theEnv);
          theNode->leftMemory->beta[0]->owner = theNode;
         }
      }
@@ -496,8 +496,8 @@ void AddBetaMemoriesToJoin(
       if (theNode->leftHash == NULL)
         {
          theNode->rightMemory = get_struct(theEnv,betaMemory);
-         theNode->rightMemory->beta = (struct partialMatch **) genalloc(theEnv,sizeof(struct partialMatch *));
-         theNode->rightMemory->last = (struct partialMatch **) genalloc(theEnv,sizeof(struct partialMatch *));
+         theNode->rightMemory->beta = (struct partialMatch **) CL_genalloc(theEnv,sizeof(struct partialMatch *));
+         theNode->rightMemory->last = (struct partialMatch **) CL_genalloc(theEnv,sizeof(struct partialMatch *));
          theNode->rightMemory->beta[0] = NULL;
          theNode->rightMemory->last[0] = NULL;
          theNode->rightMemory->size = 1;
@@ -506,8 +506,8 @@ void AddBetaMemoriesToJoin(
       else
         {
          theNode->rightMemory = get_struct(theEnv,betaMemory);
-         theNode->rightMemory->beta = (struct partialMatch **) genalloc(theEnv,sizeof(struct partialMatch *) * INITIAL_BETA_HASH_SIZE);
-         theNode->rightMemory->last = (struct partialMatch **) genalloc(theEnv,sizeof(struct partialMatch *) * INITIAL_BETA_HASH_SIZE);
+         theNode->rightMemory->beta = (struct partialMatch **) CL_genalloc(theEnv,sizeof(struct partialMatch *) * INITIAL_BETA_HASH_SIZE);
+         theNode->rightMemory->last = (struct partialMatch **) CL_genalloc(theEnv,sizeof(struct partialMatch *) * INITIAL_BETA_HASH_SIZE);
          memset(theNode->rightMemory->beta,0,sizeof(struct partialMatch **) * INITIAL_BETA_HASH_SIZE);
          memset(theNode->rightMemory->last,0,sizeof(struct partialMatch **) * INITIAL_BETA_HASH_SIZE);
          theNode->rightMemory->size = INITIAL_BETA_HASH_SIZE;
@@ -517,9 +517,9 @@ void AddBetaMemoriesToJoin(
    else if (theNode->rightSideEntryStructure == NULL)
      {
       theNode->rightMemory = get_struct(theEnv,betaMemory);
-      theNode->rightMemory->beta = (struct partialMatch **) genalloc(theEnv,sizeof(struct partialMatch *));
-      theNode->rightMemory->last = (struct partialMatch **) genalloc(theEnv,sizeof(struct partialMatch *));
-      theNode->rightMemory->beta[0] = CreateEmptyPartialMatch(theEnv);
+      theNode->rightMemory->beta = (struct partialMatch **) CL_genalloc(theEnv,sizeof(struct partialMatch *));
+      theNode->rightMemory->last = (struct partialMatch **) CL_genalloc(theEnv,sizeof(struct partialMatch *));
+      theNode->rightMemory->beta[0] = CL_CreateEmptyPartialMatch(theEnv);
       theNode->rightMemory->beta[0]->owner = theNode;
       theNode->rightMemory->beta[0]->rhsMemory = true;
       theNode->rightMemory->last[0] = theNode->rightMemory->beta[0];
@@ -536,22 +536,22 @@ void AddBetaMemoriesToJoin(
 /* Additional Environment Functions */
 /*##################################*/
 
-const char *DefruleModule(
+const char *CL_DefruleModule(
   Defrule *theDefrule)
   {
-   return GetConstructModuleName(&theDefrule->header);
+   return CL_GetConstructModuleName(&theDefrule->header);
   }
 
-const char *DefruleName(
+const char *CL_DefruleName(
   Defrule *theDefrule)
   {
-   return GetConstructNameString(&theDefrule->header);
+   return CL_GetConstructNameString(&theDefrule->header);
   }
 
-const char *DefrulePPForm(
+const char *CL_DefrulePPFoCL_rm(
   Defrule *theDefrule)
   {
-   return GetConstructPPForm(&theDefrule->header);
+   return CL_GetConstructPPFoCL_rm(&theDefrule->header);
   }
 
 #endif /* DEFRULE_CONSTRUCT */

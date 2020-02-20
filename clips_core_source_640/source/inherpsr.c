@@ -91,7 +91,7 @@ struct successor
    ***************************************** */
 
 /**************************************************************
-  NAME         : ParseSuperclasses
+  NAME         : CL_ParseSuperclasses
   DESCRIPTION  : Parses the (is-a <superclass>+) portion of
                  the (defclass ...) construct and returns
                  a list of direct superclasses.  The
@@ -123,7 +123,7 @@ struct successor
 
                  This routine allocates the space for the list
  ***************************************************************/
-PACKED_CLASS_LINKS *ParseSuperclasses(
+PACKED_CLASS_LINKS *CL_ParseSuperclasses(
   Environment *theEnv,
   const char *readSource,
   CLIPSLexeme *newClassName)
@@ -134,61 +134,61 @@ PACKED_CLASS_LINKS *ParseSuperclasses(
 
    if (DefclassData(theEnv)->ObjectParseToken.tknType != LEFT_PARENTHESIS_TOKEN)
      {
-      SyntaxErrorMessage(theEnv,"defclass inheritance");
+      CL_SyntaxErrorMessage(theEnv,"defclass inheritance");
       return NULL;
      }
-   GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
+   CL_GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
    if ((DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN) ? true :
        (DefclassData(theEnv)->ObjectParseToken.value != (void *) DefclassData(theEnv)->ISA_SYMBOL))
      {
-      SyntaxErrorMessage(theEnv,"defclass inheritance");
+      CL_SyntaxErrorMessage(theEnv,"defclass inheritance");
       return NULL;
      }
-   SavePPBuffer(theEnv," ");
-   GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
+   CL_SavePPBuffer(theEnv," ");
+   CL_GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
    while (DefclassData(theEnv)->ObjectParseToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       if (DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN)
         {
-         SyntaxErrorMessage(theEnv,"defclass");
-         goto SuperclassParseError;
+         CL_SyntaxErrorMessage(theEnv,"defclass");
+         goto CL_SuperclassParseError;
         }
-      if (FindModuleSeparator(newClassName->contents))
+      if (CL_FindModuleSeparator(newClassName->contents))
         {
-         IllegalModuleSpecifierMessage(theEnv);
-         goto SuperclassParseError;
+         CL_IllegalModuleSpecifierMessage(theEnv);
+         goto CL_SuperclassParseError;
         }
       if (DefclassData(theEnv)->ObjectParseToken.value == (void *) newClassName)
         {
-         PrintErrorID(theEnv,"INHERPSR",1,false);
-         WriteString(theEnv,STDERR,"A class may not have itself as a superclass.\n");
-         goto SuperclassParseError;
+         CL_PrintErrorID(theEnv,"INHERPSR",1,false);
+         CL_WriteString(theEnv,STDERR,"A class may not have itself as a superclass.\n");
+         goto CL_SuperclassParseError;
         }
       for (ctmp = clink ; ctmp != NULL ; ctmp = ctmp->nxt)
         {
          if (DefclassData(theEnv)->ObjectParseToken.value == (void *) ctmp->cls->header.name)
            {
-            PrintErrorID(theEnv,"INHERPSR",2,false);
-            WriteString(theEnv,STDERR,"A class may inherit from a superclass only once.\n");
-            goto SuperclassParseError;
+            CL_PrintErrorID(theEnv,"INHERPSR",2,false);
+            CL_WriteString(theEnv,STDERR,"A class may inherit from a superclass only once.\n");
+            goto CL_SuperclassParseError;
            }
         }
-      sclass = LookupDefclassInScope(theEnv,DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents);
+      sclass = LookupCL_DefclassInScope(theEnv,DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents);
       if (sclass == NULL)
         {
-         PrintErrorID(theEnv,"INHERPSR",3,false);
-         WriteString(theEnv,STDERR,"A class must be defined after all its superclasses.\n");
-         goto SuperclassParseError;
+         CL_PrintErrorID(theEnv,"INHERPSR",3,false);
+         CL_WriteString(theEnv,STDERR,"A class must be defined after all its superclasses.\n");
+         goto CL_SuperclassParseError;
         }
       if ((sclass == DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME_TYPE]) ||
           (sclass == DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_ADDRESS_TYPE]) ||
           (sclass == DefclassData(theEnv)->PrimitiveClassMap[INSTANCE_NAME_TYPE]->directSuperclasses.classArray[0]))
         {
-         PrintErrorID(theEnv,"INHERPSR",6,false);
-         WriteString(theEnv,STDERR,"A user-defined class cannot be a subclass of '");
-         WriteString(theEnv,STDERR,DefclassName(sclass));
-         WriteString(theEnv,STDERR,"'.\n");
-         goto SuperclassParseError;
+         CL_PrintErrorID(theEnv,"INHERPSR",6,false);
+         CL_WriteString(theEnv,STDERR,"A user-defined class cannot be a subclass of '");
+         CL_WriteString(theEnv,STDERR,CL_DefclassName(sclass));
+         CL_WriteString(theEnv,STDERR,"'.\n");
+         goto CL_SuperclassParseError;
         }
       ctmp = get_struct(theEnv,classLink);
       ctmp->cls = sclass;
@@ -199,29 +199,29 @@ PACKED_CLASS_LINKS *ParseSuperclasses(
       ctmp->nxt = NULL;
       cbot = ctmp;
 
-      SavePPBuffer(theEnv," ");
-      GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
+      CL_SavePPBuffer(theEnv," ");
+      CL_GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
      }
    if (clink == NULL)
      {
-      PrintErrorID(theEnv,"INHERPSR",4,false);
-      WriteString(theEnv,STDERR,"A class must have at least one superclass.\n");
+      CL_PrintErrorID(theEnv,"INHERPSR",4,false);
+      CL_WriteString(theEnv,STDERR,"A class must have at least one superclass.\n");
       return NULL;
      }
-   PPBackup(theEnv);
-   PPBackup(theEnv);
-   SavePPBuffer(theEnv,")");
+   CL_PPBackup(theEnv);
+   CL_PPBackup(theEnv);
+   CL_SavePPBuffer(theEnv,")");
    plinks = get_struct(theEnv,packedClassLinks);
-   PackClassLinks(theEnv,plinks,clink);
+   CL_PackClassLinks(theEnv,plinks,clink);
    return(plinks);
 
-SuperclassParseError:
-   DeleteClassLinks(theEnv,clink);
+CL_SuperclassParseError:
+   CL_DeleteClassLinks(theEnv,clink);
    return NULL;
   }
 
 /***************************************************************************
-  NAME         : FindPrecedenceList
+  NAME         : CL_FindPrecedenceList
   DESCRIPTION  : A complete class precedence list is obtained from the
                  list of direct superclasses as follows :
 
@@ -239,7 +239,7 @@ SuperclassParseError:
                  and successor lists indicate the partial orderings given
                  by the rules of multiple inheritance for the classes:
                  1) a class must precede all its superclasses, and 2) a
-                 class determines the precedence of its immediate superclasses.
+                 class deteCL_rmines the precedence of its immediate superclasses.
 
                  For example, the following class definitions
 
@@ -306,18 +306,18 @@ SuperclassParseError:
                  cyclic dependencies in the given superclass list, i.e.
                  none of the superclasses inherit from the class for
                  which the precedence list is being defined.  (This
-                 is verified in ParseDefclasses() in CLASSCOM.C)
+                 is verified in CL_ParseDefclasses() in CLASSCOM.C)
 
                  Every class-precedence list has the class itself on it
                  (implicitly) and a built-in system class on it explicitly
                  (except for the built-in classes).
 
-                 The precedence determination algorithm is a variation on
+                 The precedence deteCL_rmination algorithm is a variation on
                  the topological sorting algorithm given in The Art of
                  Computer Programming - Vol. I (Fundamental Algorithms) by
                  Donald Knuth.
  ***************************************************************************/
-PACKED_CLASS_LINKS *FindPrecedenceList(
+PACKED_CLASS_LINKS *CL_FindPrecedenceList(
   Environment *theEnv,
   Defclass *cls,
   PACKED_CLASS_LINKS *supers)
@@ -393,7 +393,7 @@ PACKED_CLASS_LINKS *FindPrecedenceList(
         }
 
       /* =========================================================
-         Search for the first class with no remaining predecessors
+         Search for the first class with no reCL_maining predecessors
          ========================================================= */
       if (pop->pre == 0)
         {
@@ -405,7 +405,7 @@ PACKED_CLASS_LINKS *FindPrecedenceList(
             allows us to preserve the "family" heuristic.
             Since we will pick up scanning for 0's from
             this point, we will be able to keep "family"
-            trees together, if possible. BuildPartialOrders()
+            trees together, if possible. CL_BuildPartialOrders()
             entered the classes into the sequence table
             in a pre-order depth traversal order.
             ================================================= */
@@ -448,13 +448,13 @@ PACKED_CLASS_LINKS *FindPrecedenceList(
    /* ======================================================================
       If the table of partial orders is not empty and we were unable to find
       a class with no predecessors, then there is no solution! Print out the
-      precedence loop in the partial orders. Delete the remaining partial
+      precedence loop in the partial orders. Delete the reCL_maining partial
       order table and the partial precedence list.
       ====================================================================== */
    if (po_table != NULL)
      {
-      PrintErrorID(theEnv,"INHERPSR",5,false);
-      PrintClassLinks(theEnv,STDERR,"Partial precedence list formed:",ptop);
+      CL_PrintErrorID(theEnv,"INHERPSR",5,false);
+      PrintClassLinks(theEnv,STDERR,"Partial precedence list foCL_rmed:",ptop);
       PrintPartialOrderLoop(theEnv,po_table);
       while (po_table != NULL)
         {
@@ -468,7 +468,7 @@ PACKED_CLASS_LINKS *FindPrecedenceList(
          po_table = po_table->nxt;
          rtn_struct(theEnv,partialOrder,potmp);
         }
-      DeleteClassLinks(theEnv,ptop);
+      CL_DeleteClassLinks(theEnv,ptop);
       return NULL;
      }
 
@@ -489,18 +489,18 @@ PACKED_CLASS_LINKS *FindPrecedenceList(
      }
 
    /* ============================================================
-      The class pointer will be filled in later by ParseDefclass()
+      The class pointer will be filled in later by CL_ParseDefclass()
       ============================================================ */
    ptop->cls = NULL;
 
    plinks = get_struct(theEnv,packedClassLinks);
-   PackClassLinks(theEnv,plinks,ptop);
+   CL_PackClassLinks(theEnv,plinks,ptop);
    return(plinks);
   }
 
 /***************************************************
-  NAME         : PackClassLinks
-  DESCRIPTION  : Writes a list of class links into
+  NAME         : CL_PackClassLinks
+  DESCRIPTION  : CL_Writes a list of class links into
                  a contiguous section of memory to
                  reduce overhead (the original list
                  is deleted)
@@ -511,7 +511,7 @@ PACKED_CLASS_LINKS *FindPrecedenceList(
                  deleted
   NOTES        : None
  ***************************************************/
-void PackClassLinks(
+void CL_PackClassLinks(
   Environment *theEnv,
   PACKED_CLASS_LINKS *plinks,
   CLASS_LINK *lptop)
@@ -522,12 +522,12 @@ void PackClassLinks(
    for (count = 0 , lp = lptop ; lp != NULL ; lp = lp->nxt)
      count++;
    if (count > 0)
-     plinks->classArray = (Defclass **) gm2(theEnv,(sizeof(Defclass *) * count));
+     plinks->classArray = (Defclass **) CL_gm2(theEnv,(sizeof(Defclass *) * count));
    else
      plinks->classArray = NULL;
    for (count = 0 , lp = lptop ; lp != NULL ; lp = lp->nxt , count++)
      plinks->classArray[count] = lp->cls;
-   DeleteClassLinks(theEnv,lptop);
+   CL_DeleteClassLinks(theEnv,lptop);
    plinks->classCount = count;
   }
 
@@ -541,13 +541,13 @@ void PackClassLinks(
   NAME         : InitializePartialOrderTable
   DESCRIPTION  : This function recursively enters the classes
                  that will be used in a precedence list
-                 determination in depth-first pre-order traversal.
+                 deteCL_rmination in depth-first pre-order traversal.
                  The predecessor counts and successor list are initialized.
 
   INPUTS       : 1) The partial order table
                  2) A list of direct superclasses
                  3) The class for which a precedence class is being
-                    determined (NULL for new class)
+                    deteCL_rmined (NULL for new class)
                  4) The class which superclass list is being processed
   RETURNS      : The top of partial order table
   SIDE EFFECTS : The partial order table is initialized.
@@ -720,7 +720,7 @@ static PARTIAL_ORDER *FindPartialOrder(
                  A B A.  Notice that this loop reflects the Rule 2 conflicts
                  between Class C and Class D in Class E's precedence list.
 
-  INPUTS       : The remaining partial order table of conflicting partial
+  INPUTS       : The reCL_maining partial order table of conflicting partial
                  orders
   RETURNS      : Nothing useful
   SIDE EFFECTS : The predecessor counts and successor lists are modified to
@@ -806,16 +806,16 @@ static void PrintPartialOrderLoop(
       pop1 = pop1->suc->po;
      }
 
-   WriteString(theEnv,STDERR,"Precedence loop in superclasses:");
+   CL_WriteString(theEnv,STDERR,"Precedence loop in superclasses:");
    while (pop1->pre == 1)
      {
-      WriteString(theEnv,STDERR," ");
-      PrintClassName(theEnv,STDERR,pop1->cls,false,false);
+      CL_WriteString(theEnv,STDERR," ");
+      CL_PrintClassName(theEnv,STDERR,pop1->cls,false,false);
       pop1->pre = 0;
       pop1 = pop1->suc->po;
      }
-   WriteString(theEnv,STDERR," ");
-   PrintClassName(theEnv,STDERR,pop1->cls,false,true);
+   CL_WriteString(theEnv,STDERR," ");
+   CL_PrintClassName(theEnv,STDERR,pop1->cls,false,true);
   }
 
 /***************************************************
@@ -836,14 +836,14 @@ static void PrintClassLinks(
   CLASS_LINK *clink)
   {
    if (title != NULL)
-     WriteString(theEnv,logicalName,title);
+     CL_WriteString(theEnv,logicalName,title);
    while (clink != NULL)
      {
-      WriteString(theEnv,logicalName," ");
-      PrintClassName(theEnv,logicalName,clink->cls,false,false);
+      CL_WriteString(theEnv,logicalName," ");
+      CL_PrintClassName(theEnv,logicalName,clink->cls,false,false);
       clink = clink->nxt;
      }
-   WriteString(theEnv,logicalName,"\n");
+   CL_WriteString(theEnv,logicalName,"\n");
   }
 
 #endif

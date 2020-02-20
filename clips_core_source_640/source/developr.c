@@ -92,29 +92,29 @@ void DeveloperCommands(
   Environment *theEnv)
   {
 #if ! RUN_TIME
-   AddUDF(theEnv,"primitives-info","v",0,0,NULL,PrimitiveTablesInfoCommand,"PrimitiveTablesInfoCommand",NULL);
-   AddUDF(theEnv,"primitives-usage","v",0,0,NULL,PrimitiveTablesUsageCommand,"PrimitiveTablesUsageCommand",NULL);
+   CL_AddUDF(theEnv,"primitives-info","v",0,0,NULL,PrimitiveTablesInfoCommand,"PrimitiveTablesInfoCommand",NULL);
+   CL_AddUDF(theEnv,"primitives-usage","v",0,0,NULL,PrimitiveTablesUsageCommand,"PrimitiveTablesUsageCommand",NULL);
 
 #if DEFRULE_CONSTRUCT && DEFTEMPLATE_CONSTRUCT
-   AddUDF(theEnv,"validate-fact-integrity","b", 0,0,NULL,ValidateFactIntegrityCommand,"ValidateFactIntegrityCommand",NULL);
+   CL_AddUDF(theEnv,"validate-fact-integrity","b", 0,0,NULL,ValidateFactIntegrityCommand,"ValidateFactIntegrityCommand",NULL);
 
-   AddUDF(theEnv,"show-fpn","v",1,1,"y",ShowFactPatternNetworkCommand,"ShowFactPatternNetworkCommand",NULL);
-   AddUDF(theEnv,"show-fht","v",0,0,NULL,ShowFactHashTableCommand,"ShowFactHashTableCommand",NULL);
+   CL_AddUDF(theEnv,"show-fpn","v",1,1,"y",ShowFactPatternNetworkCommand,"ShowFactPatternNetworkCommand",NULL);
+   CL_AddUDF(theEnv,"show-fht","v",0,0,NULL,ShowFactHashTableCommand,"ShowFactHashTableCommand",NULL);
 #endif
 
 #if DEFRULE_CONSTRUCT && OBJECT_SYSTEM
-   AddUDF(theEnv,"show-opn","v",0,0,NULL,PrintObjectPatternNetworkCommand,"PrintObjectPatternNetworkCommand",NULL);
+   CL_AddUDF(theEnv,"show-opn","v",0,0,NULL,PrintObjectPatternNetworkCommand,"PrintObjectPatternNetworkCommand",NULL);
 #endif
 
 #if OBJECT_SYSTEM
-   AddUDF(theEnv,"instance-table-usage","v",0,0,NULL,InstanceTableUsageCommand,"InstanceTableUsageCommand",NULL);
+   CL_AddUDF(theEnv,"instance-table-usage","v",0,0,NULL,InstanceTableUsageCommand,"InstanceTableUsageCommand",NULL);
 #endif
 
 #endif
   }
 
 /******************************************************/
-/* PrimitiveTablesInfo: Prints information about the  */
+/* PrimitiveTablesInfo: Prints infoCL_rmation about the  */
 /*   symbol, float, integer, and bitmap tables.       */
 /******************************************************/
 void PrimitiveTablesInfoCommand(
@@ -134,7 +134,7 @@ void PrimitiveTablesInfoCommand(
    /* Count entries in the symbol table. */
    /*====================================*/
 
-   symbolArray = GetSymbolTable(theEnv);
+   symbolArray = CL_GetSymbolTable(theEnv);
    for (i = 0; i < SYMBOL_HASH_SIZE; i++)
      {
       for (symbolPtr = symbolArray[i]; symbolPtr != NULL; symbolPtr = symbolPtr->next)
@@ -145,7 +145,7 @@ void PrimitiveTablesInfoCommand(
    /* Count entries in the integer table. */
    /*====================================*/
 
-   integerArray = GetIntegerTable(theEnv);
+   integerArray = CL_GetIntegerTable(theEnv);
    for (i = 0; i < INTEGER_HASH_SIZE; i++)
      {
       for (integerPtr = integerArray[i]; integerPtr != NULL; integerPtr = integerPtr->next)
@@ -156,7 +156,7 @@ void PrimitiveTablesInfoCommand(
    /* Count entries in the float table. */
    /*====================================*/
 
-   floatArray = GetFloatTable(theEnv);
+   floatArray = CL_GetFloatTable(theEnv);
    for (i = 0; i < FLOAT_HASH_SIZE; i++)
      {
       for (floatPtr = floatArray[i]; floatPtr != NULL; floatPtr = floatPtr->next)
@@ -167,7 +167,7 @@ void PrimitiveTablesInfoCommand(
    /* Count entries in the bitmap table. */
    /*====================================*/
 
-   bitMapArray = GetBitMapTable(theEnv);
+   bitMapArray = CL_GetBitMapTable(theEnv);
    for (i = 0; i < BITMAP_HASH_SIZE; i++)
      {
       for (bitMapPtr = bitMapArray[i]; bitMapPtr != NULL; bitMapPtr = bitMapPtr->next)
@@ -175,27 +175,27 @@ void PrimitiveTablesInfoCommand(
      }
 
    /*========================*/
-   /* Print the information. */
+   /* Print the infoCL_rmation. */
    /*========================*/
 
-   WriteString(theEnv,STDOUT,"Symbols: ");
-   PrintUnsignedInteger(theEnv,STDOUT,symbolCount);
-   WriteString(theEnv,STDOUT,"\n");
-   WriteString(theEnv,STDOUT,"Integers: ");
-   PrintUnsignedInteger(theEnv,STDOUT,integerCount);
-   WriteString(theEnv,STDOUT,"\n");
-   WriteString(theEnv,STDOUT,"Floats: ");
-   PrintUnsignedInteger(theEnv,STDOUT,floatCount);
-   WriteString(theEnv,STDOUT,"\n");
-   WriteString(theEnv,STDOUT,"BitMaps: ");
-   PrintUnsignedInteger(theEnv,STDOUT,bitMapCount);
-   WriteString(theEnv,STDOUT,"\n");
+   CL_WriteString(theEnv,STDOUT,"Symbols: ");
+   CL_PrintUnsignedInteger(theEnv,STDOUT,symbolCount);
+   CL_WriteString(theEnv,STDOUT,"\n");
+   CL_WriteString(theEnv,STDOUT,"Integers: ");
+   CL_PrintUnsignedInteger(theEnv,STDOUT,integerCount);
+   CL_WriteString(theEnv,STDOUT,"\n");
+   CL_WriteString(theEnv,STDOUT,"Floats: ");
+   CL_PrintUnsignedInteger(theEnv,STDOUT,floatCount);
+   CL_WriteString(theEnv,STDOUT,"\n");
+   CL_WriteString(theEnv,STDOUT,"BitMaps: ");
+   CL_PrintUnsignedInteger(theEnv,STDOUT,bitMapCount);
+   CL_WriteString(theEnv,STDOUT,"\n");
   }
 
 #define COUNT_SIZE 21
 
 /*********************************************************/
-/* PrimitiveTablesUsageCommand: Prints information about */
+/* PrimitiveTablesUsageCommand: Prints infoCL_rmation about */
 /*   the symbol, float, integer, and bitmap tables.      */
 /*********************************************************/
 void PrimitiveTablesUsageCommand(
@@ -220,7 +220,7 @@ void PrimitiveTablesUsageCommand(
    /* Count entries in the symbol table. */
    /*====================================*/
 
-   symbolArray = GetSymbolTable(theEnv);
+   symbolArray = CL_GetSymbolTable(theEnv);
    for (i = 0; i < SYMBOL_HASH_SIZE; i++)
      {
       symbolCount = 0;
@@ -240,7 +240,7 @@ void PrimitiveTablesUsageCommand(
    /* Count entries in the float table. */
    /*===================================*/
 
-   floatArray = GetFloatTable(theEnv);
+   floatArray = CL_GetFloatTable(theEnv);
    for (i = 0; i < FLOAT_HASH_SIZE; i++)
      {
       floatCount = 0;
@@ -257,29 +257,29 @@ void PrimitiveTablesUsageCommand(
      }
 
    /*========================*/
-   /* Print the information. */
+   /* Print the infoCL_rmation. */
    /*========================*/
 
-   WriteString(theEnv,STDOUT,"Total Symbols: ");
-   PrintUnsignedInteger(theEnv,STDOUT,totalSymbolCount);
-   WriteString(theEnv,STDOUT,"\n");
+   CL_WriteString(theEnv,STDOUT,"Total Symbols: ");
+   CL_PrintUnsignedInteger(theEnv,STDOUT,totalSymbolCount);
+   CL_WriteString(theEnv,STDOUT,"\n");
    for (i = 0; i < COUNT_SIZE; i++)
      {
-      PrintUnsignedInteger(theEnv,STDOUT,i);
-      WriteString(theEnv,STDOUT," ");
-      PrintUnsignedInteger(theEnv,STDOUT,symbolCounts[i]);
-      WriteString(theEnv,STDOUT,"\n");
+      CL_PrintUnsignedInteger(theEnv,STDOUT,i);
+      CL_WriteString(theEnv,STDOUT," ");
+      CL_PrintUnsignedInteger(theEnv,STDOUT,symbolCounts[i]);
+      CL_WriteString(theEnv,STDOUT,"\n");
      }
 
-   WriteString(theEnv,STDOUT,"\nTotal Floats: ");
-   PrintUnsignedInteger(theEnv,STDOUT,totalFloatCount);
-   WriteString(theEnv,STDOUT,"\n");
+   CL_WriteString(theEnv,STDOUT,"\nTotal Floats: ");
+   CL_PrintUnsignedInteger(theEnv,STDOUT,totalFloatCount);
+   CL_WriteString(theEnv,STDOUT,"\n");
    for (i = 0; i < COUNT_SIZE; i++)
      {
-      PrintUnsignedInteger(theEnv,STDOUT,i);
-      WriteString(theEnv,STDOUT," ");
-      PrintUnsignedInteger(theEnv,STDOUT,floatCounts[i]);
-      WriteString(theEnv,STDOUT,"\n");
+      CL_PrintUnsignedInteger(theEnv,STDOUT,i);
+      CL_WriteString(theEnv,STDOUT," ");
+      CL_PrintUnsignedInteger(theEnv,STDOUT,floatCounts[i]);
+      CL_WriteString(theEnv,STDOUT,"\n");
      }
 
   }
@@ -308,9 +308,9 @@ void ValidateFactIntegrityCommand(
       return;
      }
 
-   for (theFact = GetNextFact(theEnv,NULL);
+   for (theFact = CL_GetNextFact(theEnv,NULL);
         theFact != NULL;
-        theFact = GetNextFact(theEnv,theFact))
+        theFact = CL_GetNextFact(theEnv,theFact))
      {
       if (theFact->patternHeader.busyCount <= 0)
         {
@@ -373,38 +373,38 @@ void ShowFactPatternNetworkCommand(
    const char *theName;
    int depth = 0, i;
 
-   theName = GetConstructName(context,"show-fpn","template name");
+   theName = CL_GetConstructName(context,"show-fpn","template name");
    if (theName == NULL) return;
 
-   theDeftemplate = FindDeftemplate(theEnv,theName);
+   theDeftemplate = CL_FindDeftemplate(theEnv,theName);
    if (theDeftemplate == NULL) return;
 
    patternPtr = theDeftemplate->patternNetwork;
    while (patternPtr != NULL)
      {
-      for (i = 0; i < depth; i++) WriteString(theEnv,STDOUT," ");
-      if (patternPtr->header.singlefieldNode) WriteString(theEnv,STDOUT,"SF   ");
+      for (i = 0; i < depth; i++) CL_WriteString(theEnv,STDOUT," ");
+      if (patternPtr->header.singlefieldNode) CL_WriteString(theEnv,STDOUT,"SF   ");
       else if (patternPtr->header.multifieldNode)
         {
-         WriteString(theEnv,STDOUT,"MF");
-         if (patternPtr->header.endSlot) WriteString(theEnv,STDOUT,")");
-         else WriteString(theEnv,STDOUT,"*");
-         PrintUnsignedInteger(theEnv,STDOUT,patternPtr->leaveFields);
-         WriteString(theEnv,STDOUT," ");
+         CL_WriteString(theEnv,STDOUT,"MF");
+         if (patternPtr->header.endSlot) CL_WriteString(theEnv,STDOUT,")");
+         else CL_WriteString(theEnv,STDOUT,"*");
+         CL_PrintUnsignedInteger(theEnv,STDOUT,patternPtr->leaveFields);
+         CL_WriteString(theEnv,STDOUT," ");
         }
 
-      WriteString(theEnv,STDOUT,"Slot: ");
+      CL_WriteString(theEnv,STDOUT,"Slot: ");
 
-      PrintUnsignedInteger(theEnv,STDOUT,patternPtr->whichSlot);
-      WriteString(theEnv,STDOUT," Field: ");
-      PrintUnsignedInteger(theEnv,STDOUT,patternPtr->whichField);
-      WriteString(theEnv,STDOUT," Expression: ");
-      if (patternPtr->networkTest == NULL) WriteString(theEnv,STDOUT,"None");
-      else PrintExpression(theEnv,STDOUT,patternPtr->networkTest);
-      WriteString(theEnv,STDOUT," RightHash: ");
-      if (patternPtr->header.rightHash == NULL) WriteString(theEnv,STDOUT,"None");
-      else PrintExpression(theEnv,STDOUT,patternPtr->header.rightHash);
-      WriteString(theEnv,STDOUT,"\n");
+      CL_PrintUnsignedInteger(theEnv,STDOUT,patternPtr->whichSlot);
+      CL_WriteString(theEnv,STDOUT," Field: ");
+      CL_PrintUnsignedInteger(theEnv,STDOUT,patternPtr->whichField);
+      CL_WriteString(theEnv,STDOUT," Expression: ");
+      if (patternPtr->networkTest == NULL) CL_WriteString(theEnv,STDOUT,"None");
+      else CL_PrintExpression(theEnv,STDOUT,patternPtr->networkTest);
+      CL_WriteString(theEnv,STDOUT," RightHash: ");
+      if (patternPtr->header.rightHash == NULL) CL_WriteString(theEnv,STDOUT,"None");
+      else CL_PrintExpression(theEnv,STDOUT,patternPtr->header.rightHash);
+      CL_WriteString(theEnv,STDOUT,"\n");
 
       if (patternPtr->nextLevel == NULL)
         {
@@ -445,7 +445,7 @@ void PrintObjectPatternNetworkCommand(
    char indentbuf[80];
 
    indentbuf[0] = '\0';
-   PrintOPNLevel(theEnv,ObjectNetworkPointer(theEnv),indentbuf,0);
+   PrintOPNLevel(theEnv,CL_ObjectNetworkPointer(theEnv),indentbuf,0);
   }
 
 /**********************************************************
@@ -473,36 +473,36 @@ static void PrintOPNLevel(
 
    while (pptr != NULL)
      {
-      WriteString(theEnv,STDOUT,indentbuf);
+      CL_WriteString(theEnv,STDOUT,indentbuf);
       if (pptr->alphaNode != NULL)
-        WriteString(theEnv,STDOUT,"+");
-      WriteString(theEnv,STDOUT,FindIDSlotName(theEnv,pptr->slotNameID)->contents);
-      WriteString(theEnv,STDOUT," (");
-      PrintUnsignedInteger(theEnv,STDOUT,pptr->slotNameID);
-      WriteString(theEnv,STDOUT,") ");
-      WriteString(theEnv,STDOUT,pptr->endSlot ? "EPF#" : "PF#");
-      PrintUnsignedInteger(theEnv,STDOUT,pptr->whichField);
-      WriteString(theEnv,STDOUT," ");
-      WriteString(theEnv,STDOUT,pptr->multifieldNode ? "$? " : "? ");
+        CL_WriteString(theEnv,STDOUT,"+");
+      CL_WriteString(theEnv,STDOUT,CL_FindIDSlotName(theEnv,pptr->slotNameID)->contents);
+      CL_WriteString(theEnv,STDOUT," (");
+      CL_PrintUnsignedInteger(theEnv,STDOUT,pptr->slotNameID);
+      CL_WriteString(theEnv,STDOUT,") ");
+      CL_WriteString(theEnv,STDOUT,pptr->endSlot ? "EPF#" : "PF#");
+      CL_PrintUnsignedInteger(theEnv,STDOUT,pptr->whichField);
+      CL_WriteString(theEnv,STDOUT," ");
+      CL_WriteString(theEnv,STDOUT,pptr->multifieldNode ? "$? " : "? ");
       if (pptr->networkTest != NULL)
-        PrintExpression(theEnv,STDOUT,pptr->networkTest);
-      WriteString(theEnv,STDOUT,"\n");
+        CL_PrintExpression(theEnv,STDOUT,pptr->networkTest);
+      CL_WriteString(theEnv,STDOUT,"\n");
       alphaPtr = pptr->alphaNode;
       while (alphaPtr != NULL)
         {
-         WriteString(theEnv,STDOUT,indentbuf);
-         WriteString(theEnv,STDOUT,"     Classes:");
+         CL_WriteString(theEnv,STDOUT,indentbuf);
+         CL_WriteString(theEnv,STDOUT,"     Classes:");
          cbmp = (CLASS_BITMAP *) alphaPtr->classbmp->contents;
          for (i = 0 ; i <= cbmp->maxid ; i++)
            if (TestBitMap(cbmp->map,i))
              {
-              WriteString(theEnv,STDOUT," ");
-              WriteString(theEnv,STDOUT,DefclassName(DefclassData(theEnv)->ClassIDMap[i]));
+              CL_WriteString(theEnv,STDOUT," ");
+              CL_WriteString(theEnv,STDOUT,CL_DefclassName(DefclassData(theEnv)->ClassIDMap[i]));
              }
          if (alphaPtr->slotbmp != NULL)
            {
             sbmp = (SLOT_BITMAP *) alphaPtr->slotbmp->contents;
-            WriteString(theEnv,STDOUT," *** Slots:");
+            CL_WriteString(theEnv,STDOUT," *** Slots:");
             for (i = NAME_ID ; i <= sbmp->maxid ; i++)
               if (TestBitMap(sbmp->map,i))
                 {
@@ -511,18 +511,18 @@ static void PrintOPNLevel(
                      break;
                  if (uptr == NULL)
                    {
-                    WriteString(theEnv,STDOUT," ");
-                    WriteString(theEnv,STDOUT,FindIDSlotName(theEnv,i)->contents);
+                    CL_WriteString(theEnv,STDOUT," ");
+                    CL_WriteString(theEnv,STDOUT,CL_FindIDSlotName(theEnv,i)->contents);
                    }
                 }
            }
          if (alphaPtr->header.rightHash != NULL)
            {
-            WriteString(theEnv,STDOUT," RH: ");
-            PrintExpression(theEnv,STDOUT,alphaPtr->header.rightHash);
+            CL_WriteString(theEnv,STDOUT," RH: ");
+            CL_PrintExpression(theEnv,STDOUT,alphaPtr->header.rightHash);
            }
 
-         WriteString(theEnv,STDOUT,"\n");
+         CL_WriteString(theEnv,STDOUT,"\n");
          alphaPtr = alphaPtr->nxtInGroup;
         }
       indentbuf[ilen++] = (char) ((pptr->rightNode != NULL) ? '|' : ' ');
@@ -541,7 +541,7 @@ static void PrintOPNLevel(
 #if OBJECT_SYSTEM
 
 /*******************************************************/
-/* InstanceTableUsageCommand: Prints information about */
+/* InstanceTableUsageCommand: Prints infoCL_rmation about */
 /*   the instances in the instance hash table.         */
 /*******************************************************/
 void InstanceTableUsageCommand(
@@ -577,18 +577,18 @@ void InstanceTableUsageCommand(
      }
 
    /*========================*/
-   /* Print the information. */
+   /* Print the infoCL_rmation. */
    /*========================*/
 
-   WriteString(theEnv,STDOUT,"Total Instances: ");
-   PrintUnsignedInteger(theEnv,STDOUT,totalInstanceCount);
-   WriteString(theEnv,STDOUT,"\n");
+   CL_WriteString(theEnv,STDOUT,"Total CL_Instances: ");
+   CL_PrintUnsignedInteger(theEnv,STDOUT,totalInstanceCount);
+   CL_WriteString(theEnv,STDOUT,"\n");
    for (i = 0; i < COUNT_SIZE; i++)
      {
-      PrintUnsignedInteger(theEnv,STDOUT,i);
-      WriteString(theEnv,STDOUT," ");
-      PrintUnsignedInteger(theEnv,STDOUT,instanceCounts[i]);
-      WriteString(theEnv,STDOUT,"\n");
+      CL_PrintUnsignedInteger(theEnv,STDOUT,i);
+      CL_WriteString(theEnv,STDOUT," ");
+      CL_PrintUnsignedInteger(theEnv,STDOUT,instanceCounts[i]);
+      CL_WriteString(theEnv,STDOUT,"\n");
      }
   }
 
@@ -666,8 +666,8 @@ void ValidateBetaMemoriesCommand(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   WriteString(theEnv,STDOUT,"ValidateBetaMemories");
-   DoForAllConstructs(theEnv,ValidateRuleBetaMemoriesAction,DefruleData(theEnv)->DefruleModuleIndex,false,NULL);
+   CL_WriteString(theEnv,STDOUT,"ValidateBetaMemories");
+   CL_DoForAllConstructs(theEnv,ValidateRuleBetaMemoriesAction,DefruleData(theEnv)->CL_DefruleModuleIndex,false,NULL);
   }
 
 #endif

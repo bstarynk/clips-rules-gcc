@@ -25,7 +25,7 @@
 /*                                                           */
 /*            Changed integer type/precision.                */
 /*                                                           */
-/*            GetConstructNameAndComment API change.         */
+/*            CL_GetConstructNameAndComment API change.         */
 /*                                                           */
 /*            Added support for hashed memories.             */
 /*                                                           */
@@ -112,11 +112,11 @@
 #endif
 
 /****************************************************/
-/* ParseDefrule: Coordinates all actions necessary  */
+/* CL_ParseDefrule: Coordinates all actions necessary  */
 /*   for the parsing and creation of a defrule into */
 /*   the current environment.                       */
 /****************************************************/
-bool ParseDefrule(
+bool CL_ParseDefrule(
   Environment *theEnv,
   const char *readSource)
   {
@@ -135,18 +135,18 @@ bool ParseDefrule(
    /* parsed keyword defrule to this buffer.         */
    /*================================================*/
 
-   SetPPBufferStatus(theEnv,true);
-   FlushPPBuffer(theEnv);
-   SavePPBuffer(theEnv,"(defrule ");
+   CL_SetPPBufferStatus(theEnv,true);
+   CL_FlushPPBuffer(theEnv);
+   CL_SavePPBuffer(theEnv,"(defrule ");
 
    /*=========================================================*/
    /* Rules cannot be loaded when a binary load is in effect. */
    /*=========================================================*/
 
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE
-   if ((Bloaded(theEnv) == true) && (! ConstructData(theEnv)->CheckSyntaxMode))
+   if ((CL_Bloaded(theEnv) == true) && (! ConstructData(theEnv)->CL_CheckSyntaxMode))
      {
-      CannotLoadWithBloadMessage(theEnv,"defrule");
+      CannotCL_LoadWithCL_BloadMessage(theEnv,"defrule");
       return true;
      }
 #endif
@@ -160,9 +160,9 @@ bool ParseDefrule(
    DefruleData(theEnv)->DeletedRuleDebugFlags = 0;
 #endif
 
-   ruleName = GetConstructNameAndComment(theEnv,readSource,&theToken,"defrule",
-                                         (FindConstructFunction *) FindDefruleInModule,
-                                         (DeleteConstructFunction *) Undefrule,
+   ruleName = CL_GetConstructNameAndComment(theEnv,readSource,&theToken,"defrule",
+                                         (CL_FindConstructFunction *) CL_FindDefruleInModule,
+                                         (DeleteConstructFunction *) CL_Undefrule,
                                          "*",false,
                                          true,true,false);
 
@@ -172,10 +172,10 @@ bool ParseDefrule(
    /* Parse the LHS of the rule. */
    /*============================*/
 
-   theLHS = ParseRuleLHS(theEnv,readSource,&theToken,ruleName->contents,&error);
+   theLHS = CL_ParseRuleLHS(theEnv,readSource,&theToken,ruleName->contents,&error);
    if (error)
      {
-      ReturnPackedExpression(theEnv,PatternData(theEnv)->SalienceExpression);
+      CL_ReturnPackedExpression(theEnv,PatternData(theEnv)->SalienceExpression);
       PatternData(theEnv)->SalienceExpression = NULL;
       return true;
      }
@@ -184,15 +184,15 @@ bool ParseDefrule(
    /* Parse the RHS of the rule. */
    /*============================*/
 
-   ClearParsedBindNames(theEnv);
+   CL_ClearParsedBindNames(theEnv);
    ExpressionData(theEnv)->ReturnContext = true;
    actions = ParseRuleRHS(theEnv,readSource);
 
    if (actions == NULL)
      {
-      ReturnPackedExpression(theEnv,PatternData(theEnv)->SalienceExpression);
+      CL_ReturnPackedExpression(theEnv,PatternData(theEnv)->SalienceExpression);
       PatternData(theEnv)->SalienceExpression = NULL;
-      ReturnLHSParseNodes(theEnv,theLHS);
+      CL_ReturnLHSParseNodes(theEnv,theLHS);
       return true;
      }
 
@@ -202,13 +202,13 @@ bool ParseDefrule(
 
    topDisjunct = ProcessRuleLHS(theEnv,theLHS,actions,ruleName,&error);
 
-   ReturnExpression(theEnv,actions);
-   ClearParsedBindNames(theEnv);
-   ReturnLHSParseNodes(theEnv,theLHS);
+   CL_ReturnExpression(theEnv,actions);
+   CL_ClearParsedBindNames(theEnv);
+   CL_ReturnLHSParseNodes(theEnv,theLHS);
 
    if (error)
      {
-      ReturnPackedExpression(theEnv,PatternData(theEnv)->SalienceExpression);
+      CL_ReturnPackedExpression(theEnv,PatternData(theEnv)->SalienceExpression);
       PatternData(theEnv)->SalienceExpression = NULL;
       return true;
      }
@@ -218,9 +218,9 @@ bool ParseDefrule(
    /* successfully parsed defrule to the KB.       */
    /*==============================================*/
 
-   if (ConstructData(theEnv)->CheckSyntaxMode)
+   if (ConstructData(theEnv)->CL_CheckSyntaxMode)
      {
-      ReturnPackedExpression(theEnv,PatternData(theEnv)->SalienceExpression);
+      CL_ReturnPackedExpression(theEnv,PatternData(theEnv)->SalienceExpression);
       PatternData(theEnv)->SalienceExpression = NULL;
       return false;
      }
@@ -228,26 +228,26 @@ bool ParseDefrule(
    PatternData(theEnv)->SalienceExpression = NULL;
 
    /*======================================*/
-   /* Save the nice printout of the rules. */
+   /* CL_Save the nice printout of the rules. */
    /*======================================*/
 
-   SavePPBuffer(theEnv,"\n");
-   if (GetConserveMemory(theEnv) == true)
-     { topDisjunct->header.ppForm = NULL; }
+   CL_SavePPBuffer(theEnv,"\n");
+   if (CL_GetConserveMemory(theEnv) == true)
+     { topDisjunct->header.ppFoCL_rm = NULL; }
    else
-     { topDisjunct->header.ppForm = CopyPPBuffer(theEnv); }
+     { topDisjunct->header.ppFoCL_rm = CL_CopyPPBuffer(theEnv); }
 
    /*=======================================*/
    /* Store a pointer to the rule's module. */
    /*=======================================*/
 
    theModuleItem = (struct defruleModule *)
-                   GetModuleItem(theEnv,NULL,FindModuleItem(theEnv,"defrule")->moduleIndex);
+                   CL_GetModuleItem(theEnv,NULL,CL_FindModuleItem(theEnv,"defrule")->moduleIndex);
 
    for (tempPtr = topDisjunct; tempPtr != NULL; tempPtr = tempPtr->disjunct)
      {
       tempPtr->header.whichModule = (struct defmoduleItemHeader *) theModuleItem;
-      tempPtr->header.ppForm = topDisjunct->header.ppForm;
+      tempPtr->header.ppFoCL_rm = topDisjunct->header.ppFoCL_rm;
      }
 
    /*===============================================*/
@@ -262,20 +262,20 @@ bool ParseDefrule(
 
 #if DEBUGGING_FUNCTIONS
    if (BitwiseTest(DefruleData(theEnv)->DeletedRuleDebugFlags,0))
-     { SetBreak(topDisjunct); }
+     { CL_SetBreak(topDisjunct); }
    if (BitwiseTest(DefruleData(theEnv)->DeletedRuleDebugFlags,1) ||
-       (GetWatchItem(theEnv,"activations") == 1))
-     { DefruleSetWatchActivations(topDisjunct,true); }
+       (CL_GetCL_WatchItem(theEnv,"activations") == 1))
+     { CL_DefruleSetCL_WatchActivations(topDisjunct,true); }
    if (BitwiseTest(DefruleData(theEnv)->DeletedRuleDebugFlags,2) ||
-       (GetWatchItem(theEnv,"rules") == 1))
-     { DefruleSetWatchFirings(topDisjunct,true); }
+       (CL_GetCL_WatchItem(theEnv,"rules") == 1))
+     { CL_DefruleSetCL_WatchFirings(topDisjunct,true); }
 #endif
 
    /*================================*/
-   /* Perform the incremental reset. */
+   /* PerfoCL_rm the incremental reset. */
    /*================================*/
 
-   IncrementalReset(theEnv,topDisjunct);
+   CL_IncrementalCL_Reset(theEnv,topDisjunct);
 
    /*=============================================*/
    /* Return false to indicate no errors occured. */
@@ -330,7 +330,7 @@ static Defrule *ProcessRuleLHS(
    /* Loop through each disjunct of the rule. */
    /*=========================================*/
 
-   localVarCnt = CountParsedBindNames(theEnv);
+   localVarCnt = CL_CountParsedBindNames(theEnv);
 
    while ((theLHS != NULL) || (emptyLHS == true))
      {
@@ -346,30 +346,30 @@ static Defrule *ProcessRuleLHS(
          else if (theLHS->pnType == PATTERN_CE_NODE) tempNode = theLHS;
         }
 
-      if (VariableAnalysis(theEnv,tempNode))
+      if (CL_VariableAnalysis(theEnv,tempNode))
         {
          *error = true;
-         ReturnDefrule(theEnv,topDisjunct);
+         CL_ReturnDefrule(theEnv,topDisjunct);
          return NULL;
         }
 
       /*=========================================*/
-      /* Perform entity dependent post analysis. */
+      /* PerfoCL_rm entity dependent post analysis. */
       /*=========================================*/
 
-      if (PostPatternAnalysis(theEnv,tempNode))
+      if (CL_PostPatternAnalysis(theEnv,tempNode))
         {
          *error = true;
-         ReturnDefrule(theEnv,topDisjunct);
+         CL_ReturnDefrule(theEnv,topDisjunct);
          return NULL;
         }
 
       /*========================================================*/
-      /* Print out developer information if it's being watched. */
+      /* Print out developer infoCL_rmation if it's being watched. */
       /*========================================================*/
 
 #if DEVELOPER && DEBUGGING_FUNCTIONS
-      if (GetWatchItem(theEnv,"rule-analysis") == 1)
+      if (CL_GetCL_WatchItem(theEnv,"rule-analysis") == 1)
         { DumpRuleAnalysis(theEnv,tempNode); }
 #endif
 
@@ -377,10 +377,10 @@ static Defrule *ProcessRuleLHS(
       /* Check to see if there are any RHS constraint errors. */
       /*======================================================*/
 
-      if (CheckRHSForConstraintErrors(theEnv,actions,tempNode))
+      if (CL_CheckRHSForConstraintErrors(theEnv,actions,tempNode))
         {
          *error = true;
-         ReturnDefrule(theEnv,topDisjunct);
+         CL_ReturnDefrule(theEnv,topDisjunct);
          return NULL;
         }
         
@@ -389,13 +389,13 @@ static Defrule *ProcessRuleLHS(
       /* appropriate variable retrieval functions.       */
       /*=================================================*/
 
-      newActions = CopyExpression(theEnv,actions);
-      if (ReplaceProcVars(theEnv,"RHS of defrule",newActions,NULL,NULL,
+      newActions = CL_CopyExpression(theEnv,actions);
+      if (CL_ReplaceProcVars(theEnv,"RHS of defrule",newActions,NULL,NULL,
                           ReplaceRHSVariable,tempNode))
         {
          *error = true;
-         ReturnDefrule(theEnv,topDisjunct);
-         ReturnExpression(theEnv,newActions);
+         CL_ReturnDefrule(theEnv,topDisjunct);
+         CL_ReturnExpression(theEnv,newActions);
          return NULL;
         }
 
@@ -405,7 +405,7 @@ static Defrule *ProcessRuleLHS(
       /* join at the same not/and depth.                   */
       /*===================================================*/
 
-      AttachTestCEsToPatternCEs(theEnv,tempNode);
+      CL_AttachTestCEsToPatternCEs(theEnv,tempNode);
 
       /*========================================*/
       /* Check to see that logical CEs are used */
@@ -415,8 +415,8 @@ static Defrule *ProcessRuleLHS(
       if ((logicalJoin = LogicalAnalysis(theEnv,tempNode)) < 0)
         {
          *error = true;
-         ReturnDefrule(theEnv,topDisjunct);
-         ReturnExpression(theEnv,newActions);
+         CL_ReturnDefrule(theEnv,topDisjunct);
+         CL_ReturnExpression(theEnv,newActions);
          return NULL;
         }
 
@@ -425,9 +425,9 @@ static Defrule *ProcessRuleLHS(
       /* if we're only checking syntax.   */
       /*==================================*/
 
-      if (ConstructData(theEnv)->CheckSyntaxMode)
+      if (ConstructData(theEnv)->CL_CheckSyntaxMode)
         {
-         ReturnExpression(theEnv,newActions);
+         CL_ReturnExpression(theEnv,newActions);
          if (emptyLHS)
            { emptyLHS = false; }
          else
@@ -439,18 +439,18 @@ static Defrule *ProcessRuleLHS(
       /* Install the disjunct's actions. */
       /*=================================*/
 
-      ExpressionInstall(theEnv,newActions);
-      packPtr = PackExpression(theEnv,newActions);
-      ReturnExpression(theEnv,newActions);
+      CL_ExpressionInstall(theEnv,newActions);
+      packPtr = CL_PackExpression(theEnv,newActions);
+      CL_ReturnExpression(theEnv,newActions);
 
       /*===============================================================*/
       /* Create the pattern and join data structures for the new rule. */
       /*===============================================================*/
 
-      lastJoin = ConstructJoins(theEnv,logicalJoin,tempNode,1,NULL,true,true);
+      lastJoin = CL_ConstructJoins(theEnv,logicalJoin,tempNode,1,NULL,true,true);
 
       /*===================================================================*/
-      /* Determine the rule's complexity for use with conflict resolution. */
+      /* DeteCL_rmine the rule's complexity for use with conflict resolution. */
       /*===================================================================*/
 
       complexity = RuleComplexity(theEnv,tempNode);
@@ -475,7 +475,7 @@ static Defrule *ProcessRuleLHS(
       if (topDisjunct == NULL)
         {
          topDisjunct = currentDisjunct;
-         ExpressionInstall(theEnv,topDisjunct->dynamicSalience);
+         CL_ExpressionInstall(theEnv,topDisjunct->dynamicSalience);
         }
       else lastDisjunct->disjunct = currentDisjunct;
 
@@ -514,7 +514,7 @@ static Defrule *CreateNewDisjunct(
    /*===================================================*/
 
    newDisjunct = get_struct(theEnv,defrule);
-   newDisjunct->header.ppForm = NULL;
+   newDisjunct->header.ppFoCL_rm = NULL;
    newDisjunct->header.next = NULL;
    newDisjunct->header.usrData = NULL;
    newDisjunct->logicalJoin = NULL;
@@ -530,7 +530,7 @@ static Defrule *CreateNewDisjunct(
    newDisjunct->watchFiring = 0;
    newDisjunct->executing = 0;
    newDisjunct->complexity = complexity;
-   newDisjunct->autoFocus = PatternData(theEnv)->GlobalAutoFocus;
+   newDisjunct->autoCL_Focus = PatternData(theEnv)->GlobalAutoCL_Focus;
    newDisjunct->dynamicSalience = PatternData(theEnv)->SalienceExpression;
    newDisjunct->localVarCnt = localVarCnt;
 
@@ -540,7 +540,7 @@ static Defrule *CreateNewDisjunct(
 
    newDisjunct->header.whichModule =
       (struct defmoduleItemHeader *)
-      GetModuleItem(theEnv,NULL,FindModuleItem(theEnv,"defrule")->moduleIndex);
+      CL_GetModuleItem(theEnv,NULL,CL_FindModuleItem(theEnv,"defrule")->moduleIndex);
 
    /*============================================================*/
    /* Attach the rule's last join to the defrule data structure. */
@@ -550,7 +550,7 @@ static Defrule *CreateNewDisjunct(
    newDisjunct->lastJoin = lastJoin;
 
    /*=================================================*/
-   /* Determine the rule's logical join if it exists. */
+   /* DeteCL_rmine the rule's logical join if it exists. */
    /*=================================================*/
 
    tempJoin = lastJoin;
@@ -593,14 +593,14 @@ static int ReplaceRHSVariable(
 #if DEFTEMPLATE_CONSTRUCT
    if (list->type == FCALL)
      {
-      if (list->value == (void *) FindFunction(theEnv,"modify"))
+      if (list->value == (void *) CL_FindFunction(theEnv,"modify"))
         {
-         if (UpdateModifyDuplicate(theEnv,list,"modify",VtheLHS) == false)
+         if (CL_UpdateModifyDuplicate(theEnv,list,"modify",VtheLHS) == false)
            { return -1; }
         }
-      else if (list->value == (void *) FindFunction(theEnv,"duplicate"))
+      else if (list->value == (void *) CL_FindFunction(theEnv,"duplicate"))
         {
-         if (UpdateModifyDuplicate(theEnv,list,"duplicate",VtheLHS) == false)
+         if (CL_UpdateModifyDuplicate(theEnv,list,"duplicate",VtheLHS) == false)
            { return -1; }
         }
 
@@ -616,7 +616,7 @@ static int ReplaceRHSVariable(
    /* Check to see if the variable is bound on the LHS of the rule. */
    /*===============================================================*/
 
-   theVariable = FindVariable(list->lexemeValue,(struct lhsParseNode *) VtheLHS);
+   theVariable = CL_FindVariable(list->lexemeValue,(struct lhsParseNode *) VtheLHS);
    if (theVariable == NULL) return 0;
 
    /*================================================*/
@@ -651,20 +651,20 @@ static struct expr *ParseRuleRHS(
    /* Process the actions on the right hand side of the rule. */
    /*=========================================================*/
 
-   SavePPBuffer(theEnv,"\n   ");
-   SetIndentDepth(theEnv,3);
+   CL_SavePPBuffer(theEnv,"\n   ");
+   CL_SetIndentDepth(theEnv,3);
 
-   actions = GroupActions(theEnv,readSource,&theToken,true,NULL,false);
+   actions = CL_GroupActions(theEnv,readSource,&theToken,true,NULL,false);
 
    if (actions == NULL) return NULL;
 
    /*=============================*/
-   /* Reformat the closing token. */
+   /* RefoCL_rmat the closing token. */
    /*=============================*/
 
-   PPBackup(theEnv);
-   PPBackup(theEnv);
-   SavePPBuffer(theEnv,theToken.printForm);
+   CL_PPBackup(theEnv);
+   CL_PPBackup(theEnv);
+   CL_SavePPBuffer(theEnv,theToken.printFoCL_rm);
 
    /*======================================================*/
    /* Check for the closing right parenthesis of the rule. */
@@ -672,8 +672,8 @@ static struct expr *ParseRuleRHS(
 
    if (theToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      {
-      SyntaxErrorMessage(theEnv,"defrule");
-      ReturnExpression(theEnv,actions);
+      CL_SyntaxErrorMessage(theEnv,"defrule");
+      CL_ReturnExpression(theEnv,actions);
       return NULL;
      }
 
@@ -722,7 +722,7 @@ static unsigned short RuleComplexity(
   }
 
 /********************************************************************/
-/* ExpressionComplexity: Determines the complexity of a expression. */
+/* ExpressionComplexity: DeteCL_rmines the complexity of a expression. */
 /********************************************************************/
 static unsigned short ExpressionComplexity(
   Environment *theEnv,
@@ -752,8 +752,8 @@ static unsigned short ExpressionComplexity(
          else
            { complexity++; }
         }
-      else if ((EvaluationData(theEnv)->PrimitivesArray[exprPtr->type] != NULL) ?
-               EvaluationData(theEnv)->PrimitivesArray[exprPtr->type]->addsToRuleComplexity : false)
+      else if ((CL_EvaluationData(theEnv)->PrimitivesArray[exprPtr->type] != NULL) ?
+               CL_EvaluationData(theEnv)->PrimitivesArray[exprPtr->type]->addsToRuleComplexity : false)
         { complexity++; }
 
       exprPtr = exprPtr->nextArg;
@@ -818,8 +818,8 @@ static int LogicalAnalysis(
 
       if (! firstLogical)
         {
-         PrintErrorID(theEnv,"RULEPSR",1,true);
-         WriteString(theEnv,STDERR,"Logical CEs must be placed first in a rule\n");
+         CL_PrintErrorID(theEnv,"RULEPSR",1,true);
+         CL_WriteString(theEnv,STDERR,"Logical CEs must be placed first in a rule\n");
          return -1;
         }
 
@@ -831,8 +831,8 @@ static int LogicalAnalysis(
 
       if (gap)
         {
-         PrintErrorID(theEnv,"RULEPSR",2,true);
-         WriteString(theEnv,STDERR,"Gaps may not exist between logical CEs\n");
+         CL_PrintErrorID(theEnv,"RULEPSR",2,true);
+         CL_WriteString(theEnv,STDERR,"Gaps may not exist between logical CEs\n");
          return -1;
         }
 
@@ -850,7 +850,7 @@ static int LogicalAnalysis(
 
    /*============================================*/
    /* If logical CEs were found, then return the */
-   /* join number where the logical information  */
+   /* join number where the logical infoCL_rmation  */
    /* will be stored in the join network.        */
    /*============================================*/
 
@@ -866,16 +866,16 @@ static int LogicalAnalysis(
   }
 
 /*****************************************************************/
-/* FindVariable: Searches for the last occurence of a variable   */
+/* CL_FindVariable: Searches for the last occurence of a variable   */
 /*  in the LHS of a rule that is visible from the RHS of a rule. */
 /*  The last occurence of the variable on the LHS side of the    */
 /*  rule will have the strictest constraints (because it will    */
 /*  have been intersected with all of the other constraints for  */
 /*  the variable on the LHS of the rule). The strictest          */
-/*  constraints are useful for performing type checking on the   */
+/*  constraints are useful for perfoCL_rming type checking on the   */
 /*  RHS of the rule.                                             */
 /*****************************************************************/
-struct lhsParseNode *FindVariable(
+struct lhsParseNode *CL_FindVariable(
   CLIPSLexeme *name,
   struct lhsParseNode *theLHS)
   {
@@ -989,7 +989,7 @@ static void AddToDefruleList(
 #if DEVELOPER && DEBUGGING_FUNCTIONS
 
 /************************************************************/
-/* DumpRuleAnalysis: Displays the information about network */
+/* DumpRuleAnalysis: Displays the infoCL_rmation about network */
 /*   expressions generated from the analysis of the rule.   */
 /************************************************************/
 void DumpRuleAnalysis(
@@ -999,66 +999,66 @@ void DumpRuleAnalysis(
    struct lhsParseNode *traceNode;
    char buffer[20];
 
-   WriteString(theEnv,STDOUT,"\n");
+   CL_WriteString(theEnv,STDOUT,"\n");
    for (traceNode = tempNode; traceNode != NULL; traceNode = traceNode->bottom)
      {
       if (traceNode->userCE)
-        { gensprintf(buffer,"UCE %2d (%2d %2d): ",traceNode->whichCE,traceNode->beginNandDepth,traceNode->endNandDepth); }
+        { CL_gensprintf(buffer,"UCE %2d (%2d %2d): ",traceNode->whichCE,traceNode->beginNandDepth,traceNode->endNandDepth); }
       else
-        { gensprintf(buffer,"SCE %2d (%2d %2d): ",traceNode->whichCE,traceNode->beginNandDepth,traceNode->endNandDepth); }
+        { CL_gensprintf(buffer,"SCE %2d (%2d %2d): ",traceNode->whichCE,traceNode->beginNandDepth,traceNode->endNandDepth); }
 
-      WriteString(theEnv,STDOUT,buffer);
+      CL_WriteString(theEnv,STDOUT,buffer);
 
-      PrintExpression(theEnv,STDOUT,traceNode->networkTest);
-      WriteString(theEnv,STDOUT,"\n");
+      CL_PrintExpression(theEnv,STDOUT,traceNode->networkTest);
+      CL_WriteString(theEnv,STDOUT,"\n");
 
       if (traceNode->externalNetworkTest != NULL)
         {
-         WriteString(theEnv,STDOUT,"      ENT: ");
-         PrintExpression(theEnv,STDOUT,traceNode->externalNetworkTest);
-         WriteString(theEnv,STDOUT,"\n");
+         CL_WriteString(theEnv,STDOUT,"      ENT: ");
+         CL_PrintExpression(theEnv,STDOUT,traceNode->externalNetworkTest);
+         CL_WriteString(theEnv,STDOUT,"\n");
         }
 
       if (traceNode->secondaryNetworkTest != NULL)
         {
-         WriteString(theEnv,STDOUT,"      SNT: ");
-         PrintExpression(theEnv,STDOUT,traceNode->secondaryNetworkTest);
-         WriteString(theEnv,STDOUT,"\n");
+         CL_WriteString(theEnv,STDOUT,"      SNT: ");
+         CL_PrintExpression(theEnv,STDOUT,traceNode->secondaryNetworkTest);
+         CL_WriteString(theEnv,STDOUT,"\n");
         }
 
       if (traceNode->externalRightHash != NULL)
         {
-         WriteString(theEnv,STDOUT,"      ERH: ");
-         PrintExpression(theEnv,STDOUT,traceNode->externalRightHash);
-         WriteString(theEnv,STDOUT,"\n");
+         CL_WriteString(theEnv,STDOUT,"      ERH: ");
+         CL_PrintExpression(theEnv,STDOUT,traceNode->externalRightHash);
+         CL_WriteString(theEnv,STDOUT,"\n");
         }
 
       if (traceNode->externalLeftHash != NULL)
         {
-         WriteString(theEnv,STDOUT,"      ELH: ");
-         PrintExpression(theEnv,STDOUT,traceNode->externalLeftHash);
-         WriteString(theEnv,STDOUT,"\n");
+         CL_WriteString(theEnv,STDOUT,"      ELH: ");
+         CL_PrintExpression(theEnv,STDOUT,traceNode->externalLeftHash);
+         CL_WriteString(theEnv,STDOUT,"\n");
         }
 
       if (traceNode->leftHash != NULL)
         {
-         WriteString(theEnv,STDOUT,"       LH: ");
-         PrintExpression(theEnv,STDOUT,traceNode->leftHash);
-         WriteString(theEnv,STDOUT,"\n");
+         CL_WriteString(theEnv,STDOUT,"       LH: ");
+         CL_PrintExpression(theEnv,STDOUT,traceNode->leftHash);
+         CL_WriteString(theEnv,STDOUT,"\n");
         }
 
       if (traceNode->rightHash != NULL)
         {
-         WriteString(theEnv,STDOUT,"       RH: ");
-         PrintExpression(theEnv,STDOUT,traceNode->rightHash);
-         WriteString(theEnv,STDOUT,"\n");
+         CL_WriteString(theEnv,STDOUT,"       RH: ");
+         CL_PrintExpression(theEnv,STDOUT,traceNode->rightHash);
+         CL_WriteString(theEnv,STDOUT,"\n");
         }
 
       if (traceNode->betaHash != NULL)
         {
-         WriteString(theEnv,STDOUT,"       BH: ");
-         PrintExpression(theEnv,STDOUT,traceNode->betaHash);
-         WriteString(theEnv,STDOUT,"\n");
+         CL_WriteString(theEnv,STDOUT,"       BH: ");
+         CL_PrintExpression(theEnv,STDOUT,traceNode->betaHash);
+         CL_WriteString(theEnv,STDOUT,"\n");
         }
      }
   }

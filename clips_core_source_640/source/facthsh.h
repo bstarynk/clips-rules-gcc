@@ -24,7 +24,7 @@
 /*                                                           */
 /*            Changed integer type/precision.                */
 /*                                                           */
-/*            Added FactWillBeAsserted.                      */
+/*            Added FactWillBeCL_Asserted.                      */
 /*                                                           */
 /*            Converted API macros to function calls.        */
 /*                                                           */
@@ -43,7 +43,7 @@
 /*                                                           */
 /*            Modify command preserves fact id and address.  */
 /*                                                           */
-/*            Assert returns duplicate fact. FALSE is now    */
+/*            CL_Assert returns duplicate fact. FALSE is now    */
 /*            returned only if an error occurs.              */
 /*                                                           */
 /*************************************************************/
@@ -66,15 +66,15 @@ struct factHashEntry
 
 #define SIZE_FACT_HASH 16231
 
-   void                           AddHashedFact(Environment *,Fact *,size_t);
-   bool                           RemoveHashedFact(Environment *,Fact *);
-   size_t                         HandleFactDuplication(Environment *,Fact *,Fact **,long long);
-   bool                           GetFactDuplication(Environment *);
-   bool                           SetFactDuplication(Environment *,bool);
-   void                           InitializeFactHashTable(Environment *);
+   void                           CL_AddHashedFact(Environment *,Fact *,size_t);
+   bool                           CL_RemoveHashedFact(Environment *,Fact *);
+   size_t                         CL_HandleFactDuplication(Environment *,Fact *,Fact **,long long);
+   bool                           CL_GetFactDuplication(Environment *);
+   bool                           CL_SetFactDuplication(Environment *,bool);
+   void                           CL_InitializeFactHashTable(Environment *);
    void                           ShowFactHashTableCommand(Environment *,UDFContext *,UDFValue *);
-   size_t                         HashFact(Fact *);
-   bool                           FactWillBeAsserted(Environment *,Fact *);
+   size_t                         CL_HashFact(Fact *);
+   bool                           FactWillBeCL_Asserted(Environment *,Fact *);
 
 #endif /* _H_facthsh */
 

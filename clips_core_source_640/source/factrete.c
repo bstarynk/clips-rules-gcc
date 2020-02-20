@@ -60,10 +60,10 @@
 #include "factrete.h"
 
 /***************************************************************/
-/* FactPNGetVar1: Fact pattern network function for extracting */
+/* CL_FactPNGetVar1: Fact pattern network function for extracting */
 /*   a variable's value. This is the most generalized routine. */
 /***************************************************************/
-bool FactPNGetVar1(
+bool CL_FactPNGetVar1(
   Environment *theEnv,
   void *theValue,
   UDFValue *returnValue)
@@ -91,7 +91,7 @@ bool FactPNGetVar1(
    marks = FactData(theEnv)->CurrentPatternMarks;
 
    /*==========================================================*/
-   /* Determine if we want to retrieve the fact address of the */
+   /* DeteCL_rmine if we want to retrieve the fact address of the */
    /* fact, rather than retrieving a field from the fact.      */
    /*==========================================================*/
 
@@ -102,7 +102,7 @@ bool FactPNGetVar1(
      }
 
    /*=========================================================*/
-   /* Determine if we want to retrieve the entire slot value. */
+   /* DeteCL_rmine if we want to retrieve the entire slot value. */
    /*=========================================================*/
 
    if (hack->allFields)
@@ -133,12 +133,12 @@ bool FactPNGetVar1(
    fieldPtr = &factPtr->theProposition.contents[theSlot];
 
    /*==========================================================*/
-   /* Retrieve a value from a multifield slot. First determine */
+   /* Retrieve a value from a multifield slot. First deteCL_rmine */
    /* the range of fields for the variable being retrieved.    */
    /*==========================================================*/
 
    extent = SIZE_MAX;
-   adjustedField = AdjustFieldPosition(theEnv,marks,theField,theSlot,&extent);
+   adjustedField = CL_AdjustFieldPosition(theEnv,marks,theField,theSlot,&extent);
 
    /*=============================================================*/
    /* If a range of values are being retrieved (i.e. a multifield */
@@ -167,11 +167,11 @@ bool FactPNGetVar1(
   }
 
 /**************************************************/
-/* FactPNGetVar2: Fact pattern network function   */
+/* CL_FactPNGetVar2: Fact pattern network function   */
 /*   for extracting a variable's value. The value */
 /*   extracted is from a single field slot.       */
 /**************************************************/
-bool FactPNGetVar2(
+bool CL_FactPNGetVar2(
   Environment *theEnv,
   void *theValue,
   UDFValue *returnValue)
@@ -204,11 +204,11 @@ bool FactPNGetVar2(
   }
 
 /*****************************************************************/
-/* FactPNGetVar3: Fact pattern network function for extracting a */
+/* CL_FactPNGetVar3: Fact pattern network function for extracting a */
 /*   variable's value. The value extracted is from a multifield  */
 /*   slot that contains at most one multifield variable.         */
 /*****************************************************************/
-bool FactPNGetVar3(
+bool CL_FactPNGetVar3(
   Environment *theEnv,
   void *theValue,
   UDFValue *returnValue)
@@ -264,11 +264,11 @@ bool FactPNGetVar3(
   }
 
 /******************************************************/
-/* FactPNConstant1: Fact pattern network function for */
+/* CL_FactPNConstant1: Fact pattern network function for */
 /*   comparing a value stored in a single field slot  */
 /*   to a constant for either equality or inequality. */
 /******************************************************/
-bool FactPNConstant1(
+bool CL_FactPNConstant1(
   Environment *theEnv,
   void *theValue,
   UDFValue *returnValue)
@@ -312,13 +312,13 @@ bool FactPNConstant1(
   }
 
 /****************************************************************/
-/* FactPNConstant2: Fact pattern network function for comparing */
+/* CL_FactPNConstant2: Fact pattern network function for comparing */
 /*   a value stored in a slot to a constant for either equality */
 /*   or inequality. The value being retrieved from the slot has */
 /*   no multifields to its right (thus it can be retrieved      */
 /*   relative to the beginning).                                */
 /****************************************************************/
-bool FactPNConstant2(
+bool CL_FactPNConstant2(
   Environment *theEnv,
   void *theValue,
   UDFValue *returnValue)
@@ -339,7 +339,7 @@ bool FactPNConstant2(
 
    /*==========================================================*/
    /* Extract the value from the specified slot. Note that the */
-   /* test to determine the slot's type (multifield) should be */
+   /* test to deteCL_rmine the slot's type (multifield) should be */
    /* unnecessary since this routine should only be used for   */
    /* multifield slots.                                        */
    /*==========================================================*/
@@ -379,10 +379,10 @@ bool FactPNConstant2(
   }
 
 /**************************************************************/
-/* FactJNGetVar1: Fact join network function for extracting a */
+/* CL_FactJNGetVar1: Fact join network function for extracting a */
 /*   variable's value. This is the most generalized routine.  */
 /**************************************************************/
-bool FactJNGetVar1(
+bool CL_FactJNGetVar1(
   Environment *theEnv,
   void *theValue,
   UDFValue *returnValue)
@@ -434,7 +434,7 @@ bool FactJNGetVar1(
      }
 
    /*==========================================================*/
-   /* Determine if we want to retrieve the fact address of the */
+   /* DeteCL_rmine if we want to retrieve the fact address of the */
    /* fact, rather than retrieving a field from the fact.      */
    /*==========================================================*/
 
@@ -451,7 +451,7 @@ bool FactJNGetVar1(
      { theSlots = &factPtr->theProposition; }
 
    /*=========================================================*/
-   /* Determine if we want to retrieve the entire slot value. */
+   /* DeteCL_rmine if we want to retrieve the entire slot value. */
    /*=========================================================*/
 
    if (hack->allFields)
@@ -488,12 +488,12 @@ bool FactJNGetVar1(
      }
 
    /*==========================================================*/
-   /* Retrieve a value from a multifield slot. First determine */
+   /* Retrieve a value from a multifield slot. First deteCL_rmine */
    /* the range of fields for the variable being retrieved.    */
    /*==========================================================*/
 
    extent = SIZE_MAX;
-   adjustedField = AdjustFieldPosition(theEnv,marks,theField,theSlot,&extent);
+   adjustedField = CL_AdjustFieldPosition(theEnv,marks,theField,theSlot,&extent);
 
    /*=============================================================*/
    /* If a range of values are being retrieved (i.e. a multifield */
@@ -522,11 +522,11 @@ bool FactJNGetVar1(
   }
 
 /*************************************************/
-/* FactJNGetVar2: Fact join network function for */
+/* CL_FactJNGetVar2: Fact join network function for */
 /*   extracting a variable's value. The value    */
 /*   extracted is from a single field slot.      */
 /*************************************************/
-bool FactJNGetVar2(
+bool CL_FactJNGetVar2(
   Environment *theEnv,
   void *theValue,
   UDFValue *returnValue)
@@ -572,11 +572,11 @@ bool FactJNGetVar2(
   }
 
 /****************************************************************/
-/* FactJNGetVar3: Fact join network function for extracting a   */
+/* CL_FactJNGetVar3: Fact join network function for extracting a   */
 /*   variable's value. The value extracted is from a multifield */
 /*   slot that contains at most one multifield variable.        */
 /****************************************************************/
-bool FactJNGetVar3(
+bool CL_FactJNGetVar3(
   Environment *theEnv,
   void *theValue,
   UDFValue *returnValue)
@@ -645,10 +645,10 @@ bool FactJNGetVar3(
   }
 
 /****************************************************/
-/* FactSlotLength: Determines if the length of a    */
+/* CL_FactSlotLength: DeteCL_rmines if the length of a    */
 /*  multifield slot falls within a specified range. */
 /****************************************************/
-bool FactSlotLength(
+bool CL_FactSlotLength(
   Environment *theEnv,
   void *theValue,
   UDFValue *returnValue)
@@ -683,10 +683,10 @@ bool FactSlotLength(
   }
 
 /************************************************************/
-/* FactJNCompVars1: Fact join network routine for comparing */
+/* CL_FactJNCompVars1: Fact join network routine for comparing */
 /*   the values of two single field slots.                  */
 /************************************************************/
-bool FactJNCompVars1(
+bool CL_FactJNCompVars1(
   Environment *theEnv,
   void *theValue,
   UDFValue *theResult)
@@ -733,13 +733,13 @@ bool FactJNCompVars1(
   }
 
 /*****************************************************************/
-/* FactJNCompVars2:  Fact join network routine for comparing the */
+/* CL_FactJNCompVars2:  Fact join network routine for comparing the */
 /*   two single field value that are found in the first slot     */
 /*   (which must also be a multifield slot) of a deftemplate.    */
 /*   This function is provided so that variable comparisons of   */
 /*   implied deftemplates will be faster.                        */
 /*****************************************************************/
-bool FactJNCompVars2(
+bool CL_FactJNCompVars2(
   Environment *theEnv,
   void *theValue,
   UDFValue *theResult)
@@ -814,10 +814,10 @@ bool FactJNCompVars2(
   }
 
 /*****************************************************/
-/* FactPNCompVars1: Fact pattern network routine for */
+/* CL_FactPNCompVars1: Fact pattern network routine for */
 /*   comparing the values of two single field slots. */
 /*****************************************************/
-bool FactPNCompVars1(
+bool CL_FactPNCompVars1(
   Environment *theEnv,
   void *theValue,
   UDFValue *theResult)
@@ -848,7 +848,7 @@ bool FactPNCompVars1(
   }
 
 /*************************************************************************/
-/* AdjustFieldPosition: Given a list of multifield markers and the index */
+/* CL_AdjustFieldPosition: Given a list of multifield markers and the index */
 /*   to a variable in a slot, this function computes the index to the    */
 /*   field in the slot where the variable begins. In the case of         */
 /*   multifield variables, it also computes the extent (or length) of    */
@@ -863,7 +863,7 @@ bool FactPNCompVars1(
 /*   variable ?z) would be 8 since $?x binds to 2 fields and $?y binds   */
 /*   to 3 fields.                                                        */
 /*************************************************************************/
-size_t AdjustFieldPosition(
+size_t CL_AdjustFieldPosition(
   Environment *theEnv,
   struct multifieldMarker *markList,
   unsigned short whichField,
@@ -924,11 +924,11 @@ size_t AdjustFieldPosition(
   }
 
 /*****************************************************/
-/* FactStoreMultifield: This primitive is used by a  */
+/* CL_FactStoreMultifield: This primitive is used by a  */
 /*   number of multifield functions for grouping a   */
 /*   series of valuesinto a single multifield value. */
 /*****************************************************/
-bool FactStoreMultifield(
+bool CL_FactStoreMultifield(
   Environment *theEnv,
   void *theValue,
   UDFValue *theResult)
@@ -937,7 +937,7 @@ bool FactStoreMultifield(
 #pragma unused(theValue)
 #endif
 
-   StoreInMultifield(theEnv,theResult,GetFirstArgument(),false);
+   CL_StoreInMultifield(theEnv,theResult,GetFirstArgument(),false);
    return true;
   }
 

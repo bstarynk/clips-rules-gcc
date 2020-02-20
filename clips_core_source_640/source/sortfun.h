@@ -23,7 +23,7 @@
 /*            DR0864                                         */
 /*                                                           */
 /*      6.30: Added environment cleanup call function        */
-/*            DeallocateSortFunctionData.                    */
+/*            DeallocateCL_SortFunctionData.                    */
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
@@ -44,10 +44,10 @@
 
 #define _H_sortfun
 
-   void                           SortFunctionDefinitions(Environment *);
-   void                           MergeSort(Environment *,size_t,UDFValue *,
+   void                           CL_SortFunctionDefinitions(Environment *);
+   void                           CL_MergeSort(Environment *,size_t,UDFValue *,
                                             bool (*)(Environment *,UDFValue *,UDFValue *));
-   void                           SortFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_SortFunction(Environment *,UDFContext *,UDFValue *);
 
 #endif /* _H_sortfun */
 

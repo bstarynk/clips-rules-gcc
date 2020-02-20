@@ -16,13 +16,13 @@
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
-/*      6.24: Moved UserFunctions and EnvUserFunctions to    */
+/*      6.24: Moved CL_UserFunctions and EnvCL_UserFunctions to    */
 /*            the new userfunctions.c file.                  */
 /*                                                           */
 /*      6.40: Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
-/*            Moved CatchCtrlC to main.c.                    */
+/*            Moved CatchCtrlC to CL_main.c.                    */
 /*                                                           */
 /*************************************************************/
 
@@ -32,7 +32,7 @@
 /* a copy of this software and associated documentation files (the         */
 /* "Software"), to deal in the Software without restriction, including     */
 /* without limitation the rights to use, copy, modify, merge, publish,     */
-/* distribute, and/or sell copies of the Software, and to permit persons   */
+/* distribute, and/or sell copies of the Software, and to peCL_rmit persons   */
 /* to whom the Software is furnished to do so.                             */
 /*                                                                         */
 /* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS */
@@ -64,7 +64,7 @@
 /* LOCAL INTERNAL VARIABLE DEFINITIONS */
 /***************************************/
 
-   static Environment            *mainEnv;
+   static Environment            *CL_mainEnv;
 
 /****************************************/
 /* main: Starts execution of the expert */
@@ -74,18 +74,18 @@ int main(
   int argc,
   char *argv[])
   {
-   mainEnv = CreateEnvironment();
+   CL_mainEnv = CL_CreateEnvironment();
 
 #if UNIX_V || LINUX || DARWIN || UNIX_7 || WIN_GCC || WIN_MVC
    signal(SIGINT,CatchCtrlC);
 #endif
 
-   RerouteStdin(mainEnv,argc,argv);
-   CommandLoop(mainEnv);
+   CL_RerouteStdin(CL_mainEnv,argc,argv);
+   CL_CommandLoop(CL_mainEnv);
 
    /*==================================================================*/
-   /* Control does not normally return from the CommandLoop function.  */
-   /* However if you are embedding CLIPS, have replaced CommandLoop    */
+   /* Control does not noCL_rmally return from the CL_CommandLoop function.  */
+   /* However if you are embedding CLIPS, have replaced CL_CommandLoop    */
    /* with your own embedded calls that will return to this point, and */
    /* are running software that helps detect memory leaks, you need to */
    /* add function calls here to deallocate memory still being used by */
@@ -93,7 +93,7 @@ int main(
    /* can be currently executing.                                      */
    /*==================================================================*/
 
-   DestroyEnvironment(mainEnv);
+   CL_DestroyEnvironment(CL_mainEnv);
 
    return -1;
   }
@@ -105,8 +105,8 @@ int main(
 static void CatchCtrlC(
   int sgnl)
   {
-   SetHaltExecution(mainEnv,true);
-   CloseAllBatchSources(mainEnv);
+   SetCL_HaltExecution(CL_mainEnv,true);
+   CloseAllCL_BatchSources(CL_mainEnv);
    signal(SIGINT,CatchCtrlC);
   }
 #endif

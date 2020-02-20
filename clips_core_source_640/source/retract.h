@@ -28,7 +28,7 @@
 /*      6.30: Added support for hashed memories.             */
 /*                                                           */
 /*            Added additional developer statistics to help  */
-/*            analyze join network performance.              */
+/*            analyze join network perfoCL_rmance.              */
 /*                                                           */
 /*            Removed pseudo-facts used in not CEs.          */
 /*                                                           */
@@ -59,14 +59,14 @@ struct rdriveinfo
    struct rdriveinfo *next;
   };
 
-void                           NetworkRetract(Environment *,struct patternMatch *);
-void                           ReturnPartialMatch(Environment *,struct partialMatch *);
-void                           DestroyPartialMatch(Environment *,struct partialMatch *);
-void                           FlushGarbagePartialMatches(Environment *);
-void                           DeletePartialMatches(Environment *,struct partialMatch *);
-void                           PosEntryRetractBeta(Environment *,struct partialMatch *,struct partialMatch *,int);
-void                           PosEntryRetractAlpha(Environment *,struct partialMatch *,int);
-bool                           PartialMatchWillBeDeleted(Environment *,struct partialMatch *);
+void                           CL_NetworkCL_Retract(Environment *,struct patternMatch *);
+void                           CL_ReturnPartialMatch(Environment *,struct partialMatch *);
+void                           CL_DestroyPartialMatch(Environment *,struct partialMatch *);
+void                           CL_FlushGarbagePartialCL_Matches(Environment *);
+void                           CL_DeletePartialCL_Matches(Environment *,struct partialMatch *);
+void                           CL_PosEntryCL_RetractBeta(Environment *,struct partialMatch *,struct partialMatch *,int);
+void                           CL_PosEntryCL_RetractAlpha(Environment *,struct partialMatch *,int);
+bool                           CL_PartialMatchWillBeDeleted(Environment *,struct partialMatch *);
 
 #endif /* _H_retract */
 

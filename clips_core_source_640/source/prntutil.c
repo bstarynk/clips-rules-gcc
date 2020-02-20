@@ -18,13 +18,13 @@
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
-/*      6.24: Link error occurs for the SlotExistError       */
+/*      6.24: Link error occurs for the CL_SlotExistError       */
 /*            function when OBJECT_SYSTEM is set to 0 in     */
 /*            setup.h. DR0865                                */
 /*                                                           */
-/*            Added DataObjectToString function.             */
+/*            Added CL_DataObjectToString function.             */
 /*                                                           */
-/*            Added SlotExistError function.                 */
+/*            Added CL_SlotExistError function.                 */
 /*                                                           */
 /*      6.30: Support for long long integers.                */
 /*                                                           */
@@ -32,7 +32,7 @@
 /*                                                           */
 /*            Support for typed EXTERNAL_ADDRESS_TYPE.       */
 /*                                                           */
-/*            Used gensprintf and genstrcat instead of       */
+/*            Used CL_gensprintf and CL_genstrcat instead of       */
 /*            sprintf and strcat.                            */
 /*                                                           */
 /*            Changed integer type/precision.                */
@@ -50,8 +50,8 @@
 /*                                                           */
 /*            Added under/overflow error message.            */
 /*                                                           */
-/*      6.40: Added Env prefix to GetEvaluationError and     */
-/*            SetEvaluationError functions.                  */
+/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
+/*            SetCL_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -94,62 +94,62 @@
 #include "prntutil.h"
 
 /*****************************************************/
-/* InitializePrintUtilityData: Allocates environment */
+/* CL_InitializePrintUtilityData: Allocates environment */
 /*    data for print utility routines.               */
 /*****************************************************/
-void InitializePrintUtilityData(
+void CL_InitializePrintUtilityData(
   Environment *theEnv)
   {
-   AllocateEnvironmentData(theEnv,PRINT_UTILITY_DATA,sizeof(struct printUtilityData),NULL);
+   CL_AllocateEnvironmentData(theEnv,PRINT_UTILITY_DATA,sizeof(struct printUtilityData),NULL);
   }
 
 /************************************************************/
-/* WriteFloat: Controls printout of floating point numbers. */
+/* CL_WriteFloat: Controls printout of floating point numbers. */
 /************************************************************/
-void WriteFloat(
+void CL_WriteFloat(
   Environment *theEnv,
   const char *fileid,
   double number)
   {
    const char *theString;
 
-   theString = FloatToString(theEnv,number);
-   WriteString(theEnv,fileid,theString);
+   theString = CL_FloatToString(theEnv,number);
+   CL_WriteString(theEnv,fileid,theString);
   }
 
 /************************************************/
-/* WriteInteger: Controls printout of integers. */
+/* CL_WriteInteger: Controls printout of integers. */
 /************************************************/
-void WriteInteger(
+void CL_WriteInteger(
   Environment *theEnv,
   const char *logicalName,
   long long number)
   {
    char printBuffer[32];
 
-   gensprintf(printBuffer,"%lld",number);
-   WriteString(theEnv,logicalName,printBuffer);
+   CL_gensprintf(printBuffer,"%lld",number);
+   CL_WriteString(theEnv,logicalName,printBuffer);
   }
 
 /*******************************************/
-/* PrintUnsignedInteger: Controls printout */
+/* CL_PrintUnsignedInteger: Controls printout */
 /*   of unsigned integers.                 */
 /*******************************************/
-void PrintUnsignedInteger(
+void CL_PrintUnsignedInteger(
   Environment *theEnv,
   const char *logicalName,
   unsigned long long number)
   {
    char printBuffer[32];
 
-   gensprintf(printBuffer,"%llu",number);
-   WriteString(theEnv,logicalName,printBuffer);
+   CL_gensprintf(printBuffer,"%llu",number);
+   CL_WriteString(theEnv,logicalName,printBuffer);
   }
 
 /**************************************/
-/* PrintAtom: Prints an atomic value. */
+/* CL_PrintAtom: Prints an atomic value. */
 /**************************************/
-void PrintAtom(
+void CL_PrintAtom(
   Environment *theEnv,
   const char *logicalName,
   unsigned short type,
@@ -161,53 +161,53 @@ void PrintAtom(
    switch (type)
      {
       case FLOAT_TYPE:
-        WriteFloat(theEnv,logicalName,((CLIPSFloat *) value)->contents);
+        CL_WriteFloat(theEnv,logicalName,((CLIPSFloat *) value)->contents);
         break;
       case INTEGER_TYPE:
-        WriteInteger(theEnv,logicalName,((CLIPSInteger *) value)->contents);
+        CL_WriteInteger(theEnv,logicalName,((CLIPSInteger *) value)->contents);
         break;
       case SYMBOL_TYPE:
-        WriteString(theEnv,logicalName,((CLIPSLexeme *) value)->contents);
+        CL_WriteString(theEnv,logicalName,((CLIPSLexeme *) value)->contents);
         break;
       case STRING_TYPE:
         if (PrintUtilityData(theEnv)->PreserveEscapedCharacters)
-          { WriteString(theEnv,logicalName,StringPrintForm(theEnv,((CLIPSLexeme *) value)->contents)); }
+          { CL_WriteString(theEnv,logicalName,StringPrintFoCL_rm(theEnv,((CLIPSLexeme *) value)->contents)); }
         else
           {
-           WriteString(theEnv,logicalName,"\"");
-           WriteString(theEnv,logicalName,((CLIPSLexeme *) value)->contents);
-           WriteString(theEnv,logicalName,"\"");
+           CL_WriteString(theEnv,logicalName,"\"");
+           CL_WriteString(theEnv,logicalName,((CLIPSLexeme *) value)->contents);
+           CL_WriteString(theEnv,logicalName,"\"");
           }
         break;
 
       case EXTERNAL_ADDRESS_TYPE:
         theAddress = (CLIPSExternalAddress *) value;
 
-        if (PrintUtilityData(theEnv)->AddressesToStrings) WriteString(theEnv,logicalName,"\"");
+        if (PrintUtilityData(theEnv)->AddressesToStrings) CL_WriteString(theEnv,logicalName,"\"");
 
-        if ((EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type] != NULL) &&
-            (EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type]->longPrintFunction != NULL))
-          { (*EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type]->longPrintFunction)(theEnv,logicalName,value); }
+        if ((CL_EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type] != NULL) &&
+            (CL_EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type]->longCL_PrintFunction != NULL))
+          { (*CL_EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type]->longCL_PrintFunction)(theEnv,logicalName,value); }
         else
           {
-           WriteString(theEnv,logicalName,"<Pointer-");
+           CL_WriteString(theEnv,logicalName,"<Pointer-");
 
-           gensprintf(buffer,"%d-",theAddress->type);
-           WriteString(theEnv,logicalName,buffer);
+           CL_gensprintf(buffer,"%d-",theAddress->type);
+           CL_WriteString(theEnv,logicalName,buffer);
 
-           gensprintf(buffer,"%p",((CLIPSExternalAddress *) value)->contents);
-           WriteString(theEnv,logicalName,buffer);
-           WriteString(theEnv,logicalName,">");
+           CL_gensprintf(buffer,"%p",((CLIPSExternalAddress *) value)->contents);
+           CL_WriteString(theEnv,logicalName,buffer);
+           CL_WriteString(theEnv,logicalName,">");
           }
 
-        if (PrintUtilityData(theEnv)->AddressesToStrings) WriteString(theEnv,logicalName,"\"");
+        if (PrintUtilityData(theEnv)->AddressesToStrings) CL_WriteString(theEnv,logicalName,"\"");
         break;
 
 #if OBJECT_SYSTEM
       case INSTANCE_NAME_TYPE:
-        WriteString(theEnv,logicalName,"[");
-        WriteString(theEnv,logicalName,((CLIPSLexeme *) value)->contents);
-        WriteString(theEnv,logicalName,"]");
+        CL_WriteString(theEnv,logicalName,"[");
+        CL_WriteString(theEnv,logicalName,((CLIPSLexeme *) value)->contents);
+        CL_WriteString(theEnv,logicalName,"]");
         break;
 #endif
 
@@ -215,23 +215,23 @@ void PrintAtom(
         break;
 
       default:
-        if (EvaluationData(theEnv)->PrimitivesArray[type] == NULL) break;
-        if (EvaluationData(theEnv)->PrimitivesArray[type]->longPrintFunction == NULL)
+        if (CL_EvaluationData(theEnv)->PrimitivesArray[type] == NULL) break;
+        if (CL_EvaluationData(theEnv)->PrimitivesArray[type]->longCL_PrintFunction == NULL)
           {
-           WriteString(theEnv,logicalName,"<unknown atom type>");
+           CL_WriteString(theEnv,logicalName,"<unknown atom type>");
            break;
           }
-        (*EvaluationData(theEnv)->PrimitivesArray[type]->longPrintFunction)(theEnv,logicalName,value);
+        (*CL_EvaluationData(theEnv)->PrimitivesArray[type]->longCL_PrintFunction)(theEnv,logicalName,value);
         break;
      }
   }
 
 /**********************************************************/
-/* PrintTally: Prints a tally count indicating the number */
+/* CL_PrintTally: Prints a tally count indicating the number */
 /*   of items that have been displayed. Used by functions */
 /*   such as list-defrules.                               */
 /**********************************************************/
-void PrintTally(
+void CL_PrintTally(
   Environment *theEnv,
   const char *logicalName,
   unsigned long long count,
@@ -240,36 +240,36 @@ void PrintTally(
   {
    if (count == 0) return;
 
-   WriteString(theEnv,logicalName,"For a total of ");
-   PrintUnsignedInteger(theEnv,logicalName,count);
-   WriteString(theEnv,logicalName," ");
+   CL_WriteString(theEnv,logicalName,"For a total of ");
+   CL_PrintUnsignedInteger(theEnv,logicalName,count);
+   CL_WriteString(theEnv,logicalName," ");
 
-   if (count == 1) WriteString(theEnv,logicalName,singular);
-   else WriteString(theEnv,logicalName,plural);
+   if (count == 1) CL_WriteString(theEnv,logicalName,singular);
+   else CL_WriteString(theEnv,logicalName,plural);
 
-   WriteString(theEnv,logicalName,".\n");
+   CL_WriteString(theEnv,logicalName,".\n");
   }
 
 /********************************************/
-/* PrintErrorID: Prints the module name and */
+/* CL_PrintErrorID: Prints the module name and */
 /*   error ID for an error message.         */
 /********************************************/
-void PrintErrorID(
+void CL_PrintErrorID(
   Environment *theEnv,
   const char *module,
   int errorID,
   bool printCR)
   {
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   FlushParsingMessages(theEnv);
-   SetErrorFileName(theEnv,GetParsingFileName(theEnv));
-   ConstructData(theEnv)->ErrLineNumber = GetLineCount(theEnv);
+   CL_FlushParsingMessages(theEnv);
+   CL_SetErrorFileName(theEnv,CL_GetParsingFileName(theEnv));
+   ConstructData(theEnv)->ErrLineNumber = CL_GetLineCount(theEnv);
 #endif
-   if (printCR) WriteString(theEnv,STDERR,"\n");
-   WriteString(theEnv,STDERR,"[");
-   WriteString(theEnv,STDERR,module);
-   WriteInteger(theEnv,STDERR,errorID);
-   WriteString(theEnv,STDERR,"] ");
+   if (printCR) CL_WriteString(theEnv,STDERR,"\n");
+   CL_WriteString(theEnv,STDERR,"[");
+   CL_WriteString(theEnv,STDERR,module);
+   CL_WriteInteger(theEnv,STDERR,errorID);
+   CL_WriteString(theEnv,STDERR,"] ");
 
    /*==================================================*/
    /* Print the file name and line number if available */
@@ -278,42 +278,42 @@ void PrintErrorID(
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    if ((ConstructData(theEnv)->ParserErrorCallback == NULL) &&
-       (GetLoadInProgress(theEnv) == true))
+       (CL_GetCL_LoadInProgress(theEnv) == true))
      {
       const char *fileName;
 
-      fileName = GetParsingFileName(theEnv);
+      fileName = CL_GetParsingFileName(theEnv);
       if (fileName != NULL)
         {
-         WriteString(theEnv,STDERR,fileName);
-         WriteString(theEnv,STDERR,", Line ");
-         WriteInteger(theEnv,STDERR,GetLineCount(theEnv));
-         WriteString(theEnv,STDERR,": ");
+         CL_WriteString(theEnv,STDERR,fileName);
+         CL_WriteString(theEnv,STDERR,", Line ");
+         CL_WriteInteger(theEnv,STDERR,CL_GetLineCount(theEnv));
+         CL_WriteString(theEnv,STDERR,": ");
         }
      }
 #endif
   }
 
 /**********************************************/
-/* PrintWarningID: Prints the module name and */
+/* CL_PrintWarningID: Prints the module name and */
 /*   warning ID for a warning message.        */
 /**********************************************/
-void PrintWarningID(
+void CL_PrintWarningID(
   Environment *theEnv,
   const char *module,
   int warningID,
   bool printCR)
   {
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   FlushParsingMessages(theEnv);
-   SetWarningFileName(theEnv,GetParsingFileName(theEnv));
-   ConstructData(theEnv)->WrnLineNumber = GetLineCount(theEnv);
+   CL_FlushParsingMessages(theEnv);
+   CL_SetWarningFileName(theEnv,CL_GetParsingFileName(theEnv));
+   ConstructData(theEnv)->WrnLineNumber = CL_GetLineCount(theEnv);
 #endif
-   if (printCR) WriteString(theEnv,STDWRN,"\n");
-   WriteString(theEnv,STDWRN,"[");
-   WriteString(theEnv,STDWRN,module);
-   WriteInteger(theEnv,STDWRN,warningID);
-   WriteString(theEnv,STDWRN,"] ");
+   if (printCR) CL_WriteString(theEnv,STDWRN,"\n");
+   CL_WriteString(theEnv,STDWRN,"[");
+   CL_WriteString(theEnv,STDWRN,module);
+   CL_WriteInteger(theEnv,STDWRN,warningID);
+   CL_WriteString(theEnv,STDWRN,"] ");
 
    /*==================================================*/
    /* Print the file name and line number if available */
@@ -322,208 +322,208 @@ void PrintWarningID(
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    if ((ConstructData(theEnv)->ParserErrorCallback == NULL) &&
-       (GetLoadInProgress(theEnv) == true))
+       (CL_GetCL_LoadInProgress(theEnv) == true))
      {
       const char *fileName;
 
-      fileName = GetParsingFileName(theEnv);
+      fileName = CL_GetParsingFileName(theEnv);
       if (fileName != NULL)
         {
-         WriteString(theEnv,STDERR,fileName);
-         WriteString(theEnv,STDERR,", Line ");
-         WriteInteger(theEnv,STDERR,GetLineCount(theEnv));
-         WriteString(theEnv,STDERR,", ");
+         CL_WriteString(theEnv,STDERR,fileName);
+         CL_WriteString(theEnv,STDERR,", Line ");
+         CL_WriteInteger(theEnv,STDERR,CL_GetLineCount(theEnv));
+         CL_WriteString(theEnv,STDERR,", ");
         }
      }
 #endif
 
-   WriteString(theEnv,STDWRN,"WARNING: ");
+   CL_WriteString(theEnv,STDWRN,"WARNING: ");
   }
 
 /***************************************************/
-/* CantFindItemErrorMessage: Generic error message */
+/* CL_CantFindItemErrorMessage: Generic error message */
 /*  when an "item" can not be found.               */
 /***************************************************/
-void CantFindItemErrorMessage(
+void CL_CantFindItemErrorMessage(
   Environment *theEnv,
   const char *itemType,
   const char *itemName,
   bool useQuotes)
   {
-   PrintErrorID(theEnv,"PRNTUTIL",1,false);
-   WriteString(theEnv,STDERR,"Unable to find ");
-   WriteString(theEnv,STDERR,itemType);
-   WriteString(theEnv,STDERR," ");
-   if (useQuotes) WriteString(theEnv,STDERR,"'");
-   WriteString(theEnv,STDERR,itemName);
-   if (useQuotes) WriteString(theEnv,STDERR,"'");
-   WriteString(theEnv,STDERR,".\n");
+   CL_PrintErrorID(theEnv,"PRNTUTIL",1,false);
+   CL_WriteString(theEnv,STDERR,"Unable to find ");
+   CL_WriteString(theEnv,STDERR,itemType);
+   CL_WriteString(theEnv,STDERR," ");
+   if (useQuotes) CL_WriteString(theEnv,STDERR,"'");
+   CL_WriteString(theEnv,STDERR,itemName);
+   if (useQuotes) CL_WriteString(theEnv,STDERR,"'");
+   CL_WriteString(theEnv,STDERR,".\n");
   }
 
 /*****************************************************/
-/* CantFindItemInFunctionErrorMessage: Generic error */
+/* CL_CantFindItemInFunctionErrorMessage: Generic error */
 /*  message when an "item" can not be found.         */
 /*****************************************************/
-void CantFindItemInFunctionErrorMessage(
+void CL_CantFindItemInFunctionErrorMessage(
   Environment *theEnv,
   const char *itemType,
   const char *itemName,
   const char *func,
   bool useQuotes)
   {
-   PrintErrorID(theEnv,"PRNTUTIL",1,false);
-   WriteString(theEnv,STDERR,"Unable to find ");
-   WriteString(theEnv,STDERR,itemType);
-   WriteString(theEnv,STDERR," ");
-   if (useQuotes) WriteString(theEnv,STDERR,"'");
-   WriteString(theEnv,STDERR,itemName);
-   if (useQuotes) WriteString(theEnv,STDERR,"'");
-   WriteString(theEnv,STDERR," in function '");
-   WriteString(theEnv,STDERR,func);
-   WriteString(theEnv,STDERR,"'.\n");
+   CL_PrintErrorID(theEnv,"PRNTUTIL",1,false);
+   CL_WriteString(theEnv,STDERR,"Unable to find ");
+   CL_WriteString(theEnv,STDERR,itemType);
+   CL_WriteString(theEnv,STDERR," ");
+   if (useQuotes) CL_WriteString(theEnv,STDERR,"'");
+   CL_WriteString(theEnv,STDERR,itemName);
+   if (useQuotes) CL_WriteString(theEnv,STDERR,"'");
+   CL_WriteString(theEnv,STDERR," in function '");
+   CL_WriteString(theEnv,STDERR,func);
+   CL_WriteString(theEnv,STDERR,"'.\n");
   }
 
 /*****************************************************/
-/* CantDeleteItemErrorMessage: Generic error message */
+/* CL_CantDeleteItemErrorMessage: Generic error message */
 /*  when an "item" can not be deleted.               */
 /*****************************************************/
-void CantDeleteItemErrorMessage(
+void CL_CantDeleteItemErrorMessage(
   Environment *theEnv,
   const char *itemType,
   const char *itemName)
   {
-   PrintErrorID(theEnv,"PRNTUTIL",4,false);
-   WriteString(theEnv,STDERR,"Unable to delete ");
-   WriteString(theEnv,STDERR,itemType);
-   WriteString(theEnv,STDERR," '");
-   WriteString(theEnv,STDERR,itemName);
-   WriteString(theEnv,STDERR,"'.\n");
+   CL_PrintErrorID(theEnv,"PRNTUTIL",4,false);
+   CL_WriteString(theEnv,STDERR,"Unable to delete ");
+   CL_WriteString(theEnv,STDERR,itemType);
+   CL_WriteString(theEnv,STDERR," '");
+   CL_WriteString(theEnv,STDERR,itemName);
+   CL_WriteString(theEnv,STDERR,"'.\n");
   }
 
 /****************************************************/
-/* AlreadyParsedErrorMessage: Generic error message */
+/* CL_AlreadyParsedErrorMessage: Generic error message */
 /*  when an "item" has already been parsed.         */
 /****************************************************/
-void AlreadyParsedErrorMessage(
+void CL_AlreadyParsedErrorMessage(
   Environment *theEnv,
   const char *itemType,
   const char *itemName)
   {
-   PrintErrorID(theEnv,"PRNTUTIL",5,true);
-   WriteString(theEnv,STDERR,"The ");
-   if (itemType != NULL) WriteString(theEnv,STDERR,itemType);
+   CL_PrintErrorID(theEnv,"PRNTUTIL",5,true);
+   CL_WriteString(theEnv,STDERR,"The ");
+   if (itemType != NULL) CL_WriteString(theEnv,STDERR,itemType);
    if (itemName != NULL)
      {
-      WriteString(theEnv,STDERR,"'");
-      WriteString(theEnv,STDERR,itemName);
-      WriteString(theEnv,STDERR,"'");
+      CL_WriteString(theEnv,STDERR,"'");
+      CL_WriteString(theEnv,STDERR,itemName);
+      CL_WriteString(theEnv,STDERR,"'");
      }
-   WriteString(theEnv,STDERR," has already been parsed.\n");
+   CL_WriteString(theEnv,STDERR," has already been parsed.\n");
   }
 
 /*********************************************************/
-/* SyntaxErrorMessage: Generalized syntax error message. */
+/* CL_SyntaxErrorMessage: Generalized syntax error message. */
 /*********************************************************/
-void SyntaxErrorMessage(
+void CL_SyntaxErrorMessage(
   Environment *theEnv,
   const char *location)
   {
-   PrintErrorID(theEnv,"PRNTUTIL",2,true);
-   WriteString(theEnv,STDERR,"Syntax Error");
+   CL_PrintErrorID(theEnv,"PRNTUTIL",2,true);
+   CL_WriteString(theEnv,STDERR,"Syntax Error");
    if (location != NULL)
      {
-      WriteString(theEnv,STDERR,":  Check appropriate syntax for ");
-      WriteString(theEnv,STDERR,location);
+      CL_WriteString(theEnv,STDERR,":  Check appropriate syntax for ");
+      CL_WriteString(theEnv,STDERR,location);
      }
 
-   WriteString(theEnv,STDERR,".\n");
-   SetEvaluationError(theEnv,true);
+   CL_WriteString(theEnv,STDERR,".\n");
+   SetCL_EvaluationError(theEnv,true);
   }
 
 /****************************************************/
-/* LocalVariableErrorMessage: Generic error message */
+/* CL_LocalVariableErrorMessage: Generic error message */
 /*  when a local variable is accessed by an "item"  */
 /*  which can not access local variables.           */
 /****************************************************/
-void LocalVariableErrorMessage(
+void CL_LocalVariableErrorMessage(
   Environment *theEnv,
   const char *byWhat)
   {
-   PrintErrorID(theEnv,"PRNTUTIL",6,true);
-   WriteString(theEnv,STDERR,"Local variables can not be accessed by ");
-   WriteString(theEnv,STDERR,byWhat);
-   WriteString(theEnv,STDERR,".\n");
+   CL_PrintErrorID(theEnv,"PRNTUTIL",6,true);
+   CL_WriteString(theEnv,STDERR,"Local variables can not be accessed by ");
+   CL_WriteString(theEnv,STDERR,byWhat);
+   CL_WriteString(theEnv,STDERR,".\n");
   }
 
 /******************************************/
-/* SystemError: Generalized error message */
+/* CL_SystemError: Generalized error message */
 /*   for major internal errors.           */
 /******************************************/
-void SystemError(
+void CL_SystemError(
   Environment *theEnv,
   const char *module,
   int errorID)
   {
-   PrintErrorID(theEnv,"PRNTUTIL",3,true);
+   CL_PrintErrorID(theEnv,"PRNTUTIL",3,true);
 
-   WriteString(theEnv,STDERR,"\n*** ");
-   WriteString(theEnv,STDERR,APPLICATION_NAME);
-   WriteString(theEnv,STDERR," SYSTEM ERROR ***\n");
+   CL_WriteString(theEnv,STDERR,"\n*** ");
+   CL_WriteString(theEnv,STDERR,APPLICATION_NAME);
+   CL_WriteString(theEnv,STDERR," SYSTEM ERROR ***\n");
 
-   WriteString(theEnv,STDERR,"ID = ");
-   WriteString(theEnv,STDERR,module);
-   WriteInteger(theEnv,STDERR,errorID);
-   WriteString(theEnv,STDERR,"\n");
+   CL_WriteString(theEnv,STDERR,"ID = ");
+   CL_WriteString(theEnv,STDERR,module);
+   CL_WriteInteger(theEnv,STDERR,errorID);
+   CL_WriteString(theEnv,STDERR,"\n");
 
-   WriteString(theEnv,STDERR,APPLICATION_NAME);
-   WriteString(theEnv,STDERR," data structures are in an inconsistent or corrupted state.\n");
-   WriteString(theEnv,STDERR,"This error may have occurred from errors in user defined code.\n");
-   WriteString(theEnv,STDERR,"**************************\n");
+   CL_WriteString(theEnv,STDERR,APPLICATION_NAME);
+   CL_WriteString(theEnv,STDERR," data structures are in an inconsistent or corrupted state.\n");
+   CL_WriteString(theEnv,STDERR,"This error may have occurred from errors in user defined code.\n");
+   CL_WriteString(theEnv,STDERR,"**************************\n");
   }
 
 /*******************************************************/
-/* DivideByZeroErrorMessage: Generalized error message */
+/* CL_DivideByZeroErrorMessage: Generalized error message */
 /*   for when a function attempts to divide by zero.   */
 /*******************************************************/
-void DivideByZeroErrorMessage(
+void CL_DivideByZeroErrorMessage(
   Environment *theEnv,
   const char *functionName)
   {
-   PrintErrorID(theEnv,"PRNTUTIL",7,false);
-   WriteString(theEnv,STDERR,"Attempt to divide by zero in '");
-   WriteString(theEnv,STDERR,functionName);
-   WriteString(theEnv,STDERR,"' function.\n");
+   CL_PrintErrorID(theEnv,"PRNTUTIL",7,false);
+   CL_WriteString(theEnv,STDERR,"Attempt to divide by zero in '");
+   CL_WriteString(theEnv,STDERR,functionName);
+   CL_WriteString(theEnv,STDERR,"' function.\n");
   }
 
 /********************************************************/
-/* ArgumentOverUnderflowErrorMessage: Generalized error */
+/* CL_ArgumentOverUnderflowErrorMessage: Generalized error */
 /*   message for an integer under or overflow.          */
 /********************************************************/
-void ArgumentOverUnderflowErrorMessage(
+void CL_ArgumentOverUnderflowErrorMessage(
   Environment *theEnv,
   const char *functionName,
   bool error)
   {
    if (error)
      {
-      PrintErrorID(theEnv,"PRNTUTIL",17,false);
-      WriteString(theEnv,STDERR,"Over or underflow of long long integer in '");
-      WriteString(theEnv,STDERR,functionName);
-      WriteString(theEnv,STDERR,"' function.\n");
+      CL_PrintErrorID(theEnv,"PRNTUTIL",17,false);
+      CL_WriteString(theEnv,STDERR,"Over or underflow of long long integer in '");
+      CL_WriteString(theEnv,STDERR,functionName);
+      CL_WriteString(theEnv,STDERR,"' function.\n");
      }
    else
      {
-      PrintWarningID(theEnv,"PRNTUTIL",17,false);
-      WriteString(theEnv,STDWRN,"Over or underflow of long long integer in '");
-      WriteString(theEnv,STDWRN,functionName);
-      WriteString(theEnv,STDWRN,"' function.\n");
+      CL_PrintWarningID(theEnv,"PRNTUTIL",17,false);
+      CL_WriteString(theEnv,STDWRN,"Over or underflow of long long integer in '");
+      CL_WriteString(theEnv,STDWRN,functionName);
+      CL_WriteString(theEnv,STDWRN,"' function.\n");
      }
   }
 
 /*******************************************************/
-/* FloatToString: Converts number to KB string format. */
+/* CL_FloatToString: Converts number to KB string foCL_rmat. */
 /*******************************************************/
-const char *FloatToString(
+const char *CL_FloatToString(
   Environment *theEnv,
   double number)
   {
@@ -532,43 +532,43 @@ const char *FloatToString(
    char x;
    CLIPSLexeme *thePtr;
 
-   gensprintf(floatString,"%.15g",number);
+   CL_gensprintf(floatString,"%.15g",number);
 
    for (i = 0; (x = floatString[i]) != '\0'; i++)
      {
       if ((x == '.') || (x == 'e'))
         {
-         thePtr = CreateString(theEnv,floatString);
+         thePtr = CL_CreateString(theEnv,floatString);
          return thePtr->contents;
         }
      }
 
-   genstrcat(floatString,".0");
+   CL_genstrcat(floatString,".0");
 
-   thePtr = CreateString(theEnv,floatString);
+   thePtr = CL_CreateString(theEnv,floatString);
    return thePtr->contents;
   }
 
 /*******************************************************************/
-/* LongIntegerToString: Converts long integer to KB string format. */
+/* CL_LongIntegerToString: Converts long integer to KB string foCL_rmat. */
 /*******************************************************************/
-const char *LongIntegerToString(
+const char *CL_LongIntegerToString(
   Environment *theEnv,
   long long number)
   {
    char buffer[50];
    CLIPSLexeme *thePtr;
 
-   gensprintf(buffer,"%lld",number);
+   CL_gensprintf(buffer,"%lld",number);
 
-   thePtr = CreateString(theEnv,buffer);
+   thePtr = CL_CreateString(theEnv,buffer);
    return thePtr->contents;
   }
 
 /******************************************************************/
-/* DataObjectToString: Converts a UDFValue to KB string format. */
+/* CL_DataObjectToString: Converts a UDFValue to KB string foCL_rmat. */
 /******************************************************************/
-const char *DataObjectToString(
+const char *CL_DataObjectToString(
   Environment *theEnv,
   UDFValue *theDO)
   {
@@ -578,7 +578,7 @@ const char *DataObjectToString(
    const char *prefix, *postfix;
    size_t length;
    CLIPSExternalAddress *theAddress;
-   StringBuilder *theSB;
+   StringCL_Builder *theSB;
    
    char buffer[30];
 
@@ -586,7 +586,7 @@ const char *DataObjectToString(
      {
       case MULTIFIELD_TYPE:
          prefix = "(";
-         theString = ImplodeMultifield(theEnv,theDO)->contents;
+         theString = CL_ImplodeMultifield(theEnv,theDO)->contents;
          postfix = ")";
          break;
 
@@ -606,10 +606,10 @@ const char *DataObjectToString(
          return theDO->lexemeValue->contents;
 
       case FLOAT_TYPE:
-         return(FloatToString(theEnv,theDO->floatValue->contents));
+         return(CL_FloatToString(theEnv,theDO->floatValue->contents));
 
       case INTEGER_TYPE:
-         return(LongIntegerToString(theEnv,theDO->integerValue->contents));
+         return(CL_LongIntegerToString(theEnv,theDO->integerValue->contents));
 
       case VOID_TYPE:
          return("");
@@ -628,7 +628,7 @@ const char *DataObjectToString(
          else
            {
             prefix = "<Instance-";
-            theString = GetFullInstanceName(theEnv,theDO->instanceValue)->contents;
+            theString = CL_GetFullCL_InstanceName(theEnv,theDO->instanceValue)->contents;
             postfix = ">";
            }
 
@@ -638,29 +638,29 @@ const char *DataObjectToString(
       case EXTERNAL_ADDRESS_TYPE:
         theAddress = theDO->externalAddressValue;
         
-        theSB = CreateStringBuilder(theEnv,30);
+        theSB = CL_CreateStringCL_Builder(theEnv,30);
 
-        OpenStringBuilderDestination(theEnv,"DOTS",theSB);
+        OpenStringCL_BuilderDestination(theEnv,"DOTS",theSB);
 
-        if ((EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type] != NULL) &&
-            (EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type]->longPrintFunction != NULL))
-          { (*EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type]->longPrintFunction)(theEnv,"DOTS",theAddress); }
+        if ((CL_EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type] != NULL) &&
+            (CL_EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type]->longCL_PrintFunction != NULL))
+          { (*CL_EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type]->longCL_PrintFunction)(theEnv,"DOTS",theAddress); }
         else
           {
-           WriteString(theEnv,"DOTS","<Pointer-");
+           CL_WriteString(theEnv,"DOTS","<Pointer-");
 
-           gensprintf(buffer,"%d-",theAddress->type);
-           WriteString(theEnv,"DOTS",buffer);
+           CL_gensprintf(buffer,"%d-",theAddress->type);
+           CL_WriteString(theEnv,"DOTS",buffer);
 
-           gensprintf(buffer,"%p",theAddress->contents);
-           WriteString(theEnv,"DOTS",buffer);
-           WriteString(theEnv,"DOTS",">");
+           CL_gensprintf(buffer,"%p",theAddress->contents);
+           CL_WriteString(theEnv,"DOTS",buffer);
+           CL_WriteString(theEnv,"DOTS",">");
           }
 
-        thePtr = CreateString(theEnv,theSB->contents);
-        SBDispose(theSB);
+        thePtr = CL_CreateString(theEnv,theSB->contents);
+        CL_SBDispose(theSB);
 
-        CloseStringBuilderDestination(theEnv,"DOTS");
+        CloseStringCL_BuilderDestination(theEnv,"DOTS");
         return thePtr->contents;
 
 #if DEFTEMPLATE_CONSTRUCT
@@ -668,8 +668,8 @@ const char *DataObjectToString(
          if (theDO->factValue == &FactData(theEnv)->DummyFact)
            { return("<Dummy Fact>"); }
 
-         gensprintf(buffer,"<Fact-%lld>",theDO->factValue->factIndex);
-         thePtr = CreateString(theEnv,buffer);
+         CL_gensprintf(buffer,"<Fact-%lld>",theDO->factValue->factIndex);
+         thePtr = CL_CreateString(theEnv,buffer);
          return thePtr->contents;
 #endif
 
@@ -678,198 +678,198 @@ const char *DataObjectToString(
      }
 
    length = strlen(prefix) + strlen(theString) + strlen(postfix) + 1;
-   newString = (char *) genalloc(theEnv,length);
+   newString = (char *) CL_genalloc(theEnv,length);
    newString[0] = '\0';
-   genstrcat(newString,prefix);
-   genstrcat(newString,theString);
-   genstrcat(newString,postfix);
-   thePtr = CreateString(theEnv,newString);
-   genfree(theEnv,newString,length);
+   CL_genstrcat(newString,prefix);
+   CL_genstrcat(newString,theString);
+   CL_genstrcat(newString,postfix);
+   thePtr = CL_CreateString(theEnv,newString);
+   CL_genfree(theEnv,newString,length);
    return thePtr->contents;
   }
 
 /************************************************************/
-/* SalienceInformationError: Error message for errors which */
+/* SalienceInfoCL_rmationError: Error message for errors which */
 /*   occur during the evaluation of a salience value.       */
 /************************************************************/
-void SalienceInformationError(
+void SalienceInfoCL_rmationError(
   Environment *theEnv,
   const char *constructType,
   const char *constructName)
   {
-   PrintErrorID(theEnv,"PRNTUTIL",8,true);
-   WriteString(theEnv,STDERR,"This error occurred while evaluating the salience");
+   CL_PrintErrorID(theEnv,"PRNTUTIL",8,true);
+   CL_WriteString(theEnv,STDERR,"This error occurred while evaluating the salience");
    if (constructName != NULL)
      {
-      WriteString(theEnv,STDERR," for ");
-      WriteString(theEnv,STDERR,constructType);
-      WriteString(theEnv,STDERR," '");
-      WriteString(theEnv,STDERR,constructName);
-      WriteString(theEnv,STDERR,"'");
+      CL_WriteString(theEnv,STDERR," for ");
+      CL_WriteString(theEnv,STDERR,constructType);
+      CL_WriteString(theEnv,STDERR," '");
+      CL_WriteString(theEnv,STDERR,constructName);
+      CL_WriteString(theEnv,STDERR,"'");
      }
-   WriteString(theEnv,STDERR,".\n");
+   CL_WriteString(theEnv,STDERR,".\n");
   }
 
 /**********************************************************/
-/* SalienceRangeError: Error message that is printed when */
+/* CL_SalienceRangeError: Error message that is printed when */
 /*   a salience value does not fall between the minimum   */
 /*   and maximum salience values.                         */
 /**********************************************************/
-void SalienceRangeError(
+void CL_SalienceRangeError(
   Environment *theEnv,
   int min,
   int max)
   {
-   PrintErrorID(theEnv,"PRNTUTIL",9,true);
-   WriteString(theEnv,STDERR,"Salience value out of range ");
-   WriteInteger(theEnv,STDERR,min);
-   WriteString(theEnv,STDERR," to ");
-   WriteInteger(theEnv,STDERR,max);
-   WriteString(theEnv,STDERR,".\n");
+   CL_PrintErrorID(theEnv,"PRNTUTIL",9,true);
+   CL_WriteString(theEnv,STDERR,"Salience value out of range ");
+   CL_WriteInteger(theEnv,STDERR,min);
+   CL_WriteString(theEnv,STDERR," to ");
+   CL_WriteInteger(theEnv,STDERR,max);
+   CL_WriteString(theEnv,STDERR,".\n");
   }
 
 /***************************************************************/
-/* SalienceNonIntegerError: Error message that is printed when */
+/* CL_SalienceNonIntegerError: Error message that is printed when */
 /*   a rule's salience does not evaluate to an integer.        */
 /***************************************************************/
-void SalienceNonIntegerError(
+void CL_SalienceNonIntegerError(
   Environment *theEnv)
   {
-   PrintErrorID(theEnv,"PRNTUTIL",10,true);
-   WriteString(theEnv,STDERR,"Salience value must be an integer value.\n");
+   CL_PrintErrorID(theEnv,"PRNTUTIL",10,true);
+   CL_WriteString(theEnv,STDERR,"Salience value must be an integer value.\n");
   }
 
 /****************************************************/
-/* FactRetractedErrorMessage: Generic error message */
+/* CL_FactCL_RetractedErrorMessage: Generic error message */
 /*  when a fact has been retracted.                 */
 /****************************************************/
-void FactRetractedErrorMessage(
+void CL_FactCL_RetractedErrorMessage(
   Environment *theEnv,
   Fact *theFact)
   {
    char tempBuffer[20];
    
-   PrintErrorID(theEnv,"PRNTUTIL",11,false);
-   WriteString(theEnv,STDERR,"The fact ");
-   gensprintf(tempBuffer,"f-%lld",theFact->factIndex);
-   WriteString(theEnv,STDERR,tempBuffer);
-   WriteString(theEnv,STDERR," has been retracted.\n");
+   CL_PrintErrorID(theEnv,"PRNTUTIL",11,false);
+   CL_WriteString(theEnv,STDERR,"The fact ");
+   CL_gensprintf(tempBuffer,"f-%lld",theFact->factIndex);
+   CL_WriteString(theEnv,STDERR,tempBuffer);
+   CL_WriteString(theEnv,STDERR," has been retracted.\n");
   }
 
 /****************************************************/
-/* FactVarSlotErrorMessage1: Generic error message  */
+/* CL_FactVarSlotErrorMessage1: Generic error message  */
 /*   when a var/slot reference accesses a fact that */
 /*   has been retracted.                            */
 /****************************************************/
-void FactVarSlotErrorMessage1(
+void CL_FactVarSlotErrorMessage1(
   Environment *theEnv,
   Fact *theFact,
   const char *varSlot)
   {
    char tempBuffer[20];
    
-   PrintErrorID(theEnv,"PRNTUTIL",12,false);
+   CL_PrintErrorID(theEnv,"PRNTUTIL",12,false);
    
-   WriteString(theEnv,STDERR,"The variable/slot reference ?");
-   WriteString(theEnv,STDERR,varSlot);
-   WriteString(theEnv,STDERR," cannot be resolved because the referenced fact ");
-   gensprintf(tempBuffer,"f-%lld",theFact->factIndex);
-   WriteString(theEnv,STDERR,tempBuffer);
-   WriteString(theEnv,STDERR," has been retracted.\n");
+   CL_WriteString(theEnv,STDERR,"The variable/slot reference ?");
+   CL_WriteString(theEnv,STDERR,varSlot);
+   CL_WriteString(theEnv,STDERR," cannot be resolved because the referenced fact ");
+   CL_gensprintf(tempBuffer,"f-%lld",theFact->factIndex);
+   CL_WriteString(theEnv,STDERR,tempBuffer);
+   CL_WriteString(theEnv,STDERR," has been retracted.\n");
   }
 
 /****************************************************/
-/* FactVarSlotErrorMessage2: Generic error message  */
+/* CL_FactVarSlotErrorMessage2: Generic error message  */
 /*   when a var/slot reference accesses an invalid  */
 /*   slot.                                          */
 /****************************************************/
-void FactVarSlotErrorMessage2(
+void CL_FactVarSlotErrorMessage2(
   Environment *theEnv,
   Fact *theFact,
   const char *varSlot)
   {
    char tempBuffer[20];
    
-   PrintErrorID(theEnv,"PRNTUTIL",13,false);
+   CL_PrintErrorID(theEnv,"PRNTUTIL",13,false);
    
-   WriteString(theEnv,STDERR,"The variable/slot reference ?");
-   WriteString(theEnv,STDERR,varSlot);
-   WriteString(theEnv,STDERR," is invalid because the referenced fact ");
-   gensprintf(tempBuffer,"f-%lld",theFact->factIndex);
-   WriteString(theEnv,STDERR,tempBuffer);
-   WriteString(theEnv,STDERR," does not contain the specified slot.\n");
+   CL_WriteString(theEnv,STDERR,"The variable/slot reference ?");
+   CL_WriteString(theEnv,STDERR,varSlot);
+   CL_WriteString(theEnv,STDERR," is invalid because the referenced fact ");
+   CL_gensprintf(tempBuffer,"f-%lld",theFact->factIndex);
+   CL_WriteString(theEnv,STDERR,tempBuffer);
+   CL_WriteString(theEnv,STDERR," does not contain the specified slot.\n");
   }
 
 /******************************************************/
-/* InvalidVarSlotErrorMessage: Generic error message  */
+/* CL_InvalidVarSlotErrorMessage: Generic error message  */
 /*   when a var/slot reference accesses an invalid    */
 /*   slot.                                            */
 /******************************************************/
-void InvalidVarSlotErrorMessage(
+void CL_InvalidVarSlotErrorMessage(
   Environment *theEnv,
   const char *varSlot)
   {
-   PrintErrorID(theEnv,"PRNTUTIL",14,false);
+   CL_PrintErrorID(theEnv,"PRNTUTIL",14,false);
    
-   WriteString(theEnv,STDERR,"The variable/slot reference ?");
-   WriteString(theEnv,STDERR,varSlot);
-   WriteString(theEnv,STDERR," is invalid because slot names must be symbols.\n");
+   CL_WriteString(theEnv,STDERR,"The variable/slot reference ?");
+   CL_WriteString(theEnv,STDERR,varSlot);
+   CL_WriteString(theEnv,STDERR," is invalid because slot names must be symbols.\n");
   }
 
 /*******************************************************/
-/* InstanceVarSlotErrorMessage1: Generic error message */
+/* CL_InstanceVarSlotErrorMessage1: Generic error message */
 /*   when a var/slot reference accesses an instance    */
 /*   that has been deleted.                            */
 /*******************************************************/
-void InstanceVarSlotErrorMessage1(
+void CL_InstanceVarSlotErrorMessage1(
   Environment *theEnv,
   Instance *theInstance,
   const char *varSlot)
   {
-   PrintErrorID(theEnv,"PRNTUTIL",15,false);
+   CL_PrintErrorID(theEnv,"PRNTUTIL",15,false);
    
-   WriteString(theEnv,STDERR,"The variable/slot reference ?");
-   WriteString(theEnv,STDERR,varSlot);
-   WriteString(theEnv,STDERR," cannot be resolved because the referenced instance [");
-   WriteString(theEnv,STDERR,theInstance->name->contents);
-   WriteString(theEnv,STDERR,"] has been deleted.\n");
+   CL_WriteString(theEnv,STDERR,"The variable/slot reference ?");
+   CL_WriteString(theEnv,STDERR,varSlot);
+   CL_WriteString(theEnv,STDERR," cannot be resolved because the referenced instance [");
+   CL_WriteString(theEnv,STDERR,theInstance->name->contents);
+   CL_WriteString(theEnv,STDERR,"] has been deleted.\n");
   }
   
 /************************************************/
-/* InstanceVarSlotErrorMessage2: Generic error  */
+/* CL_InstanceVarSlotErrorMessage2: Generic error  */
 /*   message when a var/slot reference accesses */
 /*   an invalid slot.                           */
 /************************************************/
-void InstanceVarSlotErrorMessage2(
+void CL_InstanceVarSlotErrorMessage2(
   Environment *theEnv,
   Instance *theInstance,
   const char *varSlot)
   {
-   PrintErrorID(theEnv,"PRNTUTIL",16,false);
+   CL_PrintErrorID(theEnv,"PRNTUTIL",16,false);
    
-   WriteString(theEnv,STDERR,"The variable/slot reference ?");
-   WriteString(theEnv,STDERR,varSlot);
-   WriteString(theEnv,STDERR," is invalid because the referenced instance [");
-   WriteString(theEnv,STDERR,theInstance->name->contents);
-   WriteString(theEnv,STDERR,"] does not contain the specified slot.\n");
+   CL_WriteString(theEnv,STDERR,"The variable/slot reference ?");
+   CL_WriteString(theEnv,STDERR,varSlot);
+   CL_WriteString(theEnv,STDERR," is invalid because the referenced instance [");
+   CL_WriteString(theEnv,STDERR,theInstance->name->contents);
+   CL_WriteString(theEnv,STDERR,"] does not contain the specified slot.\n");
   }
 
 /***************************************************/
-/* SlotExistError: Prints out an appropriate error */
+/* CL_SlotExistError: Prints out an appropriate error */
 /*   message when a slot cannot be found for a     */
 /*   function. Input to the function is the slot   */
 /*   name and the function name.                   */
 /***************************************************/
-void SlotExistError(
+void CL_SlotExistError(
   Environment *theEnv,
   const char *sname,
   const char *func)
   {
-   PrintErrorID(theEnv,"INSFUN",3,false);
-   WriteString(theEnv,STDERR,"No such slot '");
-   WriteString(theEnv,STDERR,sname);
-   WriteString(theEnv,STDERR,"' in function '");
-   WriteString(theEnv,STDERR,func);
-   WriteString(theEnv,STDERR,"'.\n");
-   SetEvaluationError(theEnv,true);
+   CL_PrintErrorID(theEnv,"INSFUN",3,false);
+   CL_WriteString(theEnv,STDERR,"No such slot '");
+   CL_WriteString(theEnv,STDERR,sname);
+   CL_WriteString(theEnv,STDERR,"' in function '");
+   CL_WriteString(theEnv,STDERR,func);
+   CL_WriteString(theEnv,STDERR,"'.\n");
+   SetCL_EvaluationError(theEnv,true);
   }

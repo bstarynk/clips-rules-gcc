@@ -17,29 +17,29 @@
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
-/*      6.23: Added support for templates maintaining their  */
+/*      6.23: Added support for templates CL_maintaining their  */
 /*            own list of facts.                             */
 /*                                                           */
 /*      6.24: Renamed BOOLEAN macro type to intBool.         */
 /*                                                           */
 /*            Added additional arguments to                  */
-/*            InvalidDeftemplateSlotMessage function.        */
+/*            CL_InvalidDeftemplateSlotMessage function.        */
 /*                                                           */
 /*            Added additional arguments to                  */
-/*            PrintTemplateFact function.                    */
+/*            CL_PrintTemplateFact function.                    */
 /*                                                           */
 /*      6.30: Support for long long integers.                */
 /*                                                           */
-/*            Used gensprintf instead of sprintf.            */
+/*            Used CL_gensprintf instead of sprintf.            */
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
-/*      6.40: Added Env prefix to GetEvaluationError and     */
-/*            SetEvaluationError functions.                  */
+/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
+/*            SetCL_EvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to GetHaltExecution and       */
-/*            SetHaltExecution functions.                    */
+/*            Added Env prefix to CL_GetCL_HaltExecution and       */
+/*            SetCL_HaltExecution functions.                    */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -52,7 +52,7 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/*            Watch facts for modify command only prints     */
+/*            CL_Watch facts for modify command only prints     */
 /*            changed slots.                                 */
 /*                                                           */
 /*************************************************************/
@@ -91,78 +91,78 @@
    static struct templateSlot     *GetNextTemplateSlotToPrint(Environment *,struct fact *,struct templateSlot *,int *,int,const char *);
 
 /********************************************************/
-/* InvalidDeftemplateSlotMessage: Generic error message */
+/* CL_InvalidDeftemplateSlotMessage: Generic error message */
 /*   for use when a specified slot name isn't defined   */
 /*   in its corresponding deftemplate.                  */
 /********************************************************/
-void InvalidDeftemplateSlotMessage(
+void CL_InvalidDeftemplateSlotMessage(
   Environment *theEnv,
   const char *slotName,
   const char *deftemplateName,
   bool printCR)
   {
-   PrintErrorID(theEnv,"TMPLTDEF",1,printCR);
-   WriteString(theEnv,STDERR,"Invalid slot '");
-   WriteString(theEnv,STDERR,slotName);
-   WriteString(theEnv,STDERR,"' not defined in corresponding deftemplate '");
-   WriteString(theEnv,STDERR,deftemplateName);
-   WriteString(theEnv,STDERR,"'.\n");
+   CL_PrintErrorID(theEnv,"TMPLTDEF",1,printCR);
+   CL_WriteString(theEnv,STDERR,"Invalid slot '");
+   CL_WriteString(theEnv,STDERR,slotName);
+   CL_WriteString(theEnv,STDERR,"' not defined in corresponding deftemplate '");
+   CL_WriteString(theEnv,STDERR,deftemplateName);
+   CL_WriteString(theEnv,STDERR,"'.\n");
   }
 
 /**********************************************************/
-/* SingleFieldSlotCardinalityError: Generic error message */
+/* CL_SingleFieldCL_SlotCardinalityError: Generic error message */
 /*   used when an attempt is made to placed a multifield  */
 /*   value into a single field slot.                      */
 /**********************************************************/
-void SingleFieldSlotCardinalityError(
+void CL_SingleFieldCL_SlotCardinalityError(
   Environment *theEnv,
   const char *slotName)
   {
-   PrintErrorID(theEnv,"TMPLTDEF",2,true);
-   WriteString(theEnv,STDERR,"The single field slot '");
-   WriteString(theEnv,STDERR,slotName);
-   WriteString(theEnv,STDERR,"' can only contain a single field value.\n");
+   CL_PrintErrorID(theEnv,"TMPLTDEF",2,true);
+   CL_WriteString(theEnv,STDERR,"The single field slot '");
+   CL_WriteString(theEnv,STDERR,slotName);
+   CL_WriteString(theEnv,STDERR,"' can only contain a single field value.\n");
   }
 
 /**********************************************************************/
-/* MultiIntoSingleFieldSlotError: Determines if a multifield value is */
+/* CL_MultiIntoSingleFieldSlotError: DeteCL_rmines if a multifield value is */
 /*   being placed into a single field slot of a deftemplate fact.     */
 /**********************************************************************/
-void MultiIntoSingleFieldSlotError(
+void CL_MultiIntoSingleFieldSlotError(
   Environment *theEnv,
   struct templateSlot *theSlot,
   Deftemplate *theDeftemplate)
   {
-   PrintErrorID(theEnv,"TMPLTFUN",1,true);
-   WriteString(theEnv,STDERR,"Attempted to assert a multifield value ");
-   WriteString(theEnv,STDERR,"into the single field slot ");
+   CL_PrintErrorID(theEnv,"TMPLTFUN",1,true);
+   CL_WriteString(theEnv,STDERR,"Attempted to assert a multifield value ");
+   CL_WriteString(theEnv,STDERR,"into the single field slot ");
    if (theSlot != NULL)
      {
-      WriteString(theEnv,STDERR,"'");
-      WriteString(theEnv,STDERR,theSlot->slotName->contents);
-      WriteString(theEnv,STDERR,"'");
+      CL_WriteString(theEnv,STDERR,"'");
+      CL_WriteString(theEnv,STDERR,theSlot->slotName->contents);
+      CL_WriteString(theEnv,STDERR,"'");
      }
    else
-     { WriteString(theEnv,STDERR,"<<unknown>>"); }
-   WriteString(theEnv,STDERR," of deftemplate ");
+     { CL_WriteString(theEnv,STDERR,"<<unknown>>"); }
+   CL_WriteString(theEnv,STDERR," of deftemplate ");
    if (theDeftemplate != NULL)
      {
-      WriteString(theEnv,STDERR,"'");
-      WriteString(theEnv,STDERR,theDeftemplate->header.name->contents);
-      WriteString(theEnv,STDERR,"'");
+      CL_WriteString(theEnv,STDERR,"'");
+      CL_WriteString(theEnv,STDERR,theDeftemplate->header.name->contents);
+      CL_WriteString(theEnv,STDERR,"'");
      }
    else
-     { WriteString(theEnv,STDERR,"<<unknown>>"); }
-   WriteString(theEnv,STDERR,".\n");
+     { CL_WriteString(theEnv,STDERR,"<<unknown>>"); }
+   CL_WriteString(theEnv,STDERR,".\n");
 
-   SetEvaluationError(theEnv,true);
+   SetCL_EvaluationError(theEnv,true);
   }
 
 /**************************************************************/
-/* CheckTemplateFact: Checks a fact to see if it violates any */
+/* CL_CheckTemplateFact: Checks a fact to see if it violates any */
 /*   deftemplate type, allowed-..., or range specifications.  */
 /**************************************************************/
-void CheckTemplateFact(
+void CL_CheckTemplateFact(
   Environment *theEnv,
   Fact *theFact)
   {
@@ -174,14 +174,14 @@ void CheckTemplateFact(
    char thePlace[20];
    ConstraintViolationType rv;
 
-   if (! GetDynamicConstraintChecking(theEnv)) return;
+   if (! CL_GetDynamicConstraintChecking(theEnv)) return;
 
    sublist = theFact->theProposition.contents;
 
    /*========================================================*/
    /* If the deftemplate corresponding to the first field of */
    /* of the fact cannot be found, then the fact cannot be   */
-   /* checked against the deftemplate format.                */
+   /* checked against the deftemplate foCL_rmat.                */
    /*========================================================*/
 
    theDeftemplate = theFact->whichDeftemplate;
@@ -198,7 +198,7 @@ void CheckTemplateFact(
         slotPtr = slotPtr->next)
      {
       /*================================================*/
-      /* Store the slot value in the appropriate format */
+      /* Store the slot value in the appropriate foCL_rmat */
       /* for a call to the constraint checking routine. */
       /*================================================*/
 
@@ -220,17 +220,17 @@ void CheckTemplateFact(
       /* if a constraint violation occurred.         */
       /*=============================================*/
 
-      rv = ConstraintCheckDataObject(theEnv,&theData,slotPtr->constraints);
+      rv = CL_ConstraintCheckDataObject(theEnv,&theData,slotPtr->constraints);
       if (rv != NO_VIOLATION)
         {
-         gensprintf(thePlace,"fact f-%lld",theFact->factIndex);
+         CL_gensprintf(thePlace,"fact f-%lld",theFact->factIndex);
 
-         PrintErrorID(theEnv,"CSTRNCHK",1,true);
-         WriteString(theEnv,STDERR,"Slot value ");
-         WriteUDFValue(theEnv,STDERR,&theData);
-         ConstraintViolationErrorMessage(theEnv,NULL,thePlace,false,0,slotPtr->slotName,
+         CL_PrintErrorID(theEnv,"CSTRNCHK",1,true);
+         CL_WriteString(theEnv,STDERR,"Slot value ");
+         CL_WriteUDFValue(theEnv,STDERR,&theData);
+         CL_ConstraintViolationErrorMessage(theEnv,NULL,thePlace,false,0,slotPtr->slotName,
                                          0,rv,slotPtr->constraints,true);
-         SetHaltExecution(theEnv,true);
+         SetCL_HaltExecution(theEnv,true);
          return;
         }
      }
@@ -239,11 +239,11 @@ void CheckTemplateFact(
   }
 
 /***********************************************************************/
-/* CheckRHSSlotTypes: Checks the validity of a change to a slot as the */
+/* CL_CheckRHSCL_SlotTypes: Checks the validity of a change to a slot as the */
 /*   result of an assert, modify, or duplicate command. This checking  */
-/*   is performed statically (i.e. when the command is being parsed).  */
+/*   is perfoCL_rmed statically (i.e. when the command is being parsed).  */
 /***********************************************************************/
-bool CheckRHSSlotTypes(
+bool CL_CheckRHSCL_SlotTypes(
   Environment *theEnv,
   struct expr *rhsSlots,
   struct templateSlot *slotPtr,
@@ -252,12 +252,12 @@ bool CheckRHSSlotTypes(
    ConstraintViolationType rv;
    const char *theName;
 
-   rv = ConstraintCheckExpressionChain(theEnv,rhsSlots,slotPtr->constraints);
+   rv = CL_ConstraintCheckExpressionChain(theEnv,rhsSlots,slotPtr->constraints);
    if (rv != NO_VIOLATION)
      {
       if (rv != CARDINALITY_VIOLATION) theName = "A literal slot value";
       else theName = "Literal slot values";
-      ConstraintViolationErrorMessage(theEnv,theName,thePlace,true,0,
+      CL_ConstraintViolationErrorMessage(theEnv,theName,thePlace,true,0,
                                       slotPtr->slotName,0,rv,slotPtr->constraints,true);
       return false;
      }
@@ -266,10 +266,10 @@ bool CheckRHSSlotTypes(
   }
 
 /*********************************************************/
-/* GetNthSlot: Given a deftemplate and an integer index, */
+/* CL_GetNthSlot: Given a deftemplate and an integer index, */
 /*   returns the nth slot of a deftemplate.              */
 /*********************************************************/
-struct templateSlot *GetNthSlot(
+struct templateSlot *CL_GetNthSlot(
   Deftemplate *theDeftemplate,
   long long position)
   {
@@ -288,10 +288,10 @@ struct templateSlot *GetNthSlot(
   }
 
 /*******************************************************/
-/* FindSlotPosition: Finds the position of a specified */
+/* CL_FindSlotPosition: Finds the position of a specified */
 /*   slot in a deftemplate structure.                  */
 /*******************************************************/
-int FindSlotPosition(
+int CL_FindSlotPosition(
   Deftemplate *theDeftemplate,
   CLIPSLexeme *name)
   {
@@ -318,8 +318,8 @@ static void PrintTemplateSlot(
   struct templateSlot *slotPtr,
   CLIPSValue *slotValue)
   {
-   WriteString(theEnv,logicalName,"(");
-   WriteString(theEnv,logicalName,slotPtr->slotName->contents);
+   CL_WriteString(theEnv,logicalName,"(");
+   CL_WriteString(theEnv,logicalName,slotPtr->slotName->contents);
 
    /*======================================================*/
    /* Print the value of the slot for a single field slot. */
@@ -327,8 +327,8 @@ static void PrintTemplateSlot(
 
    if (slotPtr->multislot == false)
      {
-      WriteString(theEnv,logicalName," ");
-      PrintAtom(theEnv,logicalName,((TypeHeader *) slotValue->value)->type,slotValue->value);
+      CL_WriteString(theEnv,logicalName," ");
+      CL_PrintAtom(theEnv,logicalName,((TypeHeader *) slotValue->value)->type,slotValue->value);
      }
 
    /*==========================================================*/
@@ -342,8 +342,8 @@ static void PrintTemplateSlot(
       theSegment = (Multifield *) slotValue->value;
       if (theSegment->length > 0)
         {
-         WriteString(theEnv,logicalName," ");
-         PrintMultifieldDriver(theEnv,logicalName,theSegment,0,theSegment->length,false);
+         CL_WriteString(theEnv,logicalName," ");
+         CL_PrintMultifieldDriver(theEnv,logicalName,theSegment,0,theSegment->length,false);
         }
      }
 
@@ -351,7 +351,7 @@ static void PrintTemplateSlot(
    /* Print the closing parenthesis of the slot. */
    /*============================================*/
 
-   WriteString(theEnv,logicalName,")");
+   CL_WriteString(theEnv,logicalName,")");
   }
 
 /********************************/
@@ -388,7 +388,7 @@ static struct templateSlot *GetNextTemplateSlotToPrint(
 
       if (ignoreDefaults && (slotPtr->defaultDynamic == false))
         {
-         DeftemplateSlotDefault(theEnv,theFact->whichDeftemplate,slotPtr,&tempDO,true);
+         CL_DeftemplateSlotDefault(theEnv,theFact->whichDeftemplate,slotPtr,&tempDO,true);
 
          if (slotPtr->multislot == false)
            {
@@ -399,7 +399,7 @@ static struct templateSlot *GetNextTemplateSlotToPrint(
                continue;
               }
            }
-         else if (MultifieldsEqual((Multifield *) tempDO.value,
+         else if (CL_MultifieldsEqual((Multifield *) tempDO.value,
                                    (Multifield *) sublist[*position].value))
            {
             (*position)++;
@@ -415,11 +415,11 @@ static struct templateSlot *GetNextTemplateSlotToPrint(
   }
 
 /**********************************************************/
-/* PrintTemplateFact: Prints a fact using the deftemplate */
-/*   format. Returns true if the fact was printed using   */
-/*   this format, otherwise false.                        */
+/* CL_PrintTemplateFact: Prints a fact using the deftemplate */
+/*   foCL_rmat. Returns true if the fact was printed using   */
+/*   this foCL_rmat, otherwise false.                        */
 /**********************************************************/
-void PrintTemplateFact(
+void CL_PrintTemplateFact(
   Environment *theEnv,
   const char *logicalName,
   Fact *theFact,
@@ -434,7 +434,7 @@ void PrintTemplateFact(
    bool slotPrinted = false;
 
    /*==============================*/
-   /* Initialize some information. */
+   /* Initialize some infoCL_rmation. */
    /*==============================*/
 
    theDeftemplate = theFact->whichDeftemplate;
@@ -444,8 +444,8 @@ void PrintTemplateFact(
    /* Print the relation name of the deftemplate. */
    /*=============================================*/
 
-   WriteString(theEnv,logicalName,"(");
-   WriteString(theEnv,logicalName,theDeftemplate->header.name->contents);
+   CL_WriteString(theEnv,logicalName,"(");
+   CL_WriteString(theEnv,logicalName,theDeftemplate->header.name->contents);
 
    /*===================================================*/
    /* Print each of the field slots of the deftemplate. */
@@ -457,7 +457,7 @@ void PrintTemplateFact(
 
    if ((changeMap != NULL) &&
        (theFact->whichDeftemplate->slotList != slotPtr))
-     { WriteString(theEnv,logicalName," ..."); }
+     { CL_WriteString(theEnv,logicalName," ..."); }
 
    while (slotPtr != NULL)
      {
@@ -469,11 +469,11 @@ void PrintTemplateFact(
       if (! slotPrinted)
         {
          slotPrinted = true;
-         WriteString(theEnv,logicalName," ");
+         CL_WriteString(theEnv,logicalName," ");
         }
 
       if (separateLines)
-        { WriteString(theEnv,logicalName,"\n   "); }
+        { CL_WriteString(theEnv,logicalName,"\n   "); }
 
       /*====================================*/
       /* Print the slot name and its value. */
@@ -490,18 +490,18 @@ void PrintTemplateFact(
                                            ignoreDefaults,changeMap);
 
       if ((changeMap != NULL) && (lastPtr->next != slotPtr))
-        { WriteString(theEnv,logicalName," ..."); }
+        { CL_WriteString(theEnv,logicalName," ..."); }
 
-      if (slotPtr != NULL) WriteString(theEnv,logicalName," ");
+      if (slotPtr != NULL) CL_WriteString(theEnv,logicalName," ");
      }
 
-   WriteString(theEnv,logicalName,")");
+   CL_WriteString(theEnv,logicalName,")");
   }
 
 /***************************************************************************/
-/* UpdateDeftemplateScope: Updates the scope flag of all the deftemplates. */
+/* CL_UpdateDeftemplateScope: Updates the scope flag of all the deftemplates. */
 /***************************************************************************/
-void UpdateDeftemplateScope(
+void CL_UpdateDeftemplateScope(
   Environment *theEnv)
   {
    Deftemplate *theDeftemplate;
@@ -513,27 +513,27 @@ void UpdateDeftemplateScope(
    /* Loop through all of the modules. */
    /*==================================*/
 
-   for (theModule = GetNextDefmodule(theEnv,NULL);
+   for (theModule = CL_GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = GetNextDefmodule(theEnv,theModule))
+        theModule = CL_GetNextDefmodule(theEnv,theModule))
      {
       /*======================================================*/
       /* Loop through each of the deftemplates in the module. */
       /*======================================================*/
 
       theItem = (struct defmoduleItemHeader *)
-                GetModuleItem(theEnv,theModule,DeftemplateData(theEnv)->DeftemplateModuleIndex);
+                CL_GetModuleItem(theEnv,theModule,DeftemplateData(theEnv)->CL_DeftemplateModuleIndex);
 
       for (theDeftemplate = (Deftemplate *) theItem->firstItem;
            theDeftemplate != NULL ;
-           theDeftemplate = GetNextDeftemplate(theEnv,theDeftemplate))
+           theDeftemplate = CL_GetNextDeftemplate(theEnv,theDeftemplate))
         {
          /*=======================================*/
          /* If the deftemplate can be seen by the */
          /* current module, then it is in scope.  */
          /*=======================================*/
 
-         if (FindImportedConstruct(theEnv,"deftemplate",theModule,
+         if (CL_FindImportedConstruct(theEnv,"deftemplate",theModule,
                                    theDeftemplate->header.name->contents,
                                    &moduleCount,true,NULL) != NULL)
            { theDeftemplate->inScope = true; }
@@ -544,9 +544,9 @@ void UpdateDeftemplateScope(
   }
 
 /****************************************************************/
-/* FindSlot: Finds a specified slot in a deftemplate structure. */
+/* CL_FindSlot: Finds a specified slot in a deftemplate structure. */
 /****************************************************************/
-struct templateSlot *FindSlot(
+struct templateSlot *CL_FindSlot(
   Deftemplate *theDeftemplate,
   CLIPSLexeme *name,
   unsigned short *whichOne)
@@ -569,10 +569,10 @@ struct templateSlot *FindSlot(
 #if (! RUN_TIME) && (! BLOAD_ONLY)
 
 /************************************************************/
-/* CreateImpliedDeftemplate: Creates an implied deftemplate */
+/* CL_CreateImpliedDeftemplate: Creates an implied deftemplate */
 /*   and adds it to the list of deftemplates.               */
 /************************************************************/
-Deftemplate *CreateImpliedDeftemplate(
+Deftemplate *CL_CreateImpliedDeftemplate(
   Environment *theEnv,
   CLIPSLexeme *deftemplateName,
   bool setFlag)
@@ -581,7 +581,7 @@ Deftemplate *CreateImpliedDeftemplate(
 
    newDeftemplate = get_struct(theEnv,deftemplate);
    newDeftemplate->header.name = deftemplateName;
-   newDeftemplate->header.ppForm = NULL;
+   newDeftemplate->header.ppFoCL_rm = NULL;
    newDeftemplate->header.usrData = NULL;
    newDeftemplate->header.constructType = DEFTEMPLATE;
    newDeftemplate->header.env = theEnv;
@@ -597,15 +597,15 @@ Deftemplate *CreateImpliedDeftemplate(
    newDeftemplate->header.next = NULL;
 
 #if DEBUGGING_FUNCTIONS
-   if (GetWatchItem(theEnv,"facts") == 1)
-     { DeftemplateSetWatch(newDeftemplate,true); }
+   if (CL_GetCL_WatchItem(theEnv,"facts") == 1)
+     { CL_DeftemplateSetCL_Watch(newDeftemplate,true); }
 #endif
 
    newDeftemplate->header.whichModule = (struct defmoduleItemHeader *)
-                                        GetModuleItem(theEnv,NULL,DeftemplateData(theEnv)->DeftemplateModuleIndex);
+                                        CL_GetModuleItem(theEnv,NULL,DeftemplateData(theEnv)->CL_DeftemplateModuleIndex);
 
-   AddConstructToModule(&newDeftemplate->header);
-   InstallDeftemplate(theEnv,newDeftemplate);
+   CL_AddConstructToModule(&newDeftemplate->header);
+   CL_InstallDeftemplate(theEnv,newDeftemplate);
 
    return(newDeftemplate);
   }

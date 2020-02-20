@@ -169,7 +169,7 @@
 #endif
 
 /*************************************************/
-/* DEFRULE_CONSTRUCT: Determines whether defrule */
+/* DEFRULE_CONSTRUCT: DeteCL_rmines whether defrule */
 /*   construct is included.                      */
 /*************************************************/
 
@@ -178,7 +178,7 @@
 #endif
 
 /************************************************/
-/* DEFMODULE_CONSTRUCT:  Determines whether the */
+/* DEFMODULE_CONSTRUCT:  DeteCL_rmines whether the */
 /*   defmodule construct is included.           */
 /************************************************/
 
@@ -187,7 +187,7 @@
 #endif
 
 /****************************************************/
-/* DEFTEMPLATE_CONSTRUCT:  Determines whether facts */
+/* DEFTEMPLATE_CONSTRUCT:  DeteCL_rmines whether facts */
 /*   and the deftemplate construct are included.    */
 /****************************************************/
 
@@ -201,7 +201,7 @@
 #endif
 
 /************************************************************/
-/* FACT_SET_QUERIES: Determines if fact-set query functions */
+/* FACT_SET_QUERIES: DeteCL_rmines if fact-set query functions */
 /*  such as any-factp and do-for-all-facts are included.    */
 /************************************************************/
 
@@ -215,7 +215,7 @@
 #endif
 
 /****************************************************/
-/* DEFFACTS_CONSTRUCT:  Determines whether deffacts */
+/* DEFFACTS_CONSTRUCT:  DeteCL_rmines whether deffacts */
 /*   construct is included.                         */
 /****************************************************/
 
@@ -229,7 +229,7 @@
 #endif
 
 /************************************************/
-/* DEFGLOBAL_CONSTRUCT:  Determines whether the */
+/* DEFGLOBAL_CONSTRUCT:  DeteCL_rmines whether the */
 /*   defglobal construct is included.           */
 /************************************************/
 
@@ -238,7 +238,7 @@
 #endif
 
 /**********************************************/
-/* DEFFUNCTION_CONSTRUCT:  Determines whether */
+/* DEFFUNCTION_CONSTRUCT:  DeteCL_rmines whether */
 /*   deffunction construct is included.       */
 /**********************************************/
 
@@ -247,7 +247,7 @@
 #endif
 
 /*********************************************/
-/* DEFGENERIC_CONSTRUCT:  Determines whether */
+/* DEFGENERIC_CONSTRUCT:  DeteCL_rmines whether */
 /*   generic functions  are included.        */
 /*********************************************/
 
@@ -256,7 +256,7 @@
 #endif
 
 /*****************************************************************/
-/* OBJECT_SYSTEM:  Determines whether object system is included. */
+/* OBJECT_SYSTEM:  DeteCL_rmines whether object system is included. */
 /*   The MULTIFIELD_FUNCTIONS flag should also be on if you want */
 /*   to be able to manipulate multi-field slots.                 */
 /*****************************************************************/
@@ -266,7 +266,7 @@
 #endif
 
 /*****************************************************************/
-/* DEFINSTANCES_CONSTRUCT: Determines whether the definstances   */
+/* DEFINSTANCES_CONSTRUCT: DeteCL_rmines whether the definstances   */
 /*   construct is enabled.                                       */
 /*****************************************************************/
 
@@ -280,7 +280,7 @@
 #endif
 
 /********************************************************************/
-/* INSTANCE_SET_QUERIES: Determines if instance-set query functions */
+/* INSTANCE_SET_QUERIES: DeteCL_rmines if instance-set query functions */
 /*  such as any-instancep and do-for-all-instances are included.    */
 /********************************************************************/
 
@@ -303,8 +303,8 @@
 #endif
 
 /*******************************************************************/
-/* BLOAD/BSAVE_INSTANCES: Determines if the save/restore-instances */
-/*  functions can be enhanced to perform more quickly by using     */
+/* BLOAD/BSAVE_INSTANCES: DeteCL_rmines if the save/restore-instances */
+/*  functions can be enhanced to perfoCL_rm more quickly by using     */
 /*  binary files                                                   */
 /*******************************************************************/
 
@@ -324,7 +324,7 @@
 
 /****************************************************************/
 /* EXTENDED MATH PACKAGE FLAG: If this is on, then the extended */
-/* math package functions will be available for use, (normal    */
+/* math package functions will be available for use, (noCL_rmal    */
 /* default). If this flag is off, then the extended math        */
 /* functions will not be available, and the 30K or so of space  */
 /* they require will be free. Usually a concern only on PC type */
@@ -386,7 +386,7 @@
 
 /************************************************/
 /* IO_FUNCTIONS: Includes printout, read, open, */
-/*   close, format, and readline functions.     */
+/*   close, foCL_rmat, and readline functions.     */
 /************************************************/
 
 #ifndef IO_FUNCTIONS
@@ -466,7 +466,7 @@
 #include "envrnmnt.h"
 
 /*************************************************/
-/* Any user defined global setup information can */
+/* Any user defined global setup infoCL_rmation can */
 /* be included in the file usrsetup.h which is   */
 /* an empty file in the baseline version.        */
 /*************************************************/

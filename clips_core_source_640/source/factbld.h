@@ -55,7 +55,7 @@ struct factPatternNode
    struct factPatternNode *rightNode;
   };
 
-   void                           InitializeFactPatterns(Environment *);
-   void                           DestroyFactPatternNetwork(Environment *,struct factPatternNode *);
+   void                           CL_InitializeFactPatterns(Environment *);
+   void                           CL_DestroyFactPatternNetwork(Environment *,struct factPatternNode *);
 
 #endif /* _H_factbld */

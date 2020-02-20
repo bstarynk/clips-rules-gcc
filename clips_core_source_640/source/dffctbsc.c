@@ -37,8 +37,8 @@
 /*            imported modules are search when locating a    */
 /*            named construct.                               */
 /*                                                           */
-/*      6.40: Added Env prefix to GetEvaluationError and     */
-/*            SetEvaluationError functions.                  */
+/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
+/*            SetCL_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -93,60 +93,60 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    ResetDeffacts(Environment *,void *);
-   static void                    SaveDeffacts(Environment *,Defmodule *,const char *,void *);
-   static void                    ResetDeffactsAction(Environment *,ConstructHeader *,void *);
+   static void                    CL_ResetDeffacts(Environment *,void *);
+   static void                    CL_SaveDeffacts(Environment *,Defmodule *,const char *,void *);
+   static void                    CL_ResetDeffactsAction(Environment *,ConstructHeader *,void *);
 
 /***************************************************************/
-/* DeffactsBasicCommands: Initializes basic deffacts commands. */
+/* CL_DeffactsBasicCommands: Initializes basic deffacts commands. */
 /***************************************************************/
-void DeffactsBasicCommands(
+void CL_DeffactsBasicCommands(
   Environment *theEnv)
   {
-   AddResetFunction(theEnv,"deffacts",ResetDeffacts,0,NULL);
-   AddSaveFunction(theEnv,"deffacts",SaveDeffacts,10,NULL);
+   CL_AddCL_ResetFunction(theEnv,"deffacts",CL_ResetDeffacts,0,NULL);
+   CL_AddCL_SaveFunction(theEnv,"deffacts",CL_SaveDeffacts,10,NULL);
 
 #if ! RUN_TIME
-   AddUDF(theEnv,"get-deffacts-list","m",0,1,"y",GetDeffactsListFunction,"GetDeffactsListFunction",NULL);
-   AddUDF(theEnv,"undeffacts","v",1,1,"y",UndeffactsCommand,"UndeffactsCommand",NULL);
-   AddUDF(theEnv,"deffacts-module","y",1,1,"y",DeffactsModuleFunction,"DeffactsModuleFunction",NULL);
+   CL_AddUDF(theEnv,"get-deffacts-list","m",0,1,"y",CL_GetDeffactsListFunction,"CL_GetDeffactsListFunction",NULL);
+   CL_AddUDF(theEnv,"undeffacts","v",1,1,"y",CL_UndeffactsCommand,"CL_UndeffactsCommand",NULL);
+   CL_AddUDF(theEnv,"deffacts-module","y",1,1,"y",CL_DeffactsModuleFunction,"CL_DeffactsModuleFunction",NULL);
 
 #if DEBUGGING_FUNCTIONS
-   AddUDF(theEnv,"list-deffacts","v",0,1,"y",ListDeffactsCommand,"ListDeffactsCommand",NULL);
-   AddUDF(theEnv,"ppdeffacts","vs",1,2,";y;ldsyn",PPDeffactsCommand,"PPDeffactsCommand",NULL);
+   CL_AddUDF(theEnv,"list-deffacts","v",0,1,"y",CL_ListDeffactsCommand,"CL_ListDeffactsCommand",NULL);
+   CL_AddUDF(theEnv,"ppdeffacts","vs",1,2,";y;ldsyn",CL_PPDeffactsCommand,"CL_PPDeffactsCommand",NULL);
 #endif
 
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE)
-   DeffactsBinarySetup(theEnv);
+   CL_DeffactsBinarySetup(theEnv);
 #endif
 
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
-   DeffactsCompilerSetup(theEnv);
+   CL_DeffactsCompilerSetup(theEnv);
 #endif
 
 #endif
   }
 
 /**********************************************************/
-/* ResetDeffacts: Deffacts reset routine for use with the */
-/*   reset command. Asserts all of the facts contained in */
+/* CL_ResetDeffacts: Deffacts reset routine for use with the */
+/*   reset command. CL_Asserts all of the facts contained in */
 /*   deffacts constructs.                                 */
 /**********************************************************/
-static void ResetDeffacts(
+static void CL_ResetDeffacts(
   Environment *theEnv,
   void *context)
   {
-   DoForAllConstructs(theEnv,
-                      ResetDeffactsAction,
-                      DeffactsData(theEnv)->DeffactsModuleIndex,
+   CL_DoForAllConstructs(theEnv,
+                      CL_ResetDeffactsAction,
+                      DeffactsData(theEnv)->CL_DeffactsModuleIndex,
                       true,NULL);
   }
 
 /*****************************************************/
-/* ResetDeffactsAction: Action to be applied to each */
+/* CL_ResetDeffactsAction: Action to be applied to each */
 /*   deffacts construct during a reset command.      */
 /*****************************************************/
-static void ResetDeffactsAction(
+static void CL_ResetDeffactsAction(
   Environment *theEnv,
   ConstructHeader *theConstruct,
   void *buffer)
@@ -159,41 +159,41 @@ static void ResetDeffactsAction(
 
    if (theDeffacts->assertList == NULL) return;
 
-   SetEvaluationError(theEnv,false);
+   SetCL_EvaluationError(theEnv,false);
 
-   EvaluateExpression(theEnv,theDeffacts->assertList,&returnValue);
+   CL_EvaluateExpression(theEnv,theDeffacts->assertList,&returnValue);
   }
 
 /***************************************/
-/* SaveDeffacts: Deffacts save routine */
+/* CL_SaveDeffacts: Deffacts save routine */
 /*   for use with the save command.    */
 /***************************************/
-static void SaveDeffacts(
+static void CL_SaveDeffacts(
   Environment *theEnv,
   Defmodule *theModule,
   const char *logicalName,
   void *context)
   {
-   SaveConstruct(theEnv,theModule,logicalName,DeffactsData(theEnv)->DeffactsConstruct);
+   CL_SaveConstruct(theEnv,theModule,logicalName,DeffactsData(theEnv)->DeffactsConstruct);
   }
 
 /*******************************************/
-/* UndeffactsCommand: H/L access routine   */
+/* CL_UndeffactsCommand: H/L access routine   */
 /*   for the undeffacts command.           */
 /*******************************************/
-void UndeffactsCommand(
+void CL_UndeffactsCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
-   UndefconstructCommand(context,"undeffacts",DeffactsData(theEnv)->DeffactsConstruct);
+   CL_UndefconstructCommand(context,"undeffacts",DeffactsData(theEnv)->DeffactsConstruct);
   }
 
 /*********************************/
-/* Undeffacts: C access routine  */
+/* CL_Undeffacts: C access routine  */
 /*   for the undeffacts command. */
 /*********************************/
-bool Undeffacts(
+bool CL_Undeffacts(
   Deffacts *theDeffacts,
   Environment *allEnv)
   {
@@ -202,103 +202,103 @@ bool Undeffacts(
    if (theDeffacts == NULL)
      {
       theEnv = allEnv;
-      return Undefconstruct(theEnv,NULL,DeffactsData(theEnv)->DeffactsConstruct);
+      return CL_Undefconstruct(theEnv,NULL,DeffactsData(theEnv)->DeffactsConstruct);
      }
    else
      {
       theEnv = theDeffacts->header.env;
-      return Undefconstruct(theEnv,&theDeffacts->header,DeffactsData(theEnv)->DeffactsConstruct);
+      return CL_Undefconstruct(theEnv,&theDeffacts->header,DeffactsData(theEnv)->DeffactsConstruct);
      }
   }
 
 /*************************************************/
-/* GetDeffactsListFunction: H/L access routine   */
+/* CL_GetDeffactsListFunction: H/L access routine   */
 /*   for the get-deffacts-list function.         */
 /*************************************************/
-void GetDeffactsListFunction(
+void CL_GetDeffactsListFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
-   GetConstructListFunction(context,returnValue,DeffactsData(theEnv)->DeffactsConstruct);
+   CL_GetConstructListFunction(context,returnValue,DeffactsData(theEnv)->DeffactsConstruct);
   }
 
 /*****************************************/
-/* GetDeffactsList: C access routine     */
+/* CL_GetDeffactsList: C access routine     */
 /*   for the get-deffacts-list function. */
 /*****************************************/
-void GetDeffactsList(
+void CL_GetDeffactsList(
   Environment *theEnv,
   CLIPSValue *returnValue,
   Defmodule *theModule)
   {
    UDFValue result;
    
-   GetConstructList(theEnv,&result,DeffactsData(theEnv)->DeffactsConstruct,theModule);
-   NormalizeMultifield(theEnv,&result);
+   CL_GetConstructList(theEnv,&result,DeffactsData(theEnv)->DeffactsConstruct,theModule);
+   CL_NoCL_rmalizeMultifield(theEnv,&result);
    returnValue->value = result.value;
   }
 
 /************************************************/
-/* DeffactsModuleFunction: H/L access routine   */
+/* CL_DeffactsModuleFunction: H/L access routine   */
 /*   for the deffacts-module function.          */
 /************************************************/
-void DeffactsModuleFunction(
+void CL_DeffactsModuleFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
-   returnValue->value = GetConstructModuleCommand(context,"deffacts-module",DeffactsData(theEnv)->DeffactsConstruct);
+   returnValue->value = CL_GetConstructModuleCommand(context,"deffacts-module",DeffactsData(theEnv)->DeffactsConstruct);
   }
 
 #if DEBUGGING_FUNCTIONS
 
 /*******************************************/
-/* PPDeffactsCommand: H/L access routine   */
+/* CL_PPDeffactsCommand: H/L access routine   */
 /*   for the ppdeffacts command.           */
 /*******************************************/
-void PPDeffactsCommand(
+void CL_PPDeffactsCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
-   PPConstructCommand(context,"ppdeffacts",DeffactsData(theEnv)->DeffactsConstruct,returnValue);
+   CL_PPConstructCommand(context,"ppdeffacts",DeffactsData(theEnv)->DeffactsConstruct,returnValue);
   }
 
 /************************************/
-/* PPDeffacts: C access routine for */
+/* CL_PPDeffacts: C access routine for */
 /*   the ppdeffacts command.        */
 /************************************/
-bool PPDeffacts(
+bool CL_PPDeffacts(
   Environment *theEnv,
   const char *deffactsName,
   const char *logicalName)
   {
-   return(PPConstruct(theEnv,deffactsName,logicalName,DeffactsData(theEnv)->DeffactsConstruct));
+   return(CL_PPConstruct(theEnv,deffactsName,logicalName,DeffactsData(theEnv)->DeffactsConstruct));
   }
 
 /*********************************************/
-/* ListDeffactsCommand: H/L access routine   */
+/* CL_ListDeffactsCommand: H/L access routine   */
 /*   for the list-deffacts command.          */
 /*********************************************/
-void ListDeffactsCommand(
+void CL_ListDeffactsCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
-   ListConstructCommand(context,DeffactsData(theEnv)->DeffactsConstruct);
+   CL_ListConstructCommand(context,DeffactsData(theEnv)->DeffactsConstruct);
   }
 
 /************************************/
-/* ListDeffacts: C access routine   */
+/* CL_ListDeffacts: C access routine   */
 /*   for the list-deffacts command. */
 /************************************/
-void ListDeffacts(
+void CL_ListDeffacts(
   Environment *theEnv,
   const char *logicalName,
   Defmodule *theModule)
   {
-   ListConstruct(theEnv,DeffactsData(theEnv)->DeffactsConstruct,logicalName,theModule);
+   CL_ListConstruct(theEnv,DeffactsData(theEnv)->DeffactsConstruct,logicalName,theModule);
   }
 
 #endif /* DEBUGGING_FUNCTIONS */

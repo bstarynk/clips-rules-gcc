@@ -44,7 +44,7 @@
 
 #include "genrcfun.h"
 
-   void                           AddImplicitMethods(Environment *,Defgeneric *);
+   void                           CL_AddImplicitMethods(Environment *,Defgeneric *);
 
 #endif /* DEFGENERIC_CONSTRUCT && (! BLOAD_ONLY) && (! RUN_TIME) */
 

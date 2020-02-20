@@ -39,7 +39,7 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
-/*            Eval support for run time and bload only.      */
+/*            CL_Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -53,8 +53,8 @@
 
 #include "expressn.h"
 
-   Expression                    *FactParseQueryNoAction(Environment *,Expression *,const char *);
-   Expression                    *FactParseQueryAction(Environment *,Expression *,const char *);
+   Expression                    *CL_FactCL_ParseQueryNoAction(Environment *,Expression *,const char *);
+   Expression                    *CL_FactCL_ParseQueryAction(Environment *,Expression *,const char *);
 
 #endif /* FACT_SET_QUERIES */
 

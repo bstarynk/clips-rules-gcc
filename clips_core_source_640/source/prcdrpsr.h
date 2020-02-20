@@ -43,7 +43,7 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
-/*            Eval support for run time and bload only.      */
+/*            CL_Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -62,15 +62,15 @@ struct BindInfo
    struct BindInfo *next;
   };
 
-   void                           ProceduralFunctionParsers(Environment *);
-   struct BindInfo               *GetParsedBindNames(Environment *);
-   void                           SetParsedBindNames(Environment *,struct BindInfo *);
-   void                           ClearParsedBindNames(Environment *);
-   bool                           ParsedBindNamesEmpty(Environment *);
-   unsigned short                 SearchParsedBindNames(Environment *,CLIPSLexeme *);
-   unsigned short                 CountParsedBindNames(Environment *);
-   void                           RemoveParsedBindName(Environment *,CLIPSLexeme *);
-   struct constraintRecord       *FindBindConstraints(Environment *,CLIPSLexeme *);
+   void                           CL_ProceduralFunctionParsers(Environment *);
+   struct BindInfo               *CL_GetParsedBindNames(Environment *);
+   void                           CL_SetParsedBindNames(Environment *,struct BindInfo *);
+   void                           CL_ClearParsedBindNames(Environment *);
+   bool                           CL_ParsedBindNamesEmpty(Environment *);
+   unsigned short                 CL_SearchParsedBindNames(Environment *,CLIPSLexeme *);
+   unsigned short                 CL_CountParsedBindNames(Environment *);
+   void                           CL_RemoveParsedBindName(Environment *,CLIPSLexeme *);
+   struct constraintRecord       *CL_FindBindConstraints(Environment *,CLIPSLexeme *);
 
 #endif /* _H_prcdrpsr */
 

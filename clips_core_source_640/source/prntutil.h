@@ -17,13 +17,13 @@
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
-/*      6.24: Link error occurs for the SlotExistError       */
+/*      6.24: Link error occurs for the CL_SlotExistError       */
 /*            function when OBJECT_SYSTEM is set to 0 in     */
 /*            setup.h. DR0865                                */
 /*                                                           */
-/*            Added DataObjectToString function.             */
+/*            Added CL_DataObjectToString function.             */
 /*                                                           */
-/*            Added SlotExistError function.                 */
+/*            Added CL_SlotExistError function.                 */
 /*                                                           */
 /*      6.30: Support for long long integers.                */
 /*                                                           */
@@ -31,7 +31,7 @@
 /*                                                           */
 /*            Support for typed EXTERNAL_ADDRESS_TYPE.       */
 /*                                                           */
-/*            Used gensprintf and genstrcat instead of       */
+/*            Used CL_gensprintf and CL_genstrcat instead of       */
 /*            sprintf and strcat.                            */
 /*                                                           */
 /*            Changed integer type/precision.                */
@@ -85,36 +85,36 @@ struct printUtilityData
 
 #define PrintUtilityData(theEnv) ((struct printUtilityData *) GetEnvironmentData(theEnv,PRINT_UTILITY_DATA))
 
-   void                           InitializePrintUtilityData(Environment *);
-   void                           WriteFloat(Environment *,const char *,double);
-   void                           WriteInteger(Environment *,const char *,long long);
-   void                           PrintUnsignedInteger(Environment *,const char *,unsigned long long);
-   void                           PrintAtom(Environment *,const char *,unsigned short,void *);
-   void                           PrintTally(Environment *,const char *,unsigned long long,const char *,const char *);
-   const char                    *FloatToString(Environment *,double);
-   const char                    *LongIntegerToString(Environment *,long long);
-   const char                    *DataObjectToString(Environment *,UDFValue *);
-   void                           SyntaxErrorMessage(Environment *,const char *);
-   void                           SystemError(Environment *,const char *,int);
-   void                           PrintErrorID(Environment *,const char *,int,bool);
-   void                           PrintWarningID(Environment *,const char *,int,bool);
-   void                           CantFindItemErrorMessage(Environment *,const char *,const char *,bool);
-   void                           CantDeleteItemErrorMessage(Environment *,const char *,const char *);
-   void                           AlreadyParsedErrorMessage(Environment *,const char *,const char *);
-   void                           LocalVariableErrorMessage(Environment *,const char *);
-   void                           DivideByZeroErrorMessage(Environment *,const char *);
-   void                           SalienceInformationError(Environment *,const char *,const char *);
-   void                           SalienceRangeError(Environment *,int,int);
-   void                           SalienceNonIntegerError(Environment *);
-   void                           CantFindItemInFunctionErrorMessage(Environment *,const char *,const char *,const char *,bool);
-   void                           SlotExistError(Environment *,const char *,const char *);
-   void                           FactRetractedErrorMessage(Environment *,Fact *);
-   void                           FactVarSlotErrorMessage1(Environment *,Fact *,const char *);
-   void                           FactVarSlotErrorMessage2(Environment *,Fact *,const char *);
-   void                           InvalidVarSlotErrorMessage(Environment *,const char *);
-   void                           InstanceVarSlotErrorMessage1(Environment *,Instance *,const char *);
-   void                           InstanceVarSlotErrorMessage2(Environment *,Instance *,const char *);
-   void                           ArgumentOverUnderflowErrorMessage(Environment *,const char *,bool);
+   void                           CL_InitializePrintUtilityData(Environment *);
+   void                           CL_WriteFloat(Environment *,const char *,double);
+   void                           CL_WriteInteger(Environment *,const char *,long long);
+   void                           CL_PrintUnsignedInteger(Environment *,const char *,unsigned long long);
+   void                           CL_PrintAtom(Environment *,const char *,unsigned short,void *);
+   void                           CL_PrintTally(Environment *,const char *,unsigned long long,const char *,const char *);
+   const char                    *CL_FloatToString(Environment *,double);
+   const char                    *CL_LongIntegerToString(Environment *,long long);
+   const char                    *CL_DataObjectToString(Environment *,UDFValue *);
+   void                           CL_SyntaxErrorMessage(Environment *,const char *);
+   void                           CL_SystemError(Environment *,const char *,int);
+   void                           CL_PrintErrorID(Environment *,const char *,int,bool);
+   void                           CL_PrintWarningID(Environment *,const char *,int,bool);
+   void                           CL_CantFindItemErrorMessage(Environment *,const char *,const char *,bool);
+   void                           CL_CantDeleteItemErrorMessage(Environment *,const char *,const char *);
+   void                           CL_AlreadyParsedErrorMessage(Environment *,const char *,const char *);
+   void                           CL_LocalVariableErrorMessage(Environment *,const char *);
+   void                           CL_DivideByZeroErrorMessage(Environment *,const char *);
+   void                           SalienceInfoCL_rmationError(Environment *,const char *,const char *);
+   void                           CL_SalienceRangeError(Environment *,int,int);
+   void                           CL_SalienceNonIntegerError(Environment *);
+   void                           CL_CantFindItemInFunctionErrorMessage(Environment *,const char *,const char *,const char *,bool);
+   void                           CL_SlotExistError(Environment *,const char *,const char *);
+   void                           CL_FactCL_RetractedErrorMessage(Environment *,Fact *);
+   void                           CL_FactVarSlotErrorMessage1(Environment *,Fact *,const char *);
+   void                           CL_FactVarSlotErrorMessage2(Environment *,Fact *,const char *);
+   void                           CL_InvalidVarSlotErrorMessage(Environment *,const char *);
+   void                           CL_InstanceVarSlotErrorMessage1(Environment *,Instance *,const char *);
+   void                           CL_InstanceVarSlotErrorMessage2(Environment *,Instance *,const char *);
+   void                           CL_ArgumentOverUnderflowErrorMessage(Environment *,const char *,bool);
 
 #endif /* _H_prntutil */
 

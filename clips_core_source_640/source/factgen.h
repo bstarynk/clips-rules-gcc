@@ -16,7 +16,7 @@
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
-/*      6.30: Support for performance optimizations.         */
+/*      6.30: Support for perfoCL_rmance optimizations.         */
 /*                                                           */
 /*            Increased maximum values for pattern/slot      */
 /*            indices.                                       */
@@ -197,7 +197,7 @@ struct factCompVarsJN2Call
 
 /**********************************************************/
 /* factCheckLengthPNCall: This structure is used to store */
-/*   the  arguments to the routine for determining if the */
+/*   the  arguments to the routine for deteCL_rmining if the */
 /*   length of a multifield slot is equal or greater than */
 /*   a specified value.                                   */
 /**********************************************************/
@@ -213,17 +213,17 @@ struct factCheckLengthPNCall
 /* GLOBAL EXTERNAL FUNCTION DEFINITIONS */
 /****************************************/
 
-   void                       InitializeFactReteFunctions(Environment *);
-   struct expr               *FactPNVariableComparison(Environment *,struct lhsParseNode *,
+   void                       CL_InitializeFactReteFunctions(Environment *);
+   struct expr               *CL_FactPNVariableComparison(Environment *,struct lhsParseNode *,
                                                               struct lhsParseNode *);
-   struct expr               *FactJNVariableComparison(Environment *,struct lhsParseNode *,
+   struct expr               *CL_FactJNVariableComparison(Environment *,struct lhsParseNode *,
                                                               struct lhsParseNode *,bool);
-   void                       FactReplaceGetvar(Environment *,struct expr *,struct lhsParseNode *,int);
-   void                       FactReplaceGetfield(Environment *,struct expr *,struct lhsParseNode *);
-   struct expr               *FactGenPNConstant(Environment *,struct lhsParseNode *);
-   struct expr               *FactGenGetfield(Environment *,struct lhsParseNode *);
-   struct expr               *FactGenGetvar(Environment *,struct lhsParseNode *,int);
-   struct expr               *FactGenCheckLength(Environment *,struct lhsParseNode *);
-   struct expr               *FactGenCheckZeroLength(Environment *,unsigned short);
+   void                       CL_FactReplaceGetvar(Environment *,struct expr *,struct lhsParseNode *,int);
+   void                       CL_FactReplaceGetfield(Environment *,struct expr *,struct lhsParseNode *);
+   struct expr               *CL_FactGenPNConstant(Environment *,struct lhsParseNode *);
+   struct expr               *CL_FactGenGetfield(Environment *,struct lhsParseNode *);
+   struct expr               *CL_FactGenGetvar(Environment *,struct lhsParseNode *,int);
+   struct expr               *CL_FactGenCheckLength(Environment *,struct lhsParseNode *);
+   struct expr               *CL_FactGenCheckZeroLength(Environment *,unsigned short);
 
 #endif /* _H_factgen */

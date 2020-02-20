@@ -21,7 +21,7 @@
 /*            compilers/operating systems (IBM_MCW and       */
 /*            MAC_MCW).                                      */
 /*                                                           */
-/*            GetConstructNameAndComment API change.         */
+/*            CL_GetConstructNameAndComment API change.         */
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
@@ -61,12 +61,12 @@
 #include "dffctpsr.h"
 
 /************************************************************/
-/* ParseDeffacts: Coordinates all actions necessary for the */
+/* CL_ParseDeffacts: Coordinates all actions necessary for the */
 /*   addition of a deffacts construct into the current      */
 /*   environment. Called when parsing a construct after the */
 /*   deffacts keyword has been found.                       */
 /************************************************************/
-bool ParseDeffacts(
+bool CL_ParseDeffacts(
   Environment *theEnv,
   const char *readSource)
   {
@@ -82,20 +82,20 @@ bool ParseDeffacts(
    /*=========================*/
 
    deffactsError = false;
-   SetPPBufferStatus(theEnv,true);
+   CL_SetPPBufferStatus(theEnv,true);
 
-   FlushPPBuffer(theEnv);
-   SetIndentDepth(theEnv,3);
-   SavePPBuffer(theEnv,"(deffacts ");
+   CL_FlushPPBuffer(theEnv);
+   CL_SetIndentDepth(theEnv,3);
+   CL_SavePPBuffer(theEnv,"(deffacts ");
 
    /*==========================================================*/
    /* Deffacts can not be added when a binary image is loaded. */
    /*==========================================================*/
 
 #if BLOAD || BLOAD_AND_BSAVE
-   if ((Bloaded(theEnv) == true) && (! ConstructData(theEnv)->CheckSyntaxMode))
+   if ((CL_Bloaded(theEnv) == true) && (! ConstructData(theEnv)->CL_CheckSyntaxMode))
      {
-      CannotLoadWithBloadMessage(theEnv,"deffacts");
+      CannotCL_LoadWithCL_BloadMessage(theEnv,"deffacts");
       return true;
      }
 #endif
@@ -104,9 +104,9 @@ bool ParseDeffacts(
    /* Parse the deffacts header. */
    /*============================*/
 
-   deffactsName = GetConstructNameAndComment(theEnv,readSource,&inputToken,"deffacts",
-                                             (FindConstructFunction *) FindDeffactsInModule,
-                                             (DeleteConstructFunction *) Undeffacts,"$",true,
+   deffactsName = CL_GetConstructNameAndComment(theEnv,readSource,&inputToken,"deffacts",
+                                             (CL_FindConstructFunction *) CL_FindDeffactsInModule,
+                                             (DeleteConstructFunction *) CL_Undeffacts,"$",true,
                                              true,true,false);
    if (deffactsName == NULL) { return true; }
 
@@ -114,27 +114,27 @@ bool ParseDeffacts(
    /* Parse the list of facts in the deffacts body. */
    /*===============================================*/
 
-   temp = BuildRHSAssert(theEnv,readSource,&inputToken,&deffactsError,false,false,"deffacts");
+   temp = CL_BuildRHSCL_Assert(theEnv,readSource,&inputToken,&deffactsError,false,false,"deffacts");
 
    if (deffactsError == true) { return true; }
 
-   if (ExpressionContainsVariables(temp,false))
+   if (CL_ExpressionContainsVariables(temp,false))
      {
-      LocalVariableErrorMessage(theEnv,"a deffacts construct");
-      ReturnExpression(theEnv,temp);
+      CL_LocalVariableErrorMessage(theEnv,"a deffacts construct");
+      CL_ReturnExpression(theEnv,temp);
       return true;
      }
 
-   SavePPBuffer(theEnv,"\n");
+   CL_SavePPBuffer(theEnv,"\n");
 
    /*==============================================*/
    /* If we're only checking syntax, don't add the */
    /* successfully parsed deffacts to the KB.      */
    /*==============================================*/
 
-   if (ConstructData(theEnv)->CheckSyntaxMode)
+   if (ConstructData(theEnv)->CL_CheckSyntaxMode)
      {
-      ReturnExpression(theEnv,temp);
+      CL_ReturnExpression(theEnv,temp);
       return false;
      }
 
@@ -142,28 +142,28 @@ bool ParseDeffacts(
    /* Create the new deffacts. */
    /*==========================*/
 
-   ExpressionInstall(theEnv,temp);
+   CL_ExpressionInstall(theEnv,temp);
    newDeffacts = get_struct(theEnv,deffacts);
    IncrementLexemeCount(deffactsName);
-   InitializeConstructHeader(theEnv,"deffacts",DEFFACTS,&newDeffacts->header,deffactsName);
+   CL_InitializeConstructHeader(theEnv,"deffacts",DEFFACTS,&newDeffacts->header,deffactsName);
 
-   newDeffacts->assertList = PackExpression(theEnv,temp);
-   ReturnExpression(theEnv,temp);
+   newDeffacts->assertList = CL_PackExpression(theEnv,temp);
+   CL_ReturnExpression(theEnv,temp);
 
    /*=======================================================*/
-   /* Save the pretty print representation of the deffacts. */
+   /* CL_Save the pretty print representation of the deffacts. */
    /*=======================================================*/
 
-   if (GetConserveMemory(theEnv) == true)
-     { newDeffacts->header.ppForm = NULL; }
+   if (CL_GetConserveMemory(theEnv) == true)
+     { newDeffacts->header.ppFoCL_rm = NULL; }
    else
-     { newDeffacts->header.ppForm = CopyPPBuffer(theEnv); }
+     { newDeffacts->header.ppFoCL_rm = CL_CopyPPBuffer(theEnv); }
 
    /*=============================================*/
    /* Add the deffacts to the appropriate module. */
    /*=============================================*/
 
-   AddConstructToModule(&newDeffacts->header);
+   CL_AddConstructToModule(&newDeffacts->header);
 
 #endif /* (! RUN_TIME) && (! BLOAD_ONLY) */
 

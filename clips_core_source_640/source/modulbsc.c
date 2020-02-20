@@ -66,56 +66,56 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    ClearDefmodules(Environment *,void *);
+   static void                    CL_ClearDefmodules(Environment *,void *);
 #if DEFMODULE_CONSTRUCT
-   static void                    SaveDefmodules(Environment *,Defmodule *,const char *,void *);
+   static void                    CL_SaveDefmodules(Environment *,Defmodule *,const char *,void *);
 #endif
 
 /*****************************************************************/
-/* DefmoduleBasicCommands: Initializes basic defmodule commands. */
+/* CL_DefmoduleBasicCommands: Initializes basic defmodule commands. */
 /*****************************************************************/
-void DefmoduleBasicCommands(
+void CL_DefmoduleBasicCommands(
   Environment *theEnv)
   {
-   AddClearFunction(theEnv,"defmodule",ClearDefmodules,2000,NULL);
+   CL_AddCL_ClearFunction(theEnv,"defmodule",CL_ClearDefmodules,2000,NULL);
 
 #if DEFMODULE_CONSTRUCT
-   AddSaveFunction(theEnv,"defmodule",SaveDefmodules,1100,NULL);
+   CL_AddCL_SaveFunction(theEnv,"defmodule",CL_SaveDefmodules,1100,NULL);
 
 #if ! RUN_TIME
-   AddUDF(theEnv,"get-defmodule-list","m",0,0,NULL,GetDefmoduleListFunction,"GetDefmoduleListFunction",NULL);
+   CL_AddUDF(theEnv,"get-defmodule-list","m",0,0,NULL,CL_GetDefmoduleListFunction,"CL_GetDefmoduleListFunction",NULL);
 
 #if DEBUGGING_FUNCTIONS
-   AddUDF(theEnv,"list-defmodules","v",0,0,NULL,ListDefmodulesCommand,"ListDefmodulesCommand",NULL);
-   AddUDF(theEnv,"ppdefmodule","v",1,2,";y;ldsyn",PPDefmoduleCommand,"PPDefmoduleCommand",NULL);
+   CL_AddUDF(theEnv,"list-defmodules","v",0,0,NULL,CL_ListDefmodulesCommand,"CL_ListDefmodulesCommand",NULL);
+   CL_AddUDF(theEnv,"ppdefmodule","v",1,2,";y;ldsyn",CL_PPDefmoduleCommand,"CL_PPDefmoduleCommand",NULL);
 #endif
 #endif
 #endif
 
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE)
-   DefmoduleBinarySetup(theEnv);
+   CL_DefmoduleBinarySetup(theEnv);
 #endif
 
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
-   DefmoduleCompilerSetup(theEnv);
+   CL_DefmoduleCompilerSetup(theEnv);
 #endif
   }
 
 /*********************************************************/
-/* ClearDefmodules: Defmodule clear routine for use with */
+/* CL_ClearDefmodules: Defmodule clear routine for use with */
 /*   the clear command. Creates the MAIN module.         */
 /*********************************************************/
-static void ClearDefmodules(
+static void CL_ClearDefmodules(
   Environment *theEnv,
   void *context)
   {
 #if (BLOAD || BLOAD_AND_BSAVE || BLOAD_ONLY) && (! RUN_TIME)
-   if (Bloaded(theEnv) == true) return;
+   if (CL_Bloaded(theEnv) == true) return;
 #endif
 #if (! RUN_TIME)
-   RemoveAllDefmodules(theEnv,NULL);
+   CL_RemoveAllDefmodules(theEnv,NULL);
 
-   CreateMainModule(theEnv,NULL);
+   CL_CreateMainModule(theEnv,NULL);
    DefmoduleData(theEnv)->MainModuleRedefinable = true;
 #else
 #if MAC_XCD
@@ -127,45 +127,45 @@ static void ClearDefmodules(
 #if DEFMODULE_CONSTRUCT
 
 /******************************************/
-/* SaveDefmodules: Defmodule save routine */
+/* CL_SaveDefmodules: Defmodule save routine */
 /*   for use with the save command.       */
 /******************************************/
-static void SaveDefmodules(
+static void CL_SaveDefmodules(
   Environment *theEnv,
   Defmodule *theModule,
   const char *logicalName,
   void *context)
   {
-   const char *ppform;
+   const char *ppfoCL_rm;
 
-   ppform = DefmodulePPForm(theModule);
-   if (ppform != NULL)
+   ppfoCL_rm = CL_DefmodulePPFoCL_rm(theModule);
+   if (ppfoCL_rm != NULL)
      {
-      WriteString(theEnv,logicalName,ppform);
-      WriteString(theEnv,logicalName,"\n");
+      CL_WriteString(theEnv,logicalName,ppfoCL_rm);
+      CL_WriteString(theEnv,logicalName,"\n");
      }
   }
 
 /************************************************/
-/* GetDefmoduleListFunction: H/L access routine */
+/* CL_GetDefmoduleListFunction: H/L access routine */
 /*   for the get-defmodule-list function.       */
 /************************************************/
-void GetDefmoduleListFunction(
+void CL_GetDefmoduleListFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
    CLIPSValue result;
    
-   GetDefmoduleList(theEnv,&result);
-   CLIPSToUDFValue(&result,returnValue);
+   CL_GetDefmoduleList(theEnv,&result);
+   CL_CLIPSToUDFValue(&result,returnValue);
   }
 
 /******************************************/
-/* GetDefmoduleList: C access routine     */
+/* CL_GetDefmoduleList: C access routine     */
 /*   for the get-defmodule-list function. */
 /******************************************/
-void GetDefmoduleList(
+void CL_GetDefmoduleList(
   Environment *theEnv,
   CLIPSValue *returnValue)
   {
@@ -174,13 +174,13 @@ void GetDefmoduleList(
    Multifield *theList;
 
    /*====================================*/
-   /* Determine the number of constructs */
+   /* DeteCL_rmine the number of constructs */
    /* of the specified type.             */
    /*====================================*/
 
-   for (theConstruct = GetNextDefmodule(theEnv,NULL);
+   for (theConstruct = CL_GetNextDefmodule(theEnv,NULL);
         theConstruct != NULL;
-        theConstruct = GetNextDefmodule(theEnv,theConstruct))
+        theConstruct = CL_GetNextDefmodule(theEnv,theConstruct))
      { count++; }
 
    /*===========================*/
@@ -188,52 +188,52 @@ void GetDefmoduleList(
    /* enough to store the list. */
    /*===========================*/
 
-   theList = CreateMultifield(theEnv,count);
+   theList = CL_CreateMultifield(theEnv,count);
    returnValue->value = theList;
 
    /*====================================*/
    /* Store the names in the multifield. */
    /*====================================*/
 
-   for (theConstruct = GetNextDefmodule(theEnv,NULL), count = 0;
+   for (theConstruct = CL_GetNextDefmodule(theEnv,NULL), count = 0;
         theConstruct != NULL;
-        theConstruct = GetNextDefmodule(theEnv,theConstruct), count++)
+        theConstruct = CL_GetNextDefmodule(theEnv,theConstruct), count++)
      {
-      if (EvaluationData(theEnv)->HaltExecution == true)
+      if (CL_EvaluationData(theEnv)->CL_HaltExecution == true)
         {
-         returnValue->multifieldValue = CreateMultifield(theEnv,0L);
+         returnValue->multifieldValue = CL_CreateMultifield(theEnv,0L);
          return;
         }
-      theList->contents[count].lexemeValue = CreateSymbol(theEnv,DefmoduleName(theConstruct));
+      theList->contents[count].lexemeValue = CL_CreateSymbol(theEnv,CL_DefmoduleName(theConstruct));
      }
   }
 
 #if DEBUGGING_FUNCTIONS
 
 /********************************************/
-/* PPDefmoduleCommand: H/L access routine   */
+/* CL_PPDefmoduleCommand: H/L access routine   */
 /*   for the ppdefmodule command.           */
 /********************************************/
-void PPDefmoduleCommand(
+void CL_PPDefmoduleCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
    const char *defmoduleName;
    const char *logicalName;
-   const char *ppForm;
+   const char *ppFoCL_rm;
 
-   defmoduleName = GetConstructName(context,"ppdefmodule","defmodule name");
+   defmoduleName = CL_GetConstructName(context,"ppdefmodule","defmodule name");
    if (defmoduleName == NULL) return;
 
    if (UDFHasNextArgument(context))
      {
-      logicalName = GetLogicalName(context,STDOUT);
+      logicalName = CL_GetLogicalName(context,STDOUT);
       if (logicalName == NULL)
         {
-         IllegalLogicalNameMessage(theEnv,"ppdefmodule");
-         SetHaltExecution(theEnv,true);
-         SetEvaluationError(theEnv,true);
+         CL_IllegalLogicalNameMessage(theEnv,"ppdefmodule");
+         SetCL_HaltExecution(theEnv,true);
+         SetCL_EvaluationError(theEnv,true);
          return;
         }
      }
@@ -242,100 +242,100 @@ void PPDefmoduleCommand(
 
    if (strcmp(logicalName,"nil") == 0)
      {
-      ppForm = PPDefmoduleNil(theEnv,defmoduleName);
+      ppFoCL_rm = CL_PPDefmoduleNil(theEnv,defmoduleName);
       
-      if (ppForm == NULL)
-        { CantFindItemErrorMessage(theEnv,"defmodule",defmoduleName,true); }
+      if (ppFoCL_rm == NULL)
+        { CL_CantFindItemErrorMessage(theEnv,"defmodule",defmoduleName,true); }
 
-      returnValue->lexemeValue = CreateString(theEnv,ppForm);
+      returnValue->lexemeValue = CL_CreateString(theEnv,ppFoCL_rm);
       
       return;
      }
 
-   PPDefmodule(theEnv,defmoduleName,logicalName);
+   CL_PPDefmodule(theEnv,defmoduleName,logicalName);
 
    return;
   }
 
 /****************************************/
-/* PPDefmoduleNil: C access routine for */
+/* CL_PPDefmoduleNil: C access routine for */
 /*   the ppdefmodule command.           */
 /****************************************/
-const char *PPDefmoduleNil(
+const char *CL_PPDefmoduleNil(
   Environment *theEnv,
   const char *defmoduleName)
   {
    Defmodule *defmodulePtr;
 
-   defmodulePtr = FindDefmodule(theEnv,defmoduleName);
+   defmodulePtr = CL_FindDefmodule(theEnv,defmoduleName);
    if (defmodulePtr == NULL)
      {
-      CantFindItemErrorMessage(theEnv,"defmodule",defmoduleName,true);
+      CL_CantFindItemErrorMessage(theEnv,"defmodule",defmoduleName,true);
       return NULL;
      }
 
-   if (DefmodulePPForm(defmodulePtr) == NULL) return "";
+   if (CL_DefmodulePPFoCL_rm(defmodulePtr) == NULL) return "";
    
-   return DefmodulePPForm(defmodulePtr);
+   return CL_DefmodulePPFoCL_rm(defmodulePtr);
   }
 
 /*************************************/
-/* PPDefmodule: C access routine for */
+/* CL_PPDefmodule: C access routine for */
 /*   the ppdefmodule command.        */
 /*************************************/
-bool PPDefmodule(
+bool CL_PPDefmodule(
   Environment *theEnv,
   const char *defmoduleName,
   const char *logicalName)
   {
    Defmodule *defmodulePtr;
 
-   defmodulePtr = FindDefmodule(theEnv,defmoduleName);
+   defmodulePtr = CL_FindDefmodule(theEnv,defmoduleName);
    if (defmodulePtr == NULL)
      {
-      CantFindItemErrorMessage(theEnv,"defmodule",defmoduleName,true);
+      CL_CantFindItemErrorMessage(theEnv,"defmodule",defmoduleName,true);
       return false;
      }
 
-   if (DefmodulePPForm(defmodulePtr) == NULL) return true;
-   WriteString(theEnv,logicalName,DefmodulePPForm(defmodulePtr));
+   if (CL_DefmodulePPFoCL_rm(defmodulePtr) == NULL) return true;
+   CL_WriteString(theEnv,logicalName,CL_DefmodulePPFoCL_rm(defmodulePtr));
 
    return true;
   }
 
 /***********************************************/
-/* ListDefmodulesCommand: H/L access routine   */
+/* CL_ListDefmodulesCommand: H/L access routine   */
 /*   for the list-defmodules command.          */
 /***********************************************/
-void ListDefmodulesCommand(
+void CL_ListDefmodulesCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
-   ListDefmodules(theEnv,STDOUT);
+   CL_ListDefmodules(theEnv,STDOUT);
   }
 
 /**************************************/
-/* ListDefmodules: C access routine   */
+/* CL_ListDefmodules: C access routine   */
 /*   for the list-defmodules command. */
 /**************************************/
-void ListDefmodules(
+void CL_ListDefmodules(
   Environment *theEnv,
   const char *logicalName)
   {
    Defmodule *theModule;
    unsigned int count = 0;
 
-   for (theModule = GetNextDefmodule(theEnv,NULL);
+   for (theModule = CL_GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = GetNextDefmodule(theEnv,theModule))
+        theModule = CL_GetNextDefmodule(theEnv,theModule))
     {
-     WriteString(theEnv,logicalName,DefmoduleName(theModule));
-     WriteString(theEnv,logicalName,"\n");
+     CL_WriteString(theEnv,logicalName,CL_DefmoduleName(theModule));
+     CL_WriteString(theEnv,logicalName,"\n");
      count++;
     }
 
-   PrintTally(theEnv,logicalName,count,"defmodule","defmodules");
+   CL_PrintTally(theEnv,logicalName,count,"defmodule","defmodules");
   }
 
 #endif /* DEBUGGING_FUNCTIONS */

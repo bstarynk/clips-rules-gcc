@@ -16,7 +16,7 @@
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
-/*      6.23: Added support for templates maintaining their  */
+/*      6.23: Added support for templates CL_maintaining their  */
 /*            own list of facts.                             */
 /*                                                           */
 /*      6.30: Added support for path name argument to        */
@@ -49,9 +49,9 @@
 
 #include "tmpltdef.h"
 
-   void                           DeftemplateCompilerSetup(Environment *);
-   void                           DeftemplateCModuleReference(Environment *,FILE *,unsigned long,unsigned int,unsigned int);
-   void                           DeftemplateCConstructReference(Environment *,FILE *,Deftemplate *,
+   void                           CL_DeftemplateCompilerSetup(Environment *);
+   void                           CL_DeftemplateCModuleReference(Environment *,FILE *,unsigned long,unsigned int,unsigned int);
+   void                           CL_DeftemplateCConstructReference(Environment *,FILE *,Deftemplate *,
                                                                  unsigned int,unsigned int);
 
 #endif /* _H_tmpltcmp */

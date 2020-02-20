@@ -36,7 +36,7 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/*            Eval support for run time and bload only.      */
+/*            CL_Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -48,13 +48,13 @@
 
 #include "evaluatn.h"
 
-   void                           SetupInstanceMultifieldCommands(Environment *);
-   void                           MVSlotReplaceCommand(Environment *,UDFContext *,UDFValue *);
-   void                           MVSlotInsertCommand(Environment *,UDFContext *,UDFValue *);
-   void                           MVSlotDeleteCommand(Environment *,UDFContext *,UDFValue *);
-   void                           DirectMVReplaceCommand(Environment *,UDFContext *,UDFValue *);
-   void                           DirectMVInsertCommand(Environment *,UDFContext *,UDFValue *);
-   void                           DirectMVDeleteCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_SetupInstanceMultifieldCommands(Environment *);
+   void                           CL_MVSlotReplaceCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_MVSlotInsertCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_MVSlotDeleteCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_DirectMVReplaceCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_DirectMVInsertCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_DirectMVDeleteCommand(Environment *,UDFContext *,UDFValue *);
 
 #endif /* _H_insmult */
 

@@ -60,13 +60,13 @@
    static void                    PatternNodeToCode(Environment *,FILE *,struct factPatternNode *,unsigned int,unsigned int);
 
 /**************************************************************/
-/* FactPatternsCompilerSetup: Initializes the constructs-to-c */
+/* CL_FactPatternsCompilerSetup: Initializes the constructs-to-c */
 /*   command for use with the fact pattern network.           */
 /**************************************************************/
-void FactPatternsCompilerSetup(
+void CL_FactPatternsCompilerSetup(
   Environment *theEnv)
   {
-   FactData(theEnv)->FactCodeItem = AddCodeGeneratorItem(theEnv,"facts",0,BeforePatternNetworkToCode,
+   FactData(theEnv)->FactCodeItem = CL_AddCodeGeneratorItem(theEnv,"facts",0,BeforePatternNetworkToCode,
                                        NULL,PatternNetworkToCode,1);
   }
 
@@ -88,23 +88,23 @@ static void BeforePatternNetworkToCode(
    /* Loop through each module. */
    /*===========================*/
 
-   for (theModule = GetNextDefmodule(theEnv,NULL);
+   for (theModule = CL_GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = GetNextDefmodule(theEnv,theModule))
+        theModule = CL_GetNextDefmodule(theEnv,theModule))
      {
       /*=========================*/
       /* Set the current module. */
       /*=========================*/
 
-      SetCurrentModule(theEnv,theModule);
+      CL_SetCurrentModule(theEnv,theModule);
 
       /*======================================================*/
       /* Loop through each deftemplate in the current module. */
       /*======================================================*/
 
-      for (theDeftemplate = GetNextDeftemplate(theEnv,NULL);
+      for (theDeftemplate = CL_GetNextDeftemplate(theEnv,NULL);
            theDeftemplate != NULL;
-           theDeftemplate = GetNextDeftemplate(theEnv,theDeftemplate))
+           theDeftemplate = CL_GetNextDeftemplate(theEnv,theDeftemplate))
         {
          /*=================================================*/
          /* Assign each pattern node in the pattern network */
@@ -193,24 +193,24 @@ static bool PatternNetworkToCode(
    /* Loop through all the modules. */
    /*===============================*/
 
-   for (theModule = GetNextDefmodule(theEnv,NULL);
+   for (theModule = CL_GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = GetNextDefmodule(theEnv,theModule))
+        theModule = CL_GetNextDefmodule(theEnv,theModule))
      {
       /*=========================*/
       /* Set the current module. */
       /*=========================*/
 
-      SetCurrentModule(theEnv,theModule);
+      CL_SetCurrentModule(theEnv,theModule);
 
       /*======================================*/
       /* Loop through all of the deftemplates */
       /* in the current module.               */
       /*======================================*/
 
-      for (theTemplate = GetNextDeftemplate(theEnv,NULL);
+      for (theTemplate = CL_GetNextDeftemplate(theEnv,NULL);
            theTemplate != NULL;
-           theTemplate = GetNextDeftemplate(theEnv,theTemplate))
+           theTemplate = CL_GetNextDeftemplate(theEnv,theTemplate))
         {
          /*======================================================*/
          /* Loop through each pattern node in the deftemplate's  */
@@ -222,7 +222,7 @@ static bool PatternNetworkToCode(
               thePatternNode != NULL;
               thePatternNode = GetNextPatternNode(thePatternNode))
            {
-            networkFile = OpenFileIfNeeded(theEnv,networkFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
+            networkFile = CL_OpenFileIfNeeded(theEnv,networkFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
                                          networkArrayVersion,headerFP,
                                          "struct factPatternNode",FactPrefix(),false,NULL);
             if (networkFile == NULL)
@@ -233,7 +233,7 @@ static bool PatternNetworkToCode(
 
             PatternNodeToCode(theEnv,networkFile,thePatternNode,imageID,maxIndices);
             networkArrayCount++;
-            networkFile = CloseFileIfNeeded(theEnv,networkFile,&networkArrayCount,
+            networkFile = CL_CloseFileIfNeeded(theEnv,networkFile,&networkArrayCount,
                                             &networkArrayVersion,maxIndices,NULL,NULL);
            }
         }
@@ -269,12 +269,12 @@ static void CloseNetworkFiles(
 
    if (networkFile != NULL)
      {
-      CloseFileIfNeeded(theEnv,networkFile,&count,&arrayVersion,maxIndices,NULL,NULL);
+      CL_CloseFileIfNeeded(theEnv,networkFile,&count,&arrayVersion,maxIndices,NULL,NULL);
      }
   }
 
 /************************************************************/
-/* PatternNodeToCode: Writes the C code representation of a */
+/* PatternNodeToCode: CL_Writes the C code representation of a */
 /*   single fact pattern node slot to the specified file.   */
 /************************************************************/
 static void PatternNodeToCode(
@@ -290,7 +290,7 @@ static void PatternNodeToCode(
    /* Pattern Node Header */
    /*=====================*/
 
-   PatternNodeHeaderToCode(theEnv,theFile,&thePatternNode->header,imageID,maxIndices);
+   CL_PatternNodeHeaderToCode(theEnv,theFile,&thePatternNode->header,imageID,maxIndices);
 
    /*========================*/
    /* Field and Slot Indices */
@@ -304,7 +304,7 @@ static void PatternNodeToCode(
    /* Network Tests */
    /*===============*/
 
-   PrintHashedExpressionReference(theEnv,theFile,thePatternNode->networkTest,imageID,maxIndices);
+   CL_PrintHashedExpressionReference(theEnv,theFile,thePatternNode->networkTest,imageID,maxIndices);
 
    /*============*/
    /* Next Level */
@@ -360,10 +360,10 @@ static void PatternNodeToCode(
   }
 
 /**********************************************************/
-/* FactPatternNodeReference: Prints C code representation */
+/* CL_FactPatternNodeReference: Prints C code representation */
 /*   of a fact pattern node data structure reference.     */
 /**********************************************************/
-void FactPatternNodeReference(
+void CL_FactPatternNodeReference(
   Environment *theEnv,
   void *theVPattern,
   FILE *theFile,

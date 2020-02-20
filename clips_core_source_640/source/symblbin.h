@@ -47,16 +47,16 @@
 #define IntegerPointer(i) ((CLIPSInteger *) (SymbolData(theEnv)->IntegerArray[i]))
 
    void                    MarkNeededAtomicValues(Environment);
-   void                    WriteNeededAtomicValues(Environment *,FILE *);
-   void                    ReadNeededAtomicValues(Environment *);
-   void                    InitAtomicValueNeededFlags(Environment *);
-   void                    FreeAtomicValueStorage(Environment *);
-   void                    WriteNeededSymbols(Environment *,FILE *);
-   void                    WriteNeededFloats(Environment *,FILE *);
-   void                    WriteNeededIntegers(Environment *,FILE *);
-   void                    ReadNeededSymbols(Environment *);
-   void                    ReadNeededFloats(Environment *);
-   void                    ReadNeededIntegers(Environment *);
+   void                    CL_WriteNeededAtomicValues(Environment *,FILE *);
+   void                    CL_ReadNeededAtomicValues(Environment *);
+   void                    CL_InitAtomicValueNeededFlags(Environment *);
+   void                    CL_FreeAtomicValueStorage(Environment *);
+   void                    CL_WriteNeededSymbols(Environment *,FILE *);
+   void                    CL_WriteNeededFloats(Environment *,FILE *);
+   void                    CL_WriteNeededIntegers(Environment *,FILE *);
+   void                    CL_ReadNeededSymbols(Environment *);
+   void                    CL_ReadNeededFloats(Environment *);
+   void                    CL_ReadNeededIntegers(Environment *);
 
 #endif /* _H_symblbin */
 

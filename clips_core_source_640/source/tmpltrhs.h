@@ -17,10 +17,10 @@
 /* Revision History:                                         */
 /*                                                           */
 /*      6.24: Added additional argument required for         */
-/*            DeriveDefaultFromConstraints.                  */
+/*            CL_DeriveDefaultFromConstraints.                  */
 /*                                                           */
 /*            Added additional argument required for         */
-/*            InvalidDeftemplateSlotMessage.                 */
+/*            CL_InvalidDeftemplateSlotMessage.                 */
 /*                                                           */
 /*      6.30: Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
@@ -46,7 +46,7 @@
 #include "scanner.h"
 #include "tmpltdef.h"
 
-   struct expr                   *ParseAssertTemplate(Environment *,const char *,struct token *,bool *,
+   struct expr                   *ParseCL_AssertTemplate(Environment *,const char *,struct token *,bool *,
                                                       TokenType,bool,Deftemplate *);
 
 #endif /* _H_tmpltrhs */

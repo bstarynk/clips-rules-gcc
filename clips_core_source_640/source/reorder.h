@@ -8,14 +8,14 @@
 
 /*************************************************************/
 /* Purpose: Provides routines necessary for converting the   */
-/*   the LHS of a rule into an appropriate form suitable for */
-/*   the KB Rete topology. This includes transforming the    */
+/*   the LHS of a rule into an appropriate foCL_rm suitable for */
+/*   the KB Rete topology. This includes transfoCL_rming the    */
 /*   LHS so there is at most one "or" CE (and this is the    */
 /*   first CE of the LHS if it is used), adding initial      */
 /*   patterns to the LHS (if no LHS is specified or a "test" */
 /*   or "not" CE is the first pattern within an "and" CE),   */
-/*   removing redundant CEs, and determining appropriate     */
-/*   information on nesting for implementing joins from the  */
+/*   removing redundant CEs, and deteCL_rmining appropriate     */
+/*   infoCL_rmation on nesting for implementing joins from the  */
 /*   right.                                                  */
 /*                                                           */
 /* Principal Programmer(s):                                  */
@@ -96,7 +96,7 @@ typedef enum
 #define NO_INDEX USHRT_MAX
 
 /***********************************************************************/
-/* lhsParseNode structure: Stores information about the intermediate   */
+/* lhsParseNode structure: Stores infoCL_rmation about the inteCL_rmediate   */
 /*   parsed representation of the lhs of a rule.                       */
 /***********************************************************************/
 struct lhsParseNode
@@ -150,19 +150,19 @@ struct lhsParseNode
    struct lhsParseNode *bottom;
   };
 
-   struct lhsParseNode           *ReorderPatterns(Environment *,struct lhsParseNode *,bool *);
-   struct lhsParseNode           *CopyLHSParseNodes(Environment *,struct lhsParseNode *);
-   void                           CopyLHSParseNode(Environment *,struct lhsParseNode *,struct lhsParseNode *,bool);
-   struct lhsParseNode           *GetLHSParseNode(Environment *);
-   void                           ReturnLHSParseNodes(Environment *,struct lhsParseNode *);
-   struct lhsParseNode           *ExpressionToLHSParseNodes(Environment *,struct expr *);
-   struct expr                   *LHSParseNodesToExpression(Environment *,struct lhsParseNode *);
-   void                           AddInitialPatterns(Environment *,struct lhsParseNode *);
-   bool                           IsExistsSubjoin(struct lhsParseNode *,int);
-   struct lhsParseNode           *CombineLHSParseNodes(Environment *,struct lhsParseNode *,struct lhsParseNode *);
-   bool                           ConstantNode(struct lhsParseNode *);
-   unsigned short                 NodeTypeToType(struct lhsParseNode *);
-   ParseNodeType                  TypeToNodeType(unsigned short);
+   struct lhsParseNode           *CL_ReorderPatterns(Environment *,struct lhsParseNode *,bool *);
+   struct lhsParseNode           *CL_CopyLHSParseNodes(Environment *,struct lhsParseNode *);
+   void                           CL_CopyLHSParseNode(Environment *,struct lhsParseNode *,struct lhsParseNode *,bool);
+   struct lhsParseNode           *CL_GetLHSParseNode(Environment *);
+   void                           CL_ReturnLHSParseNodes(Environment *,struct lhsParseNode *);
+   struct lhsParseNode           *CL_ExpressionToLHSParseNodes(Environment *,struct expr *);
+   struct expr                   *CL_LHSParseNodesToExpression(Environment *,struct lhsParseNode *);
+   void                           CL_AddInitialPatterns(Environment *,struct lhsParseNode *);
+   bool                           CL_IsExistsSubjoin(struct lhsParseNode *,int);
+   struct lhsParseNode           *CL_CombineLHSParseNodes(Environment *,struct lhsParseNode *,struct lhsParseNode *);
+   bool                           CL_ConstantNode(struct lhsParseNode *);
+   unsigned short                 CL_NodeTypeToType(struct lhsParseNode *);
+   ParseNodeType                  CL_TypeToNodeType(unsigned short);
 
 #endif /* _H_reorder */
 

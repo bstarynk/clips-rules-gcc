@@ -16,8 +16,8 @@
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
-/*      6.24: Added environment parameter to GenClose.       */
-/*            Added environment parameter to GenOpen.        */
+/*      6.24: Added environment parameter to CL_GenClose.       */
+/*            Added environment parameter to CL_GenOpen.        */
 /*                                                           */
 /*            Renamed BOOLEAN macro type to intBool.         */
 /*                                                           */
@@ -78,25 +78,25 @@ struct instanceFileData
 
 #endif /* BLOAD_INSTANCES || BSAVE_INSTANCES */
 
-   void                           SetupInstanceFileCommands(Environment *);
-   void                           SaveInstancesCommand(Environment *,UDFContext *,UDFValue *);
-   void                           LoadInstancesCommand(Environment *,UDFContext *,UDFValue *);
-   void                           RestoreInstancesCommand(Environment *,UDFContext *,UDFValue *);
-   long                           SaveInstancesDriver(Environment *,const char *,SaveScope,Expression *,bool);
-   long                           SaveInstances(Environment *,const char *,SaveScope);
+   void                           CL_SetupInstanceFileCommands(Environment *);
+   void                           CL_SaveCL_InstancesCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_LoadCL_InstancesCommand(Environment *,UDFContext *,UDFValue *);
+   void                           RestoreCL_InstancesCommand(Environment *,UDFContext *,UDFValue *);
+   long                           CL_SaveCL_InstancesDriver(Environment *,const char *,CL_SaveScope,Expression *,bool);
+   long                           CL_SaveCL_Instances(Environment *,const char *,CL_SaveScope);
 #if BSAVE_INSTANCES
-   void                           BinarySaveInstancesCommand(Environment *,UDFContext *,UDFValue *);
-   long                           BinarySaveInstancesDriver(Environment *,const char *,SaveScope,Expression *,bool);
-   long                           BinarySaveInstances(Environment *,const char *,SaveScope);
+   void                           CL_BinaryCL_SaveCL_InstancesCommand(Environment *,UDFContext *,UDFValue *);
+   long                           CL_BinaryCL_SaveCL_InstancesDriver(Environment *,const char *,CL_SaveScope,Expression *,bool);
+   long                           CL_BinaryCL_SaveCL_Instances(Environment *,const char *,CL_SaveScope);
 #endif
 #if BLOAD_INSTANCES
-   void                           BinaryLoadInstancesCommand(Environment *,UDFContext *,UDFValue *);
-   long                           BinaryLoadInstances(Environment *,const char *);
+   void                           CL_BinaryCL_LoadCL_InstancesCommand(Environment *,UDFContext *,UDFValue *);
+   long                           CL_BinaryCL_LoadCL_Instances(Environment *,const char *);
 #endif
-   long                           LoadInstances(Environment *,const char *);
-   long                           LoadInstancesFromString(Environment *,const char *,size_t);
-   long                           RestoreInstances(Environment *,const char *);
-   long                           RestoreInstancesFromString(Environment *,const char *,size_t);
+   long                           CL_LoadCL_Instances(Environment *,const char *);
+   long                           CL_LoadCL_InstancesFromString(Environment *,const char *,size_t);
+   long                           RestoreCL_Instances(Environment *,const char *);
+   long                           RestoreCL_InstancesFromString(Environment *,const char *,size_t);
 
 #endif /* _H_insfile */
 

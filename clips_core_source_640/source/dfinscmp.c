@@ -54,7 +54,7 @@
    static bool                    DefinstancesToCode(Environment *,const char *,const char *,char *,unsigned int,
                                                      FILE *,unsigned int,unsigned int);
    static void                    CloseDefinstancesFiles(Environment *,FILE *,FILE *,unsigned int);
-   static void                    DefinstancesModuleToCode(Environment *,FILE *,Defmodule *,unsigned int,unsigned int);
+   static void                    CL_DefinstancesModuleToCode(Environment *,FILE *,Defmodule *,unsigned int,unsigned int);
    static void                    SingleDefinstancesToCode(Environment*,FILE *,Definstances *,unsigned int,unsigned int,unsigned int);
    static void                    InitDefinstancesCode(Environment *,FILE *,unsigned int,unsigned int);
 
@@ -65,7 +65,7 @@
    ***************************************** */
 
 /***************************************************
-  NAME         : SetupDefinstancesCompiler
+  NAME         : CL_SetupDefinstancesCompiler
   DESCRIPTION  : Initializes the construct compiler
                    item for definstances
   INPUTS       : None
@@ -73,16 +73,16 @@
   SIDE EFFECTS : Code generator item initialized
   NOTES        : None
  ***************************************************/
-void SetupDefinstancesCompiler(
+void CL_SetupDefinstancesCompiler(
   Environment *theEnv)
   {
-   DefinstancesData(theEnv)->DefinstancesCodeItem = AddCodeGeneratorItem(theEnv,"definstances",0,ReadyDefinstancesForCode,
+   DefinstancesData(theEnv)->DefinstancesCodeItem = CL_AddCodeGeneratorItem(theEnv,"definstances",0,ReadyDefinstancesForCode,
                                                InitDefinstancesCode,DefinstancesToCode,2);
   }
 
 
 /****************************************************
-  NAME         : DefinstancesCModuleReference
+  NAME         : CL_DefinstancesCModuleReference
   DESCRIPTION  : Prints out a reference to a
                  definstances module
   INPUTS       : 1) The output file
@@ -94,7 +94,7 @@ void SetupDefinstancesCompiler(
   SIDE EFFECTS : Definstances module reference printed
   NOTES        : None
  ****************************************************/
-void DefinstancesCModuleReference(
+void CL_DefinstancesCModuleReference(
   Environment *theEnv,
   FILE *theFile,
   unsigned long count,
@@ -120,17 +120,17 @@ void DefinstancesCModuleReference(
                    for use in compiled expressions
   INPUTS       : None
   RETURNS      : Nothing useful
-  SIDE EFFECTS : BsaveIndices set
+  SIDE EFFECTS : CL_BsaveIndices set
   NOTES        : None
  ***************************************************/
 static void ReadyDefinstancesForCode(
   Environment *theEnv)
   {
-   MarkConstructBsaveIDs(theEnv,DefinstancesData(theEnv)->DefinstancesModuleIndex);
+   MarkConstructCL_BsaveIDs(theEnv,DefinstancesData(theEnv)->CL_DefinstancesModuleIndex);
   }
 
 /***************************************************/
-/* InitDefinstancesCode: Writes out initialization */
+/* InitDefinstancesCode: CL_Writes out initialization */
 /*   code for definstances for a run-time module.  */
 /***************************************************/
 static void InitDefinstancesCode(
@@ -144,12 +144,12 @@ static void InitDefinstancesCode(
 #pragma unused(imageID)
 #pragma unused(theEnv)
 #endif
-   fprintf(initFP,"   DefinstancesRunTimeInitialize(theEnv);\n");
+   fprintf(initFP,"   DefinstancesCL_RunTimeInitialize(theEnv);\n");
   }
 
 /*******************************************************
   NAME         : DefinstancesToCode
-  DESCRIPTION  : Writes out static array code for
+  DESCRIPTION  : CL_Writes out static array code for
                    definstances
   INPUTS       : 1) The base name of the construct set
                  2) The base id for this construct
@@ -188,13 +188,13 @@ static bool DefinstancesToCode(
       Loop through all the modules and all the definstances writing
       their C code representation to the file as they are traversed
       ============================================================= */
-   theModule = GetNextDefmodule(theEnv,NULL);
+   theModule = CL_GetNextDefmodule(theEnv,NULL);
 
    while (theModule != NULL)
      {
-      SetCurrentModule(theEnv,theModule);
+      CL_SetCurrentModule(theEnv,theModule);
 
-      moduleFile = OpenFileIfNeeded(theEnv,moduleFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
+      moduleFile = CL_OpenFileIfNeeded(theEnv,moduleFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
                                     moduleArrayVersion,headerFP,
                                     "DEFINSTANCES_MODULE",ModulePrefix(DefinstancesData(theEnv)->DefinstancesCodeItem),
                                     false,NULL);
@@ -205,15 +205,15 @@ static bool DefinstancesToCode(
          return false;
         }
 
-      DefinstancesModuleToCode(theEnv,moduleFile,theModule,imageID,maxIndices);
-      moduleFile = CloseFileIfNeeded(theEnv,moduleFile,&moduleArrayCount,&moduleArrayVersion,
+      CL_DefinstancesModuleToCode(theEnv,moduleFile,theModule,imageID,maxIndices);
+      moduleFile = CL_CloseFileIfNeeded(theEnv,moduleFile,&moduleArrayCount,&moduleArrayVersion,
                                      maxIndices,NULL,NULL);
 
-      theDefinstances = GetNextDefinstances(theEnv,NULL);
+      theDefinstances = CL_GetNextDefinstances(theEnv,NULL);
 
       while (theDefinstances != NULL)
         {
-         definstancesFile = OpenFileIfNeeded(theEnv,definstancesFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
+         definstancesFile = CL_OpenFileIfNeeded(theEnv,definstancesFile,fileName,pathName,fileNameBuffer,fileID,imageID,&fileCount,
                                              definstancesArrayVersion,headerFP,
                                              "Definstances",ConstructPrefix(DefinstancesData(theEnv)->DefinstancesCodeItem),
                                              false,NULL);
@@ -226,13 +226,13 @@ static bool DefinstancesToCode(
          SingleDefinstancesToCode(theEnv,definstancesFile,theDefinstances,imageID,
                                   maxIndices,moduleCount);
          definstancesArrayCount++;
-         definstancesFile = CloseFileIfNeeded(theEnv,definstancesFile,&definstancesArrayCount,
+         definstancesFile = CL_CloseFileIfNeeded(theEnv,definstancesFile,&definstancesArrayCount,
                                               &definstancesArrayVersion,maxIndices,NULL,NULL);
 
-         theDefinstances = GetNextDefinstances(theEnv,theDefinstances);
+         theDefinstances = CL_GetNextDefinstances(theEnv,theDefinstances);
         }
 
-      theModule = GetNextDefmodule(theEnv,theModule);
+      theModule = CL_GetNextDefmodule(theEnv,theModule);
       moduleCount++;
       moduleArrayCount++;
      }
@@ -266,20 +266,20 @@ static void CloseDefinstancesFiles(
    if (definstancesFile != NULL)
      {
       count = maxIndices;
-      CloseFileIfNeeded(theEnv,definstancesFile,&count,&arrayVersion,
+      CL_CloseFileIfNeeded(theEnv,definstancesFile,&count,&arrayVersion,
                                          maxIndices,NULL,NULL);
      }
 
    if (moduleFile != NULL)
      {
       count = maxIndices;
-      CloseFileIfNeeded(theEnv,moduleFile,&count,&arrayVersion,maxIndices,NULL,NULL);
+      CL_CloseFileIfNeeded(theEnv,moduleFile,&count,&arrayVersion,maxIndices,NULL,NULL);
      }
   }
 
 /***************************************************
-  NAME         : DefinstancesModuleToCode
-  DESCRIPTION  : Writes out the C values for a
+  NAME         : CL_DefinstancesModuleToCode
+  DESCRIPTION  : CL_Writes out the C values for a
                  definstances module item
   INPUTS       : 1) The output file
                  2) The module for the definstances
@@ -290,7 +290,7 @@ static void CloseDefinstancesFiles(
   SIDE EFFECTS : Definstances module item written
   NOTES        : None
  ***************************************************/
-static void DefinstancesModuleToCode(
+static void CL_DefinstancesModuleToCode(
   Environment *theEnv,
   FILE *theFile,
   Defmodule *theModule,
@@ -298,14 +298,14 @@ static void DefinstancesModuleToCode(
   unsigned int maxIndices)
   {
    fprintf(theFile,"{");
-   ConstructModuleToCode(theEnv,theFile,theModule,imageID,maxIndices,
-                         DefinstancesData(theEnv)->DefinstancesModuleIndex,ConstructPrefix(DefinstancesData(theEnv)->DefinstancesCodeItem));
+   CL_ConstructModuleToCode(theEnv,theFile,theModule,imageID,maxIndices,
+                         DefinstancesData(theEnv)->CL_DefinstancesModuleIndex,ConstructPrefix(DefinstancesData(theEnv)->DefinstancesCodeItem));
    fprintf(theFile,"}");
   }
 
 /***************************************************
   NAME         : SingleDefinstancesToCode
-  DESCRIPTION  : Writes out a single definstances'
+  DESCRIPTION  : CL_Writes out a single definstances'
                  data to the file
   INPUTS       : 1) The output file
                  2) The definstances
@@ -330,7 +330,7 @@ static void SingleDefinstancesToCode(
       =================== */
 
    fprintf(theFile,"{");
-   ConstructHeaderToCode(theEnv,theFile,&theDefinstances->header,imageID,maxIndices,moduleCount,
+   CL_ConstructHeaderToCode(theEnv,theFile,&theDefinstances->header,imageID,maxIndices,moduleCount,
                          ModulePrefix(DefinstancesData(theEnv)->DefinstancesCodeItem),
                          ConstructPrefix(DefinstancesData(theEnv)->DefinstancesCodeItem));
 
@@ -338,7 +338,7 @@ static void SingleDefinstancesToCode(
       Definstances specific data
       ========================== */
    fprintf(theFile,",0,");
-   ExpressionToCode(theEnv,theFile,theDefinstances->mkinstance);
+   CL_ExpressionToCode(theEnv,theFile,theDefinstances->mkinstance);
    fprintf(theFile,"}");
   }
 

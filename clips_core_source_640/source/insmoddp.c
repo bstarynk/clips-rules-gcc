@@ -30,11 +30,11 @@
 /*                                                           */
 /*            Changed integer type/precision.                */
 /*                                                           */
-/*            The return value of DirectMessage indicates    */
+/*            The return value of CL_DirectMessage indicates    */
 /*            whether an execution error has occurred.       */
 /*                                                           */
-/*      6.40: Added Env prefix to GetEvaluationError and     */
-/*            SetEvaluationError functions.                  */
+/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
+/*            SetCL_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -47,7 +47,7 @@
 /*                                                           */
 /*            Removed DATA_OBJECT_ARRAY primitive type.      */
 /*                                                           */
-/*            Eval support for run time and bload only.      */
+/*            CL_Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -86,8 +86,8 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static UDFValue               *EvaluateSlotOverrides(Environment *,Expression *,unsigned short *,bool *);
-   static void                    DeleteSlotOverrideEvaluations(Environment *,UDFValue *,unsigned short);
+   static UDFValue               *CL_EvaluateSlotOverrides(Environment *,Expression *,unsigned short *,bool *);
+   static void                    DeleteSlotOverrideCL_Evaluations(Environment *,UDFValue *,unsigned short);
    static void                    ModifyMsgHandlerSupport(Environment *,UDFValue *,bool);
    static void                    DuplicateMsgHandlerSupport(Environment *,UDFValue *,bool);
 
@@ -98,7 +98,7 @@
    ***************************************** */
 
 /***************************************************
-  NAME         : SetupInstanceModDupCommands
+  NAME         : CL_SetupInstanceModDupCommands
   DESCRIPTION  : Defines function interfaces for
                  modify- and duplicate- instance
                  functions
@@ -107,64 +107,64 @@
   SIDE EFFECTS : Functions defined to KB
   NOTES        : None
  ***************************************************/
-void SetupInstanceModDupCommands(
+void CL_SetupInstanceModDupCommands(
   Environment *theEnv)
   {
 #if ! RUN_TIME
 
 #if DEFRULE_CONSTRUCT
-   AddUDF(theEnv,"modify-instance","*",0,UNBOUNDED,NULL,InactiveModifyInstance,"InactiveModifyInstance",NULL);
-   AddUDF(theEnv,"active-modify-instance","*",0,UNBOUNDED,NULL,ModifyInstance,"ModifyInstance",NULL);
-   AddFunctionParser(theEnv,"active-modify-instance",ParseInitializeInstance);
-   AddUDF(theEnv,"message-modify-instance","*",0,UNBOUNDED,NULL,InactiveMsgModifyInstance,"InactiveMsgModifyInstance",NULL);
-   AddUDF(theEnv,"active-message-modify-instance","*",0,UNBOUNDED,NULL,MsgModifyInstance,"MsgModifyInstance",NULL);
-   AddFunctionParser(theEnv,"active-message-modify-instance",ParseInitializeInstance);
+   CL_AddUDF(theEnv,"modify-instance","*",0,UNBOUNDED,NULL,CL_InactiveCL_ModifyInstance,"CL_InactiveCL_ModifyInstance",NULL);
+   CL_AddUDF(theEnv,"active-modify-instance","*",0,UNBOUNDED,NULL,CL_ModifyInstance,"CL_ModifyInstance",NULL);
+   CL_AddFunctionParser(theEnv,"active-modify-instance",CL_ParseInitializeInstance);
+   CL_AddUDF(theEnv,"message-modify-instance","*",0,UNBOUNDED,NULL,CL_InactiveMsgCL_ModifyInstance,"CL_InactiveMsgCL_ModifyInstance",NULL);
+   CL_AddUDF(theEnv,"active-message-modify-instance","*",0,UNBOUNDED,NULL,MsgCL_ModifyInstance,"MsgCL_ModifyInstance",NULL);
+   CL_AddFunctionParser(theEnv,"active-message-modify-instance",CL_ParseInitializeInstance);
 
-   AddUDF(theEnv,"duplicate-instance","*",0,UNBOUNDED,NULL,InactiveDuplicateInstance,"InactiveDuplicateInstance",NULL);
-   AddUDF(theEnv,"active-duplicate-instance","*",0,UNBOUNDED,NULL,DuplicateInstance,"DuplicateInstance",NULL);
-   AddFunctionParser(theEnv,"active-duplicate-instance",ParseInitializeInstance);
-   AddUDF(theEnv,"message-duplicate-instance","*",0,UNBOUNDED,NULL,InactiveMsgDuplicateInstance,"InactiveMsgDuplicateInstance",NULL);
-   AddUDF(theEnv,"active-message-duplicate-instance","*",0,UNBOUNDED,NULL,MsgDuplicateInstance,"MsgDuplicateInstance",NULL);
-   AddFunctionParser(theEnv,"active-message-duplicate-instance",ParseInitializeInstance);
+   CL_AddUDF(theEnv,"duplicate-instance","*",0,UNBOUNDED,NULL,InactiveCL_DuplicateInstance,"InactiveCL_DuplicateInstance",NULL);
+   CL_AddUDF(theEnv,"active-duplicate-instance","*",0,UNBOUNDED,NULL,CL_DuplicateInstance,"CL_DuplicateInstance",NULL);
+   CL_AddFunctionParser(theEnv,"active-duplicate-instance",CL_ParseInitializeInstance);
+   CL_AddUDF(theEnv,"message-duplicate-instance","*",0,UNBOUNDED,NULL,InactiveMsgCL_DuplicateInstance,"InactiveMsgCL_DuplicateInstance",NULL);
+   CL_AddUDF(theEnv,"active-message-duplicate-instance","*",0,UNBOUNDED,NULL,MsgCL_DuplicateInstance,"MsgCL_DuplicateInstance",NULL);
+   CL_AddFunctionParser(theEnv,"active-message-duplicate-instance",CL_ParseInitializeInstance);
 #else
-   AddUDF(theEnv,"modify-instance","*",0,UNBOUNDED,NULL,ModifyInstance,"ModifyInstance",NULL);
-   AddUDF(theEnv,"message-modify-instance","*",0,UNBOUNDED,NULL,MsgModifyInstance,"MsgModifyInstance",NULL);
-   AddUDF(theEnv,"duplicate-instance","*",0,UNBOUNDED,NULL,DuplicateInstance,"DuplicateInstance",NULL);
-   AddUDF(theEnv,"message-duplicate-instance","*",0,UNBOUNDED,NULL,MsgDuplicateInstance,"MsgDuplicateInstance",NULL);
+   CL_AddUDF(theEnv,"modify-instance","*",0,UNBOUNDED,NULL,CL_ModifyInstance,"CL_ModifyInstance",NULL);
+   CL_AddUDF(theEnv,"message-modify-instance","*",0,UNBOUNDED,NULL,MsgCL_ModifyInstance,"MsgCL_ModifyInstance",NULL);
+   CL_AddUDF(theEnv,"duplicate-instance","*",0,UNBOUNDED,NULL,CL_DuplicateInstance,"CL_DuplicateInstance",NULL);
+   CL_AddUDF(theEnv,"message-duplicate-instance","*",0,UNBOUNDED,NULL,MsgCL_DuplicateInstance,"MsgCL_DuplicateInstance",NULL);
 #endif
 
-   AddUDF(theEnv,"(direct-modify)","*",0,UNBOUNDED,NULL,DirectModifyMsgHandler,"DirectModifyMsgHandler",NULL);
-   AddUDF(theEnv,"(message-modify)","*",0,UNBOUNDED,NULL,MsgModifyMsgHandler,"MsgModifyMsgHandler",NULL);
-   AddUDF(theEnv,"(direct-duplicate)","*",0,UNBOUNDED,NULL,DirectDuplicateMsgHandler,"DirectDuplicateMsgHandler",NULL);
-   AddUDF(theEnv,"(message-duplicate)","*",0,UNBOUNDED,NULL,MsgDuplicateMsgHandler,"MsgDuplicateMsgHandler",NULL);
+   CL_AddUDF(theEnv,"(direct-modify)","*",0,UNBOUNDED,NULL,CL_DirectModifyMsgHandler,"CL_DirectModifyMsgHandler",NULL);
+   CL_AddUDF(theEnv,"(message-modify)","*",0,UNBOUNDED,NULL,CL_MsgModifyMsgHandler,"CL_MsgModifyMsgHandler",NULL);
+   CL_AddUDF(theEnv,"(direct-duplicate)","*",0,UNBOUNDED,NULL,CL_DirectDuplicateMsgHandler,"CL_DirectDuplicateMsgHandler",NULL);
+   CL_AddUDF(theEnv,"(message-duplicate)","*",0,UNBOUNDED,NULL,CL_MsgDuplicateMsgHandler,"CL_MsgDuplicateMsgHandler",NULL);
 
 #endif
 
 #if DEFRULE_CONSTRUCT
-   AddFunctionParser(theEnv,"active-modify-instance",ParseInitializeInstance);
-   AddFunctionParser(theEnv,"active-message-modify-instance",ParseInitializeInstance);
+   CL_AddFunctionParser(theEnv,"active-modify-instance",CL_ParseInitializeInstance);
+   CL_AddFunctionParser(theEnv,"active-message-modify-instance",CL_ParseInitializeInstance);
 
-   AddFunctionParser(theEnv,"active-duplicate-instance",ParseInitializeInstance);
-   AddFunctionParser(theEnv,"active-message-duplicate-instance",ParseInitializeInstance);
+   CL_AddFunctionParser(theEnv,"active-duplicate-instance",CL_ParseInitializeInstance);
+   CL_AddFunctionParser(theEnv,"active-message-duplicate-instance",CL_ParseInitializeInstance);
 #endif
 
-   AddFunctionParser(theEnv,"modify-instance",ParseInitializeInstance);
-   AddFunctionParser(theEnv,"message-modify-instance",ParseInitializeInstance);
-   AddFunctionParser(theEnv,"duplicate-instance",ParseInitializeInstance);
-   AddFunctionParser(theEnv,"message-duplicate-instance",ParseInitializeInstance);
+   CL_AddFunctionParser(theEnv,"modify-instance",CL_ParseInitializeInstance);
+   CL_AddFunctionParser(theEnv,"message-modify-instance",CL_ParseInitializeInstance);
+   CL_AddFunctionParser(theEnv,"duplicate-instance",CL_ParseInitializeInstance);
+   CL_AddFunctionParser(theEnv,"message-duplicate-instance",CL_ParseInitializeInstance);
   }
 
 /*************************************************************
-  NAME         : ModifyInstance
+  NAME         : CL_ModifyInstance
   DESCRIPTION  : Modifies slots of an instance via the
                  direct-modify message
   INPUTS       : The address of the result value
   RETURNS      : Nothing useful
-  SIDE EFFECTS : Slot updates performed directly
+  SIDE EFFECTS : Slot updates perfoCL_rmed directly
   NOTES        : H/L Syntax:
                  (modify-instance <instance> <slot-override>*)
  *************************************************************/
-void ModifyInstance(
+void CL_ModifyInstance(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -183,7 +183,7 @@ void ModifyInstance(
       execution
       =========================================== */
 
-   overrides = EvaluateSlotOverrides(theEnv,GetFirstArgument()->nextArg,
+   overrides = CL_EvaluateSlotOverrides(theEnv,GetFirstArgument()->nextArg,
                                      &overrideCount,&error);
    if (error)
      {
@@ -195,46 +195,46 @@ void ModifyInstance(
       Find the instance and make sure it
       wasn't deleted by the overrides
       ================================== */
-   ins = CheckInstance(context);
+   ins = CL_CheckInstance(context);
    if (ins == NULL)
      {
       returnValue->lexemeValue = FalseSymbol(theEnv);
-      DeleteSlotOverrideEvaluations(theEnv,overrides,overrideCount);
+      DeleteSlotOverrideCL_Evaluations(theEnv,overrides,overrideCount);
       return;
      }
 
    /* ======================================
       We are passing the slot override
-      expression information along
+      expression infoCL_rmation along
       to whatever message-handler implements
       the modify
       ====================================== */
 
    theExp.type = EXTERNAL_ADDRESS_TYPE;
-   theExp.value = CreateExternalAddress(theEnv,overrides,0);
+   theExp.value = CL_CreateExternalAddress(theEnv,overrides,0);
    theExp.argList = NULL;
    theExp.nextArg = NULL;
 
    oldOMDMV = InstanceData(theEnv)->ObjectModDupMsgValid;
    InstanceData(theEnv)->ObjectModDupMsgValid = true;
-   DirectMessage(theEnv,FindSymbolHN(theEnv,DIRECT_MODIFY_STRING,SYMBOL_BIT),ins,returnValue,&theExp);
+   CL_DirectMessage(theEnv,CL_FindSymbolHN(theEnv,DIRECT_MODIFY_STRING,SYMBOL_BIT),ins,returnValue,&theExp);
    InstanceData(theEnv)->ObjectModDupMsgValid = oldOMDMV;
 
-   DeleteSlotOverrideEvaluations(theEnv,overrides,overrideCount);
+   DeleteSlotOverrideCL_Evaluations(theEnv,overrides,overrideCount);
   }
 
 /*************************************************************
-  NAME         : MsgModifyInstance
+  NAME         : MsgCL_ModifyInstance
   DESCRIPTION  : Modifies slots of an instance via the
                  direct-modify message
   INPUTS       : The address of the result value
   RETURNS      : Nothing useful
-  SIDE EFFECTS : Slot updates performed with put- messages
+  SIDE EFFECTS : Slot updates perfoCL_rmed with put- messages
   NOTES        : H/L Syntax:
                  (message-modify-instance <instance>
                     <slot-override>*)
  *************************************************************/
-void MsgModifyInstance(
+void MsgCL_ModifyInstance(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -252,7 +252,7 @@ void MsgModifyInstance(
       new frame is pushed for message-handler
       execution
       =========================================== */
-   overrides = EvaluateSlotOverrides(theEnv,GetFirstArgument()->nextArg,
+   overrides = CL_EvaluateSlotOverrides(theEnv,GetFirstArgument()->nextArg,
                                      &overrideCount,&error);
    if (error)
      {
@@ -264,46 +264,46 @@ void MsgModifyInstance(
       Find the instance and make sure it
       wasn't deleted by the overrides
       ================================== */
-   ins = CheckInstance(context);
+   ins = CL_CheckInstance(context);
    if (ins == NULL)
      {
       returnValue->lexemeValue = FalseSymbol(theEnv);
-      DeleteSlotOverrideEvaluations(theEnv,overrides,overrideCount);
+      DeleteSlotOverrideCL_Evaluations(theEnv,overrides,overrideCount);
       return;
      }
 
    /* ======================================
       We are passing the slot override
-      expression information along
+      expression infoCL_rmation along
       to whatever message-handler implements
       the modify
       ====================================== */
 
    theExp.type = EXTERNAL_ADDRESS_TYPE;
-   theExp.value = CreateExternalAddress(theEnv,overrides,0);
+   theExp.value = CL_CreateExternalAddress(theEnv,overrides,0);
    theExp.argList = NULL;
    theExp.nextArg = NULL;
 
    oldOMDMV = InstanceData(theEnv)->ObjectModDupMsgValid;
    InstanceData(theEnv)->ObjectModDupMsgValid = true;
-   DirectMessage(theEnv,FindSymbolHN(theEnv,MSG_MODIFY_STRING,SYMBOL_BIT),ins,returnValue,&theExp);
+   CL_DirectMessage(theEnv,CL_FindSymbolHN(theEnv,MSG_MODIFY_STRING,SYMBOL_BIT),ins,returnValue,&theExp);
    InstanceData(theEnv)->ObjectModDupMsgValid = oldOMDMV;
 
-   DeleteSlotOverrideEvaluations(theEnv,overrides,overrideCount);
+   DeleteSlotOverrideCL_Evaluations(theEnv,overrides,overrideCount);
   }
 
 /*************************************************************
-  NAME         : DuplicateInstance
+  NAME         : CL_DuplicateInstance
   DESCRIPTION  : Duplicates an instance via the
                  direct-duplicate message
   INPUTS       : The address of the result value
   RETURNS      : Nothing useful
-  SIDE EFFECTS : Slot updates performed directly
+  SIDE EFFECTS : Slot updates perfoCL_rmed directly
   NOTES        : H/L Syntax:
                  (duplicate-instance <instance>
                    [to <instance-name>] <slot-override>*)
  *************************************************************/
-void DuplicateInstance(
+void CL_DuplicateInstance(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -322,7 +322,7 @@ void DuplicateInstance(
       new frame is pushed for message-handler
       execution
       =========================================== */
-   overrides = EvaluateSlotOverrides(theEnv,GetFirstArgument()->nextArg->nextArg,
+   overrides = CL_EvaluateSlotOverrides(theEnv,GetFirstArgument()->nextArg->nextArg,
                                      &overrideCount,&error);
    if (error)
      {
@@ -334,24 +334,24 @@ void DuplicateInstance(
       Find the instance and make sure it
       wasn't deleted by the overrides
       ================================== */
-   ins = CheckInstance(context);
+   ins = CL_CheckInstance(context);
    if (ins == NULL)
      {
       returnValue->lexemeValue = FalseSymbol(theEnv);
-      DeleteSlotOverrideEvaluations(theEnv,overrides,overrideCount);
+      DeleteSlotOverrideCL_Evaluations(theEnv,overrides,overrideCount);
       return;
      }
 
-   if (! UDFNextArgument(context,INSTANCE_NAME_BIT | SYMBOL_BIT,&newName))
+   if (! CL_UDFNextArgument(context,INSTANCE_NAME_BIT | SYMBOL_BIT,&newName))
      {
       returnValue->lexemeValue = FalseSymbol(theEnv);
-      DeleteSlotOverrideEvaluations(theEnv,overrides,overrideCount);
+      DeleteSlotOverrideCL_Evaluations(theEnv,overrides,overrideCount);
       return;
      }
 
    /* ======================================
       We are passing the slot override
-      expression information along
+      expression infoCL_rmation along
       to whatever message-handler implements
       the duplicate
       ====================================== */
@@ -360,30 +360,30 @@ void DuplicateInstance(
    theExp[0].argList = NULL;
    theExp[0].nextArg = &theExp[1];
    theExp[1].type = EXTERNAL_ADDRESS_TYPE;
-   theExp[1].value = CreateExternalAddress(theEnv,overrides,0);
+   theExp[1].value = CL_CreateExternalAddress(theEnv,overrides,0);
    theExp[1].argList = NULL;
    theExp[1].nextArg = NULL;
 
    oldOMDMV = InstanceData(theEnv)->ObjectModDupMsgValid;
    InstanceData(theEnv)->ObjectModDupMsgValid = true;
-   DirectMessage(theEnv,FindSymbolHN(theEnv,DIRECT_DUPLICATE_STRING,SYMBOL_BIT),ins,returnValue,&theExp[0]);
+   CL_DirectMessage(theEnv,CL_FindSymbolHN(theEnv,DIRECT_DUPLICATE_STRING,SYMBOL_BIT),ins,returnValue,&theExp[0]);
    InstanceData(theEnv)->ObjectModDupMsgValid = oldOMDMV;
 
-   DeleteSlotOverrideEvaluations(theEnv,overrides,overrideCount);
+   DeleteSlotOverrideCL_Evaluations(theEnv,overrides,overrideCount);
   }
 
 /*************************************************************
-  NAME         : MsgDuplicateInstance
+  NAME         : MsgCL_DuplicateInstance
   DESCRIPTION  : Duplicates an instance via the
                  message-duplicate message
   INPUTS       : The address of the result value
   RETURNS      : Nothing useful
-  SIDE EFFECTS : Slot updates performed w/ int & put- messages
+  SIDE EFFECTS : Slot updates perfoCL_rmed w/ int & put- messages
   NOTES        : H/L Syntax:
                  (duplicate-instance <instance>
                    [to <instance-name>] <slot-override>*)
  *************************************************************/
-void MsgDuplicateInstance(
+void MsgCL_DuplicateInstance(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -402,7 +402,7 @@ void MsgDuplicateInstance(
       new frame is pushed for message-handler
       execution
       =========================================== */
-   overrides = EvaluateSlotOverrides(theEnv,GetFirstArgument()->nextArg->nextArg,
+   overrides = CL_EvaluateSlotOverrides(theEnv,GetFirstArgument()->nextArg->nextArg,
                                      &overrideCount,&error);
    if (error)
      {
@@ -414,23 +414,23 @@ void MsgDuplicateInstance(
       Find the instance and make sure it
       wasn't deleted by the overrides
       ================================== */
-   ins = CheckInstance(context);
+   ins = CL_CheckInstance(context);
    if (ins == NULL)
      {
       returnValue->lexemeValue = FalseSymbol(theEnv);
-      DeleteSlotOverrideEvaluations(theEnv,overrides,overrideCount);
+      DeleteSlotOverrideCL_Evaluations(theEnv,overrides,overrideCount);
       return;
      }
-   if (! UDFNextArgument(context,INSTANCE_NAME_BIT | SYMBOL_BIT,&newName))
+   if (! CL_UDFNextArgument(context,INSTANCE_NAME_BIT | SYMBOL_BIT,&newName))
      {
       returnValue->lexemeValue = FalseSymbol(theEnv);
-      DeleteSlotOverrideEvaluations(theEnv,overrides,overrideCount);
+      DeleteSlotOverrideCL_Evaluations(theEnv,overrides,overrideCount);
       return;
      }
 
    /* ======================================
       We are passing the slot override
-      expression information along
+      expression infoCL_rmation along
       to whatever message-handler implements
       the duplicate
       ====================================== */
@@ -439,121 +439,121 @@ void MsgDuplicateInstance(
    theExp[0].argList = NULL;
    theExp[0].nextArg = &theExp[1];
    theExp[1].type = EXTERNAL_ADDRESS_TYPE;
-   theExp[1].value = CreateExternalAddress(theEnv,overrides,0);
+   theExp[1].value = CL_CreateExternalAddress(theEnv,overrides,0);
    theExp[1].argList = NULL;
    theExp[1].nextArg = NULL;
 
    oldOMDMV = InstanceData(theEnv)->ObjectModDupMsgValid;
    InstanceData(theEnv)->ObjectModDupMsgValid = true;
-   DirectMessage(theEnv,FindSymbolHN(theEnv,MSG_DUPLICATE_STRING,SYMBOL_BIT),ins,returnValue,&theExp[0]);
+   CL_DirectMessage(theEnv,CL_FindSymbolHN(theEnv,MSG_DUPLICATE_STRING,SYMBOL_BIT),ins,returnValue,&theExp[0]);
    InstanceData(theEnv)->ObjectModDupMsgValid = oldOMDMV;
 
-   DeleteSlotOverrideEvaluations(theEnv,overrides,overrideCount);
+   DeleteSlotOverrideCL_Evaluations(theEnv,overrides,overrideCount);
   }
 
 #if DEFRULE_CONSTRUCT
 
 /**************************************************************
-  NAME         : InactiveModifyInstance
+  NAME         : CL_InactiveCL_ModifyInstance
   DESCRIPTION  : Modifies slots of an instance of a class
                  Pattern-matching is automatically
                  delayed until the slot updates are done
   INPUTS       : The address of the result value
   RETURNS      : Nothing useful
-  SIDE EFFECTS : Slot updates performed directly
+  SIDE EFFECTS : Slot updates perfoCL_rmed directly
   NOTES        : H/L Syntax:
                  (modify-instance <instance-name>
                    <slot-override>*)
  **************************************************************/
-void InactiveModifyInstance(
+void CL_InactiveCL_ModifyInstance(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
    bool ov;
 
-   ov = SetDelayObjectPatternMatching(theEnv,true);
-   ModifyInstance(theEnv,context,returnValue);
-   SetDelayObjectPatternMatching(theEnv,ov);
+   ov = CL_SetDelayObjectPatternMatching(theEnv,true);
+   CL_ModifyInstance(theEnv,context,returnValue);
+   CL_SetDelayObjectPatternMatching(theEnv,ov);
   }
 
 /**************************************************************
-  NAME         : InactiveMsgModifyInstance
+  NAME         : CL_InactiveMsgCL_ModifyInstance
   DESCRIPTION  : Modifies slots of an instance of a class
                  Pattern-matching is automatically
                  delayed until the slot updates are done
   INPUTS       : The address of the result value
   RETURNS      : Nothing useful
-  SIDE EFFECTS : Slot updates performed with put- messages
+  SIDE EFFECTS : Slot updates perfoCL_rmed with put- messages
   NOTES        : H/L Syntax:
                  (message-modify-instance <instance-name>
                    <slot-override>*)
  **************************************************************/
-void InactiveMsgModifyInstance(
+void CL_InactiveMsgCL_ModifyInstance(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
    bool ov;
 
-   ov = SetDelayObjectPatternMatching(theEnv,true);
-   MsgModifyInstance(theEnv,context,returnValue);
-   SetDelayObjectPatternMatching(theEnv,ov);
+   ov = CL_SetDelayObjectPatternMatching(theEnv,true);
+   MsgCL_ModifyInstance(theEnv,context,returnValue);
+   CL_SetDelayObjectPatternMatching(theEnv,ov);
   }
 
 /*******************************************************************
-  NAME         : InactiveDuplicateInstance
+  NAME         : InactiveCL_DuplicateInstance
   DESCRIPTION  : Duplicates an instance of a class
                  Pattern-matching is automatically
                  delayed until the slot updates are done
   INPUTS       : The address of the result value
   RETURNS      : Nothing useful
-  SIDE EFFECTS : Slot updates performed directly
+  SIDE EFFECTS : Slot updates perfoCL_rmed directly
   NOTES        : H/L Syntax:
                  (duplicate-instance <instance> [to <instance-name>]
                    <slot-override>*)
  *******************************************************************/
-void InactiveDuplicateInstance(
+void InactiveCL_DuplicateInstance(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
    bool ov;
 
-   ov = SetDelayObjectPatternMatching(theEnv,true);
-   DuplicateInstance(theEnv,context,returnValue);
-   SetDelayObjectPatternMatching(theEnv,ov);
+   ov = CL_SetDelayObjectPatternMatching(theEnv,true);
+   CL_DuplicateInstance(theEnv,context,returnValue);
+   CL_SetDelayObjectPatternMatching(theEnv,ov);
   }
 
 /**************************************************************
-  NAME         : InactiveMsgDuplicateInstance
+  NAME         : InactiveMsgCL_DuplicateInstance
   DESCRIPTION  : Duplicates an instance of a class
                  Pattern-matching is automatically
                  delayed until the slot updates are done
   INPUTS       : The address of the result value
   RETURNS      : Nothing useful
-  SIDE EFFECTS : Slot updates performed with put- messages
+  SIDE EFFECTS : Slot updates perfoCL_rmed with put- messages
   NOTES        : H/L Syntax:
                  (message-duplicate-instance <instance>
                    [to <instance-name>]
                    <slot-override>*)
  **************************************************************/
-void InactiveMsgDuplicateInstance(
+void InactiveMsgCL_DuplicateInstance(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
    bool ov;
 
-   ov = SetDelayObjectPatternMatching(theEnv,true);
-   MsgDuplicateInstance(theEnv,context,returnValue);
-   SetDelayObjectPatternMatching(theEnv,ov);
+   ov = CL_SetDelayObjectPatternMatching(theEnv,true);
+   MsgCL_DuplicateInstance(theEnv,context,returnValue);
+   CL_SetDelayObjectPatternMatching(theEnv,ov);
   }
 
 #endif
 
 /*****************************************************
-  NAME         : DirectDuplicateMsgHandler
+  NAME         : CL_DirectDuplicateMsgHandler
   DESCRIPTION  : Implementation for the USER class
                  handler direct-duplicate
 
@@ -566,7 +566,7 @@ void InactiveMsgDuplicateInstance(
   SIDE EFFECTS : Slot values updated
   NOTES        : None
  *****************************************************/
-void DirectDuplicateMsgHandler(
+void CL_DirectDuplicateMsgHandler(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -575,7 +575,7 @@ void DirectDuplicateMsgHandler(
   }
 
 /*****************************************************
-  NAME         : MsgDuplicateMsgHandler
+  NAME         : CL_MsgDuplicateMsgHandler
   DESCRIPTION  : Implementation for the USER class
                  handler message-duplicate
 
@@ -587,7 +587,7 @@ void DirectDuplicateMsgHandler(
   SIDE EFFECTS : Slot values updated
   NOTES        : None
  *****************************************************/
-void MsgDuplicateMsgHandler(
+void CL_MsgDuplicateMsgHandler(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -596,7 +596,7 @@ void MsgDuplicateMsgHandler(
   }
 
 /***************************************************
-  NAME         : DirectModifyMsgHandler
+  NAME         : CL_DirectModifyMsgHandler
   DESCRIPTION  : Implementation for the USER class
                  handler direct-modify
 
@@ -609,7 +609,7 @@ void MsgDuplicateMsgHandler(
   SIDE EFFECTS : Slot values updated
   NOTES        : None
  ***************************************************/
-void DirectModifyMsgHandler(
+void CL_DirectModifyMsgHandler(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -618,7 +618,7 @@ void DirectModifyMsgHandler(
   }
 
 /***************************************************
-  NAME         : MsgModifyMsgHandler
+  NAME         : CL_MsgModifyMsgHandler
   DESCRIPTION  : Implementation for the USER class
                  handler message-modify
 
@@ -630,7 +630,7 @@ void DirectModifyMsgHandler(
   SIDE EFFECTS : Slot values updated
   NOTES        : None
  ***************************************************/
-void MsgModifyMsgHandler(
+void CL_MsgModifyMsgHandler(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -645,10 +645,10 @@ void MsgModifyMsgHandler(
    ***************************************** */
 
 /***********************************************************
-  NAME         : EvaluateSlotOverrides
-  DESCRIPTION  : Evaluates the slot-override expressions
+  NAME         : CL_EvaluateSlotOverrides
+  DESCRIPTION  : CL_Evaluates the slot-override expressions
                  for modify-instance and duplicate-instance
-                 Evaluations are stored in an array of
+                 CL_Evaluations are stored in an array of
                  data objects, where the supplementalInfo
                  field points at the name of the slot
                  The data object next fields are used
@@ -666,7 +666,7 @@ void MsgModifyMsgHandler(
                  event that the overrides contain variable
                  references to an outer frame
  ***********************************************************/
-static UDFValue *EvaluateSlotOverrides(
+static UDFValue *CL_EvaluateSlotOverrides(
   Environment *theEnv,
   Expression *ovExprs,
   unsigned short *ovCnt,
@@ -683,33 +683,33 @@ static UDFValue *EvaluateSlotOverrides(
       slot override: one for the slot name and
       one for the slot value
       ========================================== */
-   *ovCnt = CountArguments(ovExprs) / 2;
+   *ovCnt = CL_CountArguments(ovExprs) / 2;
    if (*ovCnt == 0)
      return NULL;
 
    /* ===============================================
-      Evaluate all the slot override names and values
+      CL_Evaluate all the slot override names and values
       and store them in a contiguous array
       =============================================== */
-   ovs = (UDFValue *) gm2(theEnv,(sizeof(UDFValue) * (*ovCnt)));
+   ovs = (UDFValue *) CL_gm2(theEnv,(sizeof(UDFValue) * (*ovCnt)));
    ovi = 0;
    while (ovExprs != NULL)
      {
-      if (EvaluateExpression(theEnv,ovExprs,&ovs[ovi]))
-        goto EvaluateOverridesError;
+      if (CL_EvaluateExpression(theEnv,ovExprs,&ovs[ovi]))
+        goto CL_EvaluateOverridesError;
       if (ovs[ovi].header->type != SYMBOL_TYPE)
         {
-         ExpectedTypeError1(theEnv,ExpressionFunctionCallName(EvaluationData(theEnv)->CurrentExpression)->contents,
+         CL_ExpectedTypeError1(theEnv,ExpressionFunctionCallName(CL_EvaluationData(theEnv)->CurrentExpression)->contents,
                             ovi+1,"slot name");
-         SetEvaluationError(theEnv,true);
-         goto EvaluateOverridesError;
+         SetCL_EvaluationError(theEnv,true);
+         goto CL_EvaluateOverridesError;
         }
       slotName = ovs[ovi].value;
       if (ovExprs->nextArg->argList)
         {
-         if (EvaluateAndStoreInDataObject(theEnv,false,ovExprs->nextArg->argList,
+         if (CL_EvaluateAndStoreInDataObject(theEnv,false,ovExprs->nextArg->argList,
                                                &ovs[ovi],true) == false)
-           goto EvaluateOverridesError;
+           goto CL_EvaluateOverridesError;
         }
       else
         {
@@ -724,14 +724,14 @@ static UDFValue *EvaluateSlotOverrides(
      }
    return(ovs);
 
-EvaluateOverridesError:
-   rm(theEnv,ovs,(sizeof(UDFValue) * (*ovCnt)));
+CL_EvaluateOverridesError:
+   CL_rm(theEnv,ovs,(sizeof(UDFValue) * (*ovCnt)));
    *error = true;
    return NULL;
   }
 
 /**********************************************************
-  NAME         : DeleteSlotOverrideEvaluations
+  NAME         : DeleteSlotOverrideCL_Evaluations
   DESCRIPTION  : Deallocates slot override evaluation array
   INPUTS       : 1) The data object array
                  2) The number of elements
@@ -740,21 +740,21 @@ EvaluateOverridesError:
                  array for modify- and duplicate- instance
   NOTES        : None
  **********************************************************/
-static void DeleteSlotOverrideEvaluations(
+static void DeleteSlotOverrideCL_Evaluations(
   Environment *theEnv,
-  UDFValue *ovEvals,
+  UDFValue *ovCL_Evals,
   unsigned short ovCnt)
   {
-   if (ovEvals != NULL)
-     rm(theEnv,ovEvals,(sizeof(UDFValue) * ovCnt));
+   if (ovCL_Evals != NULL)
+     CL_rm(theEnv,ovCL_Evals,(sizeof(UDFValue) * ovCnt));
   }
 
 /**********************************************************
   NAME         : ModifyMsgHandlerSupport
-  DESCRIPTION  : Support routine for DirectModifyMsgHandler
-                 and MsgModifyMsgHandler
+  DESCRIPTION  : Support routine for CL_DirectModifyMsgHandler
+                 and CL_MsgModifyMsgHandler
 
-                 Performs a series of slot updates
+                 PerfoCL_rms a series of slot updates
                  directly or with messages
   INPUTS       : 1) A data object buffer to hold the result
                  2) A flag indicating whether to use
@@ -776,9 +776,9 @@ static void ModifyMsgHandlerSupport(
    returnValue->value = FalseSymbol(theEnv);
    if (InstanceData(theEnv)->ObjectModDupMsgValid == false)
      {
-      PrintErrorID(theEnv,"INSMODDP",1,false);
-      WriteString(theEnv,STDERR,"Direct/message-modify message valid only in modify-instance.\n");
-      SetEvaluationError(theEnv,true);
+      CL_PrintErrorID(theEnv,"INSMODDP",1,false);
+      CL_WriteString(theEnv,STDERR,"Direct/message-modify message valid only in modify-instance.\n");
+      SetCL_EvaluationError(theEnv,true);
       return;
      }
    InstanceData(theEnv)->ObjectModDupMsgValid = false;
@@ -786,31 +786,31 @@ static void ModifyMsgHandlerSupport(
    ins = GetActiveInstance(theEnv);
    if (ins->garbage)
      {
-      StaleInstanceAddress(theEnv,"modify-instance",0);
-      SetEvaluationError(theEnv,true);
+      CL_StaleInstanceAddress(theEnv,"modify-instance",0);
+      SetCL_EvaluationError(theEnv,true);
       return;
      }
 
    /* =======================================
       Retrieve the slot override data objects
-      passed from ModifyInstance - the slot
+      passed from CL_ModifyInstance - the slot
       name is stored in the supplementalInfo
       field - and the next fields are links
       ======================================= */
 
-   slotOverrides = (UDFValue *) ((CLIPSExternalAddress *) GetNthMessageArgument(theEnv,1)->value)->contents;
+   slotOverrides = (UDFValue *) ((CLIPSExternalAddress *) CL_GetNthMessageArgument(theEnv,1)->value)->contents;
 
    while (slotOverrides != NULL)
      {
       /* ===========================================================
          No evaluation or error checking needs to be done
-         since this has already been done by EvaluateSlotOverrides()
+         since this has already been done by CL_EvaluateSlotOverrides()
          =========================================================== */
-      insSlot = FindInstanceSlot(theEnv,ins,(CLIPSLexeme *) slotOverrides->supplementalInfo);
+      insSlot = CL_FindInstanceSlot(theEnv,ins,(CLIPSLexeme *) slotOverrides->supplementalInfo);
       if (insSlot == NULL)
         {
-         SlotExistError(theEnv,((CLIPSLexeme *) slotOverrides->supplementalInfo)->contents,"modify-instance");
-         SetEvaluationError(theEnv,true);
+         CL_SlotExistError(theEnv,((CLIPSLexeme *) slotOverrides->supplementalInfo)->contents,"modify-instance");
+         SetCL_EvaluationError(theEnv,true);
          return;
         }
       if (msgpass)
@@ -822,14 +822,14 @@ static void ModifyMsgHandlerSupport(
            msgExp.value = slotOverrides;
          msgExp.argList = NULL;
          msgExp.nextArg = NULL;
-         if (! DirectMessage(theEnv,insSlot->desc->overrideMessage,ins,&temp,&msgExp))
+         if (! CL_DirectMessage(theEnv,insSlot->desc->overrideMessage,ins,&temp,&msgExp))
            return;
         }
       else
         {
          if (insSlot->desc->multiple && (slotOverrides->header->type != MULTIFIELD_TYPE))
            {
-            temp.value = CreateMultifield(theEnv,1L);
+            temp.value = CL_CreateMultifield(theEnv,1L);
             temp.begin = 0;
             temp.range = 1;
             temp.multifieldValue->contents[0].value = slotOverrides->value;
@@ -837,7 +837,7 @@ static void ModifyMsgHandlerSupport(
            }
          else
            newval = slotOverrides;
-         if (PutSlotValue(theEnv,ins,insSlot,newval,&junk,"modify-instance") != PSE_NO_ERROR)
+         if (CL_PutSlotValue(theEnv,ins,insSlot,newval,&junk,"modify-instance") != PSE_NO_ERROR)
            return;
         }
 
@@ -848,10 +848,10 @@ static void ModifyMsgHandlerSupport(
 
 /*************************************************************
   NAME         : DuplicateMsgHandlerSupport
-  DESCRIPTION  : Support routine for DirectDuplicateMsgHandler
-                 and MsgDuplicateMsgHandler
+  DESCRIPTION  : Support routine for CL_DirectDuplicateMsgHandler
+                 and CL_MsgDuplicateMsgHandler
 
-                 Performs a series of slot updates
+                 PerfoCL_rms a series of slot updates
                  directly or with messages
   INPUTS       : 1) A data object buffer to hold the result
                  2) A flag indicating whether to use
@@ -878,34 +878,34 @@ static void DuplicateMsgHandlerSupport(
    returnValue->value = FalseSymbol(theEnv);
    if (InstanceData(theEnv)->ObjectModDupMsgValid == false)
      {
-      PrintErrorID(theEnv,"INSMODDP",2,false);
-      WriteString(theEnv,STDERR,"Direct/message-duplicate message valid only in duplicate-instance.\n");
-      SetEvaluationError(theEnv,true);
+      CL_PrintErrorID(theEnv,"INSMODDP",2,false);
+      CL_WriteString(theEnv,STDERR,"Direct/message-duplicate message valid only in duplicate-instance.\n");
+      SetCL_EvaluationError(theEnv,true);
       return;
      }
    InstanceData(theEnv)->ObjectModDupMsgValid = false;
 
    /* ==================================
       Grab the slot override expressions
-      and determine the source instance
+      and deteCL_rmine the source instance
       and the name of the new instance
       ================================== */
    srcins = GetActiveInstance(theEnv);
-   newName = GetNthMessageArgument(theEnv,1)->lexemeValue;
-   slotOverrides = (UDFValue *) ((CLIPSExternalAddress *) GetNthMessageArgument(theEnv,2)->value)->contents;
+   newName = CL_GetNthMessageArgument(theEnv,1)->lexemeValue;
+   slotOverrides = (UDFValue *) ((CLIPSExternalAddress *) CL_GetNthMessageArgument(theEnv,2)->value)->contents;
    if (srcins->garbage)
      {
-      StaleInstanceAddress(theEnv,"duplicate-instance",0);
-      SetEvaluationError(theEnv,true);
+      CL_StaleInstanceAddress(theEnv,"duplicate-instance",0);
+      SetCL_EvaluationError(theEnv,true);
       return;
      }
    if (((newName->header.type == srcins->name->header.type) &&
         (newName == srcins->name)) ||
        (strcmp(newName->contents,srcins->name->contents) == 0))
      {
-      PrintErrorID(theEnv,"INSMODDP",3,false);
-      WriteString(theEnv,STDERR,"Instance copy must have a different name in duplicate-instance.\n");
-      SetEvaluationError(theEnv,true);
+      CL_PrintErrorID(theEnv,"INSMODDP",3,false);
+      CL_WriteString(theEnv,STDERR,"Instance copy must have a different name in duplicate-instance.\n");
+      SetCL_EvaluationError(theEnv,true);
       return;
      }
 
@@ -915,7 +915,7 @@ static void DuplicateMsgHandlerSupport(
       ========================================== */
    oldMkInsMsgPass = InstanceData(theEnv)->MkInsMsgPass;
    InstanceData(theEnv)->MkInsMsgPass = msgpass;
-   dstins = BuildInstance(theEnv,newName,srcins->cls,true);
+   dstins = CL_BuildInstance(theEnv,newName,srcins->cls,true);
    InstanceData(theEnv)->MkInsMsgPass = oldMkInsMsgPass;
    if (dstins == NULL)
      return;
@@ -929,12 +929,12 @@ static void DuplicateMsgHandlerSupport(
      {
       /* ===========================================================
          No evaluation or error checking needs to be done
-         since this has already been done by EvaluateSlotOverrides()
+         since this has already been done by CL_EvaluateSlotOverrides()
          =========================================================== */
-      dstInsSlot = FindInstanceSlot(theEnv,dstins,(CLIPSLexeme *) slotOverrides->supplementalInfo);
+      dstInsSlot = CL_FindInstanceSlot(theEnv,dstins,(CLIPSLexeme *) slotOverrides->supplementalInfo);
       if (dstInsSlot == NULL)
         {
-         SlotExistError(theEnv,((CLIPSLexeme *) slotOverrides->supplementalInfo)->contents,
+         CL_SlotExistError(theEnv,((CLIPSLexeme *) slotOverrides->supplementalInfo)->contents,
                         "duplicate-instance");
          goto DuplicateError;
         }
@@ -948,14 +948,14 @@ static void DuplicateMsgHandlerSupport(
 
          msgExp.argList = NULL;
          msgExp.nextArg = NULL;
-         if (! DirectMessage(theEnv,dstInsSlot->desc->overrideMessage,dstins,&temp,&msgExp))
+         if (! CL_DirectMessage(theEnv,dstInsSlot->desc->overrideMessage,dstins,&temp,&msgExp))
            goto DuplicateError;
         }
       else
         {
          if (dstInsSlot->desc->multiple && (slotOverrides->header->type != MULTIFIELD_TYPE))
            {
-            temp.value = CreateMultifield(theEnv,1L);
+            temp.value = CL_CreateMultifield(theEnv,1L);
             temp.begin = 0;
             temp.range = 1;
             temp.multifieldValue->contents[0].value = slotOverrides->value;
@@ -963,7 +963,7 @@ static void DuplicateMsgHandlerSupport(
            }
          else
            newval = slotOverrides;
-         if (PutSlotValue(theEnv,dstins,dstInsSlot,newval,&junk,"duplicate-instance") != PSE_NO_ERROR)
+         if (CL_PutSlotValue(theEnv,dstins,dstInsSlot,newval,&junk,"duplicate-instance") != PSE_NO_ERROR)
            goto DuplicateError;
         }
       dstInsSlot->override = true;
@@ -986,10 +986,10 @@ static void DuplicateMsgHandlerSupport(
                temp.begin = 0;
                temp.range = temp.multifieldValue->length;
               }
-            valArg = ConvertValueToExpression(theEnv,&temp);
-            success = DirectMessage(theEnv,dstins->slots[i].desc->overrideMessage,
+            valArg = CL_ConvertValueToExpression(theEnv,&temp);
+            success = CL_DirectMessage(theEnv,dstins->slots[i].desc->overrideMessage,
                           dstins,&temp,valArg);
-            ReturnExpression(theEnv,valArg);
+            CL_ReturnExpression(theEnv,valArg);
             if (! success)
               goto DuplicateError;
            }
@@ -1001,7 +1001,7 @@ static void DuplicateMsgHandlerSupport(
                temp.begin = 0;
                temp.range = srcins->slots[i].multifieldValue->length;
               }
-            if (PutSlotValue(theEnv,dstins,&dstins->slots[i],&temp,&junk,"duplicate-instance")
+            if (CL_PutSlotValue(theEnv,dstins,&dstins->slots[i],&temp,&junk,"duplicate-instance")
                  != PSE_NO_ERROR)
               goto DuplicateError;
            }
@@ -1009,31 +1009,31 @@ static void DuplicateMsgHandlerSupport(
      }
 
    /* =======================================
-      Send init message for message-duplicate
+      CL_Send init message for message-duplicate
       ======================================= */
    if (msgpass)
      {
       for (i = 0 ; i < dstins->cls->instanceSlotCount ; i++)
         dstins->slotAddresses[i]->override = true;
       dstins->initializeInProgress = 1;
-      DirectMessage(theEnv,MessageHandlerData(theEnv)->INIT_SYMBOL,dstins,returnValue,NULL);
+      CL_DirectMessage(theEnv,MessageHandlerData(theEnv)->INIT_SYMBOL,dstins,returnValue,NULL);
      }
    dstins->busy--;
    if (dstins->garbage)
      {
       returnValue->value = FalseSymbol(theEnv);
-      SetEvaluationError(theEnv,true);
+      SetCL_EvaluationError(theEnv,true);
      }
    else
      {
-      returnValue->value = GetFullInstanceName(theEnv,dstins);
+      returnValue->value = CL_GetFullCL_InstanceName(theEnv,dstins);
      }
    return;
 
 DuplicateError:
    dstins->busy--;
-   QuashInstance(theEnv,dstins);
-   SetEvaluationError(theEnv,true);
+   CL_QuashInstance(theEnv,dstins);
+   SetCL_EvaluationError(theEnv,true);
   }
 
 #endif

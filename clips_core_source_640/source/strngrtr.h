@@ -17,7 +17,7 @@
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
-/*      6.30: Used genstrcpy instead of strcpy.              */
+/*      6.30: Used CL_genstrcpy instead of strcpy.              */
 /*                                                           */
 /*            Removed conditional code for unsupported       */
 /*            compilers/operating systems (IBM_MCW,          */
@@ -46,7 +46,7 @@
 #define _H_strngrtr
 
 typedef struct stringRouter StringRouter;
-typedef struct stringBuilderRouter StringBuilderRouter;
+typedef struct stringCL_BuilderRouter StringCL_BuilderRouter;
 
 #include <stdio.h>
 #include "utility.h"
@@ -60,21 +60,21 @@ struct stringRouter
    char *writeString;
    size_t currentPosition;
    size_t maximumPosition;
-   int readWriteType;
+   int readCL_WriteType;
    StringRouter *next;
   };
 
-struct stringBuilderRouter
+struct stringCL_BuilderRouter
   {
    const char *name;
-   StringBuilder *SBR;
-   StringBuilderRouter *next;
+   StringCL_Builder *SBR;
+   StringCL_BuilderRouter *next;
   };
 
 struct stringRouterData
   {
    StringRouter *ListOfStringRouters;
-   StringBuilderRouter *ListOfStringBuilderRouters;
+   StringCL_BuilderRouter *ListOfStringCL_BuilderRouters;
   };
 
 #define StringRouterData(theEnv) ((struct stringRouterData *) GetEnvironmentData(theEnv,STRING_ROUTER_DATA))
@@ -83,14 +83,14 @@ struct stringRouterData
 /* I/O ROUTER DEFINITIONS */
 /**************************/
 
-   void                           InitializeStringRouter(Environment *);
-   bool                           OpenStringSource(Environment *,const char *,const char *,size_t);
-   bool                           OpenTextSource(Environment *,const char *,const char *,size_t,size_t);
-   bool                           CloseStringSource(Environment *,const char *);
-   bool                           OpenStringDestination(Environment *,const char *,char *,size_t);
-   bool                           CloseStringDestination(Environment *,const char *);
-   bool                           OpenStringBuilderDestination(Environment *,const char *,StringBuilder *);
-   bool                           CloseStringBuilderDestination(Environment *,const char *);
+   void                           CL_InitializeStringRouter(Environment *);
+   bool                           CL_OpenStringSource(Environment *,const char *,const char *,size_t);
+   bool                           CL_OpenTextSource(Environment *,const char *,const char *,size_t,size_t);
+   bool                           CL_CloseStringSource(Environment *,const char *);
+   bool                           CL_OpenStringDestination(Environment *,const char *,char *,size_t);
+   bool                           CL_CloseStringDestination(Environment *,const char *);
+   bool                           OpenStringCL_BuilderDestination(Environment *,const char *,StringCL_Builder *);
+   bool                           CloseStringCL_BuilderDestination(Environment *,const char *);
 
 #endif /* _H_strngrtr */
 

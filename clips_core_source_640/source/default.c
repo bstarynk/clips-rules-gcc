@@ -8,7 +8,7 @@
 
 /*************************************************************/
 /* Purpose: Provides functions for parsing the default       */
-/*   attribute and determining default values based on       */
+/*   attribute and deteCL_rmining default values based on       */
 /*   slot constraints.                                       */
 /*                                                           */
 /* Principal Programmer(s):                                  */
@@ -27,8 +27,8 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
-/*      6.40: Added Env prefix to GetEvaluationError and     */
-/*            SetEvaluationError functions.                  */
+/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
+/*            SetCL_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -70,10 +70,10 @@
    static void                    *FindDefaultValue(Environment *,int,CONSTRAINT_RECORD *,void *);
 
 /********************************************************/
-/* DeriveDefaultFromConstraints: Returns an appropriate */
+/* CL_DeriveDefaultFromConstraints: Returns an appropriate */
 /*   default value for the supplied constraints.        */
 /********************************************************/
-void DeriveDefaultFromConstraints(
+void CL_DeriveDefaultFromConstraints(
   Environment *theEnv,
   CONSTRAINT_RECORD *constraints,
   UDFValue *theDefault,
@@ -95,33 +95,33 @@ void DeriveDefaultFromConstraints(
         {
          theDefault->begin = 0;
          theDefault->range = 0;
-         if (garbageMultifield) theDefault->value = CreateMultifield(theEnv,0L);
-         else theDefault->value = CreateUnmanagedMultifield(theEnv,0L);
+         if (garbageMultifield) theDefault->value = CL_CreateMultifield(theEnv,0L);
+         else theDefault->value = CL_CreateUnmanagedMultifield(theEnv,0L);
         }
       else
-        { theDefault->value = CreateSymbol(theEnv,"nil"); }
+        { theDefault->value = CL_CreateSymbol(theEnv,"nil"); }
 
       return;
      }
 
    /*=========================================*/
-   /* Determine the default's type and value. */
+   /* DeteCL_rmine the default's type and value. */
    /*=========================================*/
 
    if (constraints->anyAllowed || constraints->symbolsAllowed)
-     { theValue = FindDefaultValue(theEnv,SYMBOL_TYPE,constraints,CreateSymbol(theEnv,"nil")); }
+     { theValue = FindDefaultValue(theEnv,SYMBOL_TYPE,constraints,CL_CreateSymbol(theEnv,"nil")); }
 
    else if (constraints->stringsAllowed)
-     { theValue = FindDefaultValue(theEnv,STRING_TYPE,constraints,CreateString(theEnv,"")); }
+     { theValue = FindDefaultValue(theEnv,STRING_TYPE,constraints,CL_CreateString(theEnv,"")); }
 
    else if (constraints->integersAllowed)
-     { theValue = FindDefaultValue(theEnv,INTEGER_TYPE,constraints,CreateInteger(theEnv,0LL)); }
+     { theValue = FindDefaultValue(theEnv,INTEGER_TYPE,constraints,CL_CreateInteger(theEnv,0LL)); }
 
    else if (constraints->floatsAllowed)
-     { theValue = FindDefaultValue(theEnv,FLOAT_TYPE,constraints,CreateFloat(theEnv,0.0)); }
+     { theValue = FindDefaultValue(theEnv,FLOAT_TYPE,constraints,CL_CreateFloat(theEnv,0.0)); }
 #if OBJECT_SYSTEM
    else if (constraints->instanceNamesAllowed)
-     { theValue = FindDefaultValue(theEnv,INSTANCE_NAME_TYPE,constraints,CreateInstanceName(theEnv,"nil")); }
+     { theValue = FindDefaultValue(theEnv,INSTANCE_NAME_TYPE,constraints,CL_CreateCL_InstanceName(theEnv,"nil")); }
 
    else if (constraints->instanceAddressesAllowed)
      { theValue = &InstanceData(theEnv)->DummyInstance; }
@@ -131,10 +131,10 @@ void DeriveDefaultFromConstraints(
      { theValue = &FactData(theEnv)->DummyFact; }
 #endif
    else if (constraints->externalAddressesAllowed)
-     { theValue = CreateExternalAddress(theEnv,NULL,0); }
+     { theValue = CL_CreateExternalAddress(theEnv,NULL,0); }
 
    else
-     { theValue = CreateSymbol(theEnv,"nil"); }
+     { theValue = CL_CreateSymbol(theEnv,"nil"); }
 
    /*=========================================================*/
    /* If the default is for a multifield slot, then create a  */
@@ -151,8 +151,8 @@ void DeriveDefaultFromConstraints(
 
       theDefault->begin = 0;
       theDefault->range = minFields;
-      if (garbageMultifield) theDefault->value = CreateMultifield(theEnv,minFields);
-      else theDefault->value = CreateUnmanagedMultifield(theEnv,minFields);
+      if (garbageMultifield) theDefault->value = CL_CreateMultifield(theEnv,minFields);
+      else theDefault->value = CL_CreateUnmanagedMultifield(theEnv,minFields);
 
       for (; minFields > 0; minFields--)
         { theDefault->multifieldValue->contents[minFields-1].value = theValue; }
@@ -205,22 +205,22 @@ static void *FindDefaultValue(
       if (theConstraints->minValue->type == INTEGER_TYPE)
         { return(theConstraints->minValue->value); }
       else if (theConstraints->minValue->type == FLOAT_TYPE)
-        { return(CreateInteger(theEnv,(long long) theConstraints->minValue->floatValue->contents)); }
+        { return(CL_CreateInteger(theEnv,(long long) theConstraints->minValue->floatValue->contents)); }
       else if (theConstraints->maxValue->type == INTEGER_TYPE)
         { return(theConstraints->maxValue->value); }
       else if (theConstraints->maxValue->type == FLOAT_TYPE)
-        { return(CreateInteger(theEnv,(long long) theConstraints->maxValue->floatValue->contents)); }
+        { return(CL_CreateInteger(theEnv,(long long) theConstraints->maxValue->floatValue->contents)); }
      }
    else if (theType == FLOAT_TYPE)
      {
       if (theConstraints->minValue->type == FLOAT_TYPE)
         { return(theConstraints->minValue->value); }
       else if (theConstraints->minValue->type == INTEGER_TYPE)
-        { return(CreateFloat(theEnv,(double) theConstraints->minValue->integerValue->contents)); }
+        { return(CL_CreateFloat(theEnv,(double) theConstraints->minValue->integerValue->contents)); }
       else if (theConstraints->maxValue->type == FLOAT_TYPE)
         { return(theConstraints->maxValue->value); }
       else if (theConstraints->maxValue->type == INTEGER_TYPE)
-        { return(CreateFloat(theEnv,(double) theConstraints->maxValue->integerValue->contents)); }
+        { return(CL_CreateFloat(theEnv,(double) theConstraints->maxValue->integerValue->contents)); }
      }
 
    /*======================================*/
@@ -234,9 +234,9 @@ static void *FindDefaultValue(
 #if (! RUN_TIME) && (! BLOAD_ONLY)
 
 /**********************************************/
-/* ParseDefault: Parses a default value list. */
+/* CL_ParseDefault: Parses a default value list. */
 /**********************************************/
-struct expr *ParseDefault(
+struct expr *CL_ParseDefault(
   Environment *theEnv,
   const char *readSource,
   bool multifield,
@@ -256,8 +256,8 @@ struct expr *ParseDefault(
    *noneSpecified = false;
    *deriveSpecified = false;
 
-   SavePPBuffer(theEnv," ");
-   GetToken(theEnv,readSource,&theToken);
+   CL_SavePPBuffer(theEnv," ");
+   CL_GetToken(theEnv,readSource,&theToken);
 
    /*===================================================*/
    /* Read the items contained in the default attribute */
@@ -270,10 +270,10 @@ struct expr *ParseDefault(
       /* Get the next item in the default list. */
       /*========================================*/
 
-      newItem = ParseAtomOrExpression(theEnv,readSource,&theToken);
+      newItem = CL_ParseAtomOrExpression(theEnv,readSource,&theToken);
       if (newItem == NULL)
         {
-         ReturnExpression(theEnv,defaultList);
+         CL_ReturnExpression(theEnv,defaultList);
          *error = true;
          return NULL;
         }
@@ -298,30 +298,30 @@ struct expr *ParseDefault(
              (specialVarCode == -1) ||
              ((specialVarCode != -1) && (defaultList != NULL)))
            {
-            if (dynamic) SyntaxErrorMessage(theEnv,"default-dynamic attribute");
-            else SyntaxErrorMessage(theEnv,"default attribute");
-            ReturnExpression(theEnv,newItem);
-            ReturnExpression(theEnv,defaultList);
+            if (dynamic) CL_SyntaxErrorMessage(theEnv,"default-dynamic attribute");
+            else CL_SyntaxErrorMessage(theEnv,"default attribute");
+            CL_ReturnExpression(theEnv,newItem);
+            CL_ReturnExpression(theEnv,defaultList);
             *error = true;
             return NULL;
            }
 
-         ReturnExpression(theEnv,newItem);
+         CL_ReturnExpression(theEnv,newItem);
 
          /*============================================*/
          /* Check for the closing right parenthesis of */
          /* the default or default dynamic attribute.  */
          /*============================================*/
 
-         GetToken(theEnv,readSource,&theToken);
+         CL_GetToken(theEnv,readSource,&theToken);
 
          if (theToken.tknType != RIGHT_PARENTHESIS_TOKEN)
            {
-            if (dynamic) SyntaxErrorMessage(theEnv,"default-dynamic attribute");
-            else SyntaxErrorMessage(theEnv,"default attribute");
-            PPBackup(theEnv);
-            SavePPBuffer(theEnv," ");
-            SavePPBuffer(theEnv,theToken.printForm);
+            if (dynamic) CL_SyntaxErrorMessage(theEnv,"default-dynamic attribute");
+            else CL_SyntaxErrorMessage(theEnv,"default attribute");
+            CL_PPBackup(theEnv);
+            CL_SavePPBuffer(theEnv," ");
+            CL_SavePPBuffer(theEnv,theToken.printFoCL_rm);
             *error = true;
            }
 
@@ -337,13 +337,13 @@ struct expr *ParseDefault(
       /* expressions contained within the default list.     */
       /*====================================================*/
 
-      if (ExpressionContainsVariables(newItem,false) == true)
+      if (CL_ExpressionContainsVariables(newItem,false) == true)
         {
-         ReturnExpression(theEnv,defaultList);
-         ReturnExpression(theEnv,newItem);
+         CL_ReturnExpression(theEnv,defaultList);
+         CL_ReturnExpression(theEnv,newItem);
          *error = true;
-         if (dynamic) SyntaxErrorMessage(theEnv,"default-dynamic attribute");
-         else SyntaxErrorMessage(theEnv,"default attribute");
+         if (dynamic) CL_SyntaxErrorMessage(theEnv,"default-dynamic attribute");
+         else CL_SyntaxErrorMessage(theEnv,"default attribute");
          return NULL;
         }
 
@@ -361,17 +361,17 @@ struct expr *ParseDefault(
       /* Begin parsing the next default value. */
       /*=======================================*/
 
-      SavePPBuffer(theEnv," ");
-      GetToken(theEnv,readSource,&theToken);
+      CL_SavePPBuffer(theEnv," ");
+      CL_GetToken(theEnv,readSource,&theToken);
      }
 
    /*=====================================*/
    /* Fix up pretty print representation. */
    /*=====================================*/
 
-   PPBackup(theEnv);
-   PPBackup(theEnv);
-   SavePPBuffer(theEnv,")");
+   CL_PPBackup(theEnv);
+   CL_PPBackup(theEnv);
+   CL_SavePPBuffer(theEnv,")");
 
    /*=========================================*/
    /* A single field slot's default attribute */
@@ -386,17 +386,17 @@ struct expr *ParseDefault(
         { *error = true; }
       else
         {
-         rv = ExpressionToConstraintRecord(theEnv,defaultList);
+         rv = CL_ExpressionToConstraintRecord(theEnv,defaultList);
          rv->multifieldsAllowed = false;
-         if (UnmatchableConstraint(rv)) *error = true;
-         RemoveConstraint(theEnv,rv);
+         if (CL_UnmatchableConstraint(rv)) *error = true;
+         CL_RemoveConstraint(theEnv,rv);
         }
 
       if (*error)
         {
-         PrintErrorID(theEnv,"DEFAULT",1,true);
-         WriteString(theEnv,STDERR,"The default value for a single field slot must be a single field value.\n");
-         ReturnExpression(theEnv,defaultList);
+         CL_PrintErrorID(theEnv,"DEFAULT",1,true);
+         CL_WriteString(theEnv,STDERR,"The default value for a single field slot must be a single field value.\n");
+         CL_ReturnExpression(theEnv,defaultList);
          return NULL;
         }
      }
@@ -415,34 +415,34 @@ struct expr *ParseDefault(
 
    while (newItem != NULL)
      {
-      SetEvaluationError(theEnv,false);
-      if (EvaluateExpression(theEnv,newItem,&theValue)) *error = true;
+      SetCL_EvaluationError(theEnv,false);
+      if (CL_EvaluateExpression(theEnv,newItem,&theValue)) *error = true;
 
       if ((theValue.header->type == MULTIFIELD_TYPE) &&
           (multifield == false) &&
           (*error == false))
         {
-         PrintErrorID(theEnv,"DEFAULT",1,true);
-         WriteString(theEnv,STDERR,"The default value for a single field slot must be a single field value.\n");
+         CL_PrintErrorID(theEnv,"DEFAULT",1,true);
+         CL_WriteString(theEnv,STDERR,"The default value for a single field slot must be a single field value.\n");
          *error = true;
         }
 
       if (*error)
         {
-         ReturnExpression(theEnv,tmpItem);
-         ReturnExpression(theEnv,defaultList);
+         CL_ReturnExpression(theEnv,tmpItem);
+         CL_ReturnExpression(theEnv,defaultList);
          *error = true;
          return NULL;
         }
 
-      lastDefault = ConvertValueToExpression(theEnv,&theValue);
+      lastDefault = CL_ConvertValueToExpression(theEnv,&theValue);
 
-      defaultList = AppendExpressions(defaultList,lastDefault);
+      defaultList = CL_AppendExpressions(defaultList,lastDefault);
 
       newItem = newItem->nextArg;
      }
 
-   ReturnExpression(theEnv,tmpItem);
+   CL_ReturnExpression(theEnv,tmpItem);
 
    /*==========================*/
    /* Return the default list. */

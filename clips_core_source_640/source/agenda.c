@@ -26,9 +26,9 @@
 /*                                                           */
 /*            Renamed BOOLEAN macro type to intBool.         */
 /*                                                           */
-/*            Added EnvGetActivationBasisPPForm function.    */
+/*            Added EnvCL_GetActivationBasisPPFoCL_rm function.    */
 /*                                                           */
-/*      6.30: Added salience groups to improve performance   */
+/*      6.30: Added salience groups to improve perfoCL_rmance   */
 /*            with large numbers of activations of different */
 /*            saliences.                                     */
 /*                                                           */
@@ -42,8 +42,8 @@
 /*                                                           */
 /*            Converted API macros to function calls.        */
 /*                                                           */
-/*      6.40: Added Env prefix to GetEvaluationError and     */
-/*            SetEvaluationError functions.                  */
+/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
+/*            SetCL_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -92,51 +92,51 @@
 /***************************************/
 
    static void                    PrintActivation(Environment *,const char *,Activation *);
-   static void                    AgendaClearFunction(Environment *,void *);
-   static const char             *SalienceEvaluationName(int);
-   static int                     EvaluateSalience(Environment *,Defrule *);
+   static void                    CL_AgendaCL_ClearFunction(Environment *,void *);
+   static const char             *SalienceCL_EvaluationName(int);
+   static int                     CL_EvaluateSalience(Environment *,Defrule *);
    static struct salienceGroup   *ReuseOrCreateSalienceGroup(Environment *,struct defruleModule *,int);
    static struct salienceGroup   *FindSalienceGroup(struct defruleModule *,int);
-   static void                    RemoveActivationFromGroup(Environment *,Activation *,struct defruleModule *);
+   static void                    CL_RemoveActivationFromGroup(Environment *,Activation *,struct defruleModule *);
 
 /*************************************************/
-/* InitializeAgenda: Initializes the activations */
+/* InitializeCL_Agenda: Initializes the activations */
 /*   watch item and the H/L commands for         */
 /*   manipulating the agenda.                    */
 /*************************************************/
-void InitializeAgenda(
+void InitializeCL_Agenda(
   Environment *theEnv)
   {
-   AllocateEnvironmentData(theEnv,AGENDA_DATA,sizeof(struct agendaData),NULL);
+   CL_AllocateEnvironmentData(theEnv,AGENDA_DATA,sizeof(struct agendaData),NULL);
 
-   AgendaData(theEnv)->SalienceEvaluation = WHEN_DEFINED;
+   CL_AgendaData(theEnv)->SalienceCL_Evaluation = WHEN_DEFINED;
 
-   AgendaData(theEnv)->Strategy = DEFAULT_STRATEGY;
+   CL_AgendaData(theEnv)->Strategy = DEFAULT_STRATEGY;
 
-   AddClearFunction(theEnv,"agenda",AgendaClearFunction,0,NULL);
+   CL_AddCL_ClearFunction(theEnv,"agenda",CL_AgendaCL_ClearFunction,0,NULL);
 #if DEBUGGING_FUNCTIONS
-   AddWatchItem(theEnv,"activations",1,&AgendaData(theEnv)->WatchActivations,40,DefruleWatchAccess,DefruleWatchPrint);
+   CL_AddCL_WatchItem(theEnv,"activations",1,&CL_AgendaData(theEnv)->CL_WatchActivations,40,CL_DefruleCL_WatchAccess,CL_DefruleCL_WatchPrint);
 #endif
 #if ! RUN_TIME
-   AddUDF(theEnv,"refresh","v",1,1,"y",RefreshCommand,"RefreshCommand",NULL);
-   AddUDF(theEnv,"refresh-agenda","v",0,1,"y",RefreshAgendaCommand,"RefreshAgendaCommand",NULL);
-   AddUDF(theEnv,"get-salience-evaluation","y",0,0,NULL,GetSalienceEvaluationCommand,"GetSalienceEvaluationCommand",NULL);
-   AddUDF(theEnv,"set-salience-evaluation","y",1,1,"y",SetSalienceEvaluationCommand,"SetSalienceEvaluationCommand",NULL);
+   CL_AddUDF(theEnv,"refresh","v",1,1,"y",CL_RefreshCommand,"CL_RefreshCommand",NULL);
+   CL_AddUDF(theEnv,"refresh-agenda","v",0,1,"y",CL_RefreshCL_AgendaCommand,"CL_RefreshCL_AgendaCommand",NULL);
+   CL_AddUDF(theEnv,"get-salience-evaluation","y",0,0,NULL,GetSalienceCL_EvaluationCommand,"GetSalienceCL_EvaluationCommand",NULL);
+   CL_AddUDF(theEnv,"set-salience-evaluation","y",1,1,"y",SetSalienceCL_EvaluationCommand,"SetSalienceCL_EvaluationCommand",NULL);
 
 #if DEBUGGING_FUNCTIONS
-   AddUDF(theEnv,"agenda","v",0,1,"y",AgendaCommand,"AgendaCommand",NULL);
+   CL_AddUDF(theEnv,"agenda","v",0,1,"y",CL_AgendaCommand,"CL_AgendaCommand",NULL);
 #endif
 #endif
   }
 
 /*****************************************************************/
-/* AddActivation: Creates a rule activation to be added to the   */
-/*   Agenda and links the activation with its associated partial */
-/*   match. The function PlaceActivation is then called to place */
-/*   the activation on the Agenda. Typically called when all     */
+/* CL_AddActivation: Creates a rule activation to be added to the   */
+/*   CL_Agenda and links the activation with its associated partial */
+/*   match. The function CL_PlaceActivation is then called to place */
+/*   the activation on the CL_Agenda. Typically called when all     */
 /*   patterns on the LHS of a rule have been satisfied.          */
 /*****************************************************************/
-void AddActivation(
+void CL_AddActivation(
   Environment *theEnv,
   Defrule *theRule,
   PartialMatch *binds)
@@ -146,12 +146,12 @@ void AddActivation(
    struct salienceGroup *theGroup;
 
    /*=======================================*/
-   /* Focus on the module if the activation */
+   /* CL_Focus on the module if the activation */
    /* is from an auto-focus rule.           */
    /*=======================================*/
 
-   if (theRule->autoFocus)
-     { Focus(theRule->header.whichModule->theModule); }
+   if (theRule->autoCL_Focus)
+     { CL_Focus(theRule->header.whichModule->theModule); }
 
    /*=======================================================*/
    /* Create the activation. The activation stores pointers */
@@ -164,14 +164,14 @@ void AddActivation(
    newActivation = get_struct(theEnv,activation);
    newActivation->theRule = theRule;
    newActivation->basis = binds;
-   newActivation->timetag = AgendaData(theEnv)->CurrentTimetag++;
-   newActivation->salience = EvaluateSalience(theEnv,theRule);
+   newActivation->timetag = CL_AgendaData(theEnv)->CurrentTimetag++;
+   newActivation->salience = CL_EvaluateSalience(theEnv,theRule);
 
-   newActivation->randomID = genrand();
+   newActivation->randomID = CL_genrand();
    newActivation->prev = NULL;
    newActivation->next = NULL;
 
-   AgendaData(theEnv)->NumberOfActivations++;
+   CL_AgendaData(theEnv)->NumberOfActivations++;
 
    /*=======================================================*/
    /* Point the partial match to the activation to complete */
@@ -186,12 +186,12 @@ void AddActivation(
 
 #if DEBUGGING_FUNCTIONS
    if (newActivation->theRule->watchActivation &&
-       (! ConstructData(theEnv)->ClearReadyInProgress) &&
-       (! ConstructData(theEnv)->ClearInProgress))
+       (! ConstructData(theEnv)->CL_ClearReadyInProgress) &&
+       (! ConstructData(theEnv)->CL_ClearInProgress))
      {
-      WriteString(theEnv,STDOUT,"==> Activation ");
+      CL_WriteString(theEnv,STDOUT,"==> Activation ");
       PrintActivation(theEnv,STDOUT,newActivation);
-      WriteString(theEnv,STDOUT,"\n");
+      CL_WriteString(theEnv,STDOUT,"\n");
      }
 #endif
 
@@ -203,7 +203,7 @@ void AddActivation(
 
     theGroup = ReuseOrCreateSalienceGroup(theEnv,theModuleItem,newActivation->salience);
 
-    PlaceActivation(theEnv,&(theModuleItem->agenda),newActivation,theGroup);
+    CL_PlaceActivation(theEnv,&(theModuleItem->agenda),newActivation,theGroup);
    }
 
 /*******************************/
@@ -270,9 +270,9 @@ static struct salienceGroup *FindSalienceGroup(
   }
 
 /***************************************************************/
-/* ClearRuleFromAgenda: Clears the agenda of a specified rule. */
+/* CL_ClearRuleFromCL_Agenda: CL_Clears the agenda of a specified rule. */
 /***************************************************************/
-void ClearRuleFromAgenda(
+void CL_ClearRuleFromCL_Agenda(
   Environment *theEnv,
   Defrule *theRule)
   {
@@ -296,7 +296,7 @@ void ClearRuleFromAgenda(
 
       /*========================================================*/
       /* Check each disjunct of the rule against the activation */
-      /* to determine if the activation points to the rule. If  */
+      /* to deteCL_rmine if the activation points to the rule. If  */
       /* it does, then remove the activation from the agenda.   */
       /*========================================================*/
 
@@ -306,7 +306,7 @@ void ClearRuleFromAgenda(
         {
          if (agendaPtr->theRule == tempRule)
            {
-            RemoveActivation(theEnv,agendaPtr,true,true);
+            CL_RemoveActivation(theEnv,agendaPtr,true,true);
             break;
            }
         }
@@ -316,12 +316,12 @@ void ClearRuleFromAgenda(
   }
 
 /***************************************************************/
-/* GetNextActivation: Returns an activation from the Agenda.   */
+/* CL_GetNextActivation: Returns an activation from the CL_Agenda.   */
 /*   If its argument is NULL, then the first activation on the */
-/*   Agenda is returned. If its argument is not NULL, the next */
+/*   CL_Agenda is returned. If its argument is not NULL, the next */
 /*   activation after the argument is returned.                */
 /***************************************************************/
-Activation *GetNextActivation(
+Activation *CL_GetNextActivation(
   Environment *theEnv,
   Activation *actPtr)
   {
@@ -329,7 +329,7 @@ Activation *GetNextActivation(
 
    if (actPtr == NULL)
      {
-      theModuleItem = (struct defruleModule *) GetModuleItem(theEnv,NULL,DefruleData(theEnv)->DefruleModuleIndex);
+      theModuleItem = (struct defruleModule *) CL_GetModuleItem(theEnv,NULL,DefruleData(theEnv)->CL_DefruleModuleIndex);
       if (theModuleItem == NULL) return NULL;
       return theModuleItem->agenda;
      }
@@ -338,10 +338,10 @@ Activation *GetNextActivation(
   }
 
 /*********************************************/
-/* GetActivationBasis: Returns the basis of  */
+/* CL_GetActivationBasis: Returns the basis of  */
 /*   the rule associated with an activation. */
 /*********************************************/
-struct partialMatch *GetActivationBasis(
+struct partialMatch *CL_GetActivationBasis(
   Environment *theEnv,
   Activation *actPtr)
   {
@@ -352,20 +352,20 @@ struct partialMatch *GetActivationBasis(
   }
 
 /*********************************************/
-/* ActivationRuleName: Returns the name of   */
+/* CL_ActivationRuleName: Returns the name of   */
 /*   the rule associated with an activation. */
 /*********************************************/
-const char *ActivationRuleName(
+const char *CL_ActivationRuleName(
   Activation *actPtr)
   {
    return actPtr->theRule->header.name->contents;
   }
 
 /***************************************/
-/* GetActivationRule: Returns the rule */
+/* CL_GetActivationRule: Returns the rule */
 /*   associated with an activation.    */
 /***************************************/
-Defrule *GetActivationRule(
+Defrule *CL_GetActivationRule(
   Environment *theEnv,
   Activation *actPtr)
   {
@@ -376,20 +376,20 @@ Defrule *GetActivationRule(
   }
 
 /************************************************/
-/* ActivationGetSalience: Returns the salience  */
+/* CL_ActivationGetSalience: Returns the salience  */
 /*   of the rule associated with an activation. */
 /************************************************/
-int ActivationGetSalience(
+int CL_ActivationGetSalience(
   Activation *actPtr)
   {
    return actPtr->salience;
   }
 
 /**************************************/
-/* ActivationSetSalience: Sets the    */
+/* CL_ActivationSetSalience: Sets the    */
 /*   salience value of an activation. */
 /**************************************/
-int ActivationSetSalience(
+int CL_ActivationSetSalience(
   Activation *actPtr,
   int value)
   {
@@ -406,40 +406,40 @@ int ActivationSetSalience(
   }
 
 /********************************************/
-/* ActivationPPForm: Returns the pretty     */
+/* CL_ActivationPPFoCL_rm: Returns the pretty     */
 /*   print representation of an activation. */
 /********************************************/
-void ActivationPPForm(
+void CL_ActivationPPFoCL_rm(
   Activation *theActivation,
-  StringBuilder *theSB)
+  StringCL_Builder *theSB)
   {
    Environment *theEnv = theActivation->theRule->header.env;
    
-   OpenStringBuilderDestination(theEnv,"ActPPForm",theSB);
-   PrintActivation(theEnv,"ActPPForm",theActivation);
-   CloseStringBuilderDestination(theEnv,"ActPPForm");
+   OpenStringCL_BuilderDestination(theEnv,"ActPPFoCL_rm",theSB);
+   PrintActivation(theEnv,"ActPPFoCL_rm",theActivation);
+   CloseStringCL_BuilderDestination(theEnv,"ActPPFoCL_rm");
   }
 
 /****************************************************/
-/* GetActivationBasisPPForm: Returns the pretty     */
+/* CL_GetActivationBasisPPFoCL_rm: Returns the pretty     */
 /*   print representation of an activation's basis. */
 /****************************************************/
-void GetActivationBasisPPForm(
+void CL_GetActivationBasisPPFoCL_rm(
   Environment *theEnv,
   char *buffer,
   size_t bufferLength,
   Activation *theActivation)
   {
-   OpenStringDestination(theEnv,"ActPPForm",buffer,bufferLength);
-   PrintPartialMatch(theEnv,"ActPPForm",theActivation->basis);
-   CloseStringDestination(theEnv,"ActPPForm");
+   CL_OpenStringDestination(theEnv,"ActPPFoCL_rm",buffer,bufferLength);
+   CL_PrintPartialMatch(theEnv,"ActPPFoCL_rm",theActivation->basis);
+   CL_CloseStringDestination(theEnv,"ActPPFoCL_rm");
   }
 
 /********************************************/
-/* MoveActivationToTop: Moves the specified */
+/* CL_MoveActivationToTop: Moves the specified */
 /*   activation to the top of the agenda.   */
 /********************************************/
-bool MoveActivationToTop(
+bool CL_MoveActivationToTop(
   Environment *theEnv,
   Activation *theActivation)
   {
@@ -447,7 +447,7 @@ bool MoveActivationToTop(
    struct defruleModule *theModuleItem;
 
    /*====================================*/
-   /* Determine the module of the agenda */
+   /* DeteCL_rmine the module of the agenda */
    /* in which the activation is stored. */
    /*====================================*/
 
@@ -484,41 +484,41 @@ bool MoveActivationToTop(
    /* Mark the agenda as changed. */
    /*=============================*/
 
-   AgendaData(theEnv)->AgendaChanged = true;
+   CL_AgendaData(theEnv)->CL_AgendaChanged = true;
 
    return true;
   }
 
 /*******************************************/
-/* DeleteActivation: Removes the specified */
+/* CL_DeleteActivation: Removes the specified */
 /*   activation from the agenda.           */
 /*******************************************/
-void DeleteActivation(
+void CL_DeleteActivation(
   Activation *theActivation)
   {
-   RemoveActivation(theActivation->theRule->header.env,theActivation,true,true);
+   CL_RemoveActivation(theActivation->theRule->header.env,theActivation,true,true);
   }
 
 /*************************************************/
-/* DeleteAllActivations: Removes all activations */
+/* CL_DeleteAllActivations: Removes all activations */
 /*   from the agenda of the specified module.    */
 /*************************************************/
-void DeleteAllActivations(
+void CL_DeleteAllActivations(
   Defmodule *theModule)
   {
    struct activation *tempPtr, *theActivation;
    struct salienceGroup *theGroup, *tempGroup;
    Environment *theEnv = theModule->header.env;
 
-   theActivation = GetDefruleModuleItem(theEnv,NULL)->agenda;
+   theActivation = GetCL_DefruleModuleItem(theEnv,NULL)->agenda;
    while (theActivation != NULL)
      {
       tempPtr = theActivation->next;
-      RemoveActivation(theEnv,theActivation,true,true);
+      CL_RemoveActivation(theEnv,theActivation,true,true);
       theActivation = tempPtr;
      }
 
-   theGroup = GetDefruleModuleItem(theEnv,NULL)->groupings;
+   theGroup = GetCL_DefruleModuleItem(theEnv,NULL)->groupings;
    while (theGroup != NULL)
      {
       tempGroup = theGroup->next;
@@ -528,10 +528,10 @@ void DeleteAllActivations(
  }
 
 /*******************************************************/
-/* DetachActivation: Detaches the specified activation */
-/*   from the list of activations on the Agenda.       */
+/* CL_DetachActivation: Detaches the specified activation */
+/*   from the list of activations on the CL_Agenda.       */
 /*******************************************************/
-bool DetachActivation(
+bool CL_DetachActivation(
   Environment *theEnv,
   Activation *theActivation)
   {
@@ -541,16 +541,16 @@ bool DetachActivation(
    /* A NULL pointer is invalid. */
    /*============================*/
 
-   if (theActivation == NULL) SystemError(theEnv,"AGENDA",1);
+   if (theActivation == NULL) CL_SystemError(theEnv,"AGENDA",1);
 
    /*====================================*/
-   /* Determine the module of the agenda */
+   /* DeteCL_rmine the module of the agenda */
    /* in which the activation is stored. */
    /*====================================*/
 
    theModuleItem = (struct defruleModule *) theActivation->theRule->header.whichModule;
 
-   RemoveActivationFromGroup(theEnv,theActivation,theModuleItem);
+   CL_RemoveActivationFromGroup(theEnv,theActivation,theModuleItem);
 
    /*========================================================*/
    /* If the activation is the top activation on the agenda, */
@@ -585,13 +585,13 @@ bool DetachActivation(
    /* Mark the agenda as changed. */
    /*=============================*/
 
-   AgendaData(theEnv)->AgendaChanged = true;
+   CL_AgendaData(theEnv)->CL_AgendaChanged = true;
 
    return true;
   }
 
 /****************************************************************************/
-/* PrintActivation: Prints an activation in a "pretty" format. Salience,    */
+/* PrintActivation: Prints an activation in a "pretty" foCL_rmat. Salience,    */
 /*   rule name, and the partial match which activated the rule are printed. */
 /****************************************************************************/
 static void PrintActivation(
@@ -601,44 +601,44 @@ static void PrintActivation(
   {
    char printSpace[20];
 
-   gensprintf(printSpace,"%-6d ",theActivation->salience);
-   WriteString(theEnv,logicalName,printSpace);
-   WriteString(theEnv,logicalName,theActivation->theRule->header.name->contents);
-   WriteString(theEnv,logicalName,": ");
-   PrintPartialMatch(theEnv,logicalName,theActivation->basis);
+   CL_gensprintf(printSpace,"%-6d ",theActivation->salience);
+   CL_WriteString(theEnv,logicalName,printSpace);
+   CL_WriteString(theEnv,logicalName,theActivation->theRule->header.name->contents);
+   CL_WriteString(theEnv,logicalName,": ");
+   CL_PrintPartialMatch(theEnv,logicalName,theActivation->basis);
   }
 
 /*****************************/
-/* Agenda: C access routine  */
+/* CL_Agenda: C access routine  */
 /*   for the agenda command. */
 /*****************************/
-void Agenda(
+void CL_Agenda(
   Environment *theEnv,
   const char *logicalName,
   Defmodule *theModule)
   {
-   ListItemsDriver(theEnv,logicalName,theModule,"activation","activations",
-                   (GetNextItemFunction *) GetNextActivation,
+   CL_ListItemsDriver(theEnv,logicalName,theModule,"activation","activations",
+                   (GetNextItemFunction *) CL_GetNextActivation,
                    NULL,
                    (PrintItemFunction *) PrintActivation,
                    NULL);
   }
 
 /*******************************************************************/
-/* RemoveActivation: Returns an activation and its associated data */
+/* CL_RemoveActivation: Returns an activation and its associated data */
 /*   structures to the Memory Manager. Links to other activations  */
 /*   and partial matches may also be updated.                      */
 /*******************************************************************/
-void RemoveActivation(
+void CL_RemoveActivation(
   Environment *theEnv,
   Activation *theActivation,
-  bool updateAgenda,
+  bool updateCL_Agenda,
   bool updateLinks)
   {
    struct defruleModule *theModuleItem;
 
    /*====================================*/
-   /* Determine the module of the agenda */
+   /* DeteCL_rmine the module of the agenda */
    /* in which the activation is stored. */
    /*====================================*/
 
@@ -648,9 +648,9 @@ void RemoveActivation(
    /* Update the agenda if necessary. */
    /*=================================*/
 
-   if (updateAgenda == true)
+   if (updateCL_Agenda == true)
      {
-      RemoveActivationFromGroup(theEnv,theActivation,theModuleItem);
+      CL_RemoveActivationFromGroup(theEnv,theActivation,theModuleItem);
 
       /*===============================================*/
       /* Update the pointer links between activations. */
@@ -675,12 +675,12 @@ void RemoveActivation(
 
 #if DEBUGGING_FUNCTIONS
       if (theActivation->theRule->watchActivation &&
-          (! ConstructData(theEnv)->ClearReadyInProgress) &&
-          (! ConstructData(theEnv)->ClearInProgress))
+          (! ConstructData(theEnv)->CL_ClearReadyInProgress) &&
+          (! ConstructData(theEnv)->CL_ClearInProgress))
         {
-         WriteString(theEnv,STDOUT,"<== Activation ");
+         CL_WriteString(theEnv,STDOUT,"<== Activation ");
          PrintActivation(theEnv,STDOUT,theActivation);
-         WriteString(theEnv,STDOUT,"\n");
+         CL_WriteString(theEnv,STDOUT,"\n");
         }
 #endif
 
@@ -688,7 +688,7 @@ void RemoveActivation(
       /* Mark the agenda as changed. */
       /*=============================*/
 
-      AgendaData(theEnv)->AgendaChanged = true;
+      CL_AgendaData(theEnv)->CL_AgendaChanged = true;
      }
 
    /*============================================*/
@@ -702,15 +702,15 @@ void RemoveActivation(
    /* Return the activation to the free memory pool. */
    /*================================================*/
 
-   AgendaData(theEnv)->NumberOfActivations--;
+   CL_AgendaData(theEnv)->NumberOfActivations--;
 
    rtn_struct(theEnv,activation,theActivation);
   }
 
 /******************************/
-/* RemoveActivationFromGroup: */
+/* CL_RemoveActivationFromGroup: */
 /******************************/
-static void RemoveActivationFromGroup(
+static void CL_RemoveActivationFromGroup(
   Environment *theEnv,
   Activation *theActivation,
   struct defruleModule *theRuleModule)
@@ -723,7 +723,7 @@ static void RemoveActivationFromGroup(
    if (theActivation == theGroup->first)
      {
       /*====================================================*/
-      /* If the activation is the only remaining activation */
+      /* If the activation is the only reCL_maining activation */
       /* in the group, then the group needs to be removed.  */
       /*====================================================*/
 
@@ -769,35 +769,35 @@ static void RemoveActivationFromGroup(
   }
 
 /**************************************************************/
-/* AgendaClearFunction: Agenda clear routine for use with the */
-/*   clear command. Resets the current time tag to zero.      */
+/* CL_AgendaCL_ClearFunction: CL_Agenda clear routine for use with the */
+/*   clear command. CL_Resets the current time tag to zero.      */
 /**************************************************************/
-static void AgendaClearFunction(
+static void CL_AgendaCL_ClearFunction(
   Environment *theEnv,
   void *context)
   {
-   AgendaData(theEnv)->CurrentTimetag = 1;
+   CL_AgendaData(theEnv)->CurrentTimetag = 1;
   }
 
 /*************************************************/
-/* RemoveAllActivations: Removes all activations */
+/* CL_RemoveAllActivations: Removes all activations */
 /*   from the agenda of the current module.      */
 /*************************************************/
-void RemoveAllActivations(
+void CL_RemoveAllActivations(
   Environment *theEnv)
   {
    struct activation *tempPtr, *theActivation;
    struct salienceGroup *theGroup, *tempGroup;
 
-   theActivation = GetDefruleModuleItem(theEnv,NULL)->agenda;
+   theActivation = GetCL_DefruleModuleItem(theEnv,NULL)->agenda;
    while (theActivation != NULL)
      {
       tempPtr = theActivation->next;
-      RemoveActivation(theEnv,theActivation,true,true);
+      CL_RemoveActivation(theEnv,theActivation,true,true);
       theActivation = tempPtr;
      }
 
-   theGroup = GetDefruleModuleItem(theEnv,NULL)->groupings;
+   theGroup = GetCL_DefruleModuleItem(theEnv,NULL)->groupings;
    while (theGroup != NULL)
      {
       tempGroup = theGroup->next;
@@ -807,46 +807,46 @@ void RemoveAllActivations(
  }
 
 /**********************************************/
-/* GetAgendaChanged: Returns the value of the */
+/* GetCL_AgendaChanged: Returns the value of the */
 /*   boolean flag which indicates whether any */
 /*   changes have been made to the agenda.    */
 /**********************************************/
-bool GetAgendaChanged(
+bool GetCL_AgendaChanged(
   Environment *theEnv)
   {
-   return(AgendaData(theEnv)->AgendaChanged);
+   return(CL_AgendaData(theEnv)->CL_AgendaChanged);
   }
 
 /*****************************************************************/
-/* SetAgendaChanged: Sets the value of the boolean flag which    */
+/* SetCL_AgendaChanged: Sets the value of the boolean flag which    */
 /*   indicates whether any changes have been made to the agenda. */
 /*****************************************************************/
-void SetAgendaChanged(
+void SetCL_AgendaChanged(
   Environment *theEnv,
   bool value)
   {
-   AgendaData(theEnv)->AgendaChanged = value;
+   CL_AgendaData(theEnv)->CL_AgendaChanged = value;
   }
 
 /**********************/
-/* ReorderAllAgendas: */
+/* ReorderAllCL_Agendas: */
 /**********************/
-void ReorderAllAgendas(
+void ReorderAllCL_Agendas(
   Environment *theEnv)
   {
    Defmodule *theModule;
    
-   for (theModule = GetNextDefmodule(theEnv,NULL);
+   for (theModule = CL_GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = GetNextDefmodule(theEnv,theModule))
-     { ReorderAgenda(theModule); }
+        theModule = CL_GetNextDefmodule(theEnv,theModule))
+     { ReorderCL_Agenda(theModule); }
   }
 
 /*******************************************************/
-/* ReorderAgenda: Completely reorders the agenda based */
+/* ReorderCL_Agenda: Completely reorders the agenda based */
 /*   on the current conflict resolution strategy.      */
 /*******************************************************/
-void ReorderAgenda(
+void ReorderCL_Agenda(
   Defmodule *theModule)
   {
    struct activation *theActivation, *tempPtr;
@@ -862,7 +862,7 @@ void ReorderAgenda(
    /* remove them from the agenda.    */
    /*=================================*/
 
-   theModuleItem = GetDefruleModuleItem(theEnv,theModule);
+   theModuleItem = GetCL_DefruleModuleItem(theEnv,theModule);
    theActivation = theModuleItem->agenda;
    theModuleItem->agenda = NULL;
 
@@ -887,26 +887,26 @@ void ReorderAgenda(
       theActivation->next = NULL;
       theActivation->prev = NULL;
       theGroup = ReuseOrCreateSalienceGroup(theEnv,theModuleItem,theActivation->salience);
-      PlaceActivation(theEnv,&(theModuleItem->agenda),theActivation,theGroup);
+      CL_PlaceActivation(theEnv,&(theModuleItem->agenda),theActivation,theGroup);
       theActivation = tempPtr;
      }
   }
 
 /****************************************************/
-/* GetNumberOfActivations: Returns the value of the */
+/* CL_GetNumberOfActivations: Returns the value of the */
 /*   total number of activations on all agendas.    */
 /****************************************************/
-unsigned long GetNumberOfActivations(
+unsigned long CL_GetNumberOfActivations(
   Environment *theEnv)
   {
-   return(AgendaData(theEnv)->NumberOfActivations);
+   return(CL_AgendaData(theEnv)->NumberOfActivations);
   }
 
 /******************************************************/
-/* RefreshCommand: H/L Command for refreshing a rule. */
+/* CL_RefreshCommand: H/L Command for refreshing a rule. */
 /*   Syntax: (refresh <defrule-name>)                 */
 /******************************************************/
-void RefreshCommand(
+void CL_RefreshCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -918,41 +918,41 @@ void RefreshCommand(
    /* Get the name of the rule. */
    /*===========================*/
 
-   ruleName = GetConstructName(context,"refresh","rule name");
+   ruleName = CL_GetConstructName(context,"refresh","rule name");
    if (ruleName == NULL) return;
 
    /*===============================*/
-   /* Determine if the rule exists. */
+   /* DeteCL_rmine if the rule exists. */
    /*===============================*/
 
-   rulePtr = FindDefrule(theEnv,ruleName);
+   rulePtr = CL_FindDefrule(theEnv,ruleName);
    if (rulePtr == NULL)
      {
-      CantFindItemErrorMessage(theEnv,"defrule",ruleName,true);
+      CL_CantFindItemErrorMessage(theEnv,"defrule",ruleName,true);
       return;
      }
 
    /*===================*/
-   /* Refresh the rule. */
+   /* CL_Refresh the rule. */
    /*===================*/
 
-   Refresh(rulePtr);
+   CL_Refresh(rulePtr);
   }
 
 /***********************************************************/
-/* Refresh: Refreshes a defrule. Activations of the rule   */
+/* CL_Refresh: CL_Refreshes a defrule. Activations of the rule   */
 /*   that have already been fired are added to the agenda. */
 /***********************************************************/
-void Refresh(
+void CL_Refresh(
   Defrule *theRule)
   {
    Defrule *rulePtr;
-   struct partialMatch *listOfMatches;
+   struct partialMatch *listOfCL_Matches;
    unsigned long b;
    Environment *theEnv = theRule->header.env;
 
    /*====================================*/
-   /* Refresh each disjunct of the rule. */
+   /* CL_Refresh each disjunct of the rule. */
    /*====================================*/
 
    for (rulePtr = theRule;
@@ -966,9 +966,9 @@ void Refresh(
 
       for (b = 0; b < rulePtr->lastJoin->leftMemory->size; b++)
         {
-         for (listOfMatches = rulePtr->lastJoin->leftMemory->beta[b];
-              listOfMatches != NULL;
-              listOfMatches = listOfMatches->nextInMemory)
+         for (listOfCL_Matches = rulePtr->lastJoin->leftMemory->beta[b];
+              listOfCL_Matches != NULL;
+              listOfCL_Matches = listOfCL_Matches->nextInMemory)
            {
             /*=======================================================*/
             /* If the partial match is associated with an activation */
@@ -977,10 +977,10 @@ void Refresh(
             /* have an activation associated with it.                */
             /*=======================================================*/
 
-            if (((struct joinNode *) listOfMatches->owner)->ruleToActivate != NULL)
+            if (((struct joinNode *) listOfCL_Matches->owner)->ruleToActivate != NULL)
               {
-               if (listOfMatches->marker == NULL)
-                 { AddActivation(theEnv,rulePtr,listOfMatches); }
+               if (listOfCL_Matches->marker == NULL)
+                 { CL_AddActivation(theEnv,rulePtr,listOfCL_Matches); }
               }
            }
         }
@@ -988,10 +988,10 @@ void Refresh(
   }
 
 /**********************************************/
-/* RefreshAgendaCommand: H/L access routine   */
+/* CL_RefreshCL_AgendaCommand: H/L access routine   */
 /*   for the refresh-agenda command.          */
 /**********************************************/
-void RefreshAgendaCommand(
+void CL_RefreshCL_AgendaCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -1004,7 +1004,7 @@ void RefreshAgendaCommand(
    /* This function can have at most one argument. */
    /*==============================================*/
 
-   numArgs = UDFArgumentCount(context);
+   numArgs = CL_UDFArgumentCount(context);
 
    /*===============================================================*/
    /* If a module name is specified, then the agenda of that module */
@@ -1014,45 +1014,45 @@ void RefreshAgendaCommand(
 
    if (numArgs == 1)
      {
-      theModule = GetModuleName(context,1,&error);
+      theModule = CL_GetModuleName(context,1,&error);
       if (error) return;
      }
    else
-     { theModule = GetCurrentModule(theEnv); }
+     { theModule = CL_GetCurrentModule(theEnv); }
 
    /*===============================================*/
-   /* Refresh the agenda of the appropriate module. */
+   /* CL_Refresh the agenda of the appropriate module. */
    /*===============================================*/
 
    if (theModule == NULL)
-     { RefreshAllAgendas(theEnv); }
+     { CL_RefreshAllCL_Agendas(theEnv); }
    else
-     { RefreshAgenda(theModule); }
+     { CL_RefreshCL_Agenda(theModule); }
   }
 
 /**********************/
-/* RefreshAllAgendas: */
+/* CL_RefreshAllCL_Agendas: */
 /**********************/
-void RefreshAllAgendas(
+void CL_RefreshAllCL_Agendas(
   Environment *theEnv)
   {
   Defmodule *theModule;
   
-  for (theModule = GetNextDefmodule(theEnv,NULL);
+  for (theModule = CL_GetNextDefmodule(theEnv,NULL);
        theModule != NULL;
-       theModule = GetNextDefmodule(theEnv,theModule))
-     { RefreshAgenda(theModule); }
+       theModule = CL_GetNextDefmodule(theEnv,theModule))
+     { CL_RefreshCL_Agenda(theModule); }
   }
 
 /*************************************/
-/* RefreshAgenda: C access routine   */
+/* CL_RefreshCL_Agenda: C access routine   */
 /*   for the refresh-agenda command. */
 /*************************************/
-void RefreshAgenda(
+void CL_RefreshCL_Agenda(
   Defmodule *theModule)
   {
    Activation *theActivation;
-   SalienceEvaluationType oldValue;
+   SalienceCL_EvaluationType oldValue;
    Environment *theEnv;
    
    if (theModule == NULL) return;
@@ -1062,64 +1062,64 @@ void RefreshAgenda(
    /* If embedded, clear the error flags. */
    /*=====================================*/
    
-   if (EvaluationData(theEnv)->CurrentExpression == NULL)
-     { ResetErrorFlags(theEnv); }
+   if (CL_EvaluationData(theEnv)->CurrentExpression == NULL)
+     { CL_ResetErrorFlags(theEnv); }
 
    /*==========================*/
-   /* Save the current module. */
+   /* CL_Save the current module. */
    /*==========================*/
 
-   SaveCurrentModule(theEnv);
+   CL_SaveCurrentModule(theEnv);
 
    /*=======================================================*/
    /* Remember the current setting for salience evaluation. */
-   /* To perform the refresh, the when activated setting is */
+   /* To perfoCL_rm the refresh, the when activated setting is */
    /* used to recompute the salience values.                */
    /*=======================================================*/
 
-   oldValue = GetSalienceEvaluation(theEnv);
-   SetSalienceEvaluation(theEnv,WHEN_ACTIVATED);
+   oldValue = GetSalienceCL_Evaluation(theEnv);
+   SetSalienceCL_Evaluation(theEnv,WHEN_ACTIVATED);
 
    /*============================*/
    /* Change the current module. */
    /*============================*/
 
-   SetCurrentModule(theEnv,theModule);
+   CL_SetCurrentModule(theEnv,theModule);
 
    /*================================================================*/
    /* Recompute the salience values for the current module's agenda. */
    /*================================================================*/
 
-   for (theActivation = GetNextActivation(theEnv,NULL);
+   for (theActivation = CL_GetNextActivation(theEnv,NULL);
         theActivation != NULL;
-        theActivation = GetNextActivation(theEnv,theActivation))
-     { theActivation->salience = EvaluateSalience(theEnv,theActivation->theRule); }
+        theActivation = CL_GetNextActivation(theEnv,theActivation))
+     { theActivation->salience = CL_EvaluateSalience(theEnv,theActivation->theRule); }
 
    /*======================================================*/
    /* Reorder the agenda based on the new salience values. */
    /*======================================================*/
 
-   ReorderAgenda(theModule);
+   ReorderCL_Agenda(theModule);
 
    /*==========================================*/
    /* Restore the salience evaluation setting. */
    /*==========================================*/
 
-   SetSalienceEvaluation(theEnv,oldValue);
+   SetSalienceCL_Evaluation(theEnv,oldValue);
 
    /*=============================*/
    /* Restore the current module. */
    /*=============================*/
 
-   RestoreCurrentModule(theEnv);
+   CL_RestoreCurrentModule(theEnv);
   }
 
 /*********************************************************/
-/* SetSalienceEvaluationCommand: H/L Command for setting */
+/* SetSalienceCL_EvaluationCommand: H/L Command for setting */
 /*   the salience evaluation behavior.                   */
 /*   Syntax: (set-salience-evaluation-behavior <symbol>) */
 /*********************************************************/
-void SetSalienceEvaluationCommand(
+void SetSalienceCL_EvaluationCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -1132,14 +1132,14 @@ void SetSalienceEvaluationCommand(
    /* Get the current setting for salience evaluation. */
    /*==================================================*/
 
-   oldValue = SalienceEvaluationName(GetSalienceEvaluation(theEnv));
+   oldValue = SalienceCL_EvaluationName(GetSalienceCL_Evaluation(theEnv));
 
    /*=========================================*/
    /* This function expects a single argument */
    /* which must be a symbol.                 */
    /*=========================================*/
 
-   if (! UDFFirstArgument(context,SYMBOL_BIT,&value))
+   if (! CL_UDFFirstArgument(context,SYMBOL_BIT,&value))
      { return; }
 
    /*=============================================================*/
@@ -1150,16 +1150,16 @@ void SetSalienceEvaluationCommand(
    argument = value.lexemeValue->contents;
 
    if (strcmp(argument,"when-defined") == 0)
-     { SetSalienceEvaluation(theEnv,WHEN_DEFINED); }
+     { SetSalienceCL_Evaluation(theEnv,WHEN_DEFINED); }
    else if (strcmp(argument,"when-activated") == 0)
-     { SetSalienceEvaluation(theEnv,WHEN_ACTIVATED); }
+     { SetSalienceCL_Evaluation(theEnv,WHEN_ACTIVATED); }
    else if (strcmp(argument,"every-cycle") == 0)
-     { SetSalienceEvaluation(theEnv,EVERY_CYCLE); }
+     { SetSalienceCL_Evaluation(theEnv,EVERY_CYCLE); }
    else
      {
-      UDFInvalidArgumentMessage(context,
+      CL_UDFInvalidArgumentMessage(context,
          "symbol with value when-defined, when-activated, or every-cycle");
-      returnValue->lexemeValue = CreateSymbol(theEnv,oldValue);
+      returnValue->lexemeValue = CL_CreateSymbol(theEnv,oldValue);
       return;
      }
 
@@ -1167,28 +1167,28 @@ void SetSalienceEvaluationCommand(
    /* Return the old setting for salience evaluation. */
    /*=================================================*/
 
-   returnValue->lexemeValue = CreateSymbol(theEnv,oldValue);
+   returnValue->lexemeValue = CL_CreateSymbol(theEnv,oldValue);
   }
 
 /*********************************************************/
-/* GetSalienceEvaluationCommand: H/L Command for getting */
+/* GetSalienceCL_EvaluationCommand: H/L Command for getting */
 /*   the salience evaluation behavior.                   */
 /*   Syntax: (get-salience-evaluation-behavior)          */
 /*********************************************************/
-void GetSalienceEvaluationCommand(
+void GetSalienceCL_EvaluationCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
-   returnValue->lexemeValue = CreateSymbol(theEnv,SalienceEvaluationName(GetSalienceEvaluation(theEnv)));
+   returnValue->lexemeValue = CL_CreateSymbol(theEnv,SalienceCL_EvaluationName(GetSalienceCL_Evaluation(theEnv)));
   }
 
 /*****************************************************************/
-/* SalienceEvaluationName: Given the integer value corresponding */
+/* SalienceCL_EvaluationName: Given the integer value corresponding */
 /*   to a specified salience evaluation behavior, returns a      */
 /*   character string of the behavior's name.                    */
 /*****************************************************************/
-static const char *SalienceEvaluationName(
+static const char *SalienceCL_EvaluationName(
   int strategy)
   {
    const char *sname;
@@ -1213,40 +1213,40 @@ static const char *SalienceEvaluationName(
   }
 
 /*******************************************************/
-/* GetSalienceEvaluation: Returns the value of current */
+/* GetSalienceCL_Evaluation: Returns the value of current */
 /*  type of salience evaluation (e.g., when defined,   */
 /*  when activated, or every cycle).                   */
 /*******************************************************/
-SalienceEvaluationType GetSalienceEvaluation(
+SalienceCL_EvaluationType GetSalienceCL_Evaluation(
   Environment *theEnv)
   {
-   return AgendaData(theEnv)->SalienceEvaluation;
+   return CL_AgendaData(theEnv)->SalienceCL_Evaluation;
   }
 
 /**********************************************/
-/* SetSalienceEvaluation: Sets the value of   */
+/* SetSalienceCL_Evaluation: Sets the value of   */
 /*   the current type of salience evaluation. */
 /**********************************************/
-SalienceEvaluationType SetSalienceEvaluation(
+SalienceCL_EvaluationType SetSalienceCL_Evaluation(
   Environment *theEnv,
-  SalienceEvaluationType value)
+  SalienceCL_EvaluationType value)
   {
-   SalienceEvaluationType ov;
+   SalienceCL_EvaluationType ov;
 
-   ov = AgendaData(theEnv)->SalienceEvaluation;
-   AgendaData(theEnv)->SalienceEvaluation = value;
+   ov = CL_AgendaData(theEnv)->SalienceCL_Evaluation;
+   CL_AgendaData(theEnv)->SalienceCL_Evaluation = value;
    return ov;
   }
 
 /*****************************************************************/
-/* EvaluateSalience: Returns the salience value of the specified */
+/* CL_EvaluateSalience: Returns the salience value of the specified */
 /*   defrule. If salience evaluation is currently set to         */
 /*   when-defined, then the current value of the rule's salience */
 /*   is returned. Otherwise the salience expression associated   */
 /*   with the rule is reevaluated, the value is stored as the    */
 /*   rule's current salience, and it is then returned.           */
 /*****************************************************************/
-static int EvaluateSalience(
+static int CL_EvaluateSalience(
   Environment *theEnv,
   Defrule *theDefrule)
   {
@@ -1259,7 +1259,7 @@ static int EvaluateSalience(
   /* value evaluated for the rule.                    */
   /*==================================================*/
 
-  if (GetSalienceEvaluation(theEnv) == WHEN_DEFINED)
+  if (GetSalienceCL_Evaluation(theEnv) == WHEN_DEFINED)
     { return theDefrule->salience; }
 
   /*=================================================================*/
@@ -1276,10 +1276,10 @@ static int EvaluateSalience(
   /* during evaluation, print an error message.         */
   /*====================================================*/
 
-  SetEvaluationError(theEnv,false);
-  if (EvaluateExpression(theEnv,theDefrule->dynamicSalience,&salienceValue))
+  SetCL_EvaluationError(theEnv,false);
+  if (CL_EvaluateExpression(theEnv,theDefrule->dynamicSalience,&salienceValue))
     {
-     SalienceInformationError(theEnv,"defrule",theDefrule->header.name->contents);
+     SalienceInfoCL_rmationError(theEnv,"defrule",theDefrule->header.name->contents);
      return theDefrule->salience;
     }
 
@@ -1289,9 +1289,9 @@ static int EvaluateSalience(
 
   if (salienceValue.header->type != INTEGER_TYPE)
     {
-     SalienceNonIntegerError(theEnv);
-     SalienceInformationError(theEnv,"defrule",theDefrule->header.name->contents);
-     SetEvaluationError(theEnv,true);
+     CL_SalienceNonIntegerError(theEnv);
+     SalienceInfoCL_rmationError(theEnv,"defrule",theDefrule->header.name->contents);
+     SetCL_EvaluationError(theEnv,true);
      return theDefrule->salience;
     }
 
@@ -1304,9 +1304,9 @@ static int EvaluateSalience(
 
   if ((salience > MAX_DEFRULE_SALIENCE) || (salience < MIN_DEFRULE_SALIENCE))
     {
-     SalienceRangeError(theEnv,MIN_DEFRULE_SALIENCE,MAX_DEFRULE_SALIENCE);
-     SetEvaluationError(theEnv,true);
-     SalienceInformationError(theEnv,"defrule",theDefrule->header.name->contents);
+     CL_SalienceRangeError(theEnv,MIN_DEFRULE_SALIENCE,MAX_DEFRULE_SALIENCE);
+     SetCL_EvaluationError(theEnv,true);
+     SalienceInfoCL_rmationError(theEnv,"defrule",theDefrule->header.name->contents);
      return theDefrule->salience;
     }
 
@@ -1322,11 +1322,11 @@ static int EvaluateSalience(
 #if DEBUGGING_FUNCTIONS
 
 /***********************************************/
-/* AgendaCommand: Prints out the agenda of the */
+/* CL_AgendaCommand: Prints out the agenda of the */
 /*   rules that are ready to fire.             */
 /*   Syntax: (agenda)                          */
 /***********************************************/
-void AgendaCommand(
+void CL_AgendaCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -1341,20 +1341,20 @@ void AgendaCommand(
    /* displayed.                                                    */
    /*===============================================================*/
 
-   numArgs = UDFArgumentCount(context);
+   numArgs = CL_UDFArgumentCount(context);
    if (numArgs == 1)
      {
-      theModule = GetModuleName(context,1,&error);
+      theModule = CL_GetModuleName(context,1,&error);
       if (error) return;
      }
    else
-     { theModule = GetCurrentModule(theEnv); }
+     { theModule = CL_GetCurrentModule(theEnv); }
 
    /*===============================================*/
    /* Display the agenda of the appropriate module. */
    /*===============================================*/
 
-   Agenda(theEnv,STDOUT,theModule);
+   CL_Agenda(theEnv,STDOUT,theModule);
   }
 
 #endif /* DEBUGGING_FUNCTIONS */

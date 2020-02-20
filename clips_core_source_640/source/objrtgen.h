@@ -44,15 +44,15 @@
 #include "expressn.h"
 #include "reorder.h"
 
-   void             ReplaceGetJNObjectValue(Environment *,Expression *,struct lhsParseNode *,int);
-   Expression      *GenGetJNObjectValue(Environment *,struct lhsParseNode *,int);
-   Expression      *ObjectJNVariableComparison(Environment *,struct lhsParseNode *,struct lhsParseNode *,bool);
-   Expression      *GenObjectPNConstantCompare(Environment *,struct lhsParseNode *);
-   void             ReplaceGetPNObjectValue(Environment *,Expression *,struct lhsParseNode *);
-   Expression      *GenGetPNObjectValue(Environment *,struct lhsParseNode *);
-   Expression      *ObjectPNVariableComparison(Environment *,struct lhsParseNode *,struct lhsParseNode *);
-   void             GenObjectLengthTest(Environment *,struct lhsParseNode *);
-   void             GenObjectZeroLengthTest(Environment *,struct lhsParseNode *);
+   void             CL_ReplaceGetJNObjectValue(Environment *,Expression *,struct lhsParseNode *,int);
+   Expression      *CL_GenGetJNObjectValue(Environment *,struct lhsParseNode *,int);
+   Expression      *CL_ObjectJNVariableComparison(Environment *,struct lhsParseNode *,struct lhsParseNode *,bool);
+   Expression      *CL_GenObjectPNConstantCompare(Environment *,struct lhsParseNode *);
+   void             CL_ReplaceGetPNObjectValue(Environment *,Expression *,struct lhsParseNode *);
+   Expression      *CL_GenGetPNObjectValue(Environment *,struct lhsParseNode *);
+   Expression      *CL_ObjectPNVariableComparison(Environment *,struct lhsParseNode *,struct lhsParseNode *);
+   void             CL_GenObjectLengthTest(Environment *,struct lhsParseNode *);
+   void             CL_GenObjectZeroLengthTest(Environment *,struct lhsParseNode *);
 
 #endif /* DEFRULE_CONSTRUCT && OBJECT_SYSTEM && (! RUN_TIME) && (! BLOAD_ONLY) */
 

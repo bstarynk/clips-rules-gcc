@@ -45,8 +45,8 @@
 /*      6.31: Bug fix to prevent rule activations for        */
 /*            partial matches being deleted.                 */
 /*                                                           */
-/*      6.40: Added Env prefix to GetHaltExecution and       */
-/*            SetHaltExecution functions.                    */
+/*      6.40: Added Env prefix to CL_GetCL_HaltExecution and       */
+/*            SetCL_HaltExecution functions.                    */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -86,7 +86,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                        TraceErrorToRuleDriver(Environment *,struct joinNode *,const char *,int,bool);
+   static void                        CL_TraceErrorToRuleDriver(Environment *,struct joinNode *,const char *,int,bool);
    static struct alphaMemoryHash     *FindAlphaMemory(Environment *,struct patternNodeHeader *,unsigned long);
    static unsigned long               AlphaMemoryHashValue(struct patternNodeHeader *,unsigned long);
    static void                        UnlinkAlphaMemory(Environment *,struct patternNodeHeader *,struct alphaMemoryHash *);
@@ -95,17 +95,17 @@
    static void                        UnlinkBetaPartialMatchfromAlphaAndBetaLineage(struct partialMatch *);
    static int                         CountPriorPatterns(struct joinNode *);
    static void                        ResizeBetaMemory(Environment *,struct betaMemory *);
-   static void                        ResetBetaMemory(Environment *,struct betaMemory *);
+   static void                        CL_ResetBetaMemory(Environment *,struct betaMemory *);
 #if (CONSTRUCT_COMPILER || BLOAD_AND_BSAVE) && (! RUN_TIME)
    static void                        TagNetworkTraverseJoins(Environment *,unsigned long *,unsigned long *,struct joinNode *);
 #endif
 
 /***********************************************************/
-/* PrintPartialMatch: Prints out the list of fact indices  */
+/* CL_PrintPartialMatch: Prints out the list of fact indices  */
 /*   and/or instance names associated with a partial match */
 /*   or rule instantiation.                                */
 /***********************************************************/
-void PrintPartialMatch(
+void CL_PrintPartialMatch(
   Environment *theEnv,
   const char *logicalName,
   struct partialMatch *list)
@@ -119,19 +119,19 @@ void PrintPartialMatch(
           (get_nth_pm_match(list,i)->matchingItem != NULL))
         {
          matchingItem = get_nth_pm_match(list,i)->matchingItem;
-         (*matchingItem->theInfo->base.shortPrintFunction)(theEnv,logicalName,matchingItem);
+         (*matchingItem->theInfo->base.shortCL_PrintFunction)(theEnv,logicalName,matchingItem);
         }
       else
-        { WriteString(theEnv,logicalName,"*"); }
+        { CL_WriteString(theEnv,logicalName,"*"); }
       i++;
-      if (i < list->bcount) WriteString(theEnv,logicalName,",");
+      if (i < list->bcount) CL_WriteString(theEnv,logicalName,",");
      }
   }
 
 /**********************************************/
-/* CopyPartialMatch:  Copies a partial match. */
+/* CL_CopyPartialMatch:  Copies a partial match. */
 /**********************************************/
-struct partialMatch *CopyPartialMatch(
+struct partialMatch *CL_CopyPartialMatch(
   Environment *theEnv,
   struct partialMatch *list)
   {
@@ -155,9 +155,9 @@ struct partialMatch *CopyPartialMatch(
   }
 
 /****************************/
-/* CreateEmptyPartialMatch: */
+/* CL_CreateEmptyPartialMatch: */
 /****************************/
-struct partialMatch *CreateEmptyPartialMatch(
+struct partialMatch *CL_CreateEmptyPartialMatch(
   Environment *theEnv)
   {
    struct partialMatch *linker;
@@ -199,9 +199,9 @@ static void InitializePMLinks(
   }
 
 /**********************/
-/* UpdateBetaPMLinks: */
+/* CL_UpdateBetaPMLinks: */
 /**********************/
-void UpdateBetaPMLinks(
+void CL_UpdateBetaPMLinks(
   Environment *theEnv,
   struct partialMatch *thePM,
   struct partialMatch *lhsBinds,
@@ -295,13 +295,13 @@ void UpdateBetaPMLinks(
   }
 
 /**********************************************************/
-/* AddBlockedLink: Adds a link between a partial match in */
+/* CL_AddBlockedLink: Adds a link between a partial match in */
 /*   the beta memory of a join (with a negated RHS) and a */
 /*   partial match in its right memory that prevents the  */
 /*   partial match from being satisfied and propagated to */
 /*   the next join in the rule.                           */
 /**********************************************************/
-void AddBlockedLink(
+void CL_AddBlockedLink(
   struct partialMatch *thePM,
   struct partialMatch *rhsBinds)
   {
@@ -313,13 +313,13 @@ void AddBlockedLink(
   }
 
 /*************************************************************/
-/* RemoveBlockedLink: Removes a link between a partial match */
+/* CL_RemoveBlockedLink: Removes a link between a partial match */
 /*   in the beta memory of a join (with a negated RHS) and a */
 /*   partial match in its right memory that prevents the     */
 /*   partial match from being satisfied and propagated to    */
 /*   the next join in the rule.                              */
 /*************************************************************/
-void RemoveBlockedLink(
+void CL_RemoveBlockedLink(
   struct partialMatch *thePM)
   {
    struct partialMatch *blocker;
@@ -341,9 +341,9 @@ void RemoveBlockedLink(
   }
 
 /***********************************/
-/* UnlinkBetaPMFromNodeAndLineage: */
+/* CL_UnlinkBetaPMFromNodeAndLineage: */
 /***********************************/
-void UnlinkBetaPMFromNodeAndLineage(
+void CL_UnlinkBetaPMFromNodeAndLineage(
   Environment *theEnv,
   struct joinNode *join,
   struct partialMatch *thePM,
@@ -394,13 +394,13 @@ void UnlinkBetaPMFromNodeAndLineage(
      { return; }
 
    if ((theMemory->count == 0) && (theMemory->size > 1))
-     { ResetBetaMemory(theEnv,theMemory); }
+     { CL_ResetBetaMemory(theEnv,theMemory); }
   }
 
 /*************************/
-/* UnlinkNonLeftLineage: */
+/* CL_UnlinkNonLeftLineage: */
 /*************************/
-void UnlinkNonLeftLineage(
+void CL_UnlinkNonLeftLineage(
   Environment *theEnv,
   struct joinNode *join,
   struct partialMatch *thePM,
@@ -486,7 +486,7 @@ void UnlinkNonLeftLineage(
      { return; }
 
    if ((theMemory->count == 0) && (theMemory->size > 1))
-     { ResetBetaMemory(theEnv,theMemory); }
+     { CL_ResetBetaMemory(theEnv,theMemory); }
   }
 
 /*******************************************************************/
@@ -582,17 +582,17 @@ static void UnlinkBetaPartialMatchfromAlphaAndBetaLineage(
   }
 
 /********************************************************/
-/* MergePartialMatches: Merges two partial matches. The */
+/* MergePartialCL_Matches: Merges two partial matches. The */
 /*   second match should either be NULL (indicating a   */
 /*   negated CE) or contain a single match.             */
 /********************************************************/
-struct partialMatch *MergePartialMatches(
+struct partialMatch *MergePartialCL_Matches(
   Environment *theEnv,
   struct partialMatch *lhsBind,
   struct partialMatch *rhsBind)
   {
    struct partialMatch *linker;
-   static struct partialMatch mergeTemplate = { 1 }; /* betaMemory is true, remainder are 0 or NULL */
+   static struct partialMatch mergeTemplate = { 1 }; /* betaMemory is true, reCL_mainder are 0 or NULL */
 
    /*=================================*/
    /* Allocate the new partial match. */
@@ -628,10 +628,10 @@ struct partialMatch *MergePartialMatches(
   }
 
 /*******************************************************************/
-/* InitializePatternHeader: Initializes a pattern header structure */
+/* CL_InitializePatternHeader: Initializes a pattern header structure */
 /*   (used by the fact and instance pattern matchers).             */
 /*******************************************************************/
-void InitializePatternHeader(
+void CL_InitializePatternHeader(
   Environment *theEnv,
   struct patternNodeHeader *theHeader)
   {
@@ -657,14 +657,14 @@ void InitializePatternHeader(
   }
 
 /******************************************************************/
-/* CreateAlphaMatch: Given a pointer to an entity (such as a fact */
+/* CL_CreateAlphaMatch: Given a pointer to an entity (such as a fact */
 /*   or instance) which matched a pattern, this function creates  */
 /*   a partial match suitable for storing in the alpha memory of  */
 /*   the pattern network. Note that the multifield markers which  */
 /*   are passed as a calling argument are copied (thus the caller */
 /*   is still responsible for freeing these data structures).     */
 /******************************************************************/
-struct partialMatch *CreateAlphaMatch(
+struct partialMatch *CL_CreateAlphaMatch(
   Environment *theEnv,
   void *theEntity,
   struct multifieldMarker *markers,
@@ -693,7 +693,7 @@ struct partialMatch *CreateAlphaMatch(
    afbtemp->matchingItem = (struct patternEntity *) theEntity;
 
    if (markers != NULL)
-     { afbtemp->markers = CopyMultifieldMarkers(theEnv,markers); }
+     { afbtemp->markers = CL_CopyMultifieldMarkers(theEnv,markers); }
    else
      { afbtemp->markers = NULL; }
 
@@ -766,10 +766,10 @@ struct partialMatch *CreateAlphaMatch(
   }
 
 /*******************************************/
-/* CopyMultifieldMarkers: Copies a list of */
+/* CL_CopyMultifieldMarkers: Copies a list of */
 /*   multifieldMarker data structures.     */
 /*******************************************/
-struct multifieldMarker *CopyMultifieldMarkers(
+struct multifieldMarker *CL_CopyMultifieldMarkers(
   Environment *theEnv,
   struct multifieldMarker *theMarkers)
   {
@@ -797,13 +797,13 @@ struct multifieldMarker *CopyMultifieldMarkers(
   }
 
 /***************************************************************/
-/* FlushAlphaBetaMemory: Returns all partial matches in a list */
+/* CL_FlushAlphaBetaMemory: Returns all partial matches in a list */
 /*   of partial matches either directly to the pool of free    */
-/*   memory or to the list of GarbagePartialMatches. Partial   */
+/*   memory or to the list of GarbagePartialCL_Matches. Partial   */
 /*   matches stored in alpha memories must be placed on the    */
-/*   list of GarbagePartialMatches.                            */
+/*   list of GarbagePartialCL_Matches.                            */
 /***************************************************************/
-void FlushAlphaBetaMemory(
+void CL_FlushAlphaBetaMemory(
   Environment *theEnv,
   struct partialMatch *pfl)
   {
@@ -814,17 +814,17 @@ void FlushAlphaBetaMemory(
       pfltemp = pfl->nextInMemory;
 
       UnlinkBetaPartialMatchfromAlphaAndBetaLineage(pfl);
-      ReturnPartialMatch(theEnv,pfl);
+      CL_ReturnPartialMatch(theEnv,pfl);
 
       pfl = pfltemp;
      }
   }
 
 /*****************************************************************/
-/* DestroyAlphaBetaMemory: Returns all partial matches in a list */
+/* CL_DestroyAlphaBetaMemory: Returns all partial matches in a list */
 /*   of partial matches directly to the pool of free memory.     */
 /*****************************************************************/
-void DestroyAlphaBetaMemory(
+void CL_DestroyAlphaBetaMemory(
   Environment *theEnv,
   struct partialMatch *pfl)
   {
@@ -833,16 +833,16 @@ void DestroyAlphaBetaMemory(
    while (pfl != NULL)
      {
       pfltemp = pfl->nextInMemory;
-      DestroyPartialMatch(theEnv,pfl);
+      CL_DestroyPartialMatch(theEnv,pfl);
       pfl = pfltemp;
      }
   }
 
 /******************************************************/
-/* FindEntityInPartialMatch: Searches for a specified */
+/* CL_FindEntityInPartialMatch: Searches for a specified */
 /*   data entity in a partial match.                  */
 /******************************************************/
-bool FindEntityInPartialMatch(
+bool CL_FindEntityInPartialMatch(
   struct patternEntity *theEntity,
   struct partialMatch *thePartialMatch)
   {
@@ -859,11 +859,11 @@ bool FindEntityInPartialMatch(
   }
 
 /***********************************************************************/
-/* GetPatternNumberFromJoin: Given a pointer to a join associated with */
+/* CL_GetPatternNumberFromJoin: Given a pointer to a join associated with */
 /*   a pattern CE, returns an integer representing the position of the */
 /*   pattern CE in the rule (e.g. first, second, third).               */
 /***********************************************************************/
-int GetPatternNumberFromJoin(
+int CL_GetPatternNumberFromJoin(
   struct joinNode *joinPtr)
   {
    int whichOne = 0;
@@ -883,31 +883,31 @@ int GetPatternNumberFromJoin(
   }
 
 /************************************************************************/
-/* TraceErrorToRule: Prints an error message when a error occurs as the */
+/* CL_TraceErrorToRule: Prints an error message when a error occurs as the */
 /*   result of evaluating an expression in the pattern network. Used to */
 /*   indicate which rule caused the problem.                            */
 /************************************************************************/
-void TraceErrorToRule(
+void CL_TraceErrorToRule(
   Environment *theEnv,
   struct joinNode *joinPtr,
   const char *indentSpaces)
   {
    int patternCount;
 
-   MarkRuleNetwork(theEnv,0);
+   CL_MarkRuleNetwork(theEnv,0);
 
    patternCount = CountPriorPatterns(joinPtr->lastLevel) + 1;
 
-   TraceErrorToRuleDriver(theEnv,joinPtr,indentSpaces,patternCount,false);
+   CL_TraceErrorToRuleDriver(theEnv,joinPtr,indentSpaces,patternCount,false);
 
-   MarkRuleNetwork(theEnv,0);
+   CL_MarkRuleNetwork(theEnv,0);
   }
 
 /**************************************************************/
-/* TraceErrorToRuleDriver: Driver code for printing out which */
+/* CL_TraceErrorToRuleDriver: Driver code for printing out which */
 /*   rule caused a pattern or join network error.             */
 /**************************************************************/
-static void TraceErrorToRuleDriver(
+static void CL_TraceErrorToRuleDriver(
   Environment *theEnv,
   struct joinNode *joinPtr,
   const char *indentSpaces,
@@ -928,14 +928,14 @@ static void TraceErrorToRuleDriver(
    else if (joinPtr->ruleToActivate != NULL)
      {
       joinPtr->marked = 1;
-      name = DefruleName(joinPtr->ruleToActivate);
-      WriteString(theEnv,STDERR,indentSpaces);
+      name = CL_DefruleName(joinPtr->ruleToActivate);
+      CL_WriteString(theEnv,STDERR,indentSpaces);
 
-      WriteString(theEnv,STDERR,"Of pattern #");
-      WriteInteger(theEnv,STDERR,priorRightJoinPatterns+priorPatternCount);
-      WriteString(theEnv,STDERR," in rule ");
-      WriteString(theEnv,STDERR,name);
-      WriteString(theEnv,STDERR,"\n");
+      CL_WriteString(theEnv,STDERR,"Of pattern #");
+      CL_WriteInteger(theEnv,STDERR,priorRightJoinPatterns+priorPatternCount);
+      CL_WriteString(theEnv,STDERR," in rule ");
+      CL_WriteString(theEnv,STDERR,name);
+      CL_WriteString(theEnv,STDERR,"\n");
      }
    else
      {
@@ -944,7 +944,7 @@ static void TraceErrorToRuleDriver(
       theLinks = joinPtr->nextLinks;
       while (theLinks != NULL)
         {
-         TraceErrorToRuleDriver(theEnv,theLinks->join,indentSpaces,
+         CL_TraceErrorToRuleDriver(theEnv,theLinks->join,indentSpaces,
                                 priorRightJoinPatterns+priorPatternCount,
                                 (theLinks->enterDirection == RHS));
          theLinks = theLinks->next;
@@ -974,10 +974,10 @@ static int CountPriorPatterns(
   }
 
 /********************************************************/
-/* MarkRuleNetwork: Sets the marked flag in each of the */
+/* CL_MarkRuleNetwork: Sets the marked flag in each of the */
 /*   joins in the join network to the specified value.  */
 /********************************************************/
-void MarkRuleNetwork(
+void CL_MarkRuleNetwork(
   Environment *theEnv,
   bool value)
   {
@@ -989,18 +989,18 @@ void MarkRuleNetwork(
    /* Loop through each module. */
    /*===========================*/
 
-   SaveCurrentModule(theEnv);
-   for (modulePtr = GetNextDefmodule(theEnv,NULL);
+   CL_SaveCurrentModule(theEnv);
+   for (modulePtr = CL_GetNextDefmodule(theEnv,NULL);
         modulePtr != NULL;
-        modulePtr = GetNextDefmodule(theEnv,modulePtr))
+        modulePtr = CL_GetNextDefmodule(theEnv,modulePtr))
      {
-      SetCurrentModule(theEnv,modulePtr);
+      CL_SetCurrentModule(theEnv,modulePtr);
 
       /*=========================*/
       /* Loop through each rule. */
       /*=========================*/
 
-      rulePtr = GetNextDefrule(theEnv,NULL);
+      rulePtr = CL_GetNextDefrule(theEnv,NULL);
       while (rulePtr != NULL)
         {
          /*=============================*/
@@ -1011,32 +1011,32 @@ void MarkRuleNetwork(
          for (disjunctPtr = rulePtr; disjunctPtr != NULL; disjunctPtr = disjunctPtr->disjunct)
            {
             joinPtr = disjunctPtr->lastJoin;
-            MarkRuleJoins(joinPtr,value);
+            CL_MarkRuleJoins(joinPtr,value);
            }
 
          /*===========================*/
          /* Move on to the next rule. */
          /*===========================*/
 
-         rulePtr = GetNextDefrule(theEnv,rulePtr);
+         rulePtr = CL_GetNextDefrule(theEnv,rulePtr);
         }
 
      }
 
-   RestoreCurrentModule(theEnv);
+   CL_RestoreCurrentModule(theEnv);
   }
 
 /******************/
-/* MarkRuleJoins: */
+/* CL_MarkRuleJoins: */
 /******************/
-void MarkRuleJoins(
+void CL_MarkRuleJoins(
   struct joinNode *joinPtr,
   bool value)
   {
    while (joinPtr != NULL)
      {
       if (joinPtr->joinFromTheRight)
-        { MarkRuleJoins((struct joinNode *) joinPtr->rightSideEntryStructure,value); }
+        { CL_MarkRuleJoins((struct joinNode *) joinPtr->rightSideEntryStructure,value); }
 
       joinPtr->marked = value;
       joinPtr = joinPtr->lastLevel;
@@ -1044,10 +1044,10 @@ void MarkRuleJoins(
   }
 
 /*****************************************/
-/* GetAlphaMemory: Retrieves the list of */
+/* CL_GetAlphaMemory: Retrieves the list of */
 /*   matches from an alpha memory.       */
 /*****************************************/
-struct partialMatch *GetAlphaMemory(
+struct partialMatch *CL_GetAlphaMemory(
   Environment *theEnv,
   struct patternNodeHeader *theHeader,
   unsigned long hashOffset)
@@ -1065,10 +1065,10 @@ struct partialMatch *GetAlphaMemory(
   }
 
 /*****************************************/
-/* GetLeftBetaMemory: Retrieves the list */
+/* CL_GetLeftBetaMemory: Retrieves the list */
 /*   of matches from a beta memory.      */
 /*****************************************/
-struct partialMatch *GetLeftBetaMemory(
+struct partialMatch *CL_GetLeftBetaMemory(
   struct joinNode *theJoin,
   unsigned long hashValue)
   {
@@ -1080,10 +1080,10 @@ struct partialMatch *GetLeftBetaMemory(
   }
 
 /******************************************/
-/* GetRightBetaMemory: Retrieves the list */
+/* CL_GetRightBetaMemory: Retrieves the list */
 /*   of matches from a beta memory.       */
 /******************************************/
-struct partialMatch *GetRightBetaMemory(
+struct partialMatch *CL_GetRightBetaMemory(
   struct joinNode *theJoin,
   unsigned long hashValue)
   {
@@ -1095,43 +1095,43 @@ struct partialMatch *GetRightBetaMemory(
   }
 
 /***************************************/
-/* ReturnLeftMemory: Sets the contents */
+/* CL_ReturnLeftMemory: Sets the contents */
 /*   of a beta memory to NULL.         */
 /***************************************/
-void ReturnLeftMemory(
+void CL_ReturnLeftMemory(
   Environment *theEnv,
   struct joinNode *theJoin)
   {
    if (theJoin->leftMemory == NULL) return;
-   genfree(theEnv,theJoin->leftMemory->beta,sizeof(struct partialMatch *) * theJoin->leftMemory->size);
+   CL_genfree(theEnv,theJoin->leftMemory->beta,sizeof(struct partialMatch *) * theJoin->leftMemory->size);
    rtn_struct(theEnv,betaMemory,theJoin->leftMemory);
    theJoin->leftMemory = NULL;
   }
 
 /***************************************/
-/* ReturnRightMemory: Sets the contents */
+/* CL_ReturnRightMemory: Sets the contents */
 /*   of a beta memory to NULL.         */
 /***************************************/
-void ReturnRightMemory(
+void CL_ReturnRightMemory(
   Environment *theEnv,
   struct joinNode *theJoin)
   {
    if (theJoin->rightMemory == NULL) return;
-   genfree(theEnv,theJoin->rightMemory->beta,sizeof(struct partialMatch *) * theJoin->rightMemory->size);
-   genfree(theEnv,theJoin->rightMemory->last,sizeof(struct partialMatch *) * theJoin->rightMemory->size);
+   CL_genfree(theEnv,theJoin->rightMemory->beta,sizeof(struct partialMatch *) * theJoin->rightMemory->size);
+   CL_genfree(theEnv,theJoin->rightMemory->last,sizeof(struct partialMatch *) * theJoin->rightMemory->size);
    rtn_struct(theEnv,betaMemory,theJoin->rightMemory);
    theJoin->rightMemory = NULL;
   }
 
 /****************************************************************/
-/* DestroyBetaMemory: Destroys the contents of a beta memory in */
+/* CL_DestroyBetaMemory: Destroys the contents of a beta memory in */
 /*   preperation for the deallocation of a join. Destroying is  */
-/*   performed when the environment is being deallocated and it */
+/*   perfoCL_rmed when the environment is being deallocated and it */
 /*   is not necessary to leave the environment in a consistent  */
 /*   state (as it would be if just a single rule were being     */
 /*   deleted).                                                  */
 /****************************************************************/
-void DestroyBetaMemory(
+void CL_DestroyBetaMemory(
   Environment *theEnv,
   struct joinNode *theJoin,
   int side)
@@ -1143,25 +1143,25 @@ void DestroyBetaMemory(
       if (theJoin->leftMemory == NULL) return;
 
       for (i = 0; i < theJoin->leftMemory->size; i++)
-        { DestroyAlphaBetaMemory(theEnv,theJoin->leftMemory->beta[i]); }
+        { CL_DestroyAlphaBetaMemory(theEnv,theJoin->leftMemory->beta[i]); }
      }
    else
      {
       if (theJoin->rightMemory == NULL) return;
 
       for (i = 0; i < theJoin->rightMemory->size; i++)
-        { DestroyAlphaBetaMemory(theEnv,theJoin->rightMemory->beta[i]); }
+        { CL_DestroyAlphaBetaMemory(theEnv,theJoin->rightMemory->beta[i]); }
      }
   }
 
 /*************************************************************/
-/* FlushBetaMemory: Flushes the contents of a beta memory in */
+/* CL_FlushBetaMemory: Flushes the contents of a beta memory in */
 /*   preperation for the deallocation of a join. Flushing    */
-/*   is performed when the partial matches in the beta       */
+/*   is perfoCL_rmed when the partial matches in the beta       */
 /*   memory may still be in use because the environment will */
-/*   remain active.                                          */
+/*   reCL_main active.                                          */
 /*************************************************************/
-void FlushBetaMemory(
+void CL_FlushBetaMemory(
   Environment *theEnv,
   struct joinNode *theJoin,
   int side)
@@ -1173,21 +1173,21 @@ void FlushBetaMemory(
       if (theJoin->leftMemory == NULL) return;
 
       for (i = 0; i < theJoin->leftMemory->size; i++)
-        { FlushAlphaBetaMemory(theEnv,theJoin->leftMemory->beta[i]); }
+        { CL_FlushAlphaBetaMemory(theEnv,theJoin->leftMemory->beta[i]); }
      }
    else
      {
       if (theJoin->rightMemory == NULL) return;
 
       for (i = 0; i < theJoin->rightMemory->size; i++)
-        { FlushAlphaBetaMemory(theEnv,theJoin->rightMemory->beta[i]); }
+        { CL_FlushAlphaBetaMemory(theEnv,theJoin->rightMemory->beta[i]); }
      }
  }
 
 /***********************/
-/* BetaMemoryNotEmpty: */
+/* CL_BetaMemoryNotEmpty: */
 /***********************/
-bool BetaMemoryNotEmpty(
+bool CL_BetaMemoryNotEmpty(
   struct joinNode *theJoin)
   {
    if (theJoin->leftMemory != NULL)
@@ -1206,10 +1206,10 @@ bool BetaMemoryNotEmpty(
   }
 
 /*********************************************/
-/* RemoveAlphaMemoryMatches: Removes matches */
+/* RemoveAlphaMemoryCL_Matches: Removes matches */
 /*   from an alpha memory.                   */
 /*********************************************/
-void RemoveAlphaMemoryMatches(
+void RemoveAlphaMemoryCL_Matches(
   Environment *theEnv,
   struct patternNodeHeader *theHeader,
   struct partialMatch *theMatch,
@@ -1238,17 +1238,17 @@ void RemoveAlphaMemoryMatches(
    /* Add the match to the garbage list. */
    /*====================================*/
 
-   theMatch->nextInMemory = EngineData(theEnv)->GarbagePartialMatches;
-   EngineData(theEnv)->GarbagePartialMatches = theMatch;
+   theMatch->nextInMemory = EngineData(theEnv)->GarbagePartialCL_Matches;
+   EngineData(theEnv)->GarbagePartialCL_Matches = theMatch;
 
    if ((theAlphaMemory != NULL) && (theAlphaMemory->alphaMemory == NULL))
      { UnlinkAlphaMemory(theEnv,theHeader,theAlphaMemory); }
   }
 
 /***********************/
-/* DestroyAlphaMemory: */
+/* CL_DestroyAlphaMemory: */
 /***********************/
-void DestroyAlphaMemory(
+void CL_DestroyAlphaMemory(
   Environment *theEnv,
   struct patternNodeHeader *theHeader,
   bool unlink)
@@ -1260,7 +1260,7 @@ void DestroyAlphaMemory(
    while (theAlphaMemory != NULL)
      {
       tempMemory = theAlphaMemory->nextHash;
-      DestroyAlphaBetaMemory(theEnv,theAlphaMemory->alphaMemory);
+      CL_DestroyAlphaBetaMemory(theEnv,theAlphaMemory->alphaMemory);
       if (unlink)
         { UnlinkAlphaMemoryBucketSiblings(theEnv,theAlphaMemory); }
       rtn_struct(theEnv,alphaMemoryHash,theAlphaMemory);
@@ -1272,9 +1272,9 @@ void DestroyAlphaMemory(
   }
 
 /*********************/
-/* FlushAlphaMemory: */
+/* CL_FlushAlphaMemory: */
 /*********************/
-void FlushAlphaMemory(
+void CL_FlushAlphaMemory(
   Environment *theEnv,
   struct patternNodeHeader *theHeader)
   {
@@ -1285,7 +1285,7 @@ void FlushAlphaMemory(
    while (theAlphaMemory != NULL)
      {
       tempMemory = theAlphaMemory->nextHash;
-      FlushAlphaBetaMemory(theEnv,theAlphaMemory->alphaMemory);
+      CL_FlushAlphaBetaMemory(theEnv,theAlphaMemory->alphaMemory);
       UnlinkAlphaMemoryBucketSiblings(theEnv,theAlphaMemory);
       rtn_struct(theEnv,alphaMemoryHash,theAlphaMemory);
       theAlphaMemory = tempMemory;
@@ -1393,9 +1393,9 @@ static void UnlinkAlphaMemoryBucketSiblings(
   }
 
 /**************************/
-/* ComputeRightHashValue: */
+/* CL_ComputeRightHashValue: */
 /**************************/
-unsigned long ComputeRightHashValue(
+unsigned long CL_ComputeRightHashValue(
   Environment *theEnv,
   struct patternNodeHeader *theHeader)
   {
@@ -1418,10 +1418,10 @@ unsigned long ComputeRightHashValue(
        UDFValue theResult;
        struct expr *oldArgument;
 
-       oldArgument = EvaluationData(theEnv)->CurrentExpression;
-       EvaluationData(theEnv)->CurrentExpression = tempExpr;
-       (*EvaluationData(theEnv)->PrimitivesArray[tempExpr->type]->evaluateFunction)(theEnv,tempExpr->value,&theResult);
-       EvaluationData(theEnv)->CurrentExpression = oldArgument;
+       oldArgument = CL_EvaluationData(theEnv)->CurrentExpression;
+       CL_EvaluationData(theEnv)->CurrentExpression = tempExpr;
+       (*CL_EvaluationData(theEnv)->PrimitivesArray[tempExpr->type]->evaluateFunction)(theEnv,tempExpr->value,&theResult);
+       CL_EvaluationData(theEnv)->CurrentExpression = oldArgument;
 
        switch (theResult.header->type)
          {
@@ -1473,9 +1473,9 @@ void ResizeBetaMemory(
    oldArray = theMemory->beta;
 
    theMemory->size = oldSize * 11;
-   theMemory->beta = (struct partialMatch **) genalloc(theEnv,sizeof(struct partialMatch *) * theMemory->size);
+   theMemory->beta = (struct partialMatch **) CL_genalloc(theEnv,sizeof(struct partialMatch *) * theMemory->size);
 
-   lastAdd = (struct partialMatch **) genalloc(theEnv,sizeof(struct partialMatch *) * theMemory->size);
+   lastAdd = (struct partialMatch **) CL_genalloc(theEnv,sizeof(struct partialMatch *) * theMemory->size);
    memset(theMemory->beta,0,sizeof(struct partialMatch *) * theMemory->size);
    memset(lastAdd,0,sizeof(struct partialMatch *) * theMemory->size);
 
@@ -1504,19 +1504,19 @@ void ResizeBetaMemory(
 
    if (theMemory->last != NULL)
      {
-      genfree(theEnv,theMemory->last,sizeof(struct partialMatch *) * oldSize);
+      CL_genfree(theEnv,theMemory->last,sizeof(struct partialMatch *) * oldSize);
       theMemory->last = lastAdd;
      }
    else
-     { genfree(theEnv,lastAdd,sizeof(struct partialMatch *) * theMemory->size); }
+     { CL_genfree(theEnv,lastAdd,sizeof(struct partialMatch *) * theMemory->size); }
 
-   genfree(theEnv,oldArray,sizeof(struct partialMatch *) * oldSize);
+   CL_genfree(theEnv,oldArray,sizeof(struct partialMatch *) * oldSize);
   }
 
 /********************/
-/* ResetBetaMemory: */
+/* CL_ResetBetaMemory: */
 /********************/
-static void ResetBetaMemory(
+static void CL_ResetBetaMemory(
   Environment *theEnv,
   struct betaMemory *theMemory)
   {
@@ -1531,23 +1531,23 @@ static void ResetBetaMemory(
    oldArray = theMemory->beta;
 
    theMemory->size = INITIAL_BETA_HASH_SIZE;
-   theMemory->beta = (struct partialMatch **) genalloc(theEnv,sizeof(struct partialMatch *) * theMemory->size);
+   theMemory->beta = (struct partialMatch **) CL_genalloc(theEnv,sizeof(struct partialMatch *) * theMemory->size);
    memset(theMemory->beta,0,sizeof(struct partialMatch *) * theMemory->size);
-   genfree(theEnv,oldArray,sizeof(struct partialMatch *) * oldSize);
+   CL_genfree(theEnv,oldArray,sizeof(struct partialMatch *) * oldSize);
 
    if (theMemory->last != NULL)
      {
-      lastAdd = (struct partialMatch **) genalloc(theEnv,sizeof(struct partialMatch *) * theMemory->size);
+      lastAdd = (struct partialMatch **) CL_genalloc(theEnv,sizeof(struct partialMatch *) * theMemory->size);
       memset(lastAdd,0,sizeof(struct partialMatch *) * theMemory->size);
-      genfree(theEnv,theMemory->last,sizeof(struct partialMatch *) * oldSize);
+      CL_genfree(theEnv,theMemory->last,sizeof(struct partialMatch *) * oldSize);
       theMemory->last = lastAdd;
      }
   }
 
 /********************/
-/* PrintBetaMemory: */
+/* CL_PrintBetaMemory: */
 /********************/
-unsigned long PrintBetaMemory(
+unsigned long CL_PrintBetaMemory(
   Environment *theEnv,
   const char *logName,
   struct betaMemory *theMemory,
@@ -1555,24 +1555,24 @@ unsigned long PrintBetaMemory(
   const char *indentString,
   int output)
   {
-   struct partialMatch *listOfMatches;
+   struct partialMatch *listOfCL_Matches;
    unsigned long b, count = 0;
 
-   if (GetHaltExecution(theEnv) == true)
+   if (CL_GetCL_HaltExecution(theEnv) == true)
      { return count; }
 
    for (b = 0; b < theMemory->size; b++)
      {
-      listOfMatches = theMemory->beta[b];
+      listOfCL_Matches = theMemory->beta[b];
 
-      while (listOfMatches != NULL)
+      while (listOfCL_Matches != NULL)
         {
          /*=========================================*/
          /* Check to see if the user is attempting  */
          /* to stop the display of partial matches. */
          /*=========================================*/
 
-         if (GetHaltExecution(theEnv) == true)
+         if (CL_GetCL_HaltExecution(theEnv) == true)
            { return count; }
 
          /*=========================================================*/
@@ -1584,7 +1584,7 @@ unsigned long PrintBetaMemory(
          if (output == VERBOSE)
            {
             if (indentFirst)
-              { WriteString(theEnv,logName,indentString); }
+              { CL_WriteString(theEnv,logName,indentString); }
             else
               { indentFirst = true; }
            }
@@ -1595,8 +1595,8 @@ unsigned long PrintBetaMemory(
 
          if (output == VERBOSE)
            {
-            PrintPartialMatch(theEnv,logName,listOfMatches);
-            WriteString(theEnv,logName,"\n");
+            CL_PrintPartialMatch(theEnv,logName,listOfCL_Matches);
+            CL_WriteString(theEnv,logName,"\n");
            }
 
          count++;
@@ -1605,7 +1605,7 @@ unsigned long PrintBetaMemory(
          /* Move on to the next match. */
          /*============================*/
 
-         listOfMatches = listOfMatches->nextInMemory;
+         listOfCL_Matches = listOfCL_Matches->nextInMemory;
         }
      }
 
@@ -1615,12 +1615,12 @@ unsigned long PrintBetaMemory(
 #if (CONSTRUCT_COMPILER || BLOAD_AND_BSAVE) && (! RUN_TIME)
 
 /*************************************************************/
-/* TagRuleNetwork: Assigns each join in the join network and */
+/* CL_TagRuleNetwork: Assigns each join in the join network and */
 /*   each defrule data structure with a unique integer ID.   */
 /*   Also counts the number of defrule and joinNode data     */
 /*   structures currently in use.                            */
 /*************************************************************/
-void TagRuleNetwork(
+void CL_TagRuleNetwork(
   Environment *theEnv,
   unsigned long *moduleCount,
   unsigned long *ruleCount,
@@ -1636,7 +1636,7 @@ void TagRuleNetwork(
    *joinCount = 0;
    *linkCount = 0;
 
-   MarkRuleNetwork(theEnv,0);
+   CL_MarkRuleNetwork(theEnv,0);
 
    for (theLink = DefruleData(theEnv)->LeftPrimeJoins;
         theLink != NULL;
@@ -1658,18 +1658,18 @@ void TagRuleNetwork(
    /* Loop through each module. */
    /*===========================*/
 
-   for (modulePtr = GetNextDefmodule(theEnv,NULL);
+   for (modulePtr = CL_GetNextDefmodule(theEnv,NULL);
         modulePtr != NULL;
-        modulePtr = GetNextDefmodule(theEnv,modulePtr))
+        modulePtr = CL_GetNextDefmodule(theEnv,modulePtr))
      {
       (*moduleCount)++;
-      SetCurrentModule(theEnv,modulePtr);
+      CL_SetCurrentModule(theEnv,modulePtr);
 
       /*=========================*/
       /* Loop through each rule. */
       /*=========================*/
 
-      rulePtr = GetNextDefrule(theEnv,NULL);
+      rulePtr = CL_GetNextDefrule(theEnv,NULL);
 
       while (rulePtr != NULL)
         {
@@ -1684,7 +1684,7 @@ void TagRuleNetwork(
             TagNetworkTraverseJoins(theEnv,joinCount,linkCount,disjunctPtr->lastJoin);
            }
 
-         rulePtr = GetNextDefrule(theEnv,rulePtr);
+         rulePtr = CL_GetNextDefrule(theEnv,rulePtr);
         }
      }
   }

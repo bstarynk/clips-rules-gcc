@@ -25,11 +25,11 @@
 /*                                                           */
 /*      6.30: Changed integer type/precision.                */
 /*                                                           */
-/*            GetConstructNameAndComment API change.         */
+/*            CL_GetConstructNameAndComment API change.         */
 /*                                                           */
 /*            Support for long long integers.                */
 /*                                                           */
-/*            Used gensprintf instead of sprintf.            */
+/*            Used CL_gensprintf instead of sprintf.            */
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
@@ -63,13 +63,13 @@
 
 #include "genrcfun.h"
 
-   bool                           ParseDefgeneric(Environment *,const char *);
-   bool                           ParseDefmethod(Environment *,const char *);
-   Defmethod                     *AddMethod(Environment *,Defgeneric *,Defmethod *,int,unsigned short,Expression *,
+   bool                           CL_ParseDefgeneric(Environment *,const char *);
+   bool                           CL_ParseDefmethod(Environment *,const char *);
+   Defmethod                     *CL_AddMethod(Environment *,Defgeneric *,Defmethod *,int,unsigned short,Expression *,
                                             unsigned short,unsigned short,CLIPSLexeme *,Expression *,char *,bool);
-   void                           PackRestrictionTypes(Environment *,RESTRICTION *,Expression *);
-   void                           DeleteTempRestricts(Environment *,Expression *);
-   Defmethod                     *FindMethodByRestrictions(Defgeneric *,Expression *,int,
+   void                           CL_PackRestrictionTypes(Environment *,RESTRICTION *,Expression *);
+   void                           CL_DeleteTempRestricts(Environment *,Expression *);
+   Defmethod                     *CL_FindMethodByRestrictions(Defgeneric *,Expression *,int,
                                                            CLIPSLexeme *,int *);
 
 #endif /* DEFGENERIC_CONSTRUCT && (! BLOAD_ONLY) && (! RUN_TIME) */

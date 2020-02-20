@@ -74,8 +74,8 @@ struct messageHandlerData
    CLIPSLexeme *DELETE_SYMBOL;
    CLIPSLexeme *CREATE_SYMBOL;
 #if DEBUGGING_FUNCTIONS
-   bool WatchHandlers;
-   bool WatchMessages;
+   bool CL_WatchHandlers;
+   bool CL_WatchMessages;
 #endif
    const char *hndquals[4];
    CLIPSLexeme *SELF_SYMBOL;
@@ -93,28 +93,28 @@ struct messageHandlerData
 #define PRINT_STRING  "print"
 #define CREATE_STRING "create"
 
-   void             SetupMessageHandlers(Environment *);
-   const char      *DefmessageHandlerName(Defclass *,unsigned);
-   const char      *DefmessageHandlerType(Defclass *,unsigned);
-   unsigned         GetNextDefmessageHandler(Defclass *,unsigned);
+   void             CL_SetupMessageHandlers(Environment *);
+   const char      *CL_DefmessageHandlerName(Defclass *,unsigned);
+   const char      *CL_DefmessageCL_HandlerType(Defclass *,unsigned);
+   unsigned         CL_GetNextDefmessageHandler(Defclass *,unsigned);
    DefmessageHandler
-                   *GetDefmessageHandlerPointer(Defclass *,unsigned int);
+                   *CL_GetDefmessageHandlerPointer(Defclass *,unsigned int);
 #if DEBUGGING_FUNCTIONS
-   bool             DefmessageHandlerGetWatch(Defclass *,unsigned);
-   void             DefmessageHandlerSetWatch(Defclass *,unsigned,bool);
+   bool             CL_DefmessageHandlerGetCL_Watch(Defclass *,unsigned);
+   void             CL_DefmessageHandlerSetCL_Watch(Defclass *,unsigned,bool);
 #endif
-   unsigned         FindDefmessageHandler(Defclass *,const char *,const char *);
-   bool             DefmessageHandlerIsDeletable(Defclass *,unsigned);
-   void             UndefmessageHandlerCommand(Environment *,UDFContext *,UDFValue *);
-   bool             UndefmessageHandler(Defclass *,unsigned,Environment *);
+   unsigned         CL_FindDefmessageHandler(Defclass *,const char *,const char *);
+   bool             CL_DefmessageHandlerIsDeletable(Defclass *,unsigned);
+   void             CL_UndefmessageHandlerCommand(Environment *,UDFContext *,UDFValue *);
+   bool             CL_UndefmessageHandler(Defclass *,unsigned,Environment *);
 #if DEBUGGING_FUNCTIONS
-   void             PPDefmessageHandlerCommand(Environment *,UDFContext *,UDFValue *);
-   void             ListDefmessageHandlersCommand(Environment *,UDFContext *,UDFValue *);
-   void             PreviewSendCommand(Environment *,UDFContext *,UDFValue *);
-   const char      *DefmessageHandlerPPForm(Defclass *,unsigned);
-   void             ListDefmessageHandlers(Environment *,Defclass *,const char *,bool);
-   void             PreviewSend(Defclass *,const char *,const char *);
-   unsigned long    DisplayHandlersInLinks(Environment *,const char *,PACKED_CLASS_LINKS *,unsigned int);
+   void             CL_PPDefmessageHandlerCommand(Environment *,UDFContext *,UDFValue *);
+   void             CL_ListDefmessageHandlersCommand(Environment *,UDFContext *,UDFValue *);
+   void             CL_PreviewCL_SendCommand(Environment *,UDFContext *,UDFValue *);
+   const char      *CL_DefmessageHandlerPPFoCL_rm(Defclass *,unsigned);
+   void             CL_ListDefmessageHandlers(Environment *,Defclass *,const char *,bool);
+   void             CL_PreviewCL_Send(Defclass *,const char *,const char *);
+   unsigned long    CL_DisplayHandlersInLinks(Environment *,const char *,PACKED_CLASS_LINKS *,unsigned int);
 #endif
 
 #endif /* _H_msgcom */

@@ -7,7 +7,7 @@
    /*******************************************************/
 
 /*************************************************************/
-/* Purpose: Used to determine where a new activation is      */
+/* Purpose: Used to deteCL_rmine where a new activation is      */
 /*   placed on the agenda based on the current conflict      */
 /*   resolution strategy (depth, breadth, mea, lex,          */
 /*   simplicity, or complexity). Also provides the           */
@@ -26,7 +26,7 @@
 /*      6.24: Removed CONFLICT_RESOLUTION_STRATEGIES         */
 /*            compilation flag.                              */
 /*                                                           */
-/*      6.30: Added salience groups to improve performance   */
+/*      6.30: Added salience groups to improve perfoCL_rmance   */
 /*            with large numbers of activations of different */
 /*            saliences.                                     */
 /*                                                           */
@@ -74,11 +74,11 @@ typedef enum
 
 #define DEFAULT_STRATEGY DEPTH_STRATEGY
 
-   void                           PlaceActivation(Environment *,Activation **,Activation *,struct salienceGroup *);
-   StrategyType                   SetStrategy(Environment *,StrategyType);
-   StrategyType                   GetStrategy(Environment *);
-   void                           SetStrategyCommand(Environment *,UDFContext *,UDFValue *);
-   void                           GetStrategyCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_PlaceActivation(Environment *,Activation **,Activation *,struct salienceGroup *);
+   StrategyType                   CL_SetStrategy(Environment *,StrategyType);
+   StrategyType                   CL_GetStrategy(Environment *);
+   void                           CL_SetStrategyCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_GetStrategyCommand(Environment *,UDFContext *,UDFValue *);
 
 #endif /* _H_crstrtgy */
 

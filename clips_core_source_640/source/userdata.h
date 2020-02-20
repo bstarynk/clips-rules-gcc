@@ -61,12 +61,12 @@ struct userDataData
 
 #define UserDataData(theEnv) ((struct userDataData *) GetEnvironmentData(theEnv,USER_DATA_DATA))
 
-   void                           InitializeUserDataData(Environment *);
-   unsigned char                  InstallUserDataRecord(Environment *,struct userDataRecord *);
-   struct userData               *FetchUserData(Environment *,unsigned char,struct userData **);
-   struct userData               *TestUserData(unsigned char,struct userData *);
-   void                           ClearUserDataList(Environment *,struct userData *);
-   struct userData               *DeleteUserData(Environment *,unsigned char,struct userData *);
+   void                           CL_InitializeUserDataData(Environment *);
+   unsigned char                  CL_InstallUserDataRecord(Environment *,struct userDataRecord *);
+   struct userData               *CL_FetchUserData(Environment *,unsigned char,struct userData **);
+   struct userData               *CL_TestUserData(unsigned char,struct userData *);
+   void                           CL_ClearUserDataList(Environment *,struct userData *);
+   struct userData               *CL_DeleteUserData(Environment *,unsigned char,struct userData *);
 
 #endif
 

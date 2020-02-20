@@ -38,8 +38,8 @@
 
 #include <stdio.h>
 
-   void                           SetupDefinstancesCompiler(Environment *);
-   void                           DefinstancesCModuleReference(Environment *,FILE *,unsigned long,unsigned int,unsigned int);
+   void                           CL_SetupDefinstancesCompiler(Environment *);
+   void                           CL_DefinstancesCModuleReference(Environment *,FILE *,unsigned long,unsigned int,unsigned int);
 
 #endif /* DEFINSTANCES_CONSTRUCT && CONSTRUCT_COMPILER && (! RUN_TIME) */
 

@@ -43,8 +43,8 @@
 /*            Matching instance sets containing deleted      */
 /*            instances are pruned.                          */
 /*                                                           */
-/*      6.40: Added Env prefix to GetEvaluationError and     */
-/*            SetEvaluationError functions.                  */
+/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
+/*            SetCL_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -55,10 +55,10 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/*            Added GCBlockStart and GCBlockEnd functions    */
+/*            Added CL_GCBlockStart and CL_GCBlockEnd functions    */
 /*            for garbage collection blocks.                 */
 /*                                                           */
-/*            Eval support for run time and bload only.      */
+/*            CL_Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -94,8 +94,8 @@
    static void                    PushQueryCore(Environment *);
    static void                    PopQueryCore(Environment *);
    static QUERY_CORE             *FindQueryCore(Environment *,long long);
-   static QUERY_CLASS            *DetermineQueryClasses(Environment *,Expression *,const char *,unsigned *);
-   static QUERY_CLASS            *FormChain(Environment *,const char *,Defclass *,UDFValue *);
+   static QUERY_CLASS            *DeteCL_rmineQueryClasses(Environment *,Expression *,const char *,unsigned *);
+   static QUERY_CLASS            *FoCL_rmChain(Environment *,const char *,Defclass *,UDFValue *);
    static void                    DeleteQueryClasses(Environment *,QUERY_CLASS *);
    static bool                    TestForFirstInChain(Environment *,QUERY_CLASS *,unsigned);
    static bool                    TestForFirstInstanceInClass(Environment *,Defmodule *,int,Defclass *,QUERY_CLASS *,unsigned);
@@ -105,7 +105,7 @@
    static void                    PopQuerySoln(Environment *);
 
 /****************************************************
-  NAME         : SetupQuery
+  NAME         : CL_SetupQuery
   DESCRIPTION  : Initializes instance query H/L
                    functions and parsers
   INPUTS       : None
@@ -113,42 +113,42 @@
   SIDE EFFECTS : Sets up kernel functions and parsers
   NOTES        : None
  ****************************************************/
-void SetupQuery(
+void CL_SetupQuery(
   Environment *theEnv)
   {
-   AllocateEnvironmentData(theEnv,INSTANCE_QUERY_DATA,sizeof(struct instanceQueryData),NULL);
+   CL_AllocateEnvironmentData(theEnv,INSTANCE_QUERY_DATA,sizeof(struct instanceQueryData),NULL);
 
 #if ! RUN_TIME
-   InstanceQueryData(theEnv)->QUERY_DELIMITER_SYMBOL = CreateSymbol(theEnv,QUERY_DELIMITER_STRING);
+   InstanceQueryData(theEnv)->QUERY_DELIMITER_SYMBOL = CL_CreateSymbol(theEnv,QUERY_DELIMITER_STRING);
    IncrementLexemeCount(InstanceQueryData(theEnv)->QUERY_DELIMITER_SYMBOL);
 
-   AddUDF(theEnv,"(query-instance)","n",0,UNBOUNDED,NULL,GetQueryInstance,"GetQueryInstance",NULL);
+   CL_AddUDF(theEnv,"(query-instance)","n",0,UNBOUNDED,NULL,CL_GetQueryInstance,"CL_GetQueryInstance",NULL);
 
-   AddUDF(theEnv,"(query-instance-slot)","*",0,UNBOUNDED,NULL,GetQueryInstanceSlot,"GetQueryInstanceSlot",NULL);
+   CL_AddUDF(theEnv,"(query-instance-slot)","*",0,UNBOUNDED,NULL,CL_GetQueryInstanceSlot,"CL_GetQueryInstanceSlot",NULL);
 
-   AddUDF(theEnv,"any-instancep","b",0,UNBOUNDED,NULL,AnyInstances,"AnyInstances",NULL);
+   CL_AddUDF(theEnv,"any-instancep","b",0,UNBOUNDED,NULL,CL_AnyCL_Instances,"CL_AnyCL_Instances",NULL);
 
-   AddUDF(theEnv,"find-instance","m",0,UNBOUNDED,NULL,QueryFindInstance,"QueryFindInstance",NULL);
+   CL_AddUDF(theEnv,"find-instance","m",0,UNBOUNDED,NULL,QueryCL_FindInstance,"QueryCL_FindInstance",NULL);
 
-   AddUDF(theEnv,"find-all-instances","m",0,UNBOUNDED,NULL,QueryFindAllInstances,"QueryFindAllInstances",NULL);
+   CL_AddUDF(theEnv,"find-all-instances","m",0,UNBOUNDED,NULL,QueryFindAllCL_Instances,"QueryFindAllCL_Instances",NULL);
 
-   AddUDF(theEnv,"do-for-instance","*",0,UNBOUNDED,NULL,QueryDoForInstance,"QueryDoForInstance",NULL);
+   CL_AddUDF(theEnv,"do-for-instance","*",0,UNBOUNDED,NULL,CL_QueryDoForInstance,"CL_QueryDoForInstance",NULL);
 
-   AddUDF(theEnv,"do-for-all-instances","*",0,UNBOUNDED,NULL,QueryDoForAllInstances,"QueryDoForAllInstances",NULL);
+   CL_AddUDF(theEnv,"do-for-all-instances","*",0,UNBOUNDED,NULL,QueryDoForAllCL_Instances,"QueryDoForAllCL_Instances",NULL);
 
-   AddUDF(theEnv,"delayed-do-for-all-instances","*",0,UNBOUNDED,NULL,DelayedQueryDoForAllInstances,"DelayedQueryDoForAllInstances",NULL);
+   CL_AddUDF(theEnv,"delayed-do-for-all-instances","*",0,UNBOUNDED,NULL,CL_DelayedQueryDoForAllCL_Instances,"CL_DelayedQueryDoForAllCL_Instances",NULL);
 #endif
 
-   AddFunctionParser(theEnv,"any-instancep",ParseQueryNoAction);
-   AddFunctionParser(theEnv,"find-instance",ParseQueryNoAction);
-   AddFunctionParser(theEnv,"find-all-instances",ParseQueryNoAction);
-   AddFunctionParser(theEnv,"do-for-instance",ParseQueryAction);
-   AddFunctionParser(theEnv,"do-for-all-instances",ParseQueryAction);
-   AddFunctionParser(theEnv,"delayed-do-for-all-instances",ParseQueryAction);
+   CL_AddFunctionParser(theEnv,"any-instancep",CL_ParseQueryNoAction);
+   CL_AddFunctionParser(theEnv,"find-instance",CL_ParseQueryNoAction);
+   CL_AddFunctionParser(theEnv,"find-all-instances",CL_ParseQueryNoAction);
+   CL_AddFunctionParser(theEnv,"do-for-instance",CL_ParseQueryAction);
+   CL_AddFunctionParser(theEnv,"do-for-all-instances",CL_ParseQueryAction);
+   CL_AddFunctionParser(theEnv,"delayed-do-for-all-instances",CL_ParseQueryAction);
   }
 
 /*************************************************************
-  NAME         : GetQueryInstance
+  NAME         : CL_GetQueryInstance
   DESCRIPTION  : Internal function for referring to instance
                     array on instance-queries
   INPUTS       : None
@@ -156,7 +156,7 @@ void SetupQuery(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : ((query-instance) <index>)
  *************************************************************/
-void GetQueryInstance(
+void CL_GetQueryInstance(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -164,11 +164,11 @@ void GetQueryInstance(
    QUERY_CORE *core;
 
    core = FindQueryCore(theEnv,GetFirstArgument()->integerValue->contents);
-   returnValue->value = GetFullInstanceName(theEnv,core->solns[GetFirstArgument()->nextArg->integerValue->contents]);
+   returnValue->value = CL_GetFullCL_InstanceName(theEnv,core->solns[GetFirstArgument()->nextArg->integerValue->contents]);
   }
 
 /***************************************************************************
-  NAME         : GetQueryInstanceSlot
+  NAME         : CL_GetQueryInstanceSlot
   DESCRIPTION  : Internal function for referring to slots of instances in
                     instance array on instance-queries
   INPUTS       : The caller's result buffer
@@ -176,7 +176,7 @@ void GetQueryInstance(
   SIDE EFFECTS : Caller's result buffer set appropriately
   NOTES        : H/L Syntax : ((query-instance-slot) <index> <slot-name>)
  **************************************************************************/
-void GetQueryInstanceSlot(
+void CL_GetQueryInstanceSlot(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -200,23 +200,23 @@ void GetQueryInstanceSlot(
 
    if (ins->garbage)
      {
-      InstanceVarSlotErrorMessage1(theEnv,ins,varSlot);
-      SetEvaluationError(theEnv,true);
+      CL_InstanceVarSlotErrorMessage1(theEnv,ins,varSlot);
+      SetCL_EvaluationError(theEnv,true);
       return;
      }
    
-   EvaluateExpression(theEnv,GetFirstArgument()->nextArg->nextArg,&temp);
+   CL_EvaluateExpression(theEnv,GetFirstArgument()->nextArg->nextArg,&temp);
    if (temp.header->type != SYMBOL_TYPE)
      {
-      InvalidVarSlotErrorMessage(theEnv,varSlot);
-      SetEvaluationError(theEnv,true);
+      CL_InvalidVarSlotErrorMessage(theEnv,varSlot);
+      SetCL_EvaluationError(theEnv,true);
       return;
      }
-   sp = FindInstanceSlot(theEnv,ins,temp.lexemeValue);
+   sp = CL_FindInstanceSlot(theEnv,ins,temp.lexemeValue);
    if (sp == NULL)
      {
-      InstanceVarSlotErrorMessage2(theEnv,ins,varSlot);
-      SetEvaluationError(theEnv,true);
+      CL_InstanceVarSlotErrorMessage2(theEnv,ins,varSlot);
+      SetCL_EvaluationError(theEnv,true);
       return;
      }
    returnValue->value = sp->value;
@@ -231,7 +231,7 @@ void GetQueryInstanceSlot(
    =============================================================================
    Following are the instance query functions :
 
-     any-instancep         : Determines if any instances satisfy the query
+     any-instancep         : DeteCL_rmines if any instances satisfy the query
      find-instance         : Finds first (set of) instance(s) which satisfies
                                the query and stores it in a multi-field
      find-all-instances    : Finds all (sets of) instances which satisfy the
@@ -241,14 +241,14 @@ void GetQueryInstanceSlot(
      do-for-all-instances  : Executes an action for all instances which satisfy
                                the query as they are found
      delayed-do-for-all-instances : Same as above - except that the list of instances
-                               which satisfy the query is formed before any
+                               which satisfy the query is foCL_rmed before any
                                actions are executed
 
      Instance candidate search algorithm :
 
-     All permutations of first restriction class instances with other
+     All peCL_rmutations of first restriction class instances with other
        restriction class instances (Rightmost are varied first)
-     All permutations of first restriction class's subclasses' instances with
+     All peCL_rmutations of first restriction class's subclasses' instances with
        other restriction class instances.
      And  so on...
 
@@ -270,7 +270,7 @@ void GetQueryInstanceSlot(
 
      (any-instancep ((?a a b) (?b c)) <query>)
 
-     The permutations (?a ?b) would be examined in the following order :
+     The peCL_rmutations (?a ?b) would be examined in the following order :
 
      (a1 c1),(a1 c2),(a2 c1),(a2 c2),(d1 c1),(d1 c2),(d2 c1),(d2 c2),
      (b1 c1),(b1 c2),(b2 c1),(b2 c2),(d1 c1),(d1 c2),(d2 c1),(d2 c2)
@@ -280,8 +280,8 @@ void GetQueryInstanceSlot(
    ============================================================================= */
 
 /******************************************************************************
-  NAME         : AnyInstances
-  DESCRIPTION  : Determines if there any existing instances which satisfy
+  NAME         : CL_AnyCL_Instances
+  DESCRIPTION  : DeteCL_rmines if there any existing instances which satisfy
                    the query
   INPUTS       : None
   RETURNS      : True if the query is satisfied, false otherwise
@@ -289,9 +289,9 @@ void GetQueryInstanceSlot(
                    and the query boolean-expression is evaluated
                    zero or more times (depending on instance restrictions
                    and how early the expression evaulates to true - if at all).
-  NOTES        : H/L Syntax : See ParseQueryNoAction()
+  NOTES        : H/L Syntax : See CL_ParseQueryNoAction()
  ******************************************************************************/
-void AnyInstances(
+void CL_AnyCL_Instances(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -300,7 +300,7 @@ void AnyInstances(
    unsigned rcnt;
    bool testResult;
 
-   qclasses = DetermineQueryClasses(theEnv,GetFirstArgument()->nextArg,
+   qclasses = DeteCL_rmineQueryClasses(theEnv,GetFirstArgument()->nextArg,
                                       "any-instancep",&rcnt);
    if (qclasses == NULL)
      {
@@ -310,20 +310,20 @@ void AnyInstances(
 
    PushQueryCore(theEnv);
    InstanceQueryData(theEnv)->QueryCore = get_struct(theEnv,query_core);
-   InstanceQueryData(theEnv)->QueryCore->solns = (Instance **) gm2(theEnv,(sizeof(Instance *) * rcnt));
+   InstanceQueryData(theEnv)->QueryCore->solns = (Instance **) CL_gm2(theEnv,(sizeof(Instance *) * rcnt));
    InstanceQueryData(theEnv)->QueryCore->query = GetFirstArgument();
    testResult = TestForFirstInChain(theEnv,qclasses,0);
    InstanceQueryData(theEnv)->AbortQuery = false;
-   rm(theEnv,InstanceQueryData(theEnv)->QueryCore->solns,(sizeof(Instance *) * rcnt));
+   CL_rm(theEnv,InstanceQueryData(theEnv)->QueryCore->solns,(sizeof(Instance *) * rcnt));
    rtn_struct(theEnv,query_core,InstanceQueryData(theEnv)->QueryCore);
    PopQueryCore(theEnv);
    DeleteQueryClasses(theEnv,qclasses);
 
-   returnValue->lexemeValue = CreateBoolean(theEnv,testResult);
+   returnValue->lexemeValue = CL_CreateBoolean(theEnv,testResult);
   }
 
 /******************************************************************************
-  NAME         : QueryFindInstance
+  NAME         : QueryCL_FindInstance
   DESCRIPTION  : Finds the first set of instances which satisfy the query and
                    stores their names in the user's multi-field variable
   INPUTS       : Caller's result buffer
@@ -332,9 +332,9 @@ void AnyInstances(
                    and the query boolean-expression is evaluated
                    zero or more times (depending on instance restrictions
                    and how early the expression evaulates to true - if at all).
-  NOTES        : H/L Syntax : See ParseQueryNoAction()
+  NOTES        : H/L Syntax : See CL_ParseQueryNoAction()
  ******************************************************************************/
-void QueryFindInstance(
+void QueryCL_FindInstance(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -344,39 +344,39 @@ void QueryFindInstance(
 
    returnValue->begin = 0;
    returnValue->range = 0;
-   qclasses = DetermineQueryClasses(theEnv,GetFirstArgument()->nextArg,
+   qclasses = DeteCL_rmineQueryClasses(theEnv,GetFirstArgument()->nextArg,
                                       "find-instance",&rcnt);
    if (qclasses == NULL)
      {
-      returnValue->value = CreateMultifield(theEnv,0L);
+      returnValue->value = CL_CreateMultifield(theEnv,0L);
       return;
      }
    PushQueryCore(theEnv);
    InstanceQueryData(theEnv)->QueryCore = get_struct(theEnv,query_core);
    InstanceQueryData(theEnv)->QueryCore->solns = (Instance **)
-                      gm2(theEnv,(sizeof(Instance *) * rcnt));
+                      CL_gm2(theEnv,(sizeof(Instance *) * rcnt));
    InstanceQueryData(theEnv)->QueryCore->query = GetFirstArgument();
    if (TestForFirstInChain(theEnv,qclasses,0) == true)
      {
-      returnValue->value = CreateMultifield(theEnv,rcnt);
+      returnValue->value = CL_CreateMultifield(theEnv,rcnt);
       returnValue->range = rcnt;
       for (i = 0 ; i < rcnt ; i++)
         {
          returnValue->multifieldValue->contents[i].lexemeValue =
-            GetFullInstanceName(theEnv,InstanceQueryData(theEnv)->QueryCore->solns[i]);
+            CL_GetFullCL_InstanceName(theEnv,InstanceQueryData(theEnv)->QueryCore->solns[i]);
         }
      }
    else
-      returnValue->value = CreateMultifield(theEnv,0L);
+      returnValue->value = CL_CreateMultifield(theEnv,0L);
    InstanceQueryData(theEnv)->AbortQuery = false;
-   rm(theEnv,InstanceQueryData(theEnv)->QueryCore->solns,(sizeof(Instance *) * rcnt));
+   CL_rm(theEnv,InstanceQueryData(theEnv)->QueryCore->solns,(sizeof(Instance *) * rcnt));
    rtn_struct(theEnv,query_core,InstanceQueryData(theEnv)->QueryCore);
    PopQueryCore(theEnv);
    DeleteQueryClasses(theEnv,qclasses);
   }
 
 /******************************************************************************
-  NAME         : QueryFindAllInstances
+  NAME         : QueryFindAllCL_Instances
   DESCRIPTION  : Finds all sets of instances which satisfy the query and
                    stores their names in the user's multi-field variable
 
@@ -391,9 +391,9 @@ void QueryFindInstance(
   SIDE EFFECTS : The query class-expressions are evaluated once,
                    and the query boolean-expression is evaluated
                    once for every instance set.
-  NOTES        : H/L Syntax : See ParseQueryNoAction()
+  NOTES        : H/L Syntax : See CL_ParseQueryNoAction()
  ******************************************************************************/
-void QueryFindAllInstances(
+void QueryFindAllCL_Instances(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -404,16 +404,16 @@ void QueryFindAllInstances(
 
    returnValue->begin = 0;
    returnValue->range = 0;
-   qclasses = DetermineQueryClasses(theEnv,GetFirstArgument()->nextArg,
+   qclasses = DeteCL_rmineQueryClasses(theEnv,GetFirstArgument()->nextArg,
                                       "find-all-instances",&rcnt);
    if (qclasses == NULL)
      {
-      returnValue->value = CreateMultifield(theEnv,0L);
+      returnValue->value = CL_CreateMultifield(theEnv,0L);
       return;
      }
    PushQueryCore(theEnv);
    InstanceQueryData(theEnv)->QueryCore = get_struct(theEnv,query_core);
-   InstanceQueryData(theEnv)->QueryCore->solns = (Instance **) gm2(theEnv,(sizeof(Instance *) * rcnt));
+   InstanceQueryData(theEnv)->QueryCore->solns = (Instance **) CL_gm2(theEnv,(sizeof(Instance *) * rcnt));
    InstanceQueryData(theEnv)->QueryCore->query = GetFirstArgument();
    InstanceQueryData(theEnv)->QueryCore->action = NULL;
    InstanceQueryData(theEnv)->QueryCore->soln_set = NULL;
@@ -421,25 +421,25 @@ void QueryFindAllInstances(
    InstanceQueryData(theEnv)->QueryCore->soln_cnt = 0;
    TestEntireChain(theEnv,qclasses,0);
    InstanceQueryData(theEnv)->AbortQuery = false;
-   returnValue->value = CreateMultifield(theEnv,InstanceQueryData(theEnv)->QueryCore->soln_cnt * rcnt);
+   returnValue->value = CL_CreateMultifield(theEnv,InstanceQueryData(theEnv)->QueryCore->soln_cnt * rcnt);
    while (InstanceQueryData(theEnv)->QueryCore->soln_set != NULL)
      {
       for (i = 0 , j = returnValue->range ; i < rcnt ; i++ , j++)
         {
          returnValue->multifieldValue->contents[j].lexemeValue =
-            GetFullInstanceName(theEnv,InstanceQueryData(theEnv)->QueryCore->soln_set->soln[i]);
+            CL_GetFullCL_InstanceName(theEnv,InstanceQueryData(theEnv)->QueryCore->soln_set->soln[i]);
         }
       returnValue->range = j;
       PopQuerySoln(theEnv);
      }
-   rm(theEnv,InstanceQueryData(theEnv)->QueryCore->solns,(sizeof(Instance *) * rcnt));
+   CL_rm(theEnv,InstanceQueryData(theEnv)->QueryCore->solns,(sizeof(Instance *) * rcnt));
    rtn_struct(theEnv,query_core,InstanceQueryData(theEnv)->QueryCore);
    PopQueryCore(theEnv);
    DeleteQueryClasses(theEnv,qclasses);
   }
 
 /******************************************************************************
-  NAME         : QueryDoForInstance
+  NAME         : CL_QueryDoForInstance
   DESCRIPTION  : Finds the first set of instances which satisfy the query and
                    executes a user-action with that set
   INPUTS       : None
@@ -450,9 +450,9 @@ void QueryFindAllInstances(
                    and how early the expression evaulates to true - if at all).
                    Also the action expression is executed zero or once.
                  Caller's result buffer holds result of user-action
-  NOTES        : H/L Syntax : See ParseQueryAction()
+  NOTES        : H/L Syntax : See CL_ParseQueryAction()
  ******************************************************************************/
-void QueryDoForInstance(
+void CL_QueryDoForInstance(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -461,13 +461,13 @@ void QueryDoForInstance(
    unsigned i, rcnt;
 
    returnValue->lexemeValue = FalseSymbol(theEnv);
-   qclasses = DetermineQueryClasses(theEnv,GetFirstArgument()->nextArg->nextArg,
+   qclasses = DeteCL_rmineQueryClasses(theEnv,GetFirstArgument()->nextArg->nextArg,
                                       "do-for-instance",&rcnt);
    if (qclasses == NULL)
      return;
    PushQueryCore(theEnv);
    InstanceQueryData(theEnv)->QueryCore = get_struct(theEnv,query_core);
-   InstanceQueryData(theEnv)->QueryCore->solns = (Instance **) gm2(theEnv,(sizeof(Instance *) * rcnt));
+   InstanceQueryData(theEnv)->QueryCore->solns = (Instance **) CL_gm2(theEnv,(sizeof(Instance *) * rcnt));
    InstanceQueryData(theEnv)->QueryCore->query = GetFirstArgument();
    InstanceQueryData(theEnv)->QueryCore->action = GetFirstArgument()->nextArg;
    
@@ -476,7 +476,7 @@ void QueryDoForInstance(
       for (i = 0; i < rcnt; i++)
         { InstanceQueryData(theEnv)->QueryCore->solns[i]->busy++; }
 
-      EvaluateExpression(theEnv,InstanceQueryData(theEnv)->QueryCore->action,returnValue);
+      CL_EvaluateExpression(theEnv,InstanceQueryData(theEnv)->QueryCore->action,returnValue);
       
       for (i = 0; i < rcnt; i++)
         { InstanceQueryData(theEnv)->QueryCore->solns[i]->busy--; }
@@ -484,14 +484,14 @@ void QueryDoForInstance(
      
    InstanceQueryData(theEnv)->AbortQuery = false;
    ProcedureFunctionData(theEnv)->BreakFlag = false;
-   rm(theEnv,InstanceQueryData(theEnv)->QueryCore->solns,(sizeof(Instance *) * rcnt));
+   CL_rm(theEnv,InstanceQueryData(theEnv)->QueryCore->solns,(sizeof(Instance *) * rcnt));
    rtn_struct(theEnv,query_core,InstanceQueryData(theEnv)->QueryCore);
    PopQueryCore(theEnv);
    DeleteQueryClasses(theEnv,qclasses);
   }
 
 /******************************************************************************
-  NAME         : QueryDoForAllInstances
+  NAME         : QueryDoForAllCL_Instances
   DESCRIPTION  : Finds all sets of instances which satisfy the query and
                    executes a user-function for each set as it is found
   INPUTS       : Caller's result buffer
@@ -501,9 +501,9 @@ void QueryDoForInstance(
                    once for every instance set.  Also, the action is
                    executed for every instance set.
                  Caller's result buffer holds result of last action executed.
-  NOTES        : H/L Syntax : See ParseQueryAction()
+  NOTES        : H/L Syntax : See CL_ParseQueryAction()
  ******************************************************************************/
-void QueryDoForAllInstances(
+void QueryDoForAllCL_Instances(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -512,36 +512,36 @@ void QueryDoForAllInstances(
    unsigned rcnt;
 
    returnValue->lexemeValue = FalseSymbol(theEnv);
-   qclasses = DetermineQueryClasses(theEnv,GetFirstArgument()->nextArg->nextArg,
+   qclasses = DeteCL_rmineQueryClasses(theEnv,GetFirstArgument()->nextArg->nextArg,
                                       "do-for-all-instances",&rcnt);
    if (qclasses == NULL)
      return;
 
    PushQueryCore(theEnv);
    InstanceQueryData(theEnv)->QueryCore = get_struct(theEnv,query_core);
-   InstanceQueryData(theEnv)->QueryCore->solns = (Instance **) gm2(theEnv,(sizeof(Instance *) * rcnt));
+   InstanceQueryData(theEnv)->QueryCore->solns = (Instance **) CL_gm2(theEnv,(sizeof(Instance *) * rcnt));
    InstanceQueryData(theEnv)->QueryCore->query = GetFirstArgument();
    InstanceQueryData(theEnv)->QueryCore->action = GetFirstArgument()->nextArg;
    InstanceQueryData(theEnv)->QueryCore->result = returnValue;
-   RetainUDFV(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
+   CL_RetainUDFV(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
    TestEntireChain(theEnv,qclasses,0);
-   ReleaseUDFV(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
+   CL_ReleaseUDFV(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
 
    InstanceQueryData(theEnv)->AbortQuery = false;
    ProcedureFunctionData(theEnv)->BreakFlag = false;
-   rm(theEnv,InstanceQueryData(theEnv)->QueryCore->solns,(sizeof(Instance *) * rcnt));
+   CL_rm(theEnv,InstanceQueryData(theEnv)->QueryCore->solns,(sizeof(Instance *) * rcnt));
    rtn_struct(theEnv,query_core,InstanceQueryData(theEnv)->QueryCore);
    PopQueryCore(theEnv);
    DeleteQueryClasses(theEnv,qclasses);
   }
 
 /******************************************************************************
-  NAME         : DelayedQueryDoForAllInstances
+  NAME         : CL_DelayedQueryDoForAllCL_Instances
   DESCRIPTION  : Finds all sets of instances which satisfy the query and
                    and exceutes a user-action for each set
 
-                 This function differs from QueryDoForAllInstances() in
-                   that it forms the complete list of query satisfactions
+                 This function differs from QueryDoForAllCL_Instances() in
+                   that it foCL_rms the complete list of query satisfactions
                    BEFORE executing any actions.
   INPUTS       : Caller's result buffer
   RETURNS      : Nothing useful
@@ -550,9 +550,9 @@ void QueryDoForAllInstances(
                    once for every instance set.  The action is executed
                    for evry query satisfaction.
                  Caller's result buffer holds result of last action executed.
-  NOTES        : H/L Syntax : See ParseQueryNoAction()
+  NOTES        : H/L Syntax : See CL_ParseQueryNoAction()
  ******************************************************************************/
-void DelayedQueryDoForAllInstances(
+void CL_DelayedQueryDoForAllCL_Instances(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -564,14 +564,14 @@ void DelayedQueryDoForAllInstances(
    QUERY_SOLN *theSet;
 
    returnValue->lexemeValue = FalseSymbol(theEnv);
-   qclasses = DetermineQueryClasses(theEnv,GetFirstArgument()->nextArg->nextArg,
+   qclasses = DeteCL_rmineQueryClasses(theEnv,GetFirstArgument()->nextArg->nextArg,
                                       "delayed-do-for-all-instances",&rcnt);
    if (qclasses == NULL)
      return;
 
    PushQueryCore(theEnv);
    InstanceQueryData(theEnv)->QueryCore = get_struct(theEnv,query_core);
-   InstanceQueryData(theEnv)->QueryCore->solns = (Instance **) gm2(theEnv,(sizeof(Instance *) * rcnt));
+   InstanceQueryData(theEnv)->QueryCore->solns = (Instance **) CL_gm2(theEnv,(sizeof(Instance *) * rcnt));
    InstanceQueryData(theEnv)->QueryCore->query = GetFirstArgument();
    InstanceQueryData(theEnv)->QueryCore->action = NULL;
    InstanceQueryData(theEnv)->QueryCore->soln_set = NULL;
@@ -585,7 +585,7 @@ void DelayedQueryDoForAllInstances(
    /* Increment the busy count for all instances in the solution sets. */
    /*==================================================================*/
 
-   GCBlockStart(theEnv,&gcb);
+   CL_GCBlockStart(theEnv,&gcb);
 
    for (theSet = InstanceQueryData(theEnv)->QueryCore->soln_set;
         theSet != NULL;
@@ -596,7 +596,7 @@ void DelayedQueryDoForAllInstances(
      }
 
    /*=====================*/
-   /* Perform the action. */
+   /* PerfoCL_rm the action. */
    /*=====================*/
 
    for (theSet = InstanceQueryData(theEnv)->QueryCore->soln_set;
@@ -609,13 +609,13 @@ void DelayedQueryDoForAllInstances(
          InstanceQueryData(theEnv)->QueryCore->solns[i] = theSet->soln[i];
         }
 
-      EvaluateExpression(theEnv,InstanceQueryData(theEnv)->QueryCore->action,returnValue);
+      CL_EvaluateExpression(theEnv,InstanceQueryData(theEnv)->QueryCore->action,returnValue);
 
-      if (EvaluationData(theEnv)->HaltExecution || ProcedureFunctionData(theEnv)->BreakFlag || ProcedureFunctionData(theEnv)->ReturnFlag)
+      if (CL_EvaluationData(theEnv)->CL_HaltExecution || ProcedureFunctionData(theEnv)->BreakFlag || ProcedureFunctionData(theEnv)->ReturnFlag)
         { break; }
 
-      CleanCurrentGarbageFrame(theEnv,NULL);
-      CallPeriodicTasks(theEnv);
+      CL_CleanCurrentGarbageFrame(theEnv,NULL);
+      CL_CallPeriodicTasks(theEnv);
       
       nextSet: theSet = theSet->nxt;
      }
@@ -632,8 +632,8 @@ void DelayedQueryDoForAllInstances(
         { theSet->soln[i]->busy--; }
      }
 
-   GCBlockEndUDF(theEnv,&gcb,returnValue);
-   CallPeriodicTasks(theEnv);
+   CL_GCBlockEndUDF(theEnv,&gcb,returnValue);
+   CL_CallPeriodicTasks(theEnv);
 
    /*==================================*/
    /* Deallocate the query structures. */
@@ -643,7 +643,7 @@ void DelayedQueryDoForAllInstances(
      { PopQuerySoln(theEnv); }
 
    ProcedureFunctionData(theEnv)->BreakFlag = false;
-   rm(theEnv,InstanceQueryData(theEnv)->QueryCore->solns,(sizeof(Instance *) * rcnt));
+   CL_rm(theEnv,InstanceQueryData(theEnv)->QueryCore->solns,(sizeof(Instance *) * rcnt));
    rtn_struct(theEnv,query_core,InstanceQueryData(theEnv)->QueryCore);
    PopQueryCore(theEnv);
    DeleteQueryClasses(theEnv,qclasses);
@@ -724,9 +724,9 @@ static QUERY_CORE *FindQueryCore(
   }
 
 /**********************************************************
-  NAME         : DetermineQueryClasses
-  DESCRIPTION  : Builds a list of classes to be used in
-                   instance queries - uses parse form.
+  NAME         : DeteCL_rmineQueryClasses
+  DESCRIPTION  : CL_Builds a list of classes to be used in
+                   instance queries - uses parse foCL_rm.
   INPUTS       : 1) The parse class expression chain
                  2) The name of the function being executed
                  3) Caller's buffer for restriction count
@@ -740,10 +740,10 @@ static QUERY_CORE *FindQueryCore(
                  Rcnt caller's buffer is set to reflect the
                    total number of chains
                  Assumes classExp is not NULL and that each
-                   restriction chain is terminated with
+                   restriction chain is teCL_rminated with
                    the QUERY_DELIMITER_SYMBOL "(QDS)"
  **********************************************************/
-static QUERY_CLASS *DetermineQueryClasses(
+static QUERY_CLASS *DeteCL_rmineQueryClasses(
   Environment *theEnv,
   Expression *classExp,
   const char *func,
@@ -763,7 +763,7 @@ static QUERY_CLASS *DetermineQueryClasses(
         {
          theClass = (Defclass *) classExp->value;
         }
-      else if (EvaluateExpression(theEnv,classExp,&temp))
+      else if (CL_EvaluateExpression(theEnv,classExp,&temp))
         {
          DeleteQueryClasses(theEnv,clist);
          return NULL;
@@ -775,7 +775,7 @@ static QUERY_CLASS *DetermineQueryClasses(
          new_list = true;
          (*rcnt)++;
         }
-      else if ((tmp = FormChain(theEnv,func,theClass,&temp)) != NULL)
+      else if ((tmp = FoCL_rmChain(theEnv,func,theClass,&temp)) != NULL)
         {
          if (clist == NULL)
            clist = cnxt = cchain = tmp;
@@ -792,9 +792,9 @@ static QUERY_CLASS *DetermineQueryClasses(
         }
       else
         {
-         SyntaxErrorMessage(theEnv,"instance-set query class restrictions");
+         CL_SyntaxErrorMessage(theEnv,"instance-set query class restrictions");
          DeleteQueryClasses(theEnv,clist);
-         SetEvaluationError(theEnv,true);
+         SetCL_EvaluationError(theEnv,true);
          return NULL;
         }
       classExp = classExp->nextArg;
@@ -803,9 +803,9 @@ static QUERY_CLASS *DetermineQueryClasses(
   }
 
 /*************************************************************
-  NAME         : FormChain
-  DESCRIPTION  : Builds a list of classes to be used in
-                   instance queries - uses parse form.
+  NAME         : FoCL_rmChain
+  DESCRIPTION  : CL_Builds a list of classes to be used in
+                   instance queries - uses parse foCL_rm.
   INPUTS       : 1) Name of calling function for error msgs
                  2) Data object - must be a symbol or a
                       multifield value containing all symbols
@@ -815,7 +815,7 @@ static QUERY_CLASS *DetermineQueryClasses(
                  Busy count incremented for all classes
   NOTES        : None
  *************************************************************/
-static QUERY_CLASS *FormChain(
+static QUERY_CLASS *FoCL_rmChain(
   Environment *theEnv,
   const char *func,
   Defclass *theClass,
@@ -827,13 +827,13 @@ static QUERY_CLASS *FormChain(
    const char *className;
    Defmodule *currentModule;
 
-   currentModule = GetCurrentModule(theEnv);
+   currentModule = CL_GetCurrentModule(theEnv);
    if (theClass != NULL)
      {
-      IncrementDefclassBusyCount(theEnv,theClass);
+      CL_IncrementDefclassBusyCount(theEnv,theClass);
       head = get_struct(theEnv,query_class);
       head->cls = theClass;
-      if (DefclassInScope(theEnv,head->cls,currentModule))
+      if (CL_DefclassInScope(theEnv,head->cls,currentModule))
         head->theModule = currentModule;
       else
         head->theModule = head->cls->header.whichModule->theModule;
@@ -850,16 +850,16 @@ static QUERY_CLASS *FormChain(
          but search imported defclasses too if a
          module specifier is not given
          =============================================== */
-      cls = LookupDefclassByMdlOrScope(theEnv,val->lexemeValue->contents);
+      cls = CL_LookupDefclassByMdlOrScope(theEnv,val->lexemeValue->contents);
       if (cls == NULL)
         {
-         ClassExistError(theEnv,func,val->lexemeValue->contents);
+         CL_ClassExistError(theEnv,func,val->lexemeValue->contents);
          return NULL;
         }
-      IncrementDefclassBusyCount(theEnv,(Defclass *) cls);
+      CL_IncrementDefclassBusyCount(theEnv,(Defclass *) cls);
       head = get_struct(theEnv,query_class);
       head->cls = cls;
-      if (DefclassInScope(theEnv,head->cls,currentModule))
+      if (CL_DefclassInScope(theEnv,head->cls,currentModule))
         head->theModule = currentModule;
       else
         head->theModule = head->cls->header.whichModule->theModule;
@@ -876,10 +876,10 @@ static QUERY_CLASS *FormChain(
          if (val->multifieldValue->contents[i].header->type == SYMBOL_TYPE)
            {
             className = val->multifieldValue->contents[i].lexemeValue->contents;
-            cls = LookupDefclassByMdlOrScope(theEnv,className);
+            cls = CL_LookupDefclassByMdlOrScope(theEnv,className);
             if (cls == NULL)
               {
-               ClassExistError(theEnv,func,className);
+               CL_ClassExistError(theEnv,func,className);
                DeleteQueryClasses(theEnv,head);
                return NULL;
               }
@@ -889,10 +889,10 @@ static QUERY_CLASS *FormChain(
             DeleteQueryClasses(theEnv,head);
             return NULL;
            }
-         IncrementDefclassBusyCount(theEnv,(Defclass *) cls);
+         CL_IncrementDefclassBusyCount(theEnv,(Defclass *) cls);
          tmp = get_struct(theEnv,query_class);
          tmp->cls = cls;
-         if (DefclassInScope(theEnv,tmp->cls,currentModule))
+         if (CL_DefclassInScope(theEnv,tmp->cls,currentModule))
            tmp->theModule = currentModule;
          else
            tmp->theModule = tmp->cls->header.whichModule->theModule;
@@ -930,12 +930,12 @@ static void DeleteQueryClasses(
         {
          tmp = qlist->chain;
          qlist->chain = qlist->chain->chain;
-         DecrementDefclassBusyCount(theEnv,(Defclass *) tmp->cls);
+         CL_DecrementDefclassBusyCount(theEnv,(Defclass *) tmp->cls);
          rtn_struct(theEnv,query_class,tmp);
         }
       tmp = qlist;
       qlist = qlist->nxt;
-      DecrementDefclassBusyCount(theEnv,(Defclass *) tmp->cls);
+      CL_DecrementDefclassBusyCount(theEnv,(Defclass *) tmp->cls);
       rtn_struct(theEnv,query_class,tmp);
      }
   }
@@ -964,15 +964,15 @@ static bool TestForFirstInChain(
    for (qptr = qchain ; qptr != NULL ; qptr = qptr->chain)
      {
       InstanceQueryData(theEnv)->AbortQuery = false;
-      if ((id = GetTraversalID(theEnv)) == -1)
+      if ((id = CL_GetTraversalID(theEnv)) == -1)
         return false;
       if (TestForFirstInstanceInClass(theEnv,qptr->theModule,id,qptr->cls,qchain,indx))
         {
-         ReleaseTraversalID(theEnv);
+         CL_ReleaseTraversalID(theEnv);
          return true;
         }
-      ReleaseTraversalID(theEnv);
-      if ((EvaluationData(theEnv)->HaltExecution == true) || (InstanceQueryData(theEnv)->AbortQuery == true))
+      CL_ReleaseTraversalID(theEnv);
+      if ((CL_EvaluationData(theEnv)->CL_HaltExecution == true) || (InstanceQueryData(theEnv)->AbortQuery == true))
         return false;
      }
    return false;
@@ -1009,10 +1009,10 @@ static bool TestForFirstInstanceInClass(
    if (TestTraversalID(cls->traversalRecord,id))
      return false;
    SetTraversalID(cls->traversalRecord,id);
-   if (DefclassInScope(theEnv,cls,theModule) == false)
+   if (CL_DefclassInScope(theEnv,cls,theModule) == false)
      return false;
 
-   GCBlockStart(theEnv,&gcb);
+   CL_GCBlockStart(theEnv,&gcb);
 
    ins = cls->instanceList;
    while (ins != NULL)
@@ -1027,7 +1027,7 @@ static bool TestForFirstInstanceInClass(
             break;
            }
          ins->busy--;
-         if ((EvaluationData(theEnv)->HaltExecution == true) || (InstanceQueryData(theEnv)->AbortQuery == true))
+         if ((CL_EvaluationData(theEnv)->CL_HaltExecution == true) || (InstanceQueryData(theEnv)->AbortQuery == true))
            break;
         }
       else
@@ -1042,16 +1042,16 @@ static bool TestForFirstInstanceInClass(
            }
            
          ins->busy++;
-         EvaluateExpression(theEnv,InstanceQueryData(theEnv)->QueryCore->query,&temp);
+         CL_EvaluateExpression(theEnv,InstanceQueryData(theEnv)->QueryCore->query,&temp);
          ins->busy--;
-         if (EvaluationData(theEnv)->HaltExecution == true)
+         if (CL_EvaluationData(theEnv)->CL_HaltExecution == true)
            break;
          if (temp.value != FalseSymbol(theEnv))
            break;
         }
 
-      CleanCurrentGarbageFrame(theEnv,NULL);
-      CallPeriodicTasks(theEnv);
+      CL_CleanCurrentGarbageFrame(theEnv,NULL);
+      CL_CallPeriodicTasks(theEnv);
 
       ins = ins->nxtClass;
       while ((ins != NULL) ? (ins->garbage == 1) : false)
@@ -1060,18 +1060,18 @@ static bool TestForFirstInstanceInClass(
      
    endTest:
 
-   GCBlockEnd(theEnv,&gcb);
-   CallPeriodicTasks(theEnv);
+   CL_GCBlockEnd(theEnv,&gcb);
+   CL_CallPeriodicTasks(theEnv);
 
    if (ins != NULL)
-     return(((EvaluationData(theEnv)->HaltExecution == true) || (InstanceQueryData(theEnv)->AbortQuery == true))
+     return(((CL_EvaluationData(theEnv)->CL_HaltExecution == true) || (InstanceQueryData(theEnv)->AbortQuery == true))
              ? false : true);
    for (i = 0 ; i < cls->directSubclasses.classCount ; i++)
      {
       if (TestForFirstInstanceInClass(theEnv,theModule,id,cls->directSubclasses.classArray[i],
                                       qchain,indx))
         return true;
-      if ((EvaluationData(theEnv)->HaltExecution == true) || (InstanceQueryData(theEnv)->AbortQuery == true))
+      if ((CL_EvaluationData(theEnv)->CL_HaltExecution == true) || (InstanceQueryData(theEnv)->AbortQuery == true))
         return false;
      }
    return false;
@@ -1102,11 +1102,11 @@ static void TestEntireChain(
    for (qptr = qchain ; qptr != NULL ; qptr = qptr->chain)
      {
       InstanceQueryData(theEnv)->AbortQuery = false;
-      if ((id = GetTraversalID(theEnv)) == -1)
+      if ((id = CL_GetTraversalID(theEnv)) == -1)
         return;
       TestEntireClass(theEnv,qptr->theModule,id,qptr->cls,qchain,indx);
-      ReleaseTraversalID(theEnv);
-      if ((EvaluationData(theEnv)->HaltExecution == true) || (InstanceQueryData(theEnv)->AbortQuery == true))
+      CL_ReleaseTraversalID(theEnv);
+      if ((CL_EvaluationData(theEnv)->CL_HaltExecution == true) || (InstanceQueryData(theEnv)->AbortQuery == true))
         return;
      }
   }
@@ -1143,10 +1143,10 @@ static void TestEntireClass(
    if (TestTraversalID(cls->traversalRecord,id))
      return;
    SetTraversalID(cls->traversalRecord,id);
-   if (DefclassInScope(theEnv,cls,theModule) == false)
+   if (CL_DefclassInScope(theEnv,cls,theModule) == false)
      return;
 
-   GCBlockStart(theEnv,&gcb);
+   CL_GCBlockStart(theEnv,&gcb);
 
    ins = cls->instanceList;
    while (ins != NULL)
@@ -1157,7 +1157,7 @@ static void TestEntireClass(
          ins->busy++;
          TestEntireChain(theEnv,qchain->nxt,indx+1);
          ins->busy--;
-         if ((EvaluationData(theEnv)->HaltExecution == true) || (InstanceQueryData(theEnv)->AbortQuery == true))
+         if ((CL_EvaluationData(theEnv)->CL_HaltExecution == true) || (InstanceQueryData(theEnv)->AbortQuery == true))
            break;
         }
       else
@@ -1170,10 +1170,10 @@ static void TestEntireClass(
 
          ins->busy++;
 
-         EvaluateExpression(theEnv,InstanceQueryData(theEnv)->QueryCore->query,&temp);
+         CL_EvaluateExpression(theEnv,InstanceQueryData(theEnv)->QueryCore->query,&temp);
 
          ins->busy--;
-         if (EvaluationData(theEnv)->HaltExecution == true)
+         if (CL_EvaluationData(theEnv)->CL_HaltExecution == true)
            break;
          if (temp.value != FalseSymbol(theEnv))
            {
@@ -1181,9 +1181,9 @@ static void TestEntireClass(
               {
                ins->busy++;
 
-               ReleaseUDFV(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
-               EvaluateExpression(theEnv,InstanceQueryData(theEnv)->QueryCore->action,InstanceQueryData(theEnv)->QueryCore->result);
-               RetainUDFV(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
+               CL_ReleaseUDFV(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
+               CL_EvaluateExpression(theEnv,InstanceQueryData(theEnv)->QueryCore->action,InstanceQueryData(theEnv)->QueryCore->result);
+               CL_RetainUDFV(theEnv,InstanceQueryData(theEnv)->QueryCore->result);
 
                ins->busy--;
                if (ProcedureFunctionData(theEnv)->BreakFlag || ProcedureFunctionData(theEnv)->ReturnFlag)
@@ -1191,7 +1191,7 @@ static void TestEntireClass(
                   InstanceQueryData(theEnv)->AbortQuery = true;
                   break;
                  }
-               if (EvaluationData(theEnv)->HaltExecution == true)
+               if (CL_EvaluationData(theEnv)->CL_HaltExecution == true)
                  break;
               }
             else
@@ -1203,21 +1203,21 @@ static void TestEntireClass(
       while ((ins != NULL) ? (ins->garbage == 1) : false)
         ins = ins->nxtClass;
 
-      CleanCurrentGarbageFrame(theEnv,NULL);
-      CallPeriodicTasks(theEnv);
+      CL_CleanCurrentGarbageFrame(theEnv,NULL);
+      CL_CallPeriodicTasks(theEnv);
      }
      
    endTest:
    
-   GCBlockEnd(theEnv,&gcb);
-   CallPeriodicTasks(theEnv);
+   CL_GCBlockEnd(theEnv,&gcb);
+   CL_CallPeriodicTasks(theEnv);
 
    if (ins != NULL)
      return;
    for (i = 0 ; i < cls->directSubclasses.classCount ; i++)
      {
       TestEntireClass(theEnv,theModule,id,cls->directSubclasses.classArray[i],qchain,indx);
-      if ((EvaluationData(theEnv)->HaltExecution == true) || (InstanceQueryData(theEnv)->AbortQuery == true))
+      if ((CL_EvaluationData(theEnv)->CL_HaltExecution == true) || (InstanceQueryData(theEnv)->AbortQuery == true))
         return;
      }
   }
@@ -1237,9 +1237,9 @@ static void AddSolution(
    QUERY_SOLN *new_soln;
    unsigned i;
 
-   new_soln = (QUERY_SOLN *) gm2(theEnv,sizeof(QUERY_SOLN));
+   new_soln = (QUERY_SOLN *) CL_gm2(theEnv,sizeof(QUERY_SOLN));
    new_soln->soln = (Instance **)
-                    gm2(theEnv,(sizeof(Instance *) * (InstanceQueryData(theEnv)->QueryCore->soln_size)));
+                    CL_gm2(theEnv,(sizeof(Instance *) * (InstanceQueryData(theEnv)->QueryCore->soln_size)));
    for (i = 0 ; i < InstanceQueryData(theEnv)->QueryCore->soln_size ; i++)
      new_soln->soln[i] = InstanceQueryData(theEnv)->QueryCore->solns[i];
    new_soln->nxt = NULL;
@@ -1265,9 +1265,9 @@ static void PopQuerySoln(
   {
    InstanceQueryData(theEnv)->QueryCore->soln_bottom = InstanceQueryData(theEnv)->QueryCore->soln_set;
    InstanceQueryData(theEnv)->QueryCore->soln_set = InstanceQueryData(theEnv)->QueryCore->soln_set->nxt;
-   rm(theEnv,InstanceQueryData(theEnv)->QueryCore->soln_bottom->soln,
+   CL_rm(theEnv,InstanceQueryData(theEnv)->QueryCore->soln_bottom->soln,
       (sizeof(Instance *) * InstanceQueryData(theEnv)->QueryCore->soln_size));
-   rm(theEnv,InstanceQueryData(theEnv)->QueryCore->soln_bottom,sizeof(QUERY_SOLN));
+   CL_rm(theEnv,InstanceQueryData(theEnv)->QueryCore->soln_bottom,sizeof(QUERY_SOLN));
   }
 
 #endif

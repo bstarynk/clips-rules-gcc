@@ -29,7 +29,7 @@
 /*                                                           */
 /*            Changed integer type/precision.                */
 /*                                                           */
-/*            The return value of DirectMessage indicates    */
+/*            The return value of CL_DirectMessage indicates    */
 /*            whether an execution error has occurred.       */
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
@@ -43,7 +43,7 @@
 /*                                                           */
 /*            Removed DATA_OBJECT_ARRAY primitive type.      */
 /*                                                           */
-/*            Eval support for run time and bload only.      */
+/*            CL_Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -62,24 +62,24 @@
 #include "evaluatn.h"
 #endif
 
-   void                           SetupInstanceModDupCommands(Environment *);
+   void                           CL_SetupInstanceModDupCommands(Environment *);
 
-   void                           ModifyInstance(Environment *,UDFContext *,UDFValue *);
-   void                           MsgModifyInstance(Environment *,UDFContext *,UDFValue *);
-   void                           DuplicateInstance(Environment *,UDFContext *,UDFValue *);
-   void                           MsgDuplicateInstance(Environment *,UDFContext *,UDFValue *);
+   void                           CL_ModifyInstance(Environment *,UDFContext *,UDFValue *);
+   void                           MsgCL_ModifyInstance(Environment *,UDFContext *,UDFValue *);
+   void                           CL_DuplicateInstance(Environment *,UDFContext *,UDFValue *);
+   void                           MsgCL_DuplicateInstance(Environment *,UDFContext *,UDFValue *);
 
 #if DEFRULE_CONSTRUCT && OBJECT_SYSTEM
-   void                           InactiveModifyInstance(Environment *,UDFContext *,UDFValue *);
-   void                           InactiveMsgModifyInstance(Environment *,UDFContext *,UDFValue *);
-   void                           InactiveDuplicateInstance(Environment *,UDFContext *,UDFValue *);
-   void                           InactiveMsgDuplicateInstance(Environment *,UDFContext *,UDFValue *);
+   void                           CL_InactiveCL_ModifyInstance(Environment *,UDFContext *,UDFValue *);
+   void                           CL_InactiveMsgCL_ModifyInstance(Environment *,UDFContext *,UDFValue *);
+   void                           InactiveCL_DuplicateInstance(Environment *,UDFContext *,UDFValue *);
+   void                           InactiveMsgCL_DuplicateInstance(Environment *,UDFContext *,UDFValue *);
 #endif
 
-   void                           DirectModifyMsgHandler(Environment *,UDFContext *,UDFValue *);
-   void                           MsgModifyMsgHandler(Environment *,UDFContext *,UDFValue *);
-   void                           DirectDuplicateMsgHandler(Environment *,UDFContext *,UDFValue *);
-   void                           MsgDuplicateMsgHandler(Environment *,UDFContext *,UDFValue *);
+   void                           CL_DirectModifyMsgHandler(Environment *,UDFContext *,UDFValue *);
+   void                           CL_MsgModifyMsgHandler(Environment *,UDFContext *,UDFValue *);
+   void                           CL_DirectDuplicateMsgHandler(Environment *,UDFContext *,UDFValue *);
+   void                           CL_MsgDuplicateMsgHandler(Environment *,UDFContext *,UDFValue *);
 
 #endif /* _H_insmoddp */
 

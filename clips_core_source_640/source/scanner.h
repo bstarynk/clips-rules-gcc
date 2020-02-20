@@ -21,7 +21,7 @@
 /*                                                           */
 /*            Support for long long integers.                */
 /*                                                           */
-/*            Added SetLineCount function.                   */
+/*            Added CL_SetLineCount function.                   */
 /*                                                           */
 /*            Added UTF-8 support.                           */
 /*                                                           */
@@ -79,7 +79,7 @@ struct token
       CLIPSFloat *floatValue;
       CLIPSInteger *integerValue;
      };
-   const char *printForm;
+   const char *printFoCL_rm;
   };
 
 #define SCANNER_DATA 57
@@ -95,15 +95,15 @@ struct scannerData
 
 #define ScannerData(theEnv) ((struct scannerData *) GetEnvironmentData(theEnv,SCANNER_DATA))
 
-   void                           InitializeScannerData(Environment *);
-   void                           GetToken(Environment *,const char *,struct token *);
-   void                           CopyToken(struct token *,struct token *);
-   void                           ResetLineCount(Environment *);
-   long                           GetLineCount(Environment *);
-   long                           SetLineCount(Environment *,long);
-   void                           IncrementLineCount(Environment *);
-   void                           DecrementLineCount(Environment *);
-   unsigned short                 TokenTypeToType(TokenType);
+   void                           CL_InitializeScannerData(Environment *);
+   void                           CL_GetToken(Environment *,const char *,struct token *);
+   void                           CL_CopyToken(struct token *,struct token *);
+   void                           CL_ResetLineCount(Environment *);
+   long                           CL_GetLineCount(Environment *);
+   long                           CL_SetLineCount(Environment *,long);
+   void                           CL_IncrementLineCount(Environment *);
+   void                           CL_DecrementLineCount(Environment *);
+   unsigned short                 CL_TokenTypeToType(TokenType);
 
 #endif /* _H_scanner */
 

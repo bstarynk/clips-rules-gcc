@@ -68,10 +68,10 @@
    ***************************************** */
 
 /**********************************************
-  Build functions used by AddPatternParser() to
+  CL_Build functions used by CL_AddPatternParser() to
   provide object access to the join nertwork
  **********************************************/
-void ReplaceGetJNObjectValue(
+void CL_ReplaceGetJNObjectValue(
   Environment *theEnv,
   Expression *theItem,
   struct lhsParseNode *theNode,
@@ -80,19 +80,19 @@ void ReplaceGetJNObjectValue(
    GenObjectGetVar(theEnv,true,theItem,theNode,side);
   }
 
-Expression *GenGetJNObjectValue(
+Expression *CL_GenGetJNObjectValue(
   Environment *theEnv,
   struct lhsParseNode *theNode,
   int side)
   {
    Expression *theItem;
 
-   theItem = GenConstant(theEnv,0,NULL);
+   theItem = CL_GenConstant(theEnv,0,NULL);
    GenObjectGetVar(theEnv,true,theItem,theNode,side);
    return(theItem);
   }
 
-Expression *ObjectJNVariableComparison(
+Expression *CL_ObjectJNVariableComparison(
   Environment *theEnv,
   struct lhsParseNode *selfNode,
   struct lhsParseNode *referringNode,
@@ -102,10 +102,10 @@ Expression *ObjectJNVariableComparison(
   }
 
 /**********************************************
-  Build functions used by AddPatternParser() to
+  CL_Build functions used by CL_AddPatternParser() to
   provide object access to the pattern network
  **********************************************/
-Expression *GenObjectPNConstantCompare(
+Expression *CL_GenObjectPNConstantCompare(
   Environment *theEnv,
   struct lhsParseNode *theNode)
   {
@@ -126,7 +126,7 @@ Expression *GenObjectPNConstantCompare(
 
       Otherwise, use a general eq/neq test.
       =============================================================== */
-   ClearBitString(&hack,sizeof(struct ObjectCmpPNConstant));
+   CL_ClearBitString(&hack,sizeof(struct ObjectCmpPNConstant));
    if (theNode->negated)
      hack.fail = 1;
    else
@@ -145,26 +145,26 @@ Expression *GenObjectPNConstantCompare(
         }
       else
         hack.offset = theNode->singleFieldsAfter;
-      theExp = GenConstant(theEnv,OBJ_PN_CONSTANT,AddBitMap(theEnv,&hack,
+      theExp = CL_GenConstant(theEnv,OBJ_PN_CONSTANT,CL_AddBitMap(theEnv,&hack,
                                         sizeof(struct ObjectCmpPNConstant)));
-      theExp->argList = GenConstant(theEnv,NodeTypeToType(theNode),theNode->value);
+      theExp->argList = CL_GenConstant(theEnv,CL_NodeTypeToType(theNode),theNode->value);
      }
    else
      {
       hack.general = 1;
-      theExp = GenConstant(theEnv,OBJ_PN_CONSTANT,AddBitMap(theEnv,&hack,
+      theExp = CL_GenConstant(theEnv,OBJ_PN_CONSTANT,CL_AddBitMap(theEnv,&hack,
                                         sizeof(struct ObjectCmpPNConstant)));
-      theExp->argList = GenConstant(theEnv,0,NULL);
+      theExp->argList = CL_GenConstant(theEnv,0,NULL);
       tmpType = theNode->pnType;
       theNode->pnType = SF_VARIABLE_NODE;
       GenObjectGetVar(theEnv,false,theExp->argList,theNode,-1);
       theNode->pnType = tmpType;
-      theExp->argList->nextArg = GenConstant(theEnv,NodeTypeToType(theNode),theNode->value);
+      theExp->argList->nextArg = CL_GenConstant(theEnv,CL_NodeTypeToType(theNode),theNode->value);
      }
    return(theExp);
   }
 
-void ReplaceGetPNObjectValue(
+void CL_ReplaceGetPNObjectValue(
   Environment *theEnv,
   Expression *theItem,
   struct lhsParseNode *theNode)
@@ -172,18 +172,18 @@ void ReplaceGetPNObjectValue(
    GenObjectGetVar(theEnv,false,theItem,theNode,-1);
   }
 
-Expression *GenGetPNObjectValue(
+Expression *CL_GenGetPNObjectValue(
   Environment *theEnv,
   struct lhsParseNode *theNode)
   {
    Expression *theItem;
 
-   theItem = GenConstant(theEnv,0,NULL);
+   theItem = CL_GenConstant(theEnv,0,NULL);
    GenObjectGetVar(theEnv,false,theItem,theNode,-1);
    return(theItem);
   }
 
-Expression *ObjectPNVariableComparison(
+Expression *CL_ObjectPNVariableComparison(
   Environment *theEnv,
   struct lhsParseNode *selfNode,
   struct lhsParseNode *referringNode)
@@ -192,7 +192,7 @@ Expression *ObjectPNVariableComparison(
   }
 
 /****************************************************
-  NAME         : GenObjectLengthTest
+  NAME         : CL_GenObjectLengthTest
   DESCRIPTION  : Generates a test on the cardinality
                  of a slot matching an object pattern
   INPUTS       : The first lhsParseNode for a slot
@@ -202,7 +202,7 @@ Expression *ObjectPNVariableComparison(
                  modified to include the length test
   NOTES        : None
  ****************************************************/
-void GenObjectLengthTest(
+void CL_GenObjectLengthTest(
   Environment *theEnv,
   struct lhsParseNode *theNode)
   {
@@ -214,7 +214,7 @@ void GenObjectLengthTest(
        (theNode->pnType != SF_WILDCARD_NODE))
      return;
 
-   ClearBitString(&hack,sizeof(struct ObjectMatchLength));
+   CL_ClearBitString(&hack,sizeof(struct ObjectMatchLength));
 
    if ((theNode->pnType != MF_VARIABLE_NODE) &&
        (theNode->pnType != MF_WILDCARD_NODE) &&
@@ -228,17 +228,17 @@ void GenObjectLengthTest(
    else
      hack.minLength = theNode->singleFieldsAfter;
 
-   theTest = GenConstant(theEnv,OBJ_SLOT_LENGTH,AddBitMap(theEnv,&hack,
+   theTest = CL_GenConstant(theEnv,OBJ_SLOT_LENGTH,CL_AddBitMap(theEnv,&hack,
                                          sizeof(struct ObjectMatchLength)));
 
    if (theNode->constantSelector != NULL)
-     { theNode->constantSelector->nextArg = CopyExpression(theEnv,theTest); }
+     { theNode->constantSelector->nextArg = CL_CopyExpression(theEnv,theTest); }
 
-   theNode->networkTest = CombineExpressions(theEnv,theTest,theNode->networkTest);
+   theNode->networkTest = CL_CombineExpressions(theEnv,theTest,theNode->networkTest);
   }
 
 /****************************************************
-  NAME         : GenObjectZeroLengthTest
+  NAME         : CL_GenObjectZeroLengthTest
   DESCRIPTION  : Generates a test on the cardinality
                  of a slot matching an object pattern
   INPUTS       : The first lhsParseNode for a slot
@@ -248,19 +248,19 @@ void GenObjectLengthTest(
                  modified to include the length test
   NOTES        : None
  ****************************************************/
-void GenObjectZeroLengthTest(
+void CL_GenObjectZeroLengthTest(
   Environment *theEnv,
   struct lhsParseNode *theNode)
   {
    struct ObjectMatchLength hack;
    Expression *theTest;
 
-   ClearBitString(&hack,sizeof(struct ObjectMatchLength));
+   CL_ClearBitString(&hack,sizeof(struct ObjectMatchLength));
    hack.exactly = 1;
    hack.minLength = 0;
-   theTest = GenConstant(theEnv,OBJ_SLOT_LENGTH,
-                         AddBitMap(theEnv,&hack,sizeof(struct ObjectMatchLength)));
-   theNode->networkTest = CombineExpressions(theEnv,theTest,theNode->networkTest);
+   theTest = CL_GenConstant(theEnv,OBJ_SLOT_LENGTH,
+                         CL_AddBitMap(theEnv,&hack,sizeof(struct ObjectMatchLength)));
+   theNode->networkTest = CL_CombineExpressions(theEnv,theTest,theNode->networkTest);
   }
 
 /* =========================================
@@ -298,8 +298,8 @@ static void GenObjectGetVar(
    struct ObjectMatchVar1 hack1;
    struct ObjectMatchVar2 hack2;
 
-   ClearBitString(&hack1,sizeof(struct ObjectMatchVar1));
-   ClearBitString(&hack2,sizeof(struct ObjectMatchVar2));
+   CL_ClearBitString(&hack1,sizeof(struct ObjectMatchVar1));
+   CL_ClearBitString(&hack2,sizeof(struct ObjectMatchVar2));
 
    if (joinReference)
      {
@@ -341,7 +341,7 @@ static void GenObjectGetVar(
         { theItem->type = OBJ_GET_SLOT_JNVAR1; }
       else
         { theItem->type = OBJ_GET_SLOT_PNVAR1; }
-      theItem->value = AddBitMap(theEnv,&hack1,sizeof(struct ObjectMatchVar1));
+      theItem->value = CL_AddBitMap(theEnv,&hack1,sizeof(struct ObjectMatchVar1));
       return;
      }
 
@@ -359,7 +359,7 @@ static void GenObjectGetVar(
       hack1.allFields = 1;
       hack1.whichSlot = theNode->slotNumber;
       theItem->type = (joinReference ? OBJ_GET_SLOT_JNVAR1 : OBJ_GET_SLOT_PNVAR1);
-      theItem->value = AddBitMap(theEnv,&hack1,sizeof(struct ObjectMatchVar1));
+      theItem->value = CL_AddBitMap(theEnv,&hack1,sizeof(struct ObjectMatchVar1));
       return;
      }
 
@@ -368,7 +368,7 @@ static void GenObjectGetVar(
       containing at most one multifield variable and at least
       one (or two if no multifield variables) single-field variable
       ============================================================= */
-   if (((theNode->pnType == SF_WILDCARD_NODE) || (theNode->pnType == SF_VARIABLE_NODE) || ConstantNode(theNode)) &&
+   if (((theNode->pnType == SF_WILDCARD_NODE) || (theNode->pnType == SF_VARIABLE_NODE) || CL_ConstantNode(theNode)) &&
        ((theNode->multiFieldsBefore == 0) || (theNode->multiFieldsAfter == 0)))
      {
       hack2.whichSlot = theNode->slotNumber;
@@ -383,11 +383,11 @@ static void GenObjectGetVar(
          hack2.endOffset = theNode->singleFieldsAfter;
         }
       theItem->type = (joinReference ? OBJ_GET_SLOT_JNVAR2 : OBJ_GET_SLOT_PNVAR2);
-      theItem->value = AddBitMap(theEnv,&hack2,sizeof(struct ObjectMatchVar2));
+      theItem->value = CL_AddBitMap(theEnv,&hack2,sizeof(struct ObjectMatchVar2));
       return;
      }
 
-   if (((theNode->pnType == MF_WILDCARD_NODE) || (theNode->pnType == MF_VARIABLE_NODE) || ConstantNode(theNode)) &&
+   if (((theNode->pnType == MF_WILDCARD_NODE) || (theNode->pnType == MF_VARIABLE_NODE) || CL_ConstantNode(theNode)) &&
        (theNode->multiFieldsBefore == 0) &&
        (theNode->multiFieldsAfter == 0))
      {
@@ -397,7 +397,7 @@ static void GenObjectGetVar(
       hack2.beginningOffset = theNode->singleFieldsBefore;
       hack2.endOffset = theNode->singleFieldsAfter;
       theItem->type = (joinReference ? OBJ_GET_SLOT_JNVAR2 : OBJ_GET_SLOT_PNVAR2);
-      theItem->value = AddBitMap(theEnv,&hack2,sizeof(struct ObjectMatchVar2));
+      theItem->value = CL_AddBitMap(theEnv,&hack2,sizeof(struct ObjectMatchVar2));
       return;
      }
 
@@ -407,17 +407,17 @@ static void GenObjectGetVar(
    hack1.whichSlot = theNode->slotNumber;
    hack1.whichField = theNode->index;
    theItem->type = (joinReference ? OBJ_GET_SLOT_JNVAR1 : OBJ_GET_SLOT_PNVAR1);
-   theItem->value = AddBitMap(theEnv,&hack1,sizeof(struct ObjectMatchVar1));
+   theItem->value = CL_AddBitMap(theEnv,&hack1,sizeof(struct ObjectMatchVar1));
   }
 
 /****************************************************************
   NAME         : IsSimpleSlotVariable
-  DESCRIPTION  : Determines if a slot pattern variable
+  DESCRIPTION  : DeteCL_rmines if a slot pattern variable
                  references a single-field slot or a single-field
                  in a multifield slot which does not require
                  use of multifield markers
                  (Object addresses are not simple variables)
-  INPUTS       : The intermediate parse node
+  INPUTS       : The inteCL_rmediate parse node
   RETURNS      : True if the variable is simple,
                  false otherwise
   SIDE EFFECTS : None
@@ -450,9 +450,9 @@ static bool IsSimpleSlotVariable(
                     pattern or join network test
                  2) For a join test, a flag indicating
                     if it is a nand join
-                 3) The intermediate parse node
+                 3) The inteCL_rmediate parse node
                     for the first variable
-                 4) The intermediate parse node
+                 4) The inteCL_rmediate parse node
                     for the second variable
   RETURNS      : An expression for comparing the
                  variables
@@ -507,8 +507,8 @@ static Expression *GenerateSlotComparisonTest(
       if ((firstNode->withinMultifieldSlot == false) &&
           (referringNode->withinMultifieldSlot == false))
         {
-         ClearBitString(&phack1,sizeof(struct ObjectCmpPNSingleSlotVars1));
-         ClearBitString(&jhack1,sizeof(struct ObjectCmpJoinSingleSlotVars1));
+         CL_ClearBitString(&phack1,sizeof(struct ObjectCmpPNSingleSlotVars1));
+         CL_ClearBitString(&jhack1,sizeof(struct ObjectCmpJoinSingleSlotVars1));
          if (selfNode->negated)
            phack1.fail = jhack1.fail = 1;
          else
@@ -528,11 +528,11 @@ static Expression *GenerateSlotComparisonTest(
 
             jhack1.secondPattern = referringNode->joinDepth;
 
-            theExp = GenConstant(theEnv,OBJ_JN_CMP1,AddBitMap(theEnv,&jhack1,
+            theExp = CL_GenConstant(theEnv,OBJ_JN_CMP1,CL_AddBitMap(theEnv,&jhack1,
                                            sizeof(struct ObjectCmpJoinSingleSlotVars1)));
            }
          else
-           theExp = GenConstant(theEnv,OBJ_PN_CMP1,AddBitMap(theEnv,&phack1,
+           theExp = CL_GenConstant(theEnv,OBJ_PN_CMP1,CL_AddBitMap(theEnv,&phack1,
                                            sizeof(struct ObjectCmpPNSingleSlotVars1)));
         }
       /* ============================================
@@ -543,8 +543,8 @@ static Expression *GenerateSlotComparisonTest(
       else if ((firstNode->withinMultifieldSlot == false) ||
                (referringNode->withinMultifieldSlot == false))
         {
-         ClearBitString(&phack2,sizeof(struct ObjectCmpPNSingleSlotVars2));
-         ClearBitString(&jhack2,sizeof(struct ObjectCmpJoinSingleSlotVars2));
+         CL_ClearBitString(&phack2,sizeof(struct ObjectCmpPNSingleSlotVars2));
+         CL_ClearBitString(&jhack2,sizeof(struct ObjectCmpJoinSingleSlotVars2));
 
          if (selfNode->negated)
            phack2.fail = jhack2.fail = 1;
@@ -601,10 +601,10 @@ static Expression *GenerateSlotComparisonTest(
               phack2.offset = jhack2.offset = referringNode->singleFieldsAfter;
            }
          if (joinTest)
-           theExp = GenConstant(theEnv,OBJ_JN_CMP2,AddBitMap(theEnv,&jhack2,
+           theExp = CL_GenConstant(theEnv,OBJ_JN_CMP2,CL_AddBitMap(theEnv,&jhack2,
                                            sizeof(struct ObjectCmpJoinSingleSlotVars2)));
          else
-           theExp = GenConstant(theEnv,OBJ_PN_CMP2,AddBitMap(theEnv,&phack2,
+           theExp = CL_GenConstant(theEnv,OBJ_PN_CMP2,CL_AddBitMap(theEnv,&phack2,
                                            sizeof(struct ObjectCmpPNSingleSlotVars2)));
         }
 
@@ -614,8 +614,8 @@ static Expression *GenerateSlotComparisonTest(
          =================================== */
       else
         {
-         ClearBitString(&phack3,sizeof(struct ObjectCmpPNSingleSlotVars3));
-         ClearBitString(&jhack3,sizeof(struct ObjectCmpJoinSingleSlotVars3));
+         CL_ClearBitString(&phack3,sizeof(struct ObjectCmpPNSingleSlotVars3));
+         CL_ClearBitString(&jhack3,sizeof(struct ObjectCmpJoinSingleSlotVars3));
 
          if (selfNode->negated)
            phack3.fail = jhack3.fail = 1;
@@ -652,11 +652,11 @@ static Expression *GenerateSlotComparisonTest(
             jhack3.secondPatternLHS = true;
             jhack3.secondPattern = referringNode->joinDepth;
 
-            theExp = GenConstant(theEnv,OBJ_JN_CMP3,AddBitMap(theEnv,&jhack3,
+            theExp = CL_GenConstant(theEnv,OBJ_JN_CMP3,CL_AddBitMap(theEnv,&jhack3,
                                          sizeof(struct ObjectCmpJoinSingleSlotVars3)));
            }
          else
-           theExp = GenConstant(theEnv,OBJ_PN_CMP3,AddBitMap(theEnv,&phack3,
+           theExp = CL_GenConstant(theEnv,OBJ_PN_CMP3,CL_AddBitMap(theEnv,&phack3,
                                            sizeof(struct ObjectCmpPNSingleSlotVars3)));
         }
      }
@@ -668,15 +668,15 @@ static Expression *GenerateSlotComparisonTest(
       ================================================== */
    else
      {
-      theExp = GenConstant(theEnv,FCALL,selfNode->negated ? ExpressionData(theEnv)->PTR_NEQ : ExpressionData(theEnv)->PTR_EQ);
-      theExp->argList = GenConstant(theEnv,0,NULL);
+      theExp = CL_GenConstant(theEnv,FCALL,selfNode->negated ? ExpressionData(theEnv)->PTR_NEQ : ExpressionData(theEnv)->PTR_EQ);
+      theExp->argList = CL_GenConstant(theEnv,0,NULL);
 
       if (isNand)
         { GenObjectGetVar(theEnv,joinTest,theExp->argList,selfNode,NESTED_RHS); }
       else
         { GenObjectGetVar(theEnv,joinTest,theExp->argList,selfNode,RHS); }
 
-      theExp->argList->nextArg = GenConstant(theEnv,0,NULL);
+      theExp->argList->nextArg = CL_GenConstant(theEnv,0,NULL);
 
       GenObjectGetVar(theEnv,joinTest,theExp->argList->nextArg,referringNode,LHS);
      }

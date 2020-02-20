@@ -38,7 +38,7 @@
 /*                                                           */
 /*            Support for long long integers.                */
 /*                                                           */
-/*            Used gensprintf instead of sprintf.            */
+/*            Used CL_gensprintf instead of sprintf.            */
 /*                                                           */
 /*            Support for modify callback function.          */
 /*                                                           */
@@ -53,7 +53,7 @@
 /*                                                           */
 /*            Added code to prevent a clear command from     */
 /*            being executed during fact assertions via      */
-/*            Increment/DecrementClearReadyLocks API.        */
+/*            Increment/DecrementCL_ClearReadyLocks API.        */
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
@@ -83,37 +83,37 @@
 #include "symbol.h"
 #include "tmpltdef.h"
 
-   bool                           UpdateModifyDuplicate(Environment *,struct expr *,const char *,void *);
-   struct expr                   *ModifyParse(Environment *,struct expr *,const char *);
-   struct expr                   *DuplicateParse(Environment *,struct expr *,const char *);
-   void                           DeftemplateFunctions(Environment *);
-   void                           ModifyCommand(Environment *,UDFContext *,UDFValue *);
-   void                           DuplicateCommand(Environment *,UDFContext *,UDFValue *);
-   void                           DeftemplateSlotNamesFunction(Environment *,UDFContext *,UDFValue *);
-   void                           DeftemplateSlotNames(Deftemplate *,CLIPSValue *);
-   void                           DeftemplateSlotDefaultValueFunction(Environment *,UDFContext *,UDFValue *);
-   bool                           DeftemplateSlotDefaultValue(Deftemplate *,const char *,CLIPSValue *);
-   void                           DeftemplateSlotCardinalityFunction(Environment *,UDFContext *,UDFValue *);
-   bool                           DeftemplateSlotCardinality(Deftemplate *,const char *,CLIPSValue *);
-   void                           DeftemplateSlotAllowedValuesFunction(Environment *,UDFContext *,UDFValue *);
-   bool                           DeftemplateSlotAllowedValues(Deftemplate *,const char *,CLIPSValue *);
-   void                           DeftemplateSlotRangeFunction(Environment *,UDFContext *,UDFValue *);
-   bool                           DeftemplateSlotRange(Deftemplate *,const char *,CLIPSValue *);
-   void                           DeftemplateSlotTypesFunction(Environment *,UDFContext *,UDFValue *);
-   bool                           DeftemplateSlotTypes(Deftemplate *,const char *,CLIPSValue *);
-   void                           DeftemplateSlotMultiPFunction(Environment *,UDFContext *,UDFValue *);
-   bool                           DeftemplateSlotMultiP(Deftemplate *,const char *);
-   void                           DeftemplateSlotSinglePFunction(Environment *,UDFContext *,UDFValue *);
-   bool                           DeftemplateSlotSingleP(Deftemplate *,const char *);
-   void                           DeftemplateSlotExistPFunction(Environment *,UDFContext *,UDFValue *);
-   bool                           DeftemplateSlotExistP(Deftemplate *,const char *);
-   void                           DeftemplateSlotDefaultPFunction(Environment *,UDFContext *,UDFValue *);
-   DefaultType                    DeftemplateSlotDefaultP(Deftemplate *,const char *);
-   void                           DeftemplateSlotFacetExistPFunction(Environment *,UDFContext *,UDFValue *);
-   bool                           DeftemplateSlotFacetExistP(Environment *,Deftemplate *,const char *,const char *);
-   void                           DeftemplateSlotFacetValueFunction(Environment *,UDFContext *,UDFValue *);
-   bool                           DeftemplateSlotFacetValue(Environment *,Deftemplate *,const char *,const char *,UDFValue *);
-   Fact                          *ReplaceFact(Environment *,Fact *,CLIPSValue *,char *);
+   bool                           CL_UpdateModifyDuplicate(Environment *,struct expr *,const char *,void *);
+   struct expr                   *CL_ModifyParse(Environment *,struct expr *,const char *);
+   struct expr                   *CL_DuplicateParse(Environment *,struct expr *,const char *);
+   void                           CL_DeftemplateFunctions(Environment *);
+   void                           CL_ModifyCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_DuplicateCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_DeftemplateSlotNamesFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_DeftemplateSlotNames(Deftemplate *,CLIPSValue *);
+   void                           CL_DeftemplateCL_SlotDefaultValueFunction(Environment *,UDFContext *,UDFValue *);
+   bool                           CL_DeftemplateCL_SlotDefaultValue(Deftemplate *,const char *,CLIPSValue *);
+   void                           CL_DeftemplateCL_SlotCardinalityFunction(Environment *,UDFContext *,UDFValue *);
+   bool                           CL_DeftemplateCL_SlotCardinality(Deftemplate *,const char *,CLIPSValue *);
+   void                           CL_DeftemplateCL_SlotAllowedValuesFunction(Environment *,UDFContext *,UDFValue *);
+   bool                           CL_DeftemplateCL_SlotAllowedValues(Deftemplate *,const char *,CLIPSValue *);
+   void                           CL_DeftemplateCL_SlotRangeFunction(Environment *,UDFContext *,UDFValue *);
+   bool                           CL_DeftemplateCL_SlotRange(Deftemplate *,const char *,CLIPSValue *);
+   void                           CL_DeftemplateCL_SlotTypesFunction(Environment *,UDFContext *,UDFValue *);
+   bool                           CL_DeftemplateCL_SlotTypes(Deftemplate *,const char *,CLIPSValue *);
+   void                           CL_DeftemplateSlotMultiPFunction(Environment *,UDFContext *,UDFValue *);
+   bool                           CL_DeftemplateSlotMultiP(Deftemplate *,const char *);
+   void                           CL_DeftemplateSlotSinglePFunction(Environment *,UDFContext *,UDFValue *);
+   bool                           CL_DeftemplateSlotSingleP(Deftemplate *,const char *);
+   void                           CL_DeftemplateCL_SlotExistPFunction(Environment *,UDFContext *,UDFValue *);
+   bool                           CL_DeftemplateCL_SlotExistP(Deftemplate *,const char *);
+   void                           CL_DeftemplateCL_SlotDefaultPFunction(Environment *,UDFContext *,UDFValue *);
+   DefaultType                    CL_DeftemplateCL_SlotDefaultP(Deftemplate *,const char *);
+   void                           CL_DeftemplateSlotFacetExistPFunction(Environment *,UDFContext *,UDFValue *);
+   bool                           CL_DeftemplateSlotFacetExistP(Environment *,Deftemplate *,const char *,const char *);
+   void                           CL_DeftemplateSlotFacetValueFunction(Environment *,UDFContext *,UDFValue *);
+   bool                           CL_DeftemplateSlotFacetValue(Environment *,Deftemplate *,const char *,const char *,UDFValue *);
+   Fact                          *CL_ReplaceFact(Environment *,Fact *,CLIPSValue *,char *);
 
 #endif /* _H_tmpltfun */
 

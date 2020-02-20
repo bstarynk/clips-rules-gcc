@@ -24,7 +24,7 @@
 /*            compilers/operating systems (IBM_MCW and       */
 /*            MAC_MCW).                                      */
 /*                                                           */
-/*            Used gensprintf instead of sprintf.            */
+/*            Used CL_gensprintf instead of sprintf.            */
 /*                                                           */
 /*            Changed integer type/precision.                */
 /*                                                           */
@@ -64,7 +64,7 @@ typedef enum
    EE_NO_ERROR = 0,
    EE_PARSING_ERROR,
    EE_PROCESSING_ERROR
-  } EvalError;
+  } CL_EvalError;
 
 typedef enum
   {
@@ -72,23 +72,23 @@ typedef enum
    BE_COULD_NOT_BUILD_ERROR,
    BE_CONSTRUCT_NOT_FOUND_ERROR,
    BE_PARSING_ERROR,
-  } BuildError;
+  } CL_BuildError;
 
-   BuildError                     Build(Environment *,const char *);
-   EvalError                      Eval(Environment *,const char *,CLIPSValue *);
-   void                           StringFunctionDefinitions(Environment *);
-   void                           StrCatFunction(Environment *,UDFContext *,UDFValue *);
-   void                           SymCatFunction(Environment *,UDFContext *,UDFValue *);
-   void                           StrLengthFunction(Environment *,UDFContext *,UDFValue *);
-   void                           UpcaseFunction(Environment *,UDFContext *,UDFValue *);
-   void                           LowcaseFunction(Environment *,UDFContext *,UDFValue *);
-   void                           StrCompareFunction(Environment *,UDFContext *,UDFValue *);
-   void                           SubStringFunction(Environment *,UDFContext *,UDFValue *);
-   void                           StrIndexFunction(Environment *,UDFContext *,UDFValue *);
-   void                           EvalFunction(Environment *,UDFContext *,UDFValue *);
-   void                           BuildFunction(Environment *,UDFContext *,UDFValue *);
-   void                           StringToFieldFunction(Environment *,UDFContext *,UDFValue *);
-   void                           StringToField(Environment *,const char *,UDFValue *);
+   CL_BuildError                     CL_Build(Environment *,const char *);
+   CL_EvalError                      CL_Eval(Environment *,const char *,CLIPSValue *);
+   void                           CL_StringFunctionDefinitions(Environment *);
+   void                           CL_StrCatFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_SymCatFunction(Environment *,UDFContext *,UDFValue *);
+   void                           StrCL_LengthFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_UpcaseFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_LowcaseFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_StrCompareFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_SubStringFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_StrIndexFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_EvalFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_BuildFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_StringToFieldFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_StringToField(Environment *,const char *,UDFValue *);
 
 #endif /* _H_strngfun */
 

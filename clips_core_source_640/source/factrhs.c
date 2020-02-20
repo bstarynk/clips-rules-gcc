@@ -27,14 +27,14 @@
 /*                                                           */
 /*            Added code to prevent a clear command from     */
 /*            being executed during fact assertions via      */
-/*            Increment/DecrementClearReadyLocks API.        */
+/*            Increment/DecrementCL_ClearReadyLocks API.        */
 /*                                                           */
 /*            Added code to keep track of pointers to        */
 /*            constructs that are contained externally to    */
 /*            to constructs, DanglingConstructs.             */
 /*                                                           */
-/*      6.40: Added Env prefix to GetEvaluationError and     */
-/*            SetEvaluationError functions.                  */
+/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
+/*            SetCL_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -45,7 +45,7 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/*            Eval support for run time and bload only.      */
+/*            CL_Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -86,13 +86,13 @@
 #endif
 
 /**********************************************************************/
-/* BuildRHSAssert: Parses zero or more RHS fact patterns (the format  */
+/* CL_BuildRHSCL_Assert: Parses zero or more RHS fact patterns (the foCL_rmat  */
 /*   which is used by the assert command and the deffacts construct). */
 /*   Each of the RHS patterns is attached to an assert command and if */
 /*   there is more than one assert command, then a progn command is   */
 /*   wrapped around all of the assert commands.                       */
 /**********************************************************************/
-struct expr *BuildRHSAssert(
+struct expr *CL_BuildRHSCL_Assert(
   Environment *theEnv,
   const char *logicalName,
   struct token *theToken,
@@ -119,7 +119,7 @@ struct expr *BuildRHSAssert(
          if (atLeastOne)
            {
             *error = true;
-            SyntaxErrorMessage(theEnv,whereParsed);
+            CL_SyntaxErrorMessage(theEnv,whereParsed);
            }
          return NULL;
         }
@@ -130,13 +130,13 @@ struct expr *BuildRHSAssert(
    /*================================================*/
 
    lastOne = assertList = NULL;
-   while ((nextOne = GetRHSPattern(theEnv,logicalName,theToken,
+   while ((nextOne = CL_GetRHSPattern(theEnv,logicalName,theToken,
                                    error,false,readFirstParen,
                                    true,RIGHT_PARENTHESIS_TOKEN)) != NULL)
      {
-      PPCRAndIndent(theEnv);
+      CL_PPCRAndIndent(theEnv);
 
-      stub = GenConstant(theEnv,FCALL,FindFunction(theEnv,"assert"));
+      stub = CL_GenConstant(theEnv,FCALL,CL_FindFunction(theEnv,"assert"));
       stub->argList = nextOne;
       nextOne = stub;
 
@@ -155,7 +155,7 @@ struct expr *BuildRHSAssert(
 
    if (*error)
      {
-      ReturnExpression(theEnv,assertList);
+      CL_ReturnExpression(theEnv,assertList);
       return NULL;
      }
 
@@ -165,9 +165,9 @@ struct expr *BuildRHSAssert(
 
    if (theToken->tknType == RIGHT_PARENTHESIS_TOKEN)
      {
-      PPBackup(theEnv);
-      PPBackup(theEnv);
-      SavePPBuffer(theEnv,")");
+      CL_PPBackup(theEnv);
+      CL_PPBackup(theEnv);
+      CL_SavePPBuffer(theEnv,")");
      }
 
    /*==============================================================*/
@@ -180,7 +180,7 @@ struct expr *BuildRHSAssert(
       if (atLeastOne)
         {
          *error = true;
-         SyntaxErrorMessage(theEnv,whereParsed);
+         CL_SyntaxErrorMessage(theEnv,whereParsed);
         }
 
       return NULL;
@@ -193,7 +193,7 @@ struct expr *BuildRHSAssert(
 
    if (assertList->nextArg != NULL)
      {
-      stub = GenConstant(theEnv,FCALL,FindFunction(theEnv,"progn"));
+      stub = CL_GenConstant(theEnv,FCALL,CL_FindFunction(theEnv,"progn"));
       stub->argList = assertList;
       assertList = stub;
      }
@@ -206,12 +206,12 @@ struct expr *BuildRHSAssert(
   }
 
 /***************************************************************/
-/* GetRHSPattern: Parses a single RHS fact pattern. The return */
+/* CL_GetRHSPattern: Parses a single RHS fact pattern. The return */
 /*   value is the fact just parsed (or NULL if the delimiter   */
 /*   for no more facts is the first token parsed). If an error */
 /*   occurs, then the error flag passed as an argument is set. */
 /***************************************************************/
-struct expr *GetRHSPattern(
+struct expr *CL_GetRHSPattern(
   Environment *theEnv,
   const char *readSource,
   struct token *tempToken,
@@ -235,7 +235,7 @@ struct expr *GetRHSPattern(
 
    *error = false;
 
-   if (readFirstParen) GetToken(theEnv,readSource,tempToken);
+   if (readFirstParen) CL_GetToken(theEnv,readSource,tempToken);
 
    if (checkFirstParen)
      {
@@ -243,7 +243,7 @@ struct expr *GetRHSPattern(
 
       if (tempToken->tknType != LEFT_PARENTHESIS_TOKEN)
         {
-         SyntaxErrorMessage(theEnv,"RHS patterns");
+         CL_SyntaxErrorMessage(theEnv,"RHS patterns");
          *error = true;
          return NULL;
         }
@@ -254,17 +254,17 @@ struct expr *GetRHSPattern(
    /* (but not = or : which have special significance).    */
    /*======================================================*/
 
-   GetToken(theEnv,readSource,tempToken);
+   CL_GetToken(theEnv,readSource,tempToken);
    if (tempToken->tknType != SYMBOL_TOKEN)
      {
-      SyntaxErrorMessage(theEnv,"first field of a RHS pattern");
+      CL_SyntaxErrorMessage(theEnv,"first field of a RHS pattern");
       *error = true;
       return NULL;
      }
    else if ((strcmp(tempToken->lexemeValue->contents,"=") == 0) ||
             (strcmp(tempToken->lexemeValue->contents,":") == 0))
      {
-      SyntaxErrorMessage(theEnv,"first field of a RHS pattern");
+      CL_SyntaxErrorMessage(theEnv,"first field of a RHS pattern");
       *error = true;
       return NULL;
      }
@@ -275,9 +275,9 @@ struct expr *GetRHSPattern(
 
    templateName = (CLIPSLexeme *) tempToken->value;
 
-   if (ReservedPatternSymbol(theEnv,templateName->contents,NULL))
+   if (CL_ReservedPatternSymbol(theEnv,templateName->contents,NULL))
      {
-      ReservedPatternSymbolErrorMsg(theEnv,templateName->contents,"a relation name");
+      CL_ReservedPatternSymbolErrorMsg(theEnv,templateName->contents,"a relation name");
       *error = true;
       return NULL;
      }
@@ -286,27 +286,27 @@ struct expr *GetRHSPattern(
    /* A module separator in the name is illegal in this context. */
    /*============================================================*/
 
-   if (FindModuleSeparator(templateName->contents))
+   if (CL_FindModuleSeparator(templateName->contents))
      {
-      IllegalModuleSpecifierMessage(theEnv);
+      CL_IllegalModuleSpecifierMessage(theEnv);
 
       *error = true;
       return NULL;
      }
 
    /*=============================================================*/
-   /* Determine if there is an associated deftemplate. If so, let */
+   /* DeteCL_rmine if there is an associated deftemplate. If so, let */
    /* the deftemplate parsing functions parse the RHS pattern and */
    /* then return the fact pattern that was parsed.               */
    /*=============================================================*/
 
    theDeftemplate = (Deftemplate *)
-                    FindImportedConstruct(theEnv,"deftemplate",NULL,templateName->contents,
+                    CL_FindImportedConstruct(theEnv,"deftemplate",NULL,templateName->contents,
                                           &count,true,NULL);
 
    if (count > 1)
      {
-      AmbiguousReferenceErrorMessage(theEnv,"deftemplate",templateName->contents);
+      CL_AmbiguousReferenceErrorMessage(theEnv,"deftemplate",templateName->contents);
       *error = true;
       return NULL;
      }
@@ -320,7 +320,7 @@ struct expr *GetRHSPattern(
 #if (! BLOAD_ONLY) && (! RUN_TIME)
      {
 #if BLOAD || BLOAD_AND_BSAVE
-      if ((Bloaded(theEnv)) && (! ConstructData(theEnv)->CheckSyntaxMode))
+      if ((CL_Bloaded(theEnv)) && (! ConstructData(theEnv)->CL_CheckSyntaxMode))
         {
          NoSuchTemplateError(theEnv,templateName->contents);
          *error = true;
@@ -328,15 +328,15 @@ struct expr *GetRHSPattern(
         }
 #endif
 #if DEFMODULE_CONSTRUCT
-      if (FindImportExportConflict(theEnv,"deftemplate",GetCurrentModule(theEnv),templateName->contents))
+      if (CL_FindImportExportConflict(theEnv,"deftemplate",CL_GetCurrentModule(theEnv),templateName->contents))
         {
-         ImportExportConflictMessage(theEnv,"implied deftemplate",templateName->contents,NULL,NULL);
+         CL_ImportExportConflictMessage(theEnv,"implied deftemplate",templateName->contents,NULL,NULL);
          *error = true;
          return NULL;
         }
 #endif
-      if (! ConstructData(theEnv)->CheckSyntaxMode)
-        { theDeftemplate = CreateImpliedDeftemplate(theEnv,templateName,true); }
+      if (! ConstructData(theEnv)->CL_CheckSyntaxMode)
+        { theDeftemplate = CL_CreateImpliedDeftemplate(theEnv,templateName,true); }
      }
 #else
     {
@@ -353,8 +353,8 @@ struct expr *GetRHSPattern(
 
    if ((theDeftemplate != NULL) && (theDeftemplate->implied == false))
      {
-      firstOne = GenConstant(theEnv,DEFTEMPLATE_PTR,theDeftemplate);
-      firstOne->nextArg = ParseAssertTemplate(theEnv,readSource,tempToken,
+      firstOne = CL_GenConstant(theEnv,DEFTEMPLATE_PTR,theDeftemplate);
+      firstOne->nextArg = ParseCL_AssertTemplate(theEnv,readSource,tempToken,
                                               error,endType,
                                               constantsOnly,theDeftemplate);
 
@@ -365,7 +365,7 @@ struct expr *GetRHSPattern(
 
       if (*error)
         {
-         ReturnExpression(theEnv,firstOne);
+         CL_ReturnExpression(theEnv,firstOne);
          firstOne = NULL;
         }
 
@@ -376,7 +376,7 @@ struct expr *GetRHSPattern(
    /* Parse the fact as an ordered RHS fact. */
    /*========================================*/
 
-   firstOne = GenConstant(theEnv,DEFTEMPLATE_PTR,theDeftemplate);
+   firstOne = CL_GenConstant(theEnv,DEFTEMPLATE_PTR,theDeftemplate);
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    if (! ConstructData(theEnv)->ParsingConstruct)
@@ -384,17 +384,17 @@ struct expr *GetRHSPattern(
 #endif
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   SavePPBuffer(theEnv," ");
+   CL_SavePPBuffer(theEnv," ");
 #endif
 
-   while ((nextOne = GetAssertArgument(theEnv,readSource,tempToken,
+   while ((nextOne = GetCL_AssertArgument(theEnv,readSource,tempToken,
                                         error,endType,constantsOnly,&printError)) != NULL)
      {
       if (argHead == NULL) argHead = nextOne;
       else lastOne->nextArg = nextOne;
       lastOne = nextOne;
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-      SavePPBuffer(theEnv," ");
+      CL_SavePPBuffer(theEnv," ");
 #endif
      }
 
@@ -404,9 +404,9 @@ struct expr *GetRHSPattern(
 
    if (*error)
      {
-      if (printError) SyntaxErrorMessage(theEnv,"RHS patterns");
-      ReturnExpression(theEnv,firstOne);
-      ReturnExpression(theEnv,argHead);
+      if (printError) CL_SyntaxErrorMessage(theEnv,"RHS patterns");
+      CL_ReturnExpression(theEnv,firstOne);
+      CL_ReturnExpression(theEnv,argHead);
       return NULL;
      }
 
@@ -416,9 +416,9 @@ struct expr *GetRHSPattern(
    /*=====================================*/
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   PPBackup(theEnv);
-   PPBackup(theEnv);
-   SavePPBuffer(theEnv,tempToken->printForm);
+   CL_PPBackup(theEnv);
+   CL_PPBackup(theEnv);
+   CL_SavePPBuffer(theEnv,tempToken->printFoCL_rm);
 #endif
 
    /*==========================================================*/
@@ -427,7 +427,7 @@ struct expr *GetRHSPattern(
    /* single multifield slot.                                  */
    /*==========================================================*/
 
-   firstOne->nextArg = GenConstant(theEnv,FACT_STORE_MULTIFIELD,AddBitMap(theEnv,(void *) nullBitMap,1));
+   firstOne->nextArg = CL_GenConstant(theEnv,FACT_STORE_MULTIFIELD,CL_AddBitMap(theEnv,(void *) nullBitMap,1));
    firstOne->nextArg->argList = argHead;
 
    /*==============================*/
@@ -438,14 +438,14 @@ struct expr *GetRHSPattern(
   }
 
 /********************************************************************/
-/* GetAssertArgument: Parses a single RHS slot value and returns an */
+/* GetCL_AssertArgument: Parses a single RHS slot value and returns an */
 /*   expression representing the value. When parsing a deftemplate  */
 /*   slot, the slot name has already been parsed when this function */
 /*   is called. NULL is returned if a slot or fact delimiter is     */
 /*   encountered. In the event of a parse error, the error flag     */
 /*   passed as an argument is set.                                  */
 /********************************************************************/
-struct expr *GetAssertArgument(
+struct expr *GetCL_AssertArgument(
   Environment *theEnv,
   const char *logicalName,
   struct token *theToken,
@@ -466,17 +466,17 @@ struct expr *GetAssertArgument(
    /*=================================================*/
 
    *printError = true;
-   GetToken(theEnv,logicalName,theToken);
+   CL_GetToken(theEnv,logicalName,theToken);
    if (theToken->tknType == endType) return NULL;
 
    /*=============================================================*/
    /* If an equal sign of left parenthesis was parsed, then parse */
-   /* a function which is to be evaluated to determine the slot's */
+   /* a function which is to be evaluated to deteCL_rmine the slot's */
    /* value. The equal sign corresponds to the return value       */
    /* constraint which can be used in LHS fact patterns. The      */
    /* equal sign is no longer necessary on either the LHS or RHS  */
    /* of a rule to indicate that a function is being evaluated to */
-   /* determine its value either for assignment or pattern        */
+   /* deteCL_rmine its value either for assignment or pattern        */
    /* matching.                                                   */
    /*=============================================================*/
 
@@ -491,8 +491,8 @@ struct expr *GetAssertArgument(
         }
 
 #if ! RUN_TIME
-      if (theToken->tknType == LEFT_PARENTHESIS_TOKEN) nextField = Function1Parse(theEnv,logicalName);
-      else nextField = Function0Parse(theEnv,logicalName);
+      if (theToken->tknType == LEFT_PARENTHESIS_TOKEN) nextField = CL_Function1Parse(theEnv,logicalName);
+      else nextField = CL_Function0Parse(theEnv,logicalName);
       if (nextField == NULL)
 #endif
         {
@@ -503,8 +503,8 @@ struct expr *GetAssertArgument(
       else
         {
          theToken->tknType= RIGHT_PARENTHESIS_TOKEN;
-         theToken->value = CreateString(theEnv,")");
-         theToken->printForm = ")";
+         theToken->value = CL_CreateString(theEnv,")");
+         theToken->printFoCL_rm = ")";
         }
 #endif
 
@@ -520,7 +520,7 @@ struct expr *GetAssertArgument(
            (theToken->tknType == INSTANCE_NAME_TOKEN) ||
 #endif
            (theToken->tknType == FLOAT_TOKEN) || (theToken->tknType == INTEGER_TOKEN))
-     { return(GenConstant(theEnv,TokenTypeToType(theToken->tknType),theToken->value)); }
+     { return(CL_GenConstant(theEnv,CL_TokenTypeToType(theToken->tknType),theToken->value)); }
 
    /*========================================*/
    /* Variables are also allowed as RHS slot */
@@ -540,7 +540,7 @@ struct expr *GetAssertArgument(
          return NULL;
         }
 
-      return(GenConstant(theEnv,TokenTypeToType(theToken->tknType),theToken->value));
+      return(CL_GenConstant(theEnv,CL_TokenTypeToType(theToken->tknType),theToken->value));
      }
 
    /*==========================================================*/
@@ -553,10 +553,10 @@ struct expr *GetAssertArgument(
   }
 
 /****************************************************/
-/* StringToFact: Converts the string representation */
+/* CL_StringToFact: Converts the string representation */
 /*   of a fact to a fact data structure.            */
 /****************************************************/
-Fact *StringToFact(
+Fact *CL_StringToFact(
   Environment *theEnv,
   const char *str)
   {
@@ -572,15 +572,15 @@ Fact *StringToFact(
    /* using the router as an input source.    */
    /*=========================================*/
 
-   SetEvaluationError(theEnv,false);
+   SetCL_EvaluationError(theEnv,false);
 
-   OpenStringSource(theEnv,"assert_str",str,0);
+   CL_OpenStringSource(theEnv,"assert_str",str,0);
 
-   assertArgs = GetRHSPattern(theEnv,"assert_str",&theToken,
+   assertArgs = CL_GetRHSPattern(theEnv,"assert_str",&theToken,
                               &error,false,true,
                               true,RIGHT_PARENTHESIS_TOKEN);
 
-   CloseStringSource(theEnv,"assert_str");
+   CL_CloseStringSource(theEnv,"assert_str");
 
    /*===========================================*/
    /* Check for errors or the use of variables. */
@@ -588,22 +588,22 @@ Fact *StringToFact(
 
    if ((assertArgs == NULL) && (! error))
      {
-      SyntaxErrorMessage(theEnv,"RHS patterns");
-      ReturnExpression(theEnv,assertArgs);
+      CL_SyntaxErrorMessage(theEnv,"RHS patterns");
+      CL_ReturnExpression(theEnv,assertArgs);
       return NULL;
      }
 
    if (error)
      {
-      ReturnExpression(theEnv,assertArgs);
+      CL_ReturnExpression(theEnv,assertArgs);
       return NULL;
      }
 
-   if (ExpressionContainsVariables(assertArgs,false))
+   if (CL_ExpressionContainsVariables(assertArgs,false))
      {
-      LocalVariableErrorMessage(theEnv,"the assert-string function");
-      SetEvaluationError(theEnv,true);
-      ReturnExpression(theEnv,assertArgs);
+      CL_LocalVariableErrorMessage(theEnv,"the assert-string function");
+      SetCL_EvaluationError(theEnv,true);
+      CL_ReturnExpression(theEnv,assertArgs);
       return NULL;
      }
 
@@ -615,25 +615,25 @@ Fact *StringToFact(
    for (tempPtr = assertArgs->nextArg; tempPtr != NULL; tempPtr = tempPtr->nextArg)
      { numberOfFields++; }
 
-   factPtr = CreateFactBySize(theEnv,numberOfFields);
+   factPtr = CL_CreateFactBySize(theEnv,numberOfFields);
    factPtr->whichDeftemplate = (Deftemplate *) assertArgs->value;
 
    /*=============================================*/
    /* Copy the fields to the fact data structure. */
    /*=============================================*/
 
-   IncrementClearReadyLocks(theEnv);
-   ExpressionInstall(theEnv,assertArgs); /* DR0836 */
+   IncrementCL_ClearReadyLocks(theEnv);
+   CL_ExpressionInstall(theEnv,assertArgs); /* DR0836 */
    whichField = 0;
    for (tempPtr = assertArgs->nextArg; tempPtr != NULL; tempPtr = tempPtr->nextArg)
      {
-      EvaluateExpression(theEnv,tempPtr,&theResult);
+      CL_EvaluateExpression(theEnv,tempPtr,&theResult);
       factPtr->theProposition.contents[whichField].value = theResult.value;
       whichField++;
      }
-   ExpressionDeinstall(theEnv,assertArgs); /* DR0836 */
-   ReturnExpression(theEnv,assertArgs);
-   DecrementClearReadyLocks(theEnv);
+   CL_ExpressionDeinstall(theEnv,assertArgs); /* DR0836 */
+   CL_ReturnExpression(theEnv,assertArgs);
+   DecrementCL_ClearReadyLocks(theEnv);
 
    /*==================*/
    /* Return the fact. */
@@ -654,10 +654,10 @@ static void NoSuchTemplateError(
   Environment *theEnv,
   const char *templateName)
   {
-   PrintErrorID(theEnv,"FACTRHS",1,false);
-   WriteString(theEnv,STDERR,"Implied deftemplate '");
-   WriteString(theEnv,STDERR,templateName);
-   WriteString(theEnv,STDERR,"' cannot be created with binary load in effect.\n");
+   CL_PrintErrorID(theEnv,"FACTRHS",1,false);
+   CL_WriteString(theEnv,STDERR,"Implied deftemplate '");
+   CL_WriteString(theEnv,STDERR,templateName);
+   CL_WriteString(theEnv,STDERR,"' cannot be created with binary load in effect.\n");
   }
 
 #endif /* RUN_TIME || BLOAD_ONLY || BLOAD || BLOAD_AND_BSAVE */

@@ -48,7 +48,7 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/*            Eval support for run time and bload only.      */
+/*            CL_Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -85,9 +85,9 @@
 
 /******************************************************/
 /* CheckFunctionReturnType: Checks a functions return */
-/*   type against a set of permissable return values. */
+/*   type against a set of peCL_rmissable return values. */
 /*   Returns true if the return type is included      */
-/*   among the permissible values, otherwise false.   */
+/*   among the peCL_rmissible values, otherwise false.   */
 /******************************************************/
 static bool CheckFunctionReturnType(
   unsigned functionReturnType,
@@ -131,7 +131,7 @@ static bool CheckFunctionReturnType(
   }
 
 /****************************************************/
-/* CheckTypeConstraint: Determines if a primitive   */
+/* CheckTypeConstraint: DeteCL_rmines if a primitive   */
 /*   data type satisfies the type constraint fields */
 /*   of aconstraint record.                         */
 /****************************************************/
@@ -178,11 +178,11 @@ static bool CheckTypeConstraint(
   }
 
 /********************************************************/
-/* CheckCardinalityConstraint: Determines if an integer */
+/* CL_CheckCardinalityConstraint: DeteCL_rmines if an integer */
 /*   falls within the range of allowed cardinalities    */
 /*   for a constraint record.                           */
 /********************************************************/
-bool CheckCardinalityConstraint(
+bool CL_CheckCardinalityConstraint(
   Environment *theEnv,
   size_t number,
   CONSTRAINT_RECORD *constraints)
@@ -195,7 +195,7 @@ bool CheckCardinalityConstraint(
    if (constraints == NULL) return true;
 
    /*==================================*/
-   /* Determine if the integer is less */
+   /* DeteCL_rmine if the integer is less */
    /* than the minimum cardinality.    */
    /*==================================*/
 
@@ -209,7 +209,7 @@ bool CheckCardinalityConstraint(
      }
 
    /*=====================================*/
-   /* Determine if the integer is greater */
+   /* DeteCL_rmine if the integer is greater */
    /* than the maximum cardinality.       */
    /*=====================================*/
 
@@ -230,7 +230,7 @@ bool CheckCardinalityConstraint(
   }
 
 /*****************************************************************/
-/* CheckRangeAgainstCardinalityConstraint: Determines if a range */
+/* CheckRangeAgainstCardinalityConstraint: DeteCL_rmines if a range */
 /*   of numbers could possibly fall within the range of allowed  */
 /*   cardinalities for a constraint record. Returns true if at   */
 /*   least one of the numbers in the range is within the allowed */
@@ -291,12 +291,12 @@ static bool CheckRangeAgainstCardinalityConstraint(
   }
 
 /**********************************************************************/
-/* CheckAllowedValuesConstraint: Determines if a primitive data type  */
+/* CL_CheckAllowedValuesConstraint: DeteCL_rmines if a primitive data type  */
 /*   satisfies the allowed-... constraint fields of a constraint      */
 /*   record. Returns true if the constraints are satisfied, otherwise */
 /*   false is returned.                                               */
 /**********************************************************************/
-bool CheckAllowedValuesConstraint(
+bool CL_CheckAllowedValuesConstraint(
   int type,
   void *vPtr,
   CONSTRAINT_RECORD *constraints)
@@ -311,7 +311,7 @@ bool CheckAllowedValuesConstraint(
    if (constraints == NULL) return true;
 
    /*=====================================================*/
-   /* Determine if there are any allowed-... restrictions */
+   /* DeteCL_rmine if there are any allowed-... restrictions */
    /* for the type of the value being checked.            */
    /*=====================================================*/
 
@@ -374,12 +374,12 @@ bool CheckAllowedValuesConstraint(
   }
 
 /**********************************************************************/
-/* CheckAllowedClassesConstraint: Determines if a primitive data type */
+/* CL_CheckAllowedClassesConstraint: DeteCL_rmines if a primitive data type */
 /*   satisfies the allowed-classes constraint fields of a constraint  */
 /*   record. Returns true if the constraints are satisfied, otherwise */
 /*   false is returned.                                               */
 /**********************************************************************/
-bool CheckAllowedClassesConstraint(
+bool CL_CheckAllowedClassesConstraint(
   Environment *theEnv,
   int type,
   void *vPtr,
@@ -414,14 +414,14 @@ bool CheckAllowedClassesConstraint(
      { return true; }
 
    /*=============================================*/
-   /* If an instance name is specified, determine */
+   /* If an instance name is specified, deteCL_rmine */
    /* whether the instance exists.                */
    /*=============================================*/
 
    if (type == INSTANCE_ADDRESS_TYPE)
      { ins = (Instance *) vPtr; }
    else
-     { ins = FindInstanceBySymbol(theEnv,(CLIPSLexeme *) vPtr); }
+     { ins = CL_FindInstanceBySymbol(theEnv,(CLIPSLexeme *) vPtr); }
 
    if (ins == NULL)
      { return false; }
@@ -431,15 +431,15 @@ bool CheckAllowedClassesConstraint(
    /* belongs to one of the allowed classes in the list.   */
    /*======================================================*/
 
-   insClass = InstanceClass(ins);
+   insClass = CL_InstanceClass(ins);
    for (tmpPtr = constraints->classList;
         tmpPtr != NULL;
         tmpPtr = tmpPtr->nextArg)
      {
-      cmpClass = LookupDefclassByMdlOrScope(theEnv,tmpPtr->lexemeValue->contents);
+      cmpClass = CL_LookupDefclassByMdlOrScope(theEnv,tmpPtr->lexemeValue->contents);
       if (cmpClass == NULL) continue;
       if (cmpClass == insClass) return true;
-      if (SubclassP(insClass,cmpClass)) return true;
+      if (CL_SubclassP(insClass,cmpClass)) return true;
      }
 
    /*=========================================================*/
@@ -462,7 +462,7 @@ bool CheckAllowedClassesConstraint(
   }
 
 /*************************************************************/
-/* CheckRangeConstraint: Determines if a primitive data type */
+/* CheckRangeConstraint: DeteCL_rmines if a primitive data type */
 /*   satisfies the range constraint of a constraint record.  */
 /*************************************************************/
 static bool CheckRangeConstraint(
@@ -499,12 +499,12 @@ static bool CheckRangeConstraint(
 
    while (minList != NULL)
      {
-      if (CompareNumbers(theEnv,type,vPtr,minList->type,minList->value) == LESS_THAN)
+      if (CL_CompareNumbers(theEnv,type,vPtr,minList->type,minList->value) == LESS_THAN)
         {
          minList = minList->nextArg;
          maxList = maxList->nextArg;
         }
-      else if (CompareNumbers(theEnv,type,vPtr,maxList->type,maxList->value) == GREATER_THAN)
+      else if (CL_CompareNumbers(theEnv,type,vPtr,maxList->type,maxList->value) == GREATER_THAN)
         {
          minList = minList->nextArg;
          maxList = maxList->nextArg;
@@ -522,10 +522,10 @@ static bool CheckRangeConstraint(
   }
 
 /************************************************/
-/* ConstraintViolationErrorMessage: Generalized */
+/* CL_ConstraintViolationErrorMessage: Generalized */
 /*   error message for constraint violations.   */
 /************************************************/
-void ConstraintViolationErrorMessage(
+void CL_ConstraintViolationErrorMessage(
   Environment *theEnv,
   const char *theWhat,
   const char *thePlace,
@@ -551,13 +551,13 @@ void ConstraintViolationErrorMessage(
 
       if (violationType == FUNCTION_RETURN_TYPE_VIOLATION)
         {
-         PrintErrorID(theEnv,"CSTRNCHK",1,true);
-         WriteString(theEnv,STDERR,"The function return value");
+         CL_PrintErrorID(theEnv,"CSTRNCHK",1,true);
+         CL_WriteString(theEnv,STDERR,"The function return value");
         }
       else if (theWhat != NULL)
         {
-         PrintErrorID(theEnv,"CSTRNCHK",1,true);
-         WriteString(theEnv,STDERR,theWhat);
+         CL_PrintErrorID(theEnv,"CSTRNCHK",1,true);
+         CL_WriteString(theEnv,STDERR,theWhat);
         }
 
       /*=======================================*/
@@ -567,10 +567,10 @@ void ConstraintViolationErrorMessage(
 
       if (thePlace != NULL)
         {
-         WriteString(theEnv,STDERR," found in ");
-         if (command) WriteString(theEnv,STDERR,"the '");
-         WriteString(theEnv,STDERR,thePlace);
-         if (command) WriteString(theEnv,STDERR,"' command");
+         CL_WriteString(theEnv,STDERR," found in ");
+         if (command) CL_WriteString(theEnv,STDERR,"the '");
+         CL_WriteString(theEnv,STDERR,thePlace);
+         if (command) CL_WriteString(theEnv,STDERR,"' command");
         }
 
       /*================================================*/
@@ -580,8 +580,8 @@ void ConstraintViolationErrorMessage(
 
       if (thePattern > 0)
         {
-         WriteString(theEnv,STDERR," found in CE #");
-         WriteInteger(theEnv,STDERR,thePattern);
+         CL_WriteString(theEnv,STDERR," found in CE #");
+         CL_WriteInteger(theEnv,STDERR,thePattern);
         }
      }
 
@@ -591,18 +591,18 @@ void ConstraintViolationErrorMessage(
 
    if ((violationType == TYPE_VIOLATION) ||
        (violationType == FUNCTION_RETURN_TYPE_VIOLATION))
-     { WriteString(theEnv,STDERR," does not match the allowed types"); }
+     { CL_WriteString(theEnv,STDERR," does not match the allowed types"); }
    else if (violationType == RANGE_VIOLATION)
      {
-      WriteString(theEnv,STDERR," does not fall in the allowed range ");
+      CL_WriteString(theEnv,STDERR," does not fall in the allowed range ");
       PrintRange(theEnv,STDERR,theConstraint);
      }
    else if (violationType == ALLOWED_VALUES_VIOLATION)
-     { WriteString(theEnv,STDERR," does not match the allowed values"); }
+     { CL_WriteString(theEnv,STDERR," does not match the allowed values"); }
    else if (violationType == CARDINALITY_VIOLATION)
-     { WriteString(theEnv,STDERR," does not satisfy the cardinality restrictions"); }
+     { CL_WriteString(theEnv,STDERR," does not satisfy the cardinality restrictions"); }
    else if (violationType == ALLOWED_CLASSES_VIOLATION)
-     { WriteString(theEnv,STDERR," does not match the allowed classes"); }
+     { CL_WriteString(theEnv,STDERR," does not match the allowed classes"); }
 
    /*==============================================*/
    /* Print either the slot name or field position */
@@ -611,17 +611,17 @@ void ConstraintViolationErrorMessage(
 
    if (theSlot != NULL)
      {
-      WriteString(theEnv,STDERR," for slot '");
-      WriteString(theEnv,STDERR,theSlot->contents);
-      WriteString(theEnv,STDERR,"'");
+      CL_WriteString(theEnv,STDERR," for slot '");
+      CL_WriteString(theEnv,STDERR,theSlot->contents);
+      CL_WriteString(theEnv,STDERR,"'");
      }
    else if (theField > 0)
      {
-      WriteString(theEnv,STDERR," for field #");
-      WriteInteger(theEnv,STDERR,theField);
+      CL_WriteString(theEnv,STDERR," for field #");
+      CL_WriteInteger(theEnv,STDERR,theField);
      }
 
-   WriteString(theEnv,STDERR,".\n");
+   CL_WriteString(theEnv,STDERR,".\n");
   }
 
 /********************************************************************/
@@ -634,20 +634,20 @@ static void PrintRange(
   CONSTRAINT_RECORD *theConstraint)
   {
    if (theConstraint->minValue->value == SymbolData(theEnv)->NegativeInfinity)
-     { WriteString(theEnv,logicalName,SymbolData(theEnv)->NegativeInfinity->contents); }
-   else PrintExpression(theEnv,logicalName,theConstraint->minValue);
-   WriteString(theEnv,logicalName," to ");
+     { CL_WriteString(theEnv,logicalName,SymbolData(theEnv)->NegativeInfinity->contents); }
+   else CL_PrintExpression(theEnv,logicalName,theConstraint->minValue);
+   CL_WriteString(theEnv,logicalName," to ");
    if (theConstraint->maxValue->value == SymbolData(theEnv)->PositiveInfinity)
-     { WriteString(theEnv,logicalName,SymbolData(theEnv)->PositiveInfinity->contents); }
-   else PrintExpression(theEnv,logicalName,theConstraint->maxValue);
+     { CL_WriteString(theEnv,logicalName,SymbolData(theEnv)->PositiveInfinity->contents); }
+   else CL_PrintExpression(theEnv,logicalName,theConstraint->maxValue);
   }
 
 /*************************************************************/
-/* ConstraintCheckDataObject: Given a value stored in a data */
-/*   object structure and a constraint record, determines if */
+/* CL_ConstraintCheckDataObject: Given a value stored in a data */
+/*   object structure and a constraint record, deteCL_rmines if */
 /*   the data object satisfies the constraint record.        */
 /*************************************************************/
-ConstraintViolationType ConstraintCheckDataObject(
+ConstraintViolationType CL_ConstraintCheckDataObject(
   Environment *theEnv,
   UDFValue *theData,
   CONSTRAINT_RECORD *theConstraints)
@@ -660,13 +660,13 @@ ConstraintViolationType ConstraintCheckDataObject(
 
    if (theData->header->type == MULTIFIELD_TYPE)
      {
-      if (CheckCardinalityConstraint(theEnv,theData->range,theConstraints) == false)
+      if (CL_CheckCardinalityConstraint(theEnv,theData->range,theConstraints) == false)
         { return CARDINALITY_VIOLATION; }
 
       theMultifield = theData->multifieldValue->contents;
       for (i = theData->begin; i < theData->begin + theData->range; i++)
         {
-         if ((rv = ConstraintCheckValue(theEnv,theMultifield[i].header->type,
+         if ((rv = CL_ConstraintCheckValue(theEnv,theMultifield[i].header->type,
                                         theMultifield[i].value,
                                         theConstraints)) != NO_VIOLATION)
            { return rv; }
@@ -675,17 +675,17 @@ ConstraintViolationType ConstraintCheckDataObject(
       return NO_VIOLATION;
      }
 
-   if (CheckCardinalityConstraint(theEnv,1,theConstraints) == false)
+   if (CL_CheckCardinalityConstraint(theEnv,1,theConstraints) == false)
     { return CARDINALITY_VIOLATION; }
 
-   return ConstraintCheckValue(theEnv,theData->header->type,theData->value,theConstraints);
+   return CL_ConstraintCheckValue(theEnv,theData->header->type,theData->value,theConstraints);
   }
 
 /****************************************************************/
-/* ConstraintCheckValue: Given a value and a constraint record, */
-/*   determines if the value satisfies the constraint record.   */
+/* CL_ConstraintCheckValue: Given a value and a constraint record, */
+/*   deteCL_rmines if the value satisfies the constraint record.   */
 /****************************************************************/
-ConstraintViolationType ConstraintCheckValue(
+ConstraintViolationType CL_ConstraintCheckValue(
   Environment *theEnv,
   int theType,
   void *theValue,
@@ -694,10 +694,10 @@ ConstraintViolationType ConstraintCheckValue(
    if (CheckTypeConstraint(theType,theConstraints) == false)
      { return TYPE_VIOLATION; }
 
-   else if (CheckAllowedValuesConstraint(theType,theValue,theConstraints) == false)
+   else if (CL_CheckAllowedValuesConstraint(theType,theValue,theConstraints) == false)
      { return ALLOWED_VALUES_VIOLATION; }
 
-   else if (CheckAllowedClassesConstraint(theEnv,theType,theValue,theConstraints) == false)
+   else if (CL_CheckAllowedClassesConstraint(theEnv,theType,theValue,theConstraints) == false)
      { return ALLOWED_CLASSES_VIOLATION; }
 
    else if (CheckRangeConstraint(theEnv,theType,theValue,theConstraints) == false)
@@ -713,10 +713,10 @@ ConstraintViolationType ConstraintCheckValue(
   }
 
 /********************************************************************/
-/* ConstraintCheckExpressionChain: Checks an expression and nextArg */
+/* CL_ConstraintCheckExpressionChain: Checks an expression and nextArg */
 /* links for constraint conflicts (argList is not followed).        */
 /********************************************************************/
-ConstraintViolationType ConstraintCheckExpressionChain(
+ConstraintViolationType CL_ConstraintCheckExpressionChain(
   Environment *theEnv,
   struct expr *theExpression,
   CONSTRAINT_RECORD *theConstraints)
@@ -726,14 +726,14 @@ ConstraintViolationType ConstraintCheckExpressionChain(
    ConstraintViolationType vCode;
 
    /*===========================================================*/
-   /* Determine the minimum and maximum number of value which   */
+   /* DeteCL_rmine the minimum and maximum number of value which   */
    /* can be derived from the expression chain (max of -1 means */
    /* positive infinity).                                       */
    /*===========================================================*/
 
    for (theExp = theExpression ; theExp != NULL ; theExp = theExp->nextArg)
      {
-      if (ConstantType(theExp->type)) min++;
+      if (CL_ConstantType(theExp->type)) min++;
       else if (theExp->type == FCALL)
         {
          unsigned restriction = ExpressionUnknownFunctionType(theExp);
@@ -759,7 +759,7 @@ ConstraintViolationType ConstraintCheckExpressionChain(
 
    for (theExp = theExpression ; theExp != NULL ; theExp = theExp->nextArg)
      {
-      vCode = ConstraintCheckValue(theEnv,theExp->type,theExp->value,theConstraints);
+      vCode = CL_ConstraintCheckValue(theEnv,theExp->type,theExp->value,theConstraints);
       if (vCode != NO_VIOLATION)
         return vCode;
      }
@@ -770,11 +770,11 @@ ConstraintViolationType ConstraintCheckExpressionChain(
 #if (! RUN_TIME) && (! BLOAD_ONLY)
 
 /***************************************************/
-/* ConstraintCheckExpression: Checks an expression */
+/* CL_ConstraintCheckExpression: Checks an expression */
 /*   for constraint conflicts. Returns zero if     */
 /*   conflicts are found, otherwise non-zero.      */
 /***************************************************/
-ConstraintViolationType ConstraintCheckExpression(
+ConstraintViolationType CL_ConstraintCheckExpression(
   Environment *theEnv,
   struct expr *theExpression,
   CONSTRAINT_RECORD *theConstraints)
@@ -785,11 +785,11 @@ ConstraintViolationType ConstraintCheckExpression(
 
    while (theExpression != NULL)
      {
-      rv = ConstraintCheckValue(theEnv,theExpression->type,
+      rv = CL_ConstraintCheckValue(theEnv,theExpression->type,
                                 theExpression->value,
                                 theConstraints);
       if (rv != NO_VIOLATION) return rv;
-      rv = ConstraintCheckExpression(theEnv,theExpression->argList,theConstraints);
+      rv = CL_ConstraintCheckExpression(theEnv,theExpression->argList,theConstraints);
       if (rv != NO_VIOLATION) return rv;
       theExpression = theExpression->nextArg;
      }
@@ -800,10 +800,10 @@ ConstraintViolationType ConstraintCheckExpression(
 #endif /* (! RUN_TIME) && (! BLOAD_ONLY) */
 
 /*****************************************************/
-/* UnmatchableConstraint: Determines if a constraint */
+/* CL_UnmatchableConstraint: DeteCL_rmines if a constraint */
 /*  record can still be satisfied by some value.     */
 /*****************************************************/
-bool UnmatchableConstraint(
+bool CL_UnmatchableConstraint(
   CONSTRAINT_RECORD *theConstraint)
   {
    if (theConstraint == NULL) return false;

@@ -14,22 +14,22 @@
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
-/*      6.24: Added code to CreateEnvironment to free        */
+/*      6.24: Added code to CL_CreateEnvironment to free        */
 /*            already allocated data if one of the malloc    */
 /*            calls fail.                                    */
 /*                                                           */
-/*            Modified AllocateEnvironmentData to print a    */
+/*            Modified CL_AllocateEnvironmentData to print a    */
 /*            message if it was unable to allocate memory.   */
 /*                                                           */
 /*            Renamed BOOLEAN macro type to intBool.         */
 /*                                                           */
-/*            Added CreateRuntimeEnvironment function.       */
+/*            Added CL_CreateCL_RuntimeEnvironment function.       */
 /*                                                           */
-/*            Added support for context information when an  */
+/*            Added support for context infoCL_rmation when an  */
 /*            environment is created (i.e a pointer from the */
 /*            CLIPS environment to its parent environment).  */
 /*                                                           */
-/*      6.30: Added support for passing context information  */
+/*      6.30: Added support for passing context infoCL_rmation  */
 /*            to user defined functions and callback         */
 /*            functions.                                     */
 /*                                                           */
@@ -53,7 +53,7 @@
 /*                                                           */
 /*            ALLOW_ENVIRONMENT_GLOBALS no longer supported. */
 /*                                                           */
-/*            Eval support for run time and bload only.      */
+/*            CL_Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -103,10 +103,10 @@ struct environmentData
 #define GetEnvironmentData(theEnv,position) (((struct environmentData *) theEnv)->theData[position])
 #define SetEnvironmentData(theEnv,position,value) (((struct environmentData *) theEnv)->theData[position] = value)
 
-   bool                           AllocateEnvironmentData(Environment *,unsigned,size_t,EnvironmentCleanupFunction *);
-   bool                           AddEnvironmentCleanupFunction(Environment *,const char *,EnvironmentCleanupFunction *,int);
-   void                          *GetEnvironmentContext(Environment *);
-   void                          *SetEnvironmentContext(Environment *,void *);
+   bool                           CL_AllocateEnvironmentData(Environment *,unsigned,size_t,EnvironmentCleanupFunction *);
+   bool                           CL_AddEnvironmentCleanupFunction(Environment *,const char *,EnvironmentCleanupFunction *,int);
+   void                          *CL_GetEnvironmentContext(Environment *);
+   void                          *CL_SetEnvironmentContext(Environment *,void *);
 
 #endif /* _H_envrnmnt */
 

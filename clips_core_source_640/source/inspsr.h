@@ -27,7 +27,7 @@
 /*      6.30: Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
-/*            Fixed ParseSlotOverrides memory release issue. */
+/*            Fixed CL_ParseSlotOverrides memory release issue. */
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
@@ -38,7 +38,7 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
-/*            Eval support for run time and bload only.      */
+/*            CL_Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -50,9 +50,9 @@
 
 #include "expressn.h"
 
-   Expression                    *ParseInitializeInstance(Environment *,Expression *,const char *);
-   Expression                    *ParseSlotOverrides(Environment *,const char *,bool *);
-   Expression                    *ParseSimpleInstance(Environment *,Expression *,const char *);
+   Expression                    *CL_ParseInitializeInstance(Environment *,Expression *,const char *);
+   Expression                    *CL_ParseSlotOverrides(Environment *,const char *,bool *);
+   Expression                    *CL_ParseSimpleInstance(Environment *,Expression *,const char *);
 
 #endif /* _H_inspsr */
 

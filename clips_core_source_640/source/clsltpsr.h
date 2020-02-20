@@ -59,8 +59,8 @@ typedef struct tempSlotLink
    struct tempSlotLink *nxt;
   } TEMP_SLOT_LINK;
 
-   TEMP_SLOT_LINK                *ParseSlot(Environment *,const char *,const char *,TEMP_SLOT_LINK *,PACKED_CLASS_LINKS *,bool);
-   void                           DeleteSlots(Environment *,TEMP_SLOT_LINK *);
+   TEMP_SLOT_LINK                *CL_ParseSlot(Environment *,const char *,const char *,TEMP_SLOT_LINK *,PACKED_CLASS_LINKS *,bool);
+   void                           CL_DeleteSlots(Environment *,TEMP_SLOT_LINK *);
 
 #endif
 

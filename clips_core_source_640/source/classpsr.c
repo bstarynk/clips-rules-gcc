@@ -23,12 +23,12 @@
 /*                                                            */
 /*            Renamed BOOLEAN macro type to intBool.          */
 /*                                                            */
-/*      6.30: Added support to allow CreateClassScopeMap to   */
+/*      6.30: Added support to allow CL_CreateClassScopeMap to   */
 /*            be used by other functions.                     */
 /*                                                            */
 /*            Changed integer type/precision.                 */
 /*                                                            */
-/*            GetConstructNameAndComment API change.          */
+/*            CL_GetConstructNameAndComment API change.          */
 /*                                                            */
 /*            Added const qualifiers to remove C++            */
 /*            deprecation warnings.                           */
@@ -46,7 +46,7 @@
 /*            Removed use of void pointers for specific       */
 /*            data structures.                                */
 /*                                                            */
-/*            Eval support for run time and bload only.       */
+/*            CL_Eval support for run time and bload only.       */
 /*                                                            */
 /*            Removed use of single-slot in class             */
 /*            definitions.                                    */
@@ -108,9 +108,9 @@
    static bool                    ParseSimpleQualifier(Environment *,const char *,const char *,const char *,const char *,bool *,bool *);
    static bool                    ReadUntilClosingParen(Environment *,const char *,struct token *);
    static void                    AddClass(Environment *,Defclass *);
-   static void                    BuildSubclassLinks(Environment *,Defclass *);
-   static void                    FormInstanceTemplate(Environment *,Defclass *);
-   static void                    FormSlotNameMap(Environment *,Defclass *);
+   static void                    CL_BuildSubclassLinks(Environment *,Defclass *);
+   static void                    FoCL_rmInstanceTemplate(Environment *,Defclass *);
+   static void                    FoCL_rmSlotNameMap(Environment *,Defclass *);
    static TEMP_SLOT_LINK         *MergeSlots(Environment *,TEMP_SLOT_LINK *,Defclass *,unsigned short *,unsigned short);
    static void                    PackSlots(Environment *,Defclass *,TEMP_SLOT_LINK *);
    static void                    CreatePublicSlotMessageHandlers(Environment *,Defclass *);
@@ -123,7 +123,7 @@
    ***************************************** */
 
 /***************************************************************************************
-  NAME         : ParseDefclass
+  NAME         : CL_ParseDefclass
   DESCRIPTION  : (defclass ...) is a construct (as
                  opposed to a function), thus no variables
                  may be used.  This means classes may only
@@ -168,7 +168,7 @@
 
                <default-expression> ::= ?NONE | ?VARIABLE | <expression>*
   ***************************************************************************************/
-bool ParseDefclass(
+bool CL_ParseDefclass(
   Environment *theEnv,
   const char *readSource)
   {
@@ -183,21 +183,21 @@ bool ParseDefclass(
    bool reactive = true;
 #endif
 
-   SetPPBufferStatus(theEnv,true);
-   FlushPPBuffer(theEnv);
-   SetIndentDepth(theEnv,3);
-   SavePPBuffer(theEnv,"(defclass ");
+   CL_SetPPBufferStatus(theEnv,true);
+   CL_FlushPPBuffer(theEnv);
+   CL_SetIndentDepth(theEnv,3);
+   CL_SavePPBuffer(theEnv,"(defclass ");
 
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE
-   if ((Bloaded(theEnv)) && (! ConstructData(theEnv)->CheckSyntaxMode))
+   if ((CL_Bloaded(theEnv)) && (! ConstructData(theEnv)->CL_CheckSyntaxMode))
      {
-      CannotLoadWithBloadMessage(theEnv,"defclass");
+      CannotCL_LoadWithCL_BloadMessage(theEnv,"defclass");
       return true;
      }
 #endif
 
-   cname = GetConstructNameAndComment(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken,"defclass",
-                                      (FindConstructFunction *) FindDefclassInModule,NULL,"#",true,
+   cname = CL_GetConstructNameAndComment(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken,"defclass",
+                                      (CL_FindConstructFunction *) CL_FindDefclassInModule,NULL,"#",true,
                                       true,true,false);
    if (cname == NULL)
      return true;
@@ -205,32 +205,32 @@ bool ParseDefclass(
    if (ValidClassName(theEnv,cname->contents,&cls) == false)
      return true;
 
-   sclasses = ParseSuperclasses(theEnv,readSource,cname);
+   sclasses = CL_ParseSuperclasses(theEnv,readSource,cname);
    if (sclasses == NULL)
      return true;
-   preclist = FindPrecedenceList(theEnv,cls,sclasses);
+   preclist = CL_FindPrecedenceList(theEnv,cls,sclasses);
    if (preclist == NULL)
      {
-      DeletePackedClassLinks(theEnv,sclasses,true);
+      CL_DeletePackedClassLinks(theEnv,sclasses,true);
       return true;
      }
    parseError = false;
-   GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
+   CL_GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
    while (DefclassData(theEnv)->ObjectParseToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       if (DefclassData(theEnv)->ObjectParseToken.tknType != LEFT_PARENTHESIS_TOKEN)
         {
-         SyntaxErrorMessage(theEnv,"defclass");
+         CL_SyntaxErrorMessage(theEnv,"defclass");
          parseError = true;
          break;
         }
-      PPBackup(theEnv);
-      PPCRAndIndent(theEnv);
-      SavePPBuffer(theEnv,"(");
-      GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
+      CL_PPBackup(theEnv);
+      CL_PPCRAndIndent(theEnv);
+      CL_SavePPBuffer(theEnv,"(");
+      CL_GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
       if (DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN)
         {
-         SyntaxErrorMessage(theEnv,"defclass");
+         CL_SyntaxErrorMessage(theEnv,"defclass");
          parseError = true;
          break;
         }
@@ -256,7 +256,7 @@ bool ParseDefclass(
 #endif
       else if (strcmp(DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents,SLOT_RLN) == 0)
         {
-         slots = ParseSlot(theEnv,readSource,cname->contents,slots,preclist,false);
+         slots = CL_ParseSlot(theEnv,readSource,cname->contents,slots,preclist,false);
          if (slots == NULL)
            {
             parseError = true;
@@ -265,7 +265,7 @@ bool ParseDefclass(
         }
       else if (strcmp(DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents,MLT_SLOT_RLN) == 0)
         {
-         slots = ParseSlot(theEnv,readSource,cname->contents,slots,preclist,true);
+         slots = CL_ParseSlot(theEnv,readSource,cname->contents,slots,preclist,true);
          if (slots == NULL)
            {
             parseError = true;
@@ -282,22 +282,22 @@ bool ParseDefclass(
         }
       else
         {
-         SyntaxErrorMessage(theEnv,"defclass");
+         CL_SyntaxErrorMessage(theEnv,"defclass");
          parseError = true;
          break;
         }
-      GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
+      CL_GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
      }
 
    if ((DefclassData(theEnv)->ObjectParseToken.tknType != RIGHT_PARENTHESIS_TOKEN) ||
        (parseError == true))
      {
-      DeletePackedClassLinks(theEnv,sclasses,true);
-      DeletePackedClassLinks(theEnv,preclist,true);
-      DeleteSlots(theEnv,slots);
+      CL_DeletePackedClassLinks(theEnv,sclasses,true);
+      CL_DeletePackedClassLinks(theEnv,preclist,true);
+      CL_DeleteSlots(theEnv,slots);
       return true;
      }
-   SavePPBuffer(theEnv,"\n");
+   CL_SavePPBuffer(theEnv,"\n");
 
    /* =========================================================================
       The abstract/reactive qualities of a class are inherited if not specified
@@ -328,11 +328,11 @@ bool ParseDefclass(
       ================================================================ */
    if (abstract && reactive)
      {
-      PrintErrorID(theEnv,"CLASSPSR",1,false);
-      WriteString(theEnv,STDERR,"An abstract class cannot be reactive.\n");
-      DeletePackedClassLinks(theEnv,sclasses,true);
-      DeletePackedClassLinks(theEnv,preclist,true);
-      DeleteSlots(theEnv,slots);
+      CL_PrintErrorID(theEnv,"CLASSPSR",1,false);
+      CL_WriteString(theEnv,STDERR,"An abstract class cannot be reactive.\n");
+      CL_DeletePackedClassLinks(theEnv,sclasses,true);
+      CL_DeletePackedClassLinks(theEnv,preclist,true);
+      CL_DeleteSlots(theEnv,slots);
       return true;
      }
 
@@ -343,15 +343,15 @@ bool ParseDefclass(
       successfully parsed defclass to the KB.
       ======================================================= */
 
-   if (ConstructData(theEnv)->CheckSyntaxMode)
+   if (ConstructData(theEnv)->CL_CheckSyntaxMode)
      {
-      DeletePackedClassLinks(theEnv,sclasses,true);
-      DeletePackedClassLinks(theEnv,preclist,true);
-      DeleteSlots(theEnv,slots);
+      CL_DeletePackedClassLinks(theEnv,sclasses,true);
+      CL_DeletePackedClassLinks(theEnv,preclist,true);
+      CL_DeleteSlots(theEnv,slots);
       return false;
      }
 
-   cls = NewClass(theEnv,cname);
+   cls = CL_NewClass(theEnv,cname);
    cls->abstract = abstract;
 #if DEFRULE_CONSTRUCT
    cls->reactive = reactive;
@@ -389,13 +389,13 @@ bool ParseDefclass(
 
 /***********************************************************
   NAME         : ValidClassName
-  DESCRIPTION  : Determines if a new class of the given
+  DESCRIPTION  : DeteCL_rmines if a new class of the given
                  name can be defined in the current module
   INPUTS       : 1) The new class name
                  2) Buffer to hold class address
   RETURNS      : True if OK, false otherwise
   SIDE EFFECTS : Error message printed if not OK
-  NOTES        : GetConstructNameAndComment() (called before
+  NOTES        : CL_GetConstructNameAndComment() (called before
                  this function) ensures that the defclass
                  name does not conflict with one from
                  another module
@@ -405,7 +405,7 @@ static bool ValidClassName(
   const char *theClassName,
   Defclass **theDefclass)
   {
-   *theDefclass = FindDefclassInModule(theEnv,theClassName);
+   *theDefclass = CL_FindDefclassInModule(theEnv,theClassName);
    if (*theDefclass != NULL)
      {
       /* ===================================
@@ -414,8 +414,8 @@ static bool ValidClassName(
          =================================== */
       if ((*theDefclass)->system)
         {
-         PrintErrorID(theEnv,"CLASSPSR",2,false);
-         WriteString(theEnv,STDERR,"Cannot redefine a predefined system class.\n");
+         CL_PrintErrorID(theEnv,"CLASSPSR",2,false);
+         CL_WriteString(theEnv,STDERR,"Cannot redefine a predefined system class.\n");
          return false;
         }
 
@@ -424,14 +424,14 @@ static bool ValidClassName(
          redefined if it is not in use, e.g., instances,
          generic function method restrictions, etc.
          =============================================== */
-      if ((DefclassIsDeletable(*theDefclass) == false) &&
-          (! ConstructData(theEnv)->CheckSyntaxMode))
+      if ((CL_DefclassIsDeletable(*theDefclass) == false) &&
+          (! ConstructData(theEnv)->CL_CheckSyntaxMode))
         {
-         PrintErrorID(theEnv,"CLASSPSR",3,false);
-         WriteString(theEnv,STDERR,"Class '");
-         WriteString(theEnv,STDERR,DefclassName(*theDefclass));
-         WriteString(theEnv,STDERR,"' cannot be redefined while ");
-         WriteString(theEnv,STDERR,"outstanding references to it still exist.\n");
+         CL_PrintErrorID(theEnv,"CLASSPSR",3,false);
+         CL_WriteString(theEnv,STDERR,"Class '");
+         CL_WriteString(theEnv,STDERR,CL_DefclassName(*theDefclass));
+         CL_WriteString(theEnv,STDERR,"' cannot be redefined while ");
+         CL_WriteString(theEnv,STDERR,"outstanding references to it still exist.\n");
          return false;
         }
      }
@@ -467,14 +467,14 @@ static bool ParseSimpleQualifier(
   {
    if (*alreadyTestedFlag)
      {
-      PrintErrorID(theEnv,"CLASSPSR",4,false);
-      WriteString(theEnv,STDERR,"The '");
-      WriteString(theEnv,STDERR,classQualifier);
-      WriteString(theEnv,STDERR,"' class attribute is already specified.\n");
+      CL_PrintErrorID(theEnv,"CLASSPSR",4,false);
+      CL_WriteString(theEnv,STDERR,"The '");
+      CL_WriteString(theEnv,STDERR,classQualifier);
+      CL_WriteString(theEnv,STDERR,"' class attribute is already specified.\n");
       return false;
      }
-   SavePPBuffer(theEnv," ");
-   GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
+   CL_SavePPBuffer(theEnv," ");
+   CL_GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
    if (DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN)
      goto ParseSimpleQualifierError;
    if (strcmp(DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents,setRelation) == 0)
@@ -483,14 +483,14 @@ static bool ParseSimpleQualifier(
      *binaryFlag = false;
    else
      goto ParseSimpleQualifierError;
-   GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
+   CL_GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
    if (DefclassData(theEnv)->ObjectParseToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      goto ParseSimpleQualifierError;
    *alreadyTestedFlag = true;
    return true;
 
 ParseSimpleQualifierError:
-   SyntaxErrorMessage(theEnv,"defclass");
+   CL_SyntaxErrorMessage(theEnv,"defclass");
    return false;
   }
 
@@ -517,11 +517,11 @@ static bool ReadUntilClosingParen(
    do
      {
       if (lparen_read == false)
-        SavePPBuffer(theEnv," ");
-      GetToken(theEnv,readSource,inputToken);
+        CL_SavePPBuffer(theEnv," ");
+      CL_GetToken(theEnv,readSource,inputToken);
       if (inputToken->tknType == STOP_TOKEN)
         {
-         SyntaxErrorMessage(theEnv,"message-handler declaration");
+         CL_SyntaxErrorMessage(theEnv,"message-handler declaration");
          return false;
         }
       else if (inputToken->tknType == LEFT_PARENTHESIS_TOKEN)
@@ -534,9 +534,9 @@ static bool ReadUntilClosingParen(
          cnt--;
          if (lparen_read == false)
            {
-            PPBackup(theEnv);
-            PPBackup(theEnv);
-            SavePPBuffer(theEnv,")");
+            CL_PPBackup(theEnv);
+            CL_PPBackup(theEnv);
+            CL_SavePPBuffer(theEnv,")");
            }
          lparen_read = false;
         }
@@ -550,7 +550,7 @@ static bool ReadUntilClosingParen(
 
 /*****************************************************************************
   NAME         : AddClass
-  DESCRIPTION  : Determines the precedence list of the new class.
+  DESCRIPTION  : DeteCL_rmines the precedence list of the new class.
                  If it is valid, the routine checks to see if the class
                  already exists.  If it does not, all the subclass
                  links are made from the class's direct superclasses,
@@ -571,54 +571,54 @@ static void AddClass(
   {
    Defclass *ctmp;
 #if DEBUGGING_FUNCTIONS
-   bool oldTraceInstances = false,
+   bool oldTraceCL_Instances = false,
        oldTraceSlots = false;
 #endif
 
    /* ===============================================
       If class does not already exist, insert and
-      form progeny links with all direct superclasses
+      foCL_rm progeny links with all direct superclasses
       =============================================== */
-   cls->hashTableIndex = HashClass(GetDefclassNamePointer(cls));
-   ctmp = FindDefclassInModule(theEnv,DefclassName(cls));
+   cls->hashTableIndex = CL_HashClass(GetCL_DefclassNamePointer(cls));
+   ctmp = CL_FindDefclassInModule(theEnv,CL_DefclassName(cls));
 
    if (ctmp != NULL)
      {
 #if DEBUGGING_FUNCTIONS
-      oldTraceInstances = ctmp->traceInstances;
+      oldTraceCL_Instances = ctmp->traceCL_Instances;
       oldTraceSlots = ctmp->traceSlots;
 #endif
-      DeleteClassUAG(theEnv,ctmp);
+      CL_DeleteClassUAG(theEnv,ctmp);
      }
-   PutClassInTable(theEnv,cls);
+   CL_PutClassInTable(theEnv,cls);
 
-   BuildSubclassLinks(theEnv,cls);
-   InstallClass(theEnv,cls,true);
-   AddConstructToModule(&cls->header);
+   CL_BuildSubclassLinks(theEnv,cls);
+   CL_InstallClass(theEnv,cls,true);
+   CL_AddConstructToModule(&cls->header);
 
-   FormInstanceTemplate(theEnv,cls);
-   FormSlotNameMap(theEnv,cls);
+   FoCL_rmInstanceTemplate(theEnv,cls);
+   FoCL_rmSlotNameMap(theEnv,cls);
 
-   AssignClassID(theEnv,cls);
+   CL_AssignClassID(theEnv,cls);
 
 #if DEBUGGING_FUNCTIONS
    if (cls->abstract)
      {
-      cls->traceInstances = false;
+      cls->traceCL_Instances = false;
       cls->traceSlots = false;
      }
    else
      {
-      if (oldTraceInstances)
-        cls->traceInstances = true;
+      if (oldTraceCL_Instances)
+        cls->traceCL_Instances = true;
       if (oldTraceSlots)
         cls->traceSlots = true;
      }
 #endif
 
 #if DEBUGGING_FUNCTIONS
-   if (GetConserveMemory(theEnv) == false)
-     SetDefclassPPForm(theEnv,cls,CopyPPBuffer(theEnv));
+   if (CL_GetConserveMemory(theEnv) == false)
+     SetCL_DefclassPPFoCL_rm(theEnv,cls,CL_CopyPPBuffer(theEnv));
 #endif
 
 #if DEFMODULE_CONSTRUCT
@@ -627,7 +627,7 @@ static void AddClass(
       Create a bitmap indicating whether this
       class is in scope or not for every module
       ========================================= */
-   cls->scopeMap = (CLIPSBitMap *) CreateClassScopeMap(theEnv,cls);
+   cls->scopeMap = (CLIPSBitMap *) CL_CreateClassScopeMap(theEnv,cls);
 
 #endif
 
@@ -638,7 +638,7 @@ static void AddClass(
   }
 
 /*******************************************************
-  NAME         : BuildSubclassLinks
+  NAME         : CL_BuildSubclassLinks
   DESCRIPTION  : Follows the list of superclasses
                  for a class and puts the class in
                  each of the superclasses' subclass
@@ -647,30 +647,30 @@ static void AddClass(
   RETURNS      : Nothing useful
   SIDE EFFECTS : The subclass lists for every superclass
                  are modified.
-  NOTES        : Assumes the superclass list is formed.
+  NOTES        : Assumes the superclass list is foCL_rmed.
  *******************************************************/
-static void BuildSubclassLinks(
+static void CL_BuildSubclassLinks(
   Environment *theEnv,
   Defclass *cls)
   {
    unsigned long i;
 
    for (i = 0 ; i < cls->directSuperclasses.classCount ; i++)
-     AddClassLink(theEnv,&cls->directSuperclasses.classArray[i]->directSubclasses,cls,true,0);
+     CL_AddClassLink(theEnv,&cls->directSuperclasses.classArray[i]->directSubclasses,cls,true,0);
   }
 
 /**********************************************************
-  NAME         : FormInstanceTemplate
-  DESCRIPTION  : Forms a contiguous array of instance
+  NAME         : FoCL_rmInstanceTemplate
+  DESCRIPTION  : FoCL_rms a contiguous array of instance
                   slots for use in creating instances later
-                 Also used in determining instance slot
+                 Also used in deteCL_rmining instance slot
                   indices a priori during handler defns
   INPUTS       : The class
   RETURNS      : Nothing useful
-  SIDE EFFECTS : Contiguous array of instance slots formed
+  SIDE EFFECTS : Contiguous array of instance slots foCL_rmed
   NOTES        : None
  **********************************************************/
-static void FormInstanceTemplate(
+static void FoCL_rmInstanceTemplate(
   Environment *theEnv,
   Defclass *cls)
   {
@@ -697,7 +697,7 @@ static void FormInstanceTemplate(
    cls->instanceSlotCount = scnt;
    cls->localInstanceSlotCount = 0;
    if (scnt > 0)
-     cls->instanceTemplate = (SlotDescriptor **) gm2(theEnv,(scnt * sizeof(SlotDescriptor *)));
+     cls->instanceTemplate = (SlotDescriptor **) CL_gm2(theEnv,(scnt * sizeof(SlotDescriptor *)));
    for (i = 0 ; i < scnt ; i++)
      {
       stmp = islots;
@@ -710,8 +710,8 @@ static void FormInstanceTemplate(
   }
 
 /**********************************************************
-  NAME         : FormSlotNameMap
-  DESCRIPTION  : Forms a mapping of the slot name ids into
+  NAME         : FoCL_rmSlotNameMap
+  DESCRIPTION  : FoCL_rms a mapping of the slot name ids into
                  the instance template.  Given the slot
                  name id, this map provides a much faster
                  lookup of a slot.  The id is stored
@@ -720,7 +720,7 @@ static void FormInstanceTemplate(
                  as well.
   INPUTS       : The class
   RETURNS      : Nothing useful
-  SIDE EFFECTS : Contiguous array of integers formed
+  SIDE EFFECTS : Contiguous array of integers foCL_rmed
                  The position in the array corresponding
                  to a slot name id holds an the index
                  into the instance template array holding
@@ -729,9 +729,9 @@ static void FormInstanceTemplate(
                  also stored to make deletion of the slots
                  easier
   NOTES        : Assumes the instance template has already
-                 been formed
+                 been foCL_rmed
  **********************************************************/
-static void FormSlotNameMap(
+static void FoCL_rmSlotNameMap(
   Environment *theEnv,
   Defclass *cls)
   {
@@ -744,7 +744,7 @@ static void FormSlotNameMap(
    for (i = 0 ; i < cls->instanceSlotCount ; i++)
      if (cls->instanceTemplate[i]->slotName->id > cls->maxSlotNameID)
        cls->maxSlotNameID = cls->instanceTemplate[i]->slotName->id;
-   cls->slotNameMap = (unsigned *) gm2(theEnv,(sizeof(unsigned) * (cls->maxSlotNameID + 1)));
+   cls->slotNameMap = (unsigned *) CL_gm2(theEnv,(sizeof(unsigned) * (cls->maxSlotNameID + 1)));
    for (i = 0 ; i <= cls->maxSlotNameID ; i++)
      cls->slotNameMap[i] = 0;
    for (i = 0 ; i < cls->instanceSlotCount ; i++)
@@ -838,7 +838,7 @@ static void PackSlots(
       cls->slotCount++;
       stmp = stmp->nxt;
      }
-   cls->slots = (SlotDescriptor *) gm2(theEnv,(sizeof(SlotDescriptor) * cls->slotCount));
+   cls->slots = (SlotDescriptor *) CL_gm2(theEnv,(sizeof(SlotDescriptor) * cls->slotCount));
    stmp = slots;
    for (i = 0 ; i < cls->slotCount ; i++)
      {
@@ -888,7 +888,7 @@ static void CreatePublicSlotMessageHandlers(
    for (i = 0 ; i < theDefclass->slotCount ; i++)
      {
       sd = &theDefclass->slots[i];
-        CreateGetAndPutHandlers(theEnv,sd);
+        CL_CreateGetAndPutHandlers(theEnv,sd);
      }
    for (i = 0 ; i < theDefclass->handlerCount ; i++)
      theDefclass->handlers[i].system = true;
@@ -899,7 +899,7 @@ static void CreatePublicSlotMessageHandlers(
 #if DEFMODULE_CONSTRUCT && OBJECT_SYSTEM
 
 /********************************************************
-  NAME         : CreateClassScopeMap
+  NAME         : CL_CreateClassScopeMap
   DESCRIPTION  : Creates a bitmap where each bit position
                  corresponds to a module id. If the bit
                  is set, the class is in scope for that
@@ -907,9 +907,9 @@ static void CreatePublicSlotMessageHandlers(
   INPUTS       : The class
   RETURNS      : Nothing useful
   SIDE EFFECTS : Scope bitmap created and attached
-  NOTES        : Uses FindImportedConstruct()
+  NOTES        : Uses CL_FindImportedConstruct()
  ********************************************************/
-void *CreateClassScopeMap(
+void *CL_CreateClassScopeMap(
   Environment *theEnv,
   Defclass *theDefclass)
   {
@@ -924,25 +924,25 @@ void *CreateClassScopeMap(
    className = theDefclass->header.name->contents;
    matchModule = theDefclass->header.whichModule->theModule;
 
-   scopeMapSize = (sizeof(char) * ((GetNumberOfDefmodules(theEnv) / BITS_PER_BYTE) + 1));
-   scopeMap = (char *) gm2(theEnv,scopeMapSize);
+   scopeMapSize = (sizeof(char) * ((CL_GetNumberOfDefmodules(theEnv) / BITS_PER_BYTE) + 1));
+   scopeMap = (char *) CL_gm2(theEnv,scopeMapSize);
 
-   ClearBitString(scopeMap,scopeMapSize);
-   SaveCurrentModule(theEnv);
-   for (theModule = GetNextDefmodule(theEnv,NULL) ;
+   CL_ClearBitString(scopeMap,scopeMapSize);
+   CL_SaveCurrentModule(theEnv);
+   for (theModule = CL_GetNextDefmodule(theEnv,NULL) ;
         theModule != NULL ;
-        theModule = GetNextDefmodule(theEnv,theModule))
+        theModule = CL_GetNextDefmodule(theEnv,theModule))
      {
-      SetCurrentModule(theEnv,theModule);
+      CL_SetCurrentModule(theEnv,theModule);
       moduleID = theModule->header.bsaveID;
-      if (FindImportedConstruct(theEnv,"defclass",matchModule,
+      if (CL_FindImportedConstruct(theEnv,"defclass",matchModule,
                                 className,&count,true,NULL) != NULL)
         SetBitMap(scopeMap,moduleID);
      }
-   RestoreCurrentModule(theEnv);
-   theBitMap = (CLIPSBitMap *) AddBitMap(theEnv,scopeMap,scopeMapSize);
+   CL_RestoreCurrentModule(theEnv);
+   theBitMap = (CLIPSBitMap *) CL_AddBitMap(theEnv,scopeMap,scopeMapSize);
    IncrementBitMapCount(theBitMap);
-   rm(theEnv,scopeMap,scopeMapSize);
+   CL_rm(theEnv,scopeMap,scopeMapSize);
    return(theBitMap);
   }
 

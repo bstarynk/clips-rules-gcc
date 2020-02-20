@@ -37,7 +37,7 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
-/*            Eval support for run time and bload only.      */
+/*            CL_Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -48,7 +48,7 @@
 #define _H_expressn
 
 struct exprHashNode;
-typedef struct savedContexts SavedContexts;
+typedef struct savedContexts CL_SavedContexts;
 
 #include "entities.h"
 #include "exprnops.h"
@@ -115,7 +115,7 @@ struct expressionData
    Expression *ExpressionArray;
    unsigned long ExpressionCount;
 #endif
-   SavedContexts *svContexts;
+   CL_SavedContexts *svContexts;
    bool ReturnContext;
    bool BreakContext;
    bool SequenceOpMode;
@@ -127,21 +127,21 @@ struct expressionData
 /* Global Functions */
 /********************/
 
-   void                           ReturnExpression(Environment *,Expression *);
-   void                           ExpressionInstall(Environment *,Expression *);
-   void                           ExpressionDeinstall(Environment *,Expression *);
-   Expression                    *PackExpression(Environment *,Expression *);
-   void                           ReturnPackedExpression(Environment *,Expression *);
-   void                           InitExpressionData(Environment *);
-   void                           InitExpressionPointers(Environment *);
-   bool                           SetSequenceOperatorRecognition(Environment *,bool);
-   bool                           GetSequenceOperatorRecognition(Environment *);
+   void                           CL_ReturnExpression(Environment *,Expression *);
+   void                           CL_ExpressionInstall(Environment *,Expression *);
+   void                           CL_ExpressionDeinstall(Environment *,Expression *);
+   Expression                    *CL_PackExpression(Environment *,Expression *);
+   void                           CL_ReturnPackedExpression(Environment *,Expression *);
+   void                           CL_InitExpressionData(Environment *);
+   void                           CL_InitExpressionPointers(Environment *);
+   bool                           CL_SetSequenceOperatorRecognition(Environment *,bool);
+   bool                           CL_GetSequenceOperatorRecognition(Environment *);
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-   Expression                    *AddHashedExpression(Environment *,Expression *);
+   Expression                    *CL_AddHashedExpression(Environment *,Expression *);
 #endif
-   void                           RemoveHashedExpression(Environment *,Expression *);
+   void                           CL_RemoveHashedExpression(Environment *,Expression *);
 #if BLOAD_AND_BSAVE || BLOAD_ONLY || BLOAD || CONSTRUCT_COMPILER
-   unsigned long                  HashedExpressionIndex(Environment *,Expression *);
+   unsigned long                  CL_HashedExpressionIndex(Environment *,Expression *);
 #endif
 
 #endif

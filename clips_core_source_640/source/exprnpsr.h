@@ -46,7 +46,7 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/*            Eval support for run time and bload only.      */
+/*            CL_Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -66,28 +66,28 @@ typedef enum
 #include "extnfunc.h"
 #include "scanner.h"
 
-   struct expr                   *Function0Parse(Environment *,const char *);
-   struct expr                   *Function1Parse(Environment *,const char *);
-   struct expr                   *Function2Parse(Environment *,const char *,const char *);
-   void                           PushRtnBrkContexts(Environment *);
-   void                           PopRtnBrkContexts(Environment *);
-   bool                           ReplaceSequenceExpansionOps(Environment *,struct expr *,struct expr *,
+   struct expr                   *CL_Function0Parse(Environment *,const char *);
+   struct expr                   *CL_Function1Parse(Environment *,const char *);
+   struct expr                   *CL_Function2Parse(Environment *,const char *,const char *);
+   void                           CL_PushRtnBrkContexts(Environment *);
+   void                           CL_PopRtnBrkContexts(Environment *);
+   bool                           CL_ReplaceSequenceExpansionOps(Environment *,struct expr *,struct expr *,
                                                                      void *,void *);
-   struct expr                   *CollectArguments(Environment *,struct expr *,const char *);
-   struct expr                   *ArgumentParse(Environment *,const char *,bool *);
-   struct expr                   *ParseAtomOrExpression(Environment *,const char *,struct token *);
-   Expression                    *ParseConstantArguments(Environment *,const char *,bool *);
-   struct expr                   *GroupActions(Environment *,const char *,struct token *,
+   struct expr                   *CL_CollectArguments(Environment *,struct expr *,const char *);
+   struct expr                   *CL_ArgumentParse(Environment *,const char *,bool *);
+   struct expr                   *CL_ParseAtomOrExpression(Environment *,const char *,struct token *);
+   Expression                    *CL_ParseConstantArguments(Environment *,const char *,bool *);
+   struct expr                   *CL_GroupActions(Environment *,const char *,struct token *,
                                                       bool,const char *,bool);
-   struct expr                   *RemoveUnneededProgn(Environment *,struct expr *);
-   void                           PopulateRestriction(Environment *,unsigned *,unsigned,const char *,unsigned int);
+   struct expr                   *CL_RemoveUnneededProgn(Environment *,struct expr *);
+   void                           CL_PopulateRestriction(Environment *,unsigned *,unsigned,const char *,unsigned int);
 
 
-   FunctionArgumentsError         CheckExpressionAgainstRestrictions(Environment *,struct expr *,
+   FunctionArgumentsError         CL_CheckExpressionAgainstRestrictions(Environment *,struct expr *,
                                                                      struct functionDefinition *,const char *);
 
 #if (! RUN_TIME)
-   bool                           RestrictionExists(const char *,int);
+   bool                           CL_RestrictionExists(const char *,int);
 
 #endif
 

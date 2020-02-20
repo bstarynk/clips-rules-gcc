@@ -27,7 +27,7 @@
 /*      6.30: Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
-/*            Fixed ParseSlotOverrides memory release issue. */
+/*            Fixed CL_ParseSlotOverrides memory release issue. */
 /*                                                           */
 /*            It's now possible to create an instance of a   */
 /*            class that's not in scope if the module name   */
@@ -37,8 +37,8 @@
 /*            constructs that are contained externally to    */
 /*            to constructs, DanglingConstructs.             */
 /*                                                           */
-/*      6.40: Added Env prefix to GetEvaluationError and     */
-/*            SetEvaluationError functions.                  */
+/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
+/*            SetCL_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -47,7 +47,7 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
-/*            Eval support for run time and bload only.      */
+/*            CL_Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -103,10 +103,10 @@
    ***************************************** */
 
 /*************************************************************************************
-  NAME         : ParseInitializeInstance
+  NAME         : CL_ParseInitializeInstance
   DESCRIPTION  : Parses initialize-instance and make-instance function
-                   calls into an Expression form that
-                   can later be evaluated with EvaluateExpression(theEnv,)
+                   calls into an Expression foCL_rm that
+                   can later be evaluated with CL_EvaluateExpression(theEnv,)
   INPUTS       : 1) The address of the top node of the expression
                     containing the initialize-instance function call
                  2) The logical name of the input source
@@ -117,7 +117,7 @@
                     (slot-overrides etc.)
                  The "top" expression is deleted on errors.
   NOTES        : This function parses a initialize-instance call into
-                 an expression of the following form :
+                 an expression of the following foCL_rm :
 
                  (initialize-instance <instance-name> <slot-override>*)
                   where <slot-override> ::= (<slot-name> <expression>+)
@@ -177,7 +177,7 @@
                                                            <value-expression>...
 
  *************************************************************************************/
-Expression *ParseInitializeInstance(
+Expression *CL_ParseInitializeInstance(
   Environment *theEnv,
   Expression *top,
   const char *readSource)
@@ -186,34 +186,34 @@ Expression *ParseInitializeInstance(
    int fcalltype;
    bool readclass;
 
-   if ((top->value == FindFunction(theEnv,"make-instance")) ||
-       (top->value == FindFunction(theEnv,"active-make-instance")))
+   if ((top->value == CL_FindFunction(theEnv,"make-instance")) ||
+       (top->value == CL_FindFunction(theEnv,"active-make-instance")))
      fcalltype = MAKE_TYPE;
-   else if ((top->value == FindFunction(theEnv,"initialize-instance")) ||
-            (top->value == FindFunction(theEnv,"active-initialize-instance")))
+   else if ((top->value == CL_FindFunction(theEnv,"initialize-instance")) ||
+            (top->value == CL_FindFunction(theEnv,"active-initialize-instance")))
      fcalltype = INITIALIZE_TYPE;
-   else if ((top->value == FindFunction(theEnv,"modify-instance")) ||
-            (top->value == FindFunction(theEnv,"active-modify-instance")) ||
-            (top->value == FindFunction(theEnv,"message-modify-instance")) ||
-            (top->value == FindFunction(theEnv,"active-message-modify-instance")))
+   else if ((top->value == CL_FindFunction(theEnv,"modify-instance")) ||
+            (top->value == CL_FindFunction(theEnv,"active-modify-instance")) ||
+            (top->value == CL_FindFunction(theEnv,"message-modify-instance")) ||
+            (top->value == CL_FindFunction(theEnv,"active-message-modify-instance")))
      fcalltype = MODIFY_TYPE;
    else
      fcalltype = DUPLICATE_TYPE;
-   IncrementIndentDepth(theEnv,3);
+   CL_IncrementIndentDepth(theEnv,3);
    error = false;
    if (top->type == UNKNOWN_VALUE)
      top->type = FCALL;
    else
-     SavePPBuffer(theEnv," ");
-   top->argList = ArgumentParse(theEnv,readSource,&error);
+     CL_SavePPBuffer(theEnv," ");
+   top->argList = CL_ArgumentParse(theEnv,readSource,&error);
    if (error)
-     goto ParseInitializeInstanceError;
+     goto CL_ParseInitializeInstanceError;
    else if (top->argList == NULL)
      {
-      SyntaxErrorMessage(theEnv,"instance");
-      goto ParseInitializeInstanceError;
+      CL_SyntaxErrorMessage(theEnv,"instance");
+      goto CL_ParseInitializeInstanceError;
      }
-   SavePPBuffer(theEnv," ");
+   CL_SavePPBuffer(theEnv," ");
 
    if (fcalltype == MAKE_TYPE)
      {
@@ -224,19 +224,19 @@ Expression *ParseInitializeInstance(
       if ((top->argList->type != SYMBOL_TYPE) ? false :
           (strcmp(top->argList->lexemeValue->contents,CLASS_RLN) == 0))
         {
-         top->argList->nextArg = ArgumentParse(theEnv,readSource,&error);
+         top->argList->nextArg = CL_ArgumentParse(theEnv,readSource,&error);
          if (error == true)
-           goto ParseInitializeInstanceError;
+           goto CL_ParseInitializeInstanceError;
          if (top->argList->nextArg == NULL)
            {
-            SyntaxErrorMessage(theEnv,"instance class");
-            goto ParseInitializeInstanceError;
+            CL_SyntaxErrorMessage(theEnv,"instance class");
+            goto CL_ParseInitializeInstanceError;
            }
          if ((top->argList->nextArg->type != SYMBOL_TYPE) ? true :
              (strcmp(top->argList->nextArg->lexemeValue->contents,CLASS_RLN) != 0))
            {
             top->argList->type = FCALL;
-            top->argList->value = FindFunction(theEnv,"gensym*");
+            top->argList->value = CL_FindFunction(theEnv,"gensym*");
             readclass = false;
            }
          else
@@ -244,25 +244,25 @@ Expression *ParseInitializeInstance(
         }
       else
         {
-         GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
+         CL_GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
          if ((DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN) ? true :
              (strcmp(CLASS_RLN,DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents) != 0))
            {
-            SyntaxErrorMessage(theEnv,"make-instance");
-            goto ParseInitializeInstanceError;
+            CL_SyntaxErrorMessage(theEnv,"make-instance");
+            goto CL_ParseInitializeInstanceError;
            }
-         SavePPBuffer(theEnv," ");
+         CL_SavePPBuffer(theEnv," ");
          readclass = true;
         }
       if (readclass)
         {
-         top->argList->nextArg = ArgumentParse(theEnv,readSource,&error);
+         top->argList->nextArg = CL_ArgumentParse(theEnv,readSource,&error);
          if (error)
-           goto ParseInitializeInstanceError;
+           goto CL_ParseInitializeInstanceError;
          if (top->argList->nextArg == NULL)
            {
-            SyntaxErrorMessage(theEnv,"instance class");
-            goto ParseInitializeInstanceError;
+            CL_SyntaxErrorMessage(theEnv,"instance class");
+            goto CL_ParseInitializeInstanceError;
            }
         }
 
@@ -271,64 +271,64 @@ Expression *ParseInitializeInstance(
          look it up now and replace it with the pointer
          ============================================== */
       if (ReplaceClassNameWithReference(theEnv,top->argList->nextArg) == false)
-        goto ParseInitializeInstanceError;
+        goto CL_ParseInitializeInstanceError;
 
-      PPCRAndIndent(theEnv);
-      GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
+      CL_PPCRAndIndent(theEnv);
+      CL_GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
       top->argList->nextArg->nextArg =
-                  ParseSlotOverrides(theEnv,readSource,&error);
+                  CL_ParseSlotOverrides(theEnv,readSource,&error);
      }
    else
      {
-      PPCRAndIndent(theEnv);
-      GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
+      CL_PPCRAndIndent(theEnv);
+      CL_GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
       if (fcalltype == DUPLICATE_TYPE)
         {
          if ((DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN) ? false :
              (strcmp(DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents,DUPLICATE_NAME_REF) == 0))
            {
-            PPBackup(theEnv);
-            PPBackup(theEnv);
-            SavePPBuffer(theEnv,DefclassData(theEnv)->ObjectParseToken.printForm);
-            SavePPBuffer(theEnv," ");
-            top->argList->nextArg = ArgumentParse(theEnv,readSource,&error);
+            CL_PPBackup(theEnv);
+            CL_PPBackup(theEnv);
+            CL_SavePPBuffer(theEnv,DefclassData(theEnv)->ObjectParseToken.printFoCL_rm);
+            CL_SavePPBuffer(theEnv," ");
+            top->argList->nextArg = CL_ArgumentParse(theEnv,readSource,&error);
             if (error)
-              goto ParseInitializeInstanceError;
+              goto CL_ParseInitializeInstanceError;
             if (top->argList->nextArg == NULL)
               {
-               SyntaxErrorMessage(theEnv,"instance name");
-               goto ParseInitializeInstanceError;
+               CL_SyntaxErrorMessage(theEnv,"instance name");
+               goto CL_ParseInitializeInstanceError;
               }
-            PPCRAndIndent(theEnv);
-            GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
+            CL_PPCRAndIndent(theEnv);
+            CL_GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
            }
          else
-           top->argList->nextArg = GenConstant(theEnv,FCALL,FindFunction(theEnv,"gensym*"));
-         top->argList->nextArg->nextArg = ParseSlotOverrides(theEnv,readSource,&error);
+           top->argList->nextArg = CL_GenConstant(theEnv,FCALL,CL_FindFunction(theEnv,"gensym*"));
+         top->argList->nextArg->nextArg = CL_ParseSlotOverrides(theEnv,readSource,&error);
         }
       else
-        top->argList->nextArg = ParseSlotOverrides(theEnv,readSource,&error);
+        top->argList->nextArg = CL_ParseSlotOverrides(theEnv,readSource,&error);
      }
    if (error)
-      goto ParseInitializeInstanceError;
+      goto CL_ParseInitializeInstanceError;
    if (DefclassData(theEnv)->ObjectParseToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      {
-      SyntaxErrorMessage(theEnv,"slot-override");
-      goto ParseInitializeInstanceError;
+      CL_SyntaxErrorMessage(theEnv,"slot-override");
+      goto CL_ParseInitializeInstanceError;
      }
-   DecrementIndentDepth(theEnv,3);
+   CL_DecrementIndentDepth(theEnv,3);
    return(top);
 
-ParseInitializeInstanceError:
-   SetEvaluationError(theEnv,true);
-   ReturnExpression(theEnv,top);
-   DecrementIndentDepth(theEnv,3);
+CL_ParseInitializeInstanceError:
+   SetCL_EvaluationError(theEnv,true);
+   CL_ReturnExpression(theEnv,top);
+   CL_DecrementIndentDepth(theEnv,3);
    return NULL;
   }
 
 /********************************************************************************
-  NAME         : ParseSlotOverrides
-  DESCRIPTION  : Forms expressions for slot-overrides
+  NAME         : CL_ParseSlotOverrides
+  DESCRIPTION  : FoCL_rms expressions for slot-overrides
   INPUTS       : 1) The logical name of the input
                  2) Caller's buffer for error flkag
   RETURNS      : Address override expressions, NULL
@@ -346,7 +346,7 @@ ParseInitializeInstanceError:
 
                  Assumes first token has already been scanned
  ********************************************************************************/
-Expression *ParseSlotOverrides(
+Expression *CL_ParseSlotOverrides(
   Environment *theEnv,
   const char *readSource,
   bool *error)
@@ -357,26 +357,26 @@ Expression *ParseSlotOverrides(
    while (DefclassData(theEnv)->ObjectParseToken.tknType == LEFT_PARENTHESIS_TOKEN)
      {
       *error = false;
-      theExp = ArgumentParse(theEnv,readSource,error);
+      theExp = CL_ArgumentParse(theEnv,readSource,error);
       if (*error == true)
         {
-         ReturnExpression(theEnv,top);
+         CL_ReturnExpression(theEnv,top);
          return NULL;
         }
       else if (theExp == NULL)
         {
-         SyntaxErrorMessage(theEnv,"slot-override");
+         CL_SyntaxErrorMessage(theEnv,"slot-override");
          *error = true;
-         ReturnExpression(theEnv,top);
-         SetEvaluationError(theEnv,true);
+         CL_ReturnExpression(theEnv,top);
+         SetCL_EvaluationError(theEnv,true);
          return NULL;
         }
-      theExpNext = GenConstant(theEnv,SYMBOL_TYPE,TrueSymbol(theEnv));
-      if (CollectArguments(theEnv,theExpNext,readSource) == NULL)
+      theExpNext = CL_GenConstant(theEnv,SYMBOL_TYPE,TrueSymbol(theEnv));
+      if (CL_CollectArguments(theEnv,theExpNext,readSource) == NULL)
         {
          *error = true;
-         ReturnExpression(theEnv,top);
-         ReturnExpression(theEnv,theExp);
+         CL_ReturnExpression(theEnv,top);
+         CL_ReturnExpression(theEnv,theExp);
          return NULL;
         }
       theExp->nextArg = theExpNext;
@@ -385,20 +385,20 @@ Expression *ParseSlotOverrides(
       else
         bot->nextArg = theExp;
       bot = theExp->nextArg;
-      PPCRAndIndent(theEnv);
-      GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
+      CL_PPCRAndIndent(theEnv);
+      CL_GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
      }
-   PPBackup(theEnv);
-   PPBackup(theEnv);
-   SavePPBuffer(theEnv,DefclassData(theEnv)->ObjectParseToken.printForm);
+   CL_PPBackup(theEnv);
+   CL_PPBackup(theEnv);
+   CL_SavePPBuffer(theEnv,DefclassData(theEnv)->ObjectParseToken.printFoCL_rm);
    return(top);
   }
 
 /****************************************************************************
-  NAME         : ParseSimpleInstance
+  NAME         : CL_ParseSimpleInstance
   DESCRIPTION  : Parses instances from file for load-instances
-                   into an Expression forms that
-                   can later be evaluated with EvaluateExpression(theEnv,)
+                   into an Expression foCL_rms that
+                   can later be evaluated with CL_EvaluateExpression(theEnv,)
   INPUTS       : 1) The address of the top node of the expression
                     containing the make-instance function call
                  2) The logical name of the input source
@@ -411,7 +411,7 @@ Expression *ParseSlotOverrides(
   NOTES        : The name, class, values etc. must be constants.
 
                  This function parses a make-instance call into
-                 an expression of the following form :
+                 an expression of the following foCL_rm :
 
                   (make-instance <instance> of <class> <slot-override>*)
                   where <slot-override> ::= (<slot-name> <expression>+)
@@ -427,7 +427,7 @@ Expression *ParseSlotOverrides(
                                                           <value-expression>...
 
  ****************************************************************************/
-Expression *ParseSimpleInstance(
+Expression *CL_ParseSimpleInstance(
   Environment *theEnv,
   Expression *top,
   const char *readSource)
@@ -435,93 +435,93 @@ Expression *ParseSimpleInstance(
    Expression *theExp,*vals = NULL,*vbot,*tval;
    TokenType type;
 
-   GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
+   CL_GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
    if ((DefclassData(theEnv)->ObjectParseToken.tknType != INSTANCE_NAME_TOKEN) &&
        (DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN))
-     goto MakeInstanceError;
+     goto CL_MakeInstanceError;
 
    if ((DefclassData(theEnv)->ObjectParseToken.tknType == SYMBOL_TOKEN) &&
        (strcmp(CLASS_RLN,DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents) == 0))
      {
-      top->argList = GenConstant(theEnv,FCALL,
-                                 (void *) FindFunction(theEnv,"gensym*"));
+      top->argList = CL_GenConstant(theEnv,FCALL,
+                                 (void *) CL_FindFunction(theEnv,"gensym*"));
      }
    else
      {
-      top->argList = GenConstant(theEnv,INSTANCE_NAME_TYPE,
+      top->argList = CL_GenConstant(theEnv,INSTANCE_NAME_TYPE,
                                  DefclassData(theEnv)->ObjectParseToken.value);
-      GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
+      CL_GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
       if ((DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN) ? true :
           (strcmp(CLASS_RLN,DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents) != 0))
-        goto MakeInstanceError;
+        goto CL_MakeInstanceError;
      }
 
-   GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
+   CL_GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
    if (DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN)
-     goto MakeInstanceError;
+     goto CL_MakeInstanceError;
    top->argList->nextArg =
-        GenConstant(theEnv,SYMBOL_TYPE,DefclassData(theEnv)->ObjectParseToken.value);
+        CL_GenConstant(theEnv,SYMBOL_TYPE,DefclassData(theEnv)->ObjectParseToken.value);
    theExp = top->argList->nextArg;
    if (ReplaceClassNameWithReference(theEnv,theExp) == false)
-     goto MakeInstanceError;
-   GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
+     goto CL_MakeInstanceError;
+   CL_GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
    while (DefclassData(theEnv)->ObjectParseToken.tknType == LEFT_PARENTHESIS_TOKEN)
      {
-      GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
+      CL_GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
       if (DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN)
         goto SlotOverrideError;
-      theExp->nextArg = GenConstant(theEnv,SYMBOL_TYPE,DefclassData(theEnv)->ObjectParseToken.value);
-      theExp->nextArg->nextArg = GenConstant(theEnv,SYMBOL_TYPE,TrueSymbol(theEnv));
+      theExp->nextArg = CL_GenConstant(theEnv,SYMBOL_TYPE,DefclassData(theEnv)->ObjectParseToken.value);
+      theExp->nextArg->nextArg = CL_GenConstant(theEnv,SYMBOL_TYPE,TrueSymbol(theEnv));
       theExp = theExp->nextArg->nextArg;
-      GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
+      CL_GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
       vbot = NULL;
       while (DefclassData(theEnv)->ObjectParseToken.tknType != RIGHT_PARENTHESIS_TOKEN)
         {
          type = DefclassData(theEnv)->ObjectParseToken.tknType;
          if (type == LEFT_PARENTHESIS_TOKEN)
            {
-            GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
+            CL_GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
             if ((DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN) ? true :
                 (strcmp(DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents,"create$") != 0))
               goto SlotOverrideError;
-            GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
+            CL_GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
             if (DefclassData(theEnv)->ObjectParseToken.tknType != RIGHT_PARENTHESIS_TOKEN)
               goto SlotOverrideError;
-            tval = GenConstant(theEnv,FCALL,FindFunction(theEnv,"create$"));
+            tval = CL_GenConstant(theEnv,FCALL,CL_FindFunction(theEnv,"create$"));
            }
          else
            {
             if ((type != SYMBOL_TOKEN) && (type != STRING_TOKEN) &&
                 (type != FLOAT_TOKEN) && (type != INTEGER_TOKEN) && (type != INSTANCE_NAME_TOKEN))
               goto SlotOverrideError;
-            tval = GenConstant(theEnv,TokenTypeToType(type),DefclassData(theEnv)->ObjectParseToken.value);
+            tval = CL_GenConstant(theEnv,CL_TokenTypeToType(type),DefclassData(theEnv)->ObjectParseToken.value);
            }
          if (vals == NULL)
            vals = tval;
          else
            vbot->nextArg = tval;
          vbot = tval;
-         GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
+         CL_GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
         }
       theExp->argList = vals;
-      GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
+      CL_GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
       vals = NULL;
      }
    if (DefclassData(theEnv)->ObjectParseToken.tknType != RIGHT_PARENTHESIS_TOKEN)
      goto SlotOverrideError;
    return(top);
 
-MakeInstanceError:
-   SyntaxErrorMessage(theEnv,"make-instance");
-   SetEvaluationError(theEnv,true);
-   ReturnExpression(theEnv,top);
+CL_MakeInstanceError:
+   CL_SyntaxErrorMessage(theEnv,"make-instance");
+   SetCL_EvaluationError(theEnv,true);
+   CL_ReturnExpression(theEnv,top);
    return NULL;
 
 SlotOverrideError:
-   SyntaxErrorMessage(theEnv,"slot-override");
-   SetEvaluationError(theEnv,true);
-   ReturnExpression(theEnv,top);
-   ReturnExpression(theEnv,vals);
+   CL_SyntaxErrorMessage(theEnv,"slot-override");
+   SetCL_EvaluationError(theEnv,true);
+   CL_ReturnExpression(theEnv,top);
+   CL_ReturnExpression(theEnv,vals);
    return NULL;
   }
 
@@ -558,19 +558,19 @@ static bool ReplaceClassNameWithReference(
    if (theExp->type == SYMBOL_TYPE)
      {
       theClassName = theExp->lexemeValue->contents;
-      //theDefclass = (void *) LookupDefclassInScope(theEnv,theClassName);
-      theDefclass = LookupDefclassByMdlOrScope(theEnv,theClassName); // Module or scope is now allowed
+      //theDefclass = (void *) LookupCL_DefclassInScope(theEnv,theClassName);
+      theDefclass = CL_LookupDefclassByMdlOrScope(theEnv,theClassName); // Module or scope is now allowed
       if (theDefclass == NULL)
         {
-         CantFindItemErrorMessage(theEnv,"class",theClassName,true);
+         CL_CantFindItemErrorMessage(theEnv,"class",theClassName,true);
          return false;
         }
-      if (ClassAbstractP(theDefclass))
+      if (CL_ClassAbstractP(theDefclass))
         {
-         PrintErrorID(theEnv,"INSMNGR",3,false);
-         WriteString(theEnv,STDERR,"Cannot create instances of abstract class '");
-         WriteString(theEnv,STDERR,theClassName);
-         WriteString(theEnv,STDERR,"'.\n");
+         CL_PrintErrorID(theEnv,"INSMNGR",3,false);
+         CL_WriteString(theEnv,STDERR,"Cannot create instances of abstract class '");
+         CL_WriteString(theEnv,STDERR,theClassName);
+         CL_WriteString(theEnv,STDERR,"'.\n");
          return false;
         }
       theExp->type = DEFCLASS_PTR;

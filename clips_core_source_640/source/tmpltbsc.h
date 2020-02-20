@@ -65,21 +65,21 @@
 #include "evaluatn.h"
 #include "tmpltdef.h"
 
-   void                           DeftemplateBasicCommands(Environment *);
-   void                           UndeftemplateCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           Undeftemplate(Deftemplate *,Environment *);
-   void                           GetDeftemplateListFunction(Environment *,UDFContext *,UDFValue *);
-   void                           GetDeftemplateList(Environment *,CLIPSValue *,Defmodule *);
-   void                           DeftemplateModuleFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_DeftemplateBasicCommands(Environment *);
+   void                           CL_UndeftemplateCommand(Environment *,UDFContext *,UDFValue *);
+   bool                           CL_Undeftemplate(Deftemplate *,Environment *);
+   void                           CL_GetDeftemplateListFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_GetDeftemplateList(Environment *,CLIPSValue *,Defmodule *);
+   void                           CL_DeftemplateModuleFunction(Environment *,UDFContext *,UDFValue *);
 #if DEBUGGING_FUNCTIONS
-   void                           PPDeftemplateCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           PPDeftemplate(Environment *,const char *,const char *);
-   void                           ListDeftemplatesCommand(Environment *,UDFContext *,UDFValue *);
-   void                           ListDeftemplates(Environment *,const char *,Defmodule *);
-   bool                           DeftemplateGetWatch(Deftemplate *);
-   void                           DeftemplateSetWatch(Deftemplate *,bool);
-   bool                           DeftemplateWatchAccess(Environment *,int,bool,struct expr *);
-   bool                           DeftemplateWatchPrint(Environment *,const char *,int,struct expr *);
+   void                           CL_PPDeftemplateCommand(Environment *,UDFContext *,UDFValue *);
+   bool                           CL_PPDeftemplate(Environment *,const char *,const char *);
+   void                           CL_ListDeftemplatesCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_ListDeftemplates(Environment *,const char *,Defmodule *);
+   bool                           CL_DeftemplateGetCL_Watch(Deftemplate *);
+   void                           CL_DeftemplateSetCL_Watch(Deftemplate *,bool);
+   bool                           CL_DeftemplateCL_WatchAccess(Environment *,int,bool,struct expr *);
+   bool                           CL_DeftemplateCL_WatchPrint(Environment *,const char *,int,struct expr *);
 #endif
 
 #endif /* _H_tmpltbsc */

@@ -7,7 +7,7 @@
    /*******************************************************/
 
 /*************************************************************/
-/* Purpose: Used to determine where a new activation is      */
+/* Purpose: Used to deteCL_rmine where a new activation is      */
 /*   placed on the agenda based on the current conflict      */
 /*   resolution strategy (depth, breadth, mea, lex,          */
 /*   simplicity, or complexity). Also provides the           */
@@ -26,7 +26,7 @@
 /*      6.24: Removed CONFLICT_RESOLUTION_STRATEGIES         */
 /*            compilation flag.                              */
 /*                                                           */
-/*      6.30: Added salience groups to improve performance   */
+/*      6.30: Added salience groups to improve perfoCL_rmance   */
 /*            with large numbers of activations of different */
 /*            saliences.                                     */
 /*                                                           */
@@ -83,17 +83,17 @@
    static Activation             *PlaceComplexityActivation(Activation *,struct salienceGroup *);
    static Activation             *PlaceSimplicityActivation(Activation *,struct salienceGroup *);
    static Activation             *PlaceRandomActivation(Activation *,struct salienceGroup *);
-   static int                     ComparePartialMatches(Environment *,Activation *,Activation *);
-   static const char             *GetStrategyName(StrategyType);
+   static int                     ComparePartialCL_Matches(Environment *,Activation *,Activation *);
+   static const char             *CL_GetStrategyName(StrategyType);
    static unsigned long long     *SortPartialMatch(Environment *,struct partialMatch *);
 
 /******************************************************************/
-/* PlaceActivation: Coordinates placement of an activation on the */
-/*   Agenda based on the current conflict resolution strategy.    */
+/* CL_PlaceActivation: Coordinates placement of an activation on the */
+/*   CL_Agenda based on the current conflict resolution strategy.    */
 /******************************************************************/
-void PlaceActivation(
+void CL_PlaceActivation(
   Environment *theEnv,
-  Activation **whichAgenda,
+  Activation **whichCL_Agenda,
   Activation *newActivation,
   struct salienceGroup *theGroup)
   {
@@ -104,17 +104,17 @@ void PlaceActivation(
    /* been made to the agenda.                       */
    /*================================================*/
 
-   SetAgendaChanged(theEnv,true);
+   SetCL_AgendaChanged(theEnv,true);
 
    /*=============================================*/
-   /* Determine the location where the activation */
+   /* DeteCL_rmine the location where the activation */
    /* should be placed in the agenda based on the */
    /* current conflict resolution strategy.       */
    /*==============================================*/
 
-   if (*whichAgenda != NULL)
+   if (*whichCL_Agenda != NULL)
      {
-      switch (AgendaData(theEnv)->Strategy)
+      switch (CL_AgendaData(theEnv)->Strategy)
         {
          case DEPTH_STRATEGY:
            placeAfter = PlaceDepthActivation(newActivation,theGroup);
@@ -157,8 +157,8 @@ void PlaceActivation(
 
    if (placeAfter == NULL) /* then place it at the beginning of then agenda. */
      {
-      newActivation->next = *whichAgenda;
-      *whichAgenda = newActivation;
+      newActivation->next = *whichCL_Agenda;
+      *whichCL_Agenda = newActivation;
       if (newActivation->next != NULL) newActivation->next->prev = newActivation;
      }
    else /* insert it in the agenda. */
@@ -172,7 +172,7 @@ void PlaceActivation(
   }
 
 /*******************************************************************/
-/* PlaceDepthActivation: Determines the location in the agenda     */
+/* PlaceDepthActivation: DeteCL_rmines the location in the agenda     */
 /*    where a new activation should be placed for the depth        */
 /*    strategy. Returns a pointer to the activation after which    */
 /*    the new activation should be placed (or NULL if the          */
@@ -186,7 +186,7 @@ static Activation *PlaceDepthActivation(
    unsigned long long timetag;
 
    /*============================================*/
-   /* Set up initial information for the search. */
+   /* Set up initial infoCL_rmation for the search. */
    /*============================================*/
 
    timetag = newActivation->timetag;
@@ -220,7 +220,7 @@ static Activation *PlaceDepthActivation(
      }
 
    /*========================================*/
-   /* Update the salience group information. */
+   /* Update the salience group infoCL_rmation. */
    /*========================================*/
 
    if ((lastAct == NULL) ||
@@ -238,7 +238,7 @@ static Activation *PlaceDepthActivation(
   }
 
 /*******************************************************************/
-/* PlaceBreadthActivation: Determines the location in the agenda   */
+/* PlaceBreadthActivation: DeteCL_rmines the location in the agenda   */
 /*    where a new activation should be placed for the breadth      */
 /*    strategy. Returns a pointer to the activation after which    */
 /*    the new activation should be placed (or NULL if the          */
@@ -252,7 +252,7 @@ static Activation *PlaceBreadthActivation(
    Activation *lastAct, *actPtr;
 
    /*============================================*/
-   /* Set up initial information for the search. */
+   /* Set up initial infoCL_rmation for the search. */
    /*============================================*/
 
    timetag = newActivation->timetag;
@@ -299,7 +299,7 @@ static Activation *PlaceBreadthActivation(
      }
 
    /*========================================*/
-   /* Update the salience group information. */
+   /* Update the salience group infoCL_rmation. */
    /*========================================*/
 
    if ((lastAct == NULL) ||
@@ -317,7 +317,7 @@ static Activation *PlaceBreadthActivation(
   }
 
 /*******************************************************************/
-/* PlaceLEXActivation: Determines the location in the agenda       */
+/* PlaceLEXActivation: DeteCL_rmines the location in the agenda       */
 /*    where a new activation should be placed for the lex          */
 /*    strategy. Returns a pointer to the activation after which    */
 /*    the new activation should be placed (or NULL if the          */
@@ -333,7 +333,7 @@ static Activation *PlaceLEXActivation(
    int flag;
 
    /*============================================*/
-   /* Set up initial information for the search. */
+   /* Set up initial infoCL_rmation for the search. */
    /*============================================*/
 
    timetag = newActivation->timetag;
@@ -350,7 +350,7 @@ static Activation *PlaceLEXActivation(
    actPtr = theGroup->last;
    if (actPtr != NULL)
      {
-      flag = ComparePartialMatches(theEnv,actPtr,newActivation);
+      flag = ComparePartialCL_Matches(theEnv,actPtr,newActivation);
 
       if ((flag == LESS_THAN) ||
           ((flag == EQUAL) &&  (timetag > actPtr->timetag)))
@@ -366,13 +366,13 @@ static Activation *PlaceLEXActivation(
    /* is placed before activations of lower salience and      */
    /* after activations of higher salience. Among activations */
    /* of equal salience, the OPS5 lex strategy is used for    */
-   /* determining placement.                                  */
+   /* deteCL_rmining placement.                                  */
    /*=========================================================*/
 
    actPtr = theGroup->first;
    while (actPtr != NULL)
      {
-      flag = ComparePartialMatches(theEnv,actPtr,newActivation);
+      flag = ComparePartialCL_Matches(theEnv,actPtr,newActivation);
 
       if (flag == LESS_THAN)
         {
@@ -400,7 +400,7 @@ static Activation *PlaceLEXActivation(
      }
 
    /*========================================*/
-   /* Update the salience group information. */
+   /* Update the salience group infoCL_rmation. */
    /*========================================*/
 
    if ((lastAct == NULL) ||
@@ -418,7 +418,7 @@ static Activation *PlaceLEXActivation(
   }
 
 /*******************************************************************/
-/* PlaceMEAActivation: Determines the location in the agenda       */
+/* PlaceMEAActivation: DeteCL_rmines the location in the agenda       */
 /*    where a new activation should be placed for the mea          */
 /*    strategy. Returns a pointer to the activation after which    */
 /*    the new activation should be placed (or NULL if the          */
@@ -436,7 +436,7 @@ static Activation *PlaceMEAActivation(
    bool cSet, oSet;
 
    /*============================================*/
-   /* Set up initial information for the search. */
+   /* Set up initial infoCL_rmation for the search. */
    /*============================================*/
 
    timetag = newActivation->timetag;
@@ -470,7 +470,7 @@ static Activation *PlaceMEAActivation(
         { oSet = false; }
 
       if ((cSet == false) && (oSet == false))
-        { flag = ComparePartialMatches(theEnv,actPtr,newActivation); }
+        { flag = ComparePartialCL_Matches(theEnv,actPtr,newActivation); }
       else if ((cSet == true) && (oSet == false))
         { flag = GREATER_THAN; }
       else if ((cSet == false) && (oSet == true))
@@ -480,7 +480,7 @@ static Activation *PlaceMEAActivation(
       else if (oWhoset > cWhoset)
         { flag = LESS_THAN; }
       else
-        { flag = ComparePartialMatches(theEnv,actPtr,newActivation); }
+        { flag = ComparePartialCL_Matches(theEnv,actPtr,newActivation); }
 
       if ((flag == LESS_THAN) ||
           ((flag == EQUAL) &&  (timetag > actPtr->timetag)))
@@ -496,7 +496,7 @@ static Activation *PlaceMEAActivation(
    /* is placed before activations of lower salience and      */
    /* after activations of higher salience. Among activations */
    /* of equal salience, the OPS5 mea strategy is used for    */
-   /* determining placement.                                  */
+   /* deteCL_rmining placement.                                  */
    /*=========================================================*/
 
    actPtr = theGroup->first;
@@ -521,7 +521,7 @@ static Activation *PlaceMEAActivation(
          else flag = GREATER_THAN;
         }
       else
-        { flag = ComparePartialMatches(theEnv,actPtr,newActivation); }
+        { flag = ComparePartialCL_Matches(theEnv,actPtr,newActivation); }
 
       if (flag == LESS_THAN)
         {
@@ -549,7 +549,7 @@ static Activation *PlaceMEAActivation(
      }
 
    /*========================================*/
-   /* Update the salience group information. */
+   /* Update the salience group infoCL_rmation. */
    /*========================================*/
 
    if ((lastAct == NULL) ||
@@ -567,7 +567,7 @@ static Activation *PlaceMEAActivation(
   }
 
 /*********************************************************************/
-/* PlaceComplexityActivation: Determines the location in the agenda  */
+/* PlaceComplexityActivation: DeteCL_rmines the location in the agenda  */
 /*    where a new activation should be placed for the complexity     */
 /*    strategy. Returns a pointer to the activation  after which the */
 /*    new activation should be placed (or NULL if the activation     */
@@ -582,7 +582,7 @@ static Activation *PlaceComplexityActivation(
    Activation *lastAct, *actPtr;
 
    /*========================================*/
-   /* Set up initial information for search. */
+   /* Set up initial infoCL_rmation for search. */
    /*========================================*/
 
    timetag = newActivation->timetag;
@@ -626,7 +626,7 @@ static Activation *PlaceComplexityActivation(
      }
 
    /*========================================*/
-   /* Update the salience group information. */
+   /* Update the salience group infoCL_rmation. */
    /*========================================*/
 
    if ((lastAct == NULL) ||
@@ -644,7 +644,7 @@ static Activation *PlaceComplexityActivation(
   }
 
 /*********************************************************************/
-/* PlaceSimplicityActivation: Determines the location in the agenda  */
+/* PlaceSimplicityActivation: DeteCL_rmines the location in the agenda  */
 /*    where a new activation should be placed for the simplicity     */
 /*    strategy. Returns a pointer to the activation  after which the */
 /*    new activation should be placed (or NULL if the activation     */
@@ -659,7 +659,7 @@ static Activation *PlaceSimplicityActivation(
    Activation *lastAct, *actPtr;
 
    /*============================================*/
-   /* Set up initial information for the search. */
+   /* Set up initial infoCL_rmation for the search. */
    /*============================================*/
 
    timetag = newActivation->timetag;
@@ -703,7 +703,7 @@ static Activation *PlaceSimplicityActivation(
      }
 
    /*========================================*/
-   /* Update the salience group information. */
+   /* Update the salience group infoCL_rmation. */
    /*========================================*/
 
    if ((lastAct == NULL) ||
@@ -721,7 +721,7 @@ static Activation *PlaceSimplicityActivation(
   }
 
 /*******************************************************************/
-/* PlaceRandomActivation: Determines the location in the agenda    */
+/* PlaceRandomActivation: DeteCL_rmines the location in the agenda    */
 /*    where a new activation should be placed for the random       */
 /*    strategy. Returns a pointer to the activation  after which   */
 /*    the new activation should be placed (or NULL if the          */
@@ -736,7 +736,7 @@ static Activation *PlaceRandomActivation(
    Activation *lastAct, *actPtr;
 
    /*============================================*/
-   /* Set up initial information for the search. */
+   /* Set up initial infoCL_rmation for the search. */
    /*============================================*/
 
    timetag = newActivation->timetag;
@@ -751,7 +751,7 @@ static Activation *PlaceRandomActivation(
    /* is placed before activations of lower salience and      */
    /* after activations of higher salience. Among activations */
    /* of equal salience, the placement of the activation is   */
-   /* determined through the generation of a random number.   */
+   /* deteCL_rmined through the generation of a random number.   */
    /*=========================================================*/
 
    actPtr = theGroup->first;
@@ -780,7 +780,7 @@ static Activation *PlaceRandomActivation(
      }
 
    /*========================================*/
-   /* Update the salience group information. */
+   /* Update the salience group infoCL_rmation. */
    /*========================================*/
 
    if ((lastAct == NULL) ||
@@ -856,12 +856,12 @@ static unsigned long long *SortPartialMatch(
   }
 
 /**************************************************************************/
-/* ComparePartialMatches: Compares two activations using the lex conflict */
-/*   resolution strategy to determine which activation should be placed   */
+/* ComparePartialCL_Matches: Compares two activations using the lex conflict */
+/*   resolution strategy to deteCL_rmine which activation should be placed   */
 /*   first on the agenda. This lexicographic comparison function is used  */
 /*   for both the lex and mea strategies.                                 */
 /**************************************************************************/
-static int ComparePartialMatches(
+static int ComparePartialCL_Matches(
   Environment *theEnv,
   Activation *actPtr,
   Activation *newActivation)
@@ -878,7 +878,7 @@ static int ComparePartialMatches(
    basis2 = SortPartialMatch(theEnv,actPtr->basis);
 
    /*==============================================================*/
-   /* Determine the number of timetags in each of the activations. */
+   /* DeteCL_rmine the number of timetags in each of the activations. */
    /* The number of timetags to be compared is the lessor of these */
    /* two numbers.                                                 */
    /*==============================================================*/
@@ -949,51 +949,51 @@ static int ComparePartialMatches(
   }
 
 /***********************************/
-/* SetStrategy: C access routine   */
+/* CL_SetStrategy: C access routine   */
 /*   for the set-strategy command. */
 /***********************************/
-StrategyType SetStrategy(
+StrategyType CL_SetStrategy(
   Environment *theEnv,
   StrategyType value)
   {
    StrategyType oldStrategy;
 
-   oldStrategy = AgendaData(theEnv)->Strategy;
-   AgendaData(theEnv)->Strategy = value;
+   oldStrategy = CL_AgendaData(theEnv)->Strategy;
+   CL_AgendaData(theEnv)->Strategy = value;
 
-   if (oldStrategy != AgendaData(theEnv)->Strategy)
-     { ReorderAllAgendas(theEnv); }
+   if (oldStrategy != CL_AgendaData(theEnv)->Strategy)
+     { ReorderAllCL_Agendas(theEnv); }
 
    return oldStrategy;
   }
 
 /***********************************/
-/* GetStrategy: C access routine   */
+/* CL_GetStrategy: C access routine   */
 /*   for the get-strategy command. */
 /***********************************/
-StrategyType GetStrategy(
+StrategyType CL_GetStrategy(
   Environment *theEnv)
   {
-   return AgendaData(theEnv)->Strategy;
+   return CL_AgendaData(theEnv)->Strategy;
   }
 
 /********************************************/
-/* GetStrategyCommand: H/L access routine   */
+/* CL_GetStrategyCommand: H/L access routine   */
 /*   for the get-strategy command.          */
 /********************************************/
-void GetStrategyCommand(
+void CL_GetStrategyCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
-   returnValue->lexemeValue = CreateSymbol(theEnv,GetStrategyName(GetStrategy(theEnv)));
+   returnValue->lexemeValue = CL_CreateSymbol(theEnv,CL_GetStrategyName(CL_GetStrategy(theEnv)));
   }
 
 /********************************************/
-/* SetStrategyCommand: H/L access routine   */
+/* CL_SetStrategyCommand: H/L access routine   */
 /*   for the set-strategy command.          */
 /********************************************/
-void SetStrategyCommand(
+void CL_SetStrategyCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -1006,14 +1006,14 @@ void SetStrategyCommand(
    /* Set the return value. */
    /*=======================*/
 
-   oldStrategy = GetStrategy(theEnv);
-   returnValue->lexemeValue = CreateSymbol(theEnv,GetStrategyName(oldStrategy));
+   oldStrategy = CL_GetStrategy(theEnv);
+   returnValue->lexemeValue = CL_CreateSymbol(theEnv,CL_GetStrategyName(oldStrategy));
 
    /*=========================================*/
    /* Check for the correct type of argument. */
    /*=========================================*/
 
-   if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg))
+   if (! CL_UDFFirstArgument(context,SYMBOL_BIT,&theArg))
      { return; }
 
    /*=============================================*/
@@ -1023,32 +1023,32 @@ void SetStrategyCommand(
    argument = theArg.lexemeValue->contents;
 
    if (strcmp(argument,"depth") == 0)
-     { SetStrategy(theEnv,DEPTH_STRATEGY); }
+     { CL_SetStrategy(theEnv,DEPTH_STRATEGY); }
    else if (strcmp(argument,"breadth") == 0)
-     { SetStrategy(theEnv,BREADTH_STRATEGY); }
+     { CL_SetStrategy(theEnv,BREADTH_STRATEGY); }
    else if (strcmp(argument,"lex") == 0)
-     { SetStrategy(theEnv,LEX_STRATEGY); }
+     { CL_SetStrategy(theEnv,LEX_STRATEGY); }
    else if (strcmp(argument,"mea") == 0)
-     { SetStrategy(theEnv,MEA_STRATEGY); }
+     { CL_SetStrategy(theEnv,MEA_STRATEGY); }
    else if (strcmp(argument,"complexity") == 0)
-     { SetStrategy(theEnv,COMPLEXITY_STRATEGY); }
+     { CL_SetStrategy(theEnv,COMPLEXITY_STRATEGY); }
    else if (strcmp(argument,"simplicity") == 0)
-     { SetStrategy(theEnv,SIMPLICITY_STRATEGY); }
+     { CL_SetStrategy(theEnv,SIMPLICITY_STRATEGY); }
    else if (strcmp(argument,"random") == 0)
-     { SetStrategy(theEnv,RANDOM_STRATEGY); }
+     { CL_SetStrategy(theEnv,RANDOM_STRATEGY); }
    else
      {
-      UDFInvalidArgumentMessage(context,
+      CL_UDFInvalidArgumentMessage(context,
          "symbol with value depth, breadth, lex, mea, complexity, simplicity, or random");
      }
   }
 
 /**********************************************************/
-/* GetStrategyName: Given the integer value corresponding */
+/* CL_GetStrategyName: Given the integer value corresponding */
 /*   to a specified strategy, return a character string   */
 /*   of the strategy's name.                              */
 /**********************************************************/
-static const char *GetStrategyName(
+static const char *CL_GetStrategyName(
   StrategyType strategy)
   {
    const char *sname;

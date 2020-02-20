@@ -20,12 +20,12 @@
 /*                                                           */
 /*      6.24: Renamed BOOLEAN macro type to intBool.         */
 /*                                                           */
-/*            Added environment parameter to GenClose.       */
-/*            Added environment parameter to GenOpen.        */
+/*            Added environment parameter to CL_GenClose.       */
+/*            Added environment parameter to CL_GenOpen.        */
 /*                                                           */
 /*      6.30: Changed integer type/precision.                */
 /*                                                           */
-/*            Used genstrncpy instead of strncpy.            */
+/*            Used CL_genstrncpy instead of strncpy.            */
 /*                                                           */
 /*            Borland C (IBM_TBC) and Metrowerks CodeWarrior */
 /*            (MAC_MCW, IBM_MCW) are no longer supported.    */
@@ -73,33 +73,33 @@
 #if BLOAD_AND_BSAVE
    static void                        FindNeededItems(Environment *);
    static void                        InitializeFunctionNeededFlags(Environment *);
-   static void                        WriteNeededFunctions(Environment *,FILE *);
+   static void                        CL_WriteNeededFunctions(Environment *,FILE *);
    static size_t                      FunctionBinarySize(Environment *);
-   static void                        WriteBinaryHeader(Environment *,FILE *);
-   static void                        WriteBinaryFooter(Environment *,FILE *);
+   static void                        CL_WriteBinaryHeader(Environment *,FILE *);
+   static void                        CL_WriteBinaryFooter(Environment *,FILE *);
 #endif
-   static void                        DeallocateBsaveData(Environment *);
+   static void                        DeallocateCL_BsaveData(Environment *);
 
 /**********************************************/
-/* InitializeBsaveData: Allocates environment */
+/* InitializeCL_BsaveData: Allocates environment */
 /*    data for the bsave command.             */
 /**********************************************/
-void InitializeBsaveData(
+void InitializeCL_BsaveData(
   Environment *theEnv)
   {
-   AllocateEnvironmentData(theEnv,BSAVE_DATA,sizeof(struct bsaveData),DeallocateBsaveData);
+   CL_AllocateEnvironmentData(theEnv,BSAVE_DATA,sizeof(struct bsaveData),DeallocateCL_BsaveData);
   }
 
 /************************************************/
-/* DeallocateBsaveData: Deallocates environment */
+/* DeallocateCL_BsaveData: Deallocates environment */
 /*    data for the bsave command.               */
 /************************************************/
-static void DeallocateBsaveData(
+static void DeallocateCL_BsaveData(
   Environment *theEnv)
   {
    struct BinaryItem *tmpPtr, *nextPtr;
 
-   tmpPtr = BsaveData(theEnv)->ListOfBinaryItems;
+   tmpPtr = CL_BsaveData(theEnv)->ListOfBinaryItems;
    while (tmpPtr != NULL)
      {
       nextPtr = tmpPtr->next;
@@ -109,10 +109,10 @@ static void DeallocateBsaveData(
   }
 
 /**************************************/
-/* BsaveCommand: H/L access routine   */
+/* CL_BsaveCommand: H/L access routine   */
 /*   for the bsave command.           */
 /**************************************/
-void BsaveCommand(
+void CL_BsaveCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -120,10 +120,10 @@ void BsaveCommand(
 #if (! RUN_TIME) && BLOAD_AND_BSAVE
    const char *fileName;
 
-   fileName = GetFileName(context);
+   fileName = CL_GetFileName(context);
    if (fileName != NULL)
      {
-      if (Bsave(theEnv,fileName))
+      if (CL_Bsave(theEnv,fileName))
         {
          returnValue->lexemeValue = TrueSymbol(theEnv);
          return;
@@ -140,10 +140,10 @@ void BsaveCommand(
 #if BLOAD_AND_BSAVE
 
 /****************************/
-/* Bsave: C access routine  */
+/* CL_Bsave: C access routine  */
 /*   for the bsave command. */
 /****************************/
-bool Bsave(
+bool CL_Bsave(
   Environment *theEnv,
   const char *fileName)
   {
@@ -156,19 +156,19 @@ bool Bsave(
    /* If embedded, clear the error flags. */
    /*=====================================*/
    
-   if (EvaluationData(theEnv)->CurrentExpression == NULL)
-     { ResetErrorFlags(theEnv); }
+   if (CL_EvaluationData(theEnv)->CurrentExpression == NULL)
+     { CL_ResetErrorFlags(theEnv); }
 
    /*===================================*/
    /* A bsave can't occur when a binary */
    /* image is already loaded.          */
    /*===================================*/
 
-   if (Bloaded(theEnv))
+   if (CL_Bloaded(theEnv))
      {
-      PrintErrorID(theEnv,"BSAVE",1,false);
-      WriteString(theEnv,STDERR,
-          "Cannot perform a binary save while a binary load is in effect.\n");
+      CL_PrintErrorID(theEnv,"BSAVE",1,false);
+      CL_WriteString(theEnv,STDERR,
+          "Cannot perfoCL_rm a binary save while a binary load is in effect.\n");
       return false;
      }
 
@@ -176,9 +176,9 @@ bool Bsave(
    /* Open the file. */
    /*================*/
 
-   if ((fp = GenOpen(theEnv,fileName,"wb")) == NULL)
+   if ((fp = CL_GenOpen(theEnv,fileName,"wb")) == NULL)
      {
-      OpenErrorMessage(theEnv,"bsave",fileName);
+      CL_OpenErrorMessage(theEnv,"bsave",fileName);
       return false;
      }
 
@@ -186,119 +186,119 @@ bool Bsave(
    /* Remember the current module. */
    /*==============================*/
 
-   SaveCurrentModule(theEnv);
+   CL_SaveCurrentModule(theEnv);
 
    /*==================================*/
-   /* Write binary header to the file. */
+   /* CL_Write binary header to the file. */
    /*==================================*/
 
-   WriteBinaryHeader(theEnv,fp);
+   CL_WriteBinaryHeader(theEnv,fp);
 
    /*===========================================*/
    /* Initialize count variables, index values, */
-   /* and determine some of the data structures */
+   /* and deteCL_rmine some of the data structures */
    /* which need to be saved.                   */
    /*===========================================*/
 
    ExpressionData(theEnv)->ExpressionCount = 0;
    InitializeFunctionNeededFlags(theEnv);
-   InitAtomicValueNeededFlags(theEnv);
-   FindHashedExpressions(theEnv);
+   CL_InitAtomicValueNeededFlags(theEnv);
+   CL_FindHashedExpressions(theEnv);
    FindNeededItems(theEnv);
-   SetAtomicValueIndices(theEnv,false);
+   CL_SetAtomicValueIndices(theEnv,false);
 
    /*===============================*/
-   /* Save the functions and atoms. */
+   /* CL_Save the functions and atoms. */
    /*===============================*/
 
-   WriteNeededFunctions(theEnv,fp);
-   WriteNeededAtomicValues(theEnv,fp);
+   CL_WriteNeededFunctions(theEnv,fp);
+   CL_WriteNeededAtomicValues(theEnv,fp);
 
    /*=========================================*/
-   /* Write out the number of expression data */
+   /* CL_Write out the number of expression data */
    /* structures in the binary image.         */
    /*=========================================*/
 
-   GenWrite(&ExpressionData(theEnv)->ExpressionCount,sizeof(unsigned long),fp);
+   CL_GenCL_Write(&ExpressionData(theEnv)->ExpressionCount,sizeof(unsigned long),fp);
 
    /*===========================================*/
-   /* Save the numbers indicating the amount of */
+   /* CL_Save the numbers indicating the amount of */
    /* memory needed to bload the constructs.    */
    /*===========================================*/
 
-   for (biPtr = BsaveData(theEnv)->ListOfBinaryItems;
+   for (biPtr = CL_BsaveData(theEnv)->ListOfBinaryItems;
         biPtr != NULL;
         biPtr = biPtr->next)
      {
       if (biPtr->bsaveStorageFunction != NULL)
         {
-         genstrncpy(constructBuffer,biPtr->name,CONSTRUCT_HEADER_SIZE);
-         GenWrite(constructBuffer,CONSTRUCT_HEADER_SIZE,fp);
+         CL_genstrncpy(constructBuffer,biPtr->name,CONSTRUCT_HEADER_SIZE);
+         CL_GenCL_Write(constructBuffer,CONSTRUCT_HEADER_SIZE,fp);
          (*biPtr->bsaveStorageFunction)(theEnv,fp);
         }
      }
 
    /*====================================*/
-   /* Write a binary footer to the file. */
+   /* CL_Write a binary footer to the file. */
    /*====================================*/
 
-   WriteBinaryFooter(theEnv,fp);
+   CL_WriteBinaryFooter(theEnv,fp);
 
    /*===================*/
-   /* Save expressions. */
+   /* CL_Save expressions. */
    /*===================*/
 
    ExpressionData(theEnv)->ExpressionCount = 0;
-   BsaveHashedExpressions(theEnv,fp);
+   CL_BsaveHashedExpressions(theEnv,fp);
    saveExpressionCount = ExpressionData(theEnv)->ExpressionCount;
-   BsaveConstructExpressions(theEnv,fp);
+   CL_BsaveConstructExpressions(theEnv,fp);
    ExpressionData(theEnv)->ExpressionCount = saveExpressionCount;
 
    /*===================*/
-   /* Save constraints. */
+   /* CL_Save constraints. */
    /*===================*/
 
-   WriteNeededConstraints(theEnv,fp);
+   CL_WriteNeededConstraints(theEnv,fp);
 
    /*==================*/
-   /* Save constructs. */
+   /* CL_Save constructs. */
    /*==================*/
 
-   for (biPtr = BsaveData(theEnv)->ListOfBinaryItems;
+   for (biPtr = CL_BsaveData(theEnv)->ListOfBinaryItems;
         biPtr != NULL;
         biPtr = biPtr->next)
      {
       if (biPtr->bsaveFunction != NULL)
         {
-         genstrncpy(constructBuffer,biPtr->name,CONSTRUCT_HEADER_SIZE);
-         GenWrite(constructBuffer,CONSTRUCT_HEADER_SIZE,fp);
+         CL_genstrncpy(constructBuffer,biPtr->name,CONSTRUCT_HEADER_SIZE);
+         CL_GenCL_Write(constructBuffer,CONSTRUCT_HEADER_SIZE,fp);
          (*biPtr->bsaveFunction)(theEnv,fp);
         }
      }
 
    /*===================================*/
-   /* Save a binary footer to the file. */
+   /* CL_Save a binary footer to the file. */
    /*===================================*/
 
-   WriteBinaryFooter(theEnv,fp);
+   CL_WriteBinaryFooter(theEnv,fp);
 
    /*===========*/
    /* Clean up. */
    /*===========*/
 
-   RestoreAtomicValueBuckets(theEnv);
+   CL_RestoreAtomicValueBuckets(theEnv);
 
    /*=================*/
    /* Close the file. */
    /*=================*/
 
-   GenClose(theEnv,fp);
+   CL_GenClose(theEnv,fp);
 
    /*=============================*/
    /* Restore the current module. */
    /*=============================*/
 
-   RestoreCurrentModule(theEnv);
+   CL_RestoreCurrentModule(theEnv);
 
    /*==================================*/
    /* Return true to indicate success. */
@@ -317,7 +317,7 @@ static void InitializeFunctionNeededFlags(
   {
    struct functionDefinition *functionList;
 
-   for (functionList = GetFunctionList(theEnv);
+   for (functionList = CL_GetFunctionList(theEnv);
         functionList != NULL;
         functionList = functionList->next)
      { functionList->neededFunction = false; }
@@ -334,17 +334,17 @@ static void FindNeededItems(
   {
    struct BinaryItem *biPtr;
 
-   for (biPtr = BsaveData(theEnv)->ListOfBinaryItems;
+   for (biPtr = CL_BsaveData(theEnv)->ListOfBinaryItems;
         biPtr != NULL;
         biPtr = biPtr->next)
      { if (biPtr->findFunction != NULL) (*biPtr->findFunction)(theEnv); }
   }
 
 /****************************************************/
-/* WriteNeededFunctions: Writes the names of needed */
+/* CL_WriteNeededFunctions: CL_Writes the names of needed */
 /*   functions to the binary save file.             */
 /****************************************************/
-static void WriteNeededFunctions(
+static void CL_WriteNeededFunctions(
   Environment *theEnv,
   FILE *fp)
   {
@@ -356,7 +356,7 @@ static void WriteNeededFunctions(
    /* Assign each function an index if it is needed. */
    /*================================================*/
 
-   for (functionList = GetFunctionList(theEnv);
+   for (functionList = CL_GetFunctionList(theEnv);
         functionList != NULL;
         functionList = functionList->next)
      {
@@ -367,42 +367,42 @@ static void WriteNeededFunctions(
      }
 
    /*===================================================*/
-   /* Write the number of function names to be written. */
+   /* CL_Write the number of function names to be written. */
    /*===================================================*/
 
-   GenWrite(&count,sizeof(unsigned long),fp);
+   CL_GenCL_Write(&count,sizeof(unsigned long),fp);
    if (count == 0)
      {
-      GenWrite(&count,sizeof(unsigned long),fp);
+      CL_GenCL_Write(&count,sizeof(unsigned long),fp);
       return;
      }
 
    /*================================*/
-   /* Determine the amount of space  */
+   /* DeteCL_rmine the amount of space  */
    /* needed for the function names. */
    /*================================*/
 
    space = FunctionBinarySize(theEnv);
-   GenWrite(&space,sizeof(unsigned long),fp);
+   CL_GenCL_Write(&space,sizeof(unsigned long),fp);
 
    /*===============================*/
-   /* Write out the function names. */
+   /* CL_Write out the function names. */
    /*===============================*/
 
-   for (functionList = GetFunctionList(theEnv);
+   for (functionList = CL_GetFunctionList(theEnv);
         functionList != NULL;
         functionList = functionList->next)
      {
       if (functionList->neededFunction)
         {
          length = strlen(functionList->callFunctionName->contents) + 1;
-         GenWrite((void *) functionList->callFunctionName->contents,length,fp);
+         CL_GenCL_Write((void *) functionList->callFunctionName->contents,length,fp);
         }
      }
   }
 
 /*********************************************/
-/* FunctionBinarySize: Determines the number */
+/* FunctionBinarySize: DeteCL_rmines the number */
 /*   of bytes needed to save all of the      */
 /*   function names in the binary save file. */
 /*********************************************/
@@ -412,7 +412,7 @@ static size_t FunctionBinarySize(
    size_t size = 0;
    struct functionDefinition *functionList;
 
-   for (functionList = GetFunctionList(theEnv);
+   for (functionList = CL_GetFunctionList(theEnv);
         functionList != NULL;
         functionList = functionList->next)
      {
@@ -424,11 +424,11 @@ static size_t FunctionBinarySize(
   }
 
 /***************************************************/
-/* SaveBloadCount: Used to save the data structure */
+/* CL_SaveCL_BloadCount: Used to save the data structure */
 /*   count values when a binary save command is    */
 /*   issued when a binary image is loaded.         */
 /***************************************************/
-void SaveBloadCount(
+void CL_SaveCL_BloadCount(
   Environment *theEnv,
   unsigned long cnt)
   {
@@ -438,11 +438,11 @@ void SaveBloadCount(
    tmp->val = cnt;
    tmp->nxt = NULL;
 
-   if (BsaveData(theEnv)->BloadCountSaveTop == NULL)
-     { BsaveData(theEnv)->BloadCountSaveTop = tmp; }
+   if (CL_BsaveData(theEnv)->CL_BloadCountCL_SaveTop == NULL)
+     { CL_BsaveData(theEnv)->CL_BloadCountCL_SaveTop = tmp; }
    else
      {
-      prv = BsaveData(theEnv)->BloadCountSaveTop;
+      prv = CL_BsaveData(theEnv)->CL_BloadCountCL_SaveTop;
       while (prv->nxt != NULL)
         { prv = prv->nxt; }
       prv->nxt = tmp;
@@ -450,28 +450,28 @@ void SaveBloadCount(
   }
 
 /**************************************************/
-/* RestoreBloadCount: Restores the data structure */
+/* RestoreCL_BloadCount: Restores the data structure */
 /*   count values after a binary save command is  */
 /*   completed when a binary image is loaded.     */
 /**************************************************/
-void RestoreBloadCount(
+void RestoreCL_BloadCount(
   Environment *theEnv,
   unsigned long *cnt)
   {
    BLOADCNTSV *tmp;
 
-   *cnt = BsaveData(theEnv)->BloadCountSaveTop->val;
-   tmp = BsaveData(theEnv)->BloadCountSaveTop;
-   BsaveData(theEnv)->BloadCountSaveTop = BsaveData(theEnv)->BloadCountSaveTop->nxt;
+   *cnt = CL_BsaveData(theEnv)->CL_BloadCountCL_SaveTop->val;
+   tmp = CL_BsaveData(theEnv)->CL_BloadCountCL_SaveTop;
+   CL_BsaveData(theEnv)->CL_BloadCountCL_SaveTop = CL_BsaveData(theEnv)->CL_BloadCountCL_SaveTop->nxt;
    rtn_struct(theEnv,bloadcntsv,tmp);
   }
 
 /**********************************************/
-/* MarkNeededItems: Examines an expression to */
-/*   determine which items are needed to save */
+/* CL_MarkNeededItems: Examines an expression to */
+/*   deteCL_rmine which items are needed to save */
 /*   an expression as part of a binary image. */
 /**********************************************/
-void MarkNeededItems(
+void CL_MarkNeededItems(
   Environment *theEnv,
   struct expr *testPtr)
   {
@@ -502,45 +502,45 @@ void MarkNeededItems(
            break;
 
          default:
-           if (EvaluationData(theEnv)->PrimitivesArray[testPtr->type] == NULL) break;
-           if (EvaluationData(theEnv)->PrimitivesArray[testPtr->type]->bitMap)
+           if (CL_EvaluationData(theEnv)->PrimitivesArray[testPtr->type] == NULL) break;
+           if (CL_EvaluationData(theEnv)->PrimitivesArray[testPtr->type]->bitMap)
              { ((CLIPSBitMap *) testPtr->value)->neededBitMap = true; }
            break;
 
         }
 
       if (testPtr->argList != NULL)
-        { MarkNeededItems(theEnv,testPtr->argList); }
+        { CL_MarkNeededItems(theEnv,testPtr->argList); }
 
       testPtr = testPtr->nextArg;
      }
   }
 
 /******************************************************/
-/* WriteBinaryHeader: Writes a binary header used for */
+/* CL_WriteBinaryHeader: CL_Writes a binary header used for */
 /*   verification when a binary image is loaded.      */
 /******************************************************/
-static void WriteBinaryHeader(
+static void CL_WriteBinaryHeader(
   Environment *theEnv,
   FILE *fp)
   {
-   GenWrite((void *) BloadData(theEnv)->BinaryPrefixID,strlen(BloadData(theEnv)->BinaryPrefixID) + 1,fp);
-   GenWrite((void *) BloadData(theEnv)->BinaryVersionID,strlen(BloadData(theEnv)->BinaryVersionID) + 1,fp);
-   GenWrite((void *) BloadData(theEnv)->BinarySizes,strlen(BloadData(theEnv)->BinarySizes) + 1,fp);
+   CL_GenCL_Write((void *) CL_BloadData(theEnv)->BinaryPrefixID,strlen(CL_BloadData(theEnv)->BinaryPrefixID) + 1,fp);
+   CL_GenCL_Write((void *) CL_BloadData(theEnv)->BinaryVersionID,strlen(CL_BloadData(theEnv)->BinaryVersionID) + 1,fp);
+   CL_GenCL_Write((void *) CL_BloadData(theEnv)->BinarySizes,strlen(CL_BloadData(theEnv)->BinarySizes) + 1,fp);
   }
 
 /******************************************************/
-/* WriteBinaryFooter: Writes a binary footer used for */
+/* CL_WriteBinaryFooter: CL_Writes a binary footer used for */
 /*   verification when a binary image is loaded.      */
 /******************************************************/
-static void WriteBinaryFooter(
+static void CL_WriteBinaryFooter(
   Environment *theEnv,
   FILE *fp)
   {
    char footerBuffer[CONSTRUCT_HEADER_SIZE];
 
-   genstrncpy(footerBuffer,BloadData(theEnv)->BinaryPrefixID,CONSTRUCT_HEADER_SIZE);
-   GenWrite(footerBuffer,CONSTRUCT_HEADER_SIZE,fp);
+   CL_genstrncpy(footerBuffer,CL_BloadData(theEnv)->BinaryPrefixID,CONSTRUCT_HEADER_SIZE);
+   CL_GenCL_Write(footerBuffer,CONSTRUCT_HEADER_SIZE,fp);
   }
 
 #endif /* BLOAD_AND_BSAVE */
@@ -548,12 +548,12 @@ static void WriteBinaryFooter(
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE
 
 /**********************************************************/
-/* AddBinaryItem: Informs the bload/bsave commands of the */
+/* CL_AddBinaryItem: InfoCL_rms the bload/bsave commands of the */
 /*   appropriate access functions needed to save/load the */
 /*   data structures of a construct or other "item" to a  */
 /*   binary file.                                         */
 /**********************************************************/
-bool AddBinaryItem(
+bool CL_AddBinaryItem(
   Environment *theEnv,
   const char *name,
   int priority,
@@ -588,10 +588,10 @@ bool AddBinaryItem(
    /* just put the item on the list.  */
    /*=================================*/
 
-   if (BsaveData(theEnv)->ListOfBinaryItems == NULL)
+   if (CL_BsaveData(theEnv)->ListOfBinaryItems == NULL)
      {
       newPtr->next = NULL;
-      BsaveData(theEnv)->ListOfBinaryItems = newPtr;
+      CL_BsaveData(theEnv)->ListOfBinaryItems = newPtr;
       return true;
      }
 
@@ -601,7 +601,7 @@ bool AddBinaryItem(
    /* items based on its priority.            */
    /*=========================================*/
 
-   currentPtr = BsaveData(theEnv)->ListOfBinaryItems;
+   currentPtr = CL_BsaveData(theEnv)->ListOfBinaryItems;
    while ((currentPtr != NULL) ? (priority < currentPtr->priority) : false)
      {
       lastPtr = currentPtr;
@@ -610,8 +610,8 @@ bool AddBinaryItem(
 
    if (lastPtr == NULL)
      {
-      newPtr->next = BsaveData(theEnv)->ListOfBinaryItems;
-      BsaveData(theEnv)->ListOfBinaryItems = newPtr;
+      newPtr->next = CL_BsaveData(theEnv)->ListOfBinaryItems;
+      CL_BsaveData(theEnv)->ListOfBinaryItems = newPtr;
      }
    else
      {

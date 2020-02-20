@@ -23,12 +23,12 @@
 /*                                                            */
 /*            Renamed BOOLEAN macro type to intBool.          */
 /*                                                            */
-/*      6.30: Added support to allow CreateClassScopeMap to   */
+/*      6.30: Added support to allow CL_CreateClassScopeMap to   */
 /*            be used by other functions.                     */
 /*                                                            */
 /*            Changed integer type/precision.                 */
 /*                                                            */
-/*            GetConstructNameAndComment API change.          */
+/*            CL_GetConstructNameAndComment API change.          */
 /*                                                            */
 /*            Added const qualifiers to remove C++            */
 /*            deprecation warnings.                           */
@@ -44,7 +44,7 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
-/*            Eval support for run time and bload only.      */
+/*            CL_Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -57,12 +57,12 @@
 #if OBJECT_SYSTEM
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-   bool                    ParseDefclass(Environment *,const char *);
+   bool                    CL_ParseDefclass(Environment *,const char *);
 
 #endif
 
 #if DEFMODULE_CONSTRUCT
-   void                   *CreateClassScopeMap(Environment *,Defclass *);
+   void                   *CL_CreateClassScopeMap(Environment *,Defclass *);
 #endif
 
 #endif /* OBJECT_SYSTEM */

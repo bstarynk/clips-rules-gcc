@@ -18,7 +18,7 @@
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
-/*      6.30: Used genstrcpy instead of strcpy.              */
+/*      6.30: Used CL_genstrcpy instead of strcpy.              */
 /*                                                           */
 /*            Removed conditional code for unsupported       */
 /*            compilers/operating systems (IBM_MCW,          */
@@ -60,26 +60,26 @@
 /***************************************/
 
    static bool                    QueryStringCallback(Environment *,const char *,void *);
-   static void                    WriteStringCallback(Environment *,const char *,const char *,void *);
+   static void                    CL_WriteStringCallback(Environment *,const char *,const char *,void *);
    static int                     ReadStringCallback(Environment *,const char *,void *);
    static int                     UnreadStringCallback(Environment *,const char *,int,void *);
    static StringRouter           *FindStringRouter(Environment *,const char *);
    static bool                    CreateReadStringSource(Environment *,const char *,const char *,size_t,size_t);
    static void                    DeallocateStringRouterData(Environment *);
-   static StringBuilderRouter    *FindStringBuilderRouter(Environment *,const char *);
-   static bool                    QueryStringBuilderCallback(Environment *,const char *,void *);
-   static void                    WriteStringBuilderCallback(Environment *,const char *,const char *,void *);
+   static StringCL_BuilderRouter    *FindStringCL_BuilderRouter(Environment *,const char *);
+   static bool                    QueryStringCL_BuilderCallback(Environment *,const char *,void *);
+   static void                    CL_WriteStringCL_BuilderCallback(Environment *,const char *,const char *,void *);
 
 /**********************************************************/
-/* InitializeStringRouter: Initializes string I/O router. */
+/* CL_InitializeStringRouter: Initializes string I/O router. */
 /**********************************************************/
-void InitializeStringRouter(
+void CL_InitializeStringRouter(
   Environment *theEnv)
   {
-   AllocateEnvironmentData(theEnv,STRING_ROUTER_DATA,sizeof(struct stringRouterData),DeallocateStringRouterData);
+   CL_AllocateEnvironmentData(theEnv,STRING_ROUTER_DATA,sizeof(struct stringRouterData),DeallocateStringRouterData);
 
-   AddRouter(theEnv,"string",0,QueryStringCallback,WriteStringCallback,ReadStringCallback,UnreadStringCallback,NULL,NULL);
-   AddRouter(theEnv,"stringBuilder",0,QueryStringBuilderCallback,WriteStringBuilderCallback,NULL,NULL,NULL,NULL);
+   CL_AddRouter(theEnv,"string",0,QueryStringCallback,CL_WriteStringCallback,ReadStringCallback,UnreadStringCallback,NULL,NULL);
+   CL_AddRouter(theEnv,"stringCL_Builder",0,QueryStringCL_BuilderCallback,CL_WriteStringCL_BuilderCallback,NULL,NULL,NULL,NULL);
   }
 
 /*******************************************/
@@ -90,23 +90,23 @@ static void DeallocateStringRouterData(
   Environment *theEnv)
   {
    StringRouter *tmpPtr, *nextPtr;
-   StringBuilderRouter *tmpSBPtr, *nextSBPtr;
+   StringCL_BuilderRouter *tmpSBPtr, *nextSBPtr;
 
    tmpPtr = StringRouterData(theEnv)->ListOfStringRouters;
    while (tmpPtr != NULL)
      {
       nextPtr = tmpPtr->next;
-      rm(theEnv,(void *) tmpPtr->name,strlen(tmpPtr->name) + 1);
+      CL_rm(theEnv,(void *) tmpPtr->name,strlen(tmpPtr->name) + 1);
       rtn_struct(theEnv,stringRouter,tmpPtr);
       tmpPtr = nextPtr;
      }
 
-   tmpSBPtr = StringRouterData(theEnv)->ListOfStringBuilderRouters;
+   tmpSBPtr = StringRouterData(theEnv)->ListOfStringCL_BuilderRouters;
    while (tmpSBPtr != NULL)
      {
       nextSBPtr = tmpSBPtr->next;
-      rm(theEnv,(void *) tmpSBPtr->name,strlen(tmpSBPtr->name) + 1);
-      rtn_struct(theEnv,stringBuilderRouter,tmpSBPtr);
+      CL_rm(theEnv,(void *) tmpSBPtr->name,strlen(tmpSBPtr->name) + 1);
+      rtn_struct(theEnv,stringCL_BuilderRouter,tmpSBPtr);
       tmpSBPtr = nextSBPtr;
      }
   }
@@ -133,9 +133,9 @@ static bool QueryStringCallback(
   }
 
 /**********************************************************/
-/* WriteStringCallback: Print routine for string routers. */
+/* CL_WriteStringCallback: Print routine for string routers. */
 /**********************************************************/
-static void WriteStringCallback(
+static void CL_WriteStringCallback(
   Environment *theEnv,
   const char *logicalName,
   const char *str,
@@ -146,18 +146,18 @@ static void WriteStringCallback(
    head = FindStringRouter(theEnv,logicalName);
    if (head == NULL)
      {
-      SystemError(theEnv,"ROUTER",3);
-      ExitRouter(theEnv,EXIT_FAILURE);
+      CL_SystemError(theEnv,"ROUTER",3);
+      CL_ExitRouter(theEnv,EXIT_FAILURE);
       return;
      }
 
-   if (head->readWriteType != WRITE_STRING) return;
+   if (head->readCL_WriteType != WRITE_STRING) return;
 
    if (head->maximumPosition == 0) return;
 
    if ((head->currentPosition + 1) >= head->maximumPosition) return;
 
-   genstrncpy(&head->writeString[head->currentPosition],
+   CL_genstrncpy(&head->writeString[head->currentPosition],
               str,(STD_SIZE) (head->maximumPosition - head->currentPosition) - 1);
 
    head->currentPosition += strlen(str);
@@ -177,11 +177,11 @@ static int ReadStringCallback(
    head = FindStringRouter(theEnv,logicalName);
    if (head == NULL)
      {
-      SystemError(theEnv,"ROUTER",1);
-      ExitRouter(theEnv,EXIT_FAILURE);
+      CL_SystemError(theEnv,"ROUTER",1);
+      CL_ExitRouter(theEnv,EXIT_FAILURE);
      }
 
-   if (head->readWriteType != READ_STRING) return(EOF);
+   if (head->readCL_WriteType != READ_STRING) return(EOF);
    if (head->currentPosition >= head->maximumPosition)
      {
       head->currentPosition++;
@@ -212,11 +212,11 @@ static int UnreadStringCallback(
 
    if (head == NULL)
      {
-      SystemError(theEnv,"ROUTER",2);
-      ExitRouter(theEnv,EXIT_FAILURE);
+      CL_SystemError(theEnv,"ROUTER",2);
+      CL_ExitRouter(theEnv,EXIT_FAILURE);
      }
 
-   if (head->readWriteType != READ_STRING) return 0;
+   if (head->readCL_WriteType != READ_STRING) return 0;
    if (head->currentPosition > 0)
      { head->currentPosition--; }
 
@@ -224,9 +224,9 @@ static int UnreadStringCallback(
   }
 
 /************************************************/
-/* OpenStringSource: Opens a new string router. */
+/* CL_OpenStringSource: Opens a new string router. */
 /************************************************/
-bool OpenStringSource(
+bool CL_OpenStringSource(
   Environment *theEnv,
   const char *name,
   const char *str,
@@ -246,10 +246,10 @@ bool OpenStringSource(
   }
 
 /******************************************************/
-/* OpenTextSource: Opens a new string router for text */
-/*   (which is not NULL terminated).                  */
+/* CL_OpenTextSource: Opens a new string router for text */
+/*   (which is not NULL teCL_rminated).                  */
 /******************************************************/
-bool OpenTextSource(
+bool CL_OpenTextSource(
   Environment *theEnv,
   const char *name,
   const char *str,
@@ -281,13 +281,13 @@ static bool CreateReadStringSource(
    if (FindStringRouter(theEnv,name) != NULL) return false;
 
    newStringRouter = get_struct(theEnv,stringRouter);
-   theName = (char *) gm1(theEnv,strlen(name) + 1);
-   genstrcpy(theName,name);
+   theName = (char *) CL_gm1(theEnv,strlen(name) + 1);
+   CL_genstrcpy(theName,name);
    newStringRouter->name = theName;
    newStringRouter->writeString = NULL;
    newStringRouter->readString = str;
    newStringRouter->currentPosition = currentPosition;
-   newStringRouter->readWriteType = READ_STRING;
+   newStringRouter->readCL_WriteType = READ_STRING;
    newStringRouter->maximumPosition = maximumPosition;
    newStringRouter->next = StringRouterData(theEnv)->ListOfStringRouters;
    StringRouterData(theEnv)->ListOfStringRouters = newStringRouter;
@@ -296,9 +296,9 @@ static bool CreateReadStringSource(
   }
 
 /**********************************************/
-/* CloseStringSource: Closes a string router. */
+/* CL_CloseStringSource: Closes a string router. */
 /**********************************************/
-bool CloseStringSource(
+bool CL_CloseStringSource(
   Environment *theEnv,
   const char *name)
   {
@@ -313,14 +313,14 @@ bool CloseStringSource(
          if (last == NULL)
            {
             StringRouterData(theEnv)->ListOfStringRouters = head->next;
-            rm(theEnv,(void *) head->name,strlen(head->name) + 1);
+            CL_rm(theEnv,(void *) head->name,strlen(head->name) + 1);
             rtn_struct(theEnv,stringRouter,head);
             return true;
            }
          else
            {
             last->next = head->next;
-            rm(theEnv,(void *) head->name,strlen(head->name) + 1);
+            CL_rm(theEnv,(void *) head->name,strlen(head->name) + 1);
             rtn_struct(theEnv,stringRouter,head);
             return true;
            }
@@ -333,9 +333,9 @@ bool CloseStringSource(
   }
 
 /******************************************************************/
-/* OpenStringDestination: Opens a new string router for printing. */
+/* CL_OpenStringDestination: Opens a new string router for printing. */
 /******************************************************************/
-bool OpenStringDestination(
+bool CL_OpenStringDestination(
   Environment *theEnv,
   const char *name,
   char *str,
@@ -347,13 +347,13 @@ bool OpenStringDestination(
    if (FindStringRouter(theEnv,name) != NULL) return false;
 
    newStringRouter = get_struct(theEnv,stringRouter);
-   theName = (char *) gm1(theEnv,strlen(name) + 1);
-   genstrcpy(theName,name);
+   theName = (char *) CL_gm1(theEnv,strlen(name) + 1);
+   CL_genstrcpy(theName,name);
    newStringRouter->name = theName;
    newStringRouter->readString = NULL;
    newStringRouter->writeString = str;
    newStringRouter->currentPosition = 0;
-   newStringRouter->readWriteType = WRITE_STRING;
+   newStringRouter->readCL_WriteType = WRITE_STRING;
    newStringRouter->maximumPosition = maximumPosition;
    newStringRouter->next = StringRouterData(theEnv)->ListOfStringRouters;
    StringRouterData(theEnv)->ListOfStringRouters = newStringRouter;
@@ -362,13 +362,13 @@ bool OpenStringDestination(
   }
 
 /***************************************************/
-/* CloseStringDestination: Closes a string router. */
+/* CL_CloseStringDestination: Closes a string router. */
 /***************************************************/
-bool CloseStringDestination(
+bool CL_CloseStringDestination(
   Environment *theEnv,
   const char *name)
   {
-   return CloseStringSource(theEnv,name);
+   return CL_CloseStringSource(theEnv,name);
   }
 
 /*******************************************************************/
@@ -392,58 +392,58 @@ static struct stringRouter *FindStringRouter(
   }
 
 /*********************************************/
-/* OpenStringBuilderDestination: Opens a new */
-/*   StringBuilder router for printing.      */
+/* OpenStringCL_BuilderDestination: Opens a new */
+/*   StringCL_Builder router for printing.      */
 /*********************************************/
-bool OpenStringBuilderDestination(
+bool OpenStringCL_BuilderDestination(
   Environment *theEnv,
   const char *name,
-  StringBuilder *theSB)
+  StringCL_Builder *theSB)
   {
-   StringBuilderRouter *newStringRouter;
+   StringCL_BuilderRouter *newStringRouter;
    char *theName;
 
-   if (FindStringBuilderRouter(theEnv,name) != NULL) return false;
+   if (FindStringCL_BuilderRouter(theEnv,name) != NULL) return false;
 
-   newStringRouter = get_struct(theEnv,stringBuilderRouter);
-   theName = (char *) gm1(theEnv,strlen(name) + 1);
-   genstrcpy(theName,name);
+   newStringRouter = get_struct(theEnv,stringCL_BuilderRouter);
+   theName = (char *) CL_gm1(theEnv,strlen(name) + 1);
+   CL_genstrcpy(theName,name);
    newStringRouter->name = theName;
    newStringRouter->SBR = theSB;
-   newStringRouter->next = StringRouterData(theEnv)->ListOfStringBuilderRouters;
-   StringRouterData(theEnv)->ListOfStringBuilderRouters = newStringRouter;
+   newStringRouter->next = StringRouterData(theEnv)->ListOfStringCL_BuilderRouters;
+   StringRouterData(theEnv)->ListOfStringCL_BuilderRouters = newStringRouter;
 
    return true;
   }
 
 /*****************************************/
-/* CloseStringBuilderDestination: Closes */
-/*   a StringBuilder router.             */
+/* CloseStringCL_BuilderDestination: Closes */
+/*   a StringCL_Builder router.             */
 /*****************************************/
-bool CloseStringBuilderDestination(
+bool CloseStringCL_BuilderDestination(
   Environment *theEnv,
   const char *name)
   {
-   StringBuilderRouter *head, *last;
+   StringCL_BuilderRouter *head, *last;
 
    last = NULL;
-   head = StringRouterData(theEnv)->ListOfStringBuilderRouters;
+   head = StringRouterData(theEnv)->ListOfStringCL_BuilderRouters;
    while (head != NULL)
      {
       if (strcmp(head->name,name) == 0)
         {
          if (last == NULL)
            {
-            StringRouterData(theEnv)->ListOfStringBuilderRouters = head->next;
-            rm(theEnv,(void *) head->name,strlen(head->name) + 1);
-            rtn_struct(theEnv,stringBuilderRouter,head);
+            StringRouterData(theEnv)->ListOfStringCL_BuilderRouters = head->next;
+            CL_rm(theEnv,(void *) head->name,strlen(head->name) + 1);
+            rtn_struct(theEnv,stringCL_BuilderRouter,head);
             return true;
            }
          else
            {
             last->next = head->next;
-            rm(theEnv,(void *) head->name,strlen(head->name) + 1);
-            rtn_struct(theEnv,stringBuilderRouter,head);
+            CL_rm(theEnv,(void *) head->name,strlen(head->name) + 1);
+            rtn_struct(theEnv,stringCL_BuilderRouter,head);
             return true;
            }
         }
@@ -455,16 +455,16 @@ bool CloseStringBuilderDestination(
   }
 
 /**********************************************/
-/* FindStringBuilderRouter: Returns a pointer */
-/*   to the named StringBuilder router.       */
+/* FindStringCL_BuilderRouter: Returns a pointer */
+/*   to the named StringCL_Builder router.       */
 /**********************************************/
-static struct stringBuilderRouter *FindStringBuilderRouter(
+static struct stringCL_BuilderRouter *FindStringCL_BuilderRouter(
   Environment *theEnv,
   const char *name)
   {
-   StringBuilderRouter *head;
+   StringCL_BuilderRouter *head;
 
-   head = StringRouterData(theEnv)->ListOfStringBuilderRouters;
+   head = StringRouterData(theEnv)->ListOfStringCL_BuilderRouters;
    while (head != NULL)
      {
       if (strcmp(head->name,name) == 0)
@@ -476,17 +476,17 @@ static struct stringBuilderRouter *FindStringBuilderRouter(
   }
 
 /*********************************************/
-/* QueryStringBuilderCallback: Query routine */
-/*   for stringBuilder router logical names. */
+/* QueryStringCL_BuilderCallback: Query routine */
+/*   for stringCL_Builder router logical names. */
 /*********************************************/
-static bool QueryStringBuilderCallback(
+static bool QueryStringCL_BuilderCallback(
   Environment *theEnv,
   const char *logicalName,
   void *context)
   {
-   StringBuilderRouter *head;
+   StringCL_BuilderRouter *head;
 
-   head = StringRouterData(theEnv)->ListOfStringBuilderRouters;
+   head = StringRouterData(theEnv)->ListOfStringCL_BuilderRouters;
    while (head != NULL)
      {
       if (strcmp(head->name,logicalName) == 0)
@@ -498,26 +498,26 @@ static bool QueryStringBuilderCallback(
   }
 
 /*********************************************/
-/* WriteStringBuilderCallback: Print routine */
-/*    for stringBuilder routers.             */
+/* CL_WriteStringCL_BuilderCallback: Print routine */
+/*    for stringCL_Builder routers.             */
 /*********************************************/
-static void WriteStringBuilderCallback(
+static void CL_WriteStringCL_BuilderCallback(
   Environment *theEnv,
   const char *logicalName,
   const char *str,
   void *context)
   {
-   StringBuilderRouter *head;
+   StringCL_BuilderRouter *head;
 
-   head = FindStringBuilderRouter(theEnv,logicalName);
+   head = FindStringCL_BuilderRouter(theEnv,logicalName);
    if (head == NULL)
      {
-      SystemError(theEnv,"ROUTER",3);
-      ExitRouter(theEnv,EXIT_FAILURE);
+      CL_SystemError(theEnv,"ROUTER",3);
+      CL_ExitRouter(theEnv,EXIT_FAILURE);
       return;
      }
      
-   SBAppend(head->SBR,str);
+   CL_SBAppend(head->SBR,str);
   }
 
 

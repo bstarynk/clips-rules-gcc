@@ -64,52 +64,52 @@
 #include "constrct.h"
 #include "genrcfun.h"
 
-   void                           SetupGenericFunctions(Environment *);
-   Defgeneric                    *FindDefgeneric(Environment *,const char *);
-   Defgeneric                    *FindDefgenericInModule(Environment *,const char *);
-   Defgeneric                    *LookupDefgenericByMdlOrScope(Environment *,const char *);
-   Defgeneric                    *LookupDefgenericInScope(Environment *,const char *);
-   Defgeneric                    *GetNextDefgeneric(Environment *,Defgeneric *);
-   unsigned short                 GetNextDefmethod(Defgeneric *,unsigned short);
-   bool                           DefgenericIsDeletable(Defgeneric *);
-   bool                           DefmethodIsDeletable(Defgeneric *,unsigned short);
-   void                           UndefgenericCommand(Environment *,UDFContext *,UDFValue *);
-   void                           GetDefgenericModuleCommand(Environment *,UDFContext *,UDFValue *);
-   void                           UndefmethodCommand(Environment *,UDFContext *,UDFValue *);
-   Defmethod                     *GetDefmethodPointer(Defgeneric *,long);
-   bool                           Undefgeneric(Defgeneric *,Environment *);
-   bool                           Undefmethod(Defgeneric *,unsigned short,Environment *);
+   void                           CL_SetupGenericFunctions(Environment *);
+   Defgeneric                    *CL_FindDefgeneric(Environment *,const char *);
+   Defgeneric                    *CL_FindDefgenericInModule(Environment *,const char *);
+   Defgeneric                    *CL_LookupDefgenericByMdlOrScope(Environment *,const char *);
+   Defgeneric                    *CL_LookupDefgenericInScope(Environment *,const char *);
+   Defgeneric                    *CL_GetNextDefgeneric(Environment *,Defgeneric *);
+   unsigned short                 CL_GetNextDefmethod(Defgeneric *,unsigned short);
+   bool                           CL_DefgenericIsDeletable(Defgeneric *);
+   bool                           CL_DefmethodIsDeletable(Defgeneric *,unsigned short);
+   void                           CL_UndefgenericCommand(Environment *,UDFContext *,UDFValue *);
+   void                           GetCL_DefgenericModuleCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_UndefmethodCommand(Environment *,UDFContext *,UDFValue *);
+   Defmethod                     *CL_GetDefmethodPointer(Defgeneric *,long);
+   bool                           CL_Undefgeneric(Defgeneric *,Environment *);
+   bool                           CL_Undefmethod(Defgeneric *,unsigned short,Environment *);
 #if ! OBJECT_SYSTEM
    void                           TypeCommand(Environment *,UDFContext *,UDFValue *);
 #endif
 #if DEBUGGING_FUNCTIONS || PROFILING_FUNCTIONS
-   void                           DefmethodDescription(Defgeneric *,unsigned short,StringBuilder *);
+   void                           CL_DefmethodDescription(Defgeneric *,unsigned short,StringCL_Builder *);
 #endif
 #if DEBUGGING_FUNCTIONS
-   bool                           DefgenericGetWatch(Defgeneric *);
-   void                           DefgenericSetWatch(Defgeneric *,bool);
-   bool                           DefmethodGetWatch(Defgeneric *,unsigned short);
-   void                           DefmethodSetWatch(Defgeneric *,unsigned short,bool);
-   void                           PPDefgenericCommand(Environment *,UDFContext *,UDFValue *);
-   void                           PPDefmethodCommand(Environment *,UDFContext *,UDFValue *);
-   void                           ListDefmethodsCommand(Environment *,UDFContext *,UDFValue *);
-   const char                    *DefmethodPPForm(Defgeneric *,unsigned short);
-   void                           ListDefgenericsCommand(Environment *,UDFContext *,UDFValue *);
-   void                           ListDefgenerics(Environment *,const char *,Defmodule *);
-   void                           ListDefmethods(Environment *,const char *,Defgeneric *);
+   bool                           CL_DefgenericGetCL_Watch(Defgeneric *);
+   void                           CL_DefgenericSetCL_Watch(Defgeneric *,bool);
+   bool                           CL_DefmethodGetCL_Watch(Defgeneric *,unsigned short);
+   void                           CL_DefmethodSetCL_Watch(Defgeneric *,unsigned short,bool);
+   void                           CL_PPDefgenericCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_PPDefmethodCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_ListDefmethodsCommand(Environment *,UDFContext *,UDFValue *);
+   const char                    *CL_DefmethodPPFoCL_rm(Defgeneric *,unsigned short);
+   void                           CL_ListDefgenericsCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_ListDefgenerics(Environment *,const char *,Defmodule *);
+   void                           CL_ListDefmethods(Environment *,const char *,Defgeneric *);
 #endif
-   void                           GetDefgenericListFunction(Environment *,UDFContext *,UDFValue *);
-   void                           GetDefgenericList(Environment *,CLIPSValue *,Defmodule *);
-   void                           GetDefmethodListCommand(Environment *,UDFContext *,UDFValue *);
-   void                           GetDefmethodList(Environment *,CLIPSValue *,Defgeneric *);
-   void                           GetMethodRestrictionsCommand(Environment *,UDFContext *,UDFValue *);
-   void                           GetMethodRestrictions(Defgeneric *,unsigned short,CLIPSValue *);
-   void                           SetNextDefgeneric(Defgeneric *,Defgeneric *);
-   const char                    *DefgenericModule(Defgeneric *);
-   const char                    *DefgenericName(Defgeneric *);
-   const char                    *DefgenericPPForm(Defgeneric *);
-   CLIPSLexeme                   *GetDefgenericNamePointer(Defgeneric *);
-   void                           SetDefgenericPPForm(Environment *,Defgeneric *,const char *);
+   void                           CL_GetDefgenericListFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_GetDefgenericList(Environment *,CLIPSValue *,Defmodule *);
+   void                           CL_GetDefmethodListCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_GetDefmethodList(Environment *,CLIPSValue *,Defgeneric *);
+   void                           CL_GetMethodRestrictionsCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_GetMethodRestrictions(Defgeneric *,unsigned short,CLIPSValue *);
+   void                           CL_SetNextDefgeneric(Defgeneric *,Defgeneric *);
+   const char                    *CL_DefgenericModule(Defgeneric *);
+   const char                    *CL_DefgenericName(Defgeneric *);
+   const char                    *CL_DefgenericPPFoCL_rm(Defgeneric *);
+   CLIPSLexeme                   *GetCL_DefgenericNamePointer(Defgeneric *);
+   void                           SetCL_DefgenericPPFoCL_rm(Environment *,Defgeneric *,const char *);
 
 #endif /* _H_genrccom */
 

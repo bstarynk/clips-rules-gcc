@@ -10,7 +10,7 @@
 /* Purpose: Manages the atomic data value hash tables for    */
 /*   storing symbols, integers, floats, and bit maps.        */
 /*   Contains routines for adding entries, examining the     */
-/*   hash tables, and performing garbage collection to       */
+/*   hash tables, and perfoCL_rming garbage collection to       */
 /*   remove entries no longer in use.                        */
 /*                                                           */
 /* Principal Programmer(s):                                  */
@@ -45,7 +45,7 @@
 /*                                                           */
 /*            Changed garbage collection algorithm.          */
 /*                                                           */
-/*            Used genstrcpy instead of strcpy.              */
+/*            Used CL_genstrcpy instead of strcpy.              */
 /*                                                           */
 /*            Added support for external address hash table  */
 /*            and subtyping.                                 */
@@ -116,7 +116,7 @@ struct genericHashNode
    TypeHeader header;
    struct genericHashNode *next;
    long count;
-   unsigned int permanent : 1;
+   unsigned int peCL_rmanent : 1;
    unsigned int markedEphemeral : 1;
    unsigned int needed : 1;
    unsigned int bucket : 29;
@@ -186,56 +186,56 @@ struct symbolData
 
 #define SymbolData(theEnv) ((struct symbolData *) GetEnvironmentData(theEnv,SYMBOL_DATA))
 
-   void                           InitializeAtomTables(Environment *,CLIPSLexeme **,CLIPSFloat **,
+   void                           CL_InitializeAtomTables(Environment *,CLIPSLexeme **,CLIPSFloat **,
                                                               CLIPSInteger **,CLIPSBitMap **,
                                                               CLIPSExternalAddress **);
-   CLIPSLexeme                   *AddSymbol(Environment *,const char *,unsigned short);
-   CLIPSLexeme                   *FindSymbolHN(Environment *,const char *,unsigned short);
-   CLIPSFloat                    *CreateFloat(Environment *,double);
-   CLIPSInteger                  *CreateInteger(Environment *,long long);
-   void                          *AddBitMap(Environment *,void *,unsigned short);
-   CLIPSExternalAddress          *CreateExternalAddress(Environment *,void *,unsigned short);
-   CLIPSExternalAddress          *CreateCExternalAddress(Environment *,void *);
-   CLIPSInteger                  *FindLongHN(Environment *,long long);
-   size_t                         HashSymbol(const char *,size_t);
-   size_t                         HashFloat(double,size_t);
-   size_t                         HashInteger(long long,size_t);
-   size_t                         HashBitMap(const char *,size_t,unsigned);
-   size_t                         HashExternalAddress(void *,size_t);
-   void                           RetainLexeme(Environment *,CLIPSLexeme *);
-   void                           RetainFloat(Environment *,CLIPSFloat *);
-   void                           RetainInteger(Environment *,CLIPSInteger *);
-   void                           IncrementBitMapReferenceCount(Environment *,CLIPSBitMap *);
-   void                           RetainExternalAddress(Environment *,CLIPSExternalAddress *);
-   void                           ReleaseLexeme(Environment *,CLIPSLexeme *);
-   void                           ReleaseFloat(Environment *,CLIPSFloat *);
-   void                           ReleaseInteger(Environment *,CLIPSInteger *);
-   void                           DecrementBitMapReferenceCount(Environment *,CLIPSBitMap *);
-   void                           ReleaseExternalAddress(Environment *,CLIPSExternalAddress *);
-   void                           RemoveEphemeralAtoms(Environment *);
-   CLIPSLexeme                  **GetSymbolTable(Environment *);
-   void                           SetSymbolTable(Environment *,CLIPSLexeme **);
-   CLIPSFloat                   **GetFloatTable(Environment *);
-   void                           SetFloatTable(Environment *,CLIPSFloat **);
-   CLIPSInteger                 **GetIntegerTable(Environment *);
-   void                           SetIntegerTable(Environment *,CLIPSInteger **);
-   CLIPSBitMap                  **GetBitMapTable(Environment *);
-   void                           SetBitMapTable(Environment *,CLIPSBitMap **);
-   CLIPSExternalAddress         **GetExternalAddressTable(Environment *);
-   void                           SetExternalAddressTable(Environment *,CLIPSExternalAddress **);
-   void                           RefreshSpecialSymbols(Environment *);
-   struct symbolMatch            *FindSymbolMatches(Environment *,const char *,unsigned *,size_t *);
-   void                           ReturnSymbolMatches(Environment *,struct symbolMatch *);
-   CLIPSLexeme                   *GetNextSymbolMatch(Environment *,const char *,size_t,CLIPSLexeme *,bool,size_t *);
-   void                           ClearBitString(void *,size_t);
-   void                           SetAtomicValueIndices(Environment *,bool);
-   void                           RestoreAtomicValueBuckets(Environment *);
-   void                           EphemerateValue(Environment *,void *);
-   CLIPSLexeme                   *CreateSymbol(Environment *,const char *);
-   CLIPSLexeme                   *CreateString(Environment *,const char *);
-   CLIPSLexeme                   *CreateInstanceName(Environment *,const char *);
-   CLIPSLexeme                   *CreateBoolean(Environment *,bool);
-   bool                           BitStringHasBitsSet(void *,unsigned);
+   CLIPSLexeme                   *CL_AddSymbol(Environment *,const char *,unsigned short);
+   CLIPSLexeme                   *CL_FindSymbolHN(Environment *,const char *,unsigned short);
+   CLIPSFloat                    *CL_CreateFloat(Environment *,double);
+   CLIPSInteger                  *CL_CreateInteger(Environment *,long long);
+   void                          *CL_AddBitMap(Environment *,void *,unsigned short);
+   CLIPSExternalAddress          *CL_CreateExternalAddress(Environment *,void *,unsigned short);
+   CLIPSExternalAddress          *CL_CreateCExternalAddress(Environment *,void *);
+   CLIPSInteger                  *CL_FindLongHN(Environment *,long long);
+   size_t                         CL_HashSymbol(const char *,size_t);
+   size_t                         CL_HashFloat(double,size_t);
+   size_t                         CL_HashInteger(long long,size_t);
+   size_t                         CL_HashBitMap(const char *,size_t,unsigned);
+   size_t                         CL_HashExternalAddress(void *,size_t);
+   void                           CL_RetainLexeme(Environment *,CLIPSLexeme *);
+   void                           CL_RetainFloat(Environment *,CLIPSFloat *);
+   void                           CL_RetainInteger(Environment *,CLIPSInteger *);
+   void                           CL_IncrementBitMapReferenceCount(Environment *,CLIPSBitMap *);
+   void                           CL_RetainExternalAddress(Environment *,CLIPSExternalAddress *);
+   void                           CL_ReleaseLexeme(Environment *,CLIPSLexeme *);
+   void                           CL_ReleaseFloat(Environment *,CLIPSFloat *);
+   void                           CL_ReleaseInteger(Environment *,CLIPSInteger *);
+   void                           CL_DecrementBitMapReferenceCount(Environment *,CLIPSBitMap *);
+   void                           CL_ReleaseExternalAddress(Environment *,CLIPSExternalAddress *);
+   void                           CL_RemoveEphemeralAtoms(Environment *);
+   CLIPSLexeme                  **CL_GetSymbolTable(Environment *);
+   void                           CL_SetSymbolTable(Environment *,CLIPSLexeme **);
+   CLIPSFloat                   **CL_GetFloatTable(Environment *);
+   void                           CL_SetFloatTable(Environment *,CLIPSFloat **);
+   CLIPSInteger                 **CL_GetIntegerTable(Environment *);
+   void                           CL_SetIntegerTable(Environment *,CLIPSInteger **);
+   CLIPSBitMap                  **CL_GetBitMapTable(Environment *);
+   void                           CL_SetBitMapTable(Environment *,CLIPSBitMap **);
+   CLIPSExternalAddress         **CL_GetExternalAddressTable(Environment *);
+   void                           CL_SetExternalAddressTable(Environment *,CLIPSExternalAddress **);
+   void                           CL_RefreshSpecialSymbols(Environment *);
+   struct symbolMatch            *CL_FindSymbolCL_Matches(Environment *,const char *,unsigned *,size_t *);
+   void                           ReturnSymbolCL_Matches(Environment *,struct symbolMatch *);
+   CLIPSLexeme                   *CL_GetNextSymbolMatch(Environment *,const char *,size_t,CLIPSLexeme *,bool,size_t *);
+   void                           CL_ClearBitString(void *,size_t);
+   void                           CL_SetAtomicValueIndices(Environment *,bool);
+   void                           CL_RestoreAtomicValueBuckets(Environment *);
+   void                           CL_EphemerateValue(Environment *,void *);
+   CLIPSLexeme                   *CL_CreateSymbol(Environment *,const char *);
+   CLIPSLexeme                   *CL_CreateString(Environment *,const char *);
+   CLIPSLexeme                   *CL_CreateCL_InstanceName(Environment *,const char *);
+   CLIPSLexeme                   *CL_CreateBoolean(Environment *,bool);
+   bool                           CL_BitStringHasBitsSet(void *,unsigned);
 
 #endif /* _H_symbol */
 

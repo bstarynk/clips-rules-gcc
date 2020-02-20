@@ -34,8 +34,8 @@
 /*                                                           */
 /*            Support for long long integers.                */
 /*                                                           */
-/*      6.40: Added Env prefix to GetHaltExecution and       */
-/*            SetHaltExecution functions.                    */
+/*      6.40: Added Env prefix to CL_GetCL_HaltExecution and       */
+/*            SetCL_HaltExecution functions.                    */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -46,10 +46,10 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/*            Added GCBlockStart and GCBlockEnd functions    */
+/*            Added CL_GCBlockStart and CL_GCBlockEnd functions    */
 /*            for garbage collection blocks.                 */
 /*                                                           */
-/*            Eval support for run time and bload only.      */
+/*            CL_Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -83,39 +83,39 @@
    static void                    DeallocateProceduralFunctionData(Environment *);
 
 /**********************************************/
-/* ProceduralFunctionDefinitions: Initializes */
+/* CL_ProceduralFunctionDefinitions: Initializes */
 /*   the procedural functions.                */
 /**********************************************/
-void ProceduralFunctionDefinitions(
+void CL_ProceduralFunctionDefinitions(
   Environment *theEnv)
   {
-   AllocateEnvironmentData(theEnv,PRCDRFUN_DATA,sizeof(struct procedureFunctionData),DeallocateProceduralFunctionData);
+   CL_AllocateEnvironmentData(theEnv,PRCDRFUN_DATA,sizeof(struct procedureFunctionData),DeallocateProceduralFunctionData);
 
 #if ! RUN_TIME
-   AddUDF(theEnv,"if","*",0,UNBOUNDED,NULL,IfFunction,"IfFunction",NULL);
-   AddUDF(theEnv,"while","*",0,UNBOUNDED,NULL,WhileFunction,"WhileFunction",NULL);
-   AddUDF(theEnv,"loop-for-count","*",0,UNBOUNDED,NULL,LoopForCountFunction,"LoopForCountFunction",NULL);
-   AddUDF(theEnv,"(get-loop-count)","l",1,1,NULL,GetLoopCount,"GetLoopCount",NULL);
-   AddUDF(theEnv,"bind","*",0,UNBOUNDED,NULL,BindFunction,"BindFunction",NULL);
-   AddUDF(theEnv,"progn","*",0,UNBOUNDED,NULL,PrognFunction,"PrognFunction",NULL);
-   AddUDF(theEnv,"return","*",0,UNBOUNDED,NULL,ReturnFunction,"ReturnFunction",NULL);
-   AddUDF(theEnv,"break","v",0,0,NULL,BreakFunction,"BreakFunction",NULL);
-   AddUDF(theEnv,"switch","*",0,UNBOUNDED,NULL,SwitchFunction,"SwitchFunction",NULL);
+   CL_AddUDF(theEnv,"if","*",0,UNBOUNDED,NULL,CL_IfFunction,"CL_IfFunction",NULL);
+   CL_AddUDF(theEnv,"while","*",0,UNBOUNDED,NULL,CL_WhileFunction,"CL_WhileFunction",NULL);
+   CL_AddUDF(theEnv,"loop-for-count","*",0,UNBOUNDED,NULL,CL_LoopForCountFunction,"CL_LoopForCountFunction",NULL);
+   CL_AddUDF(theEnv,"(get-loop-count)","l",1,1,NULL,CL_GetLoopCount,"CL_GetLoopCount",NULL);
+   CL_AddUDF(theEnv,"bind","*",0,UNBOUNDED,NULL,CL_BindFunction,"CL_BindFunction",NULL);
+   CL_AddUDF(theEnv,"progn","*",0,UNBOUNDED,NULL,CL_PrognFunction,"CL_PrognFunction",NULL);
+   CL_AddUDF(theEnv,"return","*",0,UNBOUNDED,NULL,CL_ReturnFunction,"CL_ReturnFunction",NULL);
+   CL_AddUDF(theEnv,"break","v",0,0,NULL,CL_BreakFunction,"CL_BreakFunction",NULL);
+   CL_AddUDF(theEnv,"switch","*",0,UNBOUNDED,NULL,CL_SwitchFunction,"CL_SwitchFunction",NULL);
 #endif
 
-   ProceduralFunctionParsers(theEnv);
+   CL_ProceduralFunctionParsers(theEnv);
 
 #if ! RUN_TIME
-   FuncSeqOvlFlags(theEnv,"progn",false,false);
-   FuncSeqOvlFlags(theEnv,"if",false,false);
-   FuncSeqOvlFlags(theEnv,"while",false,false);
-   FuncSeqOvlFlags(theEnv,"loop-for-count",false,false);
-   FuncSeqOvlFlags(theEnv,"return",false,false);
-   FuncSeqOvlFlags(theEnv,"switch",false,false);
+   CL_FuncSeqOvlFlags(theEnv,"progn",false,false);
+   CL_FuncSeqOvlFlags(theEnv,"if",false,false);
+   CL_FuncSeqOvlFlags(theEnv,"while",false,false);
+   CL_FuncSeqOvlFlags(theEnv,"loop-for-count",false,false);
+   CL_FuncSeqOvlFlags(theEnv,"return",false,false);
+   CL_FuncSeqOvlFlags(theEnv,"switch",false,false);
 #endif
 
-   AddResetFunction(theEnv,"bind",FlushBindList,0,NULL);
-   AddClearFunction(theEnv,"bind",FlushBindList,0,NULL);
+   CL_AddCL_ResetFunction(theEnv,"bind",CL_FlushBindList,0,NULL);
+   CL_AddCL_ClearFunction(theEnv,"bind",CL_FlushBindList,0,NULL);
   }
 
 /*************************************************************/
@@ -138,10 +138,10 @@ static void DeallocateProceduralFunctionData(
   }
 
 /***************************************/
-/* WhileFunction: H/L access routine   */
+/* CL_WhileFunction: H/L access routine   */
 /*   for the while function.           */
 /***************************************/
-void WhileFunction(
+void CL_WhileFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -150,32 +150,32 @@ void WhileFunction(
    GCBlock gcb;
 
    /*====================================================*/
-   /* Evaluate the body of the while loop as long as the */
+   /* CL_Evaluate the body of the while loop as long as the */
    /* while condition evaluates to a non-FALSE value.    */
    /*====================================================*/
 
-   GCBlockStart(theEnv,&gcb);
+   CL_GCBlockStart(theEnv,&gcb);
 
-   UDFNthArgument(context,1,ANY_TYPE_BITS,&theResult);
+   CL_UDFNthArgument(context,1,ANY_TYPE_BITS,&theResult);
    while ((theResult.value != FalseSymbol(theEnv)) &&
-          (EvaluationData(theEnv)->HaltExecution != true))
+          (CL_EvaluationData(theEnv)->CL_HaltExecution != true))
      {
       if ((ProcedureFunctionData(theEnv)->BreakFlag == true) || (ProcedureFunctionData(theEnv)->ReturnFlag == true))
         break;
 
-      UDFNthArgument(context,2,ANY_TYPE_BITS,&theResult);
+      CL_UDFNthArgument(context,2,ANY_TYPE_BITS,&theResult);
 
       if ((ProcedureFunctionData(theEnv)->BreakFlag == true) || (ProcedureFunctionData(theEnv)->ReturnFlag == true))
         break;
 
-      CleanCurrentGarbageFrame(theEnv,NULL);
-      CallPeriodicTasks(theEnv);
+      CL_CleanCurrentGarbageFrame(theEnv,NULL);
+      CL_CallPeriodicTasks(theEnv);
 
-      UDFNthArgument(context,1,ANY_TYPE_BITS,&theResult);
+      CL_UDFNthArgument(context,1,ANY_TYPE_BITS,&theResult);
      }
 
    /*=====================================================*/
-   /* Reset the break flag. The return flag is not reset  */
+   /* CL_Reset the break flag. The return flag is not reset  */
    /* because the while loop is probably contained within */
    /* a deffunction or RHS of a rule which needs to be    */
    /* returned from as well.                              */
@@ -199,15 +199,15 @@ void WhileFunction(
       returnValue->value = FalseSymbol(theEnv);
      }
 
-   GCBlockEndUDF(theEnv,&gcb,returnValue);
-   CallPeriodicTasks(theEnv);
+   CL_GCBlockEndUDF(theEnv,&gcb,returnValue);
+   CL_CallPeriodicTasks(theEnv);
   }
 
 /********************************************/
-/* LoopForCountFunction: H/L access routine */
+/* CL_LoopForCountFunction: H/L access routine */
 /*   for the loop-for-count function.       */
 /********************************************/
-void LoopForCountFunction(
+void CL_LoopForCountFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *loopResult)
@@ -222,7 +222,7 @@ void LoopForCountFunction(
    tmpCounter->nxt = ProcedureFunctionData(theEnv)->LoopCounterStack;
    ProcedureFunctionData(theEnv)->LoopCounterStack = tmpCounter;
 
-   if (! UDFNthArgument(context,1,INTEGER_BIT,&theArg))
+   if (! CL_UDFNthArgument(context,1,INTEGER_BIT,&theArg))
      {
       loopResult->value = FalseSymbol(theEnv);
       ProcedureFunctionData(theEnv)->LoopCounterStack = tmpCounter->nxt;
@@ -230,7 +230,7 @@ void LoopForCountFunction(
       return;
      }
    tmpCounter->loopCounter = theArg.integerValue->contents;
-   if (! UDFNthArgument(context,2,INTEGER_BIT,&theArg))
+   if (! CL_UDFNthArgument(context,2,INTEGER_BIT,&theArg))
      {
       loopResult->value = FalseSymbol(theEnv);
       ProcedureFunctionData(theEnv)->LoopCounterStack = tmpCounter->nxt;
@@ -238,22 +238,22 @@ void LoopForCountFunction(
       return;
      }
 
-   GCBlockStart(theEnv,&gcb);
+   CL_GCBlockStart(theEnv,&gcb);
 
    iterationEnd = theArg.integerValue->contents;
    while ((tmpCounter->loopCounter <= iterationEnd) &&
-          (EvaluationData(theEnv)->HaltExecution != true))
+          (CL_EvaluationData(theEnv)->CL_HaltExecution != true))
      {
       if ((ProcedureFunctionData(theEnv)->BreakFlag == true) || (ProcedureFunctionData(theEnv)->ReturnFlag == true))
         break;
 
-      UDFNthArgument(context,3,ANY_TYPE_BITS,&theArg);
+      CL_UDFNthArgument(context,3,ANY_TYPE_BITS,&theArg);
 
       if ((ProcedureFunctionData(theEnv)->BreakFlag == true) || (ProcedureFunctionData(theEnv)->ReturnFlag == true))
         break;
 
-      CleanCurrentGarbageFrame(theEnv,NULL);
-      CallPeriodicTasks(theEnv);
+      CL_CleanCurrentGarbageFrame(theEnv,NULL);
+      CL_CallPeriodicTasks(theEnv);
 
       tmpCounter->loopCounter++;
      }
@@ -272,14 +272,14 @@ void LoopForCountFunction(
    ProcedureFunctionData(theEnv)->LoopCounterStack = tmpCounter->nxt;
    rtn_struct(theEnv,loopCounterStack,tmpCounter);
 
-   GCBlockEndUDF(theEnv,&gcb,loopResult);
-   CallPeriodicTasks(theEnv);
+   CL_GCBlockEndUDF(theEnv,&gcb,loopResult);
+   CL_CallPeriodicTasks(theEnv);
   }
 
 /*****************/
-/* GetLoopCount: */
+/* CL_GetLoopCount: */
 /*****************/
-void GetLoopCount(
+void CL_GetLoopCount(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -288,7 +288,7 @@ void GetLoopCount(
    UDFValue theArg;
    LOOP_COUNTER_STACK *tmpCounter;
 
-   if (! UDFFirstArgument(context,INTEGER_BIT,&theArg))
+   if (! CL_UDFFirstArgument(context,INTEGER_BIT,&theArg))
      { return; }
    depth = theArg.integerValue->contents;
    tmpCounter = ProcedureFunctionData(theEnv)->LoopCounterStack;
@@ -298,14 +298,14 @@ void GetLoopCount(
       depth--;
      }
 
-   returnValue->integerValue = CreateInteger(theEnv,tmpCounter->loopCounter);
+   returnValue->integerValue = CL_CreateInteger(theEnv,tmpCounter->loopCounter);
   }
 
 /************************************/
-/* IfFunction: H/L access routine   */
+/* CL_IfFunction: H/L access routine   */
 /*   for the if function.           */
 /************************************/
-void IfFunction(
+void CL_IfFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -313,10 +313,10 @@ void IfFunction(
    unsigned int numArgs;
 
    /*=========================*/
-   /* Evaluate the condition. */
+   /* CL_Evaluate the condition. */
    /*=========================*/
 
-   if (! UDFNthArgument(context,1,ANY_TYPE_BITS,returnValue))
+   if (! CL_UDFNthArgument(context,1,ANY_TYPE_BITS,returnValue))
      {
       returnValue->value = FalseSymbol(theEnv);
       return;
@@ -335,11 +335,11 @@ void IfFunction(
    /* and return the value.                   */
    /*=========================================*/
 
-   numArgs = UDFArgumentCount(context);
+   numArgs = CL_UDFArgumentCount(context);
    if ((returnValue->value == FalseSymbol(theEnv)) &&
        (numArgs == 3))
      {
-      UDFNthArgument(context,3,ANY_TYPE_BITS,returnValue);
+      CL_UDFNthArgument(context,3,ANY_TYPE_BITS,returnValue);
       return;
      }
 
@@ -350,7 +350,7 @@ void IfFunction(
 
    else if (returnValue->value != FalseSymbol(theEnv))
      {
-      UDFNthArgument(context,2,ANY_TYPE_BITS,returnValue);
+      CL_UDFNthArgument(context,2,ANY_TYPE_BITS,returnValue);
       return;
      }
 
@@ -364,10 +364,10 @@ void IfFunction(
   }
 
 /**************************************/
-/* BindFunction: H/L access routine   */
+/* CL_BindFunction: H/L access routine   */
 /*   for the bind function.           */
 /**************************************/
-void BindFunction(
+void CL_BindFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -381,7 +381,7 @@ void BindFunction(
 #endif
 
    /*===============================================*/
-   /* Determine the name of the variable to be set. */
+   /* DeteCL_rmine the name of the variable to be set. */
    /*===============================================*/
 
 #if DEFGLOBAL_CONSTRUCT
@@ -390,20 +390,20 @@ void BindFunction(
    else
 #endif
      {
-      EvaluateExpression(theEnv,GetFirstArgument(),returnValue);
+      CL_EvaluateExpression(theEnv,GetFirstArgument(),returnValue);
       variableName = returnValue->lexemeValue;
      }
 
    /*===========================================*/
-   /* Determine the new value for the variable. */
+   /* DeteCL_rmine the new value for the variable. */
    /*===========================================*/
 
    if (GetFirstArgument()->nextArg == NULL)
      { unbindVar = true; }
    else if (GetFirstArgument()->nextArg->nextArg == NULL)
-     { EvaluateExpression(theEnv,GetFirstArgument()->nextArg,returnValue); }
+     { CL_EvaluateExpression(theEnv,GetFirstArgument()->nextArg,returnValue); }
    else
-     { StoreInMultifield(theEnv,returnValue,GetFirstArgument()->nextArg,true); }
+     { CL_StoreInMultifield(theEnv,returnValue,GetFirstArgument()->nextArg,true); }
 
    /*==================================*/
    /* Bind a defglobal if appropriate. */
@@ -412,7 +412,7 @@ void BindFunction(
 #if DEFGLOBAL_CONSTRUCT
    if (theGlobal != NULL)
      {
-      QSetDefglobalValue(theEnv,theGlobal,returnValue,unbindVar);
+      CL_QSetDefglobalValue(theEnv,theGlobal,returnValue,unbindVar);
       return;
      }
 #endif
@@ -461,7 +461,7 @@ void BindFunction(
         }
      }
    else
-     { ReleaseUDFV(theEnv,theBind); }
+     { CL_ReleaseUDFV(theEnv,theBind); }
 
    /*================================*/
    /* Set the value of the variable. */
@@ -472,23 +472,23 @@ void BindFunction(
       theBind->value = returnValue->value;
       theBind->begin = returnValue->begin;
       theBind->range = returnValue->range;
-      RetainUDFV(theEnv,returnValue);
+      CL_RetainUDFV(theEnv,returnValue);
      }
    else
      {
       if (lastBind == NULL) ProcedureFunctionData(theEnv)->BindList = theBind->next;
       else lastBind->next = theBind->next;
-      ReleaseLexeme(theEnv,(CLIPSLexeme *) theBind->supplementalInfo);
+      CL_ReleaseLexeme(theEnv,(CLIPSLexeme *) theBind->supplementalInfo);
       rtn_struct(theEnv,udfValue,theBind);
       returnValue->value = FalseSymbol(theEnv);
      }
   }
 
 /*******************************************/
-/* GetBoundVariable: Searches the BindList */
+/* CL_GetBoundVariable: Searches the BindList */
 /*   for a specified variable.             */
 /*******************************************/
-bool GetBoundVariable(
+bool CL_GetBoundVariable(
   Environment *theEnv,
   UDFValue *vPtr,
   CLIPSLexeme *varName)
@@ -510,29 +510,29 @@ bool GetBoundVariable(
   }
 
 /*************************************************/
-/* FlushBindList: Removes all variables from the */
+/* CL_FlushBindList: Removes all variables from the */
 /*   list of currently bound local variables.    */
 /*************************************************/
-void FlushBindList(
+void CL_FlushBindList(
   Environment *theEnv,
   void *context)
   {
-   ReturnValues(theEnv,ProcedureFunctionData(theEnv)->BindList,true);
+   CL_ReturnValues(theEnv,ProcedureFunctionData(theEnv)->BindList,true);
    ProcedureFunctionData(theEnv)->BindList = NULL;
   }
 
 /***************************************/
-/* PrognFunction: H/L access routine   */
+/* CL_PrognFunction: H/L access routine   */
 /*   for the progn function.           */
 /***************************************/
-void PrognFunction(
+void CL_PrognFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
    struct expr *argPtr;
 
-   argPtr = EvaluationData(theEnv)->CurrentExpression->argList;
+   argPtr = CL_EvaluationData(theEnv)->CurrentExpression->argList;
 
    if (argPtr == NULL)
      {
@@ -540,16 +540,16 @@ void PrognFunction(
       return;
      }
 
-   while ((argPtr != NULL) && (GetHaltExecution(theEnv) != true))
+   while ((argPtr != NULL) && (CL_GetCL_HaltExecution(theEnv) != true))
      {
-      EvaluateExpression(theEnv,argPtr,returnValue);
+      CL_EvaluateExpression(theEnv,argPtr,returnValue);
 
       if ((ProcedureFunctionData(theEnv)->BreakFlag == true) || (ProcedureFunctionData(theEnv)->ReturnFlag == true))
         break;
       argPtr = argPtr->nextArg;
      }
 
-   if (GetHaltExecution(theEnv) == true)
+   if (CL_GetCL_HaltExecution(theEnv) == true)
      {
       returnValue->value = FalseSymbol(theEnv);
       return;
@@ -559,9 +559,9 @@ void PrognFunction(
   }
 
 /***************************************************************/
-/* ReturnFunction: H/L access routine for the return function. */
+/* CL_ReturnFunction: H/L access routine for the return function. */
 /***************************************************************/
-void ReturnFunction(
+void CL_ReturnFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -571,14 +571,14 @@ void ReturnFunction(
       returnValue->voidValue = VoidConstant(theEnv);
      }
    else
-     { UDFNextArgument(context,ANY_TYPE_BITS,returnValue); }
+     { CL_UDFNextArgument(context,ANY_TYPE_BITS,returnValue); }
    ProcedureFunctionData(theEnv)->ReturnFlag = true;
   }
 
 /***************************************************************/
-/* BreakFunction: H/L access routine for the break function.   */
+/* CL_BreakFunction: H/L access routine for the break function.   */
 /***************************************************************/
-void BreakFunction(
+void CL_BreakFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -587,9 +587,9 @@ void BreakFunction(
   }
 
 /*****************************************************************/
-/* SwitchFunction: H/L access routine for the switch function.   */
+/* CL_SwitchFunction: H/L access routine for the switch function.   */
 /*****************************************************************/
-void SwitchFunction(
+void CL_SwitchFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -602,8 +602,8 @@ void SwitchFunction(
    /* ==========================
       Get the value to switch on
       ========================== */
-   EvaluateExpression(theEnv,GetFirstArgument(),&switch_val);
-   if (EvaluationData(theEnv)->EvaluationError)
+   CL_EvaluateExpression(theEnv,GetFirstArgument(),&switch_val);
+   if (CL_EvaluationData(theEnv)->CL_EvaluationError)
      return;
    for (theExp = GetFirstArgument()->nextArg ; theExp != NULL ; theExp = theExp->nextArg->nextArg)
      {
@@ -612,22 +612,22 @@ void SwitchFunction(
          ================================================= */
       if (theExp->type == VOID_TYPE)
         {
-         EvaluateExpression(theEnv,theExp->nextArg,returnValue);
+         CL_EvaluateExpression(theEnv,theExp->nextArg,returnValue);
          return;
         }
 
       /* ====================================================
          If the case matches, evaluate the actions and return
          ==================================================== */
-      EvaluateExpression(theEnv,theExp,&case_val);
-      if (EvaluationData(theEnv)->EvaluationError)
+      CL_EvaluateExpression(theEnv,theExp,&case_val);
+      if (CL_EvaluationData(theEnv)->CL_EvaluationError)
         return;
       if (switch_val.header->type == case_val.header->type)
         {
-         if ((case_val.header->type == MULTIFIELD_TYPE) ? MultifieldDOsEqual(&switch_val,&case_val) :
+         if ((case_val.header->type == MULTIFIELD_TYPE) ? MultifieldCL_DOsEqual(&switch_val,&case_val) :
              (switch_val.value == case_val.value))
            {
-            EvaluateExpression(theEnv,theExp->nextArg,returnValue);
+            CL_EvaluateExpression(theEnv,theExp->nextArg,returnValue);
             return;
            }
         }

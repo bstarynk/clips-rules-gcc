@@ -22,7 +22,7 @@
 /*            compilers/operating systems (IBM_MCW,          */
 /*            MAC_MCW, and IBM_TBC).                         */
 /*                                                           */
-/*            GetConstructNameAndComment API change.         */
+/*            CL_GetConstructNameAndComment API change.         */
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
@@ -46,7 +46,7 @@
 
 #if DEFFUNCTION_CONSTRUCT && (! BLOAD_ONLY) && (! RUN_TIME)
 
-   bool                           ParseDeffunction(Environment *,const char *);
+   bool                           CL_ParseDeffunction(Environment *,const char *);
 
 #endif /* DEFFUNCTION_CONSTRUCT && (! BLOAD_ONLY) && (! RUN_TIME) */
 

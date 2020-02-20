@@ -66,7 +66,7 @@ typedef struct deffacts Deffacts;
 struct deffactsData
   {
    Construct *DeffactsConstruct;
-   unsigned DeffactsModuleIndex;
+   unsigned CL_DeffactsModuleIndex;
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
    struct CodeGeneratorItem *DeffactsCodeItem;
 #endif
@@ -85,18 +85,18 @@ struct deffactsModule
 
 #define DeffactsData(theEnv) ((struct deffactsData *) GetEnvironmentData(theEnv,DEFFACTS_DATA))
 
-   void                           InitializeDeffacts(Environment *);
-   Deffacts                      *FindDeffacts(Environment *,const char *);
-   Deffacts                      *FindDeffactsInModule(Environment *,const char *);
-   Deffacts                      *GetNextDeffacts(Environment *,Deffacts *);
+   void                           CL_InitializeDeffacts(Environment *);
+   Deffacts                      *CL_FindDeffacts(Environment *,const char *);
+   Deffacts                      *CL_FindDeffactsInModule(Environment *,const char *);
+   Deffacts                      *CL_GetNextDeffacts(Environment *,Deffacts *);
    void                           CreateInitialFactDeffacts(void);
-   bool                           DeffactsIsDeletable(Deffacts *);
-   struct deffactsModule         *GetDeffactsModuleItem(Environment *,Defmodule *);
-   const char                    *DeffactsModule(Deffacts *);
-   const char                    *DeffactsName(Deffacts *);
-   const char                    *DeffactsPPForm(Deffacts *);
+   bool                           CL_DeffactsIsDeletable(Deffacts *);
+   struct deffactsModule         *GetCL_DeffactsModuleItem(Environment *,Defmodule *);
+   const char                    *CL_DeffactsModule(Deffacts *);
+   const char                    *CL_DeffactsName(Deffacts *);
+   const char                    *CL_DeffactsPPFoCL_rm(Deffacts *);
 #if RUN_TIME
-   void                           DeffactsRunTimeInitialize(Environment *);
+   void                           DeffactsCL_RunTimeInitialize(Environment *);
 #endif
 
 #endif /* _H_dffctdef */

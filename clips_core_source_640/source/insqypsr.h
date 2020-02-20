@@ -38,7 +38,7 @@
 /*            Removed use of void pointers for specific      */
 /*            data structures.                               */
 /*                                                           */
-/*            Eval support for run time and bload only.      */
+/*            CL_Eval support for run time and bload only.      */
 /*                                                           */
 /*************************************************************/
 
@@ -52,8 +52,8 @@
 
 #include "expressn.h"
 
-   Expression                    *ParseQueryNoAction(Environment *,Expression *,const char *);
-   Expression                    *ParseQueryAction(Environment *,Expression *,const char *);
+   Expression                    *CL_ParseQueryNoAction(Environment *,Expression *,const char *);
+   Expression                    *CL_ParseQueryAction(Environment *,Expression *,const char *);
 
 #endif /* INSTANCE_SET_QUERIES && (! RUN_TIME) */
 

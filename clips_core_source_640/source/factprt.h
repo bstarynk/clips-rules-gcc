@@ -42,18 +42,18 @@
 
 #define _H_factprt
 
-   void                           PrintFactJNCompVars1(Environment *,const char *,void *);
-   void                           PrintFactJNCompVars2(Environment *,const char *,void *);
-   void                           PrintFactPNCompVars1(Environment *,const char *,void *);
-   void                           PrintFactJNGetVar1(Environment *,const char *,void *);
-   void                           PrintFactJNGetVar2(Environment *,const char *,void *);
-   void                           PrintFactJNGetVar3(Environment *,const char *,void *);
-   void                           PrintFactPNGetVar1(Environment *,const char *,void *);
-   void                           PrintFactPNGetVar2(Environment *,const char *,void *);
-   void                           PrintFactPNGetVar3(Environment *,const char *,void *);
-   void                           PrintFactSlotLength(Environment *,const char *,void *);
-   void                           PrintFactPNConstant1(Environment *,const char *,void *);
-   void                           PrintFactPNConstant2(Environment *,const char *,void *);
+   void                           PrintCL_FactJNCompVars1(Environment *,const char *,void *);
+   void                           PrintCL_FactJNCompVars2(Environment *,const char *,void *);
+   void                           PrintCL_FactPNCompVars1(Environment *,const char *,void *);
+   void                           PrintCL_FactJNGetVar1(Environment *,const char *,void *);
+   void                           PrintCL_FactJNGetVar2(Environment *,const char *,void *);
+   void                           PrintCL_FactJNGetVar3(Environment *,const char *,void *);
+   void                           PrintCL_FactPNGetVar1(Environment *,const char *,void *);
+   void                           PrintCL_FactPNGetVar2(Environment *,const char *,void *);
+   void                           PrintCL_FactPNGetVar3(Environment *,const char *,void *);
+   void                           PrintCL_FactSlotLength(Environment *,const char *,void *);
+   void                           PrintCL_FactPNConstant1(Environment *,const char *,void *);
+   void                           PrintCL_FactPNConstant2(Environment *,const char *,void *);
 
 #endif /* _H_factprt */
 

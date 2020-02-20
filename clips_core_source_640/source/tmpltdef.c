@@ -19,7 +19,7 @@
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
-/*      6.23: Added support for templates maintaining their  */
+/*      6.23: Added support for templates CL_maintaining their  */
 /*            own list of facts.                             */
 /*                                                           */
 /*      6.24: Renamed BOOLEAN macro type to intBool.         */
@@ -96,19 +96,19 @@
    static void                   *AllocateModule(Environment *);
    static void                    ReturnModule(Environment *,void *);
    static void                    ReturnDeftemplate(Environment *,Deftemplate *);
-   static void                    InitializeDeftemplateModules(Environment *);
+   static void                    InitializeCL_DeftemplateModules(Environment *);
    static void                    DeallocateDeftemplateData(Environment *);
    static void                    DestroyDeftemplateAction(Environment *,ConstructHeader *,void *);
    static void                    DestroyDeftemplate(Environment *,Deftemplate *);
 #if RUN_TIME
-   static void                    RuntimeDeftemplateAction(Environment *,ConstructHeader *,void *);
+   static void                    CL_RuntimeDeftemplateAction(Environment *,ConstructHeader *,void *);
    static void                    SearchForHashedPatternNodes(Environment *,struct factPatternNode *);
 #endif
 
 /******************************************************************/
-/* InitializeDeftemplates: Initializes the deftemplate construct. */
+/* CL_InitializeDeftemplates: Initializes the deftemplate construct. */
 /******************************************************************/
-void InitializeDeftemplates(
+void CL_InitializeDeftemplates(
   Environment *theEnv)
   {
    struct entityRecord deftemplatePtrRecord =
@@ -118,33 +118,33 @@ void InitializeDeftemplates(
         NULL,NULL,
         NULL,
         NULL,
-        (EntityBusyCountFunction *) DecrementDeftemplateBusyCount,
-        (EntityBusyCountFunction *) IncrementDeftemplateBusyCount,
+        (EntityBusyCountFunction *) CL_DecrementDeftemplateBusyCount,
+        (EntityBusyCountFunction *) CL_IncrementDeftemplateBusyCount,
         NULL,NULL,NULL,NULL,NULL };
-   AllocateEnvironmentData(theEnv,DEFTEMPLATE_DATA,sizeof(struct deftemplateData),DeallocateDeftemplateData);
+   CL_AllocateEnvironmentData(theEnv,DEFTEMPLATE_DATA,sizeof(struct deftemplateData),DeallocateDeftemplateData);
 
    memcpy(&DeftemplateData(theEnv)->DeftemplatePtrRecord,&deftemplatePtrRecord,sizeof(struct entityRecord));
 
-   InitializeFacts(theEnv);
+   InitializeCL_Facts(theEnv);
 
-   InitializeDeftemplateModules(theEnv);
+   InitializeCL_DeftemplateModules(theEnv);
 
-   DeftemplateBasicCommands(theEnv);
+   CL_DeftemplateBasicCommands(theEnv);
 
-   DeftemplateFunctions(theEnv);
+   CL_DeftemplateFunctions(theEnv);
 
    DeftemplateData(theEnv)->DeftemplateConstruct =
-      AddConstruct(theEnv,"deftemplate","deftemplates",ParseDeftemplate,
-                   (FindConstructFunction *) FindDeftemplate,
-                   GetConstructNamePointer,GetConstructPPForm,
-                   GetConstructModuleItem,
-                   (GetNextConstructFunction *) GetNextDeftemplate,
-                   SetNextConstruct,
-                   (IsConstructDeletableFunction *) DeftemplateIsDeletable,
-                   (DeleteConstructFunction *) Undeftemplate,
+      CL_AddConstruct(theEnv,"deftemplate","deftemplates",CL_ParseDeftemplate,
+                   (CL_FindConstructFunction *) CL_FindDeftemplate,
+                   CL_GetConstructNamePointer,CL_GetConstructPPFoCL_rm,
+                   CL_GetConstructModuleItem,
+                   (GetNextConstructFunction *) CL_GetNextDeftemplate,
+                   CL_SetNextConstruct,
+                   (IsConstructDeletableFunction *) CL_DeftemplateIsDeletable,
+                   (DeleteConstructFunction *) CL_Undeftemplate,
                    (FreeConstructFunction *) ReturnDeftemplate);
 
-   InstallPrimitive(theEnv,(EntityRecord *) &DeftemplateData(theEnv)->DeftemplatePtrRecord,DEFTEMPLATE_PTR);
+   CL_InstallPrimitive(theEnv,(EntityRecord *) &DeftemplateData(theEnv)->DeftemplatePtrRecord,DEFTEMPLATE_PTR);
   }
 
 /******************************************************/
@@ -159,19 +159,19 @@ static void DeallocateDeftemplateData(
    Defmodule *theModule;
 #endif
 #if BLOAD || BLOAD_AND_BSAVE
-   if (Bloaded(theEnv)) return;
+   if (CL_Bloaded(theEnv)) return;
 #endif
 
-   DoForAllConstructs(theEnv,DestroyDeftemplateAction,DeftemplateData(theEnv)->DeftemplateModuleIndex,false,NULL);
+   CL_DoForAllConstructs(theEnv,DestroyDeftemplateAction,DeftemplateData(theEnv)->CL_DeftemplateModuleIndex,false,NULL);
 
 #if ! RUN_TIME
-   for (theModule = GetNextDefmodule(theEnv,NULL);
+   for (theModule = CL_GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
-        theModule = GetNextDefmodule(theEnv,theModule))
+        theModule = CL_GetNextDefmodule(theEnv,theModule))
      {
       theModuleItem = (struct deftemplateModule *)
-                      GetModuleItem(theEnv,theModule,
-                                    DeftemplateData(theEnv)->DeftemplateModuleIndex);
+                      CL_GetModuleItem(theEnv,theModule,
+                                    DeftemplateData(theEnv)->CL_DeftemplateModuleIndex);
       rtn_struct(theEnv,deftemplateModule,theModuleItem);
      }
 #endif
@@ -179,7 +179,7 @@ static void DeallocateDeftemplateData(
 
 /*****************************************************/
 /* DestroyDeftemplateAction: Action used to remove   */
-/*   deftemplates as a result of DestroyEnvironment. */
+/*   deftemplates as a result of CL_DestroyEnvironment. */
 /*****************************************************/
 static void DestroyDeftemplateAction(
   Environment *theEnv,
@@ -198,29 +198,29 @@ static void DestroyDeftemplateAction(
 
 
 /*************************************************************/
-/* InitializeDeftemplateModules: Initializes the deftemplate */
+/* InitializeCL_DeftemplateModules: Initializes the deftemplate */
 /*   construct for use with the defmodule construct.         */
 /*************************************************************/
-static void InitializeDeftemplateModules(
+static void InitializeCL_DeftemplateModules(
   Environment *theEnv)
   {
-   DeftemplateData(theEnv)->DeftemplateModuleIndex = RegisterModuleItem(theEnv,"deftemplate",
+   DeftemplateData(theEnv)->CL_DeftemplateModuleIndex = CL_RegisterModuleItem(theEnv,"deftemplate",
                                     AllocateModule,
                                     ReturnModule,
 #if BLOAD_AND_BSAVE || BLOAD || BLOAD_ONLY
-                                    BloadDeftemplateModuleReference,
+                                    CL_BloadCL_DeftemplateModuleReference,
 #else
                                     NULL,
 #endif
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
-                                    DeftemplateCModuleReference,
+                                    CL_DeftemplateCModuleReference,
 #else
                                     NULL,
 #endif
-                                    (FindConstructFunction *) FindDeftemplateInModule);
+                                    (CL_FindConstructFunction *) CL_FindDeftemplateInModule);
 
 #if (! BLOAD_ONLY) && (! RUN_TIME) && DEFMODULE_CONSTRUCT
-   AddPortConstructItem(theEnv,"deftemplate",SYMBOL_TOKEN);
+   CL_AddPortConstructItem(theEnv,"deftemplate",SYMBOL_TOKEN);
 #endif
   }
 
@@ -240,67 +240,67 @@ static void ReturnModule(
   Environment *theEnv,
   void *theItem)
   {
-   FreeConstructHeaderModule(theEnv,(struct defmoduleItemHeader *) theItem,DeftemplateData(theEnv)->DeftemplateConstruct);
+   CL_FreeConstructHeaderModule(theEnv,(struct defmoduleItemHeader *) theItem,DeftemplateData(theEnv)->DeftemplateConstruct);
    rtn_struct(theEnv,deftemplateModule,theItem);
   }
 
 /****************************************************************/
-/* GetDeftemplateModuleItem: Returns a pointer to the defmodule */
+/* GetCL_DeftemplateModuleItem: Returns a pointer to the defmodule */
 /*  item for the specified deftemplate or defmodule.            */
 /****************************************************************/
-struct deftemplateModule *GetDeftemplateModuleItem(
+struct deftemplateModule *GetCL_DeftemplateModuleItem(
   Environment *theEnv,
   Defmodule *theModule)
   {
-   return((struct deftemplateModule *) GetConstructModuleItemByIndex(theEnv,theModule,DeftemplateData(theEnv)->DeftemplateModuleIndex));
+   return((struct deftemplateModule *) CL_GetConstructModuleItemByIndex(theEnv,theModule,DeftemplateData(theEnv)->CL_DeftemplateModuleIndex));
   }
 
 /***************************************************/
-/* FindDeftemplate: Searches for a deftemplate in  */
+/* CL_FindDeftemplate: Searches for a deftemplate in  */
 /*   the list of deftemplates. Returns a pointer   */
 /*   to the deftemplate if  found, otherwise NULL. */
 /***************************************************/
-Deftemplate *FindDeftemplate(
+Deftemplate *CL_FindDeftemplate(
   Environment *theEnv,
   const char *deftemplateName)
   {
-   return (Deftemplate *) FindNamedConstructInModuleOrImports(theEnv,deftemplateName,DeftemplateData(theEnv)->DeftemplateConstruct);
+   return (Deftemplate *) CL_FindNamedConstructInModuleOrImports(theEnv,deftemplateName,DeftemplateData(theEnv)->DeftemplateConstruct);
   }
 
 /*******************************************************/
-/* FindDeftemplateInModule: Searches for a deftemplate */
+/* CL_FindDeftemplateInModule: Searches for a deftemplate */
 /*   in the list of deftemplates. Returns a pointer    */
 /*   to the deftemplate if  found, otherwise NULL.     */
 /*******************************************************/
-Deftemplate *FindDeftemplateInModule(
+Deftemplate *CL_FindDeftemplateInModule(
   Environment *theEnv,
   const char *deftemplateName)
   {
-   return (Deftemplate *) FindNamedConstructInModule(theEnv,deftemplateName,DeftemplateData(theEnv)->DeftemplateConstruct);
+   return (Deftemplate *) CL_FindNamedConstructInModule(theEnv,deftemplateName,DeftemplateData(theEnv)->DeftemplateConstruct);
   }
 
 /***********************************************************************/
-/* GetNextDeftemplate: If passed a NULL pointer, returns the first     */
+/* CL_GetNextDeftemplate: If passed a NULL pointer, returns the first     */
 /*   deftemplate in the ListOfDeftemplates. Otherwise returns the next */
 /*   deftemplate following the deftemplate passed as an argument.      */
 /***********************************************************************/
-Deftemplate *GetNextDeftemplate(
+Deftemplate *CL_GetNextDeftemplate(
   Environment *theEnv,
   Deftemplate *deftemplatePtr)
   {
-   return (Deftemplate *) GetNextConstructItem(theEnv,&deftemplatePtr->header,DeftemplateData(theEnv)->DeftemplateModuleIndex);
+   return (Deftemplate *) CL_GetNextConstructItem(theEnv,&deftemplatePtr->header,DeftemplateData(theEnv)->CL_DeftemplateModuleIndex);
   }
 
 /**********************************************************/
-/* DeftemplateIsDeletable: Returns true if a particular   */
+/* CL_DeftemplateIsDeletable: Returns true if a particular   */
 /*   deftemplate can be deleted, otherwise returns false. */
 /**********************************************************/
-bool DeftemplateIsDeletable(
+bool CL_DeftemplateIsDeletable(
   Deftemplate *theDeftemplate)
   {
    Environment *theEnv = theDeftemplate->header.env;
 
-   if (! ConstructsDeletable(theEnv))
+   if (! CL_ConstructsDeletable(theEnv))
      { return false; }
 
    if (theDeftemplate->busyCount > 0) return false;
@@ -338,23 +338,23 @@ static void ReturnDeftemplate(
    slotPtr = theDeftemplate->slotList;
    while (slotPtr != NULL)
      {
-      ReleaseLexeme(theEnv,slotPtr->slotName);
-      RemoveHashedExpression(theEnv,slotPtr->defaultList);
+      CL_ReleaseLexeme(theEnv,slotPtr->slotName);
+      CL_RemoveHashedExpression(theEnv,slotPtr->defaultList);
       slotPtr->defaultList = NULL;
-      RemoveHashedExpression(theEnv,slotPtr->facetList);
+      CL_RemoveHashedExpression(theEnv,slotPtr->facetList);
       slotPtr->facetList = NULL;
-      RemoveConstraint(theEnv,slotPtr->constraints);
+      CL_RemoveConstraint(theEnv,slotPtr->constraints);
       slotPtr->constraints = NULL;
       slotPtr = slotPtr->next;
      }
 
-   ReturnSlots(theEnv,theDeftemplate->slotList);
+   CL_ReturnSlots(theEnv,theDeftemplate->slotList);
 
    /*==================================*/
    /* Free storage used by the header. */
    /*==================================*/
 
-   DeinstallConstructHeader(theEnv,&theDeftemplate->header);
+   CL_DeinstallConstructHeader(theEnv,&theDeftemplate->header);
 
    rtn_struct(theEnv,deftemplate,theDeftemplate);
 #endif
@@ -384,24 +384,24 @@ static void DestroyDeftemplate(
      }
 #endif
 
-   DestroyFactPatternNetwork(theEnv,theDeftemplate->patternNetwork);
+   CL_DestroyFactPatternNetwork(theEnv,theDeftemplate->patternNetwork);
 
    /*==================================*/
    /* Free storage used by the header. */
    /*==================================*/
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-   DeinstallConstructHeader(theEnv,&theDeftemplate->header);
+   CL_DeinstallConstructHeader(theEnv,&theDeftemplate->header);
 
    rtn_struct(theEnv,deftemplate,theDeftemplate);
 #endif
   }
 
 /***********************************************/
-/* ReturnSlots: Returns the slot structures of */
+/* CL_ReturnSlots: Returns the slot structures of */
 /*   a deftemplate to free memory.             */
 /***********************************************/
-void ReturnSlots(
+void CL_ReturnSlots(
   Environment *theEnv,
   struct templateSlot *slotPtr)
   {
@@ -411,9 +411,9 @@ void ReturnSlots(
    while (slotPtr != NULL)
      {
       nextSlot = slotPtr->next;
-      ReturnExpression(theEnv,slotPtr->defaultList);
-      ReturnExpression(theEnv,slotPtr->facetList);
-      RemoveConstraint(theEnv,slotPtr->constraints);
+      CL_ReturnExpression(theEnv,slotPtr->defaultList);
+      CL_ReturnExpression(theEnv,slotPtr->facetList);
+      CL_RemoveConstraint(theEnv,slotPtr->constraints);
       rtn_struct(theEnv,templateSlot,slotPtr);
       slotPtr = nextSlot;
      }
@@ -421,21 +421,21 @@ void ReturnSlots(
   }
 
 /*************************************************/
-/* DecrementDeftemplateBusyCount: Decrements the */
+/* CL_DecrementDeftemplateBusyCount: Decrements the */
 /*   busy count of a deftemplate data structure. */
 /*************************************************/
-void DecrementDeftemplateBusyCount(
+void CL_DecrementDeftemplateBusyCount(
   Environment *theEnv,
   Deftemplate *theTemplate)
   {
-   if (! ConstructData(theEnv)->ClearInProgress) theTemplate->busyCount--;
+   if (! ConstructData(theEnv)->CL_ClearInProgress) theTemplate->busyCount--;
   }
 
 /*************************************************/
-/* IncrementDeftemplateBusyCount: Increments the */
+/* CL_IncrementDeftemplateBusyCount: Increments the */
 /*   busy count of a deftemplate data structure. */
 /*************************************************/
-void IncrementDeftemplateBusyCount(
+void CL_IncrementDeftemplateBusyCount(
   Environment *theEnv,
   Deftemplate *theTemplate)
   {
@@ -447,11 +447,11 @@ void IncrementDeftemplateBusyCount(
   }
 
 /*******************************************************************/
-/* GetNextFactInTemplate: If passed a NULL pointer, returns the    */
+/* CL_GetNextFactInTemplate: If passed a NULL pointer, returns the    */
 /*   first fact in the template's fact-list. Otherwise returns the */
 /*   next template fact following the fact passed as an argument.  */
 /*******************************************************************/
-Fact *GetNextFactInTemplate(
+Fact *CL_GetNextFactInTemplate(
   Deftemplate *theTemplate,
   Fact *factPtr)
   {
@@ -466,9 +466,9 @@ Fact *GetNextFactInTemplate(
 #if ! RUN_TIME
 
 /******************************/
-/* CreateDeftemplateScopeMap: */
+/* CL_CreateDeftemplateScopeMap: */
 /******************************/
-void *CreateDeftemplateScopeMap(
+void *CL_CreateDeftemplateScopeMap(
   Environment *theEnv,
   Deftemplate *theDeftemplate)
   {
@@ -483,25 +483,25 @@ void *CreateDeftemplateScopeMap(
    templateName = theDeftemplate->header.name->contents;
    matchModule = theDeftemplate->header.whichModule->theModule;
 
-   scopeMapSize = (sizeof(char) * ((GetNumberOfDefmodules(theEnv) / BITS_PER_BYTE) + 1));
-   scopeMap = (char *) gm2(theEnv,scopeMapSize);
+   scopeMapSize = (sizeof(char) * ((CL_GetNumberOfDefmodules(theEnv) / BITS_PER_BYTE) + 1));
+   scopeMap = (char *) CL_gm2(theEnv,scopeMapSize);
 
-   ClearBitString((void *) scopeMap,scopeMapSize);
-   SaveCurrentModule(theEnv);
-   for (theModule = GetNextDefmodule(theEnv,NULL) ;
+   CL_ClearBitString((void *) scopeMap,scopeMapSize);
+   CL_SaveCurrentModule(theEnv);
+   for (theModule = CL_GetNextDefmodule(theEnv,NULL) ;
         theModule != NULL ;
-        theModule = GetNextDefmodule(theEnv,theModule))
+        theModule = CL_GetNextDefmodule(theEnv,theModule))
      {
-      SetCurrentModule(theEnv,theModule);
+      CL_SetCurrentModule(theEnv,theModule);
       moduleID = theModule->header.bsaveID;
-      if (FindImportedConstruct(theEnv,"deftemplate",matchModule,
+      if (CL_FindImportedConstruct(theEnv,"deftemplate",matchModule,
                                 templateName,&count,true,NULL) != NULL)
         SetBitMap(scopeMap,moduleID);
      }
-   RestoreCurrentModule(theEnv);
-   theBitMap = AddBitMap(theEnv,scopeMap,scopeMapSize);
+   CL_RestoreCurrentModule(theEnv);
+   theBitMap = CL_AddBitMap(theEnv,scopeMap,scopeMapSize);
    IncrementBitMapCount(theBitMap);
-   rm(theEnv,scopeMap,scopeMapSize);
+   CL_rm(theEnv,scopeMap,scopeMapSize);
    return(theBitMap);
   }
 
@@ -510,11 +510,11 @@ void *CreateDeftemplateScopeMap(
 #if RUN_TIME
 
 /**************************************************/
-/* RuntimeDeftemplateAction: Action to be applied */
+/* CL_RuntimeDeftemplateAction: Action to be applied */
 /*   to each deftemplate construct when a runtime */
 /*   initialization occurs.                       */
 /**************************************************/
-static void RuntimeDeftemplateAction(
+static void CL_RuntimeDeftemplateAction(
   Environment *theEnv,
   ConstructHeader *theConstruct,
   void *buffer)
@@ -538,7 +538,7 @@ static void SearchForHashedPatternNodes(
     while (theNode != NULL)
       {
        if ((theNode->lastLevel != NULL) && (theNode->lastLevel->header.selector))
-        { AddHashedPatternNode(theEnv,theNode->lastLevel,theNode,theNode->networkTest->type,theNode->networkTest->value); }
+        { CL_AddHashedPatternNode(theEnv,theNode->lastLevel,theNode,theNode->networkTest->type,theNode->networkTest->value); }
 
        SearchForHashedPatternNodes(theEnv,theNode->nextLevel);
 
@@ -547,12 +547,12 @@ static void SearchForHashedPatternNodes(
    }
 
 /*********************************/
-/* DeftemplateRunTimeInitialize: */
+/* DeftemplateCL_RunTimeInitialize: */
 /*********************************/
-void DeftemplateRunTimeInitialize(
+void DeftemplateCL_RunTimeInitialize(
   Environment *theEnv)
   {
-   DoForAllConstructs(theEnv,RuntimeDeftemplateAction,DeftemplateData(theEnv)->DeftemplateModuleIndex,true,NULL);
+   CL_DoForAllConstructs(theEnv,CL_RuntimeDeftemplateAction,DeftemplateData(theEnv)->CL_DeftemplateModuleIndex,true,NULL);
   }
 
 #endif /* RUN_TIME */
@@ -561,22 +561,22 @@ void DeftemplateRunTimeInitialize(
 /* Additional Environment Functions */
 /*##################################*/
 
-const char *DeftemplateModule(
+const char *CL_DeftemplateModule(
   Deftemplate *theDeftemplate)
   {
-   return GetConstructModuleName(&theDeftemplate->header);
+   return CL_GetConstructModuleName(&theDeftemplate->header);
   }
 
-const char *DeftemplateName(
+const char *CL_DeftemplateName(
   Deftemplate *theDeftemplate)
   {
-   return GetConstructNameString(&theDeftemplate->header);
+   return CL_GetConstructNameString(&theDeftemplate->header);
   }
 
-const char *DeftemplatePPForm(
+const char *CL_DeftemplatePPFoCL_rm(
   Deftemplate *theDeftemplate)
   {
-   return GetConstructPPForm(&theDeftemplate->header);
+   return CL_GetConstructPPFoCL_rm(&theDeftemplate->header);
   }
 
 #endif /* DEFTEMPLATE_CONSTRUCT */

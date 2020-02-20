@@ -92,7 +92,7 @@ struct constructHeader
   {
    ConstructType constructType;
    CLIPSLexeme *name;
-   const char *ppForm;
+   const char *ppFoCL_rm;
    DefmoduleItemHeader *whichModule;
    unsigned long bsaveID;
    ConstructHeader *next;
@@ -107,7 +107,7 @@ struct defmoduleItemHeader
    ConstructHeader *lastItem;
   };
 
-typedef ConstructHeader *FindConstructFunction(Environment *,const char *);
+typedef ConstructHeader *CL_FindConstructFunction(Environment *,const char *);
 typedef ConstructHeader *GetNextConstructFunction(Environment *,ConstructHeader *);
 typedef bool IsConstructDeletableFunction(ConstructHeader *);
 typedef bool DeleteConstructFunction(ConstructHeader *,Environment *);
@@ -119,11 +119,11 @@ typedef void FreeConstructFunction(Environment *,ConstructHeader *);
 /* name: The name of the defmodule (stored as a reference in the      */
 /*   table).                                                          */
 /*                                                                    */
-/* ppForm: The pretty print representation of the defmodule (used by  */
+/* ppFoCL_rm: The pretty print representation of the defmodule (used by  */
 /*   the save and ppdefmodule commands).                              */
 /*                                                                    */
 /* itemsArray: An array of pointers to the module specific data used  */
-/*   by each construct specified with the RegisterModuleItem          */
+/*   by each construct specified with the CL_RegisterModuleItem          */
 /*   function. The data pointer stored in the array is allocated by   */
 /*   the allocateFunction in moduleItem data structure.               */
 /*                                                                    */
@@ -159,7 +159,7 @@ struct portItem
 /*   For example, "defrule".                                          */
 /*                                                                    */
 /* allocateFunction: Used to allocate a data structure containing all */
-/*   pertinent information related to a specific construct for a      */
+/*   pertinent infoCL_rmation related to a specific construct for a      */
 /*   given module. For example, the deffacts construct stores a       */
 /*   pointer to the first and last deffacts for each each module.     */
 /*                                                                    */
@@ -169,10 +169,10 @@ struct portItem
 /*                                                                    */
 /* bloadModuleReference: Used during a binary load to establish a     */
 /*   link between the defmodule data structure and the data structure */
-/*   containing all pertinent module information for a specific       */
+/*   containing all pertinent module infoCL_rmation for a specific       */
 /*   construct.                                                       */
 /*                                                                    */
-/* findFunction: Used to determine if a specified construct is in a   */
+/* findFunction: Used to deteCL_rmine if a specified construct is in a   */
 /*   specific module. The name is the specific construct is passed as */
 /*   a string and the function returns a pointer to the specified     */
 /*   construct if it exists.                                          */
@@ -191,7 +191,7 @@ struct moduleItem
    void  (*freeFunction)(Environment *,void *);
    void *(*bloadModuleReference)(Environment *,unsigned long);
    void  (*constructsToCModuleReference)(Environment *,FILE *,unsigned long,unsigned int,unsigned int);
-   FindConstructFunction *findFunction;
+   CL_FindConstructFunction *findFunction;
    ModuleItem *next;
   };
 
@@ -207,7 +207,7 @@ struct moduleStackItem
 struct defmoduleData
   {
    struct moduleItem *LastModuleItem;
-   struct voidCallFunctionItem *AfterModuleChangeFunctions;
+   struct voidCL_CallFunctionItem *AfterModuleChangeFunctions;
    ModuleStackItem *ModuleStack;
    bool CallModuleChangeFunctions;
    Defmodule *ListOfDefmodules;
@@ -220,7 +220,7 @@ struct defmoduleData
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    struct portConstructItem *ListOfPortConstructItems;
    unsigned short NumberOfDefmodules;
-   struct voidCallFunctionItem *AfterModuleDefinedFunctions;
+   struct voidCL_CallFunctionItem *AfterModuleDefinedFunctions;
 #endif
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
    struct CodeGeneratorItem *DefmoduleCodeItem;
@@ -235,36 +235,36 @@ struct defmoduleData
 
 #define DefmoduleData(theEnv) ((struct defmoduleData *) GetEnvironmentData(theEnv,DEFMODULE_DATA))
 
-   void                           InitializeDefmodules(Environment *);
-   Defmodule                     *FindDefmodule(Environment *,const char *);
-   const char                    *DefmoduleName(Defmodule *);
-   const char                    *DefmodulePPForm(Defmodule *);
-   Defmodule                     *GetNextDefmodule(Environment *,Defmodule *);
-   void                           RemoveAllDefmodules(Environment *,void *);
+   void                           CL_InitializeDefmodules(Environment *);
+   Defmodule                     *CL_FindDefmodule(Environment *,const char *);
+   const char                    *CL_DefmoduleName(Defmodule *);
+   const char                    *CL_DefmodulePPFoCL_rm(Defmodule *);
+   Defmodule                     *CL_GetNextDefmodule(Environment *,Defmodule *);
+   void                           CL_RemoveAllDefmodules(Environment *,void *);
    int                            AllocateModuleStorage(void);
-   unsigned                       RegisterModuleItem(Environment *,const char *,
+   unsigned                       CL_RegisterModuleItem(Environment *,const char *,
                                                      AllocateModuleFunction *,
                                                      FreeModuleFunction *,
                                                      void *(*)(Environment *,unsigned long),
                                                      void (*)(Environment *,FILE *,unsigned long,unsigned int,unsigned int),
-                                                     FindConstructFunction *);
-   void                          *GetModuleItem(Environment *,Defmodule *,unsigned);
-   void                           SetModuleItem(Environment *,Defmodule *,unsigned,void *);
-   Defmodule                     *GetCurrentModule(Environment *);
-   Defmodule                     *SetCurrentModule(Environment *,Defmodule *);
-   void                           GetCurrentModuleCommand(Environment *,UDFContext *,UDFValue *);
-   void                           SetCurrentModuleCommand(Environment *,UDFContext *,UDFValue *);
-   unsigned                       GetNumberOfModuleItems(Environment *);
-   void                           CreateMainModule(Environment *,void *);
-   void                           SetListOfDefmodules(Environment *,Defmodule *);
-   struct moduleItem             *GetListOfModuleItems(Environment *);
-   struct moduleItem             *FindModuleItem(Environment *,const char *);
-   void                           SaveCurrentModule(Environment *);
-   void                           RestoreCurrentModule(Environment *);
-   void                           AddAfterModuleChangeFunction(Environment *,const char *,VoidCallFunction *,int,void *);
-   void                           IllegalModuleSpecifierMessage(Environment *);
-   void                           AllocateDefmoduleGlobals(Environment *);
-   unsigned short                 GetNumberOfDefmodules(Environment *);
+                                                     CL_FindConstructFunction *);
+   void                          *CL_GetModuleItem(Environment *,Defmodule *,unsigned);
+   void                           CL_SetModuleItem(Environment *,Defmodule *,unsigned,void *);
+   Defmodule                     *CL_GetCurrentModule(Environment *);
+   Defmodule                     *CL_SetCurrentModule(Environment *,Defmodule *);
+   void                           CL_GetCurrentModuleCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_SetCurrentModuleCommand(Environment *,UDFContext *,UDFValue *);
+   unsigned                       CL_GetNumberOfModuleItems(Environment *);
+   void                           CL_CreateMainModule(Environment *,void *);
+   void                           CL_SetListOfDefmodules(Environment *,Defmodule *);
+   struct moduleItem             *CL_GetListOfModuleItems(Environment *);
+   struct moduleItem             *CL_FindModuleItem(Environment *,const char *);
+   void                           CL_SaveCurrentModule(Environment *);
+   void                           CL_RestoreCurrentModule(Environment *);
+   void                           CL_AddAfterModuleChangeFunction(Environment *,const char *,VoidCL_CallFunction *,int,void *);
+   void                           CL_IllegalModuleSpecifierMessage(Environment *);
+   void                           CL_AllocateDefmoduleGlobals(Environment *);
+   unsigned short                 CL_GetNumberOfDefmodules(Environment *);
 
 #endif /* _H_moduldef */
 

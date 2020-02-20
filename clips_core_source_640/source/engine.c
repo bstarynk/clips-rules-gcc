@@ -29,17 +29,17 @@
 /*                                                           */
 /*            Renamed BOOLEAN macro type to intBool.         */
 /*                                                           */
-/*            Added access functions to the HaltRules flag.  */
+/*            Added access functions to the CL_HaltRules flag.  */
 /*                                                           */
-/*            Added EnvGetNextFocus, EnvGetFocusChanged, and */
-/*            EnvSetFocusChanged functions.                  */
+/*            Added EnvGetNextCL_Focus, EnvGetCL_FocusChanged, and */
+/*            EnvSetCL_FocusChanged functions.                  */
 /*                                                           */
 /*      6.30: Added additional developer statistics to help  */
-/*            analyze join network performance.              */
+/*            analyze join network perfoCL_rmance.              */
 /*                                                           */
 /*            Removed pseudo-facts used in not CEs.          */
 /*                                                           */
-/*            Added context information for run functions.   */
+/*            Added context infoCL_rmation for run functions.   */
 /*                                                           */
 /*            Added before rule firing callback function.    */
 /*                                                           */
@@ -47,9 +47,9 @@
 /*                                                           */
 /*            Changed integer type/precision.                */
 /*                                                           */
-/*            Added EnvHalt function.                        */
+/*            Added EnvCL_Halt function.                        */
 /*                                                           */
-/*            Used gensprintf instead of sprintf.            */
+/*            Used CL_gensprintf instead of sprintf.            */
 /*                                                           */
 /*            Removed conditional code for unsupported       */
 /*            compilers/operating systems (IBM_MCW,          */
@@ -61,11 +61,11 @@
 /*                                                           */
 /*      6.31: Fixed dangling construct issue.                */
 /*                                                           */
-/*      6.40: Added Env prefix to GetEvaluationError and     */
-/*            SetEvaluationError functions.                  */
+/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
+/*            SetCL_EvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to GetHaltExecution and       */
-/*            SetHaltExecution functions.                    */
+/*            Added Env prefix to CL_GetCL_HaltExecution and       */
+/*            SetCL_HaltExecution functions.                    */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -82,7 +82,7 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/*            Added GCBlockStart and GCBlockEnd functions    */
+/*            Added CL_GCBlockStart and CL_GCBlockEnd functions    */
 /*            for garbage collection blocks.                 */
 /*                                                           */
 /*************************************************************/
@@ -121,20 +121,20 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static Defmodule              *RemoveFocus(Environment *,Defmodule *);
+   static Defmodule              *RemoveCL_Focus(Environment *,Defmodule *);
    static void                    DeallocateEngineData(Environment *);
 
 /*****************************************************************************/
-/* InitializeEngine: Initializes the activations and statistics watch items. */
+/* CL_InitializeEngine: Initializes the activations and statistics watch items. */
 /*****************************************************************************/
-void InitializeEngine(
+void CL_InitializeEngine(
   Environment *theEnv)
   {
-   AllocateEnvironmentData(theEnv,ENGINE_DATA,sizeof(struct engineData),DeallocateEngineData);
+   CL_AllocateEnvironmentData(theEnv,ENGINE_DATA,sizeof(struct engineData),DeallocateEngineData);
 
 #if DEBUGGING_FUNCTIONS
-   AddWatchItem(theEnv,"statistics",0,&EngineData(theEnv)->WatchStatistics,20,NULL,NULL);
-   AddWatchItem(theEnv,"focus",0,&EngineData(theEnv)->WatchFocus,0,NULL,NULL);
+   CL_AddCL_WatchItem(theEnv,"statistics",0,&EngineData(theEnv)->CL_WatchStatistics,20,NULL,NULL);
+   CL_AddCL_WatchItem(theEnv,"focus",0,&EngineData(theEnv)->CL_WatchCL_Focus,0,NULL,NULL);
 #endif
   }
 
@@ -147,10 +147,10 @@ static void DeallocateEngineData(
   {
    FocalModule *tmpPtr, *nextPtr;
 
-   DeallocateRuleFiredCallList(theEnv,EngineData(theEnv)->ListOfAfterRuleFiresFunctions);
-   DeallocateRuleFiredCallList(theEnv,EngineData(theEnv)->ListOfBeforeRuleFiresFunctions);
+   CL_DeallocateRuleFiredCallList(theEnv,EngineData(theEnv)->ListOfAfterRuleFiresFunctions);
+   CL_DeallocateRuleFiredCallList(theEnv,EngineData(theEnv)->ListOfBeforeRuleFiresFunctions);
 
-   tmpPtr = EngineData(theEnv)->CurrentFocus;
+   tmpPtr = EngineData(theEnv)->CurrentCL_Focus;
    while (tmpPtr != NULL)
      {
       nextPtr = tmpPtr->next;
@@ -160,9 +160,9 @@ static void DeallocateEngineData(
   }
 
 /**********************************************/
-/* Run: C access routine for the run command. */
+/* CL_Run: C access routine for the run command. */
 /**********************************************/
-long long Run(
+long long CL_Run(
   Environment *theEnv,
   long long runLimit)
   {
@@ -172,10 +172,10 @@ long long Run(
 #if DEBUGGING_FUNCTIONS
    unsigned long maxActivations = 0, sumActivations = 0;
 #if DEFTEMPLATE_CONSTRUCT
-   unsigned long maxFacts = 0, sumFacts = 0;
+   unsigned long maxCL_Facts = 0, sumCL_Facts = 0;
 #endif
 #if OBJECT_SYSTEM
-   unsigned long maxInstances = 0, sumInstances = 0;
+   unsigned long maxCL_Instances = 0, sumCL_Instances = 0;
 #endif
 #if (! GENERIC)
    double endTime, startTime = 0.0;
@@ -199,35 +199,35 @@ long long Run(
    /* Make sure the run command is not already executing. */
    /*=====================================================*/
 
-   if (EngineData(theEnv)->AlreadyRunning)
+   if (EngineData(theEnv)->AlreadyCL_Running)
      { return 0; }
-   EngineData(theEnv)->AlreadyRunning = true;
+   EngineData(theEnv)->AlreadyCL_Running = true;
 
    /*========================================*/
    /* Set up the frame for tracking garbage. */
    /*========================================*/
 
-   GCBlockStart(theEnv,&gcb);
+   CL_GCBlockStart(theEnv,&gcb);
 
    /*================================*/
-   /* Set up statistics information. */
+   /* Set up statistics infoCL_rmation. */
    /*================================*/
 
 #if DEBUGGING_FUNCTIONS
-   if (EngineData(theEnv)->WatchStatistics)
+   if (EngineData(theEnv)->CL_WatchStatistics)
      {
 #if DEFTEMPLATE_CONSTRUCT
-      maxFacts = GetNumberOfFacts(theEnv);
-      sumFacts = maxFacts;
+      maxCL_Facts = GetNumberOfCL_Facts(theEnv);
+      sumCL_Facts = maxCL_Facts;
 #endif
 #if OBJECT_SYSTEM
-      maxInstances = GetGlobalNumberOfInstances(theEnv);
-      sumInstances = maxInstances;
+      maxCL_Instances = CL_GetGlobalNumberOfCL_Instances(theEnv);
+      sumCL_Instances = maxCL_Instances;
 #endif
-      maxActivations = GetNumberOfActivations(theEnv);
+      maxActivations = CL_GetNumberOfActivations(theEnv);
       sumActivations = maxActivations;
 #if (! GENERIC)
-      startTime = gentime();
+      startTime = CL_gentime();
 #endif
      }
 #endif
@@ -236,14 +236,14 @@ long long Run(
    /* If embedded, clear the error flags. */
    /*=====================================*/
    
-   if (EvaluationData(theEnv)->CurrentExpression == NULL)
-     { ResetErrorFlags(theEnv); }
+   if (CL_EvaluationData(theEnv)->CurrentExpression == NULL)
+     { CL_ResetErrorFlags(theEnv); }
 
    /*=============================*/
    /* Set up execution variables. */
    /*=============================*/
 
-   EngineData(theEnv)->HaltRules = false;
+   EngineData(theEnv)->CL_HaltRules = false;
 
 #if DEVELOPER
    EngineData(theEnv)->leftToRightComparisons = 0;
@@ -263,11 +263,11 @@ long long Run(
    /* has been reached, or a rule execution error occurs. */
    /*=====================================================*/
 
-   theActivation = NextActivationToFire(theEnv);
+   theActivation = CL_NextActivationToFire(theEnv);
    while ((theActivation != NULL) &&
           (runLimit != 0) &&
-          (EvaluationData(theEnv)->HaltExecution == false) &&
-          (EngineData(theEnv)->HaltRules == false))
+          (CL_EvaluationData(theEnv)->CL_HaltExecution == false) &&
+          (EngineData(theEnv)->CL_HaltRules == false))
      {
       /*========================================*/
       /* Execute the list of functions that are */
@@ -283,14 +283,14 @@ long long Run(
 
       /*===========================================*/
       /* Detach the activation from the agenda and */
-      /* determine which rule is firing.           */
+      /* deteCL_rmine which rule is firing.           */
       /*===========================================*/
 
-      DetachActivation(theEnv,theActivation);
-      theTM = AddTrackedMemory(theEnv,theActivation,sizeof(struct activation));
-      ruleFiring = ActivationRuleName(theActivation);
-      theBasis = (struct partialMatch *) GetActivationBasis(theEnv,theActivation);
-      EngineData(theEnv)->ExecutingRule = GetActivationRule(theEnv,theActivation);
+      CL_DetachActivation(theEnv,theActivation);
+      theTM = CL_AddTrackedMemory(theEnv,theActivation,sizeof(struct activation));
+      ruleFiring = CL_ActivationRuleName(theActivation);
+      theBasis = (struct partialMatch *) CL_GetActivationBasis(theEnv,theActivation);
+      EngineData(theEnv)->ExecutingRule = CL_GetActivationRule(theEnv,theActivation);
 
       /*=============================================*/
       /* Update the number of rules that have fired. */
@@ -301,7 +301,7 @@ long long Run(
 
       /*==================================*/
       /* If rules are being watched, then */
-      /* print an information message.    */
+      /* print an infoCL_rmation message.    */
       /*==================================*/
 
 #if DEBUGGING_FUNCTIONS
@@ -309,12 +309,12 @@ long long Run(
         {
          char printSpace[60];
 
-         gensprintf(printSpace,"FIRE %4lld ",rulesFired);
-         WriteString(theEnv,STDOUT,printSpace);
-         WriteString(theEnv,STDOUT,ruleFiring);
-         WriteString(theEnv,STDOUT,": ");
-         PrintPartialMatch(theEnv,STDOUT,theBasis);
-         WriteString(theEnv,STDOUT,"\n");
+         CL_gensprintf(printSpace,"FIRE %4lld ",rulesFired);
+         CL_WriteString(theEnv,STDOUT,printSpace);
+         CL_WriteString(theEnv,STDOUT,ruleFiring);
+         CL_WriteString(theEnv,STDOUT,": ");
+         CL_PrintPartialMatch(theEnv,STDOUT,theBasis);
+         CL_WriteString(theEnv,STDOUT,"\n");
         }
 #endif
 
@@ -358,7 +358,7 @@ long long Run(
 
       if (EngineData(theEnv)->TheLogicalJoin != NULL)
         {
-         EngineData(theEnv)->TheLogicalBind = FindLogicalBind(EngineData(theEnv)->TheLogicalJoin,EngineData(theEnv)->GlobalLHSBinds);
+         EngineData(theEnv)->TheLogicalBind = CL_FindLogicalBind(EngineData(theEnv)->TheLogicalJoin,EngineData(theEnv)->GlobalLHSBinds);
          EngineData(theEnv)->TheLogicalBind->busy = true;
         }
       else
@@ -368,30 +368,30 @@ long long Run(
       /* Execute the rule's right hand side actions. */
       /*=============================================*/
 
-      EvaluationData(theEnv)->CurrentEvaluationDepth++;
-      SetEvaluationError(theEnv,false);
+      CL_EvaluationData(theEnv)->CurrentCL_EvaluationDepth++;
+      SetCL_EvaluationError(theEnv,false);
       EngineData(theEnv)->ExecutingRule->executing = true;
       danglingConstructs = ConstructData(theEnv)->DanglingConstructs;
 
 #if PROFILING_FUNCTIONS
-      StartProfile(theEnv,&profileFrame,
+      StartCL_Profile(theEnv,&profileFrame,
                    &EngineData(theEnv)->ExecutingRule->header.usrData,
-                   ProfileFunctionData(theEnv)->ProfileConstructs);
+                   CL_ProfileFunctionData(theEnv)->CL_ProfileConstructs);
 #endif
 
-      EvaluateProcActions(theEnv,EngineData(theEnv)->ExecutingRule->header.whichModule->theModule,
+      CL_EvaluateProcActions(theEnv,EngineData(theEnv)->ExecutingRule->header.whichModule->theModule,
                           EngineData(theEnv)->ExecutingRule->actions,EngineData(theEnv)->ExecutingRule->localVarCnt,
                           &returnValue,NULL);
 
 #if PROFILING_FUNCTIONS
-      EndProfile(theEnv,&profileFrame);
+      CL_EndCL_Profile(theEnv,&profileFrame);
 #endif
 
-      error = GetEvaluationError(theEnv);
+      error = GetCL_EvaluationError(theEnv);
       EngineData(theEnv)->ExecutingRule->executing = false;
-      SetEvaluationError(theEnv,false);
-      EvaluationData(theEnv)->CurrentEvaluationDepth--;
-      if (EvaluationData(theEnv)->CurrentExpression == NULL)
+      SetCL_EvaluationError(theEnv,false);
+      CL_EvaluationData(theEnv)->CurrentCL_EvaluationDepth--;
+      if (CL_EvaluationData(theEnv)->CurrentExpression == NULL)
         { ConstructData(theEnv)->DanglingConstructs = danglingConstructs; }
         
       /*========================================*/
@@ -405,7 +405,7 @@ long long Run(
         { (*ruleFiresFunction->func)(theEnv,theActivation,ruleFiresFunction->context); }
 
       /*=====================================*/
-      /* Remove information for logical CEs. */
+      /* Remove infoCL_rmation for logical CEs. */
       /*=====================================*/
 
       EngineData(theEnv)->TheLogicalJoin = NULL;
@@ -421,9 +421,9 @@ long long Run(
       /*=====================================================*/
 
 #if DEBUGGING_FUNCTIONS
-      if ((EvaluationData(theEnv)->HaltExecution) || (EngineData(theEnv)->HaltRules && EngineData(theEnv)->ExecutingRule->watchFiring))
+      if ((CL_EvaluationData(theEnv)->CL_HaltExecution) || (EngineData(theEnv)->CL_HaltRules && EngineData(theEnv)->ExecutingRule->watchFiring))
 #else
-      if ((EvaluationData(theEnv)->HaltExecution) || (EngineData(theEnv)->HaltRules))
+      if ((CL_EvaluationData(theEnv)->CL_HaltExecution) || (EngineData(theEnv)->CL_HaltRules))
 #endif
 
         {
@@ -431,18 +431,18 @@ long long Run(
 
          if (error)
            {
-            PrintErrorID(theEnv,"PRCCODE",4,false);
+            CL_PrintErrorID(theEnv,"PRCCODE",4,false);
             logName = STDERR;
            }
          else
            {
-            PrintWarningID(theEnv,"PRCCODE",4,false);
+            CL_PrintWarningID(theEnv,"PRCCODE",4,false);
             logName = STDWRN;
            }
 
-         WriteString(theEnv,logName,"Execution halted during the actions of defrule '");
-         WriteString(theEnv,logName,ruleFiring);
-         WriteString(theEnv,logName,"'.\n");
+         CL_WriteString(theEnv,logName,"Execution halted during the actions of defrule '");
+         CL_WriteString(theEnv,logName,ruleFiring);
+         CL_WriteString(theEnv,logName,"'.\n");
         }
 
       /*===================================================*/
@@ -464,42 +464,42 @@ long long Run(
       /* Return the agenda node to free memory. */
       /*========================================*/
 
-      RemoveTrackedMemory(theEnv,theTM);
-      RemoveActivation(theEnv,theActivation,false,false);
+      CL_RemoveTrackedMemory(theEnv,theTM);
+      CL_RemoveActivation(theEnv,theActivation,false,false);
 
       /*======================================*/
       /* Get rid of partial matches discarded */
       /* while executing the rule's RHS.      */
       /*======================================*/
 
-      FlushGarbagePartialMatches(theEnv);
+      CL_FlushGarbagePartialCL_Matches(theEnv);
 
       /*==================================*/
       /* Get rid of other garbage created */
       /* while executing the rule's RHS.  */
       /*==================================*/
 
-      CleanCurrentGarbageFrame(theEnv,NULL);
-      CallPeriodicTasks(theEnv);
+      CL_CleanCurrentGarbageFrame(theEnv,NULL);
+      CL_CallPeriodicTasks(theEnv);
 
       /*==========================*/
       /* Keep up with statistics. */
       /*==========================*/
 
 #if DEBUGGING_FUNCTIONS
-      if (EngineData(theEnv)->WatchStatistics)
+      if (EngineData(theEnv)->CL_WatchStatistics)
         {
 #if DEFTEMPLATE_CONSTRUCT
-         tempValue = GetNumberOfFacts(theEnv);
-         if (tempValue > maxFacts) maxFacts = tempValue;
-         sumFacts += tempValue;
+         tempValue = GetNumberOfCL_Facts(theEnv);
+         if (tempValue > maxCL_Facts) maxCL_Facts = tempValue;
+         sumCL_Facts += tempValue;
 #endif
 #if OBJECT_SYSTEM
-         tempValue = GetGlobalNumberOfInstances(theEnv);
-         if (tempValue > maxInstances) maxInstances = tempValue;
-         sumInstances += tempValue;
+         tempValue = CL_GetGlobalNumberOfCL_Instances(theEnv);
+         if (tempValue > maxCL_Instances) maxCL_Instances = tempValue;
+         sumCL_Instances += tempValue;
 #endif
-         tempValue = GetNumberOfActivations(theEnv);
+         tempValue = CL_GetNumberOfActivations(theEnv);
          if (tempValue > maxActivations) maxActivations = tempValue;
          sumActivations += tempValue;
         }
@@ -509,8 +509,8 @@ long long Run(
       /* Update saliences if appropriate. */
       /*==================================*/
 
-      if (GetSalienceEvaluation(theEnv) == EVERY_CYCLE)
-        { RefreshAllAgendas(theEnv); }
+      if (GetSalienceCL_Evaluation(theEnv) == EVERY_CYCLE)
+        { CL_RefreshAllCL_Agendas(theEnv); }
 
       /*========================================*/
       /* If a return was issued on the RHS of a */
@@ -519,14 +519,14 @@ long long Run(
       /*========================================*/
 
       if (ProcedureFunctionData(theEnv)->ReturnFlag == true)
-        { RemoveFocus(theEnv,EngineData(theEnv)->ExecutingRule->header.whichModule->theModule); }
+        { RemoveCL_Focus(theEnv,EngineData(theEnv)->ExecutingRule->header.whichModule->theModule); }
       ProcedureFunctionData(theEnv)->ReturnFlag = false;
 
       /*========================================*/
-      /* Determine the next activation to fire. */
+      /* DeteCL_rmine the next activation to fire. */
       /*========================================*/
 
-      theActivation = (struct activation *) NextActivationToFire(theEnv);
+      theActivation = (struct activation *) CL_NextActivationToFire(theEnv);
 
       /*==============================*/
       /* Check for a rule breakpoint. */
@@ -534,12 +534,12 @@ long long Run(
 
       if (theActivation != NULL)
         {
-         if (GetActivationRule(theEnv,theActivation)->afterBreakpoint)
+         if (CL_GetActivationRule(theEnv,theActivation)->afterBreakpoint)
            {
-            EngineData(theEnv)->HaltRules = true;
-            WriteString(theEnv,STDOUT,"Breaking on rule ");
-            WriteString(theEnv,STDOUT,ActivationRuleName(theActivation));
-            WriteString(theEnv,STDOUT,".\n");
+            EngineData(theEnv)->CL_HaltRules = true;
+            CL_WriteString(theEnv,STDOUT,"Breaking on rule ");
+            CL_WriteString(theEnv,STDOUT,CL_ActivationRuleName(theActivation));
+            CL_WriteString(theEnv,STDOUT,".\n");
            }
         }
      }
@@ -562,106 +562,106 @@ long long Run(
    /*======================================================*/
 
    if (runLimit == rulesFired)
-     { WriteString(theEnv,STDOUT,"rule firing limit reached\n"); }
+     { CL_WriteString(theEnv,STDOUT,"rule firing limit reached\n"); }
 
    /*==============================*/
    /* Restore execution variables. */
    /*==============================*/
 
    EngineData(theEnv)->ExecutingRule = NULL;
-   EngineData(theEnv)->HaltRules = false;
+   EngineData(theEnv)->CL_HaltRules = false;
 
    /*=================================================*/
    /* Print out statistics if they are being watched. */
    /*=================================================*/
 
 #if DEBUGGING_FUNCTIONS
-   if (EngineData(theEnv)->WatchStatistics)
+   if (EngineData(theEnv)->CL_WatchStatistics)
      {
 #if DEFTEMPLATE_CONSTRUCT || OBJECT_SYSTEM || DEVELOPER
       char printSpace[60];
 #endif
 #if (! GENERIC)
-      endTime = gentime();
+      endTime = CL_gentime();
 #endif
 
-      WriteInteger(theEnv,STDOUT,rulesFired);
-      WriteString(theEnv,STDOUT," rules fired");
+      CL_WriteInteger(theEnv,STDOUT,rulesFired);
+      CL_WriteString(theEnv,STDOUT," rules fired");
 
 #if (! GENERIC)
       if (startTime != endTime)
         {
-         WriteString(theEnv,STDOUT,"        Run time is ");
-         WriteFloat(theEnv,STDOUT,endTime - startTime);
-         WriteString(theEnv,STDOUT," seconds.\n");
-         WriteFloat(theEnv,STDOUT,(double) rulesFired / (endTime - startTime));
-         WriteString(theEnv,STDOUT," rules per second.\n");
+         CL_WriteString(theEnv,STDOUT,"        CL_Run time is ");
+         CL_WriteFloat(theEnv,STDOUT,endTime - startTime);
+         CL_WriteString(theEnv,STDOUT," seconds.\n");
+         CL_WriteFloat(theEnv,STDOUT,(double) rulesFired / (endTime - startTime));
+         CL_WriteString(theEnv,STDOUT," rules per second.\n");
         }
       else
-        { WriteString(theEnv,STDOUT,"\n"); }
+        { CL_WriteString(theEnv,STDOUT,"\n"); }
 #else
-      WriteString(theEnv,STDOUT,"\n");
+      CL_WriteString(theEnv,STDOUT,"\n");
 #endif
 
 #if DEFTEMPLATE_CONSTRUCT
-      gensprintf(printSpace,"%ld mean number of facts (%ld maximum).\n",
-                          (long) (((double) sumFacts / (rulesFired + 1)) + 0.5),
-                          maxFacts);
-      WriteString(theEnv,STDOUT,printSpace);
+      CL_gensprintf(printSpace,"%ld mean number of facts (%ld maximum).\n",
+                          (long) (((double) sumCL_Facts / (rulesFired + 1)) + 0.5),
+                          maxCL_Facts);
+      CL_WriteString(theEnv,STDOUT,printSpace);
 #endif
 
 #if OBJECT_SYSTEM
-      gensprintf(printSpace,"%ld mean number of instances (%ld maximum).\n",
-                          (long) (((double) sumInstances / (rulesFired + 1)) + 0.5),
-                          maxInstances);
-      WriteString(theEnv,STDOUT,printSpace);
+      CL_gensprintf(printSpace,"%ld mean number of instances (%ld maximum).\n",
+                          (long) (((double) sumCL_Instances / (rulesFired + 1)) + 0.5),
+                          maxCL_Instances);
+      CL_WriteString(theEnv,STDOUT,printSpace);
 #endif
 
-      gensprintf(printSpace,"%ld mean number of activations (%ld maximum).\n",
+      CL_gensprintf(printSpace,"%ld mean number of activations (%ld maximum).\n",
                           (long) (((double) sumActivations / (rulesFired + 1)) + 0.5),
                           maxActivations);
-      WriteString(theEnv,STDOUT,printSpace);
+      CL_WriteString(theEnv,STDOUT,printSpace);
 
 #if DEVELOPER
-      gensprintf(printSpace,"%9ld left to right comparisons.\n",
+      CL_gensprintf(printSpace,"%9ld left to right comparisons.\n",
                           EngineData(theEnv)->leftToRightComparisons);
-      WriteString(theEnv,STDOUT,printSpace);
+      CL_WriteString(theEnv,STDOUT,printSpace);
 
-      gensprintf(printSpace,"%9ld left to right succeeds.\n",
+      CL_gensprintf(printSpace,"%9ld left to right succeeds.\n",
                           EngineData(theEnv)->leftToRightSucceeds);
-      WriteString(theEnv,STDOUT,printSpace);
+      CL_WriteString(theEnv,STDOUT,printSpace);
 
-      gensprintf(printSpace,"%9ld left to right loops.\n",
+      CL_gensprintf(printSpace,"%9ld left to right loops.\n",
                           EngineData(theEnv)->leftToRightLoops);
-      WriteString(theEnv,STDOUT,printSpace);
+      CL_WriteString(theEnv,STDOUT,printSpace);
 
-      gensprintf(printSpace,"%9ld right to left comparisons.\n",
+      CL_gensprintf(printSpace,"%9ld right to left comparisons.\n",
                           EngineData(theEnv)->rightToLeftComparisons);
-      WriteString(theEnv,STDOUT,printSpace);
+      CL_WriteString(theEnv,STDOUT,printSpace);
 
-      gensprintf(printSpace,"%9ld right to left succeeds.\n",
+      CL_gensprintf(printSpace,"%9ld right to left succeeds.\n",
                           EngineData(theEnv)->rightToLeftSucceeds);
-      WriteString(theEnv,STDOUT,printSpace);
+      CL_WriteString(theEnv,STDOUT,printSpace);
 
-      gensprintf(printSpace,"%9ld right to left loops.\n",
+      CL_gensprintf(printSpace,"%9ld right to left loops.\n",
                           EngineData(theEnv)->rightToLeftLoops);
-      WriteString(theEnv,STDOUT,printSpace);
+      CL_WriteString(theEnv,STDOUT,printSpace);
 
-      gensprintf(printSpace,"%9ld find next conflicting comparisons.\n",
+      CL_gensprintf(printSpace,"%9ld find next conflicting comparisons.\n",
                           EngineData(theEnv)->findNextConflictingComparisons);
-      WriteString(theEnv,STDOUT,printSpace);
+      CL_WriteString(theEnv,STDOUT,printSpace);
 
-      gensprintf(printSpace,"%9ld beta hash list skips.\n",
+      CL_gensprintf(printSpace,"%9ld beta hash list skips.\n",
                           EngineData(theEnv)->betaHashListSkips);
-      WriteString(theEnv,STDOUT,printSpace);
+      CL_WriteString(theEnv,STDOUT,printSpace);
 
-      gensprintf(printSpace,"%9ld beta hash hash table skips.\n",
+      CL_gensprintf(printSpace,"%9ld beta hash hash table skips.\n",
                           EngineData(theEnv)->betaHashHTSkips);
-      WriteString(theEnv,STDOUT,printSpace);
+      CL_WriteString(theEnv,STDOUT,printSpace);
 
-      gensprintf(printSpace,"%9ld unneeded marker compare.\n",
+      CL_gensprintf(printSpace,"%9ld unneeded marker compare.\n",
                           EngineData(theEnv)->unneededMarkerCompare);
-      WriteString(theEnv,STDOUT,printSpace);
+      CL_WriteString(theEnv,STDOUT,printSpace);
 
 #endif
      }
@@ -672,32 +672,32 @@ long long Run(
    /* focus when the run finishes.             */
    /*==========================================*/
 
-   if (EngineData(theEnv)->CurrentFocus != NULL)
+   if (EngineData(theEnv)->CurrentCL_Focus != NULL)
      {
-      if (EngineData(theEnv)->CurrentFocus->theModule != GetCurrentModule(theEnv))
-        { SetCurrentModule(theEnv,EngineData(theEnv)->CurrentFocus->theModule); }
+      if (EngineData(theEnv)->CurrentCL_Focus->theModule != CL_GetCurrentModule(theEnv))
+        { CL_SetCurrentModule(theEnv,EngineData(theEnv)->CurrentCL_Focus->theModule); }
      }
 
    /*================================*/
    /* Restore the old garbage frame. */
    /*================================*/
 
-   GCBlockEnd(theEnv,&gcb);
-   CallPeriodicTasks(theEnv);
+   CL_GCBlockEnd(theEnv,&gcb);
+   CL_CallPeriodicTasks(theEnv);
 
    /*===================================*/
    /* Return the number of rules fired. */
    /*===================================*/
 
-   EngineData(theEnv)->AlreadyRunning = false;
+   EngineData(theEnv)->AlreadyCL_Running = false;
    return rulesFired;
   }
 
 /***********************************************************/
-/* NextActivationToFire: Returns the next activation which */
+/* CL_NextActivationToFire: Returns the next activation which */
 /*   should be executed based on the current focus.        */
 /***********************************************************/
-Activation *NextActivationToFire(
+Activation *CL_NextActivationToFire(
   Environment *theEnv)
   {
    struct activation *theActivation;
@@ -708,24 +708,24 @@ Activation *NextActivationToFire(
    /* focus on the MAIN module.          */
    /*====================================*/
 
-   if (EngineData(theEnv)->CurrentFocus == NULL)
+   if (EngineData(theEnv)->CurrentCL_Focus == NULL)
      {
-      theModule = FindDefmodule(theEnv,"MAIN");
-      Focus(theModule);
+      theModule = CL_FindDefmodule(theEnv,"MAIN");
+      CL_Focus(theModule);
      }
 
    /*===========================================================*/
-   /* Determine the top activation on the agenda of the current */
+   /* DeteCL_rmine the top activation on the agenda of the current */
    /* focus. If the current focus has no activations on its     */
    /* agenda, then pop the focus off the focus stack until      */
    /* a focus that has an activation on its agenda is found.    */
    /*===========================================================*/
 
-   theActivation = EngineData(theEnv)->CurrentFocus->theDefruleModule->agenda;
-   while ((theActivation == NULL) && (EngineData(theEnv)->CurrentFocus != NULL))
+   theActivation = EngineData(theEnv)->CurrentCL_Focus->theCL_DefruleModule->agenda;
+   while ((theActivation == NULL) && (EngineData(theEnv)->CurrentCL_Focus != NULL))
      {
-      if (EngineData(theEnv)->CurrentFocus != NULL) PopFocus(theEnv);
-      if (EngineData(theEnv)->CurrentFocus != NULL) theActivation = EngineData(theEnv)->CurrentFocus->theDefruleModule->agenda;
+      if (EngineData(theEnv)->CurrentCL_Focus != NULL) PopCL_Focus(theEnv);
+      if (EngineData(theEnv)->CurrentCL_Focus != NULL) theActivation = EngineData(theEnv)->CurrentCL_Focus->theCL_DefruleModule->agenda;
      }
 
    /*=========================================*/
@@ -736,53 +736,53 @@ Activation *NextActivationToFire(
   }
 
 /***************************************************/
-/* RemoveFocus: Removes the first occurence of the */
+/* RemoveCL_Focus: Removes the first occurence of the */
 /*   specified module from the focus stack.        */
 /***************************************************/
-static Defmodule *RemoveFocus(
+static Defmodule *RemoveCL_Focus(
   Environment *theEnv,
   Defmodule *theModule)
   {
-   FocalModule *tempFocus,*prevFocus, *nextFocus;
+   FocalModule *tempCL_Focus,*prevCL_Focus, *nextCL_Focus;
    bool found = false;
-   bool currentFocusRemoved = false;
+   bool currentCL_FocusRemoved = false;
 
    /*====================================*/
    /* Return NULL if there is nothing on */
    /* the focus stack to remove.         */
    /*====================================*/
 
-   if (EngineData(theEnv)->CurrentFocus == NULL) return NULL;
+   if (EngineData(theEnv)->CurrentCL_Focus == NULL) return NULL;
 
    /*=============================================*/
    /* Remove the first occurence of the specified */
    /* module from the focus stack.                */
    /*=============================================*/
 
-   prevFocus = NULL;
-   tempFocus = EngineData(theEnv)->CurrentFocus;
-   while ((tempFocus != NULL) && (! found))
+   prevCL_Focus = NULL;
+   tempCL_Focus = EngineData(theEnv)->CurrentCL_Focus;
+   while ((tempCL_Focus != NULL) && (! found))
      {
-      if (tempFocus->theModule == theModule)
+      if (tempCL_Focus->theModule == theModule)
         {
          found = true;
 
-         nextFocus = tempFocus->next;
-         rtn_struct(theEnv,focalModule,tempFocus);
-         tempFocus = nextFocus;
+         nextCL_Focus = tempCL_Focus->next;
+         rtn_struct(theEnv,focalModule,tempCL_Focus);
+         tempCL_Focus = nextCL_Focus;
 
-         if (prevFocus == NULL)
+         if (prevCL_Focus == NULL)
            {
-            currentFocusRemoved = true;
-            EngineData(theEnv)->CurrentFocus = tempFocus;
+            currentCL_FocusRemoved = true;
+            EngineData(theEnv)->CurrentCL_Focus = tempCL_Focus;
            }
          else
-           { prevFocus->next = tempFocus; }
+           { prevCL_Focus->next = tempCL_Focus; }
         }
       else
         {
-         prevFocus = tempFocus;
-         tempFocus = tempFocus->next;
+         prevCL_Focus = tempCL_Focus;
+         tempCL_Focus = tempCL_Focus->next;
         }
      }
 
@@ -791,28 +791,28 @@ static Defmodule *RemoveFocus(
    /* stack, simply return the current focus  */
    /*=========================================*/
 
-   if (! found) return EngineData(theEnv)->CurrentFocus->theModule;
+   if (! found) return EngineData(theEnv)->CurrentCL_Focus->theModule;
 
    /*========================================*/
    /* If the current focus is being watched, */
-   /* then print an informational message.   */
+   /* then print an infoCL_rmational message.   */
    /*========================================*/
 
 #if DEBUGGING_FUNCTIONS
-   if (EngineData(theEnv)->WatchFocus &&
-       (! ConstructData(theEnv)->ClearReadyInProgress) &&
-       (! ConstructData(theEnv)->ClearInProgress))
+   if (EngineData(theEnv)->CL_WatchCL_Focus &&
+       (! ConstructData(theEnv)->CL_ClearReadyInProgress) &&
+       (! ConstructData(theEnv)->CL_ClearInProgress))
      {
-      WriteString(theEnv,STDOUT,"<== Focus ");
-      WriteString(theEnv,STDOUT,theModule->header.name->contents);
+      CL_WriteString(theEnv,STDOUT,"<== CL_Focus ");
+      CL_WriteString(theEnv,STDOUT,theModule->header.name->contents);
 
-      if ((EngineData(theEnv)->CurrentFocus != NULL) && currentFocusRemoved)
+      if ((EngineData(theEnv)->CurrentCL_Focus != NULL) && currentCL_FocusRemoved)
         {
-         WriteString(theEnv,STDOUT," to ");
-         WriteString(theEnv,STDOUT,EngineData(theEnv)->CurrentFocus->theModule->header.name->contents);
+         CL_WriteString(theEnv,STDOUT," to ");
+         CL_WriteString(theEnv,STDOUT,EngineData(theEnv)->CurrentCL_Focus->theModule->header.name->contents);
         }
 
-      WriteString(theEnv,STDOUT,"\n");
+      CL_WriteString(theEnv,STDOUT,"\n");
      }
 #endif
 
@@ -822,9 +822,9 @@ static Defmodule *RemoveFocus(
    /* flag indicating that the focus has changed.          */
    /*======================================================*/
 
-   if ((EngineData(theEnv)->CurrentFocus != NULL) && currentFocusRemoved)
-     { SetCurrentModule(theEnv,EngineData(theEnv)->CurrentFocus->theModule); }
-   EngineData(theEnv)->FocusChanged = true;
+   if ((EngineData(theEnv)->CurrentCL_Focus != NULL) && currentCL_FocusRemoved)
+     { CL_SetCurrentModule(theEnv,EngineData(theEnv)->CurrentCL_Focus->theModule); }
+   EngineData(theEnv)->CL_FocusChanged = true;
 
    /*====================================*/
    /* Return the module that was removed */
@@ -835,62 +835,62 @@ static Defmodule *RemoveFocus(
   }
 
 /**********************************************************/
-/* PopFocus: C access routine for the pop-focus function. */
+/* PopCL_Focus: C access routine for the pop-focus function. */
 /**********************************************************/
-Defmodule *PopFocus(
+Defmodule *PopCL_Focus(
   Environment *theEnv)
   {
-   if (EngineData(theEnv)->CurrentFocus == NULL) return NULL;
-   return RemoveFocus(theEnv,EngineData(theEnv)->CurrentFocus->theModule);
+   if (EngineData(theEnv)->CurrentCL_Focus == NULL) return NULL;
+   return RemoveCL_Focus(theEnv,EngineData(theEnv)->CurrentCL_Focus->theModule);
   }
 
 /************************************************************/
-/* GetNextFocus: Returns the next focus on the focus stack. */
+/* GetNextCL_Focus: Returns the next focus on the focus stack. */
 /************************************************************/
-FocalModule *GetNextFocus(
+FocalModule *GetNextCL_Focus(
   Environment *theEnv,
-  FocalModule *theFocus)
+  FocalModule *theCL_Focus)
   {
    /*==================================================*/
    /* If NULL is passed as an argument, return the top */
    /* focus on the focus stack (the current focus).    */
    /*==================================================*/
 
-   if (theFocus == NULL) return EngineData(theEnv)->CurrentFocus;
+   if (theCL_Focus == NULL) return EngineData(theEnv)->CurrentCL_Focus;
 
    /*=======================================*/
    /* Otherwise, return the focus following */
    /* the focus passed as an argument.      */
    /*=======================================*/
 
-   return theFocus->next;
+   return theCL_Focus->next;
   }
 
 /*********************************************************/
-/* FocalModuleName: Returns the name of the FocalModule. */
+/* CL_FocalModuleName: Returns the name of the FocalModule. */
 /*********************************************************/
-const char *FocalModuleName(
-  FocalModule *theFocus)
+const char *CL_FocalModuleName(
+  FocalModule *theCL_Focus)
   {
-   return theFocus->theModule->header.name->contents;
+   return theCL_Focus->theModule->header.name->contents;
   }
 
 /****************************************************************/
-/* FocalModuleModule: Returns the Defmodule of the FocalModule. */
+/* CL_FocalModuleModule: Returns the Defmodule of the FocalModule. */
 /****************************************************************/
-Defmodule *FocalModuleModule(
-  FocalModule *theFocus)
+Defmodule *CL_FocalModuleModule(
+  FocalModule *theCL_Focus)
   {
-   return theFocus->theModule;
+   return theCL_Focus->theModule;
   }
 
 /***************************************************/
-/* Focus: C access routine for the focus function. */
+/* CL_Focus: C access routine for the focus function. */
 /***************************************************/
-void Focus(
+void CL_Focus(
   Defmodule *theModule)
   {
-   FocalModule *tempFocus;
+   FocalModule *tempCL_Focus;
    Environment *theEnv;
    
    if (theModule == NULL) return;
@@ -903,28 +903,28 @@ void Focus(
    /* then no further action is needed.                */
    /*==================================================*/
 
-   SetCurrentModule(theEnv,theModule);
-   if (EngineData(theEnv)->CurrentFocus != NULL)
-     { if (EngineData(theEnv)->CurrentFocus->theModule == theModule) return; }
+   CL_SetCurrentModule(theEnv,theModule);
+   if (EngineData(theEnv)->CurrentCL_Focus != NULL)
+     { if (EngineData(theEnv)->CurrentCL_Focus->theModule == theModule) return; }
 
    /*=====================================*/
    /* If the focus is being watched, then */
-   /* print an information message.       */
+   /* print an infoCL_rmation message.       */
    /*=====================================*/
 
 #if DEBUGGING_FUNCTIONS
-   if (EngineData(theEnv)->WatchFocus &&
-       (! ConstructData(theEnv)->ClearReadyInProgress) &&
-       (! ConstructData(theEnv)->ClearInProgress))
+   if (EngineData(theEnv)->CL_WatchCL_Focus &&
+       (! ConstructData(theEnv)->CL_ClearReadyInProgress) &&
+       (! ConstructData(theEnv)->CL_ClearInProgress))
      {
-      WriteString(theEnv,STDOUT,"==> Focus ");
-      WriteString(theEnv,STDOUT,theModule->header.name->contents);
-      if (EngineData(theEnv)->CurrentFocus != NULL)
+      CL_WriteString(theEnv,STDOUT,"==> CL_Focus ");
+      CL_WriteString(theEnv,STDOUT,theModule->header.name->contents);
+      if (EngineData(theEnv)->CurrentCL_Focus != NULL)
         {
-         WriteString(theEnv,STDOUT," from ");
-         WriteString(theEnv,STDOUT,EngineData(theEnv)->CurrentFocus->theModule->header.name->contents);
+         CL_WriteString(theEnv,STDOUT," from ");
+         CL_WriteString(theEnv,STDOUT,EngineData(theEnv)->CurrentCL_Focus->theModule->header.name->contents);
         }
-      WriteString(theEnv,STDOUT,"\n");
+      CL_WriteString(theEnv,STDOUT,"\n");
      }
 #endif
 
@@ -932,43 +932,43 @@ void Focus(
    /* Add the new focus to the focus stack. */
    /*=======================================*/
 
-   tempFocus = get_struct(theEnv,focalModule);
-   tempFocus->theModule = theModule;
-   tempFocus->theDefruleModule = GetDefruleModuleItem(theEnv,theModule);
-   tempFocus->next = EngineData(theEnv)->CurrentFocus;
-   EngineData(theEnv)->CurrentFocus = tempFocus;
-   EngineData(theEnv)->FocusChanged = true;
+   tempCL_Focus = get_struct(theEnv,focalModule);
+   tempCL_Focus->theModule = theModule;
+   tempCL_Focus->theCL_DefruleModule = GetCL_DefruleModuleItem(theEnv,theModule);
+   tempCL_Focus->next = EngineData(theEnv)->CurrentCL_Focus;
+   EngineData(theEnv)->CurrentCL_Focus = tempCL_Focus;
+   EngineData(theEnv)->CL_FocusChanged = true;
   }
 
 /************************************************/
-/* ClearFocusStackCommand: H/L access routine   */
+/* CL_ClearCL_FocusStackCommand: H/L access routine   */
 /*   for the clear-focus-stack command.         */
 /************************************************/
-void ClearFocusStackCommand(
+void CL_ClearCL_FocusStackCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
-   ClearFocusStack(theEnv);
+   CL_ClearCL_FocusStack(theEnv);
   }
 
 /****************************************/
-/* ClearFocusStack: C access routine    */
+/* CL_ClearCL_FocusStack: C access routine    */
 /*   for the clear-focus-stack command. */
 /****************************************/
-void ClearFocusStack(
+void CL_ClearCL_FocusStack(
   Environment *theEnv)
   {
-   while (EngineData(theEnv)->CurrentFocus != NULL) PopFocus(theEnv);
+   while (EngineData(theEnv)->CurrentCL_Focus != NULL) PopCL_Focus(theEnv);
 
-   EngineData(theEnv)->FocusChanged = true;
+   EngineData(theEnv)->CL_FocusChanged = true;
   }
 
 /**********************************************/
-/* AddAfterRuleFiresFunction: Adds a function */
+/* CL_AddAfterRuleFiresFunction: Adds a function */
 /*   to the ListOfAfterRuleFiresFunctions.    */
 /**********************************************/
-bool AddAfterRuleFiresFunction(
+bool CL_AddAfterRuleFiresFunction(
   Environment *theEnv,
   const char *name,
   RuleFiredFunction *functionPtr,
@@ -976,16 +976,16 @@ bool AddAfterRuleFiresFunction(
   void *context)
   {
    EngineData(theEnv)->ListOfAfterRuleFiresFunctions =
-      AddRuleFiredFunctionToCallList(theEnv,name,priority,functionPtr,
+      CL_AddRuleFiredFunctionToCallList(theEnv,name,priority,functionPtr,
                                      EngineData(theEnv)->ListOfAfterRuleFiresFunctions,context);
    return true;
   }
 
 /***********************************************/
-/* AddBeforeRuleFiresFunction: Adds a function */
+/* CL_AddBeforeRuleFiresFunction: Adds a function */
 /*   to the ListOfBeforeRuleFiresFunctions.    */
 /***********************************************/
-bool AddBeforeRuleFiresFunction(
+bool CL_AddBeforeRuleFiresFunction(
   Environment *theEnv,
   const char *name,
   RuleFiredFunction *functionPtr,
@@ -993,48 +993,48 @@ bool AddBeforeRuleFiresFunction(
   void *context)
   {
    EngineData(theEnv)->ListOfBeforeRuleFiresFunctions =
-      AddRuleFiredFunctionToCallList(theEnv,name,priority,functionPtr,
+      CL_AddRuleFiredFunctionToCallList(theEnv,name,priority,functionPtr,
                                      EngineData(theEnv)->ListOfBeforeRuleFiresFunctions,context);
    return true;
   }
 
 /****************************************************/
-/* RemoveAfterRuleFiresFunction: Removes a function */
+/* CL_RemoveAfterRuleFiresFunction: Removes a function */
 /*   from the ListOfAfterRuleFiresFunctions.        */
 /****************************************************/
-bool RemoveAfterRuleFiresFunction(
+bool CL_RemoveAfterRuleFiresFunction(
   Environment *theEnv,
   const char *name)
   {
    bool found;
 
    EngineData(theEnv)->ListOfAfterRuleFiresFunctions =
-      RemoveRuleFiredFunctionFromCallList(theEnv,name,EngineData(theEnv)->ListOfAfterRuleFiresFunctions,&found);
+      CL_RemoveRuleFiredFunctionFromCallList(theEnv,name,EngineData(theEnv)->ListOfAfterRuleFiresFunctions,&found);
 
    return found;
   }
 
 /*****************************************************/
-/* RemoveBeforeRuleFiresFunction: Removes a function */
+/* CL_RemoveBeforeRuleFiresFunction: Removes a function */
 /*   from the ListOfBeforeRuleFiresFunctions.        */
 /*****************************************************/
-bool RemoveBeforeRuleFiresFunction(
+bool CL_RemoveBeforeRuleFiresFunction(
   Environment *theEnv,
   const char *name)
   {
    bool found;
 
    EngineData(theEnv)->ListOfBeforeRuleFiresFunctions =
-      RemoveRuleFiredFunctionFromCallList(theEnv,name,EngineData(theEnv)->ListOfBeforeRuleFiresFunctions,&found);
+      CL_RemoveRuleFiredFunctionFromCallList(theEnv,name,EngineData(theEnv)->ListOfBeforeRuleFiresFunctions,&found);
 
    return found;
   }
 
 /***************************************************/
-/* AddRuleFiredFunctionToCallList: Adds a function */
+/* CL_AddRuleFiredFunctionToCallList: Adds a function */
 /*   to a rule fired function list.                */
 /***************************************************/
-RuleFiredFunctionItem *AddRuleFiredFunctionToCallList(
+RuleFiredFunctionItem *CL_AddRuleFiredFunctionToCallList(
   Environment *theEnv,
   const char *name,
   int priority,
@@ -1047,8 +1047,8 @@ RuleFiredFunctionItem *AddRuleFiredFunctionToCallList(
 
    newPtr = get_struct(theEnv,ruleFiredFunctionItem);
 
-   nameCopy = (char *) genalloc(theEnv,strlen(name) + 1);
-   genstrcpy(nameCopy,name);
+   nameCopy = (char *) CL_genalloc(theEnv,strlen(name) + 1);
+   CL_genstrcpy(nameCopy,name);
    newPtr->name = nameCopy;
 
    newPtr->func = func;
@@ -1083,10 +1083,10 @@ RuleFiredFunctionItem *AddRuleFiredFunctionToCallList(
   }
 
 /***********************************************************/
-/* RemoveRuleFiredFunctionFromCallList: Removes a function */
+/* CL_RemoveRuleFiredFunctionFromCallList: Removes a function */
 /*   from a rule fired function list.                      */
 /***********************************************************/
-RuleFiredFunctionItem *RemoveRuleFiredFunctionFromCallList(
+RuleFiredFunctionItem *CL_RemoveRuleFiredFunctionFromCallList(
   Environment *theEnv,
   const char *name,
   RuleFiredFunctionItem *head,
@@ -1108,8 +1108,8 @@ RuleFiredFunctionItem *RemoveRuleFiredFunctionFromCallList(
          else
            { lastPtr->next = currentPtr->next; }
 
-         genfree(theEnv,(void *) currentPtr->name,strlen(currentPtr->name) + 1);
-         rtn_struct(theEnv,voidCallFunctionItem,currentPtr);
+         CL_genfree(theEnv,(void *) currentPtr->name,strlen(currentPtr->name) + 1);
+         rtn_struct(theEnv,voidCL_CallFunctionItem,currentPtr);
          return head;
         }
 
@@ -1121,10 +1121,10 @@ RuleFiredFunctionItem *RemoveRuleFiredFunctionFromCallList(
   }
 
 /******************************************************/
-/* DeallocateRuleFiredCallList: Removes all functions */
+/* CL_DeallocateRuleFiredCallList: Removes all functions */
 /*   from a list of rule fired functions.             */
 /******************************************************/
-void DeallocateRuleFiredCallList(
+void CL_DeallocateRuleFiredCallList(
   Environment *theEnv,
   RuleFiredFunctionItem *theList)
   {
@@ -1134,16 +1134,16 @@ void DeallocateRuleFiredCallList(
    while (tmpPtr != NULL)
      {
       nextPtr = tmpPtr->next;
-      genfree(theEnv,(void *) tmpPtr->name,strlen(tmpPtr->name) + 1);
+      CL_genfree(theEnv,(void *) tmpPtr->name,strlen(tmpPtr->name) + 1);
       rtn_struct(theEnv,ruleFiredFunctionItem,tmpPtr);
       tmpPtr = nextPtr;
      }
   }
 
 /*******************************************************/
-/* RunCommand: H/L access routine for the run command. */
+/* CL_RunCommand: H/L access routine for the run command. */
 /*******************************************************/
-void RunCommand(
+void CL_RunCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -1152,46 +1152,46 @@ void RunCommand(
    long long runLimit = -1LL;
    UDFValue theArg;
 
-   numArgs = UDFArgumentCount(context);
+   numArgs = CL_UDFArgumentCount(context);
    if (numArgs == 0)
      { runLimit = -1LL; }
    else if (numArgs == 1)
      {
-      if (! UDFFirstArgument(context,INTEGER_BIT,&theArg)) return;
+      if (! CL_UDFFirstArgument(context,INTEGER_BIT,&theArg)) return;
       runLimit = theArg.integerValue->contents;
      }
 
-   Run(theEnv,runLimit);
+   CL_Run(theEnv,runLimit);
   }
 
 /***********************************************/
-/* HaltCommand: Causes rule execution to halt. */
+/* CL_HaltCommand: Causes rule execution to halt. */
 /***********************************************/
-void HaltCommand(
+void CL_HaltCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
-   Halt(theEnv);
+   CL_Halt(theEnv);
   }
 
 /***************************/
-/* Halt: C access routine  */
+/* CL_Halt: C access routine  */
 /*   for the halt command. */
 /***************************/
-void Halt(
+void CL_Halt(
   Environment *theEnv)
   {
-   EngineData(theEnv)->HaltRules = true;
+   EngineData(theEnv)->CL_HaltRules = true;
   }
 
 #if DEBUGGING_FUNCTIONS
 
 /********************************/
-/* SetBreak: C access routine   */
+/* CL_SetBreak: C access routine   */
 /*   for the set-break command. */
 /********************************/
-void SetBreak(
+void CL_SetBreak(
   Defrule *theRule)
   {
    Defrule *thePtr;
@@ -1203,10 +1203,10 @@ void SetBreak(
   }
 
 /***********************************/
-/* RemoveBreak: C access routine   */
+/* CL_RemoveBreak: C access routine   */
 /*   for the remove-break command. */
 /***********************************/
-bool RemoveBreak(
+bool CL_RemoveBreak(
   Defrule *theRule)
   {
    Defrule *thePtr;
@@ -1227,54 +1227,54 @@ bool RemoveBreak(
   }
 
 /**************************************************/
-/* RemoveAllBreakpoints: Removes all breakpoints. */
+/* CL_RemoveAllBreakpoints: Removes all breakpoints. */
 /**************************************************/
-void RemoveAllBreakpoints(
+void CL_RemoveAllBreakpoints(
   Environment *theEnv)
   {
    Defrule *theRule;
    Defmodule *theDefmodule = NULL;
 
-   while ((theDefmodule = GetNextDefmodule(theEnv,theDefmodule)) != NULL)
+   while ((theDefmodule = CL_GetNextDefmodule(theEnv,theDefmodule)) != NULL)
      {
       theRule = NULL;
-      while ((theRule = GetNextDefrule(theEnv,theRule)) != NULL)
-        { RemoveBreak(theRule); }
+      while ((theRule = CL_GetNextDefrule(theEnv,theRule)) != NULL)
+        { CL_RemoveBreak(theRule); }
      }
   }
 
 /**********************************/
-/* ShowBreaks: C access routine   */
+/* CL_ShowBreaks: C access routine   */
 /*   for the show-breaks command. */
 /**********************************/
-void ShowBreaks(
+void CL_ShowBreaks(
   Environment *theEnv,
   const char *logicalName,
   Defmodule *theModule)
   {
-   ListItemsDriver(theEnv,logicalName,theModule,
+   CL_ListItemsDriver(theEnv,logicalName,theModule,
                    NULL,NULL,
-                   (GetNextItemFunction *) GetNextDefrule,
-                   (const char *(*)(void *)) GetConstructNameString,
+                   (GetNextItemFunction *) CL_GetNextDefrule,
+                   (const char *(*)(void *)) CL_GetConstructNameString,
                    NULL,
-                   (bool (*)(void *)) DefruleHasBreakpoint);
+                   (bool (*)(void *)) CL_DefruleHasBreakpoint);
    }
 
 /***********************************************/
-/* DefruleHasBreakpoint: Indicates whether the */
+/* CL_DefruleHasBreakpoint: Indicates whether the */
 /*   specified rule has a breakpoint set.      */
 /***********************************************/
-bool DefruleHasBreakpoint(
+bool CL_DefruleHasBreakpoint(
   Defrule *theRule)
   {
    return theRule->afterBreakpoint;
   }
 
 /*****************************************/
-/* SetBreakCommand: H/L access routine   */
+/* CL_SetBreakCommand: H/L access routine   */
 /*   for the set-break command.          */
 /*****************************************/
-void SetBreakCommand(
+void CL_SetBreakCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -1283,24 +1283,24 @@ void SetBreakCommand(
    const char *argument;
    Defrule *defrulePtr;
 
-   if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg)) return;
+   if (! CL_UDFFirstArgument(context,SYMBOL_BIT,&theArg)) return;
 
    argument = theArg.lexemeValue->contents;
 
-   if ((defrulePtr = FindDefrule(theEnv,argument)) == NULL)
+   if ((defrulePtr = CL_FindDefrule(theEnv,argument)) == NULL)
      {
-      CantFindItemErrorMessage(theEnv,"defrule",argument,true);
+      CL_CantFindItemErrorMessage(theEnv,"defrule",argument,true);
       return;
      }
 
-   SetBreak(defrulePtr);
+   CL_SetBreak(defrulePtr);
   }
 
 /********************************************/
-/* RemoveBreakCommand: H/L access routine   */
+/* CL_RemoveBreakCommand: H/L access routine   */
 /*   for the remove-break command.          */
 /********************************************/
-void RemoveBreakCommand(
+void CL_RemoveBreakCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -1309,35 +1309,35 @@ void RemoveBreakCommand(
    const char *argument;
    Defrule *defrulePtr;
 
-   if (UDFArgumentCount(context) == 0)
+   if (CL_UDFArgumentCount(context) == 0)
      {
-      RemoveAllBreakpoints(theEnv);
+      CL_RemoveAllBreakpoints(theEnv);
       return;
      }
 
-   if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg)) return;
+   if (! CL_UDFFirstArgument(context,SYMBOL_BIT,&theArg)) return;
 
    argument = theArg.lexemeValue->contents;
 
-   if ((defrulePtr = FindDefrule(theEnv,argument)) == NULL)
+   if ((defrulePtr = CL_FindDefrule(theEnv,argument)) == NULL)
      {
-      CantFindItemErrorMessage(theEnv,"defrule",argument,true);
+      CL_CantFindItemErrorMessage(theEnv,"defrule",argument,true);
       return;
      }
 
-   if (RemoveBreak(defrulePtr) == false)
+   if (CL_RemoveBreak(defrulePtr) == false)
      {
-      WriteString(theEnv,STDERR,"Rule ");
-      WriteString(theEnv,STDERR,argument);
-      WriteString(theEnv,STDERR," does not have a breakpoint set.\n");
+      CL_WriteString(theEnv,STDERR,"Rule ");
+      CL_WriteString(theEnv,STDERR,argument);
+      CL_WriteString(theEnv,STDERR," does not have a breakpoint set.\n");
      }
   }
 
 /*******************************************/
-/* ShowBreaksCommand: H/L access routine   */
+/* CL_ShowBreaksCommand: H/L access routine   */
 /*   for the show-breaks command.          */
 /*******************************************/
-void ShowBreaksCommand(
+void CL_ShowBreaksCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -1346,76 +1346,76 @@ void ShowBreaksCommand(
    bool error;
    Defmodule *theModule;
 
-   numArgs = UDFArgumentCount(context);
+   numArgs = CL_UDFArgumentCount(context);
 
    if (numArgs == 1)
      {
-      theModule = GetModuleName(context,1,&error);
+      theModule = CL_GetModuleName(context,1,&error);
       if (error) return;
      }
    else
-     { theModule = GetCurrentModule(theEnv); }
+     { theModule = CL_GetCurrentModule(theEnv); }
 
-   ShowBreaks(theEnv,STDOUT,theModule);
+   CL_ShowBreaks(theEnv,STDOUT,theModule);
   }
 
 /***********************************************/
-/* ListFocusStackCommand: H/L access routine   */
+/* ListCL_FocusStackCommand: H/L access routine   */
 /*   for the list-focus-stack command.         */
 /***********************************************/
-void ListFocusStackCommand(
+void ListCL_FocusStackCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
-   ListFocusStack(theEnv,STDOUT);
+   ListCL_FocusStack(theEnv,STDOUT);
   }
 
 /***************************************/
-/* ListFocusStack: C access routine    */
+/* ListCL_FocusStack: C access routine    */
 /*   for the list-focus-stack command. */
 /***************************************/
-void ListFocusStack(
+void ListCL_FocusStack(
   Environment *theEnv,
   const char *logicalName)
   {
-   FocalModule *theFocus;
+   FocalModule *theCL_Focus;
 
-   for (theFocus = EngineData(theEnv)->CurrentFocus;
-        theFocus != NULL;
-        theFocus = theFocus->next)
+   for (theCL_Focus = EngineData(theEnv)->CurrentCL_Focus;
+        theCL_Focus != NULL;
+        theCL_Focus = theCL_Focus->next)
      {
-      WriteString(theEnv,logicalName,DefmoduleName(theFocus->theModule));
-      WriteString(theEnv,logicalName,"\n");
+      CL_WriteString(theEnv,logicalName,CL_DefmoduleName(theCL_Focus->theModule));
+      CL_WriteString(theEnv,logicalName,"\n");
      }
   }
 
 #endif /* DEBUGGING_FUNCTIONS */
 
 /***********************************************/
-/* GetFocusStackFunction: H/L access routine   */
+/* GetCL_FocusStackFunction: H/L access routine   */
 /*   for the get-focus-stack function.         */
 /***********************************************/
-void GetFocusStackFunction(
+void GetCL_FocusStackFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
    CLIPSValue result;
    
-   GetFocusStack(theEnv,&result);
-   CLIPSToUDFValue(&result,returnValue);
+   GetCL_FocusStack(theEnv,&result);
+   CL_CLIPSToUDFValue(&result,returnValue);
   }
 
 /***************************************/
-/* GetFocusStack: C access routine     */
+/* GetCL_FocusStack: C access routine     */
 /*   for the get-focus-stack function. */
 /***************************************/
-void GetFocusStack(
+void GetCL_FocusStack(
   Environment *theEnv,
   CLIPSValue *returnValue)
   {
-   FocalModule *theFocus;
+   FocalModule *theCL_Focus;
    Multifield *theList;
    unsigned long count = 0;
 
@@ -1424,17 +1424,17 @@ void GetFocusStack(
    /* a multifield value of length zero.        */
    /*===========================================*/
 
-   if (EngineData(theEnv)->CurrentFocus == NULL)
+   if (EngineData(theEnv)->CurrentCL_Focus == NULL)
      {
-      returnValue->value = CreateMultifield(theEnv,0L);
+      returnValue->value = CL_CreateMultifield(theEnv,0L);
       return;
      }
 
    /*=====================================================*/
-   /* Determine the number of modules on the focus stack. */
+   /* DeteCL_rmine the number of modules on the focus stack. */
    /*=====================================================*/
 
-   for (theFocus = EngineData(theEnv)->CurrentFocus; theFocus != NULL; theFocus = theFocus->next)
+   for (theCL_Focus = EngineData(theEnv)->CurrentCL_Focus; theCL_Focus != NULL; theCL_Focus = theCL_Focus->next)
      { count++; }
 
    /*=============================================*/
@@ -1442,33 +1442,33 @@ void GetFocusStack(
    /* in which to store the module names.         */
    /*=============================================*/
 
-   theList = CreateMultifield(theEnv,count);
+   theList = CL_CreateMultifield(theEnv,count);
    returnValue->multifieldValue = theList;
 
    /*=================================================*/
    /* Store the module names in the multifield value. */
    /*=================================================*/
 
-   for (theFocus = EngineData(theEnv)->CurrentFocus, count = 0;
-        theFocus != NULL;
-        theFocus = theFocus->next, count++)
+   for (theCL_Focus = EngineData(theEnv)->CurrentCL_Focus, count = 0;
+        theCL_Focus != NULL;
+        theCL_Focus = theCL_Focus->next, count++)
      {
-      theList->contents[count].value = theFocus->theModule->header.name;
+      theList->contents[count].value = theCL_Focus->theModule->header.name;
      }
   }
 
 /******************************************/
-/* PopFocusFunction: H/L access routine   */
+/* PopCL_FocusFunction: H/L access routine   */
 /*   for the pop-focus function.          */
 /******************************************/
-void PopFocusFunction(
+void PopCL_FocusFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
    Defmodule *theModule;
 
-   theModule = PopFocus(theEnv);
+   theModule = PopCL_Focus(theEnv);
    if (theModule == NULL)
      {
       returnValue->lexemeValue = FalseSymbol(theEnv);
@@ -1479,10 +1479,10 @@ void PopFocusFunction(
   }
 
 /**************************************/
-/* FocusCommand: H/L access routine   */
+/* CL_FocusCommand: H/L access routine   */
 /*   for the focus function.          */
 /**************************************/
-void FocusCommand(
+void CL_FocusCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -1493,27 +1493,27 @@ void FocusCommand(
    unsigned int argCount, i;
 
    /*===========================================*/
-   /* Focus on the specified defrule module(s). */
+   /* CL_Focus on the specified defrule module(s). */
    /*===========================================*/
 
-   argCount = UDFArgumentCount(context);
+   argCount = CL_UDFArgumentCount(context);
 
    for (i = argCount; i > 0; i--)
      {
-      if (! UDFNthArgument(context,i,SYMBOL_BIT,&theArg))
+      if (! CL_UDFNthArgument(context,i,SYMBOL_BIT,&theArg))
         { return; }
 
       argument = theArg.lexemeValue->contents;
-      theModule = FindDefmodule(theEnv,argument);
+      theModule = CL_FindDefmodule(theEnv,argument);
 
       if (theModule == NULL)
         {
-         CantFindItemErrorMessage(theEnv,"defmodule",argument,true);
+         CL_CantFindItemErrorMessage(theEnv,"defmodule",argument,true);
          returnValue->lexemeValue = FalseSymbol(theEnv);
          return;
         }
 
-      Focus(theModule);
+      CL_Focus(theModule);
      }
 
    /*===================================================*/
@@ -1524,41 +1524,41 @@ void FocusCommand(
   }
 
 /********************************************************************/
-/* GetFocusChanged: Returns the value of the variable FocusChanged. */
+/* GetCL_FocusChanged: Returns the value of the variable CL_FocusChanged. */
 /********************************************************************/
-bool GetFocusChanged(
+bool GetCL_FocusChanged(
   Environment *theEnv)
   {
-   return EngineData(theEnv)->FocusChanged;
+   return EngineData(theEnv)->CL_FocusChanged;
   }
 
 /*****************************************************************/
-/* SetFocusChanged: Sets the value of the variable FocusChanged. */
+/* SetCL_FocusChanged: Sets the value of the variable CL_FocusChanged. */
 /*****************************************************************/
-void SetFocusChanged(
+void SetCL_FocusChanged(
   Environment *theEnv,
   bool value)
   {
-   EngineData(theEnv)->FocusChanged = value;
+   EngineData(theEnv)->CL_FocusChanged = value;
   }
 
 /******************************************/
-/* SetHaltRules: Sets the HaltRules flag. */
+/* SetCL_HaltRules: Sets the CL_HaltRules flag. */
 /******************************************/
-void SetHaltRules(
+void SetCL_HaltRules(
   Environment *theEnv,
   bool value)
   {
-   EngineData(theEnv)->HaltRules = value;
+   EngineData(theEnv)->CL_HaltRules = value;
   }
 
 /*************************************************/
-/* GetHaltRules: Returns the HaltExecution flag. */
+/* CL_GetCL_HaltRules: Returns the CL_HaltExecution flag. */
 /*************************************************/
-bool GetHaltRules(
+bool CL_GetCL_HaltRules(
   Environment *theEnv)
   {
-   return(EngineData(theEnv)->HaltRules);
+   return(EngineData(theEnv)->CL_HaltRules);
   }
 
 #endif /* DEFRULE_CONSTRUCT */

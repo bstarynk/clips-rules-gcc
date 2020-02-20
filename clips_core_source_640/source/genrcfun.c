@@ -42,8 +42,8 @@
 /*            Fixed typing issue when OBJECT_SYSTEM          */
 /*            compiler flag is set to 0.                     */
 /*                                                           */
-/*      6.40: Added Env prefix to GetEvaluationError and     */
-/*            SetEvaluationError functions.                  */
+/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
+/*            SetCL_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -102,7 +102,7 @@
 #endif
 
 #if RUN_TIME
-   static void                    RuntimeDefgenericAction(Environment *,ConstructHeader *,void *);
+   static void                    CL_RuntimeDefgenericAction(Environment *,ConstructHeader *,void *);
 #endif
 
 /* =========================================
@@ -114,8 +114,8 @@
 #if ! RUN_TIME
 
 /***************************************************
-  NAME         : ClearDefgenericsReady
-  DESCRIPTION  : Determines if it is safe to
+  NAME         : CL_ClearDefgenericsReady
+  DESCRIPTION  : DeteCL_rmines if it is safe to
                  remove all defgenerics
                  Assumes *all* constructs will be
                  deleted - only checks to see if
@@ -127,7 +127,7 @@
   SIDE EFFECTS : None
   NOTES        : Used by (clear) and (bload)
  ***************************************************/
-bool ClearDefgenericsReady(
+bool CL_ClearDefgenericsReady(
   Environment *theEnv,
   void *context)
   {
@@ -135,7 +135,7 @@ bool ClearDefgenericsReady(
   }
 
 /*****************************************************
-  NAME         : AllocateDefgenericModule
+  NAME         : CL_AllocateCL_DefgenericModule
   DESCRIPTION  : Creates and initializes a
                  list of defgenerics for a new module
   INPUTS       : None
@@ -143,14 +143,14 @@ bool ClearDefgenericsReady(
   SIDE EFFECTS : Deffunction module created
   NOTES        : None
  *****************************************************/
-void *AllocateDefgenericModule(
+void *CL_AllocateCL_DefgenericModule(
   Environment *theEnv)
   {
    return (void *) get_struct(theEnv,defgenericModule);
   }
 
 /***************************************************
-  NAME         : FreeDefgenericModule
+  NAME         : FreeCL_DefgenericModule
   DESCRIPTION  : Removes a deffunction module and
                  all associated deffunctions
   INPUTS       : The deffunction module
@@ -158,12 +158,12 @@ void *AllocateDefgenericModule(
   SIDE EFFECTS : Module and deffunctions deleted
   NOTES        : None
  ***************************************************/
-void FreeDefgenericModule(
+void FreeCL_DefgenericModule(
   Environment *theEnv,
   void *theItem)
   {
 #if (! BLOAD_ONLY)
-   FreeConstructHeaderModule(theEnv,(struct defmoduleItemHeader *) theItem,DefgenericData(theEnv)->DefgenericConstruct);
+   CL_FreeConstructHeaderModule(theEnv,(struct defmoduleItemHeader *) theItem,DefgenericData(theEnv)->DefgenericConstruct);
 #endif
    rtn_struct(theEnv,defgenericModule,theItem);
   }
@@ -173,11 +173,11 @@ void FreeDefgenericModule(
 #if RUN_TIME
 
 /*************************************************/
-/* RuntimeDefgenericAction: Action to be applied */
+/* CL_RuntimeDefgenericAction: Action to be applied */
 /*   to each deffacts construct when a runtime   */
 /*   initialization occurs.                      */
 /*************************************************/
-static void RuntimeDefgenericAction(
+static void CL_RuntimeDefgenericAction(
   Environment *theEnv,
   ConstructHeader *theConstruct,
   void *buffer)
@@ -195,12 +195,12 @@ static void RuntimeDefgenericAction(
   }
 
 /********************************/
-/* DefgenericRunTimeInitialize: */
+/* DefgenericCL_RunTimeInitialize: */
 /********************************/
-void DefgenericRunTimeInitialize(
+void DefgenericCL_RunTimeInitialize(
   Environment *theEnv)
   {
-   DoForAllConstructs(theEnv,RuntimeDefgenericAction,DefgenericData(theEnv)->DefgenericModuleIndex,true,NULL);
+   CL_DoForAllConstructs(theEnv,CL_RuntimeDefgenericAction,DefgenericData(theEnv)->CL_DefgenericModuleIndex,true,NULL);
   }
 
 #endif
@@ -208,13 +208,13 @@ void DefgenericRunTimeInitialize(
 #if (! BLOAD_ONLY) && (! RUN_TIME)
 
 /************************************************************
-  NAME         : ClearDefmethods
+  NAME         : CL_ClearDefmethods
   DESCRIPTION  : Deletes all defmethods - generic headers
                    are left intact
   INPUTS       : None
   RETURNS      : True if all methods deleted, false otherwise
   SIDE EFFECTS : Defmethods deleted
-  NOTES        : Clearing generic functions is done in
+  NOTES        : CL_Clearing generic functions is done in
                    two stages
 
                  1) Delete all methods (to clear any
@@ -225,28 +225,28 @@ void DefgenericRunTimeInitialize(
                    mutually refer to generic functions
                    to be cleared
  ************************************************************/
-bool ClearDefmethods(
+bool CL_ClearDefmethods(
   Environment *theEnv)
   {
    Defgeneric *gfunc;
    bool success = true;
 
 #if BLOAD || BLOAD_AND_BSAVE
-   if (Bloaded(theEnv) == true) return false;
+   if (CL_Bloaded(theEnv) == true) return false;
 #endif
 
-   gfunc = GetNextDefgeneric(theEnv,NULL);
+   gfunc = CL_GetNextDefgeneric(theEnv,NULL);
    while (gfunc != NULL)
      {
-      if (RemoveAllExplicitMethods(theEnv,gfunc) == false)
+      if (CL_RemoveAllExplicitMethods(theEnv,gfunc) == false)
         success = false;
-      gfunc = GetNextDefgeneric(theEnv,gfunc);
+      gfunc = CL_GetNextDefgeneric(theEnv,gfunc);
      }
    return success;
   }
 
 /*****************************************************************
-  NAME         : RemoveAllExplicitMethods
+  NAME         : CL_RemoveAllExplicitMethods
   DESCRIPTION  : Deletes all explicit defmethods - generic headers
                    are left intact (as well as a method for an
                    overloaded system function)
@@ -255,7 +255,7 @@ bool ClearDefmethods(
   SIDE EFFECTS : Explicit defmethods deleted
   NOTES        : None
  *****************************************************************/
-bool RemoveAllExplicitMethods(
+bool CL_RemoveAllExplicitMethods(
   Environment *theEnv,
   Defgeneric *gfunc)
   {
@@ -263,18 +263,18 @@ bool RemoveAllExplicitMethods(
    unsigned short systemMethodCount = 0;
    Defmethod *narr;
 
-   if (MethodsExecuting(gfunc) == false)
+   if (CL_MethodsExecuting(gfunc) == false)
      {
       for (i = 0 ; i < gfunc->mcnt ; i++)
         {
          if (gfunc->methods[i].system)
            systemMethodCount++;
          else
-           DeleteMethodInfo(theEnv,gfunc,&gfunc->methods[i]);
+           CL_DeleteMethodInfo(theEnv,gfunc,&gfunc->methods[i]);
         }
       if (systemMethodCount != 0)
         {
-         narr = (Defmethod *) gm2(theEnv,(systemMethodCount * sizeof(Defmethod)));
+         narr = (Defmethod *) CL_gm2(theEnv,(systemMethodCount * sizeof(Defmethod)));
          i = 0;
          j = 0;
          while (i < gfunc->mcnt)
@@ -283,14 +283,14 @@ bool RemoveAllExplicitMethods(
               GenCopyMemory(Defmethod,1,&narr[j++],&gfunc->methods[i]);
             i++;
            }
-         rm(theEnv,gfunc->methods,(sizeof(Defmethod) * gfunc->mcnt));
+         CL_rm(theEnv,gfunc->methods,(sizeof(Defmethod) * gfunc->mcnt));
          gfunc->mcnt = systemMethodCount;
          gfunc->methods = narr;
         }
       else
         {
          if (gfunc->mcnt != 0)
-           rm(theEnv,gfunc->methods,(sizeof(Defmethod) * gfunc->mcnt));
+           CL_rm(theEnv,gfunc->methods,(sizeof(Defmethod) * gfunc->mcnt));
          gfunc->mcnt = 0;
          gfunc->methods = NULL;
         }
@@ -300,7 +300,7 @@ bool RemoveAllExplicitMethods(
   }
 
 /**************************************************
-  NAME         : RemoveDefgeneric
+  NAME         : CL_RemoveDefgeneric
   DESCRIPTION  : Removes a generic function node
                    from the generic list along with
                    all its methods
@@ -310,25 +310,25 @@ bool RemoveAllExplicitMethods(
                  Nodes deallocated
   NOTES        : Assumes generic is not in use!!!
  **************************************************/
-void RemoveDefgeneric(
+void CL_RemoveDefgeneric(
   Environment *theEnv,
   Defgeneric *theDefgeneric)
   {
    long i;
 
    for (i = 0 ; i < theDefgeneric->mcnt ; i++)
-     DeleteMethodInfo(theEnv,theDefgeneric,&theDefgeneric->methods[i]);
+     CL_DeleteMethodInfo(theEnv,theDefgeneric,&theDefgeneric->methods[i]);
 
    if (theDefgeneric->mcnt != 0)
-     { rm(theEnv,theDefgeneric->methods,(sizeof(Defmethod) * theDefgeneric->mcnt)); }
-   ReleaseLexeme(theEnv,GetDefgenericNamePointer(theDefgeneric));
-   SetDefgenericPPForm(theEnv,theDefgeneric,NULL);
-   ClearUserDataList(theEnv,theDefgeneric->header.usrData);
+     { CL_rm(theEnv,theDefgeneric->methods,(sizeof(Defmethod) * theDefgeneric->mcnt)); }
+   CL_ReleaseLexeme(theEnv,GetCL_DefgenericNamePointer(theDefgeneric));
+   SetCL_DefgenericPPFoCL_rm(theEnv,theDefgeneric,NULL);
+   CL_ClearUserDataList(theEnv,theDefgeneric->header.usrData);
    rtn_struct(theEnv,defgeneric,theDefgeneric);
   }
 
 /****************************************************************
-  NAME         : ClearDefgenerics
+  NAME         : CL_ClearDefgenerics
   DESCRIPTION  : Deletes all generic headers
   INPUTS       : None
   RETURNS      : True if all methods deleted, false otherwise
@@ -336,37 +336,37 @@ void RemoveDefgeneric(
                   function methods)
   NOTES        : None
  ****************************************************************/
-bool ClearDefgenerics(
+bool CL_ClearDefgenerics(
   Environment *theEnv)
   {
    Defgeneric *gfunc, *gtmp;
    bool success = true;
 
 #if BLOAD || BLOAD_AND_BSAVE
-   if (Bloaded(theEnv) == true) return false;
+   if (CL_Bloaded(theEnv) == true) return false;
 #endif
 
-   gfunc = GetNextDefgeneric(theEnv,NULL);
+   gfunc = CL_GetNextDefgeneric(theEnv,NULL);
    while (gfunc != NULL)
      {
       gtmp = gfunc;
-      gfunc = GetNextDefgeneric(theEnv,gfunc);
-      if (RemoveAllExplicitMethods(theEnv,gtmp) == false)
+      gfunc = CL_GetNextDefgeneric(theEnv,gfunc);
+      if (CL_RemoveAllExplicitMethods(theEnv,gtmp) == false)
         {
-         CantDeleteItemErrorMessage(theEnv,"generic function",DefgenericName(gtmp));
+         CL_CantDeleteItemErrorMessage(theEnv,"generic function",CL_DefgenericName(gtmp));
          success = false;
         }
       else
         {
-         RemoveConstructFromModule(theEnv,&gtmp->header);
-         RemoveDefgeneric(theEnv,gtmp);
+         CL_RemoveConstructFromModule(theEnv,&gtmp->header);
+         CL_RemoveDefgeneric(theEnv,gtmp);
         }
      }
    return(success);
   }
 
 /********************************************************
-  NAME         : MethodAlterError
+  NAME         : CL_MethodAlterError
   DESCRIPTION  : Prints out an error message reflecting
                    that a generic function's methods
                    cannot be altered while any of them
@@ -376,18 +376,18 @@ bool ClearDefgenerics(
   SIDE EFFECTS : None
   NOTES        : None
  ********************************************************/
-void MethodAlterError(
+void CL_MethodAlterError(
   Environment *theEnv,
   Defgeneric *gfunc)
   {
-   PrintErrorID(theEnv,"GENRCFUN",1,false);
-   WriteString(theEnv,STDERR,"Defgeneric '");
-   WriteString(theEnv,STDERR,DefgenericName(gfunc));
-   WriteString(theEnv,STDERR,"' cannot be modified while one of its methods is executing.\n");
+   CL_PrintErrorID(theEnv,"GENRCFUN",1,false);
+   CL_WriteString(theEnv,STDERR,"Defgeneric '");
+   CL_WriteString(theEnv,STDERR,CL_DefgenericName(gfunc));
+   CL_WriteString(theEnv,STDERR,"' cannot be modified while one of its methods is executing.\n");
   }
 
 /***************************************************
-  NAME         : DeleteMethodInfo
+  NAME         : CL_DeleteMethodInfo
   DESCRIPTION  : Deallocates all the data associated
                   w/ a method but does not release
                   the method structure itself
@@ -397,7 +397,7 @@ void MethodAlterError(
   SIDE EFFECTS : Nodes deallocated
   NOTES        : None
  ***************************************************/
-void DeleteMethodInfo(
+void CL_DeleteMethodInfo(
   Environment *theEnv,
   Defgeneric *gfunc,
   Defmethod *meth)
@@ -405,36 +405,36 @@ void DeleteMethodInfo(
    short j,k;
    RESTRICTION *rptr;
 
-   SaveBusyCount(gfunc);
-   ExpressionDeinstall(theEnv,meth->actions);
-   ReturnPackedExpression(theEnv,meth->actions);
-   ClearUserDataList(theEnv,meth->header.usrData);
-   if (meth->header.ppForm != NULL)
-     rm(theEnv,(void *) meth->header.ppForm,(sizeof(char) * (strlen(meth->header.ppForm)+1)));
+   CL_SaveBusyCount(gfunc);
+   CL_ExpressionDeinstall(theEnv,meth->actions);
+   CL_ReturnPackedExpression(theEnv,meth->actions);
+   CL_ClearUserDataList(theEnv,meth->header.usrData);
+   if (meth->header.ppFoCL_rm != NULL)
+     CL_rm(theEnv,(void *) meth->header.ppFoCL_rm,(sizeof(char) * (strlen(meth->header.ppFoCL_rm)+1)));
    for (j = 0 ; j < meth->restrictionCount ; j++)
      {
       rptr = &meth->restrictions[j];
 
       for (k = 0 ; k < rptr->tcnt ; k++)
 #if OBJECT_SYSTEM
-        DecrementDefclassBusyCount(theEnv,(Defclass *) rptr->types[k]);
+        CL_DecrementDefclassBusyCount(theEnv,(Defclass *) rptr->types[k]);
 #else
         DecrementIntegerCount(theEnv,(CLIPSInteger *) rptr->types[k]);
 #endif
 
       if (rptr->types != NULL)
-        rm(theEnv,rptr->types,(sizeof(void *) * rptr->tcnt));
-      ExpressionDeinstall(theEnv,rptr->query);
-      ReturnPackedExpression(theEnv,rptr->query);
+        CL_rm(theEnv,rptr->types,(sizeof(void *) * rptr->tcnt));
+      CL_ExpressionDeinstall(theEnv,rptr->query);
+      CL_ReturnPackedExpression(theEnv,rptr->query);
      }
    if (meth->restrictions != NULL)
-     rm(theEnv,meth->restrictions,
+     CL_rm(theEnv,meth->restrictions,
         (sizeof(RESTRICTION) * meth->restrictionCount));
    RestoreBusyCount(gfunc);
   }
 
 /***************************************************
-  NAME         : DestroyMethodInfo
+  NAME         : CL_DestroyMethodInfo
   DESCRIPTION  : Deallocates all the data associated
                   w/ a method but does not release
                   the method structure itself
@@ -444,7 +444,7 @@ void DeleteMethodInfo(
   SIDE EFFECTS : Nodes deallocated
   NOTES        : None
  ***************************************************/
-void DestroyMethodInfo(
+void CL_DestroyMethodInfo(
   Environment *theEnv,
   Defgeneric *gfunc,
   Defmethod *meth)
@@ -455,28 +455,28 @@ void DestroyMethodInfo(
 #pragma unused(gfunc)
 #endif
 
-   ReturnPackedExpression(theEnv,meth->actions);
+   CL_ReturnPackedExpression(theEnv,meth->actions);
 
-   ClearUserDataList(theEnv,meth->header.usrData);
-   if (meth->header.ppForm != NULL)
-     rm(theEnv,(void *) meth->header.ppForm,(sizeof(char) * (strlen(meth->header.ppForm)+1)));
+   CL_ClearUserDataList(theEnv,meth->header.usrData);
+   if (meth->header.ppFoCL_rm != NULL)
+     CL_rm(theEnv,(void *) meth->header.ppFoCL_rm,(sizeof(char) * (strlen(meth->header.ppFoCL_rm)+1)));
    for (j = 0 ; j < meth->restrictionCount ; j++)
      {
       rptr = &meth->restrictions[j];
 
       if (rptr->types != NULL)
-        rm(theEnv,rptr->types,(sizeof(void *) * rptr->tcnt));
-      ReturnPackedExpression(theEnv,rptr->query);
+        CL_rm(theEnv,rptr->types,(sizeof(void *) * rptr->tcnt));
+      CL_ReturnPackedExpression(theEnv,rptr->query);
      }
 
    if (meth->restrictions != NULL)
-     rm(theEnv,meth->restrictions,
+     CL_rm(theEnv,meth->restrictions,
         (sizeof(RESTRICTION) * meth->restrictionCount));
   }
 
 /***************************************************
-  NAME         : MethodsExecuting
-  DESCRIPTION  : Determines if any of the methods of
+  NAME         : CL_MethodsExecuting
+  DESCRIPTION  : DeteCL_rmines if any of the methods of
                    a generic function are currently
                    executing
   INPUTS       : The generic function address
@@ -485,7 +485,7 @@ void DestroyMethodInfo(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-bool MethodsExecuting(
+bool CL_MethodsExecuting(
   Defgeneric *gfunc)
   {
    long i;
@@ -502,7 +502,7 @@ bool MethodsExecuting(
 
 /**************************************************************
   NAME         : SubsumeType
-  DESCRIPTION  : Determines if the second type subsumes
+  DESCRIPTION  : DeteCL_rmines if the second type subsumes
                  the first type
                  (e.g. INTEGER_TYPE is subsumed by NUMBER_TYPE_CODE)
   INPUTS       : Two type codes
@@ -533,7 +533,7 @@ bool SubsumeType(
 #endif
 
 /*****************************************************
-  NAME         : FindMethodByIndex
+  NAME         : CL_FindMethodByIndex
   DESCRIPTION  : Finds a generic function method of
                    specified index
   INPUTS       : 1) The generic function
@@ -544,7 +544,7 @@ bool SubsumeType(
   SIDE EFFECTS : None
   NOTES        : None
  *****************************************************/
-unsigned short FindMethodByIndex(
+unsigned short CL_FindMethodByIndex(
   Defgeneric *gfunc,
   unsigned short theIndex)
   {
@@ -562,19 +562,19 @@ unsigned short FindMethodByIndex(
 #if DEBUGGING_FUNCTIONS || PROFILING_FUNCTIONS
 
 /******************************************************************
-  NAME         : PrintMethod
+  NAME         : CL_PrintMethod
   DESCRIPTION  : Lists a brief description of methods for a method
   INPUTS       : 1) Buffer for method info
                  2) Size of buffer (not including space for '\0')
                  3) The method address
   RETURNS      : Nothing useful
   SIDE EFFECTS : None
-  NOTES        : A terminating newline is NOT included
+  NOTES        : A teCL_rminating newline is NOT included
  ******************************************************************/
-void PrintMethod(
+void CL_PrintMethod(
   Environment *theEnv,
   Defmethod *meth,
-  StringBuilder *theSB)
+  StringCL_Builder *theSB)
   {
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -583,11 +583,11 @@ void PrintMethod(
    RESTRICTION *rptr;
    char numbuf[15];
 
-   SBReset(theSB);
+   SBCL_Reset(theSB);
    if (meth->system)
-     SBAppend(theSB,"SYS");
-   gensprintf(numbuf,"%-2hu ",meth->index);
-   SBAppend(theSB,numbuf);
+     CL_SBAppend(theSB,"SYS");
+   CL_gensprintf(numbuf,"%-2hu ",meth->index);
+   CL_SBAppend(theSB,numbuf);
    for (j = 0 ; j < meth->restrictionCount ; j++)
      {
       rptr = &meth->restrictions[j];
@@ -595,32 +595,32 @@ void PrintMethod(
         {
          if ((rptr->tcnt == 0) && (rptr->query == NULL))
            {
-            SBAppend(theSB,"$?");
+            CL_SBAppend(theSB,"$?");
             break;
            }
-         SBAppend(theSB,"($? ");
+         CL_SBAppend(theSB,"($? ");
         }
       else
-        SBAppend(theSB,"(");
+        CL_SBAppend(theSB,"(");
       for (k = 0 ; k < rptr->tcnt ; k++)
         {
 #if OBJECT_SYSTEM
-         SBAppend(theSB,DefclassName((Defclass *) rptr->types[k]));
+         CL_SBAppend(theSB,CL_DefclassName((Defclass *) rptr->types[k]));
 #else
-         SBAppend(theSB,TypeName(theEnv,((CLIPSInteger *) rptr->types[k])->contents));
+         CL_SBAppend(theSB,TypeName(theEnv,((CLIPSInteger *) rptr->types[k])->contents));
 #endif
          if ((k + 1) < rptr->tcnt)
-           SBAppend(theSB," ");
+           CL_SBAppend(theSB," ");
         }
       if (rptr->query != NULL)
         {
          if (rptr->tcnt != 0)
-           SBAppend(theSB," ");
-         SBAppend(theSB,"<qry>");
+           CL_SBAppend(theSB," ");
+         CL_SBAppend(theSB,"<qry>");
         }
-      SBAppend(theSB,")");
+      CL_SBAppend(theSB,")");
       if ((j + 1) != meth->restrictionCount)
-        SBAppend(theSB," ");
+        CL_SBAppend(theSB," ");
      }
   }
 
@@ -629,7 +629,7 @@ void PrintMethod(
 #if DEBUGGING_FUNCTIONS
 
 /*************************************************************
-  NAME         : PreviewGeneric
+  NAME         : CL_PreviewGeneric
   DESCRIPTION  : Allows the user to see a printout of all the
                    applicable methods for a particular generic
                    function call
@@ -637,11 +637,11 @@ void PrintMethod(
   RETURNS      : Nothing useful
   SIDE EFFECTS : Any side-effects of evaluating the generic
                    function arguments
-                 and evaluating query-functions to determine
+                 and evaluating query-functions to deteCL_rmine
                    the set of applicable methods
   NOTES        : H/L Syntax: (preview-generic <func> <args>)
  *************************************************************/
-void PreviewGeneric(
+void CL_PreviewGeneric(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -651,48 +651,48 @@ void PreviewGeneric(
    bool oldce;
    UDFValue theArg;
 
-   EvaluationData(theEnv)->EvaluationError = false;
-   if (! UDFFirstArgument(context,SYMBOL_BIT,&theArg)) return;
+   CL_EvaluationData(theEnv)->CL_EvaluationError = false;
+   if (! CL_UDFFirstArgument(context,SYMBOL_BIT,&theArg)) return;
 
-   gfunc = LookupDefgenericByMdlOrScope(theEnv,theArg.lexemeValue->contents);
+   gfunc = CL_LookupDefgenericByMdlOrScope(theEnv,theArg.lexemeValue->contents);
    if (gfunc == NULL)
      {
-      PrintErrorID(theEnv,"GENRCFUN",3,false);
-      WriteString(theEnv,STDERR,"Unable to find generic function '");
-      WriteString(theEnv,STDERR,theArg.lexemeValue->contents);
-      WriteString(theEnv,STDERR,"' in function preview-generic.\n");
+      CL_PrintErrorID(theEnv,"GENRCFUN",3,false);
+      CL_WriteString(theEnv,STDERR,"Unable to find generic function '");
+      CL_WriteString(theEnv,STDERR,theArg.lexemeValue->contents);
+      CL_WriteString(theEnv,STDERR,"' in function preview-generic.\n");
       return;
      }
-   oldce = ExecutingConstruct(theEnv);
-   SetExecutingConstruct(theEnv,true);
+   oldce = CL_ExecutingConstruct(theEnv);
+   SetCL_ExecutingConstruct(theEnv,true);
    previousGeneric = DefgenericData(theEnv)->CurrentGeneric;
    DefgenericData(theEnv)->CurrentGeneric = gfunc;
-   EvaluationData(theEnv)->CurrentEvaluationDepth++;
-   PushProcParameters(theEnv,GetFirstArgument()->nextArg,
-                          CountArguments(GetFirstArgument()->nextArg),
-                          DefgenericName(gfunc),"generic function",
-                          UnboundMethodErr);
-   if (EvaluationData(theEnv)->EvaluationError)
+   CL_EvaluationData(theEnv)->CurrentCL_EvaluationDepth++;
+   CL_PushProcParameters(theEnv,GetFirstArgument()->nextArg,
+                          CL_CountArguments(GetFirstArgument()->nextArg),
+                          CL_DefgenericName(gfunc),"generic function",
+                          CL_UnboundMethodErr);
+   if (CL_EvaluationData(theEnv)->CL_EvaluationError)
      {
-      PopProcParameters(theEnv);
+      CL_PopProcParameters(theEnv);
       DefgenericData(theEnv)->CurrentGeneric = previousGeneric;
-      EvaluationData(theEnv)->CurrentEvaluationDepth--;
-      SetExecutingConstruct(theEnv,oldce);
+      CL_EvaluationData(theEnv)->CurrentCL_EvaluationDepth--;
+      SetCL_ExecutingConstruct(theEnv,oldce);
       return;
      }
    gfunc->busy++;
    DisplayGenericCore(theEnv,gfunc);
    gfunc->busy--;
-   PopProcParameters(theEnv);
+   CL_PopProcParameters(theEnv);
    DefgenericData(theEnv)->CurrentGeneric = previousGeneric;
-   EvaluationData(theEnv)->CurrentEvaluationDepth--;
-   SetExecutingConstruct(theEnv,oldce);
+   CL_EvaluationData(theEnv)->CurrentCL_EvaluationDepth--;
+   SetCL_ExecutingConstruct(theEnv,oldce);
   }
 
 #endif /* DEBUGGING_FUNCTIONS */
 
 /***************************************************
-  NAME         : CheckGenericExists
+  NAME         : CL_CheckGenericExists
   DESCRIPTION  : Finds the address of named
                   generic function and prints out
                   error message if not found
@@ -703,29 +703,29 @@ void PreviewGeneric(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-Defgeneric *CheckGenericExists(
+Defgeneric *CL_CheckGenericExists(
   Environment *theEnv,
   const char *fname,
   const char *gname)
   {
    Defgeneric *gfunc;
 
-   gfunc = LookupDefgenericByMdlOrScope(theEnv,gname);
+   gfunc = CL_LookupDefgenericByMdlOrScope(theEnv,gname);
    if (gfunc == NULL)
      {
-      PrintErrorID(theEnv,"GENRCFUN",3,false);
-      WriteString(theEnv,STDERR,"Unable to find generic function '");
-      WriteString(theEnv,STDERR,gname);
-      WriteString(theEnv,STDERR,"' in function '");
-      WriteString(theEnv,STDERR,fname);
-      WriteString(theEnv,STDERR,"'.\n");
-      SetEvaluationError(theEnv,true);
+      CL_PrintErrorID(theEnv,"GENRCFUN",3,false);
+      CL_WriteString(theEnv,STDERR,"Unable to find generic function '");
+      CL_WriteString(theEnv,STDERR,gname);
+      CL_WriteString(theEnv,STDERR,"' in function '");
+      CL_WriteString(theEnv,STDERR,fname);
+      CL_WriteString(theEnv,STDERR,"'.\n");
+      SetCL_EvaluationError(theEnv,true);
      }
    return(gfunc);
   }
 
 /***************************************************
-  NAME         : CheckMethodExists
+  NAME         : CL_CheckMethodExists
   DESCRIPTION  : Finds the array index of the
                   specified method and prints out
                   error message if not found
@@ -736,7 +736,7 @@ Defgeneric *CheckGenericExists(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-unsigned short CheckMethodExists(
+unsigned short CL_CheckMethodExists(
   Environment *theEnv,
   const char *fname,
   Defgeneric *gfunc,
@@ -744,18 +744,18 @@ unsigned short CheckMethodExists(
   {
    unsigned short fi;
 
-   fi = FindMethodByIndex(gfunc,mi);
+   fi = CL_FindMethodByIndex(gfunc,mi);
    if (fi == METHOD_NOT_FOUND)
      {
-      PrintErrorID(theEnv,"GENRCFUN",2,false);
-      WriteString(theEnv,STDERR,"Unable to find method '");
-      WriteString(theEnv,STDERR,DefgenericName(gfunc));
-      WriteString(theEnv,STDERR,"' #");
-      PrintUnsignedInteger(theEnv,STDERR,mi);
-      WriteString(theEnv,STDERR," in function '");
-      WriteString(theEnv,STDERR,fname);
-      WriteString(theEnv,STDERR,"'.\n");
-      SetEvaluationError(theEnv,true);
+      CL_PrintErrorID(theEnv,"GENRCFUN",2,false);
+      CL_WriteString(theEnv,STDERR,"Unable to find method '");
+      CL_WriteString(theEnv,STDERR,CL_DefgenericName(gfunc));
+      CL_WriteString(theEnv,STDERR,"' #");
+      CL_PrintUnsignedInteger(theEnv,STDERR,mi);
+      CL_WriteString(theEnv,STDERR," in function '");
+      CL_WriteString(theEnv,STDERR,fname);
+      CL_WriteString(theEnv,STDERR,"'.\n");
+      SetCL_EvaluationError(theEnv,true);
      }
    return fi;
   }
@@ -771,7 +771,7 @@ unsigned short CheckMethodExists(
   RETURNS      : The name-string of the type, or
                  "<???UNKNOWN-TYPE???>" for unrecognized
                  types
-  SIDE EFFECTS : EvaluationError set and error message
+  SIDE EFFECTS : CL_EvaluationError set and error message
                  printed for unrecognized types
   NOTES        : Used only when COOL is not present
  *******************************************************/
@@ -796,9 +796,9 @@ const char *TypeName(
       case LEXEME_TYPE_CODE    : return(LEXEME_TYPE_NAME);
       case ADDRESS_TYPE_CODE   : return(ADDRESS_TYPE_NAME);
       case INSTANCE_TYPE_CODE  : return(INSTANCE_TYPE_NAME);
-      default                  : PrintErrorID(theEnv,"INSCOM",1,false);
-                                 WriteString(theEnv,STDERR,"Undefined type in function 'type'.\n");
-                                 SetEvaluationError(theEnv,true);
+      default                  : CL_PrintErrorID(theEnv,"INSCOM",1,false);
+                                 CL_WriteString(theEnv,STDERR,"Undefined type in function 'type'.\n");
+                                 SetCL_EvaluationError(theEnv,true);
                                  return("<UNKNOWN-TYPE>");
      }
   }
@@ -806,7 +806,7 @@ const char *TypeName(
 #endif
 
 /******************************************************
-  NAME         : PrintGenericName
+  NAME         : CL_PrintGenericName
   DESCRIPTION  : Prints the name of a gneric function
                  (including the module name if the
                   generic is not in the current module)
@@ -816,17 +816,17 @@ const char *TypeName(
   SIDE EFFECTS : Generic name printed
   NOTES        : None
  ******************************************************/
-void PrintGenericName(
+void CL_PrintGenericName(
   Environment *theEnv,
   const char *logName,
   Defgeneric *gfunc)
   {
-   if (gfunc->header.whichModule->theModule != GetCurrentModule(theEnv))
+   if (gfunc->header.whichModule->theModule != CL_GetCurrentModule(theEnv))
      {
-      WriteString(theEnv,logName,DefgenericModule(gfunc));
-      WriteString(theEnv,logName,"::");
+      CL_WriteString(theEnv,logName,CL_DefgenericModule(gfunc));
+      CL_WriteString(theEnv,logName,"::");
      }
-   WriteString(theEnv,logName,gfunc->header.name->contents);
+   CL_WriteString(theEnv,logName,gfunc->header.name->contents);
   }
 
 /* =========================================
@@ -853,32 +853,32 @@ static void DisplayGenericCore(
   {
    long i;
    bool rtn = false;
-   StringBuilder *theSB;
+   StringCL_Builder *theSB;
    
-   theSB = CreateStringBuilder(theEnv,256);
+   theSB = CL_CreateStringCL_Builder(theEnv,256);
 
    for (i = 0 ; i < gfunc->mcnt ; i++)
      {
       gfunc->methods[i].busy++;
-      if (IsMethodApplicable(theEnv,&gfunc->methods[i]))
+      if (CL_IsMethodApplicable(theEnv,&gfunc->methods[i]))
         {
          rtn = true;
-         WriteString(theEnv,STDOUT,DefgenericName(gfunc));
-         WriteString(theEnv,STDOUT," #");
-         PrintMethod(theEnv,&gfunc->methods[i],theSB);
-         WriteString(theEnv,STDOUT,theSB->contents);
-         WriteString(theEnv,STDOUT,"\n");
+         CL_WriteString(theEnv,STDOUT,CL_DefgenericName(gfunc));
+         CL_WriteString(theEnv,STDOUT," #");
+         CL_PrintMethod(theEnv,&gfunc->methods[i],theSB);
+         CL_WriteString(theEnv,STDOUT,theSB->contents);
+         CL_WriteString(theEnv,STDOUT,"\n");
         }
       gfunc->methods[i].busy--;
      }
    if (rtn == false)
      {
-      WriteString(theEnv,STDOUT,"No applicable methods for ");
-      WriteString(theEnv,STDOUT,DefgenericName(gfunc));
-      WriteString(theEnv,STDOUT,".\n");
+      CL_WriteString(theEnv,STDOUT,"No applicable methods for ");
+      CL_WriteString(theEnv,STDOUT,CL_DefgenericName(gfunc));
+      CL_WriteString(theEnv,STDOUT,".\n");
      }
      
-   SBDispose(theSB);
+   CL_SBDispose(theSB);
   }
 
 #endif

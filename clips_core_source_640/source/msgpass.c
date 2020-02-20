@@ -23,7 +23,7 @@
 /*                                                           */
 /*            Renamed BOOLEAN macro type to intBool.         */
 /*                                                           */
-/*      6.30: The return value of DirectMessage indicates    */
+/*      6.30: The return value of CL_DirectMessage indicates    */
 /*            whether an execution error has occurred.       */
 /*                                                           */
 /*            Removed conditional code for unsupported       */
@@ -41,8 +41,8 @@
 /*            in scope in order to sent a message to an      */
 /*            instance of that class.                        */
 /*                                                           */
-/*      6.40: Added Env prefix to GetEvaluationError and     */
-/*            SetEvaluationError functions.                  */
+/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
+/*            SetCL_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -55,7 +55,7 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
-/*            Added GCBlockStart and GCBlockEnd functions    */
+/*            Added CL_GCBlockStart and CL_GCBlockEnd functions    */
 /*            for garbage collection blocks.                 */
 /*                                                           */
 /*************************************************************/
@@ -99,7 +99,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static bool                    PerformMessage(Environment *,UDFValue *,Expression *,CLIPSLexeme *);
+   static bool                    PerfoCL_rmMessage(Environment *,UDFValue *,Expression *,CLIPSLexeme *);
    static HANDLER_LINK           *FindApplicableHandlers(Environment *,Defclass *,CLIPSLexeme *);
    static void                    CallHandlers(Environment *,UDFValue *);
    static void                    EarlySlotBindError(Environment *,Instance *,Defclass *,unsigned);
@@ -111,9 +111,9 @@
    ***************************************** */
 
 /*****************************************************
-  NAME         : DirectMessage
+  NAME         : CL_DirectMessage
   DESCRIPTION  : Plugs in given instance and
-                  performs specified message
+                  perfoCL_rms specified message
   INPUTS       : 1) Message symbolic name
                  2) The instance address
                  3) Address of UDFValue buffer
@@ -124,7 +124,7 @@
   SIDE EFFECTS : Side effects of message execution
   NOTES        : None
  *****************************************************/
-bool DirectMessage(
+bool CL_DirectMessage(
   Environment *theEnv,
   CLIPSLexeme *msg,
   Instance *ins,
@@ -142,11 +142,11 @@ bool DirectMessage(
    args.type = INSTANCE_ADDRESS_TYPE;
    args.value = ins;
 
-   return PerformMessage(theEnv,resultbuf,&args,msg);
+   return PerfoCL_rmMessage(theEnv,resultbuf,&args,msg);
   }
 
 /***************************************************
-  NAME         : Send
+  NAME         : CL_Send
   DESCRIPTION  : C Interface for sending messages to
                   instances
   INPUTS       : 1) The data object of the instance
@@ -159,7 +159,7 @@ bool DirectMessage(
                    caller's buffer
   NOTES        : None
  ***************************************************/
-void Send(
+void CL_Send(
   Environment *theEnv,
   CLIPSValue *idata,
   const char *msg,
@@ -176,54 +176,54 @@ void Send(
    /* If embedded, clear the error flags. */
    /*=====================================*/
    
-   if (EvaluationData(theEnv)->CurrentExpression == NULL)
-     { ResetErrorFlags(theEnv); }
+   if (CL_EvaluationData(theEnv)->CurrentExpression == NULL)
+     { CL_ResetErrorFlags(theEnv); }
 
-   if (EvaluationData(theEnv)->CurrentExpression == NULL)
+   if (CL_EvaluationData(theEnv)->CurrentExpression == NULL)
      {
-      CleanCurrentGarbageFrame(theEnv,NULL);
-      CallPeriodicTasks(theEnv);
+      CL_CleanCurrentGarbageFrame(theEnv,NULL);
+      CL_CallPeriodicTasks(theEnv);
      }
 
    if (returnValue != NULL)
      { returnValue->value = FalseSymbol(theEnv); }
      
-   msym = FindSymbolHN(theEnv,msg,SYMBOL_BIT);
+   msym = CL_FindSymbolHN(theEnv,msg,SYMBOL_BIT);
    if (msym == NULL)
      {
-      PrintNoHandlerError(theEnv,msg);
-      SetEvaluationError(theEnv,true);
+      CL_PrintNoHandlerError(theEnv,msg);
+      SetCL_EvaluationError(theEnv,true);
       return;
      }
      
-   iexp = GenConstant(theEnv,idata->header->type,idata->value);
-   iexp->nextArg = ParseConstantArguments(theEnv,args,&error);
+   iexp = CL_GenConstant(theEnv,idata->header->type,idata->value);
+   iexp->nextArg = CL_ParseConstantArguments(theEnv,args,&error);
    if (error == true)
      {
-      ReturnExpression(theEnv,iexp);
-      SetEvaluationError(theEnv,true);
+      CL_ReturnExpression(theEnv,iexp);
+      SetCL_EvaluationError(theEnv,true);
       return;
      }
      
-   PerformMessage(theEnv,&result,iexp,msym);
-   ReturnExpression(theEnv,iexp);
+   PerfoCL_rmMessage(theEnv,&result,iexp,msym);
+   CL_ReturnExpression(theEnv,iexp);
    
    if (returnValue != NULL)
      {
-      NormalizeMultifield(theEnv,&result);
+      CL_NoCL_rmalizeMultifield(theEnv,&result);
       returnValue->value = result.value;
      }
   }
 
 /*****************************************************
-  NAME         : DestroyHandlerLinks
+  NAME         : CL_DestroyHandlerLinks
   DESCRIPTION  : Iteratively deallocates handler-links
   INPUTS       : The handler-link list
   RETURNS      : Nothing useful
   SIDE EFFECTS : Deallocation of links
   NOTES        : None
  *****************************************************/
-void DestroyHandlerLinks(
+void CL_DestroyHandlerLinks(
   Environment *theEnv,
   HANDLER_LINK *mhead)
   {
@@ -234,14 +234,14 @@ void DestroyHandlerLinks(
       tmp = mhead;
       mhead = mhead->nxt;
       tmp->hnd->busy--;
-      DecrementDefclassBusyCount(theEnv,tmp->hnd->cls);
+      CL_DecrementDefclassBusyCount(theEnv,tmp->hnd->cls);
       rtn_struct(theEnv,messageHandlerLink,tmp);
      }
   }
 
 /***********************************************************************
-  NAME         : SendCommand
-  DESCRIPTION  : Determines the applicable handler(s) and sets up the
+  NAME         : CL_SendCommand
+  DESCRIPTION  : DeteCL_rmines the applicable handler(s) and sets up the
                    core calling frame.  Then calls the core frame.
   INPUTS       : Caller's space for storing the result of the handler(s)
   RETURNS      : Nothing useful
@@ -249,7 +249,7 @@ void DestroyHandlerLinks(
                    the core framework
   NOTES        : H/L Syntax : (send <instance> <hnd> <args>*)
  ***********************************************************************/
-void SendCommand(
+void CL_SendCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -260,7 +260,7 @@ void SendCommand(
 
    returnValue->lexemeValue = FalseSymbol(theEnv);
 
-   if (! UDFNthArgument(context,2,SYMBOL_BIT,&theArg)) return;
+   if (! CL_UDFNthArgument(context,2,SYMBOL_BIT,&theArg)) return;
    msg = theArg.lexemeValue;
 
    /* =============================================
@@ -271,11 +271,11 @@ void SendCommand(
    args.argList = GetFirstArgument()->argList;
    args.nextArg = GetFirstArgument()->nextArg->nextArg;
 
-   PerformMessage(theEnv,returnValue,&args,msg);
+   PerfoCL_rmMessage(theEnv,returnValue,&args,msg);
   }
 
 /***************************************************
-  NAME         : GetNthMessageArgument
+  NAME         : CL_GetNthMessageArgument
   DESCRIPTION  : Returns the address of the nth
                  (starting at 1) which is an
                  argument of the current message
@@ -287,7 +287,7 @@ void SendCommand(
                  stored as the first argument (0) in
                  the call frame of the message
  ***************************************************/
-UDFValue *GetNthMessageArgument(
+UDFValue *CL_GetNthMessageArgument(
   Environment *theEnv,
   int n)
   {
@@ -295,19 +295,19 @@ UDFValue *GetNthMessageArgument(
   }
 
 /********************************/
-/* NextHandlerAvailableFunction */
+/* CL_NextHandlerAvailableFunction */
 /********************************/
-void NextHandlerAvailableFunction(
+void CL_NextHandlerAvailableFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
-   returnValue->lexemeValue = CreateBoolean(theEnv,NextHandlerAvailable(theEnv));
+   returnValue->lexemeValue = CL_CreateBoolean(theEnv,CL_NextHandlerAvailable(theEnv));
   }
 
 /*****************************************************
-  NAME         : NextHandlerAvailable
-  DESCRIPTION  : Determines if there the currently
+  NAME         : CL_NextHandlerAvailable
+  DESCRIPTION  : DeteCL_rmines if there the currently
                    executing handler can call a
                    shadowed handler
                  Used before calling call-next-handler
@@ -316,7 +316,7 @@ void NextHandlerAvailableFunction(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax: (next-handlerp)
  *****************************************************/
-bool NextHandlerAvailable(
+bool CL_NextHandlerAvailable(
   Environment *theEnv)
   {
    if (MessageHandlerData(theEnv)->CurrentCore == NULL)
@@ -333,7 +333,7 @@ bool NextHandlerAvailable(
   }
 
 /********************************************************
-  NAME         : CallNextHandler
+  NAME         : CL_CallNextHandler
   DESCRIPTION  : This function allows around-handlers
                    to execute the rest of the core frame.
                  It also allows primary handlers
@@ -355,7 +355,7 @@ bool NextHandlerAvailable(
   NOTES        : H/L Syntax: (call-next-handler) OR
                     (override-next-handler <arg> ...)
  ********************************************************/
-void CallNextHandler(
+void CL_CallNextHandler(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -369,17 +369,17 @@ void CallNextHandler(
 
    returnValue->lexemeValue = FalseSymbol(theEnv);
 
-   EvaluationData(theEnv)->EvaluationError = false;
-   if (EvaluationData(theEnv)->HaltExecution)
+   CL_EvaluationData(theEnv)->CL_EvaluationError = false;
+   if (CL_EvaluationData(theEnv)->CL_HaltExecution)
      return;
-   if (NextHandlerAvailable(theEnv) == false)
+   if (CL_NextHandlerAvailable(theEnv) == false)
      {
-      PrintErrorID(theEnv,"MSGPASS",1,false);
-      WriteString(theEnv,STDERR,"Shadowed message-handlers not applicable in current context.\n");
-      SetEvaluationError(theEnv,true);
+      CL_PrintErrorID(theEnv,"MSGPASS",1,false);
+      CL_WriteString(theEnv,STDERR,"Shadowed message-handlers not applicable in current context.\n");
+      SetCL_EvaluationError(theEnv,true);
       return;
      }
-   if (EvaluationData(theEnv)->CurrentExpression->value == (void *) FindFunction(theEnv,"override-next-handler"))
+   if (CL_EvaluationData(theEnv)->CurrentExpression->value == (void *) CL_FindFunction(theEnv,"override-next-handler"))
      {
       overridep = 1;
       args.type = ProceduralPrimitiveData(theEnv)->ProcParamArray[0].header->type;
@@ -389,10 +389,10 @@ void CallNextHandler(
         args.value = &ProceduralPrimitiveData(theEnv)->ProcParamArray[0];
       args.nextArg = GetFirstArgument();
       args.argList = NULL;
-      PushProcParameters(theEnv,&args,CountArguments(&args),
+      CL_PushProcParameters(theEnv,&args,CL_CountArguments(&args),
                           MessageHandlerData(theEnv)->CurrentMessageName->contents,"message",
-                          UnboundHandlerErr);
-      if (EvaluationData(theEnv)->EvaluationError)
+                          CL_UnboundHandlerErr);
+      if (CL_EvaluationData(theEnv)->CL_EvaluationError)
         {
          ProcedureFunctionData(theEnv)->ReturnFlag = false;
          return;
@@ -410,27 +410,27 @@ void CallNextHandler(
          MessageHandlerData(theEnv)->NextInCore = MessageHandlerData(theEnv)->NextInCore->nxt;
 #if DEBUGGING_FUNCTIONS
          if (MessageHandlerData(theEnv)->CurrentCore->hnd->trace)
-           WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,BEGIN_TRACE);
+           CL_WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,BEGIN_TRACE);
 #endif
-         if (CheckHandlerArgCount(theEnv))
+         if (CL_CheckHandlerArgCount(theEnv))
            {
 #if PROFILING_FUNCTIONS
-            StartProfile(theEnv,&profileFrame,
+            StartCL_Profile(theEnv,&profileFrame,
                          &MessageHandlerData(theEnv)->CurrentCore->hnd->header.usrData,
-                         ProfileFunctionData(theEnv)->ProfileConstructs);
+                         CL_ProfileFunctionData(theEnv)->CL_ProfileConstructs);
 #endif
 
-            EvaluateProcActions(theEnv,MessageHandlerData(theEnv)->CurrentCore->hnd->cls->header.whichModule->theModule,
+            CL_EvaluateProcActions(theEnv,MessageHandlerData(theEnv)->CurrentCore->hnd->cls->header.whichModule->theModule,
                                MessageHandlerData(theEnv)->CurrentCore->hnd->actions,
                                MessageHandlerData(theEnv)->CurrentCore->hnd->localVarCount,
-                               returnValue,UnboundHandlerErr);
+                               returnValue,CL_UnboundHandlerErr);
 #if PROFILING_FUNCTIONS
-            EndProfile(theEnv,&profileFrame);
+            CL_EndCL_Profile(theEnv,&profileFrame);
 #endif
            }
 #if DEBUGGING_FUNCTIONS
          if (MessageHandlerData(theEnv)->CurrentCore->hnd->trace)
-           WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,END_TRACE);
+           CL_WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,END_TRACE);
 #endif
         }
       else
@@ -442,39 +442,39 @@ void CallNextHandler(
       MessageHandlerData(theEnv)->NextInCore = MessageHandlerData(theEnv)->NextInCore->nxt;
 #if DEBUGGING_FUNCTIONS
       if (MessageHandlerData(theEnv)->CurrentCore->hnd->trace)
-        WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,BEGIN_TRACE);
+        CL_WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,BEGIN_TRACE);
 #endif
-      if (CheckHandlerArgCount(theEnv))
+      if (CL_CheckHandlerArgCount(theEnv))
         {
 #if PROFILING_FUNCTIONS
-        StartProfile(theEnv,&profileFrame,
+        StartCL_Profile(theEnv,&profileFrame,
                      &MessageHandlerData(theEnv)->CurrentCore->hnd->header.usrData,
-                     ProfileFunctionData(theEnv)->ProfileConstructs);
+                     CL_ProfileFunctionData(theEnv)->CL_ProfileConstructs);
 #endif
 
-        EvaluateProcActions(theEnv,MessageHandlerData(theEnv)->CurrentCore->hnd->cls->header.whichModule->theModule,
+        CL_EvaluateProcActions(theEnv,MessageHandlerData(theEnv)->CurrentCore->hnd->cls->header.whichModule->theModule,
                             MessageHandlerData(theEnv)->CurrentCore->hnd->actions,
                             MessageHandlerData(theEnv)->CurrentCore->hnd->localVarCount,
-                            returnValue,UnboundHandlerErr);
+                            returnValue,CL_UnboundHandlerErr);
 #if PROFILING_FUNCTIONS
-         EndProfile(theEnv,&profileFrame);
+         CL_EndCL_Profile(theEnv,&profileFrame);
 #endif
         }
 
 #if DEBUGGING_FUNCTIONS
       if (MessageHandlerData(theEnv)->CurrentCore->hnd->trace)
-        WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,END_TRACE);
+        CL_WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,END_TRACE);
 #endif
      }
    MessageHandlerData(theEnv)->NextInCore = oldNext;
    MessageHandlerData(theEnv)->CurrentCore = oldCurrent;
    if (overridep)
-     PopProcParameters(theEnv);
+     CL_PopProcParameters(theEnv);
    ProcedureFunctionData(theEnv)->ReturnFlag = false;
   }
 
 /*************************************************************************
-  NAME         : FindApplicableOfName
+  NAME         : CL_FindApplicableOfName
   DESCRIPTION  : Groups all handlers of all types of the specified
                    class of the specified name into the applicable handler
                    list
@@ -486,7 +486,7 @@ void CallNextHandler(
   SIDE EFFECTS : Modifies the handler lists to include applicable handlers
   NOTES        : None
  *************************************************************************/
-void FindApplicableOfName(
+void CL_FindApplicableOfName(
   Environment *theEnv,
   Defclass *cls,
   HANDLER_LINK *tops[4],
@@ -499,7 +499,7 @@ void FindApplicableOfName(
    unsigned *arr;
    HANDLER_LINK *tmp;
 
-   i = FindHandlerNameGroup(cls,mname);
+   i = CL_FindHandlerNameGroup(cls,mname);
    if (i == -1)
      return;
    e = ((int) cls->handlerCount) - 1;
@@ -512,7 +512,7 @@ void FindApplicableOfName(
 
       tmp = get_struct(theEnv,messageHandlerLink);
       hnd[arr[i]].busy++;
-      IncrementDefclassBusyCount(theEnv,hnd[arr[i]].cls);
+      CL_IncrementDefclassBusyCount(theEnv,hnd[arr[i]].cls);
       tmp->hnd = &hnd[arr[i]];
       if (tops[tmp->hnd->type] == NULL)
         {
@@ -536,7 +536,7 @@ void FindApplicableOfName(
   }
 
 /*************************************************************************
-  NAME         : JoinHandlerLinks
+  NAME         : CL_JoinHandlerLinks
   DESCRIPTION  : Joins the queues of different handlers together
   INPUTS       : 1-2) The tops and bottoms of the four handler type lists:
                       around, before, primary and after
@@ -546,7 +546,7 @@ void FindApplicableOfName(
                    lists are destroyed if there are no primary handlers
   NOTES        : None
  *************************************************************************/
-HANDLER_LINK *JoinHandlerLinks(
+HANDLER_LINK *CL_JoinHandlerLinks(
   Environment *theEnv,
   HANDLER_LINK *tops[4],
   HANDLER_LINK *bots[4],
@@ -557,10 +557,10 @@ HANDLER_LINK *JoinHandlerLinks(
 
    if (tops[MPRIMARY] == NULL)
     {
-     PrintNoHandlerError(theEnv,mname->contents);
+     CL_PrintNoHandlerError(theEnv,mname->contents);
      for (i = MAROUND ; i <= MAFTER ; i++)
-       DestroyHandlerLinks(theEnv,tops[i]);
-     SetEvaluationError(theEnv,true);
+       CL_DestroyHandlerLinks(theEnv,tops[i]);
+     SetCL_EvaluationError(theEnv,true);
      return NULL;
     }
 
@@ -584,7 +584,7 @@ HANDLER_LINK *JoinHandlerLinks(
   }
 
 /***************************************************
-  NAME         : PrintHandlerSlotGetFunction
+  NAME         : PrintCL_HandlerSlotGetFunction
   DESCRIPTION  : Developer access function for
                  printing direct slot references
                  in message-handlers
@@ -594,7 +594,7 @@ HANDLER_LINK *JoinHandlerLinks(
   SIDE EFFECTS : Expression printed
   NOTES        : None
  ***************************************************/
-void PrintHandlerSlotGetFunction(
+void PrintCL_HandlerSlotGetFunction(
   Environment *theEnv,
   const char *logicalName,
   void *theValue)
@@ -605,12 +605,12 @@ void PrintHandlerSlotGetFunction(
    SlotDescriptor *sd;
 
    theReference = (HANDLER_SLOT_REFERENCE *) ((CLIPSBitMap *) theValue)->contents;
-   WriteString(theEnv,logicalName,"?self:[");
+   CL_WriteString(theEnv,logicalName,"?self:[");
    theDefclass = DefclassData(theEnv)->ClassIDMap[theReference->classID];
-   WriteString(theEnv,logicalName,theDefclass->header.name->contents);
-   WriteString(theEnv,logicalName,"]");
+   CL_WriteString(theEnv,logicalName,theDefclass->header.name->contents);
+   CL_WriteString(theEnv,logicalName,"]");
    sd = theDefclass->instanceTemplate[theDefclass->slotNameMap[theReference->slotID] - 1];
-   WriteString(theEnv,logicalName,sd->slotName->name->contents);
+   CL_WriteString(theEnv,logicalName,sd->slotName->name->contents);
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -621,7 +621,7 @@ void PrintHandlerSlotGetFunction(
   }
 
 /***************************************************
-  NAME         : HandlerSlotGetFunction
+  NAME         : CL_HandlerSlotGetFunction
   DESCRIPTION  : Access function for handling the
                  statically-bound direct slot
                  references in message-handlers
@@ -631,7 +631,7 @@ void PrintHandlerSlotGetFunction(
                  on errors
   SIDE EFFECTS : Data object buffer gets value of
                  slot. On errors, buffer gets
-                 symbol false, EvaluationError
+                 symbol false, CL_EvaluationError
                  is set and error messages are
                  printed
   NOTES        : It is possible for a handler
@@ -645,7 +645,7 @@ void PrintHandlerSlotGetFunction(
                   no-inherit or the subclass
                   overrode the original slot)
  ***************************************************/
-bool HandlerSlotGetFunction(
+bool CL_HandlerSlotGetFunction(
   Environment *theEnv,
   void *theValue,
   UDFValue *theResult)
@@ -662,10 +662,10 @@ bool HandlerSlotGetFunction(
 
    if (theInstance->garbage)
      {
-      PrintErrorID(theEnv,"INSFUN",4,false);
-      WriteString(theEnv,STDERR,"Invalid instance-address in ?self slot reference.\n");
+      CL_PrintErrorID(theEnv,"INSFUN",4,false);
+      CL_WriteString(theEnv,STDERR,"Invalid instance-address in ?self slot reference.\n");
       theResult->value = FalseSymbol(theEnv);
-      SetEvaluationError(theEnv,true);
+      SetCL_EvaluationError(theEnv,true);
       return false;
      }
 
@@ -697,12 +697,12 @@ bool HandlerSlotGetFunction(
 HandlerGetError:
    EarlySlotBindError(theEnv,theInstance,theDefclass,theReference->slotID);
    theResult->value = FalseSymbol(theEnv);
-   SetEvaluationError(theEnv,true);
+   SetCL_EvaluationError(theEnv,true);
    return false;
   }
 
 /***************************************************
-  NAME         : PrintHandlerSlotPutFunction
+  NAME         : PrintCL_HandlerSlotPutFunction
   DESCRIPTION  : Developer access function for
                  printing direct slot bindings
                  in message-handlers
@@ -712,7 +712,7 @@ HandlerGetError:
   SIDE EFFECTS : Expression printed
   NOTES        : None
  ***************************************************/
-void PrintHandlerSlotPutFunction(
+void PrintCL_HandlerSlotPutFunction(
   Environment *theEnv,
   const char *logicalName,
   void *theValue)
@@ -723,18 +723,18 @@ void PrintHandlerSlotPutFunction(
    SlotDescriptor *sd;
 
    theReference = (HANDLER_SLOT_REFERENCE *) ((CLIPSBitMap *) theValue)->contents;
-   WriteString(theEnv,logicalName,"(bind ?self:[");
+   CL_WriteString(theEnv,logicalName,"(bind ?self:[");
    theDefclass = DefclassData(theEnv)->ClassIDMap[theReference->classID];
-   WriteString(theEnv,logicalName,theDefclass->header.name->contents);
-   WriteString(theEnv,logicalName,"]");
+   CL_WriteString(theEnv,logicalName,theDefclass->header.name->contents);
+   CL_WriteString(theEnv,logicalName,"]");
    sd = theDefclass->instanceTemplate[theDefclass->slotNameMap[theReference->slotID] - 1];
-   WriteString(theEnv,logicalName,sd->slotName->name->contents);
+   CL_WriteString(theEnv,logicalName,sd->slotName->name->contents);
    if (GetFirstArgument() != NULL)
      {
-      WriteString(theEnv,logicalName," ");
-      PrintExpression(theEnv,logicalName,GetFirstArgument());
+      CL_WriteString(theEnv,logicalName," ");
+      CL_PrintExpression(theEnv,logicalName,GetFirstArgument());
      }
-   WriteString(theEnv,logicalName,")");
+   CL_WriteString(theEnv,logicalName,")");
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -745,7 +745,7 @@ void PrintHandlerSlotPutFunction(
   }
 
 /***************************************************
-  NAME         : HandlerSlotPutFunction
+  NAME         : CL_HandlerSlotPutFunction
   DESCRIPTION  : Access function for handling the
                  statically-bound direct slot
                  bindings in message-handlers
@@ -756,7 +756,7 @@ void PrintHandlerSlotPutFunction(
   SIDE EFFECTS : Data object buffer gets symbol
                  TRUE and slot is set. On errors,
                  buffer gets symbol FALSE,
-                 EvaluationError is set and error
+                 CL_EvaluationError is set and error
                  messages are printed
   NOTES        : It is possible for a handler
                  (attached to a superclass of
@@ -769,7 +769,7 @@ void PrintHandlerSlotPutFunction(
                   no-inherit or the subclass
                   overrode the original slot)
  ***************************************************/
-bool HandlerSlotPutFunction(
+bool CL_HandlerSlotPutFunction(
   Environment *theEnv,
   void *theValue,
   UDFValue *theResult)
@@ -787,9 +787,9 @@ bool HandlerSlotPutFunction(
 
    if (theInstance->garbage)
      {
-      StaleInstanceAddress(theEnv,"for slot put",0);
+      CL_StaleInstanceAddress(theEnv,"for slot put",0);
       theResult->value = FalseSymbol(theEnv);
-      SetEvaluationError(theEnv,true);
+      SetCL_EvaluationError(theEnv,true);
       return false;
      }
 
@@ -819,7 +819,7 @@ bool HandlerSlotPutFunction(
       ======================================================= */
    if (sp->desc->initializeOnly && (!theInstance->initializeInProgress))
      {
-      SlotAccessViolationError(theEnv,sp->desc->slotName->name->contents,
+      CL_SlotAccessViolationError(theEnv,sp->desc->slotName->name->contents,
                                theInstance,NULL);
       goto HandlerPutError2;
      }
@@ -831,7 +831,7 @@ bool HandlerSlotPutFunction(
       ====================================== */
    if (GetFirstArgument())
      {
-      if (EvaluateAndStoreInDataObject(theEnv,sp->desc->multiple,
+      if (CL_EvaluateAndStoreInDataObject(theEnv,sp->desc->multiple,
                                        GetFirstArgument(),&theSetVal,true) == false)
          goto HandlerPutError2;
      }
@@ -841,7 +841,7 @@ bool HandlerSlotPutFunction(
       theSetVal.range = 0;
       theSetVal.value = ProceduralPrimitiveData(theEnv)->NoParamValue;
      }
-   if (PutSlotValue(theEnv,theInstance,sp,&theSetVal,theResult,NULL) != PSE_NO_ERROR)
+   if (CL_PutSlotValue(theEnv,theInstance,sp,&theSetVal,theResult,NULL) != PSE_NO_ERROR)
       goto HandlerPutError2;
    return true;
 
@@ -850,13 +850,13 @@ HandlerPutError:
 
 HandlerPutError2:
    theResult->value = FalseSymbol(theEnv);
-   SetEvaluationError(theEnv,true);
+   SetCL_EvaluationError(theEnv,true);
 
    return false;
   }
 
 /*****************************************************
-  NAME         : DynamicHandlerGetSlot
+  NAME         : CL_DynamicHandlerGetSlot
   DESCRIPTION  : Directly references a slot's value
                  (uses dynamic binding to lookup slot)
   INPUTS       : The caller's result buffer
@@ -864,7 +864,7 @@ HandlerPutError2:
   SIDE EFFECTS : Caller's result buffer set
   NOTES        : H/L Syntax: (get <slot>)
  *****************************************************/
-void DynamicHandlerGetSlot(
+void CL_DynamicHandlerGetSlot(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -874,27 +874,27 @@ void DynamicHandlerGetSlot(
    UDFValue temp;
 
    returnValue->value = FalseSymbol(theEnv);
-   if (CheckCurrentMessage(theEnv,"dynamic-get",true) == false)
+   if (CL_CheckCurrentMessage(theEnv,"dynamic-get",true) == false)
      return;
-   EvaluateExpression(theEnv,GetFirstArgument(),&temp);
+   CL_EvaluateExpression(theEnv,GetFirstArgument(),&temp);
    if (temp.header->type != SYMBOL_TYPE)
      {
-      ExpectedTypeError1(theEnv,"dynamic-get",1,"symbol");
-      SetEvaluationError(theEnv,true);
+      CL_ExpectedTypeError1(theEnv,"dynamic-get",1,"symbol");
+      SetCL_EvaluationError(theEnv,true);
       return;
      }
    ins = GetActiveInstance(theEnv);
-   sp = FindInstanceSlot(theEnv,ins,temp.lexemeValue);
+   sp = CL_FindInstanceSlot(theEnv,ins,temp.lexemeValue);
    if (sp == NULL)
      {
-      SlotExistError(theEnv,temp.lexemeValue->contents,"dynamic-get");
+      CL_SlotExistError(theEnv,temp.lexemeValue->contents,"dynamic-get");
       return;
      }
    if ((sp->desc->publicVisibility == 0) &&
        (MessageHandlerData(theEnv)->CurrentCore->hnd->cls != sp->desc->cls))
      {
-      SlotVisibilityViolationError(theEnv,sp->desc,MessageHandlerData(theEnv)->CurrentCore->hnd->cls,false);
-      SetEvaluationError(theEnv,true);
+      CL_SlotVisibilityViolationError(theEnv,sp->desc,MessageHandlerData(theEnv)->CurrentCore->hnd->cls,false);
+      SetCL_EvaluationError(theEnv,true);
       return;
      }
    returnValue->value = sp->value;
@@ -906,7 +906,7 @@ void DynamicHandlerGetSlot(
   }
 
 /***********************************************************
-  NAME         : DynamicHandlerPutSlot
+  NAME         : CL_DynamicHandlerPutSlot
   DESCRIPTION  : Directly puts a slot's value
                  (uses dynamic binding to lookup slot)
   INPUTS       : Data obejct buffer for holding slot value
@@ -915,7 +915,7 @@ void DynamicHandlerGetSlot(
                  to value (or symbol FALSE on errors)
   NOTES        : H/L Syntax: (put <slot> <value>*)
  ***********************************************************/
-void DynamicHandlerPutSlot(
+void CL_DynamicHandlerPutSlot(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -925,40 +925,40 @@ void DynamicHandlerPutSlot(
    UDFValue temp;
 
    returnValue->value = FalseSymbol(theEnv);
-   if (CheckCurrentMessage(theEnv,"dynamic-put",true) == false)
+   if (CL_CheckCurrentMessage(theEnv,"dynamic-put",true) == false)
      return;
-   EvaluateExpression(theEnv,GetFirstArgument(),&temp);
+   CL_EvaluateExpression(theEnv,GetFirstArgument(),&temp);
    if (temp.header->type != SYMBOL_TYPE)
      {
-      ExpectedTypeError1(theEnv,"dynamic-put",1,"symbol");
-      SetEvaluationError(theEnv,true);
+      CL_ExpectedTypeError1(theEnv,"dynamic-put",1,"symbol");
+      SetCL_EvaluationError(theEnv,true);
       return;
      }
    ins = GetActiveInstance(theEnv);
-   sp = FindInstanceSlot(theEnv,ins,temp.lexemeValue);
+   sp = CL_FindInstanceSlot(theEnv,ins,temp.lexemeValue);
    if (sp == NULL)
      {
-      SlotExistError(theEnv,temp.lexemeValue->contents,"dynamic-put");
+      CL_SlotExistError(theEnv,temp.lexemeValue->contents,"dynamic-put");
       return;
      }
-   if ((sp->desc->noWrite == 0) ? false :
+   if ((sp->desc->noCL_Write == 0) ? false :
        ((sp->desc->initializeOnly == 0) || (!ins->initializeInProgress)))
      {
-      SlotAccessViolationError(theEnv,sp->desc->slotName->name->contents,
+      CL_SlotAccessViolationError(theEnv,sp->desc->slotName->name->contents,
                                ins,NULL);
-      SetEvaluationError(theEnv,true);
+      SetCL_EvaluationError(theEnv,true);
       return;
      }
    if ((sp->desc->publicVisibility == 0) &&
        (MessageHandlerData(theEnv)->CurrentCore->hnd->cls != sp->desc->cls))
      {
-      SlotVisibilityViolationError(theEnv,sp->desc,MessageHandlerData(theEnv)->CurrentCore->hnd->cls,false);
-      SetEvaluationError(theEnv,true);
+      CL_SlotVisibilityViolationError(theEnv,sp->desc,MessageHandlerData(theEnv)->CurrentCore->hnd->cls,false);
+      SetCL_EvaluationError(theEnv,true);
       return;
      }
    if (GetFirstArgument()->nextArg)
      {
-      if (EvaluateAndStoreInDataObject(theEnv,sp->desc->multiple,
+      if (CL_EvaluateAndStoreInDataObject(theEnv,sp->desc->multiple,
                         GetFirstArgument()->nextArg,&temp,true) == false)
         return;
      }
@@ -968,7 +968,7 @@ void DynamicHandlerPutSlot(
       temp.range = 0;
       temp.value = ProceduralPrimitiveData(theEnv)->NoParamValue;
      }
-   PutSlotValue(theEnv,ins,sp,&temp,returnValue,NULL);
+   CL_PutSlotValue(theEnv,ins,sp,&temp,returnValue,NULL);
   }
 
 /* =========================================
@@ -978,7 +978,7 @@ void DynamicHandlerPutSlot(
    ***************************************** */
 
 /*****************************************************
-  NAME         : PerformMessage
+  NAME         : PerfoCL_rmMessage
   DESCRIPTION  : Calls core framework for a message
   INPUTS       : 1) Caller's result buffer
                  2) Message argument expressions
@@ -992,7 +992,7 @@ void DynamicHandlerPutSlot(
                  to be in scope in order to sent a message
                  to an instance of that class.
  *****************************************************/
-static bool PerformMessage(
+static bool PerfoCL_rmMessage(
   Environment *theEnv,
   UDFValue *returnValue,
   Expression *args,
@@ -1009,32 +1009,32 @@ static bool PerformMessage(
    GCBlock gcb;
 
    returnValue->value = FalseSymbol(theEnv);
-   EvaluationData(theEnv)->EvaluationError = false;
-   if (EvaluationData(theEnv)->HaltExecution)
+   CL_EvaluationData(theEnv)->CL_EvaluationError = false;
+   if (CL_EvaluationData(theEnv)->CL_HaltExecution)
      return false;
 
-   GCBlockStart(theEnv,&gcb);
+   CL_GCBlockStart(theEnv,&gcb);
 
-   oldce = ExecutingConstruct(theEnv);
-   SetExecutingConstruct(theEnv,true);
+   oldce = CL_ExecutingConstruct(theEnv);
+   SetCL_ExecutingConstruct(theEnv,true);
    oldName = MessageHandlerData(theEnv)->CurrentMessageName;
    MessageHandlerData(theEnv)->CurrentMessageName = mname;
-   EvaluationData(theEnv)->CurrentEvaluationDepth++;
+   CL_EvaluationData(theEnv)->CurrentCL_EvaluationDepth++;
 
-   PushProcParameters(theEnv,args,CountArguments(args),
+   CL_PushProcParameters(theEnv,args,CL_CountArguments(args),
                         MessageHandlerData(theEnv)->CurrentMessageName->contents,"message",
-                        UnboundHandlerErr);
+                        CL_UnboundHandlerErr);
 
 
-   if (EvaluationData(theEnv)->EvaluationError)
+   if (CL_EvaluationData(theEnv)->CL_EvaluationError)
      {
-      EvaluationData(theEnv)->CurrentEvaluationDepth--;
+      CL_EvaluationData(theEnv)->CurrentCL_EvaluationDepth--;
       MessageHandlerData(theEnv)->CurrentMessageName = oldName;
 
-      GCBlockEndUDF(theEnv,&gcb,returnValue);
-      CallPeriodicTasks(theEnv);
+      CL_GCBlockEndUDF(theEnv,&gcb,returnValue);
+      CL_CallPeriodicTasks(theEnv);
 
-      SetExecutingConstruct(theEnv,oldce);
+      SetCL_ExecutingConstruct(theEnv,oldce);
       return false;
      }
 
@@ -1043,8 +1043,8 @@ static bool PerformMessage(
       ins = ProceduralPrimitiveData(theEnv)->ProcParamArray->instanceValue;
       if (ins->garbage == 1)
         {
-         StaleInstanceAddress(theEnv,"send",0);
-         SetEvaluationError(theEnv,true);
+         CL_StaleInstanceAddress(theEnv,"send",0);
+         SetCL_EvaluationError(theEnv,true);
         }
       else
         {
@@ -1054,14 +1054,14 @@ static bool PerformMessage(
      }
    else if (ProceduralPrimitiveData(theEnv)->ProcParamArray->header->type == INSTANCE_NAME_TYPE)
      {
-      ins = FindInstanceBySymbol(theEnv,ProceduralPrimitiveData(theEnv)->ProcParamArray->lexemeValue);
+      ins = CL_FindInstanceBySymbol(theEnv,ProceduralPrimitiveData(theEnv)->ProcParamArray->lexemeValue);
       if (ins == NULL)
         {
-         PrintErrorID(theEnv,"MSGPASS",2,false);
-         WriteString(theEnv,STDERR,"No such instance [");
-         WriteString(theEnv,STDERR,ProceduralPrimitiveData(theEnv)->ProcParamArray->lexemeValue->contents);
-         WriteString(theEnv,STDERR,"] in function 'send'.\n");
-         SetEvaluationError(theEnv,true);
+         CL_PrintErrorID(theEnv,"MSGPASS",2,false);
+         CL_WriteString(theEnv,STDERR,"No such instance [");
+         CL_WriteString(theEnv,STDERR,ProceduralPrimitiveData(theEnv)->ProcParamArray->lexemeValue->contents);
+         CL_WriteString(theEnv,STDERR,"] in function 'send'.\n");
+         SetCL_EvaluationError(theEnv,true);
         }
       else
         {
@@ -1072,19 +1072,19 @@ static bool PerformMessage(
      }
    else if ((cls = DefclassData(theEnv)->PrimitiveClassMap[ProceduralPrimitiveData(theEnv)->ProcParamArray->header->type]) == NULL)
      {
-      SystemError(theEnv,"MSGPASS",1);
-      ExitRouter(theEnv,EXIT_FAILURE);
+      CL_SystemError(theEnv,"MSGPASS",1);
+      CL_ExitRouter(theEnv,EXIT_FAILURE);
      }
-   if (EvaluationData(theEnv)->EvaluationError)
+   if (CL_EvaluationData(theEnv)->CL_EvaluationError)
      {
-      PopProcParameters(theEnv);
-      EvaluationData(theEnv)->CurrentEvaluationDepth--;
+      CL_PopProcParameters(theEnv);
+      CL_EvaluationData(theEnv)->CurrentCL_EvaluationDepth--;
       MessageHandlerData(theEnv)->CurrentMessageName = oldName;
 
-      GCBlockEndUDF(theEnv,&gcb,returnValue);
-      CallPeriodicTasks(theEnv);
+      CL_GCBlockEndUDF(theEnv,&gcb,returnValue);
+      CL_CallPeriodicTasks(theEnv);
 
-      SetExecutingConstruct(theEnv,oldce);
+      SetCL_ExecutingConstruct(theEnv,oldce);
       return false;
      }
 
@@ -1108,36 +1108,36 @@ static bool PerformMessage(
          MessageHandlerData(theEnv)->CurrentCore = MessageHandlerData(theEnv)->TopOfCore;
          MessageHandlerData(theEnv)->NextInCore = MessageHandlerData(theEnv)->TopOfCore->nxt;
 #if DEBUGGING_FUNCTIONS
-         if (MessageHandlerData(theEnv)->WatchMessages)
-           WatchMessage(theEnv,STDOUT,BEGIN_TRACE);
+         if (MessageHandlerData(theEnv)->CL_WatchMessages)
+           CL_WatchMessage(theEnv,STDOUT,BEGIN_TRACE);
          if (MessageHandlerData(theEnv)->CurrentCore->hnd->trace)
-           WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,BEGIN_TRACE);
+           CL_WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,BEGIN_TRACE);
 #endif
-         if (CheckHandlerArgCount(theEnv))
+         if (CL_CheckHandlerArgCount(theEnv))
            {
 #if PROFILING_FUNCTIONS
-            StartProfile(theEnv,&profileFrame,
+            StartCL_Profile(theEnv,&profileFrame,
                          &MessageHandlerData(theEnv)->CurrentCore->hnd->header.usrData,
-                         ProfileFunctionData(theEnv)->ProfileConstructs);
+                         CL_ProfileFunctionData(theEnv)->CL_ProfileConstructs);
 #endif
 
 
-           EvaluateProcActions(theEnv,MessageHandlerData(theEnv)->CurrentCore->hnd->cls->header.whichModule->theModule,
+           CL_EvaluateProcActions(theEnv,MessageHandlerData(theEnv)->CurrentCore->hnd->cls->header.whichModule->theModule,
                                MessageHandlerData(theEnv)->CurrentCore->hnd->actions,
                                MessageHandlerData(theEnv)->CurrentCore->hnd->localVarCount,
-                               returnValue,UnboundHandlerErr);
+                               returnValue,CL_UnboundHandlerErr);
 
 
 #if PROFILING_FUNCTIONS
-            EndProfile(theEnv,&profileFrame);
+            CL_EndCL_Profile(theEnv,&profileFrame);
 #endif
            }
 
 #if DEBUGGING_FUNCTIONS
          if (MessageHandlerData(theEnv)->CurrentCore->hnd->trace)
-           WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,END_TRACE);
-         if (MessageHandlerData(theEnv)->WatchMessages)
-           WatchMessage(theEnv,STDOUT,END_TRACE);
+           CL_WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,END_TRACE);
+         if (MessageHandlerData(theEnv)->CL_WatchMessages)
+           CL_WatchMessage(theEnv,STDOUT,END_TRACE);
 #endif
         }
       else
@@ -1145,17 +1145,17 @@ static bool PerformMessage(
          MessageHandlerData(theEnv)->CurrentCore = NULL;
          MessageHandlerData(theEnv)->NextInCore = MessageHandlerData(theEnv)->TopOfCore;
 #if DEBUGGING_FUNCTIONS
-         if (MessageHandlerData(theEnv)->WatchMessages)
-           WatchMessage(theEnv,STDOUT,BEGIN_TRACE);
+         if (MessageHandlerData(theEnv)->CL_WatchMessages)
+           CL_WatchMessage(theEnv,STDOUT,BEGIN_TRACE);
 #endif
          CallHandlers(theEnv,returnValue);
 #if DEBUGGING_FUNCTIONS
-         if (MessageHandlerData(theEnv)->WatchMessages)
-           WatchMessage(theEnv,STDOUT,END_TRACE);
+         if (MessageHandlerData(theEnv)->CL_WatchMessages)
+           CL_WatchMessage(theEnv,STDOUT,END_TRACE);
 #endif
         }
 
-      DestroyHandlerLinks(theEnv,MessageHandlerData(theEnv)->TopOfCore);
+      CL_DestroyHandlerLinks(theEnv,MessageHandlerData(theEnv)->TopOfCore);
       MessageHandlerData(theEnv)->CurrentCore = oldCurrent;
       MessageHandlerData(theEnv)->NextInCore = oldNext;
      }
@@ -1173,16 +1173,16 @@ static bool PerformMessage(
    /* ==================================
       Restore the original calling frame
       ================================== */
-   PopProcParameters(theEnv);
-   EvaluationData(theEnv)->CurrentEvaluationDepth--;
+   CL_PopProcParameters(theEnv);
+   CL_EvaluationData(theEnv)->CurrentCL_EvaluationDepth--;
    MessageHandlerData(theEnv)->CurrentMessageName = oldName;
 
-   GCBlockEndUDF(theEnv,&gcb,returnValue);
-   CallPeriodicTasks(theEnv);
+   CL_GCBlockEndUDF(theEnv,&gcb,returnValue);
+   CL_CallPeriodicTasks(theEnv);
 
-   SetExecutingConstruct(theEnv,oldce);
+   SetCL_ExecutingConstruct(theEnv,oldce);
 
-   if (EvaluationData(theEnv)->EvaluationError)
+   if (CL_EvaluationData(theEnv)->CL_EvaluationError)
      {
       returnValue->value = FalseSymbol(theEnv);
       return false;
@@ -1193,7 +1193,7 @@ static bool PerformMessage(
 
 /*****************************************************************************
   NAME         : FindApplicableHandlers
-  DESCRIPTION  : Given a message name, this routine forms the "core frame"
+  DESCRIPTION  : Given a message name, this routine foCL_rms the "core frame"
                    for the message : a list of all applicable class handlers.
                    An applicable class handler is one whose name matches
                      the message and whose class matches the instance.
@@ -1225,8 +1225,8 @@ static HANDLER_LINK *FindApplicableHandlers(
      tops[i] = bots[i] = NULL;
 
    for (i = 0 ; i < cls->allSuperclasses.classCount ; i++)
-     FindApplicableOfName(theEnv,cls->allSuperclasses.classArray[i],tops,bots,mname);
-   return(JoinHandlerLinks(theEnv,tops,bots,mname));
+     CL_FindApplicableOfName(theEnv,cls->allSuperclasses.classArray[i],tops,bots,mname);
+   return(CL_JoinHandlerLinks(theEnv,tops,bots,mname));
   }
 
 /***************************************************************
@@ -1258,7 +1258,7 @@ static void CallHandlers(
    struct profileFrameInfo profileFrame;
 #endif
 
-   if (EvaluationData(theEnv)->HaltExecution)
+   if (CL_EvaluationData(theEnv)->CL_HaltExecution)
      return;
 
    oldCurrent = MessageHandlerData(theEnv)->CurrentCore;
@@ -1270,33 +1270,33 @@ static void CallHandlers(
       MessageHandlerData(theEnv)->NextInCore = MessageHandlerData(theEnv)->NextInCore->nxt;
 #if DEBUGGING_FUNCTIONS
       if (MessageHandlerData(theEnv)->CurrentCore->hnd->trace)
-        WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,BEGIN_TRACE);
+        CL_WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,BEGIN_TRACE);
 #endif
-      if (CheckHandlerArgCount(theEnv))
+      if (CL_CheckHandlerArgCount(theEnv))
         {
 #if PROFILING_FUNCTIONS
-         StartProfile(theEnv,&profileFrame,
+         StartCL_Profile(theEnv,&profileFrame,
                       &MessageHandlerData(theEnv)->CurrentCore->hnd->header.usrData,
-                      ProfileFunctionData(theEnv)->ProfileConstructs);
+                      CL_ProfileFunctionData(theEnv)->CL_ProfileConstructs);
 #endif
 
-         EvaluateProcActions(theEnv,MessageHandlerData(theEnv)->CurrentCore->hnd->cls->header.whichModule->theModule,
+         CL_EvaluateProcActions(theEnv,MessageHandlerData(theEnv)->CurrentCore->hnd->cls->header.whichModule->theModule,
                             MessageHandlerData(theEnv)->CurrentCore->hnd->actions,
                             MessageHandlerData(theEnv)->CurrentCore->hnd->localVarCount,
-                            &temp,UnboundHandlerErr);
+                            &temp,CL_UnboundHandlerErr);
 
 
 #if PROFILING_FUNCTIONS
-         EndProfile(theEnv,&profileFrame);
+         CL_EndCL_Profile(theEnv,&profileFrame);
 #endif
         }
 
 #if DEBUGGING_FUNCTIONS
       if (MessageHandlerData(theEnv)->CurrentCore->hnd->trace)
-        WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,END_TRACE);
+        CL_WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,END_TRACE);
 #endif
       ProcedureFunctionData(theEnv)->ReturnFlag = false;
-      if ((MessageHandlerData(theEnv)->NextInCore == NULL) || EvaluationData(theEnv)->HaltExecution)
+      if ((MessageHandlerData(theEnv)->NextInCore == NULL) || CL_EvaluationData(theEnv)->CL_HaltExecution)
         {
          MessageHandlerData(theEnv)->NextInCore = oldNext;
          MessageHandlerData(theEnv)->CurrentCore = oldCurrent;
@@ -1309,35 +1309,35 @@ static void CallHandlers(
       MessageHandlerData(theEnv)->NextInCore = MessageHandlerData(theEnv)->NextInCore->nxt;
 #if DEBUGGING_FUNCTIONS
       if (MessageHandlerData(theEnv)->CurrentCore->hnd->trace)
-        WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,BEGIN_TRACE);
+        CL_WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,BEGIN_TRACE);
 #endif
-      if (CheckHandlerArgCount(theEnv))
+      if (CL_CheckHandlerArgCount(theEnv))
         {
 #if PROFILING_FUNCTIONS
-         StartProfile(theEnv,&profileFrame,
+         StartCL_Profile(theEnv,&profileFrame,
                       &MessageHandlerData(theEnv)->CurrentCore->hnd->header.usrData,
-                      ProfileFunctionData(theEnv)->ProfileConstructs);
+                      CL_ProfileFunctionData(theEnv)->CL_ProfileConstructs);
 #endif
 
 
-        EvaluateProcActions(theEnv,MessageHandlerData(theEnv)->CurrentCore->hnd->cls->header.whichModule->theModule,
+        CL_EvaluateProcActions(theEnv,MessageHandlerData(theEnv)->CurrentCore->hnd->cls->header.whichModule->theModule,
                             MessageHandlerData(theEnv)->CurrentCore->hnd->actions,
                             MessageHandlerData(theEnv)->CurrentCore->hnd->localVarCount,
-                            returnValue,UnboundHandlerErr);
+                            returnValue,CL_UnboundHandlerErr);
 
 #if PROFILING_FUNCTIONS
-         EndProfile(theEnv,&profileFrame);
+         CL_EndCL_Profile(theEnv,&profileFrame);
 #endif
         }
 
 
 #if DEBUGGING_FUNCTIONS
       if (MessageHandlerData(theEnv)->CurrentCore->hnd->trace)
-        WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,END_TRACE);
+        CL_WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,END_TRACE);
 #endif
       ProcedureFunctionData(theEnv)->ReturnFlag = false;
 
-      if ((MessageHandlerData(theEnv)->NextInCore == NULL) || EvaluationData(theEnv)->HaltExecution)
+      if ((MessageHandlerData(theEnv)->NextInCore == NULL) || CL_EvaluationData(theEnv)->CL_HaltExecution)
         {
          MessageHandlerData(theEnv)->NextInCore = oldNext;
          MessageHandlerData(theEnv)->CurrentCore = oldCurrent;
@@ -1360,34 +1360,34 @@ static void CallHandlers(
       MessageHandlerData(theEnv)->NextInCore = MessageHandlerData(theEnv)->NextInCore->nxt;
 #if DEBUGGING_FUNCTIONS
       if (MessageHandlerData(theEnv)->CurrentCore->hnd->trace)
-        WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,BEGIN_TRACE);
+        CL_WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,BEGIN_TRACE);
 #endif
-      if (CheckHandlerArgCount(theEnv))
+      if (CL_CheckHandlerArgCount(theEnv))
         {
 #if PROFILING_FUNCTIONS
-         StartProfile(theEnv,&profileFrame,
+         StartCL_Profile(theEnv,&profileFrame,
                       &MessageHandlerData(theEnv)->CurrentCore->hnd->header.usrData,
-                      ProfileFunctionData(theEnv)->ProfileConstructs);
+                      CL_ProfileFunctionData(theEnv)->CL_ProfileConstructs);
 #endif
 
 
-         EvaluateProcActions(theEnv,MessageHandlerData(theEnv)->CurrentCore->hnd->cls->header.whichModule->theModule,
+         CL_EvaluateProcActions(theEnv,MessageHandlerData(theEnv)->CurrentCore->hnd->cls->header.whichModule->theModule,
                             MessageHandlerData(theEnv)->CurrentCore->hnd->actions,
                             MessageHandlerData(theEnv)->CurrentCore->hnd->localVarCount,
-                            &temp,UnboundHandlerErr);
+                            &temp,CL_UnboundHandlerErr);
 
 #if PROFILING_FUNCTIONS
-         EndProfile(theEnv,&profileFrame);
+         CL_EndCL_Profile(theEnv,&profileFrame);
 #endif
         }
 
 
 #if DEBUGGING_FUNCTIONS
       if (MessageHandlerData(theEnv)->CurrentCore->hnd->trace)
-        WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,END_TRACE);
+        CL_WatchHandler(theEnv,STDOUT,MessageHandlerData(theEnv)->CurrentCore,END_TRACE);
 #endif
       ProcedureFunctionData(theEnv)->ReturnFlag = false;
-      if ((MessageHandlerData(theEnv)->NextInCore == NULL) || EvaluationData(theEnv)->HaltExecution)
+      if ((MessageHandlerData(theEnv)->NextInCore == NULL) || CL_EvaluationData(theEnv)->CL_HaltExecution)
         {
          MessageHandlerData(theEnv)->NextInCore = oldNext;
          MessageHandlerData(theEnv)->CurrentCore = oldCurrent;
@@ -1425,16 +1425,16 @@ static void EarlySlotBindError(
    SlotDescriptor *sd;
 
    sd = theDefclass->instanceTemplate[theDefclass->slotNameMap[slotID] - 1];
-   PrintErrorID(theEnv,"MSGPASS",3,false);
-   WriteString(theEnv,STDERR,"Static reference to slot '");
-   WriteString(theEnv,STDERR,sd->slotName->name->contents);
-   WriteString(theEnv,STDERR,"' of class ");
-   PrintClassName(theEnv,STDERR,theDefclass,true,false);
-   WriteString(theEnv,STDERR," does not apply to instance [");
-   WriteString(theEnv,STDERR,InstanceName(theInstance));
-   WriteString(theEnv,STDERR,"] of class ");
-   PrintClassName(theEnv,STDERR,theInstance->cls,true,false);
-   WriteString(theEnv,STDERR,".\n");
+   CL_PrintErrorID(theEnv,"MSGPASS",3,false);
+   CL_WriteString(theEnv,STDERR,"Static reference to slot '");
+   CL_WriteString(theEnv,STDERR,sd->slotName->name->contents);
+   CL_WriteString(theEnv,STDERR,"' of class ");
+   CL_PrintClassName(theEnv,STDERR,theDefclass,true,false);
+   CL_WriteString(theEnv,STDERR," does not apply to instance [");
+   CL_WriteString(theEnv,STDERR,CL_InstanceName(theInstance));
+   CL_WriteString(theEnv,STDERR,"] of class ");
+   CL_PrintClassName(theEnv,STDERR,theInstance->cls,true,false);
+   CL_WriteString(theEnv,STDERR,".\n");
   }
 
 #endif /* OBJECT_SYSTEM */

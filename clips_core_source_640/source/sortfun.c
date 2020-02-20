@@ -23,7 +23,7 @@
 /*            DR0864                                         */
 /*                                                           */
 /*      6.30: Added environment cleanup call function        */
-/*            DeallocateSortFunctionData.                    */
+/*            DeallocateCL_SortFunctionData.                    */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -56,39 +56,39 @@ struct sortFunctionData
    struct expr *SortComparisonFunction;
   };
 
-#define SortFunctionData(theEnv) ((struct sortFunctionData *) GetEnvironmentData(theEnv,SORTFUN_DATA))
+#define CL_SortFunctionData(theEnv) ((struct sortFunctionData *) GetEnvironmentData(theEnv,SORTFUN_DATA))
 
 /***************************************/
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    DoMergeSort(Environment *,UDFValue *,UDFValue *,size_t,
+   static void                    DoCL_MergeSort(Environment *,UDFValue *,UDFValue *,size_t,
                                               size_t,size_t,size_t,
                                               bool (*)(Environment *,UDFValue *,UDFValue *));
    static bool                    DefaultCompareSwapFunction(Environment *,UDFValue *,UDFValue *);
-   static void                    DeallocateSortFunctionData(Environment *);
+   static void                    DeallocateCL_SortFunctionData(Environment *);
 
 /****************************************/
-/* SortFunctionDefinitions: Initializes */
+/* CL_SortFunctionDefinitions: Initializes */
 /*   the sorting functions.             */
 /****************************************/
-void SortFunctionDefinitions(
+void CL_SortFunctionDefinitions(
   Environment *theEnv)
   {
-   AllocateEnvironmentData(theEnv,SORTFUN_DATA,sizeof(struct sortFunctionData),DeallocateSortFunctionData);
+   CL_AllocateEnvironmentData(theEnv,SORTFUN_DATA,sizeof(struct sortFunctionData),DeallocateCL_SortFunctionData);
 #if ! RUN_TIME
-   AddUDF(theEnv,"sort","bm",1,UNBOUNDED,"*;y",SortFunction,"SortFunction",NULL);
+   CL_AddUDF(theEnv,"sort","bm",1,UNBOUNDED,"*;y",CL_SortFunction,"CL_SortFunction",NULL);
 #endif
   }
 
 /*******************************************************/
-/* DeallocateSortFunctionData: Deallocates environment */
+/* DeallocateCL_SortFunctionData: Deallocates environment */
 /*    data for the sort function.                      */
 /*******************************************************/
-static void DeallocateSortFunctionData(
+static void DeallocateCL_SortFunctionData(
   Environment *theEnv)
   {
-   ReturnExpression(theEnv,SortFunctionData(theEnv)->SortComparisonFunction);
+   CL_ReturnExpression(theEnv,CL_SortFunctionData(theEnv)->SortComparisonFunction);
   }
 
 /********************************/
@@ -101,13 +101,13 @@ static bool DefaultCompareSwapFunction(
   {
    UDFValue returnValue;
 
-   SortFunctionData(theEnv)->SortComparisonFunction->argList = GenConstant(theEnv,item1->header->type,item1->value);
-   SortFunctionData(theEnv)->SortComparisonFunction->argList->nextArg = GenConstant(theEnv,item2->header->type,item2->value);
-   ExpressionInstall(theEnv,SortFunctionData(theEnv)->SortComparisonFunction);
-   EvaluateExpression(theEnv,SortFunctionData(theEnv)->SortComparisonFunction,&returnValue);
-   ExpressionDeinstall(theEnv,SortFunctionData(theEnv)->SortComparisonFunction);
-   ReturnExpression(theEnv,SortFunctionData(theEnv)->SortComparisonFunction->argList);
-   SortFunctionData(theEnv)->SortComparisonFunction->argList = NULL;
+   CL_SortFunctionData(theEnv)->SortComparisonFunction->argList = CL_GenConstant(theEnv,item1->header->type,item1->value);
+   CL_SortFunctionData(theEnv)->SortComparisonFunction->argList->nextArg = CL_GenConstant(theEnv,item2->header->type,item2->value);
+   CL_ExpressionInstall(theEnv,CL_SortFunctionData(theEnv)->SortComparisonFunction);
+   CL_EvaluateExpression(theEnv,CL_SortFunctionData(theEnv)->SortComparisonFunction,&returnValue);
+   CL_ExpressionDeinstall(theEnv,CL_SortFunctionData(theEnv)->SortComparisonFunction);
+   CL_ReturnExpression(theEnv,CL_SortFunctionData(theEnv)->SortComparisonFunction->argList);
+   CL_SortFunctionData(theEnv)->SortComparisonFunction->argList = NULL;
 
    if (returnValue.value == FalseSymbol(theEnv))
      { return false; }
@@ -116,10 +116,10 @@ static bool DefaultCompareSwapFunction(
   }
 
 /************************************/
-/* SortFunction: H/L access routine */
+/* CL_SortFunction: H/L access routine */
 /*   for the rest$ function.        */
 /************************************/
-void SortFunction(
+void CL_SortFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -148,14 +148,14 @@ void SortFunction(
    /* Verify that the comparison function exists. */
    /*=============================================*/
 
-   if (! UDFNthArgument(context,1,SYMBOL_BIT,&theArg))
+   if (! CL_UDFNthArgument(context,1,SYMBOL_BIT,&theArg))
      { return; }
 
    functionName = theArg.lexemeValue->contents;
-   functionReference = FunctionReferenceExpression(theEnv,functionName);
+   functionReference = CL_FunctionReferenceExpression(theEnv,functionName);
    if (functionReference == NULL)
      {
-      ExpectedTypeError1(theEnv,"sort",1,"function name, deffunction name, or defgeneric name");
+      CL_ExpectedTypeError1(theEnv,"sort",1,"function name, deffunction name, or defgeneric name");
       return;
      }
 
@@ -167,12 +167,12 @@ void SortFunction(
    if (functionReference->type == FCALL)
      {
       fptr = functionReference->functionValue;
-      if ((GetMinimumArgs(fptr) > 2) ||
-          (GetMaximumArgs(fptr) == 0) ||
-          (GetMaximumArgs(fptr) == 1))
+      if ((CL_GetMinimumArgs(fptr) > 2) ||
+          (CL_GetMaximumArgs(fptr) == 0) ||
+          (CL_GetMaximumArgs(fptr) == 1))
         {
-         ExpectedTypeError1(theEnv,"sort",1,"function name expecting two arguments");
-         ReturnExpression(theEnv,functionReference);
+         CL_ExpectedTypeError1(theEnv,"sort",1,"function name expecting two arguments");
+         CL_ReturnExpression(theEnv,functionReference);
          return;
         }
      }
@@ -190,8 +190,8 @@ void SortFunction(
           (dptr->maxNumberOfParameters == 0) ||
           (dptr->maxNumberOfParameters == 1))
         {
-         ExpectedTypeError1(theEnv,"sort",1,"deffunction name expecting two arguments");
-         ReturnExpression(theEnv,functionReference);
+         CL_ExpectedTypeError1(theEnv,"sort",1,"deffunction name expecting two arguments");
+         CL_ReturnExpression(theEnv,functionReference);
          return;
         }
      }
@@ -202,25 +202,25 @@ void SortFunction(
    /* then return an empty multifield.    */
    /*=====================================*/
 
-   argumentCount = UDFArgumentCount(context);
+   argumentCount = CL_UDFArgumentCount(context);
 
    if (argumentCount == 1)
      {
-      SetMultifieldErrorValue(theEnv,returnValue);
-      ReturnExpression(theEnv,functionReference);
+      CL_SetMultifieldErrorValue(theEnv,returnValue);
+      CL_ReturnExpression(theEnv,functionReference);
       return;
      }
 
    /*=====================================*/
    /* Retrieve the arguments to be sorted */
-   /* and determine how many there are.   */
+   /* and deteCL_rmine how many there are.   */
    /*=====================================*/
 
-   theArguments = (UDFValue *) genalloc(theEnv,(argumentCount - 1) * sizeof(UDFValue));
+   theArguments = (UDFValue *) CL_genalloc(theEnv,(argumentCount - 1) * sizeof(UDFValue));
 
    for (i = 2; i <= argumentCount; i++)
      {
-      UDFNthArgument(context,i,ANY_TYPE_BITS,&theArguments[i-2]);
+      CL_UDFNthArgument(context,i,ANY_TYPE_BITS,&theArguments[i-2]);
 
       if (theArguments[i-2].header->type == MULTIFIELD_TYPE)
         { argumentSize += theArguments[i-2].range; }
@@ -230,9 +230,9 @@ void SortFunction(
 
    if (argumentSize == 0)
      {
-      genfree(theEnv,theArguments,(argumentCount - 1) * sizeof(UDFValue)); /* Bug Fix */
-      SetMultifieldErrorValue(theEnv,returnValue);
-      ReturnExpression(theEnv,functionReference);
+      CL_genfree(theEnv,theArguments,(argumentCount - 1) * sizeof(UDFValue)); /* Bug Fix */
+      CL_SetMultifieldErrorValue(theEnv,returnValue);
+      CL_ReturnExpression(theEnv,functionReference);
       return;
      }
 
@@ -241,7 +241,7 @@ void SortFunction(
    /* into a data object array.          */
    /*====================================*/
 
-   theArguments2 = (UDFValue *) genalloc(theEnv,argumentSize * sizeof(UDFValue));
+   theArguments2 = (UDFValue *) CL_genalloc(theEnv,argumentSize * sizeof(UDFValue));
 
    for (i = 2; i <= argumentCount; i++)
      {
@@ -260,31 +260,31 @@ void SortFunction(
         }
      }
 
-   genfree(theEnv,theArguments,(argumentCount - 1) * sizeof(UDFValue));
+   CL_genfree(theEnv,theArguments,(argumentCount - 1) * sizeof(UDFValue));
 
-   functionReference->nextArg = SortFunctionData(theEnv)->SortComparisonFunction;
-   SortFunctionData(theEnv)->SortComparisonFunction = functionReference;
-
-   for (i = 0; i < argumentSize; i++)
-     { RetainUDFV(theEnv,&theArguments2[i]); }
-
-   MergeSort(theEnv,argumentSize,theArguments2,DefaultCompareSwapFunction);
+   functionReference->nextArg = CL_SortFunctionData(theEnv)->SortComparisonFunction;
+   CL_SortFunctionData(theEnv)->SortComparisonFunction = functionReference;
 
    for (i = 0; i < argumentSize; i++)
-     { ReleaseUDFV(theEnv,&theArguments2[i]); }
+     { CL_RetainUDFV(theEnv,&theArguments2[i]); }
 
-   SortFunctionData(theEnv)->SortComparisonFunction = SortFunctionData(theEnv)->SortComparisonFunction->nextArg;
+   CL_MergeSort(theEnv,argumentSize,theArguments2,DefaultCompareSwapFunction);
+
+   for (i = 0; i < argumentSize; i++)
+     { CL_ReleaseUDFV(theEnv,&theArguments2[i]); }
+
+   CL_SortFunctionData(theEnv)->SortComparisonFunction = CL_SortFunctionData(theEnv)->SortComparisonFunction->nextArg;
    functionReference->nextArg = NULL;
-   ReturnExpression(theEnv,functionReference);
+   CL_ReturnExpression(theEnv,functionReference);
 
-   theMultifield = CreateMultifield(theEnv,argumentSize);
+   theMultifield = CL_CreateMultifield(theEnv,argumentSize);
 
    for (i = 0; i < argumentSize; i++)
      {
       theMultifield->contents[i].value = theArguments2[i].value;
      }
 
-   genfree(theEnv,theArguments2,argumentSize * sizeof(UDFValue));
+   CL_genfree(theEnv,theArguments2,argumentSize * sizeof(UDFValue));
 
    returnValue->begin = 0;
    returnValue->range = argumentSize;
@@ -292,10 +292,10 @@ void SortFunction(
   }
 
 /*******************************************/
-/* MergeSort: Sorts a list of fields       */
+/* CL_MergeSort: Sorts a list of fields       */
 /*   according to user specified criteria. */
 /*******************************************/
-void MergeSort(
+void CL_MergeSort(
   Environment *theEnv,
   size_t listSize,
   UDFValue *theList,
@@ -311,29 +311,29 @@ void MergeSort(
    /* needed for the merge sort.   */
    /*==============================*/
 
-   tempList = (UDFValue *) genalloc(theEnv,listSize * sizeof(UDFValue));
+   tempList = (UDFValue *) CL_genalloc(theEnv,listSize * sizeof(UDFValue));
 
    /*=====================================*/
    /* Call the merge sort driver routine. */
    /*=====================================*/
 
    middle = (listSize + 1) / 2;
-   DoMergeSort(theEnv,theList,tempList,0,middle-1,middle,listSize - 1,swapFunction);
+   DoCL_MergeSort(theEnv,theList,tempList,0,middle-1,middle,listSize - 1,swapFunction);
 
    /*==================================*/
    /* Deallocate the temporary storage */
    /* needed by the merge sort.        */
    /*==================================*/
 
-   genfree(theEnv,tempList,listSize * sizeof(UDFValue));
+   CL_genfree(theEnv,tempList,listSize * sizeof(UDFValue));
   }
 
 
 /******************************************************/
-/* DoMergeSort: Driver routine for performing a merge */
+/* DoCL_MergeSort: Driver routine for perfoCL_rming a merge */
 /*   sort on an array of UDFValue structures.       */
 /******************************************************/
-static void DoMergeSort(
+static void DoCL_MergeSort(
   Environment *theEnv,
   UDFValue *theList,
   UDFValue *tempList,
@@ -355,16 +355,16 @@ static void DoMergeSort(
      {
       if ((*swapFunction)(theEnv,&theList[s1],&theList[e1]))
         {
-         TransferDataObjectValues(&temp,&theList[s1]);
-         TransferDataObjectValues(&theList[s1],&theList[e1]);
-         TransferDataObjectValues(&theList[e1],&temp);
+         CL_TransferDataObjectValues(&temp,&theList[s1]);
+         CL_TransferDataObjectValues(&theList[s1],&theList[e1]);
+         CL_TransferDataObjectValues(&theList[e1],&temp);
         }
      }
    else
      {
       size = ((e1 - s1) + 1);
       middle = s1 + ((size + 1) / 2);
-      DoMergeSort(theEnv,theList,tempList,s1,middle-1,middle,e1,swapFunction);
+      DoCL_MergeSort(theEnv,theList,tempList,s1,middle-1,middle,e1,swapFunction);
      }
 
    if (s2 == e2)
@@ -373,16 +373,16 @@ static void DoMergeSort(
      {
       if ((*swapFunction)(theEnv,&theList[s2],&theList[e2]))
         {
-         TransferDataObjectValues(&temp,&theList[s2]);
-         TransferDataObjectValues(&theList[s2],&theList[e2]);
-         TransferDataObjectValues(&theList[e2],&temp);
+         CL_TransferDataObjectValues(&temp,&theList[s2]);
+         CL_TransferDataObjectValues(&theList[s2],&theList[e2]);
+         CL_TransferDataObjectValues(&theList[e2],&temp);
         }
      }
    else
      {
       size = ((e2 - s2) + 1);
       middle = s2 + ((size + 1) / 2);
-      DoMergeSort(theEnv,theList,tempList,s2,middle-1,middle,e2,swapFunction);
+      DoCL_MergeSort(theEnv,theList,tempList,s2,middle-1,middle,e2,swapFunction);
      }
 
    /*======================*/
@@ -397,25 +397,25 @@ static void DoMergeSort(
      {
       if (c1 > e1)
         {
-         TransferDataObjectValues(&tempList[mergePoint],&theList[c2]);
+         CL_TransferDataObjectValues(&tempList[mergePoint],&theList[c2]);
          c2++;
          mergePoint++;
         }
       else if (c2 > e2)
         {
-         TransferDataObjectValues(&tempList[mergePoint],&theList[c1]);
+         CL_TransferDataObjectValues(&tempList[mergePoint],&theList[c1]);
          c1++;
          mergePoint++;
         }
       else if ((*swapFunction)(theEnv,&theList[c1],&theList[c2]))
         {
-         TransferDataObjectValues(&tempList[mergePoint],&theList[c2]);
+         CL_TransferDataObjectValues(&tempList[mergePoint],&theList[c2]);
          c2++;
          mergePoint++;
         }
       else
         {
-         TransferDataObjectValues(&tempList[mergePoint],&theList[c1]);
+         CL_TransferDataObjectValues(&tempList[mergePoint],&theList[c1]);
          c1++;
          mergePoint++;
         }
@@ -426,7 +426,7 @@ static void DoMergeSort(
    /*=======================================*/
 
    for (c1 = s1; c1 <= e2; c1++)
-     { TransferDataObjectValues(&theList[c1],&tempList[c1]); }
+     { CL_TransferDataObjectValues(&theList[c1],&tempList[c1]); }
   }
 
 

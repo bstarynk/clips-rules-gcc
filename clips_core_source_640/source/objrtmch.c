@@ -44,11 +44,11 @@
 /*      6.31: Optimization for marking relevant alpha nodes  */
 /*            in the object pattern network.                 */
 /*                                                           */
-/*      6.40: Added Env prefix to GetEvaluationError and      */
-/*            SetEvaluationError functions.                   */
+/*      6.40: Added Env prefix to GetCL_EvaluationError and      */
+/*            SetCL_EvaluationError functions.                   */
 /*                                                            */
-/*            Added Env prefix to GetHaltExecution and        */
-/*            SetHaltExecution functions.                     */
+/*            Added Env prefix to CL_GetCL_HaltExecution and        */
+/*            SetCL_HaltExecution functions.                     */
 /*                                                            */
 /*            Pragma once and other inclusion changes.        */
 /*                                                            */
@@ -103,11 +103,11 @@
    static void                    ObjectPatternMatch(Environment *,size_t,size_t,OBJECT_PATTERN_NODE *,struct multifieldMarker *);
    static void                    ProcessPatternNode(Environment *,size_t,size_t,OBJECT_PATTERN_NODE *,struct multifieldMarker *);
    static void                    CreateObjectAlphaMatch(Environment *,OBJECT_ALPHA_NODE *);
-   static bool                    EvaluateObjectPatternTest(Environment *,size_t,struct multifieldMarker *,
+   static bool                    CL_EvaluateObjectPatternTest(Environment *,size_t,struct multifieldMarker *,
                                                             Expression *,OBJECT_PATTERN_NODE *);
-   static void                    ObjectAssertAction(Environment *,Instance *);
+   static void                    ObjectCL_AssertAction(Environment *,Instance *);
    static void                    ObjectModifyAction(Environment *,Instance *,SLOT_BITMAP *);
-   static void                    ObjectRetractAction(Environment *,Instance *,SLOT_BITMAP *);
+   static void                    ObjectCL_RetractAction(Environment *,Instance *,SLOT_BITMAP *);
    static void                    ObjectPatternNetErrorMessage(Environment *,OBJECT_PATTERN_NODE *);
    static void                    TraceErrorToObjectPattern(Environment *,bool,OBJECT_PATTERN_NODE *);
 
@@ -118,40 +118,40 @@
    ***************************************** */
 
 /***************************************************************************
-  NAME         : ObjectMatchDelay
-  DESCRIPTION  : H/L interface for SetDelayObjectPatternMatching
+  NAME         : CL_ObjectMatchDelay
+  DESCRIPTION  : H/L interface for CL_SetDelayObjectPatternMatching
   INPUTS       : None
   RETURNS      : Nothing useful
   SIDE EFFECTS : DelayObjectPatternMatching set and Rete network updates
                  delayed until pattern-matching is completed
   NOTES        : H/L Syntax: (object-pattern-match-delay <action>*)
  ***************************************************************************/
-void ObjectMatchDelay(
+void CL_ObjectMatchDelay(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
    bool ov;
 
-   ov = SetDelayObjectPatternMatching(theEnv,true);
+   ov = CL_SetDelayObjectPatternMatching(theEnv,true);
 
-   if (! UDFFirstArgument(context,ANY_TYPE_BITS,returnValue))
+   if (! CL_UDFFirstArgument(context,ANY_TYPE_BITS,returnValue))
      { return; }
 
-   if (EvaluationData(theEnv)->EvaluationError)
+   if (CL_EvaluationData(theEnv)->CL_EvaluationError)
      {
-      SetHaltExecution(theEnv,false);
-      SetEvaluationError(theEnv,false);
-      SetDelayObjectPatternMatching(theEnv,ov);
-      SetEvaluationError(theEnv,true);
+      SetCL_HaltExecution(theEnv,false);
+      SetCL_EvaluationError(theEnv,false);
+      CL_SetDelayObjectPatternMatching(theEnv,ov);
+      SetCL_EvaluationError(theEnv,true);
      }
    else
-     SetDelayObjectPatternMatching(theEnv,ov);
+     CL_SetDelayObjectPatternMatching(theEnv,ov);
   }
 
 /***************************************************
-  NAME         : SetDelayObjectPatternMatching
-  DESCRIPTION  : Sets the flag determining if Rete
+  NAME         : CL_SetDelayObjectPatternMatching
+  DESCRIPTION  : Sets the flag deteCL_rmining if Rete
                  network activity is to be delayed
                  for objects or not
   INPUTS       : The value of the flag
@@ -159,9 +159,9 @@ void ObjectMatchDelay(
   SIDE EFFECTS : DelayObjectPatternMatching set
   NOTES        : When the delay is set to false,
                  all pending Rete network updates
-                 are performed
+                 are perfoCL_rmed
  ***************************************************/
-bool SetDelayObjectPatternMatching(
+bool CL_SetDelayObjectPatternMatching(
   Environment *theEnv,
   bool value)
   {
@@ -173,14 +173,14 @@ bool SetDelayObjectPatternMatching(
    else
      {
       ObjectReteData(theEnv)->DelayObjectPatternMatching = false;
-      ObjectNetworkAction(theEnv,0,NULL,-1);
+      CL_ObjectNetworkAction(theEnv,0,NULL,-1);
      }
    return(oldval);
   }
 
 /***************************************************
-  NAME         : GetDelayObjectPatternMatching
-  DESCRIPTION  : Gets the flag determining if Rete
+  NAME         : CL_GetDelayObjectPatternMatching
+  DESCRIPTION  : Gets the flag deteCL_rmining if Rete
                  network activity is to be delayed
                  for objects or not
   INPUTS       : None
@@ -188,14 +188,14 @@ bool SetDelayObjectPatternMatching(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-bool GetDelayObjectPatternMatching(
+bool CL_GetDelayObjectPatternMatching(
   Environment *theEnv)
   {
    return(ObjectReteData(theEnv)->DelayObjectPatternMatching);
   }
 
 /********************************************************
-  NAME         : ObjectNetworkPointer
+  NAME         : CL_ObjectNetworkPointer
   DESCRIPTION  : Returns the first object network
                  pattern node
   INPUTS       : None
@@ -203,28 +203,28 @@ bool GetDelayObjectPatternMatching(
   SIDE EFFECTS : None
   NOTES        : None
  ********************************************************/
-OBJECT_PATTERN_NODE *ObjectNetworkPointer(
+OBJECT_PATTERN_NODE *CL_ObjectNetworkPointer(
   Environment *theEnv)
   {
    return(ObjectReteData(theEnv)->ObjectPatternNetworkPointer);
   }
 
 /********************************************************
-  NAME         : ObjectNetworkTerminalPointer
-  DESCRIPTION  : Returns the first terminal pattern node
+  NAME         : CL_ObjectNetworkTeCL_rminalPointer
+  DESCRIPTION  : Returns the first teCL_rminal pattern node
   INPUTS       : None
   RETURNS      : The last node of a pattern
   SIDE EFFECTS : None
   NOTES        : None
  ********************************************************/
-OBJECT_ALPHA_NODE *ObjectNetworkTerminalPointer(
+OBJECT_ALPHA_NODE *CL_ObjectNetworkTeCL_rminalPointer(
   Environment *theEnv)
   {
-   return(ObjectReteData(theEnv)->ObjectPatternNetworkTerminalPointer);
+   return(ObjectReteData(theEnv)->ObjectPatternNetworkTeCL_rminalPointer);
   }
 
 /***************************************************
-  NAME         : SetObjectNetworkPointer
+  NAME         : SetCL_ObjectNetworkPointer
   DESCRIPTION  : Sets the object pattern network to
                   the given network
   INPUTS       : Top of the new pattern network
@@ -232,7 +232,7 @@ OBJECT_ALPHA_NODE *ObjectNetworkTerminalPointer(
   SIDE EFFECTS : ObjectPatternNetworkPointer set
   NOTES        : None
  ***************************************************/
-void SetObjectNetworkPointer(
+void SetCL_ObjectNetworkPointer(
   Environment *theEnv,
   OBJECT_PATTERN_NODE *value)
   {
@@ -240,36 +240,36 @@ void SetObjectNetworkPointer(
   }
 
 /*******************************************************
-  NAME         : SetObjectNetworkTerminalPointer
-  DESCRIPTION  : Sets the global list of terminal
+  NAME         : SetCL_ObjectNetworkTeCL_rminalPointer
+  DESCRIPTION  : Sets the global list of teCL_rminal
                  pattern nodes (the ones containing
                  the bitmaps) to the given node
   INPUTS       : The last node of a pattern
   RETURNS      : Nothing useful
-  SIDE EFFECTS : ObjectPatternNetworkTerminalPointer set
+  SIDE EFFECTS : ObjectPatternNetworkTeCL_rminalPointer set
   NOTES        : None
  *******************************************************/
-void SetObjectNetworkTerminalPointer(
+void SetCL_ObjectNetworkTeCL_rminalPointer(
   Environment *theEnv,
   OBJECT_ALPHA_NODE *value)
   {
-   ObjectReteData(theEnv)->ObjectPatternNetworkTerminalPointer = value;
+   ObjectReteData(theEnv)->ObjectPatternNetworkTeCL_rminalPointer = value;
   }
 
 /************************************************************************
-  NAME         : ObjectNetworkAction
+  NAME         : CL_ObjectNetworkAction
   DESCRIPTION  : Main driver for pattern-matching on objects
                  If the pattern-matching is current delayed or another
                  object is currently being pattern-matched, the requested
                  match action is queued for later processing.
-                 Otherwise, the match action is performed and the
+                 Otherwise, the match action is perfoCL_rmed and the
                  Rete network is updated.
   INPUTS       : 1) The match action type
                     OBJECT_ASSERT  (1)
                     OBJECT_RETRACT (2)
                     OBJECT_MODIFY  (3)
                  2) The instance to be matched (can be NULL if only
-                    want pending actions to be performed)
+                    want pending actions to be perfoCL_rmed)
                  3) The name id of the slot being updated (can be -1)
                     If this argument is -1, it is assumed that any
                     pattern which could match this instance must be
@@ -279,7 +279,7 @@ void SetObjectNetworkTerminalPointer(
   SIDE EFFECTS : Action queued or Rete network updated
   NOTES        : None
  ************************************************************************/
-void ObjectNetworkAction(
+void CL_ObjectNetworkAction(
   Environment *theEnv,
   int type,
   Instance *ins,
@@ -320,15 +320,15 @@ void ObjectNetworkAction(
         switch (type)
         {
          case OBJECT_ASSERT  :
-           ObjectAssertAction(theEnv,ins);
+           ObjectCL_AssertAction(theEnv,ins);
            break;
          case OBJECT_RETRACT :
-           ObjectRetractAction(theEnv,ins,NULL);
+           ObjectCL_RetractAction(theEnv,ins,NULL);
            break;
          default             :
            tmpMap = QueueModifySlotMap(theEnv,NULL,slotNameID);
            ObjectModifyAction(theEnv,ins,tmpMap);
-           rm(theEnv,tmpMap,SlotBitMapSize(tmpMap));
+           CL_rm(theEnv,tmpMap,SlotBitMapSize(tmpMap));
         }
       else
         QueueObjectMatchAction(theEnv,type,ins,slotNameID);
@@ -342,14 +342,14 @@ void ObjectNetworkAction(
 
    EngineData(theEnv)->JoinOperationInProgress = false;
 
-   ForceLogicalRetractions(theEnv);
+   CL_ForceLogicalCL_Retractions(theEnv);
 
    /*=========================================*/
    /* Free partial matches that were released */
    /* by the assertion of the fact.           */
    /*=========================================*/
 
-   if (EngineData(theEnv)->ExecutingRule == NULL) FlushGarbagePartialMatches(theEnv);
+   if (EngineData(theEnv)->ExecutingRule == NULL) CL_FlushGarbagePartialCL_Matches(theEnv);
   }
 
 /* =========================================
@@ -359,7 +359,7 @@ void ObjectNetworkAction(
    ***************************************** */
 
 /***************************************************
-  NAME         : ResetObjectMatchTimeTags
+  NAME         : CL_ResetObjectMatchTimeTags
   DESCRIPTION  : If CurrentObjectMatchTimeTag + 1
                  would cause an overflow,
                  CurrentObjectMatchTimeTag
@@ -373,7 +373,7 @@ void ObjectNetworkAction(
                  valid pattern nodes on a match
   NOTES        : None
  ***************************************************/
-void ResetObjectMatchTimeTags(
+void CL_ResetObjectMatchTimeTags(
   Environment *theEnv)
   {
    OBJECT_ALPHA_NODE *alphaPtr;
@@ -387,7 +387,7 @@ void ResetObjectMatchTimeTags(
    if ((ObjectReteData(theEnv)->CurrentObjectMatchTimeTag + 1L) > ObjectReteData(theEnv)->CurrentObjectMatchTimeTag)
      return;
    ObjectReteData(theEnv)->CurrentObjectMatchTimeTag = 0L;
-   alphaPtr = ObjectNetworkTerminalPointer(theEnv);
+   alphaPtr = CL_ObjectNetworkTeCL_rminalPointer(theEnv);
    while (alphaPtr != NULL)
      {
       alphaPtr->matchTimeTag = 0L;
@@ -399,7 +399,7 @@ void ResetObjectMatchTimeTags(
          lastLevel->matchTimeTag = 0L;
          lastLevel = lastLevel->lastLevel;
         }
-      alphaPtr = alphaPtr->nxtTerminal;
+      alphaPtr = alphaPtr->nxtTeCL_rminal;
      }
   }
 
@@ -425,7 +425,7 @@ static void QueueObjectMatchAction(
   int slotNameID)
   {
    OBJECT_MATCH_ACTION *prv,*cur,*newMatch;
-   OBJECT_MATCH_ACTION *prvRetract = NULL; /* DR0873 */
+   OBJECT_MATCH_ACTION *prvCL_Retract = NULL; /* DR0873 */
 
    prv = NULL;
    cur = ObjectReteData(theEnv)->ObjectMatchActionQueue;
@@ -435,11 +435,11 @@ static void QueueObjectMatchAction(
          Here are the possibilities for the first Rete event already
          on the queue as compared with the new event for an object:
 
-         Assert/Retract  -->  Delete assert event
+         CL_Assert/CL_Retract  -->  Delete assert event
                               Ignore retract event
-         Assert/Modify   -->  Ignore modify event
+         CL_Assert/Modify   -->  Ignore modify event
          Modify/Modify   -->  Merge new modify event
-         Modify/Retract  -->  Delete modify event
+         Modify/CL_Retract  -->  Delete modify event
                               Queue the retract event
          =========================================================== */
       if (cur->ins == ins)
@@ -482,7 +482,7 @@ static void QueueObjectMatchAction(
             cur->type = OBJECT_RETRACT;
             if (cur->slotNameIDs != NULL)
               {
-               rm(theEnv,cur->slotNameIDs,SlotBitMapSize(cur->slotNameIDs));
+               CL_rm(theEnv,cur->slotNameIDs,SlotBitMapSize(cur->slotNameIDs));
                cur->slotNameIDs = NULL;
               }
            }
@@ -498,7 +498,7 @@ static void QueueObjectMatchAction(
         }
 
       if (cur->type == OBJECT_RETRACT) /* DR0873 */
-        { prvRetract = cur; }          /* DR0873 */
+        { prvCL_Retract = cur; }          /* DR0873 */
       prv = cur;
       cur = cur->nxt;
      }
@@ -516,21 +516,21 @@ static void QueueObjectMatchAction(
    newMatch->ins->busy++;
 
    /* DR0873 Begin */
-   /* Retract operations must be processed before assert and   */
+   /* CL_Retract operations must be processed before assert and   */
    /* modify actions, otherwise the pattern matching process   */
    /* might attempt to access the slots of a retract instance. */
 
    if (type == OBJECT_RETRACT)
      {
-      if (prvRetract == NULL)
+      if (prvCL_Retract == NULL)
         {
          newMatch->nxt = ObjectReteData(theEnv)->ObjectMatchActionQueue;
          ObjectReteData(theEnv)->ObjectMatchActionQueue = newMatch;
         }
       else
         {
-         newMatch->nxt = prvRetract->nxt;
-         prvRetract->nxt = newMatch;
+         newMatch->nxt = prvCL_Retract->nxt;
+         prvCL_Retract->nxt = newMatch;
         }
      }
    else
@@ -570,13 +570,13 @@ static SLOT_BITMAP *QueueModifySlotMap(
       newmaxid = (unsigned short) (slotNameID * 2);
       newsz = sizeof(SLOT_BITMAP) +
               (sizeof(char) * (newmaxid / BITS_PER_BYTE));
-      newMap = (SLOT_BITMAP *) gm2(theEnv,newsz);
-      ClearBitString(newMap,newsz);
+      newMap = (SLOT_BITMAP *) CL_gm2(theEnv,newsz);
+      CL_ClearBitString(newMap,newsz);
       if (oldMap != NULL)
         {
          oldsz = SlotBitMapSize(oldMap);
          GenCopyMemory(char,oldsz,newMap,oldMap);
-         rm(theEnv,oldMap,oldsz);
+         CL_rm(theEnv,oldMap,oldsz);
         }
       newMap->maxid = newmaxid;
      }
@@ -601,7 +601,7 @@ static void ReturnObjectMatchAction(
   OBJECT_MATCH_ACTION *omaPtr)
   {
    if (omaPtr->slotNameIDs != NULL)
-     rm(theEnv,omaPtr->slotNameIDs,SlotBitMapSize(omaPtr->slotNameIDs));
+     CL_rm(theEnv,omaPtr->slotNameIDs,SlotBitMapSize(omaPtr->slotNameIDs));
    rtn_struct(theEnv,objectMatchAction,omaPtr);
   }
 
@@ -628,10 +628,10 @@ static void ProcessObjectMatchQueue(
       switch(cur->type)
         {
          case OBJECT_ASSERT  :
-           ObjectAssertAction(theEnv,cur->ins);
+           ObjectCL_AssertAction(theEnv,cur->ins);
            break;
          case OBJECT_RETRACT :
-           ObjectRetractAction(theEnv,cur->ins,cur->slotNameIDs);
+           ObjectCL_RetractAction(theEnv,cur->ins,cur->slotNameIDs);
            break;
          default             :
            ObjectModifyAction(theEnv,cur->ins,cur->slotNameIDs);
@@ -643,7 +643,7 @@ static void ProcessObjectMatchQueue(
 
 /******************************************************
   NAME         : MarkObjectPatternNetwork
-  DESCRIPTION  : Iterates through all terminal
+  DESCRIPTION  : Iterates through all teCL_rminal
                  pattern nodes checking class and
                  slot bitmaps.  If a pattern is
                  applicable to the object/slot change,
@@ -668,9 +668,9 @@ static void MarkObjectPatternNetwork(
    CLASS_ALPHA_LINK *current_alpha_link;
 
    cls = ObjectReteData(theEnv)->CurrentPatternObject->cls;
-   current_alpha_link = cls->relevant_terminal_alpha_nodes;
+   current_alpha_link = cls->relevant_teCL_rminal_alpha_nodes;
 
-   ResetObjectMatchTimeTags(theEnv);
+   CL_ResetObjectMatchTimeTags(theEnv);
    ObjectReteData(theEnv)->CurrentObjectMatchTimeTag++;
 
    while (current_alpha_link != NULL)
@@ -682,7 +682,7 @@ static void MarkObjectPatternNetwork(
          pattern has been marked for initialization before proceeding.
          ============================================================= */
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-      if (EngineData(theEnv)->IncrementalResetInProgress &&
+      if (EngineData(theEnv)->CL_IncrementalCL_ResetInProgress &&
           (alphaPtr->header.initialize == false))
         {
          current_alpha_link = current_alpha_link->next;
@@ -769,7 +769,7 @@ static bool CompareSlotBitMaps(
   NAME         : ObjectPatternMatch
   DESCRIPTION  : Iterates through all the pattern nodes on one level
                  in the pattern network.  A node is only processed
-                 if it can lead to a terminating class bitmap node
+                 if it can lead to a teCL_rminating class bitmap node
                  which applies to the object being matched.  This
                  allows for a significant reduction in the number of
                  patterns considered.
@@ -787,12 +787,12 @@ static bool CompareSlotBitMaps(
                  CurrentPatternObjectSlot - the current slot being examined
                  CurrentObjectSlotLength - the cardinality of the slot value
 
-                 An optimization is performed when evaluating
+                 An optimization is perfoCL_rmed when evaluating
                  constant tests on a slot value field.  All
                  pattern nodes on a level which restrict the same slot
                  are grouped together.  Those which are constant
                  tests are placed at the far right.  Thus, as soon
-                 as one of these constant tests succeeds, the remaining
+                 as one of these constant tests succeeds, the reCL_maining
                  nodes for that slot on this level can be skipped
  **********************************************************************************/
 static void ObjectPatternMatch(
@@ -888,7 +888,7 @@ static void ObjectPatternMatch(
 
 /**********************************************************************************
   NAME         : ProcessPatternNode
-  DESCRIPTION  : Determines if a pattern node satsifies the corresponding
+  DESCRIPTION  : DeteCL_rmines if a pattern node satsifies the corresponding
                  slot value field(s) in an object.  If it does,
                  ObjectPatternMatch() is recursively called to process
                  the child nodes of this node.  In this mutual recursion
@@ -896,7 +896,7 @@ static void ObjectPatternMatch(
                  the nodes of all applicable patterns are processed
                  to completion.  ObjectPatternMatch() enters an object
                  into a pattern's aplha memory when the traversal reaches
-                 a terminal class bitmap node.
+                 a teCL_rminal class bitmap node.
   INPUTS       : 1) The offset of the slot index from the pattern index
                  2) The pattern node being examined
                  3) The end of the list of multifield markers for the pattern
@@ -940,11 +940,11 @@ static void ProcessPatternNode(
      {
       if (patternNode->selector) /* TBD Necessary? */
         {
-         if (EvaluateObjectPatternTest(theEnv,objectSlotField,NULL,patternNode->networkTest->nextArg,patternNode))
+         if (CL_EvaluateObjectPatternTest(theEnv,objectSlotField,NULL,patternNode->networkTest->nextArg,patternNode))
            {
-            EvaluateExpression(theEnv,patternNode->networkTest,&theResult);
+            CL_EvaluateExpression(theEnv,patternNode->networkTest,&theResult);
 
-            tempPtr = (OBJECT_PATTERN_NODE *) FindHashedPatternNode(theEnv,patternNode,theResult.header->type,theResult.value);
+            tempPtr = (OBJECT_PATTERN_NODE *) CL_FindHashedPatternNode(theEnv,patternNode,theResult.header->type,theResult.value);
 
             if (tempPtr != NULL)
               {
@@ -955,7 +955,7 @@ static void ProcessPatternNode(
            }
         }
       else if ((patternNode->networkTest == NULL) ? true :
-          (EvaluateObjectPatternTest(theEnv,objectSlotField,NULL,
+          (CL_EvaluateObjectPatternTest(theEnv,objectSlotField,NULL,
                                      (Expression *) patternNode->networkTest,patternNode)))
         {
          if (patternNode->alphaNode != NULL)
@@ -973,11 +973,11 @@ static void ProcessPatternNode(
      {
       if (patternNode->selector)
         {
-         if (EvaluateObjectPatternTest(theEnv,objectSlotField,NULL,patternNode->networkTest->nextArg,patternNode))
+         if (CL_EvaluateObjectPatternTest(theEnv,objectSlotField,NULL,patternNode->networkTest->nextArg,patternNode))
            {
-            EvaluateExpression(theEnv,patternNode->networkTest,&theResult);
+            CL_EvaluateExpression(theEnv,patternNode->networkTest,&theResult);
 
-            tempPtr = (OBJECT_PATTERN_NODE *) FindHashedPatternNode(theEnv,patternNode,theResult.header->type,theResult.value);
+            tempPtr = (OBJECT_PATTERN_NODE *) CL_FindHashedPatternNode(theEnv,patternNode,theResult.header->type,theResult.value);
 
             if (tempPtr != NULL)
               {
@@ -988,7 +988,7 @@ static void ProcessPatternNode(
            }
         }
       else if ((patternNode->networkTest == NULL) ? true :
-          EvaluateObjectPatternTest(theEnv,objectSlotField,NULL,
+          CL_EvaluateObjectPatternTest(theEnv,objectSlotField,NULL,
                                     (Expression *) patternNode->networkTest,patternNode))
         {
          if (patternNode->alphaNode != NULL)
@@ -1021,7 +1021,7 @@ static void ProcessPatternNode(
    /* multifield pattern node: from no values to all values from */
    /* the starting position of the multifield to the end of the  */
    /* object slot.  Otherwise, bind the multifield to all the    */
-   /* remaining fields in the slot value and continue with       */
+   /* reCL_maining fields in the slot value and continue with       */
    /* pattern-matching.                                          */
    /*============================================================*/
 
@@ -1035,11 +1035,11 @@ static void ProcessPatternNode(
         {
          if (patternNode->selector)
            {
-            if (EvaluateObjectPatternTest(theEnv,objectSlotField,newMark,patternNode->networkTest->nextArg,patternNode))
+            if (CL_EvaluateObjectPatternTest(theEnv,objectSlotField,newMark,patternNode->networkTest->nextArg,patternNode))
               {
-               EvaluateExpression(theEnv,patternNode->networkTest,&theResult);
+               CL_EvaluateExpression(theEnv,patternNode->networkTest,&theResult);
 
-               tempPtr = (OBJECT_PATTERN_NODE *) FindHashedPatternNode(theEnv,patternNode,theResult.header->type,theResult.value);
+               tempPtr = (OBJECT_PATTERN_NODE *) CL_FindHashedPatternNode(theEnv,patternNode,theResult.header->type,theResult.value);
 
                if (tempPtr != NULL)
                  {
@@ -1053,7 +1053,7 @@ static void ProcessPatternNode(
               }
            }
          else if ((patternNode->networkTest == NULL) ? true :
-              EvaluateObjectPatternTest(theEnv,objectSlotField,newMark,
+              CL_EvaluateObjectPatternTest(theEnv,objectSlotField,newMark,
                         (Expression *) patternNode->networkTest,patternNode))
            {
             if (patternNode->alphaNode != NULL)
@@ -1072,11 +1072,11 @@ static void ProcessPatternNode(
       newMark->range = ObjectReteData(theEnv)->CurrentObjectSlotLength + 1 - newMark->startPosition - patternNode->leaveFields;
       if (patternNode->selector)
         {
-         if (EvaluateObjectPatternTest(theEnv,objectSlotField,newMark,patternNode->networkTest->nextArg,patternNode))
+         if (CL_EvaluateObjectPatternTest(theEnv,objectSlotField,newMark,patternNode->networkTest->nextArg,patternNode))
            {
-            EvaluateExpression(theEnv,patternNode->networkTest,&theResult);
+            CL_EvaluateExpression(theEnv,patternNode->networkTest,&theResult);
 
-            tempPtr = (OBJECT_PATTERN_NODE *) FindHashedPatternNode(theEnv,patternNode,theResult.header->type,theResult.value);
+            tempPtr = (OBJECT_PATTERN_NODE *) CL_FindHashedPatternNode(theEnv,patternNode,theResult.header->type,theResult.value);
 
             if (tempPtr != NULL)
               {
@@ -1087,7 +1087,7 @@ static void ProcessPatternNode(
            }
         }
       else if ((patternNode->networkTest == NULL) ? true :
-          EvaluateObjectPatternTest(theEnv,objectSlotField,newMark,
+          CL_EvaluateObjectPatternTest(theEnv,objectSlotField,newMark,
                                     (Expression *) patternNode->networkTest,patternNode))
         {
          if (patternNode->alphaNode != NULL)
@@ -1131,19 +1131,19 @@ static void CreateObjectAlphaMatch(
      {
       if (alphaPtr->matchTimeTag == ObjectReteData(theEnv)->CurrentObjectMatchTimeTag)
         {
-         hashValue = ComputeRightHashValue(theEnv,&alphaPtr->header);
+         hashValue = CL_ComputeRightHashValue(theEnv,&alphaPtr->header);
 
          /* ===================================================
             If we have reached the class bitmap of the pattern,
             place the object in the alpha memory of each of
-            the terminal nodes underneath and drive
+            the teCL_rminal nodes underneath and drive
             the partial matches through the join network.
 
             Insert the instance into the alpha memory
             of this pattern and mark it as busy
             =================================================== */
          ObjectReteData(theEnv)->CurrentPatternObject->busy++;
-         theMatch = CreateAlphaMatch(theEnv,ObjectReteData(theEnv)->CurrentPatternObject,
+         theMatch = CL_CreateAlphaMatch(theEnv,ObjectReteData(theEnv)->CurrentPatternObject,
                                      ObjectReteData(theEnv)->CurrentPatternObjectMarks,
                                      (struct patternNodeHeader *) alphaPtr,hashValue);
          theMatch->owner = alphaPtr;
@@ -1164,7 +1164,7 @@ static void CreateObjectAlphaMatch(
          listOfJoins = alphaPtr->header.entryJoin;
          while (listOfJoins != NULL)
            {
-            NetworkAssert(theEnv,theMatch,listOfJoins);
+            NetworkCL_Assert(theEnv,theMatch,listOfJoins);
             listOfJoins = listOfJoins->rightMatchNode;
            }
         }
@@ -1173,23 +1173,23 @@ static void CreateObjectAlphaMatch(
   }
 
 /******************************************************
-  NAME         : EvaluateObjectPatternTest
-  DESCRIPTION  : Evaluates the pattern network test
+  NAME         : CL_EvaluateObjectPatternTest
+  DESCRIPTION  : CL_Evaluates the pattern network test
                  expression for a node
   INPUTS       : 1) The actual index of the slot value
                     field currently being examined
                  2) The multifield marker (if any)
-                    for the pattern node being exmained
+                    for the pattern node being exCL_mained
                  3) The pattern network test expression
                  4) The pattern node being examined
   RETURNS      : True if the node passes the
                  test, false otherwise
-  SIDE EFFECTS : Evaluation of the test
-                 EvaluationError and HaltExecution
+  SIDE EFFECTS : CL_Evaluation of the test
+                 CL_EvaluationError and CL_HaltExecution
                  are always set to false
   NOTES        : Assumes networkTest != NULL
  ******************************************************/
-static bool EvaluateObjectPatternTest(
+static bool CL_EvaluateObjectPatternTest(
   Environment *theEnv,
   size_t objectSlotField,
   struct multifieldMarker *selfSlotMarker,
@@ -1205,10 +1205,10 @@ static bool EvaluateObjectPatternTest(
      {
       struct expr *oldArgument;
 
-      oldArgument = EvaluationData(theEnv)->CurrentExpression;
-      EvaluationData(theEnv)->CurrentExpression = networkTest;
-      rv = ObjectCmpConstantFunction(theEnv,networkTest->value,&vresult);
-      EvaluationData(theEnv)->CurrentExpression = oldArgument;
+      oldArgument = CL_EvaluationData(theEnv)->CurrentExpression;
+      CL_EvaluationData(theEnv)->CurrentExpression = networkTest;
+      rv = CL_ObjectCmpConstantFunction(theEnv,networkTest->value,&vresult);
+      CL_EvaluationData(theEnv)->CurrentExpression = oldArgument;
       if (rv)
         {
          if (((struct ObjectCmpPNConstant *)
@@ -1220,7 +1220,7 @@ static bool EvaluateObjectPatternTest(
      }
 
    /* =========================================================
-      Evaluate or expressions expressed in the format:
+      CL_Evaluate or expressions expressed in the foCL_rmat:
          (or <expression 1> <expression 2> ... <expression n>)
        Returns true (1.0) if any of the expression are true,
        otherwise returns false (0.0).
@@ -1230,7 +1230,7 @@ static bool EvaluateObjectPatternTest(
       networkTest = networkTest->argList;
       while (networkTest != NULL)
         {
-         if (EvaluateObjectPatternTest(theEnv,objectSlotField,selfSlotMarker,networkTest,patternNode))
+         if (CL_EvaluateObjectPatternTest(theEnv,objectSlotField,selfSlotMarker,networkTest,patternNode))
            {
             /* ============================================
                A node can be blocked ONLY if there were one
@@ -1246,7 +1246,7 @@ static bool EvaluateObjectPatternTest(
      }
 
    /* ==========================================================
-      Evaluate and expressions expressed in the format:
+      CL_Evaluate and expressions expressed in the foCL_rmat:
        (and <expression 1> <expression 2> ... <expression n>)
       Returns false if any of the expression are false,
       otherwise returns true.
@@ -1256,7 +1256,7 @@ static bool EvaluateObjectPatternTest(
       networkTest = networkTest->argList;
       while (networkTest != NULL)
         {
-         if (EvaluateObjectPatternTest(theEnv,objectSlotField,selfSlotMarker,networkTest,patternNode)
+         if (CL_EvaluateObjectPatternTest(theEnv,objectSlotField,selfSlotMarker,networkTest,patternNode)
               == false)
            {
             patternNode->blocked = false;
@@ -1269,16 +1269,16 @@ static bool EvaluateObjectPatternTest(
      }
 
    /* =======================================================
-      Evaluate all other expressions using EvaluateExpression
+      CL_Evaluate all other expressions using CL_EvaluateExpression
       ======================================================= */
    else
      {
-      EvaluationData(theEnv)->HaltExecution = false;
-      if (EvaluateExpression(theEnv,networkTest,&vresult))
+      CL_EvaluationData(theEnv)->CL_HaltExecution = false;
+      if (CL_EvaluateExpression(theEnv,networkTest,&vresult))
         {
          ObjectPatternNetErrorMessage(theEnv,patternNode);
-         EvaluationData(theEnv)->EvaluationError = false;
-         EvaluationData(theEnv)->HaltExecution = false;
+         CL_EvaluationData(theEnv)->CL_EvaluationError = false;
+         CL_EvaluationData(theEnv)->CL_HaltExecution = false;
          return false;
         }
       if (vresult.value != FalseSymbol(theEnv))
@@ -1288,7 +1288,7 @@ static bool EvaluateObjectPatternTest(
   }
 
 /***************************************************
-  NAME         : ObjectAssertAction
+  NAME         : ObjectCL_AssertAction
   DESCRIPTION  : Filters an instance through the
                  object pattern network
   INPUTS       : The instance
@@ -1296,7 +1296,7 @@ static bool EvaluateObjectPatternTest(
   SIDE EFFECTS : Instance matched
   NOTES        : None
  ***************************************************/
-static void ObjectAssertAction(
+static void ObjectCL_AssertAction(
   Environment *theEnv,
   Instance *ins)
   {
@@ -1304,7 +1304,7 @@ static void ObjectAssertAction(
    ObjectReteData(theEnv)->CurrentPatternObject = ins;
    ObjectReteData(theEnv)->CurrentPatternObjectSlot = NULL;
    MarkObjectPatternNetwork(theEnv,NULL);
-   ObjectPatternMatch(theEnv,0,0,ObjectNetworkPointer(theEnv),NULL);
+   ObjectPatternMatch(theEnv,0,0,CL_ObjectNetworkPointer(theEnv),NULL);
    ins->reteSynchronized = true;
   }
 
@@ -1327,17 +1327,17 @@ static void ObjectModifyAction(
   SLOT_BITMAP *slotNameIDs)
   {
    ins->patternHeader.timeTag = ObjectReteData(theEnv)->UseEntityTimeTag;
-   ObjectRetractAction(theEnv,ins,slotNameIDs);
+   ObjectCL_RetractAction(theEnv,ins,slotNameIDs);
    ObjectReteData(theEnv)->CurrentPatternObject = ins;
    ObjectReteData(theEnv)->CurrentPatternObjectSlot = NULL;
    MarkObjectPatternNetwork(theEnv,slotNameIDs);
-   ObjectPatternMatch(theEnv,0,0,ObjectNetworkPointer(theEnv),NULL);
+   ObjectPatternMatch(theEnv,0,0,CL_ObjectNetworkPointer(theEnv),NULL);
    ins->reteSynchronized = true;
   }
 
 /****************************************************
-  NAME         : ObjectRetractAction
-  DESCRIPTION  : Retracts the instance from the
+  NAME         : ObjectCL_RetractAction
+  DESCRIPTION  : CL_Retracts the instance from the
                  applicable patterns for the object
                  (if the slotNameID != -1, then the
                   instance is only retracted from
@@ -1348,10 +1348,10 @@ static void ObjectModifyAction(
                     (NULL if the instance is actually
                      being removed)
   RETURNS      : Nothing useful
-  SIDE EFFECTS : Retractions performed
+  SIDE EFFECTS : CL_Retractions perfoCL_rmed
   NOTES        : None
  ****************************************************/
-static void ObjectRetractAction(
+static void ObjectCL_RetractAction(
   Environment *theEnv,
   Instance *ins,
   SLOT_BITMAP *slotNameIDs)
@@ -1359,7 +1359,7 @@ static void ObjectRetractAction(
    struct patternMatch *prvMatch,*tmpMatch,
                        *deleteMatch,*lastDeleteMatch;
    OBJECT_ALPHA_NODE *alphaPtr;
-   void *saveDependents;
+   void *saveCL_Dependents;
 
    if (slotNameIDs == NULL)
      {
@@ -1371,7 +1371,7 @@ static void ObjectRetractAction(
             ins->busy--;
             tmpMatch = tmpMatch->next;
            }
-         NetworkRetract(theEnv,(struct patternMatch *) ins->partialMatchList);
+         CL_NetworkCL_Retract(theEnv,(struct patternMatch *) ins->partialMatchList);
          ins->partialMatchList = NULL;
         }
      }
@@ -1425,10 +1425,10 @@ static void ObjectRetractAction(
          ============================================= */
       if (deleteMatch != NULL)
         {
-         saveDependents = ins->patternHeader.dependents;
+         saveCL_Dependents = ins->patternHeader.dependents;
          ins->patternHeader.dependents = NULL;
-         NetworkRetract(theEnv,deleteMatch);
-         ins->patternHeader.dependents = saveDependents;
+         CL_NetworkCL_Retract(theEnv,deleteMatch);
+         ins->patternHeader.dependents = saveCL_Dependents;
         }
      }
    ins->reteSynchronized = true;
@@ -1448,18 +1448,18 @@ static void ObjectPatternNetErrorMessage(
   Environment *theEnv,
   OBJECT_PATTERN_NODE *patternPtr)
   {
-   PrintErrorID(theEnv,"OBJRTMCH",1,true);
-   WriteString(theEnv,STDERR,"This error occurred in the object pattern network\n");
-   WriteString(theEnv,STDERR,"   Currently active instance: [");
-   WriteString(theEnv,STDERR,ObjectReteData(theEnv)->CurrentPatternObject->name->contents);
-   WriteString(theEnv,STDERR,"]\n");
-   WriteString(theEnv,STDERR,"   Problem resides in slot '");
-   WriteString(theEnv,STDERR,FindIDSlotName(theEnv,patternPtr->slotNameID)->contents);
-   WriteString(theEnv,STDERR,"' field #");
-   PrintUnsignedInteger(theEnv,STDERR,patternPtr->whichField);
-   WriteString(theEnv,STDERR,"\n");
+   CL_PrintErrorID(theEnv,"OBJRTMCH",1,true);
+   CL_WriteString(theEnv,STDERR,"This error occurred in the object pattern network\n");
+   CL_WriteString(theEnv,STDERR,"   Currently active instance: [");
+   CL_WriteString(theEnv,STDERR,ObjectReteData(theEnv)->CurrentPatternObject->name->contents);
+   CL_WriteString(theEnv,STDERR,"]\n");
+   CL_WriteString(theEnv,STDERR,"   Problem resides in slot '");
+   CL_WriteString(theEnv,STDERR,CL_FindIDSlotName(theEnv,patternPtr->slotNameID)->contents);
+   CL_WriteString(theEnv,STDERR,"' field #");
+   CL_PrintUnsignedInteger(theEnv,STDERR,patternPtr->whichField);
+   CL_WriteString(theEnv,STDERR,"\n");
    TraceErrorToObjectPattern(theEnv,true,patternPtr);
-   WriteString(theEnv,STDERR,"\n");
+   CL_WriteString(theEnv,STDERR,"\n");
   }
 
 /*********************************************************
@@ -1489,7 +1489,7 @@ static void TraceErrorToObjectPattern(
          joinPtr = patternPtr->alphaNode->header.entryJoin;
          while (joinPtr != NULL)
            {
-            TraceErrorToRule(theEnv,joinPtr,"      ");
+            CL_TraceErrorToRule(theEnv,joinPtr,"      ");
             joinPtr = joinPtr->rightMatchNode;
            }
         }
