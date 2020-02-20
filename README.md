@@ -19,6 +19,7 @@ The copyright owner is my employer [CEA, LIST](https://www-list.cea.fr/) in Fran
 
 -----
 
-### Copyright © 2020 CEA (Commissariat à l'énergie atomique et aux énergies alternatives)
+#### Copyright © 2020 CEA (Commissariat à l'énergie atomique et aux énergies alternatives)
 
-contributed by Basile Starynkevitch.
+contributed by Basile Starynkevitch (France). For technical questions
+contact `basile@starynkevitch.net` or `basile.starynkevitch@cea.fr`
