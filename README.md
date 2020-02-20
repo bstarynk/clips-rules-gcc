@@ -14,7 +14,8 @@ some Linux desktop.
 
 The `clips-rules-gcc` plugin might be interacting with
 [Bismon](http://github.com/bstarynk/bismon). It is embedding the
-[CLIPS rules](http://www.clipsrules.net/) engine.
+[CLIPS rules](http://www.clipsrules.net/) engine, version 6.40 beta.
+
 
 The copyright owner is my employer [CEA, LIST](https://www-list.cea.fr/) in France.
 
