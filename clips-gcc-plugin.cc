@@ -29,7 +29,7 @@ int plugin_is_GPL_compatible;
 
 std::string CLGCC_projectstr;
 std::string CLGCC_translationunitstr;
-
+Environment* CLGCC_env;
 
 // give elapsed process CPU time in seconds
 double
@@ -55,6 +55,9 @@ CLGCC_starting(void*gccdata __attribute__((unused)), void*userdata __attribute((
          CLGCC_projectstr.c_str(),
          CLGCC_translationunitstr.c_str(),
          cputimbuf, __LINE__);
+  CLGCC_env = CreateEnvironment();
+  if (!CLGCC_env)
+    fatal(UNKNOWN_LOCATION, "CLIPS-GCC: CreateEnvironment failed");
 } // end CLGCC_starting
 
 
@@ -69,6 +72,9 @@ CLGCC_finishing(void*gccdata __attribute__((unused)), void*userdata __attribute(
          CLGCC_projectstr.c_str(),
          CLGCC_translationunitstr.c_str(),
          cputimbuf, __LINE__);
+  if (!DestroyEnvironment(CLGCC_env))
+    fatal(UNKNOWN_LOCATION, "CLIPS-GCC: DestroyEnvironment failed");
+    
 } // end CLGCC_finishing
 
 

@@ -72,6 +72,8 @@
 #include "context.h"
 
 
+#include "clips.h"
+
 // in generated _timestamp.c
 
 extern "C" char clgcc_timestamp[];
@@ -87,6 +89,9 @@ extern "C" char clgcc_makefile[];
 
 
 extern "C" double CLGCC_cputime(void);
+
+extern "C" Environment* CLGCC_env;
+
 extern std::string CLGCC_projectstr;
 extern std::string CLGCC_translationunitstr;
 

@@ -87,10 +87,10 @@ _timestamp.c: generate-timestamp.sh Makefile $(CLGCC_PLUGIN_CXXSOURCES) $(CLGCC_
 	$(MV) $@-tmp $@
 
 CLIPS-source/%.o: CLIPS-source/%.c
-	$(CC) $(CFLAGS) -DCLIPS_SOURCE $^ -c  -MMD -MF $(patsubst CLIPS-source/%.o, CLIPS-source/_%.mk, $@) -o $@
+	$(CC) $(CFLAGS) -DCLIPS_SOURCE $< -c  -MMD -MF $(patsubst CLIPS-source/%.o, CLIPS-source/_%.mk, $@) -o $@
 
 %.o: %.cc
-	$(CXX) $(CXXFLAGS) -I $(GCCPLUGIN_DIR)/include -DCLIPSGCC_SOURCE $^ -c  -MMD -MF  $(patsubst %.o, _%.mk, $@) -o $@
+	$(CXX) $(CXXFLAGS) -I $(GCCPLUGIN_DIR)/include -DCLIPSGCC_SOURCE $< -c  -MMD -MF  $(patsubst %.o, _%.mk, $@) -o $@
 
 -include $(wildcard _*.mk)
 
