@@ -22,54 +22,7 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 **/
-
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
-
-#include <iostream>
-#include <unordered_map>
-#include <unordered_set>
-#include <map>
-#include <set>
-
-#include <cstdio>
-#include <cassert>
-
-#include <unistd.h>
-#include <time.h>
-#include <math.h>
-
-#include "gcc-plugin.h"
-#include "config.h"
-#include "system.h"
-#include "coretypes.h"
-#include "tm.h"
-#include "tree.h"
-#include "stringpool.h"
-#include "toplev.h"
-#include "basic-block.h"
-#include "hash-table.h"
-#include "vec.h"
-#include "ggc.h"
-#include "basic-block.h"
-#include "tree-ssa-alias.h"
-#include "internal-fn.h"
-#include "gimple-fold.h"
-#include "tree-eh.h"
-#include "gimple-expr.h"
-#include "is-a.h"
-#include "gimple.h"
-#include "gimple-iterator.h"
-#include "tree.h"
-#include "tree-pass.h"
-#include "toplev.h"
-#include "intl.h"
-#include "plugin-version.h"
-#include "diagnostic.h"
-#include "context.h"
-
-
+#include "clips-gcc.hh"
 
 int plugin_is_GPL_compatible;
 
@@ -77,7 +30,6 @@ int plugin_is_GPL_compatible;
 std::string CLGCC_projectstr;
 std::string CLGCC_translationunitstr;
 
-extern "C" double CLGCC_cputime(void);
 
 // give elapsed process CPU time in seconds
 double
@@ -126,10 +78,14 @@ parse_plugin_arguments (const char*plugin_name, struct plugin_name_args* plargs)
 {
   int plargc = plargs->argc;
   int ix= 0;
+  static char versbuf[256];
+  snprintf(versbuf, sizeof(versbuf),
+	   "CLIPS-GCC plugin %s, built %s",
+	   clgcc_lastgitcommit, clgcc_timestamp);
   assert (plargs->version == NULL);
-  plargs->version = versbuf;
   assert (plargs->help == NULL);
-  plargs->help = "See https://github.com/bstarynk/clips-rules-gcc"";
+  plargs->version = versbuf;
+  plargs->help = "See https://github.com/bstarynk/clips-rules-gcc";
                  //
                  for (struct plugin_argument* plcurarg = plargs->argv;
                       (ix<plargc)?(plcurarg = plargs->argv+ix):nullptr; ix++)
