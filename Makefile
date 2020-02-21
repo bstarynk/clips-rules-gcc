@@ -25,6 +25,7 @@
 
 CLGCC_GIT_ID := $(shell ./generate-gitid.sh)
 CC= gcc
+TARGET_GCC?= $(CC)
 CXX= g++
 RM= rm -f
 MV= mv -v 
@@ -32,6 +33,8 @@ ASTYLE= astyle
 ASTYLEFLAGS= --style=gnu -s2
 INDENT= indent
 INDENTFLAGS= --gnu-style--no-tabs --honour-newlines
+
+GCCPLUGIN_DIR:= $(shell $(TARGET_GCC) -print-file-name=plugin)
 
 CLGCC_PLUGIN_CXXSOURCES := $(wildcard clips*.cc)
 CLGCC_PLUGIN_CXXHEADERS := $(wildcard clips*.hh)
@@ -44,7 +47,7 @@ CLGCC_OPTIMFLAGS= -O1 -g
 CLGCC_WARNFLAGS= -Wall -Wextra
 CLGCC_CWARNFLAGS= -Wmissing-prototypes
 CLGCC_CXXWARNFLAGS=
-CLGCC_PREPROFLAGS= -I /usr/local/include -I CLIPS-source/
+CLGCC_PREPROFLAGS= -I /usr/local/include -I CLIPS-source/ 
 
 CFLAGS= $(CLGCC_PREPROFLAGS) $(CLGCC_OPTIMFLAGS) $(CLGCC_WARNFLAGS) $(CLGCC_CWARNFLAGS) $(CLGCC_GENFLAGS)
 CXXFLAGS= $(CLGCC_PREPROFLAGS) $(CLGCC_OPTIMFLAGS) $(CLGCC_WARNFLAGS) $(CLGCC_CXXWARNFLAGS) $(CLGCC_GENFLAGS)
@@ -82,4 +85,11 @@ clips-gcc-plugin.so: _timestamp.c $(CLGCC_PLUGIN_OBJECTS) $(CLIPS_OBJECTS)
 _timestamp.c: generate-timestamp.sh Makefile $(CLGCC_PLUGIN_CXXSOURCES) $(CLGCC_PLUGIN_CXXHEADERS) $(CLIPS_CSOURCES) $(CLIPS_CHEADERS)
 	./generate-timestamp.sh $@ > $@-tmp
 	$(MV) $@-tmp $@
+
+CLIPS-source/%.o: CLIPS-source/%.c
+	$(CC) $(CFLAGS) -DCLIPS_SOURCE $^ -c -o $@
+
+%.o: %.cc
+	$(CXX) $(CXXFLAGS) -I $(GCCPLUGIN_DIR)/include -DCLIPSGCC_SOURCE $^ -c -o $@
+
 ### end of Makefile for https://github.com/bstarynk/clips-rules-gcc
