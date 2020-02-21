@@ -106,7 +106,7 @@
 /*********************************************************************/
 
 #ifndef LINUX
-#define LINUX   0   /* Tested with Ubuntu 16.04, Debian 9.1, */
+#define LINUX   1   /* Tested with Ubuntu 16.04, Debian 9.1, */
 #endif              /* Fedora 26, Mint 18, and CentOS 7.     */
 
 #ifndef DARWIN
@@ -169,7 +169,7 @@
 #endif
 
 /*************************************************/
-/* DEFRULE_CONSTRUCT: DeteCL_rmines whether defrule */
+/* DEFRULE_CONSTRUCT: Determines whether defrule */
 /*   construct is included.                      */
 /*************************************************/
 
@@ -178,7 +178,7 @@
 #endif
 
 /************************************************/
-/* DEFMODULE_CONSTRUCT:  DeteCL_rmines whether the */
+/* DEFMODULE_CONSTRUCT:  Determines whether the */
 /*   defmodule construct is included.           */
 /************************************************/
 
@@ -187,7 +187,7 @@
 #endif
 
 /****************************************************/
-/* DEFTEMPLATE_CONSTRUCT:  DeteCL_rmines whether facts */
+/* DEFTEMPLATE_CONSTRUCT:  Determines whether facts */
 /*   and the deftemplate construct are included.    */
 /****************************************************/
 
@@ -201,7 +201,7 @@
 #endif
 
 /************************************************************/
-/* FACT_SET_QUERIES: DeteCL_rmines if fact-set query functions */
+/* FACT_SET_QUERIES: Determines if fact-set query functions */
 /*  such as any-factp and do-for-all-facts are included.    */
 /************************************************************/
 
@@ -215,7 +215,7 @@
 #endif
 
 /****************************************************/
-/* DEFFACTS_CONSTRUCT:  DeteCL_rmines whether deffacts */
+/* DEFFACTS_CONSTRUCT:  Determines whether deffacts */
 /*   construct is included.                         */
 /****************************************************/
 
@@ -229,7 +229,7 @@
 #endif
 
 /************************************************/
-/* DEFGLOBAL_CONSTRUCT:  DeteCL_rmines whether the */
+/* DEFGLOBAL_CONSTRUCT:  Determines whether the */
 /*   defglobal construct is included.           */
 /************************************************/
 
@@ -238,7 +238,7 @@
 #endif
 
 /**********************************************/
-/* DEFFUNCTION_CONSTRUCT:  DeteCL_rmines whether */
+/* DEFFUNCTION_CONSTRUCT:  Determines whether */
 /*   deffunction construct is included.       */
 /**********************************************/
 
@@ -247,7 +247,7 @@
 #endif
 
 /*********************************************/
-/* DEFGENERIC_CONSTRUCT:  DeteCL_rmines whether */
+/* DEFGENERIC_CONSTRUCT:  Determines whether */
 /*   generic functions  are included.        */
 /*********************************************/
 
@@ -256,7 +256,7 @@
 #endif
 
 /*****************************************************************/
-/* OBJECT_SYSTEM:  DeteCL_rmines whether object system is included. */
+/* OBJECT_SYSTEM:  Determines whether object system is included. */
 /*   The MULTIFIELD_FUNCTIONS flag should also be on if you want */
 /*   to be able to manipulate multi-field slots.                 */
 /*****************************************************************/
@@ -266,7 +266,7 @@
 #endif
 
 /*****************************************************************/
-/* DEFINSTANCES_CONSTRUCT: DeteCL_rmines whether the definstances   */
+/* DEFINSTANCES_CONSTRUCT: Determines whether the definstances   */
 /*   construct is enabled.                                       */
 /*****************************************************************/
 
@@ -280,7 +280,7 @@
 #endif
 
 /********************************************************************/
-/* INSTANCE_SET_QUERIES: DeteCL_rmines if instance-set query functions */
+/* INSTANCE_SET_QUERIES: Determines if instance-set query functions */
 /*  such as any-instancep and do-for-all-instances are included.    */
 /********************************************************************/
 
@@ -303,7 +303,7 @@
 #endif
 
 /*******************************************************************/
-/* BLOAD/BSAVE_INSTANCES: DeteCL_rmines if the save/restore-instances */
+/* BLOAD/BSAVE_INSTANCES: Determines if the save/restore-instances */
 /*  functions can be enhanced to perfoCL_rm more quickly by using     */
 /*  binary files                                                   */
 /*******************************************************************/
@@ -386,7 +386,7 @@
 
 /************************************************/
 /* IO_FUNCTIONS: Includes printout, read, open, */
-/*   close, foCL_rmat, and readline functions.     */
+/*   close, format, and readline functions.     */
 /************************************************/
 
 #ifndef IO_FUNCTIONS
@@ -466,7 +466,7 @@
 #include "envrnmnt.h"
 
 /*************************************************/
-/* Any user defined global setup infoCL_rmation can */
+/* Any user defined global setup information can */
 /* be included in the file usrsetup.h which is   */
 /* an empty file in the baseline version.        */
 /*************************************************/
