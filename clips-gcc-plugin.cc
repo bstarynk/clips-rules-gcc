@@ -55,9 +55,9 @@ CLGCC_starting(void*gccdata __attribute__((unused)), void*userdata __attribute((
          CLGCC_projectstr.c_str(),
          CLGCC_translationunitstr.c_str(),
          cputimbuf, __LINE__);
-  CLGCC_env = CreateEnvironment();
+  CLGCC_env = CL_CreateEnvironment();
   if (!CLGCC_env)
-    fatal(UNKNOWN_LOCATION, "CLIPS-GCC: CreateEnvironment failed");
+    fatal_error(UNKNOWN_LOCATION, "CLIPS-GCC: CL_CreateEnvironment failed");
 } // end CLGCC_starting
 
 
@@ -72,8 +72,8 @@ CLGCC_finishing(void*gccdata __attribute__((unused)), void*userdata __attribute(
          CLGCC_projectstr.c_str(),
          CLGCC_translationunitstr.c_str(),
          cputimbuf, __LINE__);
-  if (!DestroyEnvironment(CLGCC_env))
-    fatal(UNKNOWN_LOCATION, "CLIPS-GCC: DestroyEnvironment failed");
+  if (!CL_DestroyEnvironment(CLGCC_env))
+    fatal_error(UNKNOWN_LOCATION, "CLIPS-GCC: CL_DestroyEnvironment failed");
     
 } // end CLGCC_finishing
 
