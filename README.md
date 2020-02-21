@@ -2,6 +2,9 @@
 
 ## a GCC plugin embedding the CLIPS rules engine for Linux
 
+### original source code on https://github.com/bstarynk/clips-rules-gcc/
+
+
 My ([Basile Starynkevitch](http://starynkevitch.net/Basile/), employed
 at [CEA, LIST](http://www-list.cea.fr/) in France) work on
 `clips-rules-gcc` is partly funded (in 2020) by the European Union,
