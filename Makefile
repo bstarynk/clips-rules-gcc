@@ -21,7 +21,7 @@
 #
 #
 
-.PHONY: all clean plugin indent  test
+.PHONY: all clean plugin indent tests print-test-settings
 
 CLGCC_GIT_ID := $(shell ./generate-gitid.sh)
 CC= gcc
@@ -47,7 +47,9 @@ CLGCC_OPTIMFLAGS= -O1 -g
 CLGCC_WARNFLAGS= -Wall -Wextra
 CLGCC_CWARNFLAGS= -Wmissing-prototypes
 CLGCC_CXXWARNFLAGS=
-CLGCC_PREPROFLAGS= -I /usr/local/include -I CLIPS-source/ 
+CLGCC_PREPROFLAGS= -I /usr/local/include -I CLIPS-source/
+
+CLGCC_TESTDIRS:=$(shell /bin/ls testdir/T[0-9]*[A-Za-z_]*[A-Za-z0-9])
 
 CFLAGS= $(CLGCC_PREPROFLAGS) $(CLGCC_OPTIMFLAGS) $(CLGCC_WARNFLAGS) $(CLGCC_CWARNFLAGS) $(CLGCC_GENFLAGS)
 CXXFLAGS= $(CLGCC_PREPROFLAGS) $(CLGCC_OPTIMFLAGS) $(CLGCC_WARNFLAGS) $(CLGCC_CXXWARNFLAGS) $(CLGCC_GENFLAGS)
@@ -91,6 +93,11 @@ CLIPS-source/%.o: CLIPS-source/%.c
 
 %.o: %.cc
 	$(CXX) $(CXXFLAGS) -I $(GCCPLUGIN_DIR)/include -DCLIPSGCC_SOURCE $< -c  -MMD -MF  $(patsubst %.o, _%.mk, $@) -o $@
+
+#### the print-test-settings target is called by test scripts testdir/T*/run.bash
+print-test-settings:
+	@printf "TARGET_GCC=%s\n" $(TARGET_GCC)
+	@printf "CLIPS_GCC_PLUGIN=%s\n" $(realpath clips-gcc-plugin.so)
 
 -include $(wildcard _*.mk)
 
