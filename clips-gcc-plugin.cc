@@ -74,7 +74,7 @@ CLGCC_finishing(void*gccdata __attribute__((unused)), void*userdata __attribute(
          cputimbuf, __LINE__);
   if (!CL_DestroyEnvironment(CLGCC_env))
     fatal_error(UNKNOWN_LOCATION, "CLIPS-GCC: CL_DestroyEnvironment failed");
-    
+
 } // end CLGCC_finishing
 
 
@@ -86,23 +86,26 @@ parse_plugin_arguments (const char*plugin_name, struct plugin_name_args* plargs)
   int ix= 0;
   static char versbuf[256];
   snprintf(versbuf, sizeof(versbuf),
-	   "CLIPS-GCC plugin %s, built %s",
-	   clgcc_lastgitcommit, clgcc_timestamp);
+           "CLIPS-GCC plugin %s, built %s",
+           clgcc_lastgitcommit, clgcc_timestamp);
   assert (plargs->version == NULL);
   assert (plargs->help == NULL);
   plargs->version = versbuf;
   plargs->help = "See https://github.com/bstarynk/clips-rules-gcc";
-                 //
-                 for (struct plugin_argument* plcurarg = plargs->argv;
-                      (ix<plargc)?(plcurarg = plargs->argv+ix):nullptr; ix++)
+  //
+  for (struct plugin_argument* plcurarg = plargs->argv;
+       (ix<plargc)?(plcurarg = plargs->argv+ix):nullptr; ix++)
     {
       const char*curkey = plcurarg->key;
       const char*curval = plcurarg->value;
-      if (!strcmp(curkey, "project") && curval)
+#define CLGCC_GOT_OPTION(S)   (!strcmp(curkey, (S)) && curval)
+#define CLGCC_GOT_PLAIN_OPTION(S)   (!strcmp(curkey, (S)) && !curval)
+#define CLGCC_GOT_ANY_OPTION(S)   (!strcmp(curkey, (S)))
+      if (CLGCC_GOT_OPTION("project"))
         {
           CLGCC_projectstr = std::string(curval);
         }
-      else if (!strcmp(curkey, "help"))
+      else if (CLGCC_GOT_PLAIN_OPTION("help"))
         {
           inform (UNKNOWN_LOCATION,
                   "CLIPS-GCC plugin %s help:\n", plugin_name);
@@ -118,6 +121,9 @@ parse_plugin_arguments (const char*plugin_name, struct plugin_name_args* plargs)
             warning(UNKNOWN_LOCATION, "CLIPS-GCC: unexpected plugin %s argument %s",
                     plugin_name, curkey);
         }
+#undef CLGCC_GOT_OPTION
+#undef CLGCC_GOT_PLAIN_OPTION
+#undef CLGCC_GOT_ANY_OPTION
     }
 } // end parse_plugin_arguments
 

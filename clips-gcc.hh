@@ -2,7 +2,7 @@
 /**
    https://github.com/bstarynk/clips-rules-gcc
 
-   file clips-gcc.hh is the common C++ header. 
+   file clips-gcc.hh is the common C++ header.
 
    Copyright © 2020 CEA (Commissariat à l'énergie atomique et aux énergies alternatives)
    contributed by Basile Starynkevitch.
