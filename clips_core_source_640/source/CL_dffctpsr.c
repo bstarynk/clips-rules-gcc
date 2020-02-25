@@ -95,7 +95,7 @@ bool CL_ParseDeffacts(
 #if BLOAD || BLOAD_AND_BSAVE
    if ((CL_Bloaded(theEnv) == true) && (! ConstructData(theEnv)->CL_CheckSyntaxMode))
      {
-      CannotCL_LoadWithCL_BloadMessage(theEnv,"deffacts");
+      Cannot_LoadWith_BloadMessage(theEnv,"deffacts");
       return true;
      }
 #endif
@@ -114,7 +114,7 @@ bool CL_ParseDeffacts(
    /* Parse the list of facts in the deffacts body. */
    /*===============================================*/
 
-   temp = CL_BuildRHSCL_Assert(theEnv,readSource,&inputToken,&deffactsError,false,false,"deffacts");
+   temp = CL_BuildRHS_Assert(theEnv,readSource,&inputToken,&deffactsError,false,false,"deffacts");
 
    if (deffactsError == true) { return true; }
 
@@ -155,9 +155,9 @@ bool CL_ParseDeffacts(
    /*=======================================================*/
 
    if (CL_GetConserveMemory(theEnv) == true)
-     { newDeffacts->header.ppFoCL_rm = NULL; }
+     { newDeffacts->header.ppFo_rm = NULL; }
    else
-     { newDeffacts->header.ppFoCL_rm = CL_CopyPPBuffer(theEnv); }
+     { newDeffacts->header.ppFo_rm = CL_CopyPPBuffer(theEnv); }
 
    /*=============================================*/
    /* Add the deffacts to the appropriate module. */

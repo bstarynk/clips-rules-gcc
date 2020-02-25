@@ -23,7 +23,7 @@
 /*                                                           */
 /*            Renamed BOOLEAN macro type to intBool.         */
 /*                                                           */
-/*            Added support for passing context infoCL_rmation  */
+/*            Added support for passing context info_rmation  */
 /*            to the router functions.                       */
 /*                                                           */
 /*      6.30: Fixed issues with passing context to routers.  */
@@ -39,8 +39,8 @@
 /*                                                           */
 /*            Added check for reuse of existing router name. */
 /*                                                           */
-/*            Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*            Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -138,7 +138,7 @@ bool CL_PrintRouterExists(
   {
    struct router *currentPtr;
    
-   if (((char *) RouterData(theEnv)->FastCL_SaveFilePtr) == logicalName)
+   if (((char *) RouterData(theEnv)->Fast_SaveFilePtr) == logicalName)
      { return true; }
      
    currentPtr = RouterData(theEnv)->ListOfRouters;
@@ -192,9 +192,9 @@ void CL_WriteString(
    /* all of the routers.                               */
    /*===================================================*/
 
-   if (((char *) RouterData(theEnv)->FastCL_SaveFilePtr) == logicalName)
+   if (((char *) RouterData(theEnv)->Fast_SaveFilePtr) == logicalName)
      {
-      fprintf(RouterData(theEnv)->FastCL_SaveFilePtr,"%s",str);
+      fprintf(RouterData(theEnv)->Fast_SaveFilePtr,"%s",str);
       return;
      }
 
@@ -239,13 +239,13 @@ int CL_ReadRouter(
    /* all of the routers.                               */
    /*===================================================*/
 
-   if (((char *) RouterData(theEnv)->FastCL_LoadFilePtr) == logicalName)
+   if (((char *) RouterData(theEnv)->Fast_LoadFilePtr) == logicalName)
      {
-      inchar = getc(RouterData(theEnv)->FastCL_LoadFilePtr);
+      inchar = getc(RouterData(theEnv)->Fast_LoadFilePtr);
 
       if ((inchar == '\r') || (inchar == '\n'))
         {
-         if (((char *) RouterData(theEnv)->FastCL_LoadFilePtr) == RouterData(theEnv)->LineCountRouter)
+         if (((char *) RouterData(theEnv)->Fast_LoadFilePtr) == RouterData(theEnv)->LineCountRouter)
            { CL_IncrementLineCount(theEnv); }
         }
 
@@ -327,15 +327,15 @@ int CL_UnreadRouter(
    /* all of the routers.                               */
    /*===================================================*/
 
-   if (((char *) RouterData(theEnv)->FastCL_LoadFilePtr) == logicalName)
+   if (((char *) RouterData(theEnv)->Fast_LoadFilePtr) == logicalName)
      {
       if ((ch == '\r') || (ch == '\n'))
         {
-         if (((char *) RouterData(theEnv)->FastCL_LoadFilePtr) == RouterData(theEnv)->LineCountRouter)
+         if (((char *) RouterData(theEnv)->Fast_LoadFilePtr) == RouterData(theEnv)->LineCountRouter)
            { CL_DecrementLineCount(theEnv); }
         }
 
-      return ungetc(ch,RouterData(theEnv)->FastCL_LoadFilePtr);
+      return ungetc(ch,RouterData(theEnv)->Fast_LoadFilePtr);
      }
 
    /*===============================================*/
@@ -418,7 +418,7 @@ void CL_ExitRouter(
   }
 
 /********************************************/
-/* CL_AbortExit: Forces CL_ExitRouter to teCL_rminate */
+/* CL_AbortExit: Forces CL_ExitRouter to te_rminate */
 /*   after calling all closing routers.     */
 /********************************************/
 void CL_AbortExit(
@@ -435,8 +435,8 @@ bool CL_AddRouter(
   const char *routerName,
   int priority,
   RouterQueryFunction *queryFunction,
-  RouterCL_WriteFunction *writeFunction,
-  RouterCL_ReadFunction *readFunction,
+  Router_WriteFunction *writeFunction,
+  Router_ReadFunction *readFunction,
   RouterUnreadFunction *unreadFunction,
   RouterExitFunction *exitFunction,
   void *context)
@@ -535,7 +535,7 @@ bool CL_DeleteRouter(
   }
 
 /*********************************************************************/
-/* CL_QueryRouters: DeteCL_rmines if any router recognizes a logical name. */
+/* CL_QueryRouters: Dete_rmines if any router recognizes a logical name. */
 /*********************************************************************/
 bool CL_QueryRouters(
   Environment *theEnv,
@@ -554,7 +554,7 @@ bool CL_QueryRouters(
   }
 
 /************************************************/
-/* QueryRouter: DeteCL_rmines if a specific router */
+/* QueryRouter: Dete_rmines if a specific router */
 /*    recognizes a logical name.                */
 /************************************************/
 static bool QueryRouter(
@@ -655,41 +655,41 @@ Router *CL_FindRouter(
   }
 
 /********************************************************/
-/* SetFastCL_Load: Used to bypass router system for loads. */
+/* SetFast_Load: Used to bypass router system for loads. */
 /********************************************************/
-void SetFastCL_Load(
+void SetFast_Load(
   Environment *theEnv,
   FILE *filePtr)
   {
-   RouterData(theEnv)->FastCL_LoadFilePtr = filePtr;
+   RouterData(theEnv)->Fast_LoadFilePtr = filePtr;
   }
 
 /********************************************************/
-/* SetFastCL_Save: Used to bypass router system for saves. */
+/* SetFast_Save: Used to bypass router system for saves. */
 /********************************************************/
-void SetFastCL_Save(
+void SetFast_Save(
   Environment *theEnv,
   FILE *filePtr)
   {
-   RouterData(theEnv)->FastCL_SaveFilePtr = filePtr;
+   RouterData(theEnv)->Fast_SaveFilePtr = filePtr;
   }
 
 /******************************************************/
-/* CL_GetFastCL_Load: Returns the "fast load" file pointer. */
+/* CL_GetFast_Load: Returns the "fast load" file pointer. */
 /******************************************************/
-FILE *CL_GetFastCL_Load(
+FILE *CL_GetFast_Load(
   Environment *theEnv)
   {
-   return(RouterData(theEnv)->FastCL_LoadFilePtr);
+   return(RouterData(theEnv)->Fast_LoadFilePtr);
   }
 
 /******************************************************/
-/* CL_GetFastCL_Save: Returns the "fast save" file pointer. */
+/* CL_GetFast_Save: Returns the "fast save" file pointer. */
 /******************************************************/
-FILE *CL_GetFastCL_Save(
+FILE *CL_GetFast_Save(
   Environment *theEnv)
   {
-   return(RouterData(theEnv)->FastCL_SaveFilePtr);
+   return(RouterData(theEnv)->Fast_SaveFilePtr);
   }
 
 /*****************************************************/

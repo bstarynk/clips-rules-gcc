@@ -55,41 +55,41 @@
 
    void                           CL_InitializeInstanceCommand(Environment *,UDFContext *,UDFValue *);
    void                           CL_MakeInstanceCommand(Environment *,UDFContext *,UDFValue *);
-   CLIPSLexeme                   *CL_GetFullCL_InstanceName(Environment *,Instance *);
+   CLIPSLexeme                   *CL_GetFull_InstanceName(Environment *,Instance *);
    Instance                      *CL_BuildInstance(Environment *,CLIPSLexeme *,Defclass *,bool);
    void                           CL_InitSlotsCommand(Environment *,UDFContext *,UDFValue *);
    CL_UnmakeInstanceError            CL_QuashInstance(Environment *,Instance *);
 
 #if DEFRULE_CONSTRUCT && OBJECT_SYSTEM
    void                           CL_InactiveInitializeInstance(Environment *,UDFContext *,UDFValue *);
-   void                           CL_InactiveCL_MakeInstance(Environment *,UDFContext *,UDFValue *);
+   void                           CL_Inactive_MakeInstance(Environment *,UDFContext *,UDFValue *);
 #endif
 
-   InstanceCL_Builder               *CreateInstanceCL_Builder(Environment *,const char *);
-   PutSlotError                   CL_IBPutSlot(InstanceCL_Builder *,const char *,CLIPSValue *);
+   Instance_Builder               *CreateInstance_Builder(Environment *,const char *);
+   PutSlotError                   CL_IBPutSlot(Instance_Builder *,const char *,CLIPSValue *);
 
-   Instance                      *CL_IBMake(InstanceCL_Builder *,const char *);
+   Instance                      *CL_IBMake(Instance_Builder *,const char *);
 
-   void                           CL_IBDispose(InstanceCL_Builder *);
-   void                           CL_IBAbort(InstanceCL_Builder *);
-   InstanceCL_BuilderError           CL_IBSetDefclass(InstanceCL_Builder *,const char *);
+   void                           CL_IBDispose(Instance_Builder *);
+   void                           CL_IBAbort(Instance_Builder *);
+   Instance_BuilderError           CL_IBSetDefclass(Instance_Builder *,const char *);
 
-   PutSlotError                   CL_IBPutSlotCLIPSInteger(InstanceCL_Builder *,const char *,CLIPSInteger *);
-   PutSlotError                   CL_IBPutSlotInteger(InstanceCL_Builder *,const char *,long long);
+   PutSlotError                   CL_IBPutSlotCLIPSInteger(Instance_Builder *,const char *,CLIPSInteger *);
+   PutSlotError                   CL_IBPutSlotInteger(Instance_Builder *,const char *,long long);
 
-   PutSlotError                   CL_IBPutSlotCLIPSFloat(InstanceCL_Builder *,const char *,CLIPSFloat *);
-   PutSlotError                   CL_IBPutSlotFloat(InstanceCL_Builder *,const char *,double);
+   PutSlotError                   CL_IBPutSlotCLIPSFloat(Instance_Builder *,const char *,CLIPSFloat *);
+   PutSlotError                   CL_IBPutSlotFloat(Instance_Builder *,const char *,double);
 
-   PutSlotError                   CL_IBPutSlotCLIPSLexeme(InstanceCL_Builder *,const char *,CLIPSLexeme *);
-   PutSlotError                   CL_IBPutSlotSymbol(InstanceCL_Builder *,const char *,const char *);
-   PutSlotError                   CL_IBPutSlotString(InstanceCL_Builder *,const char *,const char *);
-   PutSlotError                   CL_IBPutSlotCL_InstanceName(InstanceCL_Builder *,const char *,const char *);
+   PutSlotError                   CL_IBPutSlotCLIPSLexeme(Instance_Builder *,const char *,CLIPSLexeme *);
+   PutSlotError                   CL_IBPutSlotSymbol(Instance_Builder *,const char *,const char *);
+   PutSlotError                   CL_IBPutSlotString(Instance_Builder *,const char *,const char *);
+   PutSlotError                   CL_IBPutSlot_InstanceName(Instance_Builder *,const char *,const char *);
 
-   PutSlotError                   CL_IBPutSlotFact(InstanceCL_Builder *,const char *,Fact *);
-   PutSlotError                   CL_IBPutSlotInstance(InstanceCL_Builder *,const char *,Instance *);
-   PutSlotError                   CL_IBPutSlotExternalAddress(InstanceCL_Builder *,const char *,CLIPSExternalAddress *);
-   PutSlotError                   CL_IBPutSlotMultifield(InstanceCL_Builder *,const char *,Multifield *);
-   InstanceCL_BuilderError           CL_IBError(Environment *);
+   PutSlotError                   CL_IBPutSlotFact(Instance_Builder *,const char *,Fact *);
+   PutSlotError                   CL_IBPutSlotInstance(Instance_Builder *,const char *,Instance *);
+   PutSlotError                   CL_IBPutSlotExternalAddress(Instance_Builder *,const char *,CLIPSExternalAddress *);
+   PutSlotError                   CL_IBPutSlotMultifield(Instance_Builder *,const char *,Multifield *);
+   Instance_BuilderError           CL_IBError(Environment *);
 
    InstanceModifier              *CL_CreateInstanceModifier(Environment *,Instance *);
    PutSlotError                   CL_IMPutSlot(InstanceModifier *,const char *,CLIPSValue *);
@@ -107,7 +107,7 @@
    PutSlotError                   CL_IMPutSlotCLIPSLexeme(InstanceModifier *,const char *,CLIPSLexeme *);
    PutSlotError                   CL_IMPutSlotSymbol(InstanceModifier *,const char *,const char *);
    PutSlotError                   CL_IMPutSlotString(InstanceModifier *,const char *,const char *);
-   PutSlotError                   CL_IMPutSlotCL_InstanceName(InstanceModifier *,const char *,const char *);
+   PutSlotError                   CL_IMPutSlot_InstanceName(InstanceModifier *,const char *,const char *);
 
    PutSlotError                   CL_IMPutSlotFact(InstanceModifier *,const char *,Fact *);
    PutSlotError                   CL_IMPutSlotInstance(InstanceModifier *,const char *,Instance *);

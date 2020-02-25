@@ -45,8 +45,8 @@
 /*            Optimization for marking relevant alpha nodes  */
 /*            in the object pattern network.                 */
 /*                                                           */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*      6.40: Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -176,8 +176,8 @@ bool CL_InstancesPurge(
   Environment *theEnv,
   void *context)
   {
-   CL_DestroyAllCL_Instances(theEnv,NULL);
-   CL_CleanupCL_Instances(theEnv,NULL);
+   CL_DestroyAll_Instances(theEnv,NULL);
+   CL_Cleanup_Instances(theEnv,NULL);
    return((InstanceData(theEnv)->InstanceList != NULL) ? false : true);
   }
 
@@ -255,7 +255,7 @@ void CL_ClassExistError(
    CL_WriteString(theEnv,STDERR,"' in function '");
    CL_WriteString(theEnv,STDERR,func);
    CL_WriteString(theEnv,STDERR,"'.\n");
-   SetCL_EvaluationError(theEnv,true);
+   Set_EvaluationError(theEnv,true);
   }
 
 /*********************************************
@@ -358,7 +358,7 @@ void CL_PutClassInTable(
   Environment *theEnv,
   Defclass *cls)
   {
-   cls->hashTableIndex = CL_HashClass(GetCL_DefclassNamePointer(cls));
+   cls->hashTableIndex = CL_HashClass(Get_DefclassNamePointer(cls));
    cls->nxtHash = DefclassData(theEnv)->ClassTable[cls->hashTableIndex];
    DefclassData(theEnv)->ClassTable[cls->hashTableIndex] = cls;
   }
@@ -548,7 +548,7 @@ Defclass *CL_NewClass(
    cls->abstract = 0;
    cls->reactive = 1;
 #if DEBUGGING_FUNCTIONS
-   cls->traceCL_Instances = DefclassData(theEnv)->CL_WatchCL_Instances;
+   cls->trace_Instances = DefclassData(theEnv)->CL_Watch_Instances;
    cls->traceSlots = DefclassData(theEnv)->CL_WatchSlots;
 #endif
    cls->hashTableIndex = 0;
@@ -573,7 +573,7 @@ Defclass *CL_NewClass(
    cls->nxtHash = NULL;
    cls->scopeMap = NULL;
    CL_ClearBitString(cls->traversalRecord,TRAVERSAL_BYTES);
-   cls->relevant_teCL_rminal_alpha_nodes = NULL;
+   cls->relevant_te_rminal_alpha_nodes = NULL;
    return(cls);
   }
 
@@ -803,8 +803,8 @@ void CL_RemoveDefclass(
       hnd = &cls->handlers[i];
       if (hnd->actions != NULL)
         CL_ReturnPackedExpression(theEnv,hnd->actions);
-      if (hnd->header.ppFoCL_rm != NULL)
-        CL_rm(theEnv,(void *) hnd->header.ppFoCL_rm,(sizeof(char) * (strlen(hnd->header.ppFoCL_rm)+1)));
+      if (hnd->header.ppFo_rm != NULL)
+        CL_rm(theEnv,(void *) hnd->header.ppFo_rm,(sizeof(char) * (strlen(hnd->header.ppFo_rm)+1)));
       if (hnd->header.usrData != NULL)
         { CL_ClearUserDataList(theEnv,hnd->header.usrData); }
      }
@@ -814,16 +814,16 @@ void CL_RemoveDefclass(
       CL_rm(theEnv,cls->handlerOrderMap,(sizeof(unsigned) * cls->handlerCount));
      }
 
-   currentAlphaLink = cls->relevant_teCL_rminal_alpha_nodes;
+   currentAlphaLink = cls->relevant_te_rminal_alpha_nodes;
    while (currentAlphaLink != NULL)
      {
       nextAlphaLink = currentAlphaLink->next;
       rtn_struct(theEnv,classAlphaLink,currentAlphaLink);
       currentAlphaLink = nextAlphaLink;
      }
-   cls->relevant_teCL_rminal_alpha_nodes = NULL;
+   cls->relevant_te_rminal_alpha_nodes = NULL;
 
-   SetCL_DefclassPPFoCL_rm(theEnv,cls,NULL);
+   SetCL_DefclassPPFo_rm(theEnv,cls,NULL);
    DeassignClassID(theEnv,cls->id);
    rtn_struct(theEnv,defclass,cls);
   }
@@ -887,8 +887,8 @@ void CL_DestroyDefclass(
       if (hnd->actions != NULL)
         CL_ReturnPackedExpression(theEnv,hnd->actions);
 
-      if (hnd->header.ppFoCL_rm != NULL)
-        CL_rm(theEnv,(void *) hnd->header.ppFoCL_rm,(sizeof(char) * (strlen(hnd->header.ppFoCL_rm)+1)));
+      if (hnd->header.ppFo_rm != NULL)
+        CL_rm(theEnv,(void *) hnd->header.ppFo_rm,(sizeof(char) * (strlen(hnd->header.ppFo_rm)+1)));
 
       if (hnd->header.usrData != NULL)
         { CL_ClearUserDataList(theEnv,hnd->header.usrData); }
@@ -900,14 +900,14 @@ void CL_DestroyDefclass(
       CL_rm(theEnv,cls->handlerOrderMap,(sizeof(unsigned) * cls->handlerCount));
      }
 
-   currentAlphaLink = cls->relevant_teCL_rminal_alpha_nodes;
+   currentAlphaLink = cls->relevant_te_rminal_alpha_nodes;
    while (currentAlphaLink != NULL)
      {
       nextAlphaLink = currentAlphaLink->next;
       rtn_struct(theEnv, classAlphaLink, currentAlphaLink);
       currentAlphaLink = nextAlphaLink;
      }
-   cls->relevant_teCL_rminal_alpha_nodes = NULL;
+   cls->relevant_te_rminal_alpha_nodes = NULL;
 
    CL_DestroyConstructHeader(theEnv,&cls->header);
 
@@ -1230,7 +1230,7 @@ int CL_GetTraversalID(
       CL_WriteString(theEnv,STDERR,"Maximum number of simultaneous class hierarchy\n  traversals exceeded ");
       CL_WriteInteger(theEnv,STDERR,MAX_TRAVERSALS);
       CL_WriteString(theEnv,STDERR,".\n");
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return(-1);
      }
 

@@ -76,10 +76,10 @@
    bool                           CL_PPDeftemplate(Environment *,const char *,const char *);
    void                           CL_ListDeftemplatesCommand(Environment *,UDFContext *,UDFValue *);
    void                           CL_ListDeftemplates(Environment *,const char *,Defmodule *);
-   bool                           CL_DeftemplateGetCL_Watch(Deftemplate *);
-   void                           CL_DeftemplateSetCL_Watch(Deftemplate *,bool);
-   bool                           CL_DeftemplateCL_WatchAccess(Environment *,int,bool,struct expr *);
-   bool                           CL_DeftemplateCL_WatchPrint(Environment *,const char *,int,struct expr *);
+   bool                           CL_DeftemplateGet_Watch(Deftemplate *);
+   void                           CL_DeftemplateSet_Watch(Deftemplate *,bool);
+   bool                           CL_Deftemplate_WatchAccess(Environment *,int,bool,struct expr *);
+   bool                           CL_Deftemplate_WatchPrint(Environment *,const char *,int,struct expr *);
 #endif
 
 #endif /* _H_tmpltbsc */

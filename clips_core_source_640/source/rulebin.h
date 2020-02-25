@@ -26,7 +26,7 @@
 /*                                                           */
 /*            Added support for alpha memories.              */
 /*                                                           */
-/*            Added salience groups to improve perfoCL_rmance   */
+/*            Added salience groups to improve perfo_rmance   */
 /*            with large numbers of activations of different */
 /*            saliences.                                     */
 /*                                                           */
@@ -57,7 +57,7 @@ struct bsaveDefrule
    int salience;
    unsigned short localVarCnt;
    unsigned int complexity      : 12;
-   unsigned int autoCL_Focus       :  1;
+   unsigned int auto_Focus       :  1;
    unsigned long dynamicSalience;
    unsigned long actions;
    unsigned long logicalJoin;
@@ -80,7 +80,7 @@ struct bsavePatternNodeHeader
    unsigned int selector : 1;
   };
 
-struct bsaveCL_DefruleModule
+struct bsave_DefruleModule
   {
    struct bsaveDefmoduleItemHeader header;
   };
@@ -116,7 +116,7 @@ struct bsaveJoinNode
 
 struct defruleBinaryData
   {
-   unsigned long NumberOfCL_DefruleModules;
+   unsigned long NumberOf_DefruleModules;
    unsigned long NumberOfDefrules;
    unsigned long NumberOfJoins;
    unsigned long NumberOfLinks;
@@ -139,9 +139,9 @@ struct defruleBinaryData
    void                           CL_DefruleBinarySetup(Environment *);
    void                           CL_UpdatePatternNodeHeader(Environment *,struct patternNodeHeader *,
                                                                  struct bsavePatternNodeHeader *);
-   void                           CL_AssignCL_BsavePatternHeaderValues(Environment *,struct bsavePatternNodeHeader *,
+   void                           CL_Assign_BsavePatternHeaderValues(Environment *,struct bsavePatternNodeHeader *,
                                                                         struct patternNodeHeader *);
-   void                          *CL_BloadCL_DefruleModuleReference(Environment *,unsigned long);
+   void                          *CL_Bload_DefruleModuleReference(Environment *,unsigned long);
 
 #endif /* (! RUN_TIME) */
 

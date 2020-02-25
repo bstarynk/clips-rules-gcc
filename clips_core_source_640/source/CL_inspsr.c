@@ -37,8 +37,8 @@
 /*            constructs that are contained externally to    */
 /*            to constructs, DanglingConstructs.             */
 /*                                                           */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*      6.40: Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -105,7 +105,7 @@
 /*************************************************************************************
   NAME         : CL_ParseInitializeInstance
   DESCRIPTION  : Parses initialize-instance and make-instance function
-                   calls into an Expression foCL_rm that
+                   calls into an Expression fo_rm that
                    can later be evaluated with CL_EvaluateExpression(theEnv,)
   INPUTS       : 1) The address of the top node of the expression
                     containing the initialize-instance function call
@@ -117,7 +117,7 @@
                     (slot-overrides etc.)
                  The "top" expression is deleted on errors.
   NOTES        : This function parses a initialize-instance call into
-                 an expression of the following foCL_rm :
+                 an expression of the following fo_rm :
 
                  (initialize-instance <instance-name> <slot-override>*)
                   where <slot-override> ::= (<slot-name> <expression>+)
@@ -289,7 +289,7 @@ Expression *CL_ParseInitializeInstance(
            {
             CL_PPBackup(theEnv);
             CL_PPBackup(theEnv);
-            CL_SavePPBuffer(theEnv,DefclassData(theEnv)->ObjectParseToken.printFoCL_rm);
+            CL_SavePPBuffer(theEnv,DefclassData(theEnv)->ObjectParseToken.printFo_rm);
             CL_SavePPBuffer(theEnv," ");
             top->argList->nextArg = CL_ArgumentParse(theEnv,readSource,&error);
             if (error)
@@ -320,7 +320,7 @@ Expression *CL_ParseInitializeInstance(
    return(top);
 
 CL_ParseInitializeInstanceError:
-   SetCL_EvaluationError(theEnv,true);
+   Set_EvaluationError(theEnv,true);
    CL_ReturnExpression(theEnv,top);
    CL_DecrementIndentDepth(theEnv,3);
    return NULL;
@@ -328,7 +328,7 @@ CL_ParseInitializeInstanceError:
 
 /********************************************************************************
   NAME         : CL_ParseSlotOverrides
-  DESCRIPTION  : FoCL_rms expressions for slot-overrides
+  DESCRIPTION  : Fo_rms expressions for slot-overrides
   INPUTS       : 1) The logical name of the input
                  2) Caller's buffer for error flkag
   RETURNS      : Address override expressions, NULL
@@ -368,7 +368,7 @@ Expression *CL_ParseSlotOverrides(
          CL_SyntaxErrorMessage(theEnv,"slot-override");
          *error = true;
          CL_ReturnExpression(theEnv,top);
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          return NULL;
         }
       theExpNext = CL_GenConstant(theEnv,SYMBOL_TYPE,TrueSymbol(theEnv));
@@ -390,14 +390,14 @@ Expression *CL_ParseSlotOverrides(
      }
    CL_PPBackup(theEnv);
    CL_PPBackup(theEnv);
-   CL_SavePPBuffer(theEnv,DefclassData(theEnv)->ObjectParseToken.printFoCL_rm);
+   CL_SavePPBuffer(theEnv,DefclassData(theEnv)->ObjectParseToken.printFo_rm);
    return(top);
   }
 
 /****************************************************************************
   NAME         : CL_ParseSimpleInstance
   DESCRIPTION  : Parses instances from file for load-instances
-                   into an Expression foCL_rms that
+                   into an Expression fo_rms that
                    can later be evaluated with CL_EvaluateExpression(theEnv,)
   INPUTS       : 1) The address of the top node of the expression
                     containing the make-instance function call
@@ -411,7 +411,7 @@ Expression *CL_ParseSlotOverrides(
   NOTES        : The name, class, values etc. must be constants.
 
                  This function parses a make-instance call into
-                 an expression of the following foCL_rm :
+                 an expression of the following fo_rm :
 
                   (make-instance <instance> of <class> <slot-override>*)
                   where <slot-override> ::= (<slot-name> <expression>+)
@@ -513,13 +513,13 @@ Expression *CL_ParseSimpleInstance(
 
 CL_MakeInstanceError:
    CL_SyntaxErrorMessage(theEnv,"make-instance");
-   SetCL_EvaluationError(theEnv,true);
+   Set_EvaluationError(theEnv,true);
    CL_ReturnExpression(theEnv,top);
    return NULL;
 
 SlotOverrideError:
    CL_SyntaxErrorMessage(theEnv,"slot-override");
-   SetCL_EvaluationError(theEnv,true);
+   Set_EvaluationError(theEnv,true);
    CL_ReturnExpression(theEnv,top);
    CL_ReturnExpression(theEnv,vals);
    return NULL;
@@ -558,7 +558,7 @@ static bool ReplaceClassNameWithReference(
    if (theExp->type == SYMBOL_TYPE)
      {
       theClassName = theExp->lexemeValue->contents;
-      //theDefclass = (void *) LookupCL_DefclassInScope(theEnv,theClassName);
+      //theDefclass = (void *) Lookup_DefclassInScope(theEnv,theClassName);
       theDefclass = CL_LookupDefclassByMdlOrScope(theEnv,theClassName); // Module or scope is now allowed
       if (theDefclass == NULL)
         {

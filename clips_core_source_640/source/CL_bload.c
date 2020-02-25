@@ -73,18 +73,18 @@
 /***************************************/
 
    static struct functionDefinition **ReadNeededFunctions(Environment *,unsigned long *,bool *);
-   static struct functionDefinition  *FastCL_FindFunction(Environment *,const char *,struct functionDefinition *);
-   static bool                        CL_ClearCL_Bload(Environment *);
-   static void                        CL_ClearCL_BloadCallback(Environment *,void *);
-   static void                        AbortCL_Bload(Environment *);
+   static struct functionDefinition  *Fast_FindFunction(Environment *,const char *,struct functionDefinition *);
+   static bool                        CL_Clear_Bload(Environment *);
+   static void                        CL_Clear_BloadCallback(Environment *,void *);
+   static void                        Abort_Bload(Environment *);
    static bool                        CL_BloadOutOfMemoryFunction(Environment *,size_t);
-   static void                        DeallocateCL_BloadData(Environment *);
+   static void                        Deallocate_BloadData(Environment *);
 
 /**********************************************/
-/* InitializeCL_BloadData: Allocates environment */
+/* Initialize_BloadData: Allocates environment */
 /*    data for the bload command.             */
 /**********************************************/
-void InitializeCL_BloadData(
+void Initialize_BloadData(
   Environment *theEnv)
   {
    char sizeBuffer[20];
@@ -92,8 +92,8 @@ void InitializeCL_BloadData(
                                              sizeof(int),sizeof(long),sizeof(long long));
 
    CL_AllocateEnvironmentData(theEnv,BLOAD_DATA,sizeof(struct bloadData),NULL);
-   CL_AddEnvironmentCleanupFunction(theEnv,"bload",DeallocateCL_BloadData,-1500);
-   CL_AddCL_ClearFunction(theEnv,"bload",CL_ClearCL_BloadCallback,10000,NULL);
+   CL_AddEnvironmentCleanupFunction(theEnv,"bload",Deallocate_BloadData,-1500);
+   CL_Add_ClearFunction(theEnv,"bload",CL_Clear_BloadCallback,10000,NULL);
 
    CL_BloadData(theEnv)->BinaryPrefixID = "\1\2\3\4CLIPS";
    CL_BloadData(theEnv)->BinaryVersionID = "V6.40";
@@ -102,16 +102,16 @@ void InitializeCL_BloadData(
   }
 
 /************************************************/
-/* DeallocateCL_BloadData: Deallocates environment */
+/* Deallocate_BloadData: Deallocates environment */
 /*    data for the bload command.               */
 /************************************************/
-static void DeallocateCL_BloadData(
+static void Deallocate_BloadData(
   Environment *theEnv)
   {
-   CL_DeallocateVoidCallList(theEnv,CL_BloadData(theEnv)->BeforeCL_BloadFunctions);
-   CL_DeallocateVoidCallList(theEnv,CL_BloadData(theEnv)->AfterCL_BloadFunctions);
-   CL_DeallocateBoolCallList(theEnv,CL_BloadData(theEnv)->CL_ClearCL_BloadReadyFunctions);
-   CL_DeallocateVoidCallList(theEnv,CL_BloadData(theEnv)->AbortCL_BloadFunctions);
+   CL_DeallocateVoidCallList(theEnv,CL_BloadData(theEnv)->Before_BloadFunctions);
+   CL_DeallocateVoidCallList(theEnv,CL_BloadData(theEnv)->After_BloadFunctions);
+   CL_DeallocateBoolCallList(theEnv,CL_BloadData(theEnv)->CL_Clear_BloadReadyFunctions);
+   CL_DeallocateVoidCallList(theEnv,CL_BloadData(theEnv)->Abort_BloadFunctions);
    CL_genfree(theEnv,CL_BloadData(theEnv)->BinarySizes,strlen(CL_BloadData(theEnv)->BinarySizes) + 1);
   }
 
@@ -130,7 +130,7 @@ bool CL_Bload(
    char sizesBuffer[20];
    char constructBuffer[CONSTRUCT_HEADER_SIZE];
    struct BinaryItem *biPtr;
-   struct voidCL_CallFunctionItem *bfPtr;
+   struct void_CallFunctionItem *bfPtr;
    
    /*=====================================*/
    /* If embedded, clear the error flags. */
@@ -150,7 +150,7 @@ bool CL_Bload(
      }
 
    /*=====================================*/
-   /* DeteCL_rmine if this is a binary file. */
+   /* Dete_rmine if this is a binary file. */
    /*=====================================*/
 
    CL_GenReadBinary(theEnv,IDbuffer,strlen(CL_BloadData(theEnv)->BinaryPrefixID) + 1);
@@ -165,8 +165,8 @@ bool CL_Bload(
      }
 
    /*=======================================*/
-   /* DeteCL_rmine if it's a binary file using */
-   /* a foCL_rmat from a different version.    */
+   /* Dete_rmine if it's a binary file using */
+   /* a fo_rmat from a different version.    */
    /*=======================================*/
 
    CL_GenReadBinary(theEnv,IDbuffer,strlen(CL_BloadData(theEnv)->BinaryVersionID) + 1);
@@ -181,7 +181,7 @@ bool CL_Bload(
      }
 
    /*===========================================*/
-   /* DeteCL_rmine if it's a binary file using the */
+   /* Dete_rmine if it's a binary file using the */
    /* correct size for pointers and numbers.    */
    /*===========================================*/
 
@@ -202,7 +202,7 @@ bool CL_Bload(
 
    if (CL_BloadData(theEnv)->CL_BloadActive)
      {
-      if (CL_ClearCL_Bload(theEnv) == false)
+      if (CL_Clear_Bload(theEnv) == false)
         {
          CL_GenCloseBinary(theEnv);
          return false;
@@ -210,7 +210,7 @@ bool CL_Bload(
      }
 
    /*=================================*/
-   /* DeteCL_rmine if the KB environment */
+   /* Dete_rmine if the KB environment */
    /* was successfully cleared.       */
    /*=================================*/
 
@@ -231,7 +231,7 @@ bool CL_Bload(
    /*==================================*/
 
    ConstructData(theEnv)->CL_ClearInProgress = true;
-   for (bfPtr = CL_BloadData(theEnv)->BeforeCL_BloadFunctions;
+   for (bfPtr = CL_BloadData(theEnv)->Before_BloadFunctions;
         bfPtr != NULL;
         bfPtr = bfPtr->next)
      { (*bfPtr->func)(theEnv,bfPtr->context); }
@@ -246,7 +246,7 @@ bool CL_Bload(
    if (error)
      {
       CL_GenCloseBinary(theEnv);
-      AbortCL_Bload(theEnv);
+      Abort_Bload(theEnv);
       return false;
      }
 
@@ -257,7 +257,7 @@ bool CL_Bload(
    CL_ReadNeededAtomicValues(theEnv);
 
    /*===========================================*/
-   /* DeteCL_rmine the number of expressions to be */
+   /* Dete_rmine the number of expressions to be */
    /* read and allocate the appropriate space   */
    /*===========================================*/
 
@@ -298,7 +298,7 @@ bool CL_Bload(
 
       /*==========================================*/
       /* If the construct type wasn't found, skip */
-      /* the storage binary load infoCL_rmation for  */
+      /* the storage binary load info_rmation for  */
       /* this construct.                          */
       /*==========================================*/
 
@@ -379,7 +379,7 @@ bool CL_Bload(
 
    /*========================================*/
    /* Free up temporary storage used for the */
-   /* function and atomic value infoCL_rmation. */
+   /* function and atomic value info_rmation. */
    /*========================================*/
 
    if (CL_BloadData(theEnv)->FunctionArray != NULL)
@@ -394,7 +394,7 @@ bool CL_Bload(
    /* executed after a bload occurs.   */
    /*==================================*/
 
-   for (bfPtr = CL_BloadData(theEnv)->AfterCL_BloadFunctions;
+   for (bfPtr = CL_BloadData(theEnv)->After_BloadFunctions;
         bfPtr != NULL;
         bfPtr = bfPtr->next)
      { (*bfPtr->func)(theEnv,bfPtr->context); }
@@ -415,7 +415,7 @@ bool CL_Bload(
   }
 
 /************************************************************
-  NAME         : CL_BloadandCL_Refresh
+  NAME         : CL_Bloadand_Refresh
   DESCRIPTION  : CL_Loads and refreshes objects - will bload
                  all objects at once, if possible, but
                  will aslo work in increments if memory is
@@ -430,7 +430,7 @@ bool CL_Bload(
   NOTES        : Assumes binary file pointer is positioned
                  for bloads of the objects
  ************************************************************/
-void CL_BloadandCL_Refresh(
+void CL_Bloadand_Refresh(
   Environment *theEnv,
   unsigned long objcnt,
   size_t objsz,
@@ -497,7 +497,7 @@ static struct functionDefinition **ReadNeededFunctions(
    bool functionsNotFound = false;
 
    /*===================================================*/
-   /* DeteCL_rmine the number of function names to be read */
+   /* Dete_rmine the number of function names to be read */
    /* and the space required for them.                  */
    /*===================================================*/
 
@@ -526,7 +526,7 @@ static struct functionDefinition **ReadNeededFunctions(
    functionPtr = NULL;
    for (i = 0; i < *numberOfFunctions; i++)
      {
-      if ((functionPtr = FastCL_FindFunction(theEnv,namePtr,functionPtr)) == NULL)
+      if ((functionPtr = Fast_FindFunction(theEnv,namePtr,functionPtr)) == NULL)
         {
          if (! functionsNotFound)
            {
@@ -572,10 +572,10 @@ static struct functionDefinition **ReadNeededFunctions(
   }
 
 /*****************************************/
-/* FastCL_FindFunction: Search the function */
+/* Fast_FindFunction: Search the function */
 /*   list for a specific function.       */
 /*****************************************/
-static struct functionDefinition *FastCL_FindFunction(
+static struct functionDefinition *Fast_FindFunction(
   Environment *theEnv,
   const char *functionName,
   struct functionDefinition *lastFunction)
@@ -631,25 +631,25 @@ bool CL_Bloaded(
   }
 
 /***************************************/
-/* CL_ClearCL_BloadCallback: CL_Clears a binary */
+/* CL_Clear_BloadCallback: CL_Clears a binary */
 /*   image from the KB environment.    */
 /***************************************/
-static void CL_ClearCL_BloadCallback(
+static void CL_Clear_BloadCallback(
   Environment *theEnv,
   void *context)
   {
-   CL_ClearCL_Bload(theEnv);
+   CL_Clear_Bload(theEnv);
   }
 
 /*************************************/
-/* CL_ClearCL_Bload: CL_Clears a binary image */
+/* CL_Clear_Bload: CL_Clears a binary image */
 /*   from the KB environment.        */
 /*************************************/
-static bool CL_ClearCL_Bload(
+static bool CL_Clear_Bload(
   Environment *theEnv)
   {
    struct BinaryItem *biPtr;
-   struct boolCL_CallFunctionItem *bfPtr;
+   struct bool_CallFunctionItem *bfPtr;
    bool ready, error;
 
    /*======================================*/
@@ -665,7 +665,7 @@ static bool CL_ClearCL_Bload(
    /*=================================================*/
 
    error = false;
-   for (bfPtr = CL_BloadData(theEnv)->CL_ClearCL_BloadReadyFunctions;
+   for (bfPtr = CL_BloadData(theEnv)->CL_Clear_BloadReadyFunctions;
         bfPtr != NULL;
         bfPtr = bfPtr->next)
      {
@@ -711,13 +711,13 @@ static bool CL_ClearCL_Bload(
    /* Free bloaded expressions. */
    /*===========================*/
 
-   CL_ClearCL_BloadedExpressions(theEnv);
+   CL_Clear_BloadedExpressions(theEnv);
 
    /*===========================*/
    /* Free bloaded constraints. */
    /*===========================*/
 
-   CL_ClearCL_BloadedConstraints(theEnv);
+   CL_Clear_BloadedConstraints(theEnv);
 
    /*==================================*/
    /* Remove the bload clear function. */
@@ -734,91 +734,91 @@ static bool CL_ClearCL_Bload(
   }
 
 /*************************************************/
-/* AbortCL_Bload: Cleans up effects of before-bload */
+/* Abort_Bload: Cleans up effects of before-bload */
 /*   functions in event of failure.              */
 /*************************************************/
-static void AbortCL_Bload(
+static void Abort_Bload(
   Environment *theEnv)
   {
-   struct voidCL_CallFunctionItem *bfPtr;
+   struct void_CallFunctionItem *bfPtr;
 
-   for (bfPtr = CL_BloadData(theEnv)->AbortCL_BloadFunctions;
+   for (bfPtr = CL_BloadData(theEnv)->Abort_BloadFunctions;
         bfPtr != NULL;
         bfPtr = bfPtr->next)
      { (*bfPtr->func)(theEnv,bfPtr->context); }
   }
 
 /********************************************/
-/* CL_AddBeforeCL_BloadFunction: Adds a function  */
+/* CL_AddBefore_BloadFunction: Adds a function  */
 /*   to the list of functions called before */
 /*   a binary load occurs.                  */
 /********************************************/
-void CL_AddBeforeCL_BloadFunction(
+void CL_AddBefore_BloadFunction(
   Environment *theEnv,
   const char *name,
-  VoidCL_CallFunction *func,
+  Void_CallFunction *func,
   int priority,
   void *context)
   {
-   CL_BloadData(theEnv)->BeforeCL_BloadFunctions =
-     CL_AddCL_VoidFunctionToCallList(theEnv,name,priority,func,CL_BloadData(theEnv)->BeforeCL_BloadFunctions,context);
+   CL_BloadData(theEnv)->Before_BloadFunctions =
+     CL_Add_VoidFunctionToCallList(theEnv,name,priority,func,CL_BloadData(theEnv)->Before_BloadFunctions,context);
   }
 
 /*******************************************/
-/* CL_AddAfterCL_BloadFunction: Adds a function  */
+/* CL_AddAfter_BloadFunction: Adds a function  */
 /*   to the list of functions called after */
 /*   a binary load occurs.                 */
 /*******************************************/
-void CL_AddAfterCL_BloadFunction(
+void CL_AddAfter_BloadFunction(
   Environment *theEnv,
   const char *name,
-  VoidCL_CallFunction *func,
+  Void_CallFunction *func,
   int priority,
   void *context)
   {
-   CL_BloadData(theEnv)->AfterCL_BloadFunctions =
-      CL_AddCL_VoidFunctionToCallList(theEnv,name,priority,func,CL_BloadData(theEnv)->AfterCL_BloadFunctions,context);
+   CL_BloadData(theEnv)->After_BloadFunctions =
+      CL_Add_VoidFunctionToCallList(theEnv,name,priority,func,CL_BloadData(theEnv)->After_BloadFunctions,context);
   }
 
 /**************************************************/
-/* CL_AddCL_ClearCL_BloadReadyFunction: Adds a function to */
-/*   the list of functions called to deteCL_rmine if */
+/* CL_Add_Clear_BloadReadyFunction: Adds a function to */
+/*   the list of functions called to dete_rmine if */
 /*   a binary image can be cleared.               */
 /**************************************************/
-void CL_AddCL_ClearCL_BloadReadyFunction(
+void CL_Add_Clear_BloadReadyFunction(
   Environment *theEnv,
   const char *name,
-  BoolCL_CallFunction *func,
+  Bool_CallFunction *func,
   int priority,
   void *context)
   {
-   CL_BloadData(theEnv)->CL_ClearCL_BloadReadyFunctions =
+   CL_BloadData(theEnv)->CL_Clear_BloadReadyFunctions =
       CL_AddBoolFunctionToCallList(theEnv,name,priority,func,
-                                CL_BloadData(theEnv)->CL_ClearCL_BloadReadyFunctions,context);
+                                CL_BloadData(theEnv)->CL_Clear_BloadReadyFunctions,context);
   }
 
 /*********************************************/
-/* CL_AddAbortCL_BloadFunction: Adds a function to */
+/* CL_AddAbort_BloadFunction: Adds a function to */
 /*   the list of functions called if a bload */
 /*   has to be aborted.                      */
 /*********************************************/
-void CL_AddAbortCL_BloadFunction(
+void CL_AddAbort_BloadFunction(
   Environment *theEnv,
   const char *name,
-  VoidCL_CallFunction *func,
+  Void_CallFunction *func,
   int priority,
   void *context)
   {
-   CL_BloadData(theEnv)->AbortCL_BloadFunctions =
-      CL_AddCL_VoidFunctionToCallList(theEnv,name,priority,func,
-                                CL_BloadData(theEnv)->AbortCL_BloadFunctions,context);
+   CL_BloadData(theEnv)->Abort_BloadFunctions =
+      CL_Add_VoidFunctionToCallList(theEnv,name,priority,func,
+                                CL_BloadData(theEnv)->Abort_BloadFunctions,context);
   }
 
 /*******************************************************
   NAME         : CL_BloadOutOfMemoryFunction
   DESCRIPTION  : Memory function used by bload to
                    prevent exiting when out of
-                   memory - used by CL_BloadandCL_Refresh
+                   memory - used by CL_Bloadand_Refresh
   INPUTS       : The memory request size (unused)
   RETURNS      : True (indicates a failure and for
                  the memory functions to simply
@@ -837,11 +837,11 @@ static bool CL_BloadOutOfMemoryFunction(
   }
 
 /*****************************************************/
-/* CannotCL_LoadWithCL_BloadMessage: Generic error message */
+/* Cannot_LoadWith_BloadMessage: Generic error message */
 /*   for indicating that a construct can't be loaded */
 /*   when a binary image is active.                  */
 /*****************************************************/
-void CannotCL_LoadWithCL_BloadMessage(
+void Cannot_LoadWith_BloadMessage(
   Environment *theEnv,
   const char *constructName)
   {

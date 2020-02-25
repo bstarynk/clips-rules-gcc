@@ -85,9 +85,9 @@
 
 /******************************************************/
 /* CheckFunctionReturnType: Checks a functions return */
-/*   type against a set of peCL_rmissable return values. */
+/*   type against a set of pe_rmissable return values. */
 /*   Returns true if the return type is included      */
-/*   among the peCL_rmissible values, otherwise false.   */
+/*   among the pe_rmissible values, otherwise false.   */
 /******************************************************/
 static bool CheckFunctionReturnType(
   unsigned functionReturnType,
@@ -131,7 +131,7 @@ static bool CheckFunctionReturnType(
   }
 
 /****************************************************/
-/* CheckTypeConstraint: DeteCL_rmines if a primitive   */
+/* CheckTypeConstraint: Dete_rmines if a primitive   */
 /*   data type satisfies the type constraint fields */
 /*   of aconstraint record.                         */
 /****************************************************/
@@ -178,7 +178,7 @@ static bool CheckTypeConstraint(
   }
 
 /********************************************************/
-/* CL_CheckCardinalityConstraint: DeteCL_rmines if an integer */
+/* CL_CheckCardinalityConstraint: Dete_rmines if an integer */
 /*   falls within the range of allowed cardinalities    */
 /*   for a constraint record.                           */
 /********************************************************/
@@ -195,7 +195,7 @@ bool CL_CheckCardinalityConstraint(
    if (constraints == NULL) return true;
 
    /*==================================*/
-   /* DeteCL_rmine if the integer is less */
+   /* Dete_rmine if the integer is less */
    /* than the minimum cardinality.    */
    /*==================================*/
 
@@ -209,7 +209,7 @@ bool CL_CheckCardinalityConstraint(
      }
 
    /*=====================================*/
-   /* DeteCL_rmine if the integer is greater */
+   /* Dete_rmine if the integer is greater */
    /* than the maximum cardinality.       */
    /*=====================================*/
 
@@ -230,7 +230,7 @@ bool CL_CheckCardinalityConstraint(
   }
 
 /*****************************************************************/
-/* CheckRangeAgainstCardinalityConstraint: DeteCL_rmines if a range */
+/* CheckRangeAgainstCardinalityConstraint: Dete_rmines if a range */
 /*   of numbers could possibly fall within the range of allowed  */
 /*   cardinalities for a constraint record. Returns true if at   */
 /*   least one of the numbers in the range is within the allowed */
@@ -291,7 +291,7 @@ static bool CheckRangeAgainstCardinalityConstraint(
   }
 
 /**********************************************************************/
-/* CL_CheckAllowedValuesConstraint: DeteCL_rmines if a primitive data type  */
+/* CL_CheckAllowedValuesConstraint: Dete_rmines if a primitive data type  */
 /*   satisfies the allowed-... constraint fields of a constraint      */
 /*   record. Returns true if the constraints are satisfied, otherwise */
 /*   false is returned.                                               */
@@ -311,7 +311,7 @@ bool CL_CheckAllowedValuesConstraint(
    if (constraints == NULL) return true;
 
    /*=====================================================*/
-   /* DeteCL_rmine if there are any allowed-... restrictions */
+   /* Dete_rmine if there are any allowed-... restrictions */
    /* for the type of the value being checked.            */
    /*=====================================================*/
 
@@ -374,7 +374,7 @@ bool CL_CheckAllowedValuesConstraint(
   }
 
 /**********************************************************************/
-/* CL_CheckAllowedClassesConstraint: DeteCL_rmines if a primitive data type */
+/* CL_CheckAllowedClassesConstraint: Dete_rmines if a primitive data type */
 /*   satisfies the allowed-classes constraint fields of a constraint  */
 /*   record. Returns true if the constraints are satisfied, otherwise */
 /*   false is returned.                                               */
@@ -414,7 +414,7 @@ bool CL_CheckAllowedClassesConstraint(
      { return true; }
 
    /*=============================================*/
-   /* If an instance name is specified, deteCL_rmine */
+   /* If an instance name is specified, dete_rmine */
    /* whether the instance exists.                */
    /*=============================================*/
 
@@ -462,7 +462,7 @@ bool CL_CheckAllowedClassesConstraint(
   }
 
 /*************************************************************/
-/* CheckRangeConstraint: DeteCL_rmines if a primitive data type */
+/* CheckRangeConstraint: Dete_rmines if a primitive data type */
 /*   satisfies the range constraint of a constraint record.  */
 /*************************************************************/
 static bool CheckRangeConstraint(
@@ -644,7 +644,7 @@ static void PrintRange(
 
 /*************************************************************/
 /* CL_ConstraintCheckDataObject: Given a value stored in a data */
-/*   object structure and a constraint record, deteCL_rmines if */
+/*   object structure and a constraint record, dete_rmines if */
 /*   the data object satisfies the constraint record.        */
 /*************************************************************/
 ConstraintViolationType CL_ConstraintCheckDataObject(
@@ -683,7 +683,7 @@ ConstraintViolationType CL_ConstraintCheckDataObject(
 
 /****************************************************************/
 /* CL_ConstraintCheckValue: Given a value and a constraint record, */
-/*   deteCL_rmines if the value satisfies the constraint record.   */
+/*   dete_rmines if the value satisfies the constraint record.   */
 /****************************************************************/
 ConstraintViolationType CL_ConstraintCheckValue(
   Environment *theEnv,
@@ -726,7 +726,7 @@ ConstraintViolationType CL_ConstraintCheckExpressionChain(
    ConstraintViolationType vCode;
 
    /*===========================================================*/
-   /* DeteCL_rmine the minimum and maximum number of value which   */
+   /* Dete_rmine the minimum and maximum number of value which   */
    /* can be derived from the expression chain (max of -1 means */
    /* positive infinity).                                       */
    /*===========================================================*/
@@ -800,7 +800,7 @@ ConstraintViolationType CL_ConstraintCheckExpression(
 #endif /* (! RUN_TIME) && (! BLOAD_ONLY) */
 
 /*****************************************************/
-/* CL_UnmatchableConstraint: DeteCL_rmines if a constraint */
+/* CL_UnmatchableConstraint: Dete_rmines if a constraint */
 /*  record can still be satisfied by some value.     */
 /*****************************************************/
 bool CL_UnmatchableConstraint(

@@ -19,7 +19,7 @@
 /*                                                           */
 /*      6.24: Renamed BOOLEAN macro type to intBool.         */
 /*                                                           */
-/*      6.30: Added support for passing context infoCL_rmation  */
+/*      6.30: Added support for passing context info_rmation  */
 /*            to user defined functions.                     */
 /*                                                           */
 /*            Support for long long integers.                */

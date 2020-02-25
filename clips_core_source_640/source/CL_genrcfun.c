@@ -42,8 +42,8 @@
 /*            Fixed typing issue when OBJECT_SYSTEM          */
 /*            compiler flag is set to 0.                     */
 /*                                                           */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*      6.40: Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -115,7 +115,7 @@
 
 /***************************************************
   NAME         : CL_ClearDefgenericsReady
-  DESCRIPTION  : DeteCL_rmines if it is safe to
+  DESCRIPTION  : Dete_rmines if it is safe to
                  remove all defgenerics
                  Assumes *all* constructs will be
                  deleted - only checks to see if
@@ -135,7 +135,7 @@ bool CL_ClearDefgenericsReady(
   }
 
 /*****************************************************
-  NAME         : CL_AllocateCL_DefgenericModule
+  NAME         : CL_Allocate_DefgenericModule
   DESCRIPTION  : Creates and initializes a
                  list of defgenerics for a new module
   INPUTS       : None
@@ -143,14 +143,14 @@ bool CL_ClearDefgenericsReady(
   SIDE EFFECTS : Deffunction module created
   NOTES        : None
  *****************************************************/
-void *CL_AllocateCL_DefgenericModule(
+void *CL_Allocate_DefgenericModule(
   Environment *theEnv)
   {
    return (void *) get_struct(theEnv,defgenericModule);
   }
 
 /***************************************************
-  NAME         : FreeCL_DefgenericModule
+  NAME         : Free_DefgenericModule
   DESCRIPTION  : Removes a deffunction module and
                  all associated deffunctions
   INPUTS       : The deffunction module
@@ -158,7 +158,7 @@ void *CL_AllocateCL_DefgenericModule(
   SIDE EFFECTS : Module and deffunctions deleted
   NOTES        : None
  ***************************************************/
-void FreeCL_DefgenericModule(
+void Free_DefgenericModule(
   Environment *theEnv,
   void *theItem)
   {
@@ -195,9 +195,9 @@ static void CL_RuntimeDefgenericAction(
   }
 
 /********************************/
-/* DefgenericCL_RunTimeInitialize: */
+/* Defgeneric_RunTimeInitialize: */
 /********************************/
-void DefgenericCL_RunTimeInitialize(
+void Defgeneric_RunTimeInitialize(
   Environment *theEnv)
   {
    CL_DoForAllConstructs(theEnv,CL_RuntimeDefgenericAction,DefgenericData(theEnv)->CL_DefgenericModuleIndex,true,NULL);
@@ -321,8 +321,8 @@ void CL_RemoveDefgeneric(
 
    if (theDefgeneric->mcnt != 0)
      { CL_rm(theEnv,theDefgeneric->methods,(sizeof(Defmethod) * theDefgeneric->mcnt)); }
-   CL_ReleaseLexeme(theEnv,GetCL_DefgenericNamePointer(theDefgeneric));
-   SetCL_DefgenericPPFoCL_rm(theEnv,theDefgeneric,NULL);
+   CL_ReleaseLexeme(theEnv,Get_DefgenericNamePointer(theDefgeneric));
+   SetCL_DefgenericPPFo_rm(theEnv,theDefgeneric,NULL);
    CL_ClearUserDataList(theEnv,theDefgeneric->header.usrData);
    rtn_struct(theEnv,defgeneric,theDefgeneric);
   }
@@ -409,8 +409,8 @@ void CL_DeleteMethodInfo(
    CL_ExpressionDeinstall(theEnv,meth->actions);
    CL_ReturnPackedExpression(theEnv,meth->actions);
    CL_ClearUserDataList(theEnv,meth->header.usrData);
-   if (meth->header.ppFoCL_rm != NULL)
-     CL_rm(theEnv,(void *) meth->header.ppFoCL_rm,(sizeof(char) * (strlen(meth->header.ppFoCL_rm)+1)));
+   if (meth->header.ppFo_rm != NULL)
+     CL_rm(theEnv,(void *) meth->header.ppFo_rm,(sizeof(char) * (strlen(meth->header.ppFo_rm)+1)));
    for (j = 0 ; j < meth->restrictionCount ; j++)
      {
       rptr = &meth->restrictions[j];
@@ -458,8 +458,8 @@ void CL_DestroyMethodInfo(
    CL_ReturnPackedExpression(theEnv,meth->actions);
 
    CL_ClearUserDataList(theEnv,meth->header.usrData);
-   if (meth->header.ppFoCL_rm != NULL)
-     CL_rm(theEnv,(void *) meth->header.ppFoCL_rm,(sizeof(char) * (strlen(meth->header.ppFoCL_rm)+1)));
+   if (meth->header.ppFo_rm != NULL)
+     CL_rm(theEnv,(void *) meth->header.ppFo_rm,(sizeof(char) * (strlen(meth->header.ppFo_rm)+1)));
    for (j = 0 ; j < meth->restrictionCount ; j++)
      {
       rptr = &meth->restrictions[j];
@@ -476,7 +476,7 @@ void CL_DestroyMethodInfo(
 
 /***************************************************
   NAME         : CL_MethodsExecuting
-  DESCRIPTION  : DeteCL_rmines if any of the methods of
+  DESCRIPTION  : Dete_rmines if any of the methods of
                    a generic function are currently
                    executing
   INPUTS       : The generic function address
@@ -502,7 +502,7 @@ bool CL_MethodsExecuting(
 
 /**************************************************************
   NAME         : SubsumeType
-  DESCRIPTION  : DeteCL_rmines if the second type subsumes
+  DESCRIPTION  : Dete_rmines if the second type subsumes
                  the first type
                  (e.g. INTEGER_TYPE is subsumed by NUMBER_TYPE_CODE)
   INPUTS       : Two type codes
@@ -569,12 +569,12 @@ unsigned short CL_FindMethodByIndex(
                  3) The method address
   RETURNS      : Nothing useful
   SIDE EFFECTS : None
-  NOTES        : A teCL_rminating newline is NOT included
+  NOTES        : A te_rminating newline is NOT included
  ******************************************************************/
 void CL_PrintMethod(
   Environment *theEnv,
   Defmethod *meth,
-  StringCL_Builder *theSB)
+  String_Builder *theSB)
   {
 #if MAC_XCD
 #pragma unused(theEnv)
@@ -583,7 +583,7 @@ void CL_PrintMethod(
    RESTRICTION *rptr;
    char numbuf[15];
 
-   SBCL_Reset(theSB);
+   SB_Reset(theSB);
    if (meth->system)
      CL_SBAppend(theSB,"SYS");
    CL_gensprintf(numbuf,"%-2hu ",meth->index);
@@ -637,7 +637,7 @@ void CL_PrintMethod(
   RETURNS      : Nothing useful
   SIDE EFFECTS : Any side-effects of evaluating the generic
                    function arguments
-                 and evaluating query-functions to deteCL_rmine
+                 and evaluating query-functions to dete_rmine
                    the set of applicable methods
   NOTES        : H/L Syntax: (preview-generic <func> <args>)
  *************************************************************/
@@ -664,10 +664,10 @@ void CL_PreviewGeneric(
       return;
      }
    oldce = CL_ExecutingConstruct(theEnv);
-   SetCL_ExecutingConstruct(theEnv,true);
+   Set_ExecutingConstruct(theEnv,true);
    previousGeneric = DefgenericData(theEnv)->CurrentGeneric;
    DefgenericData(theEnv)->CurrentGeneric = gfunc;
-   CL_EvaluationData(theEnv)->CurrentCL_EvaluationDepth++;
+   CL_EvaluationData(theEnv)->Current_EvaluationDepth++;
    CL_PushProcParameters(theEnv,GetFirstArgument()->nextArg,
                           CL_CountArguments(GetFirstArgument()->nextArg),
                           CL_DefgenericName(gfunc),"generic function",
@@ -676,8 +676,8 @@ void CL_PreviewGeneric(
      {
       CL_PopProcParameters(theEnv);
       DefgenericData(theEnv)->CurrentGeneric = previousGeneric;
-      CL_EvaluationData(theEnv)->CurrentCL_EvaluationDepth--;
-      SetCL_ExecutingConstruct(theEnv,oldce);
+      CL_EvaluationData(theEnv)->Current_EvaluationDepth--;
+      Set_ExecutingConstruct(theEnv,oldce);
       return;
      }
    gfunc->busy++;
@@ -685,8 +685,8 @@ void CL_PreviewGeneric(
    gfunc->busy--;
    CL_PopProcParameters(theEnv);
    DefgenericData(theEnv)->CurrentGeneric = previousGeneric;
-   CL_EvaluationData(theEnv)->CurrentCL_EvaluationDepth--;
-   SetCL_ExecutingConstruct(theEnv,oldce);
+   CL_EvaluationData(theEnv)->Current_EvaluationDepth--;
+   Set_ExecutingConstruct(theEnv,oldce);
   }
 
 #endif /* DEBUGGING_FUNCTIONS */
@@ -719,7 +719,7 @@ Defgeneric *CL_CheckGenericExists(
       CL_WriteString(theEnv,STDERR,"' in function '");
       CL_WriteString(theEnv,STDERR,fname);
       CL_WriteString(theEnv,STDERR,"'.\n");
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
      }
    return(gfunc);
   }
@@ -755,7 +755,7 @@ unsigned short CL_CheckMethodExists(
       CL_WriteString(theEnv,STDERR," in function '");
       CL_WriteString(theEnv,STDERR,fname);
       CL_WriteString(theEnv,STDERR,"'.\n");
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
      }
    return fi;
   }
@@ -798,7 +798,7 @@ const char *TypeName(
       case INSTANCE_TYPE_CODE  : return(INSTANCE_TYPE_NAME);
       default                  : CL_PrintErrorID(theEnv,"INSCOM",1,false);
                                  CL_WriteString(theEnv,STDERR,"Undefined type in function 'type'.\n");
-                                 SetCL_EvaluationError(theEnv,true);
+                                 Set_EvaluationError(theEnv,true);
                                  return("<UNKNOWN-TYPE>");
      }
   }
@@ -853,9 +853,9 @@ static void DisplayGenericCore(
   {
    long i;
    bool rtn = false;
-   StringCL_Builder *theSB;
+   String_Builder *theSB;
    
-   theSB = CL_CreateStringCL_Builder(theEnv,256);
+   theSB = CL_CreateString_Builder(theEnv,256);
 
    for (i = 0 ; i < gfunc->mcnt ; i++)
      {

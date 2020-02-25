@@ -69,7 +69,7 @@ struct objectReteBinaryData
 
 #define ClassAlphaPointer(i)   ((i == ULONG_MAX) ? NULL : (CLASS_ALPHA_LINK *) &ObjectReteBinaryData(theEnv)->AlphaLinkArray[i])
 
-   void                    SetupObjectPatternsCL_Bload(Environment *);
+   void                    SetupObjectPatterns_Bload(Environment *);
 
 #endif /* DEFRULE_CONSTRUCT && OBJECT_SYSTEM */
 

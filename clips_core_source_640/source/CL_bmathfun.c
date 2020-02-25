@@ -29,11 +29,11 @@
 /*                                                           */
 /*      6.31: Fix for overflow error in div function.        */
 /*                                                           */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*      6.40: Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to CL_GetCL_HaltExecution and       */
-/*            SetCL_HaltExecution functions.                    */
+/*            Added Env prefix to CL_Get_HaltExecution and       */
+/*            Set_HaltExecution functions.                    */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -296,7 +296,7 @@ void CL_DivisionFunction(
       if (theNumber == 0.0)
         {
          CL_DivideByZeroErrorMessage(theEnv,"/");
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          returnValue->floatValue = CL_CreateFloat(theEnv,1.0);
          return;
         }
@@ -352,7 +352,7 @@ void CL_DivFunction(
       if (theNumber == 0LL)
         {
          CL_DivideByZeroErrorMessage(theEnv,"div");
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          returnValue->integerValue = CL_CreateInteger(theEnv,1L);
          return;
         }
@@ -360,7 +360,7 @@ void CL_DivFunction(
       if ((total == LLONG_MIN) && (theNumber == -1))
         {
          CL_ArgumentOverUnderflowErrorMessage(theEnv,"div",true);
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          returnValue->integerValue = CL_CreateInteger(theEnv,1L);
          return;
         }
@@ -478,8 +478,8 @@ void CL_MinFunction(
      { return; }
 
    /*===========================================================*/
-   /* Loop through the reCL_maining arguments, first checking each */
-   /* argument to see that it is a number, and then deteCL_rmining */
+   /* Loop through the re_maining arguments, first checking each */
+   /* argument to see that it is a number, and then dete_rmining */
    /* if the argument is less than the previous arguments and   */
    /* is thus the minimum value.                                */
    /*===========================================================*/
@@ -526,8 +526,8 @@ void CL_MaxFunction(
      { return; }
 
    /*===========================================================*/
-   /* Loop through the reCL_maining arguments, first checking each */
-   /* argument to see that it is a number, and then deteCL_rmining */
+   /* Loop through the re_maining arguments, first checking each */
+   /* argument to see that it is a number, and then dete_rmining */
    /* if the argument is greater than the previous arguments    */
    /* and is thus the maximum value.                            */
    /*===========================================================*/

@@ -61,7 +61,7 @@
 /*            Added CL_GCBlockStart and CL_GCBlockEnd functions    */
 /*            for garbage collection blocks.                 */
 /*                                                           */
-/*            Added StringCL_Builder functions.                 */
+/*            Added String_Builder functions.                 */
 /*                                                           */
 /*************************************************************/
 
@@ -75,37 +75,37 @@
 
 typedef struct callFunctionItem CL_CallFunctionItem;
 typedef struct callFunctionItemWithArg CL_CallFunctionItemWithArg;
-typedef struct boolCL_CallFunctionItem BoolCL_CallFunctionItem;
-typedef struct voidCL_CallFunctionItem VoidCL_CallFunctionItem;
+typedef struct bool_CallFunctionItem Bool_CallFunctionItem;
+typedef struct void_CallFunctionItem Void_CallFunctionItem;
 
 #include "evaluatn.h"
 #include "moduldef.h"
 
 typedef struct gcBlock GCBlock;
-typedef struct stringCL_Builder StringCL_Builder;
+typedef struct string_Builder String_Builder;
 
-struct voidCL_CallFunctionItem
+struct void_CallFunctionItem
   {
    const char *name;
-   VoidCL_CallFunction *func;
+   Void_CallFunction *func;
    int priority;
-   struct voidCL_CallFunctionItem *next;
+   struct void_CallFunctionItem *next;
    void *context;
   };
 
-struct boolCL_CallFunctionItem
+struct bool_CallFunctionItem
   {
    const char *name;
-   BoolCL_CallFunction *func;
+   Bool_CallFunction *func;
    int priority;
-   struct boolCL_CallFunctionItem *next;
+   struct bool_CallFunctionItem *next;
    void *context;
   };
 
 struct callFunctionItemWithArg
   {
    const char *name;
-   VoidCL_CallFunctionWithArg *func;
+   Void_CallFunctionWithArg *func;
    int priority;
    struct callFunctionItemWithArg *next;
    void *context;
@@ -139,11 +139,11 @@ struct gcBlock
    UDFValue *result;
   };
 
-struct stringCL_Builder
+struct string_Builder
   {
    Environment *sbEnv;
    char *contents;
-   size_t bufferCL_Reset;
+   size_t buffer_Reset;
    size_t length;
    size_t bufferMaximum;
   };
@@ -152,11 +152,11 @@ struct stringCL_Builder
 
 struct utilityData
   {
-   struct voidCL_CallFunctionItem *ListOfCleanupFunctions;
-   struct voidCL_CallFunctionItem *ListOfPeriodicFunctions;
+   struct void_CallFunctionItem *ListOfCleanupFunctions;
+   struct void_CallFunctionItem *ListOfPeriodicFunctions;
    bool PeriodicFunctionsEnabled;
    bool YieldFunctionEnabled;
-   void (*YieldCL_TimeFunction)(void);
+   void (*Yield_TimeFunction)(void);
    struct trackedMemory *trackList;
    struct garbageFrame MasterGarbageFrame;
    struct garbageFrame *CurrentGarbageFrame;
@@ -170,38 +170,38 @@ struct utilityData
 #define IsUTF8MultiByteContinuation(ch) ((((unsigned char) ch) >= 0x80) && (((unsigned char) ch) <= 0xBF))
 
    void                           CL_InitializeUtilityData(Environment *);
-   bool                           CL_AddCleanupFunction(Environment *,const char *,VoidCL_CallFunction *,int,void *);
-   bool                           CL_AddPeriodicFunction(Environment *,const char *,VoidCL_CallFunction *,int,void *);
+   bool                           CL_AddCleanupFunction(Environment *,const char *,Void_CallFunction *,int,void *);
+   bool                           CL_AddPeriodicFunction(Environment *,const char *,Void_CallFunction *,int,void *);
    bool                           CL_RemoveCleanupFunction(Environment *,const char *);
    bool                           CL_RemovePeriodicFunction(Environment *,const char *);
    char                          *CL_CopyString(Environment *,const char *);
    void                           CL_DeleteString(Environment *,char *);
    const char                    *CL_AppendStrings(Environment *,const char *,const char *);
-   const char                    *StringPrintFoCL_rm(Environment *,const char *);
+   const char                    *StringPrintFo_rm(Environment *,const char *);
    char                          *CL_AppendToString(Environment *,const char *,char *,size_t *,size_t *);
    char                          *CL_InsertInString(Environment *,const char *,size_t,char *,size_t *,size_t *);
    char                          *CL_AppendNToString(Environment *,const char *,char *,size_t,size_t *,size_t *);
    char                          *CL_EnlargeString(Environment *,size_t,char *,size_t *,size_t *);
    char                          *CL_ExpandStringWithChar(Environment *,int,char *,size_t *,size_t *,size_t);
-   VoidCL_CallFunctionItem          *CL_AddCL_VoidFunctionToCallList(Environment *,const char *,int,VoidCL_CallFunction *,
-                                                            VoidCL_CallFunctionItem *,void *);
-   BoolCL_CallFunctionItem          *CL_AddBoolFunctionToCallList(Environment *,const char *,int,BoolCL_CallFunction *,
-                                                            BoolCL_CallFunctionItem *,void *);
-   VoidCL_CallFunctionItem          *CL_RemoveCL_VoidFunctionFromCallList(Environment *,const char *,
-                                                                 VoidCL_CallFunctionItem *,bool *);
-   BoolCL_CallFunctionItem          *CL_RemoveBoolFunctionFromCallList(Environment *,const char *,
-                                                                 BoolCL_CallFunctionItem *,bool *);
-   void                           CL_DeallocateVoidCallList(Environment *,VoidCL_CallFunctionItem *);
-   void                           CL_DeallocateBoolCallList(Environment *,BoolCL_CallFunctionItem *);
+   Void_CallFunctionItem          *CL_Add_VoidFunctionToCallList(Environment *,const char *,int,Void_CallFunction *,
+                                                            Void_CallFunctionItem *,void *);
+   Bool_CallFunctionItem          *CL_AddBoolFunctionToCallList(Environment *,const char *,int,Bool_CallFunction *,
+                                                            Bool_CallFunctionItem *,void *);
+   Void_CallFunctionItem          *CL_Remove_VoidFunctionFromCallList(Environment *,const char *,
+                                                                 Void_CallFunctionItem *,bool *);
+   Bool_CallFunctionItem          *CL_RemoveBoolFunctionFromCallList(Environment *,const char *,
+                                                                 Bool_CallFunctionItem *,bool *);
+   void                           CL_DeallocateVoidCallList(Environment *,Void_CallFunctionItem *);
+   void                           CL_DeallocateBoolCallList(Environment *,Bool_CallFunctionItem *);
    CL_CallFunctionItemWithArg       *CL_AddFunctionToCallListWithArg(Environment *,const char *,int,
-                                                               VoidCL_CallFunctionWithArg *,
+                                                               Void_CallFunctionWithArg *,
                                                                CL_CallFunctionItemWithArg *,void *);
    CL_CallFunctionItemWithArg       *CL_RemoveFunctionFromCallListWithArg(Environment *,const char *,
                                                                             struct callFunctionItemWithArg *,
                                                                             bool *);
    void                           CL_DeallocateCallListWithArg(Environment *,struct callFunctionItemWithArg *);
-   VoidCL_CallFunctionItem          *CL_GetCL_VoidFunctionFromCallList(Environment *,const char *,VoidCL_CallFunctionItem *);
-   BoolCL_CallFunctionItem          *CL_GetBoolFunctionFromCallList(Environment *,const char *,BoolCL_CallFunctionItem *);
+   Void_CallFunctionItem          *CL_Get_VoidFunctionFromCallList(Environment *,const char *,Void_CallFunctionItem *);
+   Bool_CallFunctionItem          *CL_GetBoolFunctionFromCallList(Environment *,const char *,Bool_CallFunctionItem *);
    size_t                         CL_ItemHashValue(Environment *,unsigned short,void *,size_t);
    void                           CL_YieldTime(Environment *);
    bool                           CL_EnablePeriodicFunctions(Environment *,bool);
@@ -219,14 +219,14 @@ struct utilityData
    void                           CL_GCBlockStart(Environment *,GCBlock *);
    void                           CL_GCBlockEnd(Environment *,GCBlock *);
    void                           CL_GCBlockEndUDF(Environment *,GCBlock *,UDFValue *);
-   StringCL_Builder                 *CL_CreateStringCL_Builder(Environment *,size_t);
-   void                           CL_SBDispose(StringCL_Builder *);
-   void                           CL_SBAppend(StringCL_Builder *,const char *);
-   void                           CL_SBAppendInteger(StringCL_Builder *,long long);
-   void                           CL_SBAppendFloat(StringCL_Builder *,double);
-   void                           CL_SBAddChar(StringCL_Builder *,int);
-   void                           SBCL_Reset(StringCL_Builder *);
-   char                          *CL_SBCopy(StringCL_Builder *);
+   String_Builder                 *CL_CreateString_Builder(Environment *,size_t);
+   void                           CL_SBDispose(String_Builder *);
+   void                           CL_SBAppend(String_Builder *,const char *);
+   void                           CL_SBAppendInteger(String_Builder *,long long);
+   void                           CL_SBAppendFloat(String_Builder *,double);
+   void                           CL_SBAddChar(String_Builder *,int);
+   void                           SB_Reset(String_Builder *);
+   char                          *CL_SBCopy(String_Builder *);
    void                          *CL_GetPeriodicFunctionContext(Environment *,const char *);
 
 #endif /* _H_utility */

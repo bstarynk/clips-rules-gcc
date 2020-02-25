@@ -68,8 +68,8 @@
 
    void                           CL_PrintPartialMatch(Environment *,const char *,struct partialMatch *);
    struct partialMatch           *CL_CopyPartialMatch(Environment *,struct partialMatch *);
-   struct partialMatch           *MergePartialCL_Matches(Environment *,struct partialMatch *,struct partialMatch *);
-   long                           IncrementPseudoCL_FactIndex(void);
+   struct partialMatch           *MergePartial_Matches(Environment *,struct partialMatch *,struct partialMatch *);
+   long                           IncrementPseudo_FactIndex(void);
    struct partialMatch           *CL_GetAlphaMemory(Environment *,struct patternNodeHeader *,unsigned long);
    struct partialMatch           *CL_GetLeftBetaMemory(struct joinNode *,unsigned long);
    struct partialMatch           *CL_GetRightBetaMemory(struct joinNode *,unsigned long);
@@ -78,7 +78,7 @@
    void                           CL_DestroyBetaMemory(Environment *,struct joinNode *,int);
    void                           CL_FlushBetaMemory(Environment *,struct joinNode *,int);
    bool                           CL_BetaMemoryNotEmpty(struct joinNode *);
-   void                           RemoveAlphaMemoryCL_Matches(Environment *,struct patternNodeHeader *,struct partialMatch *,
+   void                           RemoveAlphaMemory_Matches(Environment *,struct patternNodeHeader *,struct partialMatch *,
                                                                   struct alphaMatch *);
    void                           CL_DestroyAlphaMemory(Environment *,struct patternNodeHeader *,bool);
    void                           CL_FlushAlphaMemory(Environment *,struct patternNodeHeader *);

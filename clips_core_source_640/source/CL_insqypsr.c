@@ -117,7 +117,7 @@
                  <query-block>  :== (<instance-var>+) <query-expression>
                  <instance-var> :== (<var-name> <class-name>+)
 
-                 Parses into following foCL_rm :
+                 Parses into following fo_rm :
 
                  <query-function>
                       |
@@ -186,7 +186,7 @@ Expression *CL_ParseQueryNoAction(
                  <query-block>  :== (<instance-var>+) <query-expression>
                  <instance-var> :== (<var-name> <class-name>+)
 
-                 Parses into following foCL_rm :
+                 Parses into following fo_rm :
 
                  <query-function>
                       |
@@ -496,7 +496,7 @@ static bool CL_ParseQueryActionExpression(
    qaction = CL_GroupActions(theEnv,readSource,queryInputToken,true,NULL,false);
    CL_PPBackup(theEnv);
    CL_PPBackup(theEnv);
-   CL_SavePPBuffer(theEnv,queryInputToken->printFoCL_rm);
+   CL_SavePPBuffer(theEnv,queryInputToken->printFo_rm);
 
    ExpressionData(theEnv)->BreakContext = false;
    if (qaction == NULL)
@@ -620,7 +620,7 @@ static bool ReplaceInstanceVariables(
 /*************************************************************************
   NAME         : ReplaceSlotReference
   DESCRIPTION  : Replaces instance-set query function variable
-                   references of the foCL_rm: <instance-variable>:<slot-name>
+                   references of the fo_rm: <instance-variable>:<slot-name>
                    with function calls to get these instance-slots at run
                    time
   INPUTS       : 1) The instance-set variable list
@@ -677,7 +677,7 @@ static bool ReplaceSlotReference(
             if (itkn.tknType != SYMBOL_TOKEN)
               {
                CL_InvalidVarSlotErrorMessage(theEnv,str);
-               SetCL_EvaluationError(theEnv,true);
+               Set_EvaluationError(theEnv,true);
                return true;
               }
               
@@ -697,7 +697,7 @@ static bool ReplaceSlotReference(
 
 /********************************************************************
   NAME         : IsQueryFunction
-  DESCRIPTION  : DeteCL_rmines if an expression is a query function call
+  DESCRIPTION  : Dete_rmines if an expression is a query function call
   INPUTS       : The expression
   RETURNS      : True if query function call, false otherwise
   SIDE EFFECTS : None
@@ -711,17 +711,17 @@ static bool IsQueryFunction(
    if (theExp->type != FCALL)
      return false;
    fptr = (int (*)(void)) ExpressionFunctionPointer(theExp);
-   if (fptr == (int (*)(void)) CL_AnyCL_Instances)
+   if (fptr == (int (*)(void)) CL_Any_Instances)
      return true;
-   if (fptr == (int (*)(void)) QueryCL_FindInstance)
+   if (fptr == (int (*)(void)) Query_FindInstance)
      return true;
-   if (fptr == (int (*)(void)) QueryFindAllCL_Instances)
+   if (fptr == (int (*)(void)) QueryFindAll_Instances)
      return true;
    if (fptr == (int (*)(void)) CL_QueryDoForInstance)
      return true;
-   if (fptr == (int (*)(void)) QueryDoForAllCL_Instances)
+   if (fptr == (int (*)(void)) QueryDoForAll_Instances)
      return true;
-   if (fptr == (int (*)(void)) CL_DelayedQueryDoForAllCL_Instances)
+   if (fptr == (int (*)(void)) CL_DelayedQueryDoForAll_Instances)
      return true;
    return false;
   }

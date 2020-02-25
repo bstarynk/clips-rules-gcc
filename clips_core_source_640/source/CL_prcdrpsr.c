@@ -220,7 +220,7 @@ static struct expr *WhileParse(
       read_first_token = true;
       CL_PPBackup(theEnv);
       CL_SavePPBuffer(theEnv," ");
-      CL_SavePPBuffer(theEnv,theToken.printFoCL_rm);
+      CL_SavePPBuffer(theEnv,theToken.printFo_rm);
       CL_IncrementIndentDepth(theEnv,3);
       CL_PPCRAndIndent(theEnv);
      }
@@ -230,7 +230,7 @@ static struct expr *WhileParse(
       CL_PPBackup(theEnv);
       CL_IncrementIndentDepth(theEnv,3);
       CL_PPCRAndIndent(theEnv);
-      CL_SavePPBuffer(theEnv,theToken.printFoCL_rm);
+      CL_SavePPBuffer(theEnv,theToken.printFo_rm);
      }
 
    /*============================*/
@@ -251,7 +251,7 @@ static struct expr *WhileParse(
      
    CL_PPBackup(theEnv);
    CL_PPBackup(theEnv);
-   CL_SavePPBuffer(theEnv,theToken.printFoCL_rm);
+   CL_SavePPBuffer(theEnv,theToken.printFo_rm);
 
    /*=======================================================*/
    /* Check for the closing right parenthesis of the while. */
@@ -294,7 +294,7 @@ static struct expr *LoopForCountParse(
    CL_GetToken(theEnv,infile,&theToken);
 
    /* ==========================================
-      Simple foCL_rm: loop-for-count <end> [do] ...
+      Simple fo_rm: loop-for-count <end> [do] ...
       ========================================== */
    if (theToken.tknType != LEFT_PARENTHESIS_TOKEN)
      {
@@ -323,7 +323,7 @@ static struct expr *LoopForCountParse(
         }
 
       /* =============================================================
-         Complex foCL_rm: loop-for-count (<var> [<start>] <end>) [do] ...
+         Complex fo_rm: loop-for-count (<var> [<start>] <end>) [do] ...
          ============================================================= */
       else
         {
@@ -345,7 +345,7 @@ static struct expr *LoopForCountParse(
            {
             CL_PPBackup(theEnv);
             CL_PPBackup(theEnv);
-            CL_SavePPBuffer(theEnv,theToken.printFoCL_rm);
+            CL_SavePPBuffer(theEnv,theToken.printFo_rm);
             tmpexp = CL_GenConstant(theEnv,INTEGER_TYPE,CL_CreateInteger(theEnv,1LL));
             tmpexp->nextArg = parse->argList;
             parse->argList = tmpexp;
@@ -379,7 +379,7 @@ static struct expr *LoopForCountParse(
       read_first_paren = true;
       CL_PPBackup(theEnv);
       CL_SavePPBuffer(theEnv," ");
-      CL_SavePPBuffer(theEnv,theToken.printFoCL_rm);
+      CL_SavePPBuffer(theEnv,theToken.printFo_rm);
       CL_IncrementIndentDepth(theEnv,3);
       CL_PPCRAndIndent(theEnv);
      }
@@ -389,7 +389,7 @@ static struct expr *LoopForCountParse(
       CL_PPBackup(theEnv);
       CL_IncrementIndentDepth(theEnv,3);
       CL_PPCRAndIndent(theEnv);
-      CL_SavePPBuffer(theEnv,theToken.printFoCL_rm);
+      CL_SavePPBuffer(theEnv,theToken.printFo_rm);
      }
    else
      goto LoopForCountParseError;
@@ -436,7 +436,7 @@ static struct expr *LoopForCountParse(
      ReplaceLoopCountVars(theEnv,loopVar,parse->argList->nextArg->nextArg,0);
    CL_PPBackup(theEnv);
    CL_PPBackup(theEnv);
-   CL_SavePPBuffer(theEnv,theToken.printFoCL_rm);
+   CL_SavePPBuffer(theEnv,theToken.printFo_rm);
 
    /*================================================================*/
    /* Check for the closing right parenthesis of the loop-for-count. */
@@ -559,7 +559,7 @@ static struct expr *IfParse(
       CL_DecrementIndentDepth(theEnv,3);
       CL_PPBackup(theEnv);
       CL_PPBackup(theEnv);
-      CL_SavePPBuffer(theEnv,theToken.printFoCL_rm);
+      CL_SavePPBuffer(theEnv,theToken.printFo_rm);
       return(top);
      }
 
@@ -633,7 +633,7 @@ static struct expr *PrognParse(
    CL_DecrementIndentDepth(theEnv,3);
    CL_PPBackup(theEnv);
    CL_PPBackup(theEnv);
-   CL_SavePPBuffer(theEnv,tkn.printFoCL_rm);
+   CL_SavePPBuffer(theEnv,tkn.printFo_rm);
    return(tmp);
   }
 
@@ -837,7 +837,7 @@ static struct expr *SwitchParse(
      {
       CL_PPBackup(theEnv);
       CL_PPCRAndIndent(theEnv);
-      CL_SavePPBuffer(theEnv,theToken.printFoCL_rm);
+      CL_SavePPBuffer(theEnv,theToken.printFo_rm);
       if (theToken.tknType != LEFT_PARENTHESIS_TOKEN)
         goto SwitchParseErrorAndMessage;
       CL_GetToken(theEnv,infile,&theToken);
@@ -893,7 +893,7 @@ static struct expr *SwitchParse(
       theExp = theExp->nextArg;
       CL_PPBackup(theEnv);
       CL_PPBackup(theEnv);
-      CL_SavePPBuffer(theEnv,theToken.printFoCL_rm);
+      CL_SavePPBuffer(theEnv,theToken.printFo_rm);
       CL_GetToken(theEnv,infile,&theToken);
      }
    CL_DecrementIndentDepth(theEnv,3);
@@ -988,7 +988,7 @@ static int AddBindName(
    /* Look for the variable name in the list of bind variable */
    /* names already parsed. If it is found, then return the   */
    /* index to the variable and union the new constraint      */
-   /* infoCL_rmation with the old constraint infoCL_rmation.        */
+   /* info_rmation with the old constraint info_rmation.        */
    /*=========================================================*/
 
    lastBind = NULL;
@@ -1014,7 +1014,7 @@ static int AddBindName(
 
    /*===============================================================*/
    /* If the variable name wasn't found, then add it to the list of */
-   /* variable names and store the constraint infoCL_rmation with it.  */
+   /* variable names and store the constraint info_rmation with it.  */
    /*===============================================================*/
 
    currentBind = get_struct(theEnv,BindInfo);

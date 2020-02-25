@@ -58,7 +58,7 @@
    static void                    CL_BloadBinaryItem(Environment *);
    static void                    UpdateDefmodule(Environment *,void *,unsigned long);
    static void                    UpdatePortItem(Environment *,void *,unsigned long);
-   static void                    CL_ClearCL_Bload(Environment *);
+   static void                    CL_Clear_Bload(Environment *);
 
 /*********************************************/
 /* CL_DefmoduleBinarySetup: Installs the binary */
@@ -67,21 +67,21 @@
 void CL_DefmoduleBinarySetup(
   Environment *theEnv)
   {
-   CL_AddBeforeCL_BloadFunction(theEnv,"defmodule",CL_RemoveAllDefmodules,2000,NULL);
+   CL_AddBefore_BloadFunction(theEnv,"defmodule",CL_RemoveAllDefmodules,2000,NULL);
 
 #if BLOAD_AND_BSAVE
    CL_AddBinaryItem(theEnv,"defmodule",0,CL_BsaveFind,NULL,
                              CL_BsaveStorage,CL_BsaveBinaryItem,
                              CL_BloadStorage,CL_BloadBinaryItem,
-                             CL_ClearCL_Bload);
+                             CL_Clear_Bload);
 #endif
 
-   CL_AddAbortCL_BloadFunction(theEnv,"defmodule",CL_CreateMainModule,0,NULL);
+   CL_AddAbort_BloadFunction(theEnv,"defmodule",CL_CreateMainModule,0,NULL);
 
 #if (BLOAD || BLOAD_ONLY)
    CL_AddBinaryItem(theEnv,"defmodule",0,NULL,NULL,NULL,NULL,
                              CL_BloadStorage,CL_BloadBinaryItem,
-                             CL_ClearCL_Bload);
+                             CL_Clear_Bload);
 #endif
   }
 
@@ -91,23 +91,23 @@ void CL_DefmoduleBinarySetup(
 /**************************************************************/
 void CL_UpdateDefmoduleItemHeader(
   Environment *theEnv,
-  struct bsaveDefmoduleItemHeader *theCL_BsaveHeader,
+  struct bsaveDefmoduleItemHeader *the_BsaveHeader,
   struct defmoduleItemHeader *theHeader,
   size_t itemSize,
   void *itemArray)
   {
    size_t firstOffset, lastOffset;
 
-   theHeader->theModule = ModulePointer(theCL_BsaveHeader->theModule);
-   if (theCL_BsaveHeader->firstItem == ULONG_MAX)
+   theHeader->theModule = ModulePointer(the_BsaveHeader->theModule);
+   if (the_BsaveHeader->firstItem == ULONG_MAX)
      {
       theHeader->firstItem = NULL;
       theHeader->lastItem = NULL;
      }
    else
      {
-      firstOffset = itemSize * theCL_BsaveHeader->firstItem;
-      lastOffset = itemSize * theCL_BsaveHeader->lastItem;
+      firstOffset = itemSize * the_BsaveHeader->firstItem;
+      lastOffset = itemSize * the_BsaveHeader->lastItem;
       theHeader->firstItem =
         (ConstructHeader *) &((char *) itemArray)[firstOffset];
       theHeader->lastItem =
@@ -118,23 +118,23 @@ void CL_UpdateDefmoduleItemHeader(
 #if BLOAD_AND_BSAVE
 
 /*********************************************************/
-/* CL_AssignCL_BsaveDefmdlItemHdrVals: Assigns the appropriate */
+/* CL_Assign_BsaveDefmdlItemHdrVals: Assigns the appropriate */
 /*   values to a bsave defmodule item header record.     */
 /*********************************************************/
-void CL_AssignCL_BsaveDefmdlItemHdrVals(
-  struct bsaveDefmoduleItemHeader *theCL_BsaveHeader,
+void CL_Assign_BsaveDefmdlItemHdrVals(
+  struct bsaveDefmoduleItemHeader *the_BsaveHeader,
   struct defmoduleItemHeader *theHeader)
   {
-   theCL_BsaveHeader->theModule = theHeader->theModule->header.bsaveID;
+   the_BsaveHeader->theModule = theHeader->theModule->header.bsaveID;
    if (theHeader->firstItem == NULL)
      {
-      theCL_BsaveHeader->firstItem = ULONG_MAX;
-      theCL_BsaveHeader->lastItem = ULONG_MAX;
+      the_BsaveHeader->firstItem = ULONG_MAX;
+      the_BsaveHeader->lastItem = ULONG_MAX;
      }
    else
      {
-      theCL_BsaveHeader->firstItem = theHeader->firstItem->bsaveID;
-      theCL_BsaveHeader->lastItem = theHeader->lastItem->bsaveID;
+      the_BsaveHeader->firstItem = theHeader->firstItem->bsaveID;
+      the_BsaveHeader->lastItem = theHeader->lastItem->bsaveID;
      }
   }
 
@@ -155,8 +155,8 @@ static void CL_BsaveFind(
    /* in the process of saving the binary image.            */
    /*=======================================================*/
 
-   CL_SaveCL_BloadCount(theEnv,DefmoduleData(theEnv)->BNumberOfDefmodules);
-   CL_SaveCL_BloadCount(theEnv,DefmoduleData(theEnv)->NumberOfPortItems);
+   CL_Save_BloadCount(theEnv,DefmoduleData(theEnv)->BNumberOfDefmodules);
+   CL_Save_BloadCount(theEnv,DefmoduleData(theEnv)->NumberOfPortItems);
 
    /*==========================================*/
    /* Set the count of defmodule and defmodule */
@@ -240,9 +240,9 @@ static void CL_BsaveStorage(
    size_t space;
 
    space = sizeof(long) * 2;
-   CL_GenCL_Write(&space,sizeof(size_t),fp);
-   CL_GenCL_Write(&DefmoduleData(theEnv)->BNumberOfDefmodules,sizeof(long),fp);
-   CL_GenCL_Write(&DefmoduleData(theEnv)->NumberOfPortItems,sizeof(long),fp);
+   CL_Gen_Write(&space,sizeof(size_t),fp);
+   CL_Gen_Write(&DefmoduleData(theEnv)->BNumberOfDefmodules,sizeof(long),fp);
+   CL_Gen_Write(&DefmoduleData(theEnv)->NumberOfPortItems,sizeof(long),fp);
   }
 
 /*********************************************/
@@ -266,7 +266,7 @@ static void CL_BsaveBinaryItem(
 
    space = DefmoduleData(theEnv)->BNumberOfDefmodules * sizeof(struct bsaveDefmodule);
    space += DefmoduleData(theEnv)->NumberOfPortItems * sizeof(struct bsavePortItem);
-   CL_GenCL_Write(&space,sizeof(size_t),fp);
+   CL_Gen_Write(&space,sizeof(size_t),fp);
 
    /*==========================================*/
    /* CL_Write out each defmodule data structure. */
@@ -278,7 +278,7 @@ static void CL_BsaveBinaryItem(
         defmodulePtr != NULL;
         defmodulePtr = CL_GetNextDefmodule(theEnv,defmodulePtr))
      {
-      CL_AssignCL_BsaveConstructHeaderVals(&newDefmodule.header,&defmodulePtr->header);
+      CL_Assign_BsaveConstructHeaderVals(&newDefmodule.header,&defmodulePtr->header);
 
       DefmoduleData(theEnv)->BNumberOfDefmodules++;
       
@@ -305,7 +305,7 @@ static void CL_BsaveBinaryItem(
         }
 
       newDefmodule.bsaveID = defmodulePtr->header.bsaveID;
-      CL_GenCL_Write(&newDefmodule,sizeof(struct bsaveDefmodule),fp);
+      CL_Gen_Write(&newDefmodule,sizeof(struct bsaveDefmodule),fp);
      }
 
    /*==========================================*/
@@ -333,7 +333,7 @@ static void CL_BsaveBinaryItem(
          if (theList->next == NULL) newPortItem.next = ULONG_MAX;
          else newPortItem.next = DefmoduleData(theEnv)->NumberOfPortItems;
 
-         CL_GenCL_Write(&newPortItem,sizeof(struct bsavePortItem),fp);
+         CL_Gen_Write(&newPortItem,sizeof(struct bsavePortItem),fp);
         }
 
       for (theList = defmodulePtr->exportList;
@@ -353,7 +353,7 @@ static void CL_BsaveBinaryItem(
          if (theList->next == NULL) newPortItem.next = ULONG_MAX;
          else newPortItem.next = DefmoduleData(theEnv)->NumberOfPortItems;
 
-         CL_GenCL_Write(&newPortItem,sizeof(struct bsavePortItem),fp);
+         CL_Gen_Write(&newPortItem,sizeof(struct bsavePortItem),fp);
         }
 
       defmodulePtr = CL_GetNextDefmodule(theEnv,defmodulePtr);
@@ -366,8 +366,8 @@ static void CL_BsaveBinaryItem(
    /* overwritten by the binary save).                            */
    /*=============================================================*/
 
-   RestoreCL_BloadCount(theEnv,&DefmoduleData(theEnv)->BNumberOfDefmodules);
-   RestoreCL_BloadCount(theEnv,&DefmoduleData(theEnv)->NumberOfPortItems);
+   Restore_BloadCount(theEnv,&DefmoduleData(theEnv)->BNumberOfDefmodules);
+   Restore_BloadCount(theEnv,&DefmoduleData(theEnv)->NumberOfPortItems);
   }
 
 #endif /* BLOAD_AND_BSAVE */
@@ -382,7 +382,7 @@ static void CL_BloadStorage(
    size_t space;
 
    /*=======================================*/
-   /* DeteCL_rmine the number of defmodule and */
+   /* Dete_rmine the number of defmodule and */
    /* port item data structures to be read. */
    /*=======================================*/
 
@@ -431,8 +431,8 @@ static void CL_BloadBinaryItem(
    CL_GenReadBinary(theEnv,&space,sizeof(size_t));
    if (DefmoduleData(theEnv)->BNumberOfDefmodules == 0) return;
 
-   CL_BloadandCL_Refresh(theEnv,DefmoduleData(theEnv)->BNumberOfDefmodules,sizeof(struct bsaveDefmodule),UpdateDefmodule);
-   CL_BloadandCL_Refresh(theEnv,DefmoduleData(theEnv)->NumberOfPortItems,sizeof(struct bsavePortItem),UpdatePortItem);
+   CL_Bloadand_Refresh(theEnv,DefmoduleData(theEnv)->BNumberOfDefmodules,sizeof(struct bsaveDefmodule),UpdateDefmodule);
+   CL_Bloadand_Refresh(theEnv,DefmoduleData(theEnv)->NumberOfPortItems,sizeof(struct bsavePortItem),UpdatePortItem);
 
    CL_SetListOfDefmodules(theEnv,DefmoduleData(theEnv)->DefmoduleArray);
    CL_SetCurrentModule(theEnv,CL_GetNextDefmodule(theEnv,NULL));
@@ -478,7 +478,7 @@ static void UpdateDefmodule(
         }
      }
 
-   DefmoduleData(theEnv)->DefmoduleArray[obji].header.ppFoCL_rm = NULL;
+   DefmoduleData(theEnv)->DefmoduleArray[obji].header.ppFo_rm = NULL;
 
    if (bdp->importList != ULONG_MAX)
      { DefmoduleData(theEnv)->DefmoduleArray[obji].importList = (struct portItem *) &DefmoduleData(theEnv)->PortItemArray[bdp->importList]; }
@@ -536,10 +536,10 @@ static void UpdatePortItem(
   }
 
 /***************************************/
-/* CL_ClearCL_Bload: Defmodule clear routine */
+/* CL_Clear_Bload: Defmodule clear routine */
 /*   when a binary load is in effect.  */
 /***************************************/
-static void CL_ClearCL_Bload(
+static void CL_Clear_Bload(
   Environment *theEnv)
   {
    unsigned long i;
@@ -594,7 +594,7 @@ static void CL_ClearCL_Bload(
    DefmoduleData(theEnv)->NumberOfPortItems = 0;
 
    /*===========================*/
-   /* CL_Reset module infoCL_rmation. */
+   /* CL_Reset module info_rmation. */
    /*===========================*/
 
    CL_SetListOfDefmodules(theEnv,NULL);

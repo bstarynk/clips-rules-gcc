@@ -91,7 +91,7 @@ bool CL_FactPNGetVar1(
    marks = FactData(theEnv)->CurrentPatternMarks;
 
    /*==========================================================*/
-   /* DeteCL_rmine if we want to retrieve the fact address of the */
+   /* Dete_rmine if we want to retrieve the fact address of the */
    /* fact, rather than retrieving a field from the fact.      */
    /*==========================================================*/
 
@@ -102,7 +102,7 @@ bool CL_FactPNGetVar1(
      }
 
    /*=========================================================*/
-   /* DeteCL_rmine if we want to retrieve the entire slot value. */
+   /* Dete_rmine if we want to retrieve the entire slot value. */
    /*=========================================================*/
 
    if (hack->allFields)
@@ -133,7 +133,7 @@ bool CL_FactPNGetVar1(
    fieldPtr = &factPtr->theProposition.contents[theSlot];
 
    /*==========================================================*/
-   /* Retrieve a value from a multifield slot. First deteCL_rmine */
+   /* Retrieve a value from a multifield slot. First dete_rmine */
    /* the range of fields for the variable being retrieved.    */
    /*==========================================================*/
 
@@ -339,7 +339,7 @@ bool CL_FactPNConstant2(
 
    /*==========================================================*/
    /* Extract the value from the specified slot. Note that the */
-   /* test to deteCL_rmine the slot's type (multifield) should be */
+   /* test to dete_rmine the slot's type (multifield) should be */
    /* unnecessary since this routine should only be used for   */
    /* multifield slots.                                        */
    /*==========================================================*/
@@ -434,7 +434,7 @@ bool CL_FactJNGetVar1(
      }
 
    /*==========================================================*/
-   /* DeteCL_rmine if we want to retrieve the fact address of the */
+   /* Dete_rmine if we want to retrieve the fact address of the */
    /* fact, rather than retrieving a field from the fact.      */
    /*==========================================================*/
 
@@ -451,7 +451,7 @@ bool CL_FactJNGetVar1(
      { theSlots = &factPtr->theProposition; }
 
    /*=========================================================*/
-   /* DeteCL_rmine if we want to retrieve the entire slot value. */
+   /* Dete_rmine if we want to retrieve the entire slot value. */
    /*=========================================================*/
 
    if (hack->allFields)
@@ -488,7 +488,7 @@ bool CL_FactJNGetVar1(
      }
 
    /*==========================================================*/
-   /* Retrieve a value from a multifield slot. First deteCL_rmine */
+   /* Retrieve a value from a multifield slot. First dete_rmine */
    /* the range of fields for the variable being retrieved.    */
    /*==========================================================*/
 
@@ -645,7 +645,7 @@ bool CL_FactJNGetVar3(
   }
 
 /****************************************************/
-/* CL_FactSlotLength: DeteCL_rmines if the length of a    */
+/* CL_FactSlotLength: Dete_rmines if the length of a    */
 /*  multifield slot falls within a specified range. */
 /****************************************************/
 bool CL_FactSlotLength(

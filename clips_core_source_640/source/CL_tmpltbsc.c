@@ -101,7 +101,7 @@
 void CL_DeftemplateBasicCommands(
   Environment *theEnv)
   {
-   CL_AddCL_SaveFunction(theEnv,"deftemplate",CL_SaveDeftemplates,10,NULL);
+   CL_Add_SaveFunction(theEnv,"deftemplate",CL_SaveDeftemplates,10,NULL);
 
 #if ! RUN_TIME
    CL_AddUDF(theEnv,"get-deftemplate-list","m",0,1,"y",CL_GetDeftemplateListFunction,"CL_GetDeftemplateListFunction",NULL);
@@ -195,7 +195,7 @@ void CL_GetDeftemplateList(
    UDFValue result;
    
    CL_GetConstructList(theEnv,&result,DeftemplateData(theEnv)->DeftemplateConstruct,theModule);
-   CL_NoCL_rmalizeMultifield(theEnv,&result);
+   CL_No_rmalizeMultifield(theEnv,&result);
    returnValue->value = result.value;
   }
 
@@ -262,20 +262,20 @@ void CL_ListDeftemplates(
   }
 
 /********************************************************/
-/* CL_DeftemplateGetCL_Watch: C access routine for retrieving */
+/* CL_DeftemplateGet_Watch: C access routine for retrieving */
 /*   the current watch value of a deftemplate.          */
 /********************************************************/
-bool CL_DeftemplateGetCL_Watch(
+bool CL_DeftemplateGet_Watch(
   Deftemplate *theTemplate)
   {
    return theTemplate->watch;
   }
 
 /******************************************************/
-/* CL_DeftemplateSetCL_Watch:  C access routine for setting */
+/* CL_DeftemplateSet_Watch:  C access routine for setting */
 /*   the current watch value of a deftemplate.        */
 /******************************************************/
-void CL_DeftemplateSetCL_Watch(
+void CL_DeftemplateSet_Watch(
   Deftemplate *theTemplate,
   bool newState)
   {
@@ -283,10 +283,10 @@ void CL_DeftemplateSetCL_Watch(
   }
 
 /**********************************************************/
-/* CL_DeftemplateCL_WatchAccess: Access routine for setting the */
+/* CL_Deftemplate_WatchAccess: Access routine for setting the */
 /*   watch flag of a deftemplate via the watch command.   */
 /**********************************************************/
-bool CL_DeftemplateCL_WatchAccess(
+bool CL_Deftemplate_WatchAccess(
   Environment *theEnv,
   int code,
   bool newState,
@@ -296,16 +296,16 @@ bool CL_DeftemplateCL_WatchAccess(
 #pragma unused(code)
 #endif
 
-   return CL_ConstructSetCL_WatchAccess(theEnv,DeftemplateData(theEnv)->DeftemplateConstruct,newState,argExprs,
-                                  (ConstructGetCL_WatchFunction *) CL_DeftemplateGetCL_Watch,
-                                  (ConstructSetCL_WatchFunction *) CL_DeftemplateSetCL_Watch);
+   return CL_ConstructSet_WatchAccess(theEnv,DeftemplateData(theEnv)->DeftemplateConstruct,newState,argExprs,
+                                  (ConstructGet_WatchFunction *) CL_DeftemplateGet_Watch,
+                                  (ConstructSet_WatchFunction *) CL_DeftemplateSet_Watch);
   }
 
 /*************************************************************************/
-/* CL_DeftemplateCL_WatchPrint: Access routine for printing which deftemplates */
+/* CL_Deftemplate_WatchPrint: Access routine for printing which deftemplates */
 /*   have their watch flag set via the list-watch-items command.         */
 /*************************************************************************/
-bool CL_DeftemplateCL_WatchPrint(
+bool CL_Deftemplate_WatchPrint(
   Environment *theEnv,
   const char *logName,
   int code,
@@ -315,9 +315,9 @@ bool CL_DeftemplateCL_WatchPrint(
 #pragma unused(code)
 #endif
 
-   return CL_ConstructPrintCL_WatchAccess(theEnv,DeftemplateData(theEnv)->DeftemplateConstruct,logName,argExprs,
-                                    (ConstructGetCL_WatchFunction *) CL_DeftemplateGetCL_Watch,
-                                    (ConstructSetCL_WatchFunction *) CL_DeftemplateSetCL_Watch);
+   return CL_ConstructPrint_WatchAccess(theEnv,DeftemplateData(theEnv)->DeftemplateConstruct,logName,argExprs,
+                                    (ConstructGet_WatchFunction *) CL_DeftemplateGet_Watch,
+                                    (ConstructSet_WatchFunction *) CL_DeftemplateSet_Watch);
   }
 
 #endif /* DEBUGGING_FUNCTIONS */

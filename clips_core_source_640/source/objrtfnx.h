@@ -197,7 +197,7 @@ struct objectReteData
    struct entityRecord JNSimpleCompareInfo3;
    OBJECT_MATCH_ACTION *ObjectMatchActionQueue;
    OBJECT_PATTERN_NODE *ObjectPatternNetworkPointer;
-   OBJECT_ALPHA_NODE *ObjectPatternNetworkTeCL_rminalPointer;
+   OBJECT_ALPHA_NODE *ObjectPatternNetworkTe_rminalPointer;
    bool DelayObjectPatternMatching;
    unsigned long long CurrentObjectMatchTimeTag;
    unsigned long long UseEntityTimeTag;

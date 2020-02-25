@@ -109,8 +109,8 @@
    static bool                    ReadUntilClosingParen(Environment *,const char *,struct token *);
    static void                    AddClass(Environment *,Defclass *);
    static void                    CL_BuildSubclassLinks(Environment *,Defclass *);
-   static void                    FoCL_rmInstanceTemplate(Environment *,Defclass *);
-   static void                    FoCL_rmSlotNameMap(Environment *,Defclass *);
+   static void                    Fo_rmInstanceTemplate(Environment *,Defclass *);
+   static void                    Fo_rmSlotNameMap(Environment *,Defclass *);
    static TEMP_SLOT_LINK         *MergeSlots(Environment *,TEMP_SLOT_LINK *,Defclass *,unsigned short *,unsigned short);
    static void                    PackSlots(Environment *,Defclass *,TEMP_SLOT_LINK *);
    static void                    CreatePublicSlotMessageHandlers(Environment *,Defclass *);
@@ -191,7 +191,7 @@ bool CL_ParseDefclass(
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE
    if ((CL_Bloaded(theEnv)) && (! ConstructData(theEnv)->CL_CheckSyntaxMode))
      {
-      CannotCL_LoadWithCL_BloadMessage(theEnv,"defclass");
+      Cannot_LoadWith_BloadMessage(theEnv,"defclass");
       return true;
      }
 #endif
@@ -389,7 +389,7 @@ bool CL_ParseDefclass(
 
 /***********************************************************
   NAME         : ValidClassName
-  DESCRIPTION  : DeteCL_rmines if a new class of the given
+  DESCRIPTION  : Dete_rmines if a new class of the given
                  name can be defined in the current module
   INPUTS       : 1) The new class name
                  2) Buffer to hold class address
@@ -550,7 +550,7 @@ static bool ReadUntilClosingParen(
 
 /*****************************************************************************
   NAME         : AddClass
-  DESCRIPTION  : DeteCL_rmines the precedence list of the new class.
+  DESCRIPTION  : Dete_rmines the precedence list of the new class.
                  If it is valid, the routine checks to see if the class
                  already exists.  If it does not, all the subclass
                  links are made from the class's direct superclasses,
@@ -571,21 +571,21 @@ static void AddClass(
   {
    Defclass *ctmp;
 #if DEBUGGING_FUNCTIONS
-   bool oldTraceCL_Instances = false,
+   bool oldTrace_Instances = false,
        oldTraceSlots = false;
 #endif
 
    /* ===============================================
       If class does not already exist, insert and
-      foCL_rm progeny links with all direct superclasses
+      fo_rm progeny links with all direct superclasses
       =============================================== */
-   cls->hashTableIndex = CL_HashClass(GetCL_DefclassNamePointer(cls));
+   cls->hashTableIndex = CL_HashClass(Get_DefclassNamePointer(cls));
    ctmp = CL_FindDefclassInModule(theEnv,CL_DefclassName(cls));
 
    if (ctmp != NULL)
      {
 #if DEBUGGING_FUNCTIONS
-      oldTraceCL_Instances = ctmp->traceCL_Instances;
+      oldTrace_Instances = ctmp->trace_Instances;
       oldTraceSlots = ctmp->traceSlots;
 #endif
       CL_DeleteClassUAG(theEnv,ctmp);
@@ -596,21 +596,21 @@ static void AddClass(
    CL_InstallClass(theEnv,cls,true);
    CL_AddConstructToModule(&cls->header);
 
-   FoCL_rmInstanceTemplate(theEnv,cls);
-   FoCL_rmSlotNameMap(theEnv,cls);
+   Fo_rmInstanceTemplate(theEnv,cls);
+   Fo_rmSlotNameMap(theEnv,cls);
 
    CL_AssignClassID(theEnv,cls);
 
 #if DEBUGGING_FUNCTIONS
    if (cls->abstract)
      {
-      cls->traceCL_Instances = false;
+      cls->trace_Instances = false;
       cls->traceSlots = false;
      }
    else
      {
-      if (oldTraceCL_Instances)
-        cls->traceCL_Instances = true;
+      if (oldTrace_Instances)
+        cls->trace_Instances = true;
       if (oldTraceSlots)
         cls->traceSlots = true;
      }
@@ -618,7 +618,7 @@ static void AddClass(
 
 #if DEBUGGING_FUNCTIONS
    if (CL_GetConserveMemory(theEnv) == false)
-     SetCL_DefclassPPFoCL_rm(theEnv,cls,CL_CopyPPBuffer(theEnv));
+     SetCL_DefclassPPFo_rm(theEnv,cls,CL_CopyPPBuffer(theEnv));
 #endif
 
 #if DEFMODULE_CONSTRUCT
@@ -647,7 +647,7 @@ static void AddClass(
   RETURNS      : Nothing useful
   SIDE EFFECTS : The subclass lists for every superclass
                  are modified.
-  NOTES        : Assumes the superclass list is foCL_rmed.
+  NOTES        : Assumes the superclass list is fo_rmed.
  *******************************************************/
 static void CL_BuildSubclassLinks(
   Environment *theEnv,
@@ -660,17 +660,17 @@ static void CL_BuildSubclassLinks(
   }
 
 /**********************************************************
-  NAME         : FoCL_rmInstanceTemplate
-  DESCRIPTION  : FoCL_rms a contiguous array of instance
+  NAME         : Fo_rmInstanceTemplate
+  DESCRIPTION  : Fo_rms a contiguous array of instance
                   slots for use in creating instances later
-                 Also used in deteCL_rmining instance slot
+                 Also used in dete_rmining instance slot
                   indices a priori during handler defns
   INPUTS       : The class
   RETURNS      : Nothing useful
-  SIDE EFFECTS : Contiguous array of instance slots foCL_rmed
+  SIDE EFFECTS : Contiguous array of instance slots fo_rmed
   NOTES        : None
  **********************************************************/
-static void FoCL_rmInstanceTemplate(
+static void Fo_rmInstanceTemplate(
   Environment *theEnv,
   Defclass *cls)
   {
@@ -710,8 +710,8 @@ static void FoCL_rmInstanceTemplate(
   }
 
 /**********************************************************
-  NAME         : FoCL_rmSlotNameMap
-  DESCRIPTION  : FoCL_rms a mapping of the slot name ids into
+  NAME         : Fo_rmSlotNameMap
+  DESCRIPTION  : Fo_rms a mapping of the slot name ids into
                  the instance template.  Given the slot
                  name id, this map provides a much faster
                  lookup of a slot.  The id is stored
@@ -720,7 +720,7 @@ static void FoCL_rmInstanceTemplate(
                  as well.
   INPUTS       : The class
   RETURNS      : Nothing useful
-  SIDE EFFECTS : Contiguous array of integers foCL_rmed
+  SIDE EFFECTS : Contiguous array of integers fo_rmed
                  The position in the array corresponding
                  to a slot name id holds an the index
                  into the instance template array holding
@@ -729,9 +729,9 @@ static void FoCL_rmInstanceTemplate(
                  also stored to make deletion of the slots
                  easier
   NOTES        : Assumes the instance template has already
-                 been foCL_rmed
+                 been fo_rmed
  **********************************************************/
-static void FoCL_rmSlotNameMap(
+static void Fo_rmSlotNameMap(
   Environment *theEnv,
   Defclass *cls)
   {

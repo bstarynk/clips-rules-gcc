@@ -44,7 +44,7 @@
 
    void                        CL_AllocateExpressions(Environment *);
    void                        CL_RefreshExpressions(Environment *);
-   void                        CL_ClearCL_BloadedExpressions(Environment *);
+   void                        CL_Clear_BloadedExpressions(Environment *);
    void                        CL_FindHashedExpressions(Environment *);
    void                        CL_BsaveHashedExpressions(Environment *,FILE *);
    void                        CL_BsaveConstructExpressions(Environment *,FILE *);

@@ -124,7 +124,7 @@ void CL_FieldConversion(
      }
 
    /*========================================================*/
-   /* DeteCL_rmine if constant testing must be perfoCL_rmed in the */
+   /* Dete_rmine if constant testing must be perfo_rmed in the */
    /* join network. Only possible when a field contains an   */
    /* or ('|') and references are made to variables outside  */
    /* the pattern.                                           */
@@ -376,7 +376,7 @@ static void ExtractAnds(
 /*   a binding occurrence of a variable in another pattern, then the    */
 /*   other constraints in the field must be tested in the join network  */
 /*   (this is how some constant constraint tests must occasionally be   */
-/*   perfoCL_rmed in the join network).                                    */
+/*   perfo_rmed in the join network).                                    */
 /************************************************************************/
 static void ExtractFieldTest(
   Environment *theEnv,
@@ -767,7 +767,7 @@ void CL_AddNandUnification(
 /*******************************************************************/
 /* CL_GetvarReplace: Replaces occurences of variables in expressions */
 /*   with function calls that will extract the variable's value    */
-/*   from a partial match (i.e. from infoCL_rmation stored in the     */
+/*   from a partial match (i.e. from info_rmation stored in the     */
 /*   join network or the activation of the rule).                  */
 /*******************************************************************/
 struct expr *CL_GetvarReplace(
@@ -809,7 +809,7 @@ struct expr *CL_GetvarReplace(
 
       /*=============================================================*/
       /* Referencing a variable outside the scope of the immediately */
-      /* enclosing not/and CE requires that the test be perfoCL_rmed in */
+      /* enclosing not/and CE requires that the test be perfo_rmed in */
       /* the "join from the right" join.                             */
       /*=============================================================*/
 
@@ -856,7 +856,7 @@ struct expr *CL_GetvarReplace(
 /* GetfieldReplace: Replaces occurences of variables in expressions   */
 /*   with function calls that will extract the variable's value       */
 /*   given a pointer to the data entity that contains the value (i.e. */
-/*   from infoCL_rmation stored in the pattern network).                 */
+/*   from info_rmation stored in the pattern network).                 */
 /**********************************************************************/
 static struct expr *GetfieldReplace(
   Environment *theEnv,
@@ -974,7 +974,7 @@ static struct expr *GenPNVariableComparison(
   }
 
 /************************************************************/
-/* AllVariablesInPattern: DeteCL_rmines if all of the variable */
+/* AllVariablesInPattern: Dete_rmines if all of the variable */
 /*   references in a field constraint can be referenced     */
 /*   within thepattern in which the field is contained.     */
 /************************************************************/
@@ -1032,7 +1032,7 @@ static bool AllVariablesInPattern(
   }
 
 /**************************************************************************/
-/* AllVariablesInExpression: DeteCL_rmines if all of the variable references */
+/* AllVariablesInExpression: Dete_rmines if all of the variable references */
 /*   in an expression can be referenced within the pattern in which the   */
 /*   expression is contained.                                             */
 /**************************************************************************/

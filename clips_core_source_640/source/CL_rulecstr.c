@@ -58,7 +58,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static bool                    CheckForCL_UnmatchableConstraints(Environment *,struct lhsParseNode *,unsigned short);
+   static bool                    CheckFor_UnmatchableConstraints(Environment *,struct lhsParseNode *,unsigned short);
    static bool                    MultifieldCardinalityViolation(Environment *,struct lhsParseNode *);
    static struct lhsParseNode    *UnionVariableConstraints(Environment *,struct lhsParseNode *,
                                                            struct lhsParseNode *);
@@ -71,11 +71,11 @@
                                                                   struct lhsParseNode *);
 
 /***********************************************************/
-/* CheckForCL_UnmatchableConstraints: DeteCL_rmines if a LHS CE  */
+/* CheckFor_UnmatchableConstraints: Dete_rmines if a LHS CE  */
 /*   node contains unmatchable constraints. Return true if */
 /*   there are unmatchable constraints, otherwise false.   */
 /***********************************************************/
-static bool CheckForCL_UnmatchableConstraints(
+static bool CheckFor_UnmatchableConstraints(
   Environment *theEnv,
   struct lhsParseNode *theNode,
   unsigned short whichCE)
@@ -151,7 +151,7 @@ static void ConstraintConflictMessage(
   }
 
 /***************************************************************/
-/* MultifieldCardinalityViolation: DeteCL_rmines if a cardinality */
+/* MultifieldCardinalityViolation: Dete_rmines if a cardinality */
 /*   violation has occurred for a LHS CE node.                 */
 /***************************************************************/
 static bool MultifieldCardinalityViolation(
@@ -173,7 +173,7 @@ static bool MultifieldCardinalityViolation(
    if (theNode->multifieldSlot == false) return false;
 
    /*=============================================*/
-   /* DeteCL_rmine the minimum and maximum number of */
+   /* Dete_rmine the minimum and maximum number of */
    /* fields the slot could contain based on the  */
    /* slot constraints found in the pattern.      */
    /*=============================================*/
@@ -248,7 +248,7 @@ static bool MultifieldCardinalityViolation(
    else tempConstraint->maxFields = CL_GenConstant(theEnv,INTEGER_TYPE,CL_CreateInteger(theEnv,maxFields));
 
    /*================================================================*/
-   /* DeteCL_rmine the final cardinality for the multifield slot by     */
+   /* Dete_rmine the final cardinality for the multifield slot by     */
    /* intersecting the cardinality sum of the restrictions within    */
    /* the multifield slot with the original cardinality of the slot. */
    /*================================================================*/
@@ -260,7 +260,7 @@ static bool MultifieldCardinalityViolation(
    theNode->derivedConstraints = true;
 
    /*===================================================================*/
-   /* DeteCL_rmine if the final cardinality for the slot can be satisfied. */
+   /* Dete_rmine if the final cardinality for the slot can be satisfied. */
    /*===================================================================*/
 
    if (CL_UnmatchableConstraint(newConstraint)) return true;
@@ -375,7 +375,7 @@ bool CL_ProcessConnectedConstraints(
    /* Check for constraint violations. */
    /*==================================*/
 
-   if (CheckForCL_UnmatchableConstraints(theEnv,theNode,patternHead->whichCE))
+   if (CheckFor_UnmatchableConstraints(theEnv,theNode,patternHead->whichCE))
      { return true; }
 
    /*=========================================*/
@@ -621,7 +621,7 @@ static struct lhsParseNode *UnionVariableConstraints(
 
 /*****************************************************************/
 /* CL_GetExpressionVarConstraints: Given an expression stored using */
-/*   the LHS parse node data structures, deteCL_rmines and returns  */
+/*   the LHS parse node data structures, dete_rmines and returns  */
 /*   the constraints on variables caused by that expression. For */
 /*   example, the expression (+ ?x 1) would imply a numeric type */
 /*   constraint for the variable ?x since the addition function  */
@@ -778,7 +778,7 @@ static bool CheckArgumentForConstraintError(
    /*=============================================================*/
    /* Skip anything that isn't a variable or isn't an argument to */
    /* a user defined function (i.e. deffunctions and generic have */
-   /* no constraint infoCL_rmation so they aren't checked).          */
+   /* no constraint info_rmation so they aren't checked).          */
    /*=============================================================*/
 
    if ((expressionList->type != SF_VARIABLE) || (theFunction == NULL))

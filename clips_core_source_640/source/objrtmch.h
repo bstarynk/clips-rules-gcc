@@ -123,7 +123,7 @@ struct objectAlphaNode
    CLIPSBitMap *classbmp,*slotbmp;
    OBJECT_PATTERN_NODE *patternNode;
    struct objectAlphaNode *nxtInGroup,
-                          *nxtTeCL_rminal;
+                          *nxtTe_rminal;
    unsigned long bsaveID;
   };
 
@@ -146,9 +146,9 @@ typedef struct objectMatchAction
    bool                  CL_SetDelayObjectPatternMatching(Environment *,bool);
    bool                  CL_GetDelayObjectPatternMatching(Environment *);
    OBJECT_PATTERN_NODE  *CL_ObjectNetworkPointer(Environment *);
-   OBJECT_ALPHA_NODE    *CL_ObjectNetworkTeCL_rminalPointer(Environment *);
-   void                  SetCL_ObjectNetworkPointer(Environment *,OBJECT_PATTERN_NODE *);
-   void                  SetCL_ObjectNetworkTeCL_rminalPointer(Environment *,OBJECT_ALPHA_NODE *);
+   OBJECT_ALPHA_NODE    *CL_ObjectNetworkTe_rminalPointer(Environment *);
+   void                  Set_ObjectNetworkPointer(Environment *,OBJECT_PATTERN_NODE *);
+   void                  SetCL_ObjectNetworkTe_rminalPointer(Environment *,OBJECT_ALPHA_NODE *);
    void                  CL_ObjectNetworkAction(Environment *,int,Instance *,int);
    void                  CL_ResetObjectMatchTimeTags(Environment *);
 

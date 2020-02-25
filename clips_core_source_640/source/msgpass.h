@@ -83,9 +83,9 @@ typedef struct messageHandlerLink
                                          HANDLER_LINK *[],CLIPSLexeme *);
    HANDLER_LINK    *CL_JoinHandlerLinks(Environment *,HANDLER_LINK *[],HANDLER_LINK *[],CLIPSLexeme *);
 
-   void             PrintCL_HandlerSlotGetFunction(Environment *,const char *,void *);
+   void             Print_HandlerSlotGetFunction(Environment *,const char *,void *);
    bool             CL_HandlerSlotGetFunction(Environment *,void *,UDFValue *);
-   void             PrintCL_HandlerSlotPutFunction(Environment *,const char *,void *);
+   void             Print_HandlerSlotPutFunction(Environment *,const char *,void *);
    bool             CL_HandlerSlotPutFunction(Environment *,void *,UDFValue *);
    void             CL_DynamicHandlerGetSlot(Environment *,UDFContext *,UDFValue *);
    void             CL_DynamicHandlerPutSlot(Environment *,UDFContext *,UDFValue *);

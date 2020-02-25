@@ -137,7 +137,7 @@ struct defclassData
    CLIPSLexeme *ISA_SYMBOL;
    CLIPSLexeme *NAME_SYMBOL;
 #if DEBUGGING_FUNCTIONS
-   bool CL_WatchCL_Instances;
+   bool CL_Watch_Instances;
    bool CL_WatchSlots;
 #endif
    unsigned short CTID;

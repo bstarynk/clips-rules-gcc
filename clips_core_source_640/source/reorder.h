@@ -8,14 +8,14 @@
 
 /*************************************************************/
 /* Purpose: Provides routines necessary for converting the   */
-/*   the LHS of a rule into an appropriate foCL_rm suitable for */
-/*   the KB Rete topology. This includes transfoCL_rming the    */
+/*   the LHS of a rule into an appropriate fo_rm suitable for */
+/*   the KB Rete topology. This includes transfo_rming the    */
 /*   LHS so there is at most one "or" CE (and this is the    */
 /*   first CE of the LHS if it is used), adding initial      */
 /*   patterns to the LHS (if no LHS is specified or a "test" */
 /*   or "not" CE is the first pattern within an "and" CE),   */
-/*   removing redundant CEs, and deteCL_rmining appropriate     */
-/*   infoCL_rmation on nesting for implementing joins from the  */
+/*   removing redundant CEs, and dete_rmining appropriate     */
+/*   info_rmation on nesting for implementing joins from the  */
 /*   right.                                                  */
 /*                                                           */
 /* Principal Programmer(s):                                  */
@@ -96,7 +96,7 @@ typedef enum
 #define NO_INDEX USHRT_MAX
 
 /***********************************************************************/
-/* lhsParseNode structure: Stores infoCL_rmation about the inteCL_rmediate   */
+/* lhsParseNode structure: Stores info_rmation about the inte_rmediate   */
 /*   parsed representation of the lhs of a rule.                       */
 /***********************************************************************/
 struct lhsParseNode

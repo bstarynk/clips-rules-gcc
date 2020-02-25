@@ -107,7 +107,7 @@
    ***************************************** */
 
 /***********************************************************************
-  NAME         : CL_FactCL_ParseQueryNoAction
+  NAME         : CL_Fact_ParseQueryNoAction
   DESCRIPTION  : Parses the following functions :
                    (any-factp)
                    (find-first-fact)
@@ -124,7 +124,7 @@
                  <query-block>  :== (<fact-var>+) <query-expression>
                  <fact-var> :== (<var-name> <template-name>+)
 
-                 Parses into following foCL_rm :
+                 Parses into following fo_rm :
 
                  <query-function>
                       |
@@ -135,7 +135,7 @@
 
                  <template-2a> -> <template-2b> -> (QDS) -> ...
  ***********************************************************************/
-Expression *CL_FactCL_ParseQueryNoAction(
+Expression *CL_Fact_ParseQueryNoAction(
   Environment *theEnv,
   Expression *top,
   const char *readSource)
@@ -181,7 +181,7 @@ Expression *CL_FactCL_ParseQueryNoAction(
   }
 
 /***********************************************************************
-  NAME         : CL_FactCL_ParseQueryAction
+  NAME         : CL_Fact_ParseQueryAction
   DESCRIPTION  : Parses the following functions :
                    (do-for-fact)
                    (do-for-all-facts)
@@ -198,7 +198,7 @@ Expression *CL_FactCL_ParseQueryNoAction(
                  <query-block>  :== (<fact-var>+) <query-expression>
                  <fact-var> :== (<var-name> <template-name>+)
 
-                 Parses into following foCL_rm :
+                 Parses into following fo_rm :
 
                  <query-function>
                       |
@@ -209,7 +209,7 @@ Expression *CL_FactCL_ParseQueryNoAction(
 
                  <template-2a> -> <template-2b> -> (QDS) -> ...
  ***********************************************************************/
-Expression *CL_FactCL_ParseQueryAction(
+Expression *CL_Fact_ParseQueryAction(
   Environment *theEnv,
   Expression *top,
   const char *readSource)
@@ -556,7 +556,7 @@ static bool CL_ParseQueryActionExpression(
 
    CL_PPBackup(theEnv);
    CL_PPBackup(theEnv);
-   CL_SavePPBuffer(theEnv,queryInputToken->printFoCL_rm);
+   CL_SavePPBuffer(theEnv,queryInputToken->printFo_rm);
 
    ExpressionData(theEnv)->BreakContext = false;
 
@@ -685,7 +685,7 @@ static bool CL_ReplaceFactVariables(
 /*************************************************************************
   NAME         : ReplaceSlotReference
   DESCRIPTION  : Replaces fact-set query function variable
-                   references of the foCL_rm: <fact-variable>:<slot-name>
+                   references of the fo_rm: <fact-variable>:<slot-name>
                    with function calls to get these fact-slots at run
                    time
   INPUTS       : 1) The fact-set variable list
@@ -742,7 +742,7 @@ static bool ReplaceSlotReference(
             if (itkn.tknType != SYMBOL_TOKEN)
               {
                CL_InvalidVarSlotErrorMessage(theEnv,str);
-               SetCL_EvaluationError(theEnv,true);
+               Set_EvaluationError(theEnv,true);
                return true;
               }
               
@@ -762,7 +762,7 @@ static bool ReplaceSlotReference(
 
 /********************************************************************
   NAME         : IsQueryFunction
-  DESCRIPTION  : DeteCL_rmines if an expression is a query function call
+  DESCRIPTION  : Dete_rmines if an expression is a query function call
   INPUTS       : The expression
   RETURNS      : True if query function call, false otherwise
   SIDE EFFECTS : None
@@ -777,17 +777,17 @@ static bool IsQueryFunction(
      return false;
    fptr = (int (*)(void)) ExpressionFunctionPointer(theExp);
 
-   if (fptr == (int (*)(void)) CL_AnyCL_Facts)
+   if (fptr == (int (*)(void)) CL_Any_Facts)
      return true;
    if (fptr == (int (*)(void)) CL_QueryFindFact)
      return true;
-   if (fptr == (int (*)(void)) QueryFindAllCL_Facts)
+   if (fptr == (int (*)(void)) QueryFindAll_Facts)
      return true;
    if (fptr == (int (*)(void)) CL_QueryDoForFact)
      return true;
-   if (fptr == (int (*)(void)) QueryDoForAllCL_Facts)
+   if (fptr == (int (*)(void)) QueryDoForAll_Facts)
      return true;
-   if (fptr == (int (*)(void)) CL_DelayedQueryDoForAllCL_Facts)
+   if (fptr == (int (*)(void)) CL_DelayedQueryDoForAll_Facts)
      return true;
 
    return false;

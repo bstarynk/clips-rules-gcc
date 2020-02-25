@@ -209,7 +209,7 @@ Defclass *CL_LookupDefclassByMdlOrScope(
    Defmodule *theModule;
 
    if (CL_FindModuleSeparator(classAndModuleName) == 0)
-     { return LookupCL_DefclassInScope(theEnv,classAndModuleName); }
+     { return Lookup_DefclassInScope(theEnv,classAndModuleName); }
 
    CL_SaveCurrentModule(theEnv);
    className = CL_ExtractModuleAndConstructName(theEnv,classAndModuleName);
@@ -235,7 +235,7 @@ Defclass *CL_LookupDefclassByMdlOrScope(
   }
 
 /****************************************************
-  NAME         : LookupCL_DefclassInScope
+  NAME         : Lookup_DefclassInScope
   DESCRIPTION  : Finds a class in current or imported
                    modules (module specifier
                    is not allowed)
@@ -246,7 +246,7 @@ Defclass *CL_LookupDefclassByMdlOrScope(
   NOTES        : Assumes no two classes of the same
                  name are ever in the same scope
  ****************************************************/
-Defclass *LookupCL_DefclassInScope(
+Defclass *Lookup_DefclassInScope(
   Environment *theEnv,
   const char *className)
   {
@@ -306,7 +306,7 @@ Defclass *CL_LookupDefclassAnywhere(
 
 /***************************************************
   NAME         : CL_DefclassInScope
-  DESCRIPTION  : DeteCL_rmines if a defclass is in
+  DESCRIPTION  : Dete_rmines if a defclass is in
                  scope of the given module
   INPUTS       : 1) The defclass
                  2) The module (NULL for current
@@ -359,7 +359,7 @@ Defclass *CL_GetNextDefclass(
 
 /***************************************************
   NAME         : CL_DefclassIsDeletable
-  DESCRIPTION  : DeteCL_rmines if a defclass
+  DESCRIPTION  : Dete_rmines if a defclass
                    can be deleted
   INPUTS       : Address of the defclass
   RETURNS      : True if deletable,
@@ -450,7 +450,7 @@ bool CL_Undefclass(
 
 /*********************************************************
   NAME         : CL_PPDefclassCommand
-  DESCRIPTION  : Displays the pretty print foCL_rm of
+  DESCRIPTION  : Displays the pretty print fo_rm of
                  a class to stdout.
   INPUTS       : None
   RETURNS      : Nothing useful
@@ -499,8 +499,8 @@ void CL_ListDefclasses(
   }
 
 /*********************************************************
-  NAME         : CL_DefclassGetCL_WatchCL_Instances
-  DESCRIPTION  : DeteCL_rmines if deletions/creations of
+  NAME         : CL_DefclassGet_Watch_Instances
+  DESCRIPTION  : Dete_rmines if deletions/creations of
                  instances of this class will generate
                  trace messages or not
   INPUTS       : A pointer to the class
@@ -509,14 +509,14 @@ void CL_ListDefclasses(
   SIDE EFFECTS : None
   NOTES        : None
  *********************************************************/
-bool CL_DefclassGetCL_WatchCL_Instances(
+bool CL_DefclassGet_Watch_Instances(
   Defclass *theDefclass)
   {
-   return theDefclass->traceCL_Instances;
+   return theDefclass->trace_Instances;
   }
 
 /*********************************************************
-  NAME         : CL_DefclassSetCL_WatchCL_Instances
+  NAME         : CL_DefclassSet_Watch_Instances
   DESCRIPTION  : Sets the trace to ON/OFF for the
                  creation/deletion of instances
                  of the class
@@ -527,19 +527,19 @@ bool CL_DefclassGetCL_WatchCL_Instances(
   SIDE EFFECTS : CL_Watch flag for the class set
   NOTES        : None
  *********************************************************/
-void CL_DefclassSetCL_WatchCL_Instances(
+void CL_DefclassSet_Watch_Instances(
   Defclass *theDefclass,
   bool newState)
   {
    if (theDefclass->abstract)
      { return; }
 
-   theDefclass->traceCL_Instances = newState;
+   theDefclass->trace_Instances = newState;
   }
 
 /*********************************************************
-  NAME         : CL_DefclassGetCL_WatchSlots
-  DESCRIPTION  : DeteCL_rmines if changes to slots of
+  NAME         : CL_DefclassGet_WatchSlots
+  DESCRIPTION  : Dete_rmines if changes to slots of
                  instances of this class will generate
                  trace messages or not
   INPUTS       : A pointer to the class
@@ -548,14 +548,14 @@ void CL_DefclassSetCL_WatchCL_Instances(
   SIDE EFFECTS : None
   NOTES        : None
  *********************************************************/
-bool CL_DefclassGetCL_WatchSlots(
+bool CL_DefclassGet_WatchSlots(
   Defclass *theDefclass)
   {
    return theDefclass->traceSlots;
   }
 
 /**********************************************************
-  NAME         : SetDefclassCL_WatchSlots
+  NAME         : SetDefclass_WatchSlots
   DESCRIPTION  : Sets the trace to ON/OFF for the
                  changes to slots of instances of the class
   INPUTS       : 1) true to set the trace on,
@@ -565,7 +565,7 @@ bool CL_DefclassGetCL_WatchSlots(
   SIDE EFFECTS : CL_Watch flag for the class set
   NOTES        : None
  **********************************************************/
-void CL_DefclassSetCL_WatchSlots(
+void CL_DefclassSet_WatchSlots(
   Defclass *theDefclass,
   bool newState)
   {
@@ -573,9 +573,9 @@ void CL_DefclassSetCL_WatchSlots(
   }
 
 /******************************************************************
-  NAME         : CL_DefclassCL_WatchAccess
+  NAME         : CL_Defclass_WatchAccess
   DESCRIPTION  : Parses a list of class names passed by
-                 CL_AddCL_WatchItem() and sets the traces accordingly
+                 CL_Add_WatchItem() and sets the traces accordingly
   INPUTS       : 1) A code indicating which trace flag is to be set
                     0 - CL_Watch instance creation/deletion
                     1 - CL_Watch slot changes to instances
@@ -584,28 +584,28 @@ void CL_DefclassSetCL_WatchSlots(
                     of the classes for which to set traces
   RETURNS      : True if all OK, false otherwise
   SIDE EFFECTS : CL_Watch flags set in specified classes
-  NOTES        : Accessory function for CL_AddCL_WatchItem()
+  NOTES        : Accessory function for CL_Add_WatchItem()
  ******************************************************************/
-bool CL_DefclassCL_WatchAccess(
+bool CL_Defclass_WatchAccess(
   Environment *theEnv,
   int code,
   bool newState,
   Expression *argExprs)
   {
    if (code)
-     return(CL_ConstructSetCL_WatchAccess(theEnv,DefclassData(theEnv)->DefclassConstruct,newState,argExprs,
-                                    (ConstructGetCL_WatchFunction *) CL_DefclassGetCL_WatchSlots,
-                                    (ConstructSetCL_WatchFunction *) CL_DefclassSetCL_WatchSlots));
+     return(CL_ConstructSet_WatchAccess(theEnv,DefclassData(theEnv)->DefclassConstruct,newState,argExprs,
+                                    (ConstructGet_WatchFunction *) CL_DefclassGet_WatchSlots,
+                                    (ConstructSet_WatchFunction *) CL_DefclassSet_WatchSlots));
    else
-     return(CL_ConstructSetCL_WatchAccess(theEnv,DefclassData(theEnv)->DefclassConstruct,newState,argExprs,
-                                    (ConstructGetCL_WatchFunction *) CL_DefclassGetCL_WatchCL_Instances,
-                                    (ConstructSetCL_WatchFunction *) CL_DefclassSetCL_WatchCL_Instances));
+     return(CL_ConstructSet_WatchAccess(theEnv,DefclassData(theEnv)->DefclassConstruct,newState,argExprs,
+                                    (ConstructGet_WatchFunction *) CL_DefclassGet_Watch_Instances,
+                                    (ConstructSet_WatchFunction *) CL_DefclassSet_Watch_Instances));
   }
 
 /***********************************************************************
-  NAME         : CL_DefclassCL_WatchPrint
+  NAME         : CL_Defclass_WatchPrint
   DESCRIPTION  : Parses a list of class names passed by
-                 CL_AddCL_WatchItem() and displays the traces accordingly
+                 CL_Add_WatchItem() and displays the traces accordingly
   INPUTS       : 1) The logical name of the output
                  2) A code indicating which trace flag is to be examined
                     0 - CL_Watch instance creation/deletion
@@ -614,22 +614,22 @@ bool CL_DefclassCL_WatchAccess(
                     of the classes for which to examine traces
   RETURNS      : True if all OK, false otherwise
   SIDE EFFECTS : CL_Watch flags displayed for specified classes
-  NOTES        : Accessory function for CL_AddCL_WatchItem()
+  NOTES        : Accessory function for CL_Add_WatchItem()
  ***********************************************************************/
-bool CL_DefclassCL_WatchPrint(
+bool CL_Defclass_WatchPrint(
   Environment *theEnv,
   const char *logName,
   int code,
   Expression *argExprs)
   {
    if (code)
-     return(CL_ConstructPrintCL_WatchAccess(theEnv,DefclassData(theEnv)->DefclassConstruct,logName,argExprs,
-                                      (ConstructGetCL_WatchFunction *) CL_DefclassGetCL_WatchSlots,
-                                      (ConstructSetCL_WatchFunction *) CL_DefclassSetCL_WatchSlots));
+     return(CL_ConstructPrint_WatchAccess(theEnv,DefclassData(theEnv)->DefclassConstruct,logName,argExprs,
+                                      (ConstructGet_WatchFunction *) CL_DefclassGet_WatchSlots,
+                                      (ConstructSet_WatchFunction *) CL_DefclassSet_WatchSlots));
    else
-     return(CL_ConstructPrintCL_WatchAccess(theEnv,DefclassData(theEnv)->DefclassConstruct,logName,argExprs,
-                                      (ConstructGetCL_WatchFunction *) CL_DefclassGetCL_WatchCL_Instances,
-                                      (ConstructSetCL_WatchFunction *) CL_DefclassSetCL_WatchCL_Instances));
+     return(CL_ConstructPrint_WatchAccess(theEnv,DefclassData(theEnv)->DefclassConstruct,logName,argExprs,
+                                      (ConstructGet_WatchFunction *) CL_DefclassGet_Watch_Instances,
+                                      (ConstructSet_WatchFunction *) CL_DefclassSet_Watch_Instances));
   }
 
 #endif /* DEBUGGING_FUNCTIONS */
@@ -670,13 +670,13 @@ void CL_GetDefclassList(
    UDFValue result;
    
    CL_GetConstructList(theEnv,&result,DefclassData(theEnv)->DefclassConstruct,theModule);
-   CL_NoCL_rmalizeMultifield(theEnv,&result);
+   CL_No_rmalizeMultifield(theEnv,&result);
    returnValue->value = result.value;
   }
 
 /*****************************************************
   NAME         : CL_HasSuperclass
-  DESCRIPTION  : DeteCL_rmines if class-2 is a superclass
+  DESCRIPTION  : Dete_rmines if class-2 is a superclass
                    of class-1
   INPUTS       : 1) Class-1
                  2) Class-2
@@ -734,7 +734,7 @@ CLIPSLexeme *CL_CheckClassAndSlot(
 
 /***************************************************
   NAME         : CL_SaveDefclasses
-  DESCRIPTION  : Prints pretty print foCL_rm of
+  DESCRIPTION  : Prints pretty print fo_rm of
                    defclasses to specified output
   INPUTS       : The  logical name of the output
   RETURNS      : Nothing useful
@@ -770,7 +770,7 @@ void CL_SaveDefclasses(
 
 /***************************************************
   NAME         : CL_SaveDefclass
-  DESCRIPTION  : CL_Writes out the pretty-print foCL_rms
+  DESCRIPTION  : CL_Writes out the pretty-print fo_rms
                  of a class and all its handlers
   INPUTS       : 1) The class
                  2) The logical name of the output
@@ -786,20 +786,20 @@ static void CL_SaveDefclass(
    const char *logName = (const char *) userBuffer;
    Defclass *theDefclass = (Defclass *) theConstruct;
    unsigned hnd;
-   const char *ppFoCL_rm;
+   const char *ppFo_rm;
 
-   ppFoCL_rm = CL_DefclassPPFoCL_rm(theDefclass);
-   if (ppFoCL_rm != NULL)
+   ppFo_rm = CL_DefclassPPFo_rm(theDefclass);
+   if (ppFo_rm != NULL)
      {
-      CL_WriteString(theEnv,logName,ppFoCL_rm);
+      CL_WriteString(theEnv,logName,ppFo_rm);
       CL_WriteString(theEnv,logName,"\n");
       hnd = CL_GetNextDefmessageHandler(theDefclass,0);
       while (hnd != 0)
         {
-         ppFoCL_rm = CL_DefmessageHandlerPPFoCL_rm(theDefclass,hnd);
-         if (ppFoCL_rm != NULL)
+         ppFo_rm = CL_DefmessageHandlerPPFo_rm(theDefclass,hnd);
+         if (ppFo_rm != NULL)
            {
-            CL_WriteString(theEnv,logName,ppFoCL_rm);
+            CL_WriteString(theEnv,logName,ppFo_rm);
             CL_WriteString(theEnv,logName,"\n");
            }
          hnd = CL_GetNextDefmessageHandler(theDefclass,hnd);
@@ -922,7 +922,7 @@ static const char *CL_GetClassDefaultsModeName(
 /* Additional Access Functions */
 /*#############################*/
 
-CLIPSLexeme *GetCL_DefclassNamePointer(
+CLIPSLexeme *Get_DefclassNamePointer(
   Defclass *theClass)
   {
    return CL_GetConstructNamePointer(&theClass->header);
@@ -946,13 +946,13 @@ const char *CL_DefclassName(
    return CL_GetConstructNameString(&theClass->header);
   }
 
-const char *CL_DefclassPPFoCL_rm(
+const char *CL_DefclassPPFo_rm(
   Defclass *theClass)
   {
-   return CL_GetConstructPPFoCL_rm(&theClass->header);
+   return CL_GetConstructPPFo_rm(&theClass->header);
   }
 
-struct defmoduleItemHeader *GetCL_DefclassModule(
+struct defmoduleItemHeader *Get_DefclassModule(
   Environment *theEnv,
   Defclass *theClass)
   {
@@ -965,12 +965,12 @@ const char *CL_DefclassModule(
    return CL_GetConstructModuleName(&theClass->header);
   }
 
-void SetCL_DefclassPPFoCL_rm(
+void SetCL_DefclassPPFo_rm(
   Environment *theEnv,
   Defclass *theClass,
-  char *thePPFoCL_rm)
+  char *thePPFo_rm)
   {
-   SetConstructPPFoCL_rm(theEnv,&theClass->header,thePPFoCL_rm);
+   SetConstructPPFo_rm(theEnv,&theClass->header,thePPFo_rm);
   }
 
 #endif /* OBJECT_SYSTEM */

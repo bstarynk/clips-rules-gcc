@@ -9,7 +9,7 @@
 /*************************************************************/
 /* Purpose: Contains the code for several I/O functions      */
 /*   including printout, read, open, close, remove, rename,  */
-/*   foCL_rmat, and readline.                                   */
+/*   fo_rmat, and readline.                                   */
 /*                                                           */
 /* Principal Programmer(s):                                  */
 /*      Brian L. Dantes                                      */
@@ -23,7 +23,7 @@
 /*      6.24: Added the get-char, set-locale, and            */
 /*            read-number functions.                         */
 /*                                                           */
-/*            Modified printing of floats in the foCL_rmat      */
+/*            Modified printing of floats in the fo_rmat      */
 /*            function to use the locale from the set-locale */
 /*            function.                                      */
 /*                                                           */
@@ -35,7 +35,7 @@
 /*            Support for long long integers.                */
 /*                                                           */
 /*            Removed the undocumented use of t in the       */
-/*            printout command to perfoCL_rm the same function  */
+/*            printout command to perfo_rm the same function  */
 /*            as crlf.                                       */
 /*                                                           */
 /*            Replaced EXT_IO and BASIC_IO compiler flags    */
@@ -70,11 +70,11 @@
 /*            interfaces that support deleting carriage      */
 /*            returns.                                       */
 /*                                                           */
-/*            Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*            Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to CL_GetCL_HaltExecution and       */
-/*            SetCL_HaltExecution functions.                    */
+/*            Added Env prefix to CL_Get_HaltExecution and       */
+/*            Set_HaltExecution functions.                    */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -160,8 +160,8 @@ struct IOFunctionData
 #if IO_FUNCTIONS
    static void             ReadTokenFromStdin(Environment *,struct token *);
    static const char      *ControlStringCheck(UDFContext *,unsigned int);
-   static char             FindFoCL_rmatFlag(const char *,size_t *,char *,size_t);
-   static const char      *PrintFoCL_rmatFlag(UDFContext *,const char *,unsigned int,int);
+   static char             FindFo_rmatFlag(const char *,size_t *,char *,size_t);
+   static const char      *PrintFo_rmatFlag(UDFContext *,const char *,unsigned int,int);
    static char            *FillBuffer(Environment *,const char *,size_t *,size_t *);
    static void             ReadNumber(Environment *,const char *,struct token *,bool);
    static void             PrintDriver(UDFContext *,const char *,bool);
@@ -199,7 +199,7 @@ void CL_IOFunctionDefinitions(
    CL_AddUDF(theEnv,"put-char","v",1,2,";ldsyn;l",CL_PutCharFunction,"CL_PutCharFunction",NULL);
    CL_AddUDF(theEnv,"remove","b",1,1,"sy",CL_RemoveFunction,"CL_RemoveFunction",NULL);
    CL_AddUDF(theEnv,"rename","b",2,2,"sy",CL_RenameFunction,"CL_RenameFunction",NULL);
-   CL_AddUDF(theEnv,"foCL_rmat","s",2,UNBOUNDED,"*;ldsyn;s",CL_FoCL_rmatFunction,"CL_FoCL_rmatFunction",NULL);
+   CL_AddUDF(theEnv,"fo_rmat","s",2,UNBOUNDED,"*;ldsyn;s",CL_Fo_rmatFunction,"CL_Fo_rmatFunction",NULL);
    CL_AddUDF(theEnv,"readline","sy",0,1,";ldsyn",CL_ReadlineFunction,"CL_ReadlineFunction",NULL);
    CL_AddUDF(theEnv,"set-locale","sy",0,1,";s",CL_SetLocaleFunction,"CL_SetLocaleFunction",NULL);
    CL_AddUDF(theEnv,"read-number","syld",0,1,";ldsyn",CL_ReadNumberFunction,"CL_ReadNumberFunction",NULL);
@@ -233,13 +233,13 @@ void CL_PrintoutFunction(
    if (logicalName == NULL)
      {
       CL_IllegalLogicalNameMessage(theEnv,"printout");
-      SetCL_HaltExecution(theEnv,true);
-      SetCL_EvaluationError(theEnv,true);
+      Set_HaltExecution(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return;
      }
 
    /*============================================================*/
-   /* DeteCL_rmine if any router recognizes the output destination. */
+   /* Dete_rmine if any router recognizes the output destination. */
    /*============================================================*/
 
    if (strcmp(logicalName,"nil") == 0)
@@ -372,7 +372,7 @@ void CL_ReadFunction(
    CL_ClearErrorValue(theEnv);
 
    /*======================================================*/
-   /* DeteCL_rmine the logical name from which input is read. */
+   /* Dete_rmine the logical name from which input is read. */
    /*======================================================*/
 
    if (! UDFHasNextArgument(context))
@@ -383,8 +383,8 @@ void CL_ReadFunction(
       if (logicalName == NULL)
         {
          CL_IllegalLogicalNameMessage(theEnv,"read");
-         SetCL_HaltExecution(theEnv,true);
-         SetCL_EvaluationError(theEnv,true);
+         Set_HaltExecution(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          CL_SetErrorValue(theEnv,&CL_CreateSymbol(theEnv,"LOGICAL_NAME_ERROR")->header);
          returnValue->lexemeValue = FalseSymbol(theEnv);
          return;
@@ -398,8 +398,8 @@ void CL_ReadFunction(
    if (CL_QueryRouters(theEnv,logicalName) == false)
      {
       CL_UnrecognizedRouterMessage(theEnv,logicalName);
-      SetCL_HaltExecution(theEnv,true);
-      SetCL_EvaluationError(theEnv,true);
+      Set_HaltExecution(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       CL_SetErrorValue(theEnv,&CL_CreateSymbol(theEnv,"LOGICAL_NAME_ERROR")->header);
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
@@ -436,7 +436,7 @@ void CL_ReadFunction(
       returnValue->lexemeValue = FalseSymbol(theEnv);
      }
    else
-     { returnValue->value = CL_CreateSymbol(theEnv,theToken.printFoCL_rm); }
+     { returnValue->value = CL_CreateSymbol(theEnv,theToken.printFo_rm); }
   }
 
 /********************************************************/
@@ -480,7 +480,7 @@ static void ReadTokenFromStdin(
       inchar = CL_ReadRouter(theEnv,STDIN);
 
       while ((inchar != '\n') && (inchar != '\r') && (inchar != EOF) &&
-             (! CL_GetCL_HaltExecution(theEnv)))
+             (! CL_Get_HaltExecution(theEnv)))
         {
          inputString = CL_ExpandStringWithChar(theEnv,inchar,inputString,&RouterData(theEnv)->CommandBufferInputCount,
                                             &inputStringSize,inputStringSize + 80);
@@ -512,7 +512,7 @@ static void ReadTokenFromStdin(
       /* aborts the read function.                 */
       /*===========================================*/
 
-      if (CL_GetCL_HaltExecution(theEnv))
+      if (CL_Get_HaltExecution(theEnv))
         {
          CL_SetErrorValue(theEnv,&CL_CreateSymbol(theEnv,"READ_ERROR")->header);
          theToken->tknType = SYMBOL_TOKEN;
@@ -569,8 +569,8 @@ void CL_OpenFunction(
    logicalName = CL_GetLogicalName(context,NULL);
    if (logicalName == NULL)
      {
-      SetCL_HaltExecution(theEnv,true);
-      SetCL_EvaluationError(theEnv,true);
+      Set_HaltExecution(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       CL_IllegalLogicalNameMessage(theEnv,"open");
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
@@ -583,8 +583,8 @@ void CL_OpenFunction(
 
    if (CL_FindFile(theEnv,logicalName,NULL))
      {
-      SetCL_HaltExecution(theEnv,true);
-      SetCL_EvaluationError(theEnv,true);
+      Set_HaltExecution(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       CL_PrintErrorID(theEnv,"IOFUN",2,false);
       CL_WriteString(theEnv,STDERR,"Logical name '");
       CL_WriteString(theEnv,STDERR,logicalName);
@@ -626,8 +626,8 @@ void CL_OpenFunction(
        (strcmp(accessMode,"a+b") != 0) &&
        (strcmp(accessMode,"ab+")))
      {
-      SetCL_HaltExecution(theEnv,true);
-      SetCL_EvaluationError(theEnv,true);
+      Set_HaltExecution(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       CL_ExpectedTypeError1(theEnv,"open",3,"'file access mode string'");
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
@@ -672,8 +672,8 @@ void CL_CloseFunction(
    if (logicalName == NULL)
      {
       CL_IllegalLogicalNameMessage(theEnv,"close");
-      SetCL_HaltExecution(theEnv,true);
-      SetCL_EvaluationError(theEnv,true);
+      Set_HaltExecution(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
@@ -717,8 +717,8 @@ void CL_FlushFunction(
    if (logicalName == NULL)
      {
       CL_IllegalLogicalNameMessage(theEnv,"flush");
-      SetCL_HaltExecution(theEnv,true);
-      SetCL_EvaluationError(theEnv,true);
+      Set_HaltExecution(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
@@ -750,8 +750,8 @@ void CL_RewindFunction(
    if (logicalName == NULL)
      {
       CL_IllegalLogicalNameMessage(theEnv,"flush");
-      SetCL_HaltExecution(theEnv,true);
-      SetCL_EvaluationError(theEnv,true);
+      Set_HaltExecution(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
@@ -763,8 +763,8 @@ void CL_RewindFunction(
    if (CL_QueryRouters(theEnv,logicalName) == false)
      {
       CL_UnrecognizedRouterMessage(theEnv,logicalName);
-      SetCL_HaltExecution(theEnv,true);
-      SetCL_EvaluationError(theEnv,true);
+      Set_HaltExecution(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
@@ -797,8 +797,8 @@ void CL_TellFunction(
    if (logicalName == NULL)
      {
       CL_IllegalLogicalNameMessage(theEnv,"tell");
-      SetCL_HaltExecution(theEnv,true);
-      SetCL_EvaluationError(theEnv,true);
+      Set_HaltExecution(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
@@ -810,8 +810,8 @@ void CL_TellFunction(
    if (CL_QueryRouters(theEnv,logicalName) == false)
      {
       CL_UnrecognizedRouterMessage(theEnv,logicalName);
-      SetCL_HaltExecution(theEnv,true);
-      SetCL_EvaluationError(theEnv,true);
+      Set_HaltExecution(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
@@ -849,8 +849,8 @@ void CL_SeekFunction(
    if (logicalName == NULL)
      {
       CL_IllegalLogicalNameMessage(theEnv,"seek");
-      SetCL_HaltExecution(theEnv,true);
-      SetCL_EvaluationError(theEnv,true);
+      Set_HaltExecution(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
@@ -862,8 +862,8 @@ void CL_SeekFunction(
    if (CL_QueryRouters(theEnv,logicalName) == false)
      {
       CL_UnrecognizedRouterMessage(theEnv,logicalName);
-      SetCL_HaltExecution(theEnv,true);
-      SetCL_EvaluationError(theEnv,true);
+      Set_HaltExecution(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
@@ -930,8 +930,8 @@ void CL_GetCharFunction(
       if (logicalName == NULL)
         {
          CL_IllegalLogicalNameMessage(theEnv,"get-char");
-         SetCL_HaltExecution(theEnv,true);
-         SetCL_EvaluationError(theEnv,true);
+         Set_HaltExecution(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          returnValue->integerValue = CL_CreateInteger(theEnv,-1);
          return;
         }
@@ -944,8 +944,8 @@ void CL_GetCharFunction(
    if (CL_QueryRouters(theEnv,logicalName) == false)
      {
       CL_UnrecognizedRouterMessage(theEnv,logicalName);
-      SetCL_HaltExecution(theEnv,true);
-      SetCL_EvaluationError(theEnv,true);
+      Set_HaltExecution(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       returnValue->integerValue = CL_CreateInteger(theEnv,-1);
       return;
      }
@@ -1010,8 +1010,8 @@ void CL_UngetCharFunction(
       if (logicalName == NULL)
         {
          CL_IllegalLogicalNameMessage(theEnv,"ungetc-char");
-         SetCL_HaltExecution(theEnv,true);
-         SetCL_EvaluationError(theEnv,true);
+         Set_HaltExecution(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          returnValue->integerValue = CL_CreateInteger(theEnv,-1);
          return;
         }
@@ -1020,8 +1020,8 @@ void CL_UngetCharFunction(
    if (CL_QueryRouters(theEnv,logicalName) == false)
      {
       CL_UnrecognizedRouterMessage(theEnv,logicalName);
-      SetCL_HaltExecution(theEnv,true);
-      SetCL_EvaluationError(theEnv,true);
+      Set_HaltExecution(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       returnValue->integerValue = CL_CreateInteger(theEnv,-1);
       return;
      }
@@ -1079,8 +1079,8 @@ void CL_PutCharFunction(
       if (logicalName == NULL)
         {
          CL_IllegalLogicalNameMessage(theEnv,"put-char");
-         SetCL_HaltExecution(theEnv,true);
-         SetCL_EvaluationError(theEnv,true);
+         Set_HaltExecution(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          return;
         }
      }
@@ -1088,8 +1088,8 @@ void CL_PutCharFunction(
    if (CL_QueryRouters(theEnv,logicalName) == false)
      {
       CL_UnrecognizedRouterMessage(theEnv,logicalName);
-      SetCL_HaltExecution(theEnv,true);
-      SetCL_EvaluationError(theEnv,true);
+      Set_HaltExecution(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return;
      }
 
@@ -1235,29 +1235,29 @@ void CL_ChdirFunction(
 
       default:
         CL_WriteString(theEnv,STDERR,"The chdir function is not supported on this system.\n");
-        SetCL_HaltExecution(theEnv,true);
-        SetCL_EvaluationError(theEnv,true);
+        Set_HaltExecution(theEnv,true);
+        Set_EvaluationError(theEnv,true);
         returnValue->lexemeValue = FalseSymbol(theEnv);
         break;
      }
   }
 
 /****************************************/
-/* CL_FoCL_rmatFunction: H/L access routine   */
-/*   for the foCL_rmat function.           */
+/* CL_Fo_rmatFunction: H/L access routine   */
+/*   for the fo_rmat function.           */
 /****************************************/
-void CL_FoCL_rmatFunction(
+void CL_Fo_rmatFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
    unsigned int argCount;
    size_t start_pos;
-   const char *foCL_rmatString;
+   const char *fo_rmatString;
    const char *logicalName;
-   char foCL_rmatFlagType;
+   char fo_rmatFlagType;
    unsigned int f_cur_arg = 3;
-   size_t foCL_rm_pos = 0;
+   size_t fo_rm_pos = 0;
    char percentBuffer[FLAG_MAX];
    char *fstr = NULL;
    size_t fmaxm = 0;
@@ -1272,8 +1272,8 @@ void CL_FoCL_rmatFunction(
    hptr = CL_CreateString(theEnv,"");
 
    /*=========================================*/
-   /* FoCL_rmat requires at least two arguments: */
-   /* a logical name and a foCL_rmat string.     */
+   /* Fo_rmat requires at least two arguments: */
+   /* a logical name and a fo_rmat string.     */
    /*=========================================*/
 
    argCount = CL_UDFArgumentCount(context);
@@ -1284,9 +1284,9 @@ void CL_FoCL_rmatFunction(
 
    if ((logicalName = CL_GetLogicalName(context,STDOUT)) == NULL)
      {
-      CL_IllegalLogicalNameMessage(theEnv,"foCL_rmat");
-      SetCL_HaltExecution(theEnv,true);
-      SetCL_EvaluationError(theEnv,true);
+      CL_IllegalLogicalNameMessage(theEnv,"fo_rmat");
+      Set_HaltExecution(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       returnValue->value = hptr;
       return;
      }
@@ -1306,34 +1306,34 @@ void CL_FoCL_rmatFunction(
    /* present in the argument list.                       */
    /*=====================================================*/
 
-   if ((foCL_rmatString = ControlStringCheck(context,argCount)) == NULL)
+   if ((fo_rmatString = ControlStringCheck(context,argCount)) == NULL)
      {
       returnValue->value = hptr;
       return;
      }
 
    /*========================================*/
-   /* Search the foCL_rmat string, printing the */
-   /* foCL_rmat flags as they are encountered.  */
+   /* Search the fo_rmat string, printing the */
+   /* fo_rmat flags as they are encountered.  */
    /*========================================*/
 
-   while (foCL_rmatString[foCL_rm_pos] != '\0')
+   while (fo_rmatString[fo_rm_pos] != '\0')
      {
-      if (foCL_rmatString[foCL_rm_pos] != '%')
+      if (fo_rmatString[fo_rm_pos] != '%')
         {
-         start_pos = foCL_rm_pos;
-         while ((foCL_rmatString[foCL_rm_pos] != '%') &&
-                (foCL_rmatString[foCL_rm_pos] != '\0'))
-           { foCL_rm_pos++; }
-         fstr = CL_AppendNToString(theEnv,&foCL_rmatString[start_pos],fstr,foCL_rm_pos-start_pos,&fpos,&fmaxm);
+         start_pos = fo_rm_pos;
+         while ((fo_rmatString[fo_rm_pos] != '%') &&
+                (fo_rmatString[fo_rm_pos] != '\0'))
+           { fo_rm_pos++; }
+         fstr = CL_AppendNToString(theEnv,&fo_rmatString[start_pos],fstr,fo_rm_pos-start_pos,&fpos,&fmaxm);
         }
       else
         {
-		 foCL_rm_pos++;
-         foCL_rmatFlagType = FindFoCL_rmatFlag(foCL_rmatString,&foCL_rm_pos,percentBuffer,FLAG_MAX);
-         if (foCL_rmatFlagType != ' ')
+		 fo_rm_pos++;
+         fo_rmatFlagType = FindFo_rmatFlag(fo_rmatString,&fo_rm_pos,percentBuffer,FLAG_MAX);
+         if (fo_rmatFlagType != ' ')
            {
-            if ((theString = PrintFoCL_rmatFlag(context,percentBuffer,f_cur_arg,foCL_rmatFlagType)) == NULL)
+            if ((theString = PrintFo_rmatFlag(context,percentBuffer,f_cur_arg,fo_rmatFlagType)) == NULL)
               {
                if (fstr != NULL) CL_rm(theEnv,fstr,fmaxm);
                returnValue->value = hptr;
@@ -1372,7 +1372,7 @@ void CL_FoCL_rmatFunction(
   }
 
 /*********************************************************************/
-/* ControlStringCheck:  Checks the 2nd parameter which is the foCL_rmat */
+/* ControlStringCheck:  Checks the 2nd parameter which is the fo_rmat */
 /*   control string to see if there are enough matching arguments.   */
 /*********************************************************************/
 static const char *ControlStringCheck(
@@ -1384,7 +1384,7 @@ static const char *ControlStringCheck(
    char print_buff[FLAG_MAX];
    size_t i;
    unsigned int per_count;
-   char foCL_rmatFlag;
+   char fo_rmatFlag;
    Environment *theEnv = context->environment;
 
    if (! CL_UDFNthArgument(context,2,STRING_BIT,&t_ptr))
@@ -1397,17 +1397,17 @@ static const char *ControlStringCheck(
       if (str_array[i] == '%')
         {
          i++;
-         foCL_rmatFlag = FindFoCL_rmatFlag(str_array,&i,print_buff,FLAG_MAX);
-         if (foCL_rmatFlag == '-')
+         fo_rmatFlag = FindFo_rmatFlag(str_array,&i,print_buff,FLAG_MAX);
+         if (fo_rmatFlag == '-')
            {
             CL_PrintErrorID(theEnv,"IOFUN",3,false);
-            CL_WriteString(theEnv,STDERR,"Invalid foCL_rmat flag \"");
+            CL_WriteString(theEnv,STDERR,"Invalid fo_rmat flag \"");
             CL_WriteString(theEnv,STDERR,print_buff);
-            CL_WriteString(theEnv,STDERR,"\" specified in foCL_rmat function.\n");
-            SetCL_EvaluationError(theEnv,true);
+            CL_WriteString(theEnv,STDERR,"\" specified in fo_rmat function.\n");
+            Set_EvaluationError(theEnv,true);
             return (NULL);
            }
-         else if (foCL_rmatFlag != ' ')
+         else if (fo_rmatFlag != ' ')
            { per_count++; }
         }
       else
@@ -1416,8 +1416,8 @@ static const char *ControlStringCheck(
 
    if ((per_count + 2) != argCount)
      {
-      CL_ExpectedCountError(theEnv,"foCL_rmat",EXACTLY,per_count+2);
-      SetCL_EvaluationError(theEnv,true);
+      CL_ExpectedCountError(theEnv,"fo_rmat",EXACTLY,per_count+2);
+      Set_EvaluationError(theEnv,true);
       return (NULL);
      }
 
@@ -1425,74 +1425,74 @@ static const char *ControlStringCheck(
   }
 
 /***********************************************/
-/* FindFoCL_rmatFlag:  This function searches for */
-/*   a foCL_rmat flag in the foCL_rmat string.       */
+/* FindFo_rmatFlag:  This function searches for */
+/*   a fo_rmat flag in the fo_rmat string.       */
 /***********************************************/
-static char FindFoCL_rmatFlag(
-  const char *foCL_rmatString,
+static char FindFo_rmatFlag(
+  const char *fo_rmatString,
   size_t *a,
-  char *foCL_rmatBuffer,
+  char *fo_rmatBuffer,
   size_t bufferMax)
   {
-   char inchar, foCL_rmatFlagType;
+   char inchar, fo_rmatFlagType;
    size_t copy_pos = 0;
 
    /*====================================================*/
    /* Set return values to the default value. A blank    */
-   /* character indicates that no foCL_rmat flag was found  */
+   /* character indicates that no fo_rmat flag was found  */
    /* which requires a parameter.                        */
    /*====================================================*/
 
-   foCL_rmatFlagType = ' ';
+   fo_rmatFlagType = ' ';
 
    /*=====================================================*/
-   /* The foCL_rmat flags for carriage returns, line feeds,  */
+   /* The fo_rmat flags for carriage returns, line feeds,  */
    /* horizontal and vertical tabs, and the percent sign, */
    /* do not require a parameter.                         */
    /*=====================================================*/
 
-   if (foCL_rmatString[*a] == 'n')
+   if (fo_rmatString[*a] == 'n')
      {
-      CL_gensprintf(foCL_rmatBuffer,"\n");
+      CL_gensprintf(fo_rmatBuffer,"\n");
       (*a)++;
-      return(foCL_rmatFlagType);
+      return(fo_rmatFlagType);
      }
-   else if (foCL_rmatString[*a] == 'r')
+   else if (fo_rmatString[*a] == 'r')
      {
-      CL_gensprintf(foCL_rmatBuffer,"\r");
+      CL_gensprintf(fo_rmatBuffer,"\r");
       (*a)++;
-      return(foCL_rmatFlagType);
+      return(fo_rmatFlagType);
      }
-   else if (foCL_rmatString[*a] == 't')
+   else if (fo_rmatString[*a] == 't')
      {
-      CL_gensprintf(foCL_rmatBuffer,"\t");
+      CL_gensprintf(fo_rmatBuffer,"\t");
       (*a)++;
-      return(foCL_rmatFlagType);
+      return(fo_rmatFlagType);
      }
-   else if (foCL_rmatString[*a] == 'v')
+   else if (fo_rmatString[*a] == 'v')
      {
-      CL_gensprintf(foCL_rmatBuffer,"\v");
+      CL_gensprintf(fo_rmatBuffer,"\v");
       (*a)++;
-      return(foCL_rmatFlagType);
+      return(fo_rmatFlagType);
      }
-   else if (foCL_rmatString[*a] == '%')
+   else if (fo_rmatString[*a] == '%')
      {
-      CL_gensprintf(foCL_rmatBuffer,"%%");
+      CL_gensprintf(fo_rmatBuffer,"%%");
       (*a)++;
-      return(foCL_rmatFlagType);
+      return(fo_rmatFlagType);
      }
 
    /*======================================================*/
-   /* Identify the foCL_rmat flag which requires a parameter. */
+   /* Identify the fo_rmat flag which requires a parameter. */
    /*======================================================*/
 
-   foCL_rmatBuffer[copy_pos++] = '%';
-   foCL_rmatBuffer[copy_pos] = '\0';
-   while ((foCL_rmatString[*a] != '%') &&
-          (foCL_rmatString[*a] != '\0') &&
+   fo_rmatBuffer[copy_pos++] = '%';
+   fo_rmatBuffer[copy_pos] = '\0';
+   while ((fo_rmatString[*a] != '%') &&
+          (fo_rmatString[*a] != '\0') &&
           (copy_pos < (bufferMax - 5)))
      {
-      inchar = foCL_rmatString[*a];
+      inchar = fo_rmatString[*a];
       (*a)++;
 
       if ( (inchar == 'd') ||
@@ -1500,12 +1500,12 @@ static char FindFoCL_rmatFlag(
            (inchar == 'x') ||
            (inchar == 'u'))
         {
-         foCL_rmatFlagType = inchar;
-         foCL_rmatBuffer[copy_pos++] = 'l';
-         foCL_rmatBuffer[copy_pos++] = 'l';
-         foCL_rmatBuffer[copy_pos++] = inchar;
-         foCL_rmatBuffer[copy_pos] = '\0';
-         return(foCL_rmatFlagType);
+         fo_rmatFlagType = inchar;
+         fo_rmatBuffer[copy_pos++] = 'l';
+         fo_rmatBuffer[copy_pos++] = 'l';
+         fo_rmatBuffer[copy_pos++] = inchar;
+         fo_rmatBuffer[copy_pos] = '\0';
+         return(fo_rmatFlagType);
         }
       else if ( (inchar == 'c') ||
                 (inchar == 's') ||
@@ -1513,15 +1513,15 @@ static char FindFoCL_rmatFlag(
                 (inchar == 'f') ||
                 (inchar == 'g') )
         {
-         foCL_rmatBuffer[copy_pos++] = inchar;
-         foCL_rmatBuffer[copy_pos] = '\0';
-         foCL_rmatFlagType = inchar;
-         return(foCL_rmatFlagType);
+         fo_rmatBuffer[copy_pos++] = inchar;
+         fo_rmatBuffer[copy_pos] = '\0';
+         fo_rmatFlagType = inchar;
+         return(fo_rmatFlagType);
         }
 
       /*=======================================================*/
       /* If the type hasn't been read, then this should be the */
-      /* -M.N part of the foCL_rmat specification (where M and N  */
+      /* -M.N part of the fo_rmat specification (where M and N  */
       /* are integers).                                        */
       /*=======================================================*/
 
@@ -1529,27 +1529,27 @@ static char FindFoCL_rmatFlag(
            (inchar != '.') &&
            (inchar != '-') )
         {
-         foCL_rmatBuffer[copy_pos++] = inchar;
-         foCL_rmatBuffer[copy_pos] = '\0';
+         fo_rmatBuffer[copy_pos++] = inchar;
+         fo_rmatBuffer[copy_pos] = '\0';
          return('-');
         }
 
-      foCL_rmatBuffer[copy_pos++] = inchar;
-      foCL_rmatBuffer[copy_pos] = '\0';
+      fo_rmatBuffer[copy_pos++] = inchar;
+      fo_rmatBuffer[copy_pos] = '\0';
      }
 
-   return(foCL_rmatFlagType);
+   return(fo_rmatFlagType);
   }
 
 /**********************************************************************/
-/* PrintFoCL_rmatFlag:  Prints out part of the total foCL_rmat string along */
-/*   with the argument for that part of the foCL_rmat string.            */
+/* PrintFo_rmatFlag:  Prints out part of the total fo_rmat string along */
+/*   with the argument for that part of the fo_rmat string.            */
 /**********************************************************************/
-static const char *PrintFoCL_rmatFlag(
+static const char *PrintFo_rmatFlag(
   UDFContext *context,
-  const char *foCL_rmatString,
+  const char *fo_rmatString,
   unsigned int whichArg,
-  int foCL_rmatType)
+  int fo_rmatType)
   {
    UDFValue theResult;
    const char *theString;
@@ -1562,14 +1562,14 @@ static const char *PrintFoCL_rmatFlag(
    /* String argument */
    /*=================*/
 
-   switch (foCL_rmatType)
+   switch (fo_rmatType)
      {
       case 's':
         if (! CL_UDFNthArgument(context,whichArg,LEXEME_BITS,&theResult))
           { return(NULL); }
-        theLength = strlen(foCL_rmatString) + strlen(theResult.lexemeValue->contents) + 200;
+        theLength = strlen(fo_rmatString) + strlen(theResult.lexemeValue->contents) + 200;
         printBuffer = (char *) CL_gm2(theEnv,(sizeof(char) * theLength));
-        CL_gensprintf(printBuffer,foCL_rmatString,theResult.lexemeValue->contents);
+        CL_gensprintf(printBuffer,fo_rmatString,theResult.lexemeValue->contents);
         break;
 
       case 'c':
@@ -1577,19 +1577,19 @@ static const char *PrintFoCL_rmatFlag(
         if ((theResult.header->type == STRING_TYPE) ||
             (theResult.header->type == SYMBOL_TYPE))
           {
-           theLength = strlen(foCL_rmatString) + 200;
+           theLength = strlen(fo_rmatString) + 200;
            printBuffer = (char *) CL_gm2(theEnv,(sizeof(char) * theLength));
-           CL_gensprintf(printBuffer,foCL_rmatString,theResult.lexemeValue->contents[0]);
+           CL_gensprintf(printBuffer,fo_rmatString,theResult.lexemeValue->contents[0]);
           }
         else if (theResult.header->type == INTEGER_TYPE)
           {
-           theLength = strlen(foCL_rmatString) + 200;
+           theLength = strlen(fo_rmatString) + 200;
            printBuffer = (char *) CL_gm2(theEnv,(sizeof(char) * theLength));
-           CL_gensprintf(printBuffer,foCL_rmatString,(char) theResult.integerValue->contents);
+           CL_gensprintf(printBuffer,fo_rmatString,(char) theResult.integerValue->contents);
           }
         else
           {
-           CL_ExpectedTypeError1(theEnv,"foCL_rmat",whichArg,"symbol, string, or integer");
+           CL_ExpectedTypeError1(theEnv,"fo_rmat",whichArg,"symbol, string, or integer");
            return NULL;
           }
         break;
@@ -1600,16 +1600,16 @@ static const char *PrintFoCL_rmatFlag(
       case 'u':
         if (! CL_UDFNthArgument(context,whichArg,NUMBER_BITS,&theResult))
           { return(NULL); }
-        theLength = strlen(foCL_rmatString) + 200;
+        theLength = strlen(fo_rmatString) + 200;
         printBuffer = (char *) CL_gm2(theEnv,(sizeof(char) * theLength));
 
         oldLocale = CL_CreateSymbol(theEnv,setlocale(LC_NUMERIC,NULL));
         setlocale(LC_NUMERIC,IOFunctionData(theEnv)->locale->contents);
 
         if (theResult.header->type == FLOAT_TYPE)
-          { CL_gensprintf(printBuffer,foCL_rmatString,(long long) theResult.floatValue->contents); }
+          { CL_gensprintf(printBuffer,fo_rmatString,(long long) theResult.floatValue->contents); }
         else
-          { CL_gensprintf(printBuffer,foCL_rmatString,theResult.integerValue->contents); }
+          { CL_gensprintf(printBuffer,fo_rmatString,theResult.integerValue->contents); }
 
         setlocale(LC_NUMERIC,oldLocale->contents);
         break;
@@ -1619,7 +1619,7 @@ static const char *PrintFoCL_rmatFlag(
       case 'e':
         if (! CL_UDFNthArgument(context,whichArg,NUMBER_BITS,&theResult))
           { return(NULL); }
-        theLength = strlen(foCL_rmatString) + 200;
+        theLength = strlen(fo_rmatString) + 200;
         printBuffer = (char *) CL_gm2(theEnv,(sizeof(char) * theLength));
 
         oldLocale = CL_CreateSymbol(theEnv,setlocale(LC_NUMERIC,NULL));
@@ -1627,17 +1627,17 @@ static const char *PrintFoCL_rmatFlag(
         setlocale(LC_NUMERIC,IOFunctionData(theEnv)->locale->contents);
 
         if (theResult.header->type == FLOAT_TYPE)
-          { CL_gensprintf(printBuffer,foCL_rmatString,theResult.floatValue->contents); }
+          { CL_gensprintf(printBuffer,fo_rmatString,theResult.floatValue->contents); }
         else
-          { CL_gensprintf(printBuffer,foCL_rmatString,(double) theResult.integerValue->contents); }
+          { CL_gensprintf(printBuffer,fo_rmatString,(double) theResult.integerValue->contents); }
 
         setlocale(LC_NUMERIC,oldLocale->contents);
 
         break;
 
       default:
-         CL_WriteString(theEnv,STDERR," Error in foCL_rmat, the conversion character");
-         CL_WriteString(theEnv,STDERR," for foCL_rmatted output is not valid\n");
+         CL_WriteString(theEnv,STDERR," Error in fo_rmat, the conversion character");
+         CL_WriteString(theEnv,STDERR," for fo_rmatted output is not valid\n");
          return NULL;
      }
 
@@ -1667,8 +1667,8 @@ void CL_ReadlineFunction(
       if (logicalName == NULL)
         {
          CL_IllegalLogicalNameMessage(theEnv,"readline");
-         SetCL_HaltExecution(theEnv,true);
-         SetCL_EvaluationError(theEnv,true);
+         Set_HaltExecution(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          returnValue->lexemeValue = FalseSymbol(theEnv);
          return;
         }
@@ -1677,8 +1677,8 @@ void CL_ReadlineFunction(
    if (CL_QueryRouters(theEnv,logicalName) == false)
      {
       CL_UnrecognizedRouterMessage(theEnv,logicalName);
-      SetCL_HaltExecution(theEnv,true);
-      SetCL_EvaluationError(theEnv,true);
+      Set_HaltExecution(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
@@ -1702,7 +1702,7 @@ void CL_ReadlineFunction(
       buffer = FillBuffer(theEnv,logicalName,&currentPos,&line_max);
      }
 
-   if (CL_GetCL_HaltExecution(theEnv))
+   if (CL_Get_HaltExecution(theEnv))
      {
       returnValue->lexemeValue = FalseSymbol(theEnv);
       if (buffer != NULL) CL_rm(theEnv,buffer,sizeof (char) * line_max);
@@ -1748,7 +1748,7 @@ static char *FillBuffer(
    /*==================================*/
 
    while ((c != '\n') && (c != '\r') && (c != EOF) &&
-          (! CL_GetCL_HaltExecution(theEnv)))
+          (! CL_Get_HaltExecution(theEnv)))
      {
       buf = CL_ExpandStringWithChar(theEnv,c,buf,currentPosition,maximumSize,*maximumSize+80);
       c = CL_ReadRouter(theEnv,logicalName);
@@ -1819,7 +1819,7 @@ void CL_ReadNumberFunction(
    const char *logicalName = NULL;
 
    /*======================================================*/
-   /* DeteCL_rmine the logical name from which input is read. */
+   /* Dete_rmine the logical name from which input is read. */
    /*======================================================*/
 
    if (! UDFHasNextArgument(context))
@@ -1830,8 +1830,8 @@ void CL_ReadNumberFunction(
       if (logicalName == NULL)
         {
          CL_IllegalLogicalNameMessage(theEnv,"read");
-         SetCL_HaltExecution(theEnv,true);
-         SetCL_EvaluationError(theEnv,true);
+         Set_HaltExecution(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          returnValue->lexemeValue = FalseSymbol(theEnv);
          return;
         }
@@ -1844,8 +1844,8 @@ void CL_ReadNumberFunction(
    if (CL_QueryRouters(theEnv,logicalName) == false)
      {
       CL_UnrecognizedRouterMessage(theEnv,logicalName);
-      SetCL_HaltExecution(theEnv,true);
-      SetCL_EvaluationError(theEnv,true);
+      Set_HaltExecution(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
@@ -1885,7 +1885,7 @@ void CL_ReadNumberFunction(
    else if (theToken.tknType == UNKNOWN_VALUE_TOKEN)
      { returnValue->lexemeValue = FalseSymbol(theEnv); }
    else
-     { returnValue->value = CL_CreateString(theEnv,theToken.printFoCL_rm); }
+     { returnValue->value = CL_CreateString(theEnv,theToken.printFo_rm); }
 
    return;
   }
@@ -1924,7 +1924,7 @@ static void ReadNumber(
    /*====================================*/
 
    while (isspace(inchar) && (inchar != EOF) &&
-          (! CL_GetCL_HaltExecution(theEnv)))
+          (! CL_Get_HaltExecution(theEnv)))
      { inchar = CL_ReadRouter(theEnv,logicalName); }
 
    /*=============================================================*/
@@ -1935,7 +1935,7 @@ static void ReadNumber(
    while ((((! isStdin) && (! isspace(inchar))) ||
           (isStdin && (inchar != '\n') && (inchar != '\r'))) &&
           (inchar != EOF) &&
-          (! CL_GetCL_HaltExecution(theEnv)))
+          (! CL_Get_HaltExecution(theEnv)))
      {
       inputString = CL_ExpandStringWithChar(theEnv,inchar,inputString,&RouterData(theEnv)->CommandBufferInputCount,
                                          &inputStringSize,inputStringSize + 80);
@@ -1947,7 +1947,7 @@ static void ReadNumber(
    /* aborts the read-number function.          */
    /*===========================================*/
 
-   if (CL_GetCL_HaltExecution(theEnv))
+   if (CL_Get_HaltExecution(theEnv))
      {
       theToken->tknType = SYMBOL_TOKEN;
       theToken->value = FalseSymbol(theEnv);
@@ -1979,7 +1979,7 @@ static void ReadNumber(
 
    /*=======================================*/
    /* Change the locale so that numbers are */
-   /* converted using the localized foCL_rmat. */
+   /* converted using the localized fo_rmat. */
    /*=======================================*/
 
    oldLocale = CL_CreateSymbol(theEnv,setlocale(LC_NUMERIC,NULL));
@@ -1987,8 +1987,8 @@ static void ReadNumber(
 
    /*========================================*/
    /* Try to parse the number as a long. The */
-   /* teCL_rminating character must either be   */
-   /* white space or the string teCL_rminator.  */
+   /* te_rminating character must either be   */
+   /* white space or the string te_rminator.  */
    /*========================================*/
 
 #if WIN_MVC
@@ -2009,8 +2009,8 @@ static void ReadNumber(
 
    /*==========================================*/
    /* Try to parse the number as a double. The */
-   /* teCL_rminating character must either be     */
-   /* white space or the string teCL_rminator.    */
+   /* te_rminating character must either be     */
+   /* white space or the string te_rminator.    */
    /*==========================================*/
 
    theDouble = strtod(inputString,&charPtr);
@@ -2026,7 +2026,7 @@ static void ReadNumber(
 
    /*============================================*/
    /* Restore the "C" locale so that any parsing */
-   /* of numbers uses the C foCL_rmat.              */
+   /* of numbers uses the C fo_rmat.              */
    /*============================================*/
 
    setlocale(LC_NUMERIC,oldLocale->contents);

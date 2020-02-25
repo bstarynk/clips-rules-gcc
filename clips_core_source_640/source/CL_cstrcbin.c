@@ -57,14 +57,14 @@
  ***************************************************/
 void CL_MarkConstructHeaderNeededItems(
   ConstructHeader *theConstruct,
-  unsigned long theCL_BsaveID)
+  unsigned long the_BsaveID)
   {
    theConstruct->name->neededSymbol = true;
-   theConstruct->bsaveID = theCL_BsaveID;
+   theConstruct->bsaveID = the_BsaveID;
   }
 
 /******************************************************
-  NAME         : CL_AssignCL_BsaveConstructHeaderVals
+  NAME         : CL_Assign_BsaveConstructHeaderVals
   DESCRIPTION  : Assigns value to the construct
                  header for saving in the binary file
   INPUTS       : 1) The binary-save buffer for the
@@ -80,32 +80,32 @@ void CL_MarkConstructHeaderNeededItems(
                  used for the whichModule id of
                  this construct.
  ******************************************************/
-void CL_AssignCL_BsaveConstructHeaderVals(
-  struct bsaveConstructHeader *theCL_BsaveConstruct,
+void CL_Assign_BsaveConstructHeaderVals(
+  struct bsaveConstructHeader *the_BsaveConstruct,
   ConstructHeader *theConstruct)
   {
    if (theConstruct->name != NULL)
-     { theCL_BsaveConstruct->name = theConstruct->name->bucket; }
+     { the_BsaveConstruct->name = theConstruct->name->bucket; }
    else
-     { theCL_BsaveConstruct->name = ULONG_MAX; }
+     { the_BsaveConstruct->name = ULONG_MAX; }
    
    if ((theConstruct->whichModule != NULL) &&
        (theConstruct->whichModule->theModule != NULL))
-     { theCL_BsaveConstruct->whichModule = theConstruct->whichModule->theModule->header.bsaveID; }
+     { the_BsaveConstruct->whichModule = theConstruct->whichModule->theModule->header.bsaveID; }
    else
-     { theCL_BsaveConstruct->whichModule = ULONG_MAX; }
+     { the_BsaveConstruct->whichModule = ULONG_MAX; }
      
    if (theConstruct->next != NULL)
-     theCL_BsaveConstruct->next = theConstruct->next->bsaveID;
+     the_BsaveConstruct->next = theConstruct->next->bsaveID;
    else
-     theCL_BsaveConstruct->next = ULONG_MAX;
+     the_BsaveConstruct->next = ULONG_MAX;
   }
 
 #endif /* BLOAD_AND_BSAVE */
 
 /***************************************************
   NAME         : CL_UpdateConstructHeader
-  DESCRIPTION  : DeteCL_rmines field values for
+  DESCRIPTION  : Dete_rmines field values for
                  construct header from binary-load
                  buffer
   INPUTS       : 1) The binary-load data for the
@@ -123,7 +123,7 @@ void CL_AssignCL_BsaveConstructHeaderVals(
  ***************************************************/
 void CL_UpdateConstructHeader(
   Environment *theEnv,
-  struct bsaveConstructHeader *theCL_BsaveConstruct,
+  struct bsaveConstructHeader *the_BsaveConstruct,
   ConstructHeader *theConstruct,
   ConstructType theType,
   size_t itemModuleSize,
@@ -133,26 +133,26 @@ void CL_UpdateConstructHeader(
   {
    size_t moduleOffset, itemOffset;
 
-   if (theCL_BsaveConstruct->whichModule != ULONG_MAX)
+   if (the_BsaveConstruct->whichModule != ULONG_MAX)
      {
-      moduleOffset = itemModuleSize * theCL_BsaveConstruct->whichModule;
+      moduleOffset = itemModuleSize * the_BsaveConstruct->whichModule;
       theConstruct->whichModule =
         (struct defmoduleItemHeader *) &((char *) itemModuleArray)[moduleOffset];
      }
    else
      { theConstruct->whichModule = NULL; }
      
-   if (theCL_BsaveConstruct->name != ULONG_MAX)
+   if (the_BsaveConstruct->name != ULONG_MAX)
      {
-      theConstruct->name = SymbolPointer(theCL_BsaveConstruct->name);
+      theConstruct->name = SymbolPointer(the_BsaveConstruct->name);
       IncrementLexemeCount(theConstruct->name);
      }
    else
      { theConstruct->name = NULL; }
      
-   if (theCL_BsaveConstruct->next != ULONG_MAX)
+   if (the_BsaveConstruct->next != ULONG_MAX)
      {
-      itemOffset = itemSize * theCL_BsaveConstruct->next;
+      itemOffset = itemSize * the_BsaveConstruct->next;
       theConstruct->next = (ConstructHeader *) &((char *) itemArray)[itemOffset];
      }
    else
@@ -160,7 +160,7 @@ void CL_UpdateConstructHeader(
 
    theConstruct->constructType = theType;
    theConstruct->env = theEnv;
-   theConstruct->ppFoCL_rm = NULL;
+   theConstruct->ppFo_rm = NULL;
    theConstruct->bsaveID = 0L;
    theConstruct->usrData = NULL;
   }

@@ -70,7 +70,7 @@
 
 /*********************************************/
 /* CL_DeftemplateLHSParse: Parses a LHS pattern */
-/*   that uses the deftemplate foCL_rmat.       */
+/*   that uses the deftemplate fo_rmat.       */
 /*********************************************/
 struct lhsParseNode *CL_DeftemplateLHSParse(
   Environment *theEnv,
@@ -154,7 +154,7 @@ static struct lhsParseNode *GetLHSSlots(
      {
       CL_PPBackup(theEnv);
       CL_SavePPBuffer(theEnv," ");
-      CL_SavePPBuffer(theEnv,tempToken->printFoCL_rm);
+      CL_SavePPBuffer(theEnv,tempToken->printFo_rm);
 
       /*=================================================*/
       /* Slot definitions begin with a left parenthesis. */
@@ -182,7 +182,7 @@ static struct lhsParseNode *GetLHSSlots(
         }
 
       /*==========================================================*/
-      /* DeteCL_rmine if the slot name is valid for the deftemplate. */
+      /* Dete_rmine if the slot name is valid for the deftemplate. */
       /*==========================================================*/
 
       if ((slotPtr = CL_FindSlot(theDeftemplate,tempToken->lexemeValue,&position)) == NULL)
@@ -195,7 +195,7 @@ static struct lhsParseNode *GetLHSSlots(
         }
 
       /*============================================*/
-      /* DeteCL_rmine if the slot is multiply defined. */
+      /* Dete_rmine if the slot is multiply defined. */
       /*============================================*/
 
       if (MultiplyDefinedLHSSlots(theEnv,firstSlot,tempToken->lexemeValue) == true)
@@ -294,7 +294,7 @@ static struct lhsParseNode *GetSingleLHSSlot(
       if ((nextSlot->pnType == MF_VARIABLE_NODE) ||
           (nextSlot->pnType == MF_WILDCARD_NODE))
         {
-         CL_SingleFieldCL_SlotCardinalityError(theEnv,slotPtr->slotName->contents);
+         CL_SingleField_SlotCardinalityError(theEnv,slotPtr->slotName->contents);
          *error = true;
          CL_ReturnLHSParseNodes(theEnv,nextSlot);
          return NULL;
@@ -324,7 +324,7 @@ static struct lhsParseNode *GetSingleLHSSlot(
      {
       CL_PPBackup(theEnv);
       CL_SavePPBuffer(theEnv," ");
-      CL_SavePPBuffer(theEnv,tempToken->printFoCL_rm);
+      CL_SavePPBuffer(theEnv,tempToken->printFo_rm);
       CL_SyntaxErrorMessage(theEnv,"deftemplate patterns");
       *error = true;
       CL_ReturnLHSParseNodes(theEnv,nextSlot);
@@ -352,7 +352,7 @@ static struct lhsParseNode *GetSingleLHSSlot(
   }
 
 /******************************************************/
-/* MultiplyDefinedLHSSlots: DeteCL_rmines if a slot name */
+/* MultiplyDefinedLHSSlots: Dete_rmines if a slot name */
 /*   was used more than once in a LHS pattern.        */
 /******************************************************/
 static bool MultiplyDefinedLHSSlots(

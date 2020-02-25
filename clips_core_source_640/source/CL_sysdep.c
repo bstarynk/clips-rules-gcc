@@ -25,7 +25,7 @@
 /*                                                           */
 /*            Made CL_gensystem functional for Xcode.           */
 /*                                                           */
-/*            Added BeforeCL_OpenFunction and AfterCL_OpenFunction */
+/*            Added Before_OpenFunction and After_OpenFunction */
 /*            hooks.                                         */
 /*                                                           */
 /*            Added environment parameter to CL_GenClose.       */
@@ -79,7 +79,7 @@
 /*            current directory.                             */
 /*                                                           */
 /*            Modified CL_gentime to return "comparable" epoch  */
-/*            based values across platfoCL_rms.                 */
+/*            based values across platfo_rms.                 */
 /*                                                           */
 /*            Refactored code to reduce header dependencies  */
 /*            in sysdep.c.                                   */
@@ -168,8 +168,8 @@ struct systemDependentData
 #if (! WIN_MVC)
    FILE *BinaryFP;
 #endif
-   int (*BeforeCL_OpenFunction)(Environment *);
-   int (*AfterCL_OpenFunction)(Environment *);
+   int (*Before_OpenFunction)(Environment *);
+   int (*After_OpenFunction)(Environment *);
    jmp_buf *jmpBuffer;
   };
 
@@ -512,30 +512,30 @@ bool CL_genrename(
   }
 
 /***********************************/
-/* SetBeforeCL_OpenFunction: Sets the */
-/*  value of BeforeCL_OpenFunction.   */
+/* SetBefore_OpenFunction: Sets the */
+/*  value of Before_OpenFunction.   */
 /***********************************/
-int (*SetBeforeCL_OpenFunction(Environment *theEnv,
+int (*SetBefore_OpenFunction(Environment *theEnv,
                                int (*theFunction)(Environment *)))(Environment *)
   {
    int (*tempFunction)(Environment *);
 
-   tempFunction = SystemDependentData(theEnv)->BeforeCL_OpenFunction;
-   SystemDependentData(theEnv)->BeforeCL_OpenFunction = theFunction;
+   tempFunction = SystemDependentData(theEnv)->Before_OpenFunction;
+   SystemDependentData(theEnv)->Before_OpenFunction = theFunction;
    return(tempFunction);
   }
 
 /**********************************/
-/* SetAfterCL_OpenFunction: Sets the */
-/*  value of AfterCL_OpenFunction.   */
+/* SetAfter_OpenFunction: Sets the */
+/*  value of After_OpenFunction.   */
 /**********************************/
-int (*SetAfterCL_OpenFunction(Environment *theEnv,
+int (*SetAfter_OpenFunction(Environment *theEnv,
                               int (*theFunction)(Environment *)))(Environment *)
   {
    int (*tempFunction)(Environment *);
 
-   tempFunction = SystemDependentData(theEnv)->AfterCL_OpenFunction;
-   SystemDependentData(theEnv)->AfterCL_OpenFunction = theFunction;
+   tempFunction = SystemDependentData(theEnv)->After_OpenFunction;
+   SystemDependentData(theEnv)->After_OpenFunction = theFunction;
    return(tempFunction);
   }
 
@@ -557,8 +557,8 @@ FILE *CL_GenOpen(
    /* Invoke the before open function. */
    /*==================================*/
 
-   if (SystemDependentData(theEnv)->BeforeCL_OpenFunction != NULL)
-     { (*SystemDependentData(theEnv)->BeforeCL_OpenFunction)(theEnv); }
+   if (SystemDependentData(theEnv)->Before_OpenFunction != NULL)
+     { (*SystemDependentData(theEnv)->Before_OpenFunction)(theEnv); }
 
    /*================*/
    /* Open the file. */
@@ -612,8 +612,8 @@ FILE *CL_GenOpen(
    /* Invoke the after open function. */
    /*=================================*/
 
-   if (SystemDependentData(theEnv)->AfterCL_OpenFunction != NULL)
-     { (*SystemDependentData(theEnv)->AfterCL_OpenFunction)(theEnv); }
+   if (SystemDependentData(theEnv)->After_OpenFunction != NULL)
+     { (*SystemDependentData(theEnv)->After_OpenFunction)(theEnv); }
 
    /*===============================*/
    /* Return a pointer to the file. */
@@ -703,15 +703,15 @@ int CL_GenOpenReadBinary(
   const char *funcName,
   const char *fileName)
   {
-   if (SystemDependentData(theEnv)->BeforeCL_OpenFunction != NULL)
-     { (*SystemDependentData(theEnv)->BeforeCL_OpenFunction)(theEnv); }
+   if (SystemDependentData(theEnv)->Before_OpenFunction != NULL)
+     { (*SystemDependentData(theEnv)->Before_OpenFunction)(theEnv); }
 
 #if WIN_MVC
    SystemDependentData(theEnv)->BinaryFileHandle = _open(fileName,O_RDONLY | O_BINARY);
    if (SystemDependentData(theEnv)->BinaryFileHandle == -1)
      {
-      if (SystemDependentData(theEnv)->AfterCL_OpenFunction != NULL)
-        { (*SystemDependentData(theEnv)->AfterCL_OpenFunction)(theEnv); }
+      if (SystemDependentData(theEnv)->After_OpenFunction != NULL)
+        { (*SystemDependentData(theEnv)->After_OpenFunction)(theEnv); }
       return 0;
      }
 #endif
@@ -719,14 +719,14 @@ int CL_GenOpenReadBinary(
 #if (! WIN_MVC)
    if ((SystemDependentData(theEnv)->BinaryFP = fopen(fileName,"rb")) == NULL)
      {
-      if (SystemDependentData(theEnv)->AfterCL_OpenFunction != NULL)
-        { (*SystemDependentData(theEnv)->AfterCL_OpenFunction)(theEnv); }
+      if (SystemDependentData(theEnv)->After_OpenFunction != NULL)
+        { (*SystemDependentData(theEnv)->After_OpenFunction)(theEnv); }
       return 0;
      }
 #endif
 
-   if (SystemDependentData(theEnv)->AfterCL_OpenFunction != NULL)
-     { (*SystemDependentData(theEnv)->AfterCL_OpenFunction)(theEnv); }
+   if (SystemDependentData(theEnv)->After_OpenFunction != NULL)
+     { (*SystemDependentData(theEnv)->After_OpenFunction)(theEnv); }
 
    return 1;
   }
@@ -818,8 +818,8 @@ void CL_GenTellBinary(
 void CL_GenCloseBinary(
   Environment *theEnv)
   {
-   if (SystemDependentData(theEnv)->BeforeCL_OpenFunction != NULL)
-     { (*SystemDependentData(theEnv)->BeforeCL_OpenFunction)(theEnv); }
+   if (SystemDependentData(theEnv)->Before_OpenFunction != NULL)
+     { (*SystemDependentData(theEnv)->Before_OpenFunction)(theEnv); }
 
 #if WIN_MVC
    _close(SystemDependentData(theEnv)->BinaryFileHandle);
@@ -829,15 +829,15 @@ void CL_GenCloseBinary(
    fclose(SystemDependentData(theEnv)->BinaryFP);
 #endif
 
-   if (SystemDependentData(theEnv)->AfterCL_OpenFunction != NULL)
-     { (*SystemDependentData(theEnv)->AfterCL_OpenFunction)(theEnv); }
+   if (SystemDependentData(theEnv)->After_OpenFunction != NULL)
+     { (*SystemDependentData(theEnv)->After_OpenFunction)(theEnv); }
   }
 
 /***********************************************/
-/* CL_GenCL_Write: Generic routine for writing to a  */
+/* CL_Gen_Write: Generic routine for writing to a  */
 /*   file. No machine specific code as of yet. */
 /***********************************************/
-void CL_GenCL_Write(
+void CL_Gen_Write(
   void *dataPtr,
   size_t size,
   FILE *fp)

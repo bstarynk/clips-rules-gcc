@@ -155,7 +155,7 @@ void CL_DeffunctionCModuleReference(
 static void ReadyDeffunctionsForCode(
   Environment *theEnv)
   {
-   MarkConstructCL_BsaveIDs(theEnv,DeffunctionData(theEnv)->CL_DeffunctionModuleIndex);
+   MarkConstruct_BsaveIDs(theEnv,DeffunctionData(theEnv)->CL_DeffunctionModuleIndex);
   }
 
 /**************************************************/
@@ -173,7 +173,7 @@ static void InitDeffunctionCode(
 #pragma unused(imageID)
 #pragma unused(theEnv)
 #endif
-   fprintf(initFP,"   DeffunctionCL_RunTimeInitialize(theEnv);\n");
+   fprintf(initFP,"   Deffunction_RunTimeInitialize(theEnv);\n");
   }
 
 /*******************************************************

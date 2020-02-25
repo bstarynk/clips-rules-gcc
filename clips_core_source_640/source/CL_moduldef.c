@@ -293,7 +293,7 @@ Defmodule *CL_SetCurrentModule(
   Environment *theEnv,
   Defmodule *newModule)
   {
-   struct voidCL_CallFunctionItem *changeFunctions;
+   struct void_CallFunctionItem *changeFunctions;
    Defmodule *oldModule;
 
    /*=============================================*/
@@ -433,7 +433,7 @@ void CL_CreateMainModule(
    IncrementLexemeCount(newDefmodule->header.name);
    newDefmodule->header.whichModule = NULL;
    newDefmodule->header.next = NULL;
-   newDefmodule->header.ppFoCL_rm = NULL;
+   newDefmodule->header.ppFo_rm = NULL;
    newDefmodule->importList = NULL;
    newDefmodule->exportList = NULL;
    newDefmodule->header.bsaveID = 0L;
@@ -485,7 +485,7 @@ void CL_CreateMainModule(
 
 /*********************************************************************/
 /* CL_SetListOfDefmodules: Sets the list of defmodules to the specified */
-/*   value. NoCL_rmally used when initializing a run-time module or     */
+/*   value. No_rmally used when initializing a run-time module or     */
 /*   when bloading a binary file to install the list of defmodules.  */
 /*********************************************************************/
 void CL_SetListOfDefmodules(
@@ -531,13 +531,13 @@ const char *CL_DefmoduleName(
   }
 
 /************************************************/
-/* CL_DefmodulePPFoCL_rm: Returns the pretty print    */
+/* CL_DefmodulePPFo_rm: Returns the pretty print    */
 /*   representation of the specified defmodule. */
 /************************************************/
-const char *CL_DefmodulePPFoCL_rm(
+const char *CL_DefmodulePPFo_rm(
   Defmodule *defmodulePtr)
   {
-   return defmodulePtr->header.ppFoCL_rm;
+   return defmodulePtr->header.ppFo_rm;
   }
 
 #if (! RUN_TIME)
@@ -570,7 +570,7 @@ void CL_RemoveAllDefmodules(
 static void ReturnDefmodule(
   Environment *theEnv,
   Defmodule *theDefmodule,
-  bool environmentCL_Clear)
+  bool environment_Clear)
   {
    unsigned int i;
    struct moduleItem *theItem;
@@ -582,7 +582,7 @@ static void ReturnDefmodule(
 
    if (theDefmodule == NULL) return;
 
-   if (! environmentCL_Clear)
+   if (! environment_Clear)
      { CL_SetCurrentModule(theEnv,theDefmodule); }
 
    /*============================================*/
@@ -592,7 +592,7 @@ static void ReturnDefmodule(
 
    if (theDefmodule->itemsArray != NULL)
      {
-      if (! environmentCL_Clear)
+      if (! environment_Clear)
         {
          for (i = 0, theItem = DefmoduleData(theEnv)->ListOfModuleItems;
               (i < DefmoduleData(theEnv)->NumberOfModuleItems) && (theItem != NULL);
@@ -610,7 +610,7 @@ static void ReturnDefmodule(
    /* Decrement the symbol count for the defmodule's name. */
    /*======================================================*/
 
-   if (! environmentCL_Clear)
+   if (! environment_Clear)
      { CL_ReleaseLexeme(theEnv,theDefmodule->header.name); }
 
    /*====================================*/
@@ -621,7 +621,7 @@ static void ReturnDefmodule(
    while (theSpec != NULL)
      {
       nextSpec = theSpec->next;
-      if (! environmentCL_Clear)
+      if (! environment_Clear)
         {
          if (theSpec->moduleName != NULL) CL_ReleaseLexeme(theEnv,theSpec->moduleName);
          if (theSpec->constructType != NULL) CL_ReleaseLexeme(theEnv,theSpec->constructType);
@@ -639,7 +639,7 @@ static void ReturnDefmodule(
    while (theSpec != NULL)
      {
       nextSpec = theSpec->next;
-      if (! environmentCL_Clear)
+      if (! environment_Clear)
         {
          if (theSpec->moduleName != NULL) CL_ReleaseLexeme(theEnv,theSpec->moduleName);
          if (theSpec->constructType != NULL) CL_ReleaseLexeme(theEnv,theSpec->constructType);
@@ -653,10 +653,10 @@ static void ReturnDefmodule(
    /* Free the defmodule pretty print string. */
    /*=========================================*/
 
-   if (theDefmodule->header.ppFoCL_rm != NULL)
+   if (theDefmodule->header.ppFo_rm != NULL)
      {
-      CL_rm(theEnv,(void *) theDefmodule->header.ppFoCL_rm,
-         sizeof(char) * (strlen(theDefmodule->header.ppFoCL_rm) + 1));
+      CL_rm(theEnv,(void *) theDefmodule->header.ppFo_rm,
+         sizeof(char) * (strlen(theDefmodule->header.ppFo_rm) + 1));
      }
 
    /*=======================*/
@@ -782,12 +782,12 @@ void CL_SetCurrentModuleCommand(
 void CL_AddAfterModuleChangeFunction(
   Environment *theEnv,
   const char *name,
-  VoidCL_CallFunction *func,
+  Void_CallFunction *func,
   int priority,
   void *context)
   {
    DefmoduleData(theEnv)->AfterModuleChangeFunctions =
-     CL_AddCL_VoidFunctionToCallList(theEnv,name,priority,func,DefmoduleData(theEnv)->AfterModuleChangeFunctions,context);
+     CL_Add_VoidFunctionToCallList(theEnv,name,priority,func,DefmoduleData(theEnv)->AfterModuleChangeFunctions,context);
   }
 
 /************************************************/

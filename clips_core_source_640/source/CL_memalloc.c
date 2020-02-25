@@ -18,7 +18,7 @@
 /* Revision History:                                         */
 /*                                                           */
 /*      6.24: Removed CL_HaltExecution check from the           */
-/*            EnvCL_ReleaseMem function. DR0863                 */
+/*            Env_ReleaseMem function. DR0863                 */
 /*                                                           */
 /*            Renamed BOOLEAN macro type to intBool.         */
 /*                                                           */
@@ -36,7 +36,7 @@
 /*            Converted API macros to function calls.        */
 /*                                                           */
 /*            Removed deallocating message parameter from    */
-/*            EnvCL_ReleaseMem.                                 */
+/*            Env_ReleaseMem.                                 */
 /*                                                           */
 /*            Removed support for BLOCK_MEMORY.              */
 /*                                                           */
@@ -427,11 +427,11 @@ unsigned long CL_PoolSize(
   }
 
 /***************************************************************/
-/* CL_ActualCL_PoolSize : Returns number of bytes DOS requires to    */
+/* CL_Actual_PoolSize : Returns number of bytes DOS requires to    */
 /*   store the free pool.  This routine is functionally        */
 /*   equivalent to pool_size on anything other than the IBM-PC */
 /***************************************************************/
-unsigned long CL_ActualCL_PoolSize(
+unsigned long CL_Actual_PoolSize(
   Environment *theEnv)
   {
    return(CL_PoolSize(theEnv));

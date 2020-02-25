@@ -97,7 +97,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static bool                    ValidCL_DeffunctionName(Environment *,const char *);
+   static bool                    Valid_DeffunctionName(Environment *,const char *);
    static Deffunction            *AddDeffunction(Environment *,CLIPSLexeme *,Expression *,unsigned short,unsigned short,unsigned short,bool);
 
 /***************************************************************************
@@ -136,7 +136,7 @@ bool CL_ParseDeffunction(
 #if BLOAD || BLOAD_AND_BSAVE
    if ((CL_Bloaded(theEnv) == true) && (! ConstructData(theEnv)->CL_CheckSyntaxMode))
      {
-      CannotCL_LoadWithCL_BloadMessage(theEnv,"deffunctions");
+      Cannot_LoadWith_BloadMessage(theEnv,"deffunctions");
       return true;
      }
 #endif
@@ -153,7 +153,7 @@ bool CL_ParseDeffunction(
    if (deffunctionName == NULL)
      { return true; }
 
-   if (ValidCL_DeffunctionName(theEnv,deffunctionName->contents) == false)
+   if (Valid_DeffunctionName(theEnv,deffunctionName->contents) == false)
      { return true; }
 
    /*==========================*/
@@ -270,12 +270,12 @@ bool CL_ParseDeffunction(
      }
 
    /*=============================*/
-   /* RefoCL_rmat the closing token. */
+   /* Refo_rmat the closing token. */
    /*=============================*/
 
    CL_PPBackup(theEnv);
    CL_PPBackup(theEnv);
-   CL_SavePPBuffer(theEnv,inputToken.printFoCL_rm);
+   CL_SavePPBuffer(theEnv,inputToken.printFo_rm);
    CL_SavePPBuffer(theEnv,"\n");
 
    /*======================*/
@@ -296,8 +296,8 @@ bool CL_ParseDeffunction(
    ***************************************** */
 
 /************************************************************
-  NAME         : ValidCL_DeffunctionName
-  DESCRIPTION  : DeteCL_rmines if a new deffunction of the given
+  NAME         : Valid_DeffunctionName
+  DESCRIPTION  : Dete_rmines if a new deffunction of the given
                  name can be defined in the current module
   INPUTS       : The new deffunction name
   RETURNS      : True if OK, false otherwise
@@ -307,9 +307,9 @@ bool CL_ParseDeffunction(
                  name does not conflict with one from
                  another module
  ************************************************************/
-static bool ValidCL_DeffunctionName(
+static bool Valid_DeffunctionName(
   Environment *theEnv,
-  const char *theCL_DeffunctionName)
+  const char *the_DeffunctionName)
   {
    Deffunction *theDeffunction;
 #if DEFGENERIC_CONSTRUCT
@@ -322,7 +322,7 @@ static bool ValidCL_DeffunctionName(
    /* construct type, e.g, defclass, defrule, etc. */
    /*==============================================*/
 
-   if (CL_FindConstruct(theEnv,theCL_DeffunctionName) != NULL)
+   if (CL_FindConstruct(theEnv,the_DeffunctionName) != NULL)
      {
       CL_PrintErrorID(theEnv,"DFFNXPSR",1,false);
       CL_WriteString(theEnv,STDERR,"Deffunctions are not allowed to replace constructs.\n");
@@ -335,7 +335,7 @@ static bool ValidCL_DeffunctionName(
    /* watch, list-defrules, etc.             */
    /*========================================*/
 
-   if (CL_FindFunction(theEnv,theCL_DeffunctionName) != NULL)
+   if (CL_FindFunction(theEnv,the_DeffunctionName) != NULL)
      {
       CL_PrintErrorID(theEnv,"DFFNXPSR",2,false);
       CL_WriteString(theEnv,STDERR,"Deffunctions are not allowed to replace external functions.\n");
@@ -350,7 +350,7 @@ static bool ValidCL_DeffunctionName(
    /* or imported from another).                */
    /*===========================================*/
 
-   theDefgeneric = CL_LookupDefgenericInScope(theEnv,theCL_DeffunctionName);
+   theDefgeneric = CL_LookupDefgenericInScope(theEnv,the_DeffunctionName);
 
    if (theDefgeneric != NULL)
      {
@@ -374,7 +374,7 @@ static bool ValidCL_DeffunctionName(
      }
 #endif
 
-   theDeffunction = CL_FindDeffunctionInModule(theEnv,theCL_DeffunctionName);
+   theDeffunction = CL_FindDeffunctionInModule(theEnv,the_DeffunctionName);
    if (theDeffunction != NULL)
      {
       /*=============================================*/
@@ -424,7 +424,7 @@ static Deffunction *AddDeffunction(
    Deffunction *dfuncPtr;
    unsigned oldbusy;
 #if DEBUGGING_FUNCTIONS
-   bool DFHadCL_Watch = false;
+   bool DFHad_Watch = false;
 #else
 #if MAC_XCD
 #pragma unused(headerp)
@@ -434,7 +434,7 @@ static Deffunction *AddDeffunction(
    /*===============================================================*/
    /* If the deffunction doesn't exist, create a new structure to   */
    /* contain it and add it to the List of deffunctions. Otherwise, */
-   /* use the existing structure and remove the pretty print foCL_rm   */
+   /* use the existing structure and remove the pretty print fo_rm   */
    /* and interpretive code.                                        */
    /*===============================================================*/
 
@@ -454,7 +454,7 @@ static Deffunction *AddDeffunction(
    else
      {
 #if DEBUGGING_FUNCTIONS
-      DFHadCL_Watch = CL_DeffunctionGetCL_Watch(dfuncPtr);
+      DFHad_Watch = CL_DeffunctionGet_Watch(dfuncPtr);
 #endif
       dfuncPtr->minNumberOfParameters = min;
       dfuncPtr->maxNumberOfParameters = max;
@@ -464,7 +464,7 @@ static Deffunction *AddDeffunction(
       dfuncPtr->busy = oldbusy;
       CL_ReturnPackedExpression(theEnv,dfuncPtr->code);
       dfuncPtr->code = NULL;
-      SetCL_DeffunctionPPFoCL_rm(theEnv,dfuncPtr,NULL);
+      SetCL_DeffunctionPPFo_rm(theEnv,dfuncPtr,NULL);
 
       /*======================================*/
       /* Remove the deffunction from the list */
@@ -494,15 +494,15 @@ static Deffunction *AddDeffunction(
      }
 
    /*==================================*/
-   /* Install the pretty print foCL_rm if */
+   /* Install the pretty print fo_rm if */
    /* memory is not being conserved.   */
    /*==================================*/
 
 #if DEBUGGING_FUNCTIONS
-   CL_DeffunctionSetCL_Watch(dfuncPtr,DFHadCL_Watch ? true : DeffunctionData(theEnv)->CL_WatchDeffunctions);
+   CL_DeffunctionSet_Watch(dfuncPtr,DFHad_Watch ? true : DeffunctionData(theEnv)->CL_WatchDeffunctions);
 
    if ((CL_GetConserveMemory(theEnv) == false) && (headerp == false))
-     { SetCL_DeffunctionPPFoCL_rm(theEnv,dfuncPtr,CL_CopyPPBuffer(theEnv)); }
+     { SetCL_DeffunctionPPFo_rm(theEnv,dfuncPtr,CL_CopyPPBuffer(theEnv)); }
 #endif
 
    return dfuncPtr;

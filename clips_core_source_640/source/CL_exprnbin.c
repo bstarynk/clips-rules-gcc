@@ -78,7 +78,7 @@
    static void                        UpdateExpression(Environment *,void *,unsigned long);
 
 /***********************************************************/
-/* CL_AllocateExpressions: DeteCL_rmines the amount of space     */
+/* CL_AllocateExpressions: Dete_rmines the amount of space     */
 /*   required for loading the binary image of expressions  */
 /*   and allocates that amount of space.                   */
 /***********************************************************/
@@ -106,7 +106,7 @@ void CL_RefreshExpressions(
   {
    if (ExpressionData(theEnv)->ExpressionArray == NULL) return;
 
-   CL_BloadandCL_Refresh(theEnv,ExpressionData(theEnv)->NumberOfExpressions,
+   CL_Bloadand_Refresh(theEnv,ExpressionData(theEnv)->NumberOfExpressions,
                    sizeof(BSAVE_EXPRESSION),UpdateExpression);
   }
 
@@ -245,10 +245,10 @@ static void UpdateExpression(
   }
 
 /*********************************************/
-/* CL_ClearCL_BloadedExpressions: CL_Clears the space */
+/* CL_Clear_BloadedExpressions: CL_Clears the space */
 /*   utilized by an expression binary image. */
 /*********************************************/
-void CL_ClearCL_BloadedExpressions(
+void CL_Clear_BloadedExpressions(
   Environment *theEnv)
   {
    unsigned long i;
@@ -510,7 +510,7 @@ void CL_BsaveExpression(
      /* CL_Write out the expression. */
      /*===========================*/
 
-     CL_GenCL_Write(&newTest,sizeof(BSAVE_EXPRESSION),fp);
+     CL_Gen_Write(&newTest,sizeof(BSAVE_EXPRESSION),fp);
 
      /*==========================*/
      /* CL_Write out argument list. */

@@ -83,7 +83,7 @@ void CL_DeffactsCompilerSetup(
 static void BeforeDeffactsToCode(
   Environment *theEnv)
   {
-   MarkConstructCL_BsaveIDs(theEnv,DeffactsData(theEnv)->CL_DeffactsModuleIndex);
+   MarkConstruct_BsaveIDs(theEnv,DeffactsData(theEnv)->CL_DeffactsModuleIndex);
   }
 
 /***********************************************/
@@ -101,7 +101,7 @@ static void InitDeffactsCode(
 #pragma unused(imageID)
 #pragma unused(theEnv)
 #endif
-   fprintf(initFP,"   DeffactsCL_RunTimeInitialize(theEnv);\n");
+   fprintf(initFP,"   Deffacts_RunTimeInitialize(theEnv);\n");
   }
 
 /**********************************************************/

@@ -23,13 +23,13 @@
 /*                                                           */
 /*            Renamed BOOLEAN macro type to intBool.         */
 /*                                                           */
-/*            Added CL_CreateCL_RuntimeEnvironment function.       */
+/*            Added CL_Create_RuntimeEnvironment function.       */
 /*                                                           */
-/*            Added support for context infoCL_rmation when an  */
+/*            Added support for context info_rmation when an  */
 /*            environment is created (i.e a pointer from the */
 /*            CLIPS environment to its parent environment).  */
 /*                                                           */
-/*      6.30: Added support for passing context infoCL_rmation  */
+/*      6.30: Added support for passing context info_rmation  */
 /*            to user defined functions and callback         */
 /*            functions.                                     */
 /*                                                           */

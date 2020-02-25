@@ -8,7 +8,7 @@
 
 /*************************************************************/
 /* Purpose: Provides functions for parsing the default       */
-/*   attribute and deteCL_rmining default values based on       */
+/*   attribute and dete_rmining default values based on       */
 /*   slot constraints.                                       */
 /*                                                           */
 /* Principal Programmer(s):                                  */

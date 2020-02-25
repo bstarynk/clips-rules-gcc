@@ -121,10 +121,10 @@ void CL_CallDeffunction(
    CL_GCBlockStart(theEnv,&gcb);
 
    oldce = CL_ExecutingConstruct(theEnv);
-   SetCL_ExecutingConstruct(theEnv,true);
+   Set_ExecutingConstruct(theEnv,true);
    previouslyExecutingDeffunction = DeffunctionData(theEnv)->ExecutingDeffunction;
    DeffunctionData(theEnv)->ExecutingDeffunction = dptr;
-   CL_EvaluationData(theEnv)->CurrentCL_EvaluationDepth++;
+   CL_EvaluationData(theEnv)->Current_EvaluationDepth++;
    dptr->executing++;
    CL_PushProcParameters(theEnv,args,CL_CountArguments(args),CL_DeffunctionName(dptr),
                       "deffunction",UnboundDeffunctionErr);
@@ -132,12 +132,12 @@ void CL_CallDeffunction(
      {
       dptr->executing--;
       DeffunctionData(theEnv)->ExecutingDeffunction = previouslyExecutingDeffunction;
-      CL_EvaluationData(theEnv)->CurrentCL_EvaluationDepth--;
+      CL_EvaluationData(theEnv)->Current_EvaluationDepth--;
 
       CL_GCBlockEndUDF(theEnv,&gcb,returnValue);
       CL_CallPeriodicTasks(theEnv);
 
-      SetCL_ExecutingConstruct(theEnv,oldce);
+      Set_ExecutingConstruct(theEnv,oldce);
       return;
      }
 
@@ -147,7 +147,7 @@ void CL_CallDeffunction(
 #endif
 
 #if PROFILING_FUNCTIONS
-   StartCL_Profile(theEnv,&profileFrame,
+   Start_Profile(theEnv,&profileFrame,
                 &dptr->header.usrData,
                 CL_ProfileFunctionData(theEnv)->CL_ProfileConstructs);
 #endif
@@ -157,7 +157,7 @@ void CL_CallDeffunction(
                        returnValue,UnboundDeffunctionErr);
 
 #if PROFILING_FUNCTIONS
-    CL_EndCL_Profile(theEnv,&profileFrame);
+    CL_End_Profile(theEnv,&profileFrame);
 #endif
 
 #if DEBUGGING_FUNCTIONS
@@ -169,12 +169,12 @@ void CL_CallDeffunction(
    dptr->executing--;
    CL_PopProcParameters(theEnv);
    DeffunctionData(theEnv)->ExecutingDeffunction = previouslyExecutingDeffunction;
-   CL_EvaluationData(theEnv)->CurrentCL_EvaluationDepth--;
+   CL_EvaluationData(theEnv)->Current_EvaluationDepth--;
 
    CL_GCBlockEndUDF(theEnv,&gcb,returnValue);
    CL_CallPeriodicTasks(theEnv);
 
-   SetCL_ExecutingConstruct(theEnv,oldce);
+   Set_ExecutingConstruct(theEnv,oldce);
   }
 
 /* =========================================
@@ -233,7 +233,7 @@ static void CL_WatchDeffunction(
      }
    CL_WriteString(theEnv,STDOUT,DeffunctionData(theEnv)->ExecutingDeffunction->header.name->contents);
    CL_WriteString(theEnv,STDOUT," ED:");
-   CL_WriteInteger(theEnv,STDOUT,CL_EvaluationData(theEnv)->CurrentCL_EvaluationDepth);
+   CL_WriteInteger(theEnv,STDOUT,CL_EvaluationData(theEnv)->Current_EvaluationDepth);
    CL_PrintProcParamArray(theEnv,STDOUT);
   }
 

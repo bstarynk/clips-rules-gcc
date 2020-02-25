@@ -9,7 +9,7 @@
 /*************************************************************/
 /* Purpose: Provides routines for CL_maintaining a fact hash    */
 /*   table so that duplication of facts can quickly be       */
-/*   deteCL_rmined.                                             */
+/*   dete_rmined.                                             */
 /*                                                           */
 /* Principal Programmer(s):                                  */
 /*      Gary D. Riley                                        */
@@ -26,7 +26,7 @@
 /*                                                           */
 /*            Changed integer type/precision.                */
 /*                                                           */
-/*            Added FactWillBeCL_Asserted.                      */
+/*            Added FactWillBe_Asserted.                      */
 /*                                                           */
 /*            Converted API macros to function calls.        */
 /*                                                           */
@@ -114,7 +114,7 @@ size_t CL_HashFact(
   }
 
 /**********************************************/
-/* FactExists: DeteCL_rmines if a specified fact */
+/* FactExists: Dete_rmines if a specified fact */
 /*   already exists in the fact hash table.   */
 /**********************************************/
 static Fact *FactExists(
@@ -152,7 +152,7 @@ void CL_AddHashedFact(
   {
    struct factHashEntry *newhash, *temp;
 
-   if (FactData(theEnv)->NumberOfCL_Facts > FactData(theEnv)->FactHashTableSize)
+   if (FactData(theEnv)->NumberOf_Facts > FactData(theEnv)->FactHashTableSize)
      { ResizeFactHashTable(theEnv); }
 
    newhash = get_struct(theEnv,factHashEntry);
@@ -189,7 +189,7 @@ bool CL_RemoveHashedFact(
            {
             FactData(theEnv)->FactHashTable[hashValue] = hptr->next;
             rtn_struct(theEnv,factHashEntry,hptr);
-            if (FactData(theEnv)->NumberOfCL_Facts == 1)
+            if (FactData(theEnv)->NumberOf_Facts == 1)
               { CL_ResetFactHashTable(theEnv); }
             return true;
            }
@@ -197,7 +197,7 @@ bool CL_RemoveHashedFact(
            {
             prev->next = hptr->next;
             rtn_struct(theEnv,factHashEntry,hptr);
-            if (FactData(theEnv)->NumberOfCL_Facts == 1)
+            if (FactData(theEnv)->NumberOf_Facts == 1)
               { CL_ResetFactHashTable(theEnv); }
             return true;
            }
@@ -209,10 +209,10 @@ bool CL_RemoveHashedFact(
   }
 
 /****************************************************/
-/* FactWillBeCL_Asserted: DeteCL_rmines if a fact will be */
+/* FactWillBe_Asserted: Dete_rmines if a fact will be */
 /*   asserted based on the duplication settings.    */
 /****************************************************/
-bool FactWillBeCL_Asserted(
+bool FactWillBe_Asserted(
   Environment *theEnv,
   Fact *theFact)
   {
@@ -230,7 +230,7 @@ bool FactWillBeCL_Asserted(
   }
 
 /*****************************************************/
-/* CL_HandleFactDuplication: DeteCL_rmines if a fact to be */
+/* CL_HandleFactDuplication: Dete_rmines if a fact to be */
 /*   added to the fact-list is a duplicate entry and */
 /*   takes appropriate action based on the current   */
 /*   setting of the fact-duplication flag.           */
@@ -256,14 +256,14 @@ size_t CL_HandleFactDuplication(
      { CL_ReturnFact(theEnv,theFact); }
    else
      {
-      theFact->nextFact = FactData(theEnv)->GarbageCL_Facts;
-      FactData(theEnv)->GarbageCL_Facts = theFact;
+      theFact->nextFact = FactData(theEnv)->Garbage_Facts;
+      FactData(theEnv)->Garbage_Facts = theFact;
       UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
       theFact->garbage = true;
      }
 
 #if DEFRULE_CONSTRUCT
-   CL_AddLogicalCL_Dependencies(theEnv,(struct patternEntity *) *duplicate,true);
+   CL_AddLogical_Dependencies(theEnv,(struct patternEntity *) *duplicate,true);
 #endif
 
    return 0;

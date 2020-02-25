@@ -22,7 +22,7 @@
 /*                                                           */
 /*            Added CL_EvaluateAndStoreInDataObject function.   */
 /*                                                           */
-/*      6.30: Added support for passing context infoCL_rmation  */
+/*      6.30: Added support for passing context info_rmation  */
 /*            to user defined functions.                     */
 /*                                                           */
 /*            Added support for external address hash table  */
@@ -41,11 +41,11 @@
 /*                                                           */
 /*            Converted API macros to function calls.        */
 /*                                                           */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*      6.40: Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to CL_GetCL_HaltExecution and       */
-/*            SetCL_HaltExecution functions.                    */
+/*            Added Env prefix to CL_Get_HaltExecution and       */
+/*            Set_HaltExecution functions.                    */
 /*                                                           */
 /*            Removed LOCALE definition.                     */
 /*                                                           */
@@ -73,13 +73,13 @@
 #include "constant.h"
 #include "entities.h"
 
-typedef struct functionCallCL_Builder FunctionCallCL_Builder;
+typedef struct functionCall_Builder FunctionCall_Builder;
 
-struct functionCallCL_Builder
+struct functionCall_Builder
   {
    Environment *fcbEnv;
    CLIPSValue *contents;
-   size_t bufferCL_Reset;
+   size_t buffer_Reset;
    size_t length;
    size_t bufferMaximum;
   };
@@ -93,7 +93,7 @@ typedef enum
    FCBE_ARGUMENT_COUNT_ERROR,
    FCBE_ARGUMENT_TYPE_ERROR,
    FCBE_PROCESSING_ERROR
-  } FunctionCallCL_BuilderError;
+  } FunctionCall_BuilderError;
 
 #define PARAMETERS_UNBOUNDED USHRT_MAX
 
@@ -102,8 +102,8 @@ typedef enum
 struct externalAddressType
   {
    const  char *name;
-   void (*shortCL_PrintFunction)(Environment *,const char *,void *);
-   void (*longCL_PrintFunction)(Environment *,const char *,void *);
+   void (*short_PrintFunction)(Environment *,const char *,void *);
+   void (*long_PrintFunction)(Environment *,const char *,void *);
    bool (*discardFunction)(Environment *,void *);
    void (*newFunction)(UDFContext *,UDFValue *);
    bool (*callFunction)(UDFContext *,UDFValue *,UDFValue *);
@@ -123,12 +123,12 @@ struct externalAddressType
 
 #define BitwiseTest(n,b)   (((n) & (char) (1 << (b))) ? true : false)
 #define BitwiseSet(n,b)    (n |= (char) (1 << (b)))
-#define BitwiseCL_Clear(n,b)  (n &= (char) ~(1 << (b)))
+#define Bitwise_Clear(n,b)  (n &= (char) ~(1 << (b)))
 
 #define CountToBitMapSize(c) (((c) + (BITS_PER_BYTE - 1)) / BITS_PER_BYTE) 
 #define TestBitMap(map,id)  BitwiseTest(map[(id) / BITS_PER_BYTE],(id) % BITS_PER_BYTE)
 #define SetBitMap(map,id)   BitwiseSet(map[(id) / BITS_PER_BYTE],(id) % BITS_PER_BYTE)
-#define CL_ClearBitMap(map,id) BitwiseCL_Clear(map[(id) / BITS_PER_BYTE],(id) % BITS_PER_BYTE)
+#define CL_ClearBitMap(map,id) Bitwise_Clear(map[(id) / BITS_PER_BYTE],(id) % BITS_PER_BYTE)
 
 #define EVALUATION_DATA 44
 
@@ -137,7 +137,7 @@ struct evaluationData
    struct expr *CurrentExpression;
    bool CL_EvaluationError;
    bool CL_HaltExecution;
-   int CurrentCL_EvaluationDepth;
+   int Current_EvaluationDepth;
    int numberOfAddressTypes;
    struct entityRecord *PrimitivesArray[MAXIMUM_PRIMITIVES];
    struct externalAddressType *ExternalAddressTypes[MAXIMUM_EXTERNAL_ADDRESS_TYPES];
@@ -145,12 +145,12 @@ struct evaluationData
 
 #define CL_EvaluationData(theEnv) ((struct evaluationData *) GetEnvironmentData(theEnv,EVALUATION_DATA))
 
-   void                           InitializeCL_EvaluationData(Environment *);
+   void                           Initialize_EvaluationData(Environment *);
    bool                           CL_EvaluateExpression(Environment *,struct expr *,UDFValue *);
-   void                           SetCL_EvaluationError(Environment *,bool);
-   bool                           GetCL_EvaluationError(Environment *);
-   void                           SetCL_HaltExecution(Environment *,bool);
-   bool                           CL_GetCL_HaltExecution(Environment *);
+   void                           Set_EvaluationError(Environment *,bool);
+   bool                           Get_EvaluationError(Environment *);
+   void                           Set_HaltExecution(Environment *,bool);
+   bool                           CL_Get_HaltExecution(Environment *);
    void                           CL_ReturnValues(Environment *,UDFValue *,bool);
    void                           CL_WriteUDFValue(Environment *,const char *,UDFValue *);
    void                           CL_WriteCLIPSValue(Environment *,const char *,CLIPSValue *);
@@ -174,24 +174,24 @@ struct evaluationData
    bool                           CL_DOsEqual(UDFValue *,UDFValue *);
    bool                           CL_EvaluateAndStoreInDataObject(Environment *,bool,Expression *,UDFValue *,bool);
    void                           CL_ResetErrorFlags(Environment *);
-   FunctionCallCL_Builder           *CL_CreateFunctionCallCL_Builder(Environment *,size_t);
-   void                           CL_FCBAppendUDFValue(FunctionCallCL_Builder *,UDFValue *);
-   void                           CL_FCBAppend(FunctionCallCL_Builder *,CLIPSValue *);
-   void                           CL_FCBAppendCLIPSInteger(FunctionCallCL_Builder *,CLIPSInteger *);
-   void                           CL_FCBAppendInteger(FunctionCallCL_Builder *,long long);
-   void                           CL_FCBAppendCLIPSFloat(FunctionCallCL_Builder *,CLIPSFloat *);
-   void                           CL_FCBAppendFloat(FunctionCallCL_Builder *,double);
-   void                           CL_FCBAppendCLIPSLexeme(FunctionCallCL_Builder *,CLIPSLexeme *);
-   void                           CL_FCBAppendSymbol(FunctionCallCL_Builder *,const char *);
-   void                           CL_FCBAppendString(FunctionCallCL_Builder *,const char *);
-   void                           CL_FCBAppendCL_InstanceName(FunctionCallCL_Builder *,const char *);
-   void                           CL_FCBAppendCLIPSExternalAddress(FunctionCallCL_Builder *,CLIPSExternalAddress *);
-   void                           CL_FCBAppendFact(FunctionCallCL_Builder *,Fact *);
-   void                           CL_FCBAppendInstance(FunctionCallCL_Builder *,Instance *);
-   void                           CL_FCBAppendMultifield(FunctionCallCL_Builder *,Multifield *);
-   void                           CL_FCBDispose(FunctionCallCL_Builder *);
-   void                           CL_FCBCL_Reset(FunctionCallCL_Builder *);
-   FunctionCallCL_BuilderError       CL_FCBCall(FunctionCallCL_Builder *,const char *,CLIPSValue *);
+   FunctionCall_Builder           *CL_CreateFunctionCall_Builder(Environment *,size_t);
+   void                           CL_FCBAppendUDFValue(FunctionCall_Builder *,UDFValue *);
+   void                           CL_FCBAppend(FunctionCall_Builder *,CLIPSValue *);
+   void                           CL_FCBAppendCLIPSInteger(FunctionCall_Builder *,CLIPSInteger *);
+   void                           CL_FCBAppendInteger(FunctionCall_Builder *,long long);
+   void                           CL_FCBAppendCLIPSFloat(FunctionCall_Builder *,CLIPSFloat *);
+   void                           CL_FCBAppendFloat(FunctionCall_Builder *,double);
+   void                           CL_FCBAppendCLIPSLexeme(FunctionCall_Builder *,CLIPSLexeme *);
+   void                           CL_FCBAppendSymbol(FunctionCall_Builder *,const char *);
+   void                           CL_FCBAppendString(FunctionCall_Builder *,const char *);
+   void                           CL_FCBAppend_InstanceName(FunctionCall_Builder *,const char *);
+   void                           CL_FCBAppendCLIPSExternalAddress(FunctionCall_Builder *,CLIPSExternalAddress *);
+   void                           CL_FCBAppendFact(FunctionCall_Builder *,Fact *);
+   void                           CL_FCBAppendInstance(FunctionCall_Builder *,Instance *);
+   void                           CL_FCBAppendMultifield(FunctionCall_Builder *,Multifield *);
+   void                           CL_FCBDispose(FunctionCall_Builder *);
+   void                           CL_FCB_Reset(FunctionCall_Builder *);
+   FunctionCall_BuilderError       CL_FCBCall(FunctionCall_Builder *,const char *,CLIPSValue *);
    
 #define CVIsType(cv,cvType) (((1 << (((TypeHeader *) (cv)->value)->type)) & (cvType)) ? true : false)
 

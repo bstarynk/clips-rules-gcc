@@ -45,11 +45,11 @@
 /*            Fixed linkage issue when DEFMODULE_CONSTRUCT   */
 /*            compiler flag is set to 0.                     */
 /*                                                           */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*      6.40: Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to CL_GetCL_HaltExecution and       */
-/*            SetCL_HaltExecution functions.                    */
+/*            Added Env prefix to CL_Get_HaltExecution and       */
+/*            Set_HaltExecution functions.                    */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -158,8 +158,8 @@ void CL_MultifieldFunctionDefinitions(
    CL_AddUDF(theEnv,"first$","m",1,1,"m",CL_FirstFunction,"CL_FirstFunction",NULL);
    CL_AddUDF(theEnv,"rest$","m",1,1,"m",CL_RestFunction,"CL_RestFunction",NULL);
    CL_AddUDF(theEnv,"subseq$","m",3,3,"l;m",CL_SubseqFunction,"CL_SubseqFunction",NULL);
-   CL_AddUDF(theEnv,"delete-member$","m",2,UNBOUNDED,"*;m",CL_DeleteCL_MemberFunction,"CL_DeleteCL_MemberFunction",NULL);
-   CL_AddUDF(theEnv,"replace-member$","m",3,UNBOUNDED,"*;m",ReplaceCL_MemberFunction,"ReplaceCL_MemberFunction",NULL);
+   CL_AddUDF(theEnv,"delete-member$","m",2,UNBOUNDED,"*;m",CL_Delete_MemberFunction,"CL_Delete_MemberFunction",NULL);
+   CL_AddUDF(theEnv,"replace-member$","m",3,UNBOUNDED,"*;m",Replace_MemberFunction,"Replace_MemberFunction",NULL);
    CL_AddUDF(theEnv,"delete$","m",3,3,"l;m",CL_DeleteFunction,"CL_DeleteFunction",NULL);
    CL_AddUDF(theEnv,"replace$","m",4,UNBOUNDED,"*;m;l;l",CL_ReplaceFunction,"CL_ReplaceFunction",NULL);
    CL_AddUDF(theEnv,"insert$","m",3,UNBOUNDED,"*;m;l",CL_InsertFunction,"CL_InsertFunction",NULL);
@@ -168,7 +168,7 @@ void CL_MultifieldFunctionDefinitions(
    CL_AddUDF(theEnv,"nth$","synldife",2,2,";l;m",CL_NthFunction,"CL_NthFunction",NULL);
    CL_AddUDF(theEnv,"member$","blm",2,2,";*;m",CL_MemberFunction,"CL_MemberFunction",NULL);
    CL_AddUDF(theEnv,"subsetp","b",2,2,";m;m",CL_SubsetpFunction,"CL_SubsetpFunction",NULL);
-   CL_AddUDF(theEnv,"progn$","*",0,UNBOUNDED,NULL,CL_MultifieldCL_PrognFunction,"CL_MultifieldCL_PrognFunction",NULL);
+   CL_AddUDF(theEnv,"progn$","*",0,UNBOUNDED,NULL,CL_Multifield_PrognFunction,"CL_Multifield_PrognFunction",NULL);
    CL_AddUDF(theEnv,"foreach","*",0,UNBOUNDED,NULL,CL_ForeachFunction,"CL_ForeachFunction",NULL);
    CL_FuncSeqOvlFlags(theEnv,"progn$",false,false);
    CL_FuncSeqOvlFlags(theEnv,"foreach",false,false);
@@ -216,7 +216,7 @@ void CL_DeleteFunction(
        (((long long) ((size_t) end)) != end))
      {
       CL_MVRangeError(theEnv,start,end,value1.range,"delete$");
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       CL_SetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
@@ -233,7 +233,7 @@ void CL_DeleteFunction(
    if ((rs > srcLen) || (re > srcLen))
      {
       CL_MVRangeError(theEnv,start,end,value1.range,"delete$");
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       CL_SetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
@@ -306,7 +306,7 @@ void CL_ReplaceFunction(
        (((long long) ((size_t) end)) != end))
      {
       CL_MVRangeError(theEnv,start,end,value1.range,"replace$");
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       CL_SetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
@@ -323,7 +323,7 @@ void CL_ReplaceFunction(
    if ((rs > srcLen) || (re > srcLen))
      {
       CL_MVRangeError(theEnv,start,end,value1.range,"replace$");
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       CL_SetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
@@ -368,10 +368,10 @@ void CL_ReplaceFunction(
   }
 
 /**********************************************/
-/* CL_DeleteCL_MemberFunction: H/L access routine   */
+/* CL_Delete_MemberFunction: H/L access routine   */
 /*   for the delete-member$ function.         */
 /**********************************************/
-void CL_DeleteCL_MemberFunction(
+void CL_Delete_MemberFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -404,7 +404,7 @@ void CL_DeleteCL_MemberFunction(
      {
       if (! CL_UDFNextArgument(context,ANY_TYPE_BITS,&valueSought))
         {
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          CL_SetMultifieldErrorValue(theEnv,returnValue);
          return;
         }
@@ -441,10 +441,10 @@ void CL_DeleteCL_MemberFunction(
   }
 
 /***********************************************/
-/* ReplaceCL_MemberFunction: H/L access routine   */
+/* Replace_MemberFunction: H/L access routine   */
 /*   for the replace-member$ function.         */
 /***********************************************/
-void ReplaceCL_MemberFunction(
+void Replace_MemberFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -499,7 +499,7 @@ void ReplaceCL_MemberFunction(
                                  &replVal,"replace-member$") == false)
         {
          CL_rm(theEnv,delVals,delSize);
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          CL_SetMultifieldErrorValue(theEnv,returnValue);
          return;
         }
@@ -566,7 +566,7 @@ void CL_InsertFunction(
    if (CL_InsertMultiValueField(theEnv,returnValue,&value1,uindex,
                              &value3,"insert$") == false)
      {
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       CL_SetMultifieldErrorValue(theEnv,returnValue);
      }
   }
@@ -686,7 +686,7 @@ void CL_SubseqFunction(
      }
 
    /*==================================================*/
-   /* Adjust lengths to confoCL_rm to segment boundaries. */
+   /* Adjust lengths to confo_rm to segment boundaries. */
    /*==================================================*/
      
    if (start < 1) start = 1;
@@ -1104,7 +1104,7 @@ static struct expr *MultifieldPrognParser(
    CL_GetToken(theEnv,infile,&tkn);
 
    /* ================================
-      Simple foCL_rm: progn$ <mf-exp> ...
+      Simple fo_rm: progn$ <mf-exp> ...
       ================================ */
    if (tkn.tknType != LEFT_PARENTHESIS_TOKEN)
      {
@@ -1131,7 +1131,7 @@ static struct expr *MultifieldPrognParser(
         }
 
       /* =========================================
-         Complex foCL_rm: progn$ (<var> <mf-exp>) ...
+         Complex fo_rm: progn$ (<var> <mf-exp>) ...
          ========================================= */
       else
         {
@@ -1148,7 +1148,7 @@ static struct expr *MultifieldPrognParser(
            goto MvPrognParseError;
          CL_PPBackup(theEnv);
          /* CL_PPBackup(theEnv); */
-         CL_SavePPBuffer(theEnv,tkn.printFoCL_rm);
+         CL_SavePPBuffer(theEnv,tkn.printFo_rm);
          CL_SavePPBuffer(theEnv," ");
         }
      }
@@ -1166,7 +1166,7 @@ static struct expr *MultifieldPrognParser(
    CL_DecrementIndentDepth(theEnv,3);
    CL_PPBackup(theEnv);
    CL_PPBackup(theEnv);
-   CL_SavePPBuffer(theEnv,tkn.printFoCL_rm);
+   CL_SavePPBuffer(theEnv,tkn.printFo_rm);
    if (top->argList->nextArg == NULL)
      {
       CL_ClearParsedBindNames(theEnv);
@@ -1250,7 +1250,7 @@ static struct expr *ForeachParser(
    CL_DecrementIndentDepth(theEnv,3);
    CL_PPBackup(theEnv);
    CL_PPBackup(theEnv);
-   CL_SavePPBuffer(theEnv,tkn.printFoCL_rm);
+   CL_SavePPBuffer(theEnv,tkn.printFo_rm);
    if (top->argList->nextArg == NULL)
      {
       CL_ClearParsedBindNames(theEnv);
@@ -1340,10 +1340,10 @@ static void ReplaceMvPrognFieldVars(
 #endif /* (! BLOAD_ONLY) */
 
 /*****************************************/
-/* CL_MultifieldCL_PrognFunction: H/L access   */
+/* CL_Multifield_PrognFunction: H/L access   */
 /*   routine for the progn$ function.    */
 /*****************************************/
-void CL_MultifieldCL_PrognFunction(
+void CL_Multifield_PrognFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -1558,7 +1558,7 @@ bool CL_ReplaceMultiValueFieldSizet(
 
 /**************************************************************************
   NAME         : CL_InsertMultiValueField
-  DESCRIPTION  : PerfoCL_rms an insert on the src multi-field value
+  DESCRIPTION  : Perfo_rms an insert on the src multi-field value
                    storing the results in the dst multi-field value
   INPUTS       : 1) The destination value buffer
                  2) The source value (can be NULL)

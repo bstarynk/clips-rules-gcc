@@ -17,7 +17,7 @@
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
-/*      6.23: Modified OutputCL_ProfileInfo to allow a before   */
+/*      6.23: Modified Output_ProfileInfo to allow a before   */
 /*            and after prefix so that a string buffer does  */
 /*            not need to be created to contain the entire   */
 /*            prefix. This allows a buffer overflow problem  */
@@ -79,12 +79,12 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static bool                        OutputCL_ProfileInfo(Environment *,const char *,struct constructCL_ProfileInfo *,
+   static bool                        Output_ProfileInfo(Environment *,const char *,struct construct_ProfileInfo *,
                                                         const char *,const char *,const char *,const char **);
-   static void                        OutputCL_UserFunctionsInfo(Environment *);
+   static void                        Output_UserFunctionsInfo(Environment *);
    static void                        OutputConstructsCodeInfo(Environment *);
 #if (! RUN_TIME)
-   static void                        CL_ProfileCL_ClearFunction(Environment *,void *);
+   static void                        CL_Profile_ClearFunction(Environment *,void *);
 #endif
 
 /******************************************************/
@@ -94,41 +94,41 @@
 void CL_ConstructProfilingFunctionDefinitions(
   Environment *theEnv)
   {
-   struct userDataRecord profileDataInfo = { 0, CL_CreateCL_ProfileData, CL_DeleteCL_ProfileData };
+   struct userDataRecord profileDataInfo = { 0, CL_Create_ProfileData, CL_Delete_ProfileData };
 
    CL_AllocateEnvironmentData(theEnv,PROFLFUN_DATA,sizeof(struct profileFunctionData),NULL);
 
    memcpy(&CL_ProfileFunctionData(theEnv)->CL_ProfileDataInfo,&profileDataInfo,sizeof(struct userDataRecord));
 
-   CL_ProfileFunctionData(theEnv)->LastCL_ProfileInfo = NO_PROFILE;
+   CL_ProfileFunctionData(theEnv)->Last_ProfileInfo = NO_PROFILE;
    CL_ProfileFunctionData(theEnv)->PercentThreshold = 0.0;
    CL_ProfileFunctionData(theEnv)->OutputString = OUTPUT_STRING;
 
 #if ! RUN_TIME
    CL_AddUDF(theEnv,"profile","v",1,1,"y",CL_ProfileCommand,"CL_ProfileCommand",NULL);
    CL_AddUDF(theEnv,"profile-info","v",0,0,NULL, CL_ProfileInfoCommand,"CL_ProfileInfoCommand",NULL);
-   CL_AddUDF(theEnv,"profile-reset","v",0,0,NULL,CL_ProfileCL_ResetCommand,"CL_ProfileCL_ResetCommand",NULL);
+   CL_AddUDF(theEnv,"profile-reset","v",0,0,NULL,CL_Profile_ResetCommand,"CL_Profile_ResetCommand",NULL);
 
-   CL_AddUDF(theEnv,"set-profile-percent-threshold","d",1,1,"ld",SetCL_ProfilePercentThresholdCommand,"SetCL_ProfilePercentThresholdCommand",NULL);
-   CL_AddUDF(theEnv,"get-profile-percent-threshold","d",0,0,NULL,CL_GetCL_ProfilePercentThresholdCommand,"CL_GetCL_ProfilePercentThresholdCommand",NULL);
+   CL_AddUDF(theEnv,"set-profile-percent-threshold","d",1,1,"ld",Set_ProfilePercentThresholdCommand,"Set_ProfilePercentThresholdCommand",NULL);
+   CL_AddUDF(theEnv,"get-profile-percent-threshold","d",0,0,NULL,CL_Get_ProfilePercentThresholdCommand,"CL_Get_ProfilePercentThresholdCommand",NULL);
 
    CL_ProfileFunctionData(theEnv)->CL_ProfileDataID = CL_InstallUserDataRecord(theEnv,&CL_ProfileFunctionData(theEnv)->CL_ProfileDataInfo);
 
-   CL_AddCL_ClearFunction(theEnv,"profile",CL_ProfileCL_ClearFunction,0,NULL);
+   CL_Add_ClearFunction(theEnv,"profile",CL_Profile_ClearFunction,0,NULL);
 #endif
   }
 
 /**********************************/
-/* CL_CreateCL_ProfileData: Allocates a */
+/* CL_Create_ProfileData: Allocates a */
 /*   profile user data structure. */
 /**********************************/
-void *CL_CreateCL_ProfileData(
+void *CL_Create_ProfileData(
   Environment *theEnv)
   {
-   struct constructCL_ProfileInfo *theInfo;
+   struct construct_ProfileInfo *theInfo;
 
-   theInfo = (struct constructCL_ProfileInfo *)
-             CL_genalloc(theEnv,sizeof(struct constructCL_ProfileInfo));
+   theInfo = (struct construct_ProfileInfo *)
+             CL_genalloc(theEnv,sizeof(struct construct_ProfileInfo));
 
    theInfo->numberOfEntries = 0;
    theInfo->childCall = false;
@@ -140,13 +140,13 @@ void *CL_CreateCL_ProfileData(
   }
 
 /**************************************/
-/* CL_DeleteCL_ProfileData:          */
+/* CL_Delete_ProfileData:          */
 /**************************************/
-void CL_DeleteCL_ProfileData(
+void CL_Delete_ProfileData(
   Environment *theEnv,
   void *theData)
   {
-   CL_genfree(theEnv,theData,sizeof(struct constructCL_ProfileInfo));
+   CL_genfree(theEnv,theData,sizeof(struct construct_ProfileInfo));
   }
 
 /**************************************/
@@ -192,17 +192,17 @@ bool CL_Profile(
    if (strcmp(argument,"user-functions") == 0)
      {
       CL_ProfileFunctionData(theEnv)->CL_ProfileStartTime = CL_gentime();
-      CL_ProfileFunctionData(theEnv)->CL_ProfileCL_UserFunctions = true;
+      CL_ProfileFunctionData(theEnv)->CL_Profile_UserFunctions = true;
       CL_ProfileFunctionData(theEnv)->CL_ProfileConstructs = false;
-      CL_ProfileFunctionData(theEnv)->LastCL_ProfileInfo = USER_FUNCTIONS;
+      CL_ProfileFunctionData(theEnv)->Last_ProfileInfo = USER_FUNCTIONS;
      }
 
    else if (strcmp(argument,"constructs") == 0)
      {
       CL_ProfileFunctionData(theEnv)->CL_ProfileStartTime = CL_gentime();
-      CL_ProfileFunctionData(theEnv)->CL_ProfileCL_UserFunctions = false;
+      CL_ProfileFunctionData(theEnv)->CL_Profile_UserFunctions = false;
       CL_ProfileFunctionData(theEnv)->CL_ProfileConstructs = true;
-      CL_ProfileFunctionData(theEnv)->LastCL_ProfileInfo = CONSTRUCTS_CODE;
+      CL_ProfileFunctionData(theEnv)->Last_ProfileInfo = CONSTRUCTS_CODE;
      }
 
    /*======================================================*/
@@ -214,7 +214,7 @@ bool CL_Profile(
      {
       CL_ProfileFunctionData(theEnv)->CL_ProfileEndTime = CL_gentime();
       CL_ProfileFunctionData(theEnv)->CL_ProfileTotalTime += (CL_ProfileFunctionData(theEnv)->CL_ProfileEndTime - CL_ProfileFunctionData(theEnv)->CL_ProfileStartTime);
-      CL_ProfileFunctionData(theEnv)->CL_ProfileCL_UserFunctions = false;
+      CL_ProfileFunctionData(theEnv)->CL_Profile_UserFunctions = false;
       CL_ProfileFunctionData(theEnv)->CL_ProfileConstructs = false;
      }
 
@@ -245,53 +245,53 @@ void CL_ProfileInfoCommand(
    /* update the profile end time.     */
    /*==================================*/
 
-   if (CL_ProfileFunctionData(theEnv)->CL_ProfileCL_UserFunctions || CL_ProfileFunctionData(theEnv)->CL_ProfileConstructs)
+   if (CL_ProfileFunctionData(theEnv)->CL_Profile_UserFunctions || CL_ProfileFunctionData(theEnv)->CL_ProfileConstructs)
      {
       CL_ProfileFunctionData(theEnv)->CL_ProfileEndTime = CL_gentime();
       CL_ProfileFunctionData(theEnv)->CL_ProfileTotalTime += (CL_ProfileFunctionData(theEnv)->CL_ProfileEndTime - CL_ProfileFunctionData(theEnv)->CL_ProfileStartTime);
      }
 
    /*==================================*/
-   /* Print the profiling infoCL_rmation. */
+   /* Print the profiling info_rmation. */
    /*==================================*/
 
-   if (CL_ProfileFunctionData(theEnv)->LastCL_ProfileInfo != NO_PROFILE)
+   if (CL_ProfileFunctionData(theEnv)->Last_ProfileInfo != NO_PROFILE)
      {
       CL_gensprintf(buffer,"CL_Profile elapsed time = %g seconds\n",
                       CL_ProfileFunctionData(theEnv)->CL_ProfileTotalTime);
       CL_WriteString(theEnv,STDOUT,buffer);
 
-      if (CL_ProfileFunctionData(theEnv)->LastCL_ProfileInfo == USER_FUNCTIONS)
+      if (CL_ProfileFunctionData(theEnv)->Last_ProfileInfo == USER_FUNCTIONS)
         { CL_WriteString(theEnv,STDOUT,"Function Name                            "); }
-      else if (CL_ProfileFunctionData(theEnv)->LastCL_ProfileInfo == CONSTRUCTS_CODE)
+      else if (CL_ProfileFunctionData(theEnv)->Last_ProfileInfo == CONSTRUCTS_CODE)
         { CL_WriteString(theEnv,STDOUT,"Construct Name                           "); }
 
       CL_WriteString(theEnv,STDOUT,"Entries         Time           %          Time+Kids     %+Kids\n");
 
-      if (CL_ProfileFunctionData(theEnv)->LastCL_ProfileInfo == USER_FUNCTIONS)
+      if (CL_ProfileFunctionData(theEnv)->Last_ProfileInfo == USER_FUNCTIONS)
         { CL_WriteString(theEnv,STDOUT,"-------------                            "); }
-      else if (CL_ProfileFunctionData(theEnv)->LastCL_ProfileInfo == CONSTRUCTS_CODE)
+      else if (CL_ProfileFunctionData(theEnv)->Last_ProfileInfo == CONSTRUCTS_CODE)
         { CL_WriteString(theEnv,STDOUT,"--------------                           "); }
 
       CL_WriteString(theEnv,STDOUT,"-------        ------        -----        ---------     ------\n");
      }
 
-   if (CL_ProfileFunctionData(theEnv)->LastCL_ProfileInfo == USER_FUNCTIONS) OutputCL_UserFunctionsInfo(theEnv);
-   if (CL_ProfileFunctionData(theEnv)->LastCL_ProfileInfo == CONSTRUCTS_CODE) OutputConstructsCodeInfo(theEnv);
+   if (CL_ProfileFunctionData(theEnv)->Last_ProfileInfo == USER_FUNCTIONS) Output_UserFunctionsInfo(theEnv);
+   if (CL_ProfileFunctionData(theEnv)->Last_ProfileInfo == CONSTRUCTS_CODE) OutputConstructsCodeInfo(theEnv);
   }
 
 /**********************************************/
-/* StartCL_Profile: Initiates bookkeeping needed */
+/* Start_Profile: Initiates bookkeeping needed */
 /*   to profile a construct or function.      */
 /**********************************************/
-void StartCL_Profile(
+void Start_Profile(
   Environment *theEnv,
   struct profileFrameInfo *theFrame,
   struct userData **theList,
   bool checkFlag)
   {
    double startTime, addTime;
-   struct constructCL_ProfileInfo *profileInfo;
+   struct construct_ProfileInfo *profileInfo;
 
    if (! checkFlag)
      {
@@ -299,38 +299,38 @@ void StartCL_Profile(
       return;
      }
 
-   profileInfo = (struct constructCL_ProfileInfo *) CL_FetchUserData(theEnv,CL_ProfileFunctionData(theEnv)->CL_ProfileDataID,theList);
+   profileInfo = (struct construct_ProfileInfo *) CL_FetchUserData(theEnv,CL_ProfileFunctionData(theEnv)->CL_ProfileDataID,theList);
 
    theFrame->profileOnExit = true;
    theFrame->parentCall = false;
 
    startTime = CL_gentime();
-   theFrame->oldCL_ProfileFrame = CL_ProfileFunctionData(theEnv)->ActiveCL_ProfileFrame;
+   theFrame->old_ProfileFrame = CL_ProfileFunctionData(theEnv)->Active_ProfileFrame;
 
-   if (CL_ProfileFunctionData(theEnv)->ActiveCL_ProfileFrame != NULL)
+   if (CL_ProfileFunctionData(theEnv)->Active_ProfileFrame != NULL)
      {
-      addTime = startTime - CL_ProfileFunctionData(theEnv)->ActiveCL_ProfileFrame->startTime;
-      CL_ProfileFunctionData(theEnv)->ActiveCL_ProfileFrame->totalSelfTime += addTime;
+      addTime = startTime - CL_ProfileFunctionData(theEnv)->Active_ProfileFrame->startTime;
+      CL_ProfileFunctionData(theEnv)->Active_ProfileFrame->totalSelfTime += addTime;
      }
 
-   CL_ProfileFunctionData(theEnv)->ActiveCL_ProfileFrame = profileInfo;
+   CL_ProfileFunctionData(theEnv)->Active_ProfileFrame = profileInfo;
 
-   CL_ProfileFunctionData(theEnv)->ActiveCL_ProfileFrame->numberOfEntries++;
-   CL_ProfileFunctionData(theEnv)->ActiveCL_ProfileFrame->startTime = startTime;
+   CL_ProfileFunctionData(theEnv)->Active_ProfileFrame->numberOfEntries++;
+   CL_ProfileFunctionData(theEnv)->Active_ProfileFrame->startTime = startTime;
 
-   if (! CL_ProfileFunctionData(theEnv)->ActiveCL_ProfileFrame->childCall)
+   if (! CL_ProfileFunctionData(theEnv)->Active_ProfileFrame->childCall)
      {
       theFrame->parentCall = true;
       theFrame->parentStartTime = startTime;
-      CL_ProfileFunctionData(theEnv)->ActiveCL_ProfileFrame->childCall = true;
+      CL_ProfileFunctionData(theEnv)->Active_ProfileFrame->childCall = true;
      }
   }
 
 /*******************************************/
-/* CL_EndCL_Profile: Finishes bookkeeping needed */
+/* CL_End_Profile: Finishes bookkeeping needed */
 /*   to profile a construct or function.   */
 /*******************************************/
-void CL_EndCL_Profile(
+void CL_End_Profile(
   Environment *theEnv,
   struct profileFrameInfo *theFrame)
   {
@@ -343,26 +343,26 @@ void CL_EndCL_Profile(
    if (theFrame->parentCall)
      {
       addTime = endTime - theFrame->parentStartTime;
-      CL_ProfileFunctionData(theEnv)->ActiveCL_ProfileFrame->totalWithChildrenTime += addTime;
-      CL_ProfileFunctionData(theEnv)->ActiveCL_ProfileFrame->childCall = false;
+      CL_ProfileFunctionData(theEnv)->Active_ProfileFrame->totalWithChildrenTime += addTime;
+      CL_ProfileFunctionData(theEnv)->Active_ProfileFrame->childCall = false;
      }
 
-   CL_ProfileFunctionData(theEnv)->ActiveCL_ProfileFrame->totalSelfTime += (endTime - CL_ProfileFunctionData(theEnv)->ActiveCL_ProfileFrame->startTime);
+   CL_ProfileFunctionData(theEnv)->Active_ProfileFrame->totalSelfTime += (endTime - CL_ProfileFunctionData(theEnv)->Active_ProfileFrame->startTime);
 
-   if (theFrame->oldCL_ProfileFrame != NULL)
-     { theFrame->oldCL_ProfileFrame->startTime = endTime; }
+   if (theFrame->old_ProfileFrame != NULL)
+     { theFrame->old_ProfileFrame->startTime = endTime; }
 
-   CL_ProfileFunctionData(theEnv)->ActiveCL_ProfileFrame = theFrame->oldCL_ProfileFrame;
+   CL_ProfileFunctionData(theEnv)->Active_ProfileFrame = theFrame->old_ProfileFrame;
   }
 
 /******************************************/
-/* OutputCL_ProfileInfo: Prints out a single */
-/*   line of profile infoCL_rmation.         */
+/* Output_ProfileInfo: Prints out a single */
+/*   line of profile info_rmation.         */
 /******************************************/
-static bool OutputCL_ProfileInfo(
+static bool Output_ProfileInfo(
   Environment *theEnv,
   const char *itemName,
-  struct constructCL_ProfileInfo *profileInfo,
+  struct construct_ProfileInfo *profileInfo,
   const char *printPrefixBefore,
   const char *printPrefix,
   const char *printPrefixAfter,
@@ -422,10 +422,10 @@ static bool OutputCL_ProfileInfo(
   }
 
 /*******************************************/
-/* CL_ProfileCL_ResetCommand: H/L access routine */
+/* CL_Profile_ResetCommand: H/L access routine */
 /*   for the profile-reset command.        */
 /*******************************************/
-void CL_ProfileCL_ResetCommand(
+void CL_Profile_ResetCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -452,13 +452,13 @@ void CL_ProfileCL_ResetCommand(
    CL_ProfileFunctionData(theEnv)->CL_ProfileStartTime = 0.0;
    CL_ProfileFunctionData(theEnv)->CL_ProfileEndTime = 0.0;
    CL_ProfileFunctionData(theEnv)->CL_ProfileTotalTime = 0.0;
-   CL_ProfileFunctionData(theEnv)->LastCL_ProfileInfo = NO_PROFILE;
+   CL_ProfileFunctionData(theEnv)->Last_ProfileInfo = NO_PROFILE;
 
    for (theFunction = CL_GetFunctionList(theEnv);
         theFunction != NULL;
         theFunction = theFunction->next)
      {
-      CL_ResetCL_ProfileInfo((struct constructCL_ProfileInfo *)
+      CL_Reset_ProfileInfo((struct construct_ProfileInfo *)
                        CL_TestUserData(CL_ProfileFunctionData(theEnv)->CL_ProfileDataID,theFunction->usrData));
      }
 
@@ -466,7 +466,7 @@ void CL_ProfileCL_ResetCommand(
      {
       if (CL_EvaluationData(theEnv)->PrimitivesArray[i] != NULL)
         {
-         CL_ResetCL_ProfileInfo((struct constructCL_ProfileInfo *)
+         CL_Reset_ProfileInfo((struct construct_ProfileInfo *)
                           CL_TestUserData(CL_ProfileFunctionData(theEnv)->CL_ProfileDataID,CL_EvaluationData(theEnv)->PrimitivesArray[i]->usrData));
         }
      }
@@ -476,7 +476,7 @@ void CL_ProfileCL_ResetCommand(
         theDeffunction != NULL;
         theDeffunction = CL_GetNextDeffunction(theEnv,theDeffunction))
      {
-      CL_ResetCL_ProfileInfo((struct constructCL_ProfileInfo *)
+      CL_Reset_ProfileInfo((struct construct_ProfileInfo *)
                        CL_TestUserData(CL_ProfileFunctionData(theEnv)->CL_ProfileDataID,theDeffunction->header.usrData));
      }
 #endif
@@ -486,7 +486,7 @@ void CL_ProfileCL_ResetCommand(
         theDefrule != NULL;
         theDefrule = CL_GetNextDefrule(theEnv,theDefrule))
      {
-      CL_ResetCL_ProfileInfo((struct constructCL_ProfileInfo *)
+      CL_Reset_ProfileInfo((struct construct_ProfileInfo *)
                        CL_TestUserData(CL_ProfileFunctionData(theEnv)->CL_ProfileDataID,theDefrule->header.usrData));
      }
 #endif
@@ -496,7 +496,7 @@ void CL_ProfileCL_ResetCommand(
         theDefgeneric != NULL;
         theDefgeneric = CL_GetNextDefgeneric(theEnv,theDefgeneric))
      {
-      CL_ResetCL_ProfileInfo((struct constructCL_ProfileInfo *)
+      CL_Reset_ProfileInfo((struct construct_ProfileInfo *)
                        CL_TestUserData(CL_ProfileFunctionData(theEnv)->CL_ProfileDataID,theDefgeneric->header.usrData));
 
       for (methodIndex = CL_GetNextDefmethod(theDefgeneric,0);
@@ -504,7 +504,7 @@ void CL_ProfileCL_ResetCommand(
            methodIndex = CL_GetNextDefmethod(theDefgeneric,methodIndex))
         {
          theMethod = CL_GetDefmethodPointer(theDefgeneric,methodIndex);
-         CL_ResetCL_ProfileInfo((struct constructCL_ProfileInfo *)
+         CL_Reset_ProfileInfo((struct construct_ProfileInfo *)
                           CL_TestUserData(CL_ProfileFunctionData(theEnv)->CL_ProfileDataID,theMethod->header.usrData));
         }
      }
@@ -515,14 +515,14 @@ void CL_ProfileCL_ResetCommand(
         theDefclass != NULL;
         theDefclass = CL_GetNextDefclass(theEnv,theDefclass))
      {
-      CL_ResetCL_ProfileInfo((struct constructCL_ProfileInfo *)
+      CL_Reset_ProfileInfo((struct construct_ProfileInfo *)
                        CL_TestUserData(CL_ProfileFunctionData(theEnv)->CL_ProfileDataID,theDefclass->header.usrData));
       for (handlerIndex = CL_GetNextDefmessageHandler(theDefclass,0);
            handlerIndex != 0;
            handlerIndex = CL_GetNextDefmessageHandler(theDefclass,handlerIndex))
         {
          theHandler = CL_GetDefmessageHandlerPointer(theDefclass,handlerIndex);
-         CL_ResetCL_ProfileInfo((struct constructCL_ProfileInfo *)
+         CL_Reset_ProfileInfo((struct construct_ProfileInfo *)
                           CL_TestUserData(CL_ProfileFunctionData(theEnv)->CL_ProfileDataID,theHandler->header.usrData));
         }
      }
@@ -531,11 +531,11 @@ void CL_ProfileCL_ResetCommand(
   }
 
 /*************************************************/
-/* CL_ResetCL_ProfileInfo: Sets the initial values for */
-/*   a constructCL_ProfileInfo data structure.      */
+/* CL_Reset_ProfileInfo: Sets the initial values for */
+/*   a construct_ProfileInfo data structure.      */
 /*************************************************/
-void CL_ResetCL_ProfileInfo(
-  struct constructCL_ProfileInfo *profileInfo)
+void CL_Reset_ProfileInfo(
+  struct construct_ProfileInfo *profileInfo)
   {
    if (profileInfo == NULL) return;
 
@@ -547,9 +547,9 @@ void CL_ResetCL_ProfileInfo(
   }
 
 /****************************/
-/* OutputCL_UserFunctionsInfo: */
+/* Output_UserFunctionsInfo: */
 /****************************/
-static void OutputCL_UserFunctionsInfo(
+static void Output_UserFunctionsInfo(
   Environment *theEnv)
   {
    struct functionDefinition *theFunction;
@@ -559,8 +559,8 @@ static void OutputCL_UserFunctionsInfo(
         theFunction != NULL;
         theFunction = theFunction->next)
      {
-      OutputCL_ProfileInfo(theEnv,theFunction->callFunctionName->contents,
-                        (struct constructCL_ProfileInfo *)
+      Output_ProfileInfo(theEnv,theFunction->callFunctionName->contents,
+                        (struct construct_ProfileInfo *)
                            CL_TestUserData(CL_ProfileFunctionData(theEnv)->CL_ProfileDataID,
                         theFunction->usrData),
                         NULL,NULL,NULL,NULL);
@@ -570,8 +570,8 @@ static void OutputCL_UserFunctionsInfo(
      {
       if (CL_EvaluationData(theEnv)->PrimitivesArray[i] != NULL)
         {
-         OutputCL_ProfileInfo(theEnv,CL_EvaluationData(theEnv)->PrimitivesArray[i]->name,
-                           (struct constructCL_ProfileInfo *)
+         Output_ProfileInfo(theEnv,CL_EvaluationData(theEnv)->PrimitivesArray[i]->name,
+                           (struct construct_ProfileInfo *)
                               CL_TestUserData(CL_ProfileFunctionData(theEnv)->CL_ProfileDataID,
                            CL_EvaluationData(theEnv)->PrimitivesArray[i]->usrData),
                            NULL,NULL,NULL,NULL);
@@ -598,7 +598,7 @@ static void OutputConstructsCodeInfo(
    Defgeneric *theDefgeneric;
    Defmethod *theMethod;
    unsigned short methodIndex;
-   StringCL_Builder *theSB;
+   String_Builder *theSB;
 #endif
 #if OBJECT_SYSTEM
    Defclass *theDefclass;
@@ -617,8 +617,8 @@ static void OutputConstructsCodeInfo(
         theDeffunction != NULL;
         theDeffunction = CL_GetNextDeffunction(theEnv,theDeffunction))
      {
-      OutputCL_ProfileInfo(theEnv,CL_DeffunctionName(theDeffunction),
-                        (struct constructCL_ProfileInfo *)
+      Output_ProfileInfo(theEnv,CL_DeffunctionName(theDeffunction),
+                        (struct construct_ProfileInfo *)
                           CL_TestUserData(CL_ProfileFunctionData(theEnv)->CL_ProfileDataID,theDeffunction->header.usrData),
                         NULL,NULL,NULL,&banner);
      }
@@ -626,7 +626,7 @@ static void OutputConstructsCodeInfo(
 
    banner = "\n*** Defgenerics ***\n";
 #if DEFGENERIC_CONSTRUCT
-   theSB = CL_CreateStringCL_Builder(theEnv,512);
+   theSB = CL_CreateString_Builder(theEnv,512);
    for (theDefgeneric = CL_GetNextDefgeneric(theEnv,NULL);
         theDefgeneric != NULL;
         theDefgeneric = CL_GetNextDefgeneric(theEnv,theDefgeneric))
@@ -642,8 +642,8 @@ static void OutputConstructsCodeInfo(
          theMethod = CL_GetDefmethodPointer(theDefgeneric,methodIndex);
 
          CL_DefmethodDescription(theDefgeneric,methodIndex,theSB);
-         if (OutputCL_ProfileInfo(theEnv,theSB->contents,
-                               (struct constructCL_ProfileInfo *)
+         if (Output_ProfileInfo(theEnv,theSB->contents,
+                               (struct construct_ProfileInfo *)
                                   CL_TestUserData(CL_ProfileFunctionData(theEnv)->CL_ProfileDataID,theMethod->header.usrData),
                                prefixBefore,prefix,prefixAfter,&banner))
            {
@@ -671,8 +671,8 @@ static void OutputConstructsCodeInfo(
            handlerIndex = CL_GetNextDefmessageHandler(theDefclass,handlerIndex))
         {
          theHandler = CL_GetDefmessageHandlerPointer(theDefclass,handlerIndex);
-         if (OutputCL_ProfileInfo(theEnv,CL_DefmessageHandlerName(theDefclass,handlerIndex),
-                               (struct constructCL_ProfileInfo *)
+         if (Output_ProfileInfo(theEnv,CL_DefmessageHandlerName(theDefclass,handlerIndex),
+                               (struct construct_ProfileInfo *)
                                   CL_TestUserData(CL_ProfileFunctionData(theEnv)->CL_ProfileDataID,
                                theHandler->header.usrData),
                                prefixBefore,prefix,prefixAfter,&banner))
@@ -693,8 +693,8 @@ static void OutputConstructsCodeInfo(
         theDefrule != NULL;
         theDefrule = CL_GetNextDefrule(theEnv,theDefrule))
      {
-      OutputCL_ProfileInfo(theEnv,CL_DefruleName(theDefrule),
-                        (struct constructCL_ProfileInfo *)
+      Output_ProfileInfo(theEnv,CL_DefruleName(theDefrule),
+                        (struct construct_ProfileInfo *)
                           CL_TestUserData(CL_ProfileFunctionData(theEnv)->CL_ProfileDataID,theDefrule->header.usrData),
                         NULL,NULL,NULL,&banner);
      }
@@ -703,10 +703,10 @@ static void OutputConstructsCodeInfo(
   }
 
 /*********************************************************/
-/* SetCL_ProfilePercentThresholdCommand: H/L access routine */
+/* Set_ProfilePercentThresholdCommand: H/L access routine */
 /*   for the set-profile-percent-threshold command.      */
 /*********************************************************/
-void SetCL_ProfilePercentThresholdCommand(
+void Set_ProfilePercentThresholdCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -725,14 +725,14 @@ void SetCL_ProfilePercentThresholdCommand(
       returnValue->floatValue = CL_CreateFloat(theEnv,-1.0);
      }
    else
-     { returnValue->floatValue = CL_CreateFloat(theEnv,SetCL_ProfilePercentThreshold(theEnv,newThreshold)); }
+     { returnValue->floatValue = CL_CreateFloat(theEnv,Set_ProfilePercentThreshold(theEnv,newThreshold)); }
   }
 
 /****************************************************/
-/* SetCL_ProfilePercentThreshold: C access routine for */
+/* Set_ProfilePercentThreshold: C access routine for */
 /*   the set-profile-percent-threshold command.     */
 /****************************************************/
-double SetCL_ProfilePercentThreshold(
+double Set_ProfilePercentThreshold(
   Environment *theEnv,
   double value)
   {
@@ -749,10 +749,10 @@ double SetCL_ProfilePercentThreshold(
   }
 
 /*********************************************************/
-/* CL_GetCL_ProfilePercentThresholdCommand: H/L access routine */
+/* CL_Get_ProfilePercentThresholdCommand: H/L access routine */
 /*   for the get-profile-percent-threshold command.      */
 /*********************************************************/
-void CL_GetCL_ProfilePercentThresholdCommand(
+void CL_Get_ProfilePercentThresholdCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -761,19 +761,19 @@ void CL_GetCL_ProfilePercentThresholdCommand(
   }
 
 /****************************************************/
-/* CL_GetCL_ProfilePercentThreshold: C access routine for */
+/* CL_Get_ProfilePercentThreshold: C access routine for */
 /*   the get-profile-percent-threshold command.     */
 /****************************************************/
-double CL_GetCL_ProfilePercentThreshold(
+double CL_Get_ProfilePercentThreshold(
   Environment *theEnv)
   {
    return(CL_ProfileFunctionData(theEnv)->PercentThreshold);
   }
 
 /**********************************************************/
-/* SetCL_ProfileOutputString: Sets the output string global. */
+/* Set_ProfileOutputString: Sets the output string global. */
 /**********************************************************/
-const char *SetCL_ProfileOutputString(
+const char *Set_ProfileOutputString(
   Environment *theEnv,
   const char *value)
   {
@@ -791,10 +791,10 @@ const char *SetCL_ProfileOutputString(
 
 #if (! RUN_TIME)
 /******************************************************************/
-/* CL_ProfileCL_ClearFunction: Profiling clear routine for use with the */
+/* CL_Profile_ClearFunction: Profiling clear routine for use with the */
 /*   clear command. Removes user data attached to user functions. */
 /******************************************************************/
-static void CL_ProfileCL_ClearFunction(
+static void CL_Profile_ClearFunction(
   Environment *theEnv,
   void *context)
   {

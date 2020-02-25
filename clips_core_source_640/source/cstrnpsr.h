@@ -61,7 +61,7 @@ struct constraintParseRecord
    unsigned int allowedNumbers : 1;
    unsigned int allowedValues : 1;
    unsigned int allowedClasses : 1;
-   unsigned int allowedCL_InstanceNames : 1;
+   unsigned int allowed_InstanceNames : 1;
    unsigned int cardinality : 1;
   };
 
@@ -72,7 +72,7 @@ typedef struct constraintParseRecord CONSTRAINT_PARSE_RECORD;
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    void                           CL_InitializeConstraintParseRecord(CONSTRAINT_PARSE_RECORD *);
    bool                           CL_StandardConstraint(const char *);
-   bool                           CL_ParseCL_StandardConstraint(Environment *,const char *,const char *,
+   bool                           CL_Parse_StandardConstraint(Environment *,const char *,const char *,
                                                                  CONSTRAINT_RECORD *,
                                                                  CONSTRAINT_PARSE_RECORD *,
                                                                  bool);

@@ -64,8 +64,8 @@
 /***************************************/
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   static struct lhsParseNode            *ConjuctiveCL_RestrictionParse(Environment *,const char *,struct token *,bool *);
-   static struct lhsParseNode            *LiteralCL_RestrictionParse(Environment *,const char *,struct token *,bool *);
+   static struct lhsParseNode            *Conjuctive_RestrictionParse(Environment *,const char *,struct token *,bool *);
+   static struct lhsParseNode            *Literal_RestrictionParse(Environment *,const char *,struct token *,bool *);
    static bool                            CheckForVariableMixing(Environment *,struct lhsParseNode *);
    static void                            TallyFieldTypes(struct lhsParseNode *);
 #endif
@@ -116,7 +116,7 @@ static void DeallocatePatternData(
    struct patternNodeHashEntry *tmpPNEPtr, *nextPNEPtr;
    unsigned long i;
 
-   tmpRSPtr = PatternData(theEnv)->ListOfCL_ReservedPatternSymbols;
+   tmpRSPtr = PatternData(theEnv)->ListOf_ReservedPatternSymbols;
    while (tmpRSPtr != NULL)
      {
       nextRSPtr = tmpRSPtr->next;
@@ -248,14 +248,14 @@ void *CL_FindHashedPatternNode(
   }
 
 /******************************************************************/
-/* CL_AddCL_ReservedPatternSymbol: Adds a symbol to the list of symbols */
+/* CL_Add_ReservedPatternSymbol: Adds a symbol to the list of symbols */
 /*  that are restricted for use in patterns. For example, the     */
 /*  deftemplate construct cannot use the symbol "object", since   */
 /*  this needs to be reserved for object patterns. Some symbols,  */
 /*  such as "exists" are completely reserved and can not be used  */
 /*  to start any type of pattern CE.                              */
 /******************************************************************/
-void CL_AddCL_ReservedPatternSymbol(
+void CL_Add_ReservedPatternSymbol(
   Environment *theEnv,
   const char *theSymbol,
   const char *reservedBy)
@@ -265,8 +265,8 @@ void CL_AddCL_ReservedPatternSymbol(
    newSymbol = get_struct(theEnv,reservedSymbol);
    newSymbol->theSymbol = theSymbol;
    newSymbol->reservedBy = reservedBy;
-   newSymbol->next = PatternData(theEnv)->ListOfCL_ReservedPatternSymbols;
-   PatternData(theEnv)->ListOfCL_ReservedPatternSymbols = newSymbol;
+   newSymbol->next = PatternData(theEnv)->ListOf_ReservedPatternSymbols;
+   PatternData(theEnv)->ListOf_ReservedPatternSymbols = newSymbol;
   }
 
 /******************************************************************/
@@ -282,7 +282,7 @@ bool CL_ReservedPatternSymbol(
   {
    struct reservedSymbol *currentSymbol;
 
-   for (currentSymbol = PatternData(theEnv)->ListOfCL_ReservedPatternSymbols;
+   for (currentSymbol = PatternData(theEnv)->ListOf_ReservedPatternSymbols;
         currentSymbol != NULL;
         currentSymbol = currentSymbol->next)
      {
@@ -621,7 +621,7 @@ struct lhsParseNode *CL_RestrictionParse(
         }
       else
         {
-         nextNode = ConjuctiveCL_RestrictionParse(theEnv,readSource,theToken,&error);
+         nextNode = Conjuctive_RestrictionParse(theEnv,readSource,theToken,&error);
          if (nextNode == NULL)
            {
             CL_ReturnLHSParseNodes(theEnv,topNode);
@@ -638,7 +638,7 @@ struct lhsParseNode *CL_RestrictionParse(
         {
          CL_PPBackup(theEnv);
          CL_SavePPBuffer(theEnv," ");
-         CL_SavePPBuffer(theEnv,theToken->printFoCL_rm);
+         CL_SavePPBuffer(theEnv,theToken->printFo_rm);
         }
 
       /*========================================*/
@@ -751,7 +751,7 @@ struct lhsParseNode *CL_RestrictionParse(
 
       /*==========================================================*/
       /* Create a separate constraint record to keep track of the */
-      /* cardinality infoCL_rmation for this multifield constraint.  */
+      /* cardinality info_rmation for this multifield constraint.  */
       /*==========================================================*/
 
       tempConstraints = CL_GetConstraintRecord(theEnv);
@@ -807,7 +807,7 @@ struct lhsParseNode *CL_RestrictionParse(
   }
 
 /***************************************************************/
-/* TallyFieldTypes: DeteCL_rmines the number of single field and  */
+/* TallyFieldTypes: Dete_rmines the number of single field and  */
 /*   multifield variables and wildcards that appear before and */
 /*   after each restriction found in a multifield slot.        */
 /***************************************************************/
@@ -888,7 +888,7 @@ static void TallyFieldTypes(
   }
 
 /*******************************************************************/
-/* ConjuctiveCL_RestrictionParse: Parses a single constraint field in */
+/* Conjuctive_RestrictionParse: Parses a single constraint field in */
 /*   a pattern that is not a single field wildcard, multifield     */
 /*   wildcard, or multifield variable. The field may consist of a  */
 /*   number of subfields tied together using the & connective      */
@@ -899,7 +899,7 @@ static void TallyFieldTypes(
 /*                <single-constraint> & <connected-constraint> |   */
 /*                <single-constraint> | <connected-constraint>     */
 /*******************************************************************/
-static struct lhsParseNode *ConjuctiveCL_RestrictionParse(
+static struct lhsParseNode *Conjuctive_RestrictionParse(
   Environment *theEnv,
   const char *readSource,
   struct token *theToken,
@@ -910,11 +910,11 @@ static struct lhsParseNode *ConjuctiveCL_RestrictionParse(
    TokenType connectorType;
 
    /*=====================================*/
-   /* Get the first node and deteCL_rmine if */
+   /* Get the first node and dete_rmine if */
    /* it is a binding variable.           */
    /*=====================================*/
 
-   theNode = LiteralCL_RestrictionParse(theEnv,readSource,theToken,error);
+   theNode = Literal_RestrictionParse(theEnv,readSource,theToken,error);
 
    if (*error == true)
      { return NULL; }
@@ -956,7 +956,7 @@ static struct lhsParseNode *ConjuctiveCL_RestrictionParse(
       connectorType = theToken->tknType;
 
       CL_GetToken(theEnv,readSource,theToken);
-      theNode = LiteralCL_RestrictionParse(theEnv,readSource,theToken,error);
+      theNode = Literal_RestrictionParse(theEnv,readSource,theToken,error);
 
       if (*error == true)
         {
@@ -996,7 +996,7 @@ static struct lhsParseNode *ConjuctiveCL_RestrictionParse(
         }
 
       /*==================================================*/
-      /* DeteCL_rmine if any more restrictions are connected */
+      /* Dete_rmine if any more restrictions are connected */
       /* to the current list of restrictions.             */
       /*==================================================*/
 
@@ -1024,7 +1024,7 @@ static struct lhsParseNode *ConjuctiveCL_RestrictionParse(
 
 /*****************************************************/
 /* CheckForVariableMixing: Checks a field constraint */
-/*   to deteCL_rmine if single and multifield variables */
+/*   to dete_rmine if single and multifield variables */
 /*   are illegally mixed within it.                  */
 /*****************************************************/
 static bool CheckForVariableMixing(
@@ -1041,7 +1041,7 @@ static bool CheckForVariableMixing(
 
    /*================================================*/
    /* If the constraint contains a binding variable, */
-   /* deteCL_rmine whether it is a single field or      */
+   /* dete_rmine whether it is a single field or      */
    /* multifield variable.                           */
    /*================================================*/
 
@@ -1067,7 +1067,7 @@ static bool CheckForVariableMixing(
            tempRestriction = tempRestriction->right)
         {
          /*=====================================================*/
-         /* DeteCL_rmine if the constraint contains a single field */
+         /* Dete_rmine if the constraint contains a single field */
          /* variable, multifield variable, constant (a single   */
          /* field), a return value constraint of a function     */
          /* returning a single field value, or a return value   */
@@ -1114,21 +1114,21 @@ static bool CheckForVariableMixing(
   }
 
 /***********************************************************/
-/* LiteralCL_RestrictionParse: Parses a single constraint.    */
+/* Literal_RestrictionParse: Parses a single constraint.    */
 /*   The constraint may be a literal constraint, a         */
 /*   predicate constraint, a return value constraint, or a */
 /*   variable constraint. The constraints may also be      */
 /*   negated using the ~ connective constraint.            */
 /*                                                         */
-/* <single-constraint>     ::= <teCL_rm> | ~<teCL_rm>            */
+/* <single-constraint>     ::= <te_rm> | ~<te_rm>            */
 /*                                                         */
-/*  <teCL_rm>                 ::= <constant> |                */
+/*  <te_rm>                 ::= <constant> |                */
 /*                             <single-field-variable> |   */
 /*                             <multi-field-variable> |    */
 /*                             :<function-call> |          */
 /*                             =<function-call>            */
 /***********************************************************/
-static struct lhsParseNode *LiteralCL_RestrictionParse(
+static struct lhsParseNode *Literal_RestrictionParse(
   Environment *theEnv,
   const char *readSource,
   struct token *theToken,
@@ -1144,7 +1144,7 @@ static struct lhsParseNode *LiteralCL_RestrictionParse(
    topNode = CL_GetLHSParseNode(theEnv);
 
    /*=================================================*/
-   /* DeteCL_rmine if the constraint has a '~' preceding */
+   /* Dete_rmine if the constraint has a '~' preceding */
    /* it. If it  does, then the field is negated      */
    /* (e.g. ~red means "not the constant red."        */
    /*=================================================*/
@@ -1158,7 +1158,7 @@ static struct lhsParseNode *LiteralCL_RestrictionParse(
      { topNode->negated = false; }
 
    /*===========================================*/
-   /* DeteCL_rmine if the constraint is one of the */
+   /* Dete_rmine if the constraint is one of the */
    /* recognized types. These are ?variables,   */
    /* symbols, strings, numbers, :(expression), */
    /* and =(expression).                        */

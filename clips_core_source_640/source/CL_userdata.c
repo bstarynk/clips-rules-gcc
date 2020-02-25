@@ -55,7 +55,7 @@ unsigned char CL_InstallUserDataRecord(
   }
 
 /*****************************************************/
-/* CL_FetchUserData: Searches for user data infoCL_rmation */
+/* CL_FetchUserData: Searches for user data info_rmation */
 /*   from a list of user data structures. A new user */
 /*   data structure is created if one is not found.  */
 /*****************************************************/
@@ -83,7 +83,7 @@ struct userData *CL_FetchUserData(
   }
 
 /*****************************************************/
-/* CL_TestUserData: Searches for user data infoCL_rmation  */
+/* CL_TestUserData: Searches for user data info_rmation  */
 /*   from a list of user data structures. NULL is    */
 /*   returned if the appropriate user data structure */
 /*   is not found.                                   */
@@ -123,7 +123,7 @@ void CL_ClearUserDataList(
   }
 
 /*************************************************/
-/* CL_DeleteUserData: Removes user data infoCL_rmation */
+/* CL_DeleteUserData: Removes user data info_rmation */
 /*   from a list of user data structures.        */
 /*************************************************/
 struct userData *CL_DeleteUserData(

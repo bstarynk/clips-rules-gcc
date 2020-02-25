@@ -443,7 +443,7 @@ static void InitDeftemplateCode(
 #pragma unused(maxIndices)
 #endif
 
-   fprintf(initFP,"   DeftemplateCL_RunTimeInitialize(theEnv);\n");
+   fprintf(initFP,"   Deftemplate_RunTimeInitialize(theEnv);\n");
   }
 
 #endif /* DEFTEMPLATE_CONSTRUCT && CONSTRUCT_COMPILER && (! RUN_TIME) */

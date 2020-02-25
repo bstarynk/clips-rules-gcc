@@ -7,7 +7,7 @@
    /*******************************************************/
 
 /*************************************************************/
-/* Purpose: Provides functions for perfoCL_rming operations on  */
+/* Purpose: Provides functions for perfo_rming operations on  */
 /*   constraint records including computing the intersection */
 /*   and union of constraint records.                        */
 /*                                                           */

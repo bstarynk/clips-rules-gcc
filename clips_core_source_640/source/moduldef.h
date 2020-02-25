@@ -92,7 +92,7 @@ struct constructHeader
   {
    ConstructType constructType;
    CLIPSLexeme *name;
-   const char *ppFoCL_rm;
+   const char *ppFo_rm;
    DefmoduleItemHeader *whichModule;
    unsigned long bsaveID;
    ConstructHeader *next;
@@ -119,7 +119,7 @@ typedef void FreeConstructFunction(Environment *,ConstructHeader *);
 /* name: The name of the defmodule (stored as a reference in the      */
 /*   table).                                                          */
 /*                                                                    */
-/* ppFoCL_rm: The pretty print representation of the defmodule (used by  */
+/* ppFo_rm: The pretty print representation of the defmodule (used by  */
 /*   the save and ppdefmodule commands).                              */
 /*                                                                    */
 /* itemsArray: An array of pointers to the module specific data used  */
@@ -159,7 +159,7 @@ struct portItem
 /*   For example, "defrule".                                          */
 /*                                                                    */
 /* allocateFunction: Used to allocate a data structure containing all */
-/*   pertinent infoCL_rmation related to a specific construct for a      */
+/*   pertinent info_rmation related to a specific construct for a      */
 /*   given module. For example, the deffacts construct stores a       */
 /*   pointer to the first and last deffacts for each each module.     */
 /*                                                                    */
@@ -169,10 +169,10 @@ struct portItem
 /*                                                                    */
 /* bloadModuleReference: Used during a binary load to establish a     */
 /*   link between the defmodule data structure and the data structure */
-/*   containing all pertinent module infoCL_rmation for a specific       */
+/*   containing all pertinent module info_rmation for a specific       */
 /*   construct.                                                       */
 /*                                                                    */
-/* findFunction: Used to deteCL_rmine if a specified construct is in a   */
+/* findFunction: Used to dete_rmine if a specified construct is in a   */
 /*   specific module. The name is the specific construct is passed as */
 /*   a string and the function returns a pointer to the specified     */
 /*   construct if it exists.                                          */
@@ -207,7 +207,7 @@ struct moduleStackItem
 struct defmoduleData
   {
    struct moduleItem *LastModuleItem;
-   struct voidCL_CallFunctionItem *AfterModuleChangeFunctions;
+   struct void_CallFunctionItem *AfterModuleChangeFunctions;
    ModuleStackItem *ModuleStack;
    bool CallModuleChangeFunctions;
    Defmodule *ListOfDefmodules;
@@ -220,7 +220,7 @@ struct defmoduleData
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    struct portConstructItem *ListOfPortConstructItems;
    unsigned short NumberOfDefmodules;
-   struct voidCL_CallFunctionItem *AfterModuleDefinedFunctions;
+   struct void_CallFunctionItem *AfterModuleDefinedFunctions;
 #endif
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
    struct CodeGeneratorItem *DefmoduleCodeItem;
@@ -238,7 +238,7 @@ struct defmoduleData
    void                           CL_InitializeDefmodules(Environment *);
    Defmodule                     *CL_FindDefmodule(Environment *,const char *);
    const char                    *CL_DefmoduleName(Defmodule *);
-   const char                    *CL_DefmodulePPFoCL_rm(Defmodule *);
+   const char                    *CL_DefmodulePPFo_rm(Defmodule *);
    Defmodule                     *CL_GetNextDefmodule(Environment *,Defmodule *);
    void                           CL_RemoveAllDefmodules(Environment *,void *);
    int                            AllocateModuleStorage(void);
@@ -261,7 +261,7 @@ struct defmoduleData
    struct moduleItem             *CL_FindModuleItem(Environment *,const char *);
    void                           CL_SaveCurrentModule(Environment *);
    void                           CL_RestoreCurrentModule(Environment *);
-   void                           CL_AddAfterModuleChangeFunction(Environment *,const char *,VoidCL_CallFunction *,int,void *);
+   void                           CL_AddAfterModuleChangeFunction(Environment *,const char *,Void_CallFunction *,int,void *);
    void                           CL_IllegalModuleSpecifierMessage(Environment *);
    void                           CL_AllocateDefmoduleGlobals(Environment *);
    unsigned short                 CL_GetNumberOfDefmodules(Environment *);

@@ -17,7 +17,7 @@
 /* Revision History:                                         */
 /*                                                           */
 /*      6.24: Removed CL_HaltExecution check from the           */
-/*            EnvCL_ReleaseMem function. DR0863                 */
+/*            Env_ReleaseMem function. DR0863                 */
 /*                                                           */
 /*            Renamed BOOLEAN macro type to intBool.         */
 /*                                                           */
@@ -35,7 +35,7 @@
 /*            Converted API macros to function calls.        */
 /*                                                           */
 /*            Removed deallocating message parameter from    */
-/*            EnvCL_ReleaseMem.                                 */
+/*            Env_ReleaseMem.                                 */
 /*                                                           */
 /*            Removed support for BLOCK_MEMORY.              */
 /*                                                           */
@@ -77,7 +77,7 @@ struct memoryPtr
 
 #if (MEM_TABLE_SIZE > 0)
 /*
- * NoCL_rmal memory management case
+ * No_rmal memory management case
  */
 
 #define get_struct(theEnv,type) \
@@ -132,7 +132,7 @@ struct memoryPtr
 #else // MEM_TABLE_SIZE == 0
 /*
  * Debug case (routes all memory management through CL_genalloc/CL_genfree to take advantage of
- * platfoCL_rm, memory debugging aids)
+ * platfo_rm, memory debugging aids)
  */
 #define get_struct(theEnv,type) ((struct type *) CL_genalloc(theEnv,sizeof(struct type)))
 
@@ -183,7 +183,7 @@ struct memoryData
    void                          *CL_gm2(Environment *,size_t);
    void                           CL_rm(Environment *,void *,size_t);
    unsigned long                  CL_PoolSize(Environment *);
-   unsigned long                  CL_ActualCL_PoolSize(Environment *);
+   unsigned long                  CL_Actual_PoolSize(Environment *);
    bool                           CL_SetConserveMemory(Environment *,bool);
    bool                           CL_GetConserveMemory(Environment *);
    void                           CL_genmemcpy(char *,char *,unsigned long);

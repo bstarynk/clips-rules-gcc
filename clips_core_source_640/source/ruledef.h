@@ -37,14 +37,14 @@
 /*            Added support for hashed memories.             */
 /*                                                           */
 /*            Added additional developer statistics to help  */
-/*            analyze join network perfoCL_rmance.              */
+/*            analyze join network perfo_rmance.              */
 /*                                                           */
-/*            Added salience groups to improve perfoCL_rmance   */
+/*            Added salience groups to improve perfo_rmance   */
 /*            with large numbers of activations of different */
 /*            saliences.                                     */
 /*                                                           */
-/*            Added EnvCL_GetDisjunctCount and                  */
-/*            EnvCL_GetNthDisjunct functions.                   */
+/*            Added Env_GetDisjunctCount and                  */
+/*            Env_GetNthDisjunct functions.                   */
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
@@ -93,7 +93,7 @@ struct defrule
    unsigned int afterBreakpoint :  1;
    unsigned int watchActivation :  1;
    unsigned int watchFiring     :  1;
-   unsigned int autoCL_Focus       :  1;
+   unsigned int auto_Focus       :  1;
    unsigned int executing       :  1;
    struct expr *dynamicSalience;
    struct expr *actions;
@@ -160,10 +160,10 @@ struct defruleData
    Defrule                       *CL_FindDefrule(Environment *,const char *);
    Defrule                       *CL_FindDefruleInModule(Environment *,const char *);
    Defrule                       *CL_GetNextDefrule(Environment *,Defrule *);
-   struct defruleModule          *GetCL_DefruleModuleItem(Environment *,Defmodule *);
+   struct defruleModule          *Get_DefruleModuleItem(Environment *,Defmodule *);
    bool                           CL_DefruleIsDeletable(Defrule *);
 #if RUN_TIME
-   void                           DefruleCL_RunTimeInitialize(Environment *,struct joinLink *,struct joinLink *);
+   void                           Defrule_RunTimeInitialize(Environment *,struct joinLink *,struct joinLink *);
 #endif
 #if RUN_TIME || BLOAD_ONLY || BLOAD || BLOAD_AND_BSAVE
    void                           CL_AddBetaMemoriesToJoin(Environment *,struct joinNode *);
@@ -172,7 +172,7 @@ struct defruleData
    Defrule                       *CL_GetNthDisjunct(Environment *,Defrule *,long);
    const char                    *CL_DefruleModule(Defrule *);
    const char                    *CL_DefruleName(Defrule *);
-   const char                    *CL_DefrulePPFoCL_rm(Defrule *);
+   const char                    *CL_DefrulePPFo_rm(Defrule *);
 
 #endif /* _H_ruledef */
 

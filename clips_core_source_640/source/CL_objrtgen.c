@@ -412,12 +412,12 @@ static void GenObjectGetVar(
 
 /****************************************************************
   NAME         : IsSimpleSlotVariable
-  DESCRIPTION  : DeteCL_rmines if a slot pattern variable
+  DESCRIPTION  : Dete_rmines if a slot pattern variable
                  references a single-field slot or a single-field
                  in a multifield slot which does not require
                  use of multifield markers
                  (Object addresses are not simple variables)
-  INPUTS       : The inteCL_rmediate parse node
+  INPUTS       : The inte_rmediate parse node
   RETURNS      : True if the variable is simple,
                  false otherwise
   SIDE EFFECTS : None
@@ -450,9 +450,9 @@ static bool IsSimpleSlotVariable(
                     pattern or join network test
                  2) For a join test, a flag indicating
                     if it is a nand join
-                 3) The inteCL_rmediate parse node
+                 3) The inte_rmediate parse node
                     for the first variable
-                 4) The inteCL_rmediate parse node
+                 4) The inte_rmediate parse node
                     for the second variable
   RETURNS      : An expression for comparing the
                  variables

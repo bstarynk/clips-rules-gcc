@@ -78,23 +78,23 @@
    static void                        CL_WriteBinaryHeader(Environment *,FILE *);
    static void                        CL_WriteBinaryFooter(Environment *,FILE *);
 #endif
-   static void                        DeallocateCL_BsaveData(Environment *);
+   static void                        Deallocate_BsaveData(Environment *);
 
 /**********************************************/
-/* InitializeCL_BsaveData: Allocates environment */
+/* Initialize_BsaveData: Allocates environment */
 /*    data for the bsave command.             */
 /**********************************************/
-void InitializeCL_BsaveData(
+void Initialize_BsaveData(
   Environment *theEnv)
   {
-   CL_AllocateEnvironmentData(theEnv,BSAVE_DATA,sizeof(struct bsaveData),DeallocateCL_BsaveData);
+   CL_AllocateEnvironmentData(theEnv,BSAVE_DATA,sizeof(struct bsaveData),Deallocate_BsaveData);
   }
 
 /************************************************/
-/* DeallocateCL_BsaveData: Deallocates environment */
+/* Deallocate_BsaveData: Deallocates environment */
 /*    data for the bsave command.               */
 /************************************************/
-static void DeallocateCL_BsaveData(
+static void Deallocate_BsaveData(
   Environment *theEnv)
   {
    struct BinaryItem *tmpPtr, *nextPtr;
@@ -168,7 +168,7 @@ bool CL_Bsave(
      {
       CL_PrintErrorID(theEnv,"BSAVE",1,false);
       CL_WriteString(theEnv,STDERR,
-          "Cannot perfoCL_rm a binary save while a binary load is in effect.\n");
+          "Cannot perfo_rm a binary save while a binary load is in effect.\n");
       return false;
      }
 
@@ -196,7 +196,7 @@ bool CL_Bsave(
 
    /*===========================================*/
    /* Initialize count variables, index values, */
-   /* and deteCL_rmine some of the data structures */
+   /* and dete_rmine some of the data structures */
    /* which need to be saved.                   */
    /*===========================================*/
 
@@ -219,7 +219,7 @@ bool CL_Bsave(
    /* structures in the binary image.         */
    /*=========================================*/
 
-   CL_GenCL_Write(&ExpressionData(theEnv)->ExpressionCount,sizeof(unsigned long),fp);
+   CL_Gen_Write(&ExpressionData(theEnv)->ExpressionCount,sizeof(unsigned long),fp);
 
    /*===========================================*/
    /* CL_Save the numbers indicating the amount of */
@@ -233,7 +233,7 @@ bool CL_Bsave(
       if (biPtr->bsaveStorageFunction != NULL)
         {
          CL_genstrncpy(constructBuffer,biPtr->name,CONSTRUCT_HEADER_SIZE);
-         CL_GenCL_Write(constructBuffer,CONSTRUCT_HEADER_SIZE,fp);
+         CL_Gen_Write(constructBuffer,CONSTRUCT_HEADER_SIZE,fp);
          (*biPtr->bsaveStorageFunction)(theEnv,fp);
         }
      }
@@ -271,7 +271,7 @@ bool CL_Bsave(
       if (biPtr->bsaveFunction != NULL)
         {
          CL_genstrncpy(constructBuffer,biPtr->name,CONSTRUCT_HEADER_SIZE);
-         CL_GenCL_Write(constructBuffer,CONSTRUCT_HEADER_SIZE,fp);
+         CL_Gen_Write(constructBuffer,CONSTRUCT_HEADER_SIZE,fp);
          (*biPtr->bsaveFunction)(theEnv,fp);
         }
      }
@@ -370,20 +370,20 @@ static void CL_WriteNeededFunctions(
    /* CL_Write the number of function names to be written. */
    /*===================================================*/
 
-   CL_GenCL_Write(&count,sizeof(unsigned long),fp);
+   CL_Gen_Write(&count,sizeof(unsigned long),fp);
    if (count == 0)
      {
-      CL_GenCL_Write(&count,sizeof(unsigned long),fp);
+      CL_Gen_Write(&count,sizeof(unsigned long),fp);
       return;
      }
 
    /*================================*/
-   /* DeteCL_rmine the amount of space  */
+   /* Dete_rmine the amount of space  */
    /* needed for the function names. */
    /*================================*/
 
    space = FunctionBinarySize(theEnv);
-   CL_GenCL_Write(&space,sizeof(unsigned long),fp);
+   CL_Gen_Write(&space,sizeof(unsigned long),fp);
 
    /*===============================*/
    /* CL_Write out the function names. */
@@ -396,13 +396,13 @@ static void CL_WriteNeededFunctions(
       if (functionList->neededFunction)
         {
          length = strlen(functionList->callFunctionName->contents) + 1;
-         CL_GenCL_Write((void *) functionList->callFunctionName->contents,length,fp);
+         CL_Gen_Write((void *) functionList->callFunctionName->contents,length,fp);
         }
      }
   }
 
 /*********************************************/
-/* FunctionBinarySize: DeteCL_rmines the number */
+/* FunctionBinarySize: Dete_rmines the number */
 /*   of bytes needed to save all of the      */
 /*   function names in the binary save file. */
 /*********************************************/
@@ -424,11 +424,11 @@ static size_t FunctionBinarySize(
   }
 
 /***************************************************/
-/* CL_SaveCL_BloadCount: Used to save the data structure */
+/* CL_Save_BloadCount: Used to save the data structure */
 /*   count values when a binary save command is    */
 /*   issued when a binary image is loaded.         */
 /***************************************************/
-void CL_SaveCL_BloadCount(
+void CL_Save_BloadCount(
   Environment *theEnv,
   unsigned long cnt)
   {
@@ -438,11 +438,11 @@ void CL_SaveCL_BloadCount(
    tmp->val = cnt;
    tmp->nxt = NULL;
 
-   if (CL_BsaveData(theEnv)->CL_BloadCountCL_SaveTop == NULL)
-     { CL_BsaveData(theEnv)->CL_BloadCountCL_SaveTop = tmp; }
+   if (CL_BsaveData(theEnv)->CL_BloadCount_SaveTop == NULL)
+     { CL_BsaveData(theEnv)->CL_BloadCount_SaveTop = tmp; }
    else
      {
-      prv = CL_BsaveData(theEnv)->CL_BloadCountCL_SaveTop;
+      prv = CL_BsaveData(theEnv)->CL_BloadCount_SaveTop;
       while (prv->nxt != NULL)
         { prv = prv->nxt; }
       prv->nxt = tmp;
@@ -450,25 +450,25 @@ void CL_SaveCL_BloadCount(
   }
 
 /**************************************************/
-/* RestoreCL_BloadCount: Restores the data structure */
+/* Restore_BloadCount: Restores the data structure */
 /*   count values after a binary save command is  */
 /*   completed when a binary image is loaded.     */
 /**************************************************/
-void RestoreCL_BloadCount(
+void Restore_BloadCount(
   Environment *theEnv,
   unsigned long *cnt)
   {
    BLOADCNTSV *tmp;
 
-   *cnt = CL_BsaveData(theEnv)->CL_BloadCountCL_SaveTop->val;
-   tmp = CL_BsaveData(theEnv)->CL_BloadCountCL_SaveTop;
-   CL_BsaveData(theEnv)->CL_BloadCountCL_SaveTop = CL_BsaveData(theEnv)->CL_BloadCountCL_SaveTop->nxt;
+   *cnt = CL_BsaveData(theEnv)->CL_BloadCount_SaveTop->val;
+   tmp = CL_BsaveData(theEnv)->CL_BloadCount_SaveTop;
+   CL_BsaveData(theEnv)->CL_BloadCount_SaveTop = CL_BsaveData(theEnv)->CL_BloadCount_SaveTop->nxt;
    rtn_struct(theEnv,bloadcntsv,tmp);
   }
 
 /**********************************************/
 /* CL_MarkNeededItems: Examines an expression to */
-/*   deteCL_rmine which items are needed to save */
+/*   dete_rmine which items are needed to save */
 /*   an expression as part of a binary image. */
 /**********************************************/
 void CL_MarkNeededItems(
@@ -524,9 +524,9 @@ static void CL_WriteBinaryHeader(
   Environment *theEnv,
   FILE *fp)
   {
-   CL_GenCL_Write((void *) CL_BloadData(theEnv)->BinaryPrefixID,strlen(CL_BloadData(theEnv)->BinaryPrefixID) + 1,fp);
-   CL_GenCL_Write((void *) CL_BloadData(theEnv)->BinaryVersionID,strlen(CL_BloadData(theEnv)->BinaryVersionID) + 1,fp);
-   CL_GenCL_Write((void *) CL_BloadData(theEnv)->BinarySizes,strlen(CL_BloadData(theEnv)->BinarySizes) + 1,fp);
+   CL_Gen_Write((void *) CL_BloadData(theEnv)->BinaryPrefixID,strlen(CL_BloadData(theEnv)->BinaryPrefixID) + 1,fp);
+   CL_Gen_Write((void *) CL_BloadData(theEnv)->BinaryVersionID,strlen(CL_BloadData(theEnv)->BinaryVersionID) + 1,fp);
+   CL_Gen_Write((void *) CL_BloadData(theEnv)->BinarySizes,strlen(CL_BloadData(theEnv)->BinarySizes) + 1,fp);
   }
 
 /******************************************************/
@@ -540,7 +540,7 @@ static void CL_WriteBinaryFooter(
    char footerBuffer[CONSTRUCT_HEADER_SIZE];
 
    CL_genstrncpy(footerBuffer,CL_BloadData(theEnv)->BinaryPrefixID,CONSTRUCT_HEADER_SIZE);
-   CL_GenCL_Write(footerBuffer,CONSTRUCT_HEADER_SIZE,fp);
+   CL_Gen_Write(footerBuffer,CONSTRUCT_HEADER_SIZE,fp);
   }
 
 #endif /* BLOAD_AND_BSAVE */
@@ -548,7 +548,7 @@ static void CL_WriteBinaryFooter(
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE
 
 /**********************************************************/
-/* CL_AddBinaryItem: InfoCL_rms the bload/bsave commands of the */
+/* CL_AddBinaryItem: Info_rms the bload/bsave commands of the */
 /*   appropriate access functions needed to save/load the */
 /*   data structures of a construct or other "item" to a  */
 /*   binary file.                                         */

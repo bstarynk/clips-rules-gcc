@@ -67,8 +67,8 @@
 #if MULTIFIELD_FUNCTIONS
    void                    CL_DeleteFunction(Environment *,UDFContext *,UDFValue *);
    void                    CL_ReplaceFunction(Environment *,UDFContext *,UDFValue *);
-   void                    CL_DeleteCL_MemberFunction(Environment *,UDFContext *,UDFValue *);
-   void                    ReplaceCL_MemberFunction(Environment *,UDFContext *,UDFValue *);
+   void                    CL_Delete_MemberFunction(Environment *,UDFContext *,UDFValue *);
+   void                    Replace_MemberFunction(Environment *,UDFContext *,UDFValue *);
    void                    CL_InsertFunction(Environment *,UDFContext *,UDFValue *);
    void                    CL_ExplodeFunction(Environment *,UDFContext *,UDFValue *);
    void                    CL_ImplodeFunction(Environment *,UDFContext *,UDFValue *);
@@ -78,7 +78,7 @@
    void                    CL_NthFunction(Environment *,UDFContext *,UDFValue *);
    void                    CL_SubsetpFunction(Environment *,UDFContext *,UDFValue *);
    void                    CL_MemberFunction(Environment *,UDFContext *,UDFValue *);
-   void                    CL_MultifieldCL_PrognFunction(Environment *,UDFContext *,UDFValue *);
+   void                    CL_Multifield_PrognFunction(Environment *,UDFContext *,UDFValue *);
    void                    CL_ForeachFunction(Environment *,UDFContext *,UDFValue *);
    void                    CL_GetMvPrognField(Environment *,UDFContext *,UDFValue *);
    void                    CL_GetMvPrognIndex(Environment *,UDFContext *,UDFValue *);

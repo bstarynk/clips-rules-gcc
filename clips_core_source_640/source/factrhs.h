@@ -21,7 +21,7 @@
 /*                                                           */
 /*            Added code to prevent a clear command from     */
 /*            being executed during fact assertions via      */
-/*            Increment/DecrementCL_ClearReadyLocks API.        */
+/*            Increment/Decrement_ClearReadyLocks API.        */
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
@@ -45,8 +45,8 @@
 #include "scanner.h"
 #include "symbol.h"
 
-   struct expr                   *CL_BuildRHSCL_Assert(Environment *,const char *,struct token *,bool *,bool,bool,const char *);
-   struct expr                   *GetCL_AssertArgument(Environment *,const char *,struct token *,bool *,TokenType,bool,bool *);
+   struct expr                   *CL_BuildRHS_Assert(Environment *,const char *,struct token *,bool *,bool,bool,const char *);
+   struct expr                   *Get_AssertArgument(Environment *,const char *,struct token *,bool *,TokenType,bool,bool *);
    struct expr                   *CL_GetRHSPattern(Environment*,const char *,struct token *,bool *,bool,
                                                        bool,bool,TokenType);
    Fact                          *CL_StringToFact(Environment *,const char *);

@@ -10,7 +10,7 @@
 /* Purpose: Manages the atomic data value hash tables for    */
 /*   storing symbols, integers, floats, and bit maps.        */
 /*   Contains routines for adding entries, examining the     */
-/*   hash tables, and perfoCL_rming garbage collection to       */
+/*   hash tables, and perfo_rming garbage collection to       */
 /*   remove entries no longer in use.                        */
 /*                                                           */
 /* Principal Programmer(s):                                  */
@@ -232,7 +232,7 @@ static void DeallocateSymbolData(
       while (shPtr != NULL)
         {
          nextSHPtr = shPtr->next;
-         if (! shPtr->peCL_rmanent)
+         if (! shPtr->pe_rmanent)
            {
             CL_rm(theEnv,(void *) shPtr->contents,strlen(shPtr->contents)+1);
             rtn_struct(theEnv,clipsLexeme,shPtr);
@@ -248,7 +248,7 @@ static void DeallocateSymbolData(
       while (fhPtr != NULL)
         {
          nextFHPtr = fhPtr->next;
-         if (! fhPtr->peCL_rmanent)
+         if (! fhPtr->pe_rmanent)
            { rtn_struct(theEnv,clipsFloat,fhPtr); }
          fhPtr = nextFHPtr;
         }
@@ -261,7 +261,7 @@ static void DeallocateSymbolData(
       while (ihPtr != NULL)
         {
          nextIHPtr = ihPtr->next;
-         if (! ihPtr->peCL_rmanent)
+         if (! ihPtr->pe_rmanent)
            { rtn_struct(theEnv,clipsInteger,ihPtr); }
          ihPtr = nextIHPtr;
         }
@@ -274,7 +274,7 @@ static void DeallocateSymbolData(
       while (bmhPtr != NULL)
         {
          nextBMHPtr = bmhPtr->next;
-         if (! bmhPtr->peCL_rmanent)
+         if (! bmhPtr->pe_rmanent)
            {
             CL_rm(theEnv,(void *) bmhPtr->contents,bmhPtr->size);
             rtn_struct(theEnv,clipsBitMap,bmhPtr);
@@ -290,7 +290,7 @@ static void DeallocateSymbolData(
       while (eahPtr != NULL)
         {
          nextEAHPtr = eahPtr->next;
-         if (! eahPtr->peCL_rmanent)
+         if (! eahPtr->pe_rmanent)
            {
             rtn_struct(theEnv,clipsExternalAddress,eahPtr);
            }
@@ -364,9 +364,9 @@ CLIPSLexeme *CL_CreateString(
   }
 
 /**********************/
-/* CL_CreateCL_InstanceName */
+/* CL_Create_InstanceName */
 /**********************/
-CLIPSLexeme *CL_CreateCL_InstanceName(
+CLIPSLexeme *CL_Create_InstanceName(
   Environment *theEnv,
   const char *str)
   {
@@ -435,7 +435,7 @@ CLIPSLexeme *CL_AddSymbol(
     peek->next = NULL;
     peek->bucket = (unsigned int) tally;
     peek->count = 0;
-    peek->peCL_rmanent = false;
+    peek->pe_rmanent = false;
     peek->header.type = theType;
 
     /*================================================*/
@@ -527,7 +527,7 @@ CLIPSFloat *CL_CreateFloat(
     peek->next = NULL;
     peek->bucket = (unsigned int) tally;
     peek->count = 0;
-    peek->peCL_rmanent = false;
+    peek->pe_rmanent = false;
     peek->header.type = FLOAT_TYPE;
 
     /*===============================================*/
@@ -592,7 +592,7 @@ CLIPSInteger *CL_CreateInteger(
     peek->next = NULL;
     peek->bucket = (unsigned int) tally;
     peek->count = 0;
-    peek->peCL_rmanent = false;
+    peek->pe_rmanent = false;
     peek->header.type = INTEGER_TYPE;
 
     /*=================================================*/
@@ -696,7 +696,7 @@ void *CL_AddBitMap(
     peek->next = NULL;
     peek->bucket = (unsigned int) tally;
     peek->count = 0;
-    peek->peCL_rmanent = false;
+    peek->pe_rmanent = false;
     peek->size = size;
     peek->header.type = BITMAP_TYPE;
 
@@ -779,7 +779,7 @@ CLIPSExternalAddress *CL_CreateExternalAddress(
     peek->next = NULL;
     peek->bucket = (unsigned int) tally;
     peek->count = 0;
-    peek->peCL_rmanent = false;
+    peek->pe_rmanent = false;
     peek->header.type = EXTERNAL_ADDRESS_TYPE;
 
     /*================================================*/
@@ -915,7 +915,7 @@ size_t CL_HashBitMap(
      }
 
    /*============================================*/
-   /* Add the reCL_maining characters to the count. */
+   /* Add the re_maining characters to the count. */
    /*============================================*/
 
    for (; j < length; j++) count += (size_t) word[j];
@@ -1545,15 +1545,15 @@ void CL_RefreshSpecialSymbols(
   }
 
 /***********************************************************/
-/* CL_FindSymbolCL_Matches: Finds all symbols in the SymbolTable */
+/* CL_FindSymbol_Matches: Finds all symbols in the SymbolTable */
 /*   which begin with a specified symbol. This function is */
 /*   used to implement the command completion feature      */
 /*   found in some of the machine specific interfaces.     */
 /***********************************************************/
-struct symbolMatch *CL_FindSymbolCL_Matches(
+struct symbolMatch *CL_FindSymbol_Matches(
   Environment *theEnv,
   const char *searchString,
-  unsigned *numberOfCL_Matches,
+  unsigned *numberOf_Matches,
   size_t *commonPrefixLength)
   {
    struct symbolMatch *reply = NULL, *temp;
@@ -1561,12 +1561,12 @@ struct symbolMatch *CL_FindSymbolCL_Matches(
    size_t searchLength;
 
    searchLength = strlen(searchString);
-   *numberOfCL_Matches = 0;
+   *numberOf_Matches = 0;
 
    while ((hashPtr = CL_GetNextSymbolMatch(theEnv,searchString,searchLength,hashPtr,
                                         false,commonPrefixLength)) != NULL)
      {
-      *numberOfCL_Matches = *numberOfCL_Matches + 1;
+      *numberOf_Matches = *numberOf_Matches + 1;
       temp = get_struct(theEnv,symbolMatch);
       temp->match = hashPtr;
       temp->next = reply;
@@ -1577,19 +1577,19 @@ struct symbolMatch *CL_FindSymbolCL_Matches(
   }
 
 /*********************************************************/
-/* ReturnSymbolCL_Matches: Returns a set of symbol matches. */
+/* ReturnSymbol_Matches: Returns a set of symbol matches. */
 /*********************************************************/
-void ReturnSymbolCL_Matches(
+void ReturnSymbol_Matches(
   Environment *theEnv,
-  struct symbolMatch *listOfCL_Matches)
+  struct symbolMatch *listOf_Matches)
   {
    struct symbolMatch *temp;
 
-   while (listOfCL_Matches != NULL)
+   while (listOf_Matches != NULL)
      {
-      temp = listOfCL_Matches->next;
-      rtn_struct(theEnv,symbolMatch,listOfCL_Matches);
-      listOfCL_Matches = temp;
+      temp = listOf_Matches->next;
+      rtn_struct(theEnv,symbolMatch,listOf_Matches);
+      listOf_Matches = temp;
      }
   }
 
@@ -1697,7 +1697,7 @@ CLIPSLexeme *CL_GetNextSymbolMatch(
            { continue; }
 
          /*==================================================*/
-         /* Two types of matching can be perfoCL_rmed: the type */
+         /* Two types of matching can be perfo_rmed: the type */
          /* comparing just to the beginning of the string    */
          /* and the type which looks for the substring       */
          /* anywhere within the string being examined.       */
@@ -1706,7 +1706,7 @@ CLIPSLexeme *CL_GetNextSymbolMatch(
          if (! anywhere)
            {
             /*=============================================*/
-            /* DeteCL_rmine the common prefix length between  */
+            /* Dete_rmine the common prefix length between  */
             /* the previously found match (if available or */
             /* the search string if not) and the symbol    */
             /* table entry.                                */
@@ -1761,7 +1761,7 @@ CLIPSLexeme *CL_GetNextSymbolMatch(
   }
 
 /**********************************************/
-/* StringWithinString: DeteCL_rmines if a string */
+/* StringWithinString: Dete_rmines if a string */
 /*   is contained within another string.      */
 /**********************************************/
 static const char *StringWithinString(
@@ -1780,7 +1780,7 @@ static const char *StringWithinString(
   }
 
 /************************************************/
-/* CommonPrefixLength: DeteCL_rmines the length of */
+/* CommonPrefixLength: Dete_rmines the length of */
 /*    the maximumcommon prefix of two strings   */
 /************************************************/
 static size_t CommonPrefixLength(
@@ -1889,7 +1889,7 @@ void CL_SetAtomicValueIndices(
 
 /***********************************************************************/
 /* CL_RestoreAtomicValueBuckets: Restores the bucket values of hash table */
-/*   entries to the appropriate values. NoCL_rmally called to undo the    */
+/*   entries to the appropriate values. No_rmally called to undo the    */
 /*   effects of a call to the CL_SetAtomicValueIndices function.          */
 /***********************************************************************/
 void CL_RestoreAtomicValueBuckets(

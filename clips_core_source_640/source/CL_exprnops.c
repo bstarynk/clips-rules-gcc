@@ -155,7 +155,7 @@ bool CL_ConstantType(
   }
 
 /*****************************************************************************/
-/* CL_IdenticalExpression: DeteCL_rmines if two expressions are identical. Returns */
+/* CL_IdenticalExpression: Dete_rmines if two expressions are identical. Returns */
 /*   true if the expressions are identical, otherwise false is returned.     */
 /*****************************************************************************/
 bool CL_IdenticalExpression(
@@ -254,7 +254,7 @@ struct expr *CL_CopyExpression(
   }
 
 /************************************************************/
-/* CL_ExpressionContainsVariables: DeteCL_rmines if an expression */
+/* CL_ExpressionContainsVariables: Dete_rmines if an expression */
 /*   contains any variables. Returns true if the expression */
 /*   contains any variables, otherwise false is returned.   */
 /************************************************************/

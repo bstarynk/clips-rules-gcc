@@ -88,9 +88,9 @@ typedef struct bsaveConstraintRecord BSAVE_CONSTRAINT_RECORD;
 /***************************************/
 
 #if BLOAD_AND_BSAVE
-   static void                    CopyToCL_BsaveConstraintRecord(Environment *,CONSTRAINT_RECORD *,BSAVE_CONSTRAINT_RECORD *);
+   static void                    CopyTo_BsaveConstraintRecord(Environment *,CONSTRAINT_RECORD *,BSAVE_CONSTRAINT_RECORD *);
 #endif
-   static void                    CopyFromCL_BsaveConstraintRecord(Environment *,void *,unsigned long);
+   static void                    CopyFrom_BsaveConstraintRecord(Environment *,void *,unsigned long);
 
 #if BLOAD_AND_BSAVE
 
@@ -143,7 +143,7 @@ void CL_WriteNeededConstraints(
    /* constraints in the constraint table.       */
    /*============================================*/
 
-   CL_GenCL_Write(&numberOfUsedConstraints,sizeof(unsigned long),fp);
+   CL_Gen_Write(&numberOfUsedConstraints,sizeof(unsigned long),fp);
    if (numberOfUsedConstraints == 0) return;
 
    for (i = 0 ; i < SIZE_CONSTRAINT_HASH; i++)
@@ -152,18 +152,18 @@ void CL_WriteNeededConstraints(
            tmpPtr != NULL;
            tmpPtr = tmpPtr->next)
         {
-         CopyToCL_BsaveConstraintRecord(theEnv,tmpPtr,&bsaveConstraints);
-         CL_GenCL_Write(&bsaveConstraints,sizeof(BSAVE_CONSTRAINT_RECORD),fp);
+         CopyTo_BsaveConstraintRecord(theEnv,tmpPtr,&bsaveConstraints);
+         CL_Gen_Write(&bsaveConstraints,sizeof(BSAVE_CONSTRAINT_RECORD),fp);
         }
      }
   }
 
 /****************************************************/
-/* CopyToCL_BsaveConstraintRecord: Copies a constraint */
+/* CopyTo_BsaveConstraintRecord: Copies a constraint */
 /*   record to the data structure used for storing  */
 /*   constraints in a binary image.                 */
 /****************************************************/
-static void CopyToCL_BsaveConstraintRecord(
+static void CopyTo_BsaveConstraintRecord(
   Environment *theEnv,
   CONSTRAINT_RECORD *constraints,
   BSAVE_CONSTRAINT_RECORD *bsaveConstraints)
@@ -210,16 +210,16 @@ void CL_ReadNeededConstraints(
    ConstraintData(theEnv)->ConstraintArray = (CONSTRAINT_RECORD *)
            CL_genalloc(theEnv,(sizeof(CONSTRAINT_RECORD) * ConstraintData(theEnv)->NumberOfConstraints));
 
-   CL_BloadandCL_Refresh(theEnv,ConstraintData(theEnv)->NumberOfConstraints,sizeof(BSAVE_CONSTRAINT_RECORD),
-                   CopyFromCL_BsaveConstraintRecord);
+   CL_Bloadand_Refresh(theEnv,ConstraintData(theEnv)->NumberOfConstraints,sizeof(BSAVE_CONSTRAINT_RECORD),
+                   CopyFrom_BsaveConstraintRecord);
   }
 
 /*****************************************************/
-/* CopyFromCL_BsaveConstraintRecord: Copies values to a */
+/* CopyFrom_BsaveConstraintRecord: Copies values to a */
 /*   constraint record from the data structure used  */
 /*   for storing constraints in a binary image.      */
 /*****************************************************/
-static void CopyFromCL_BsaveConstraintRecord(
+static void CopyFrom_BsaveConstraintRecord(
   Environment *theEnv,
   void *buf,
   unsigned long theIndex)
@@ -260,10 +260,10 @@ static void CopyFromCL_BsaveConstraintRecord(
   }
 
 /********************************************************/
-/* CL_ClearCL_BloadedConstraints: CL_Releases memory associated  */
+/* CL_Clear_BloadedConstraints: CL_Releases memory associated  */
 /*   with constraints loaded from binary image          */
 /********************************************************/
-void CL_ClearCL_BloadedConstraints(
+void CL_Clear_BloadedConstraints(
   Environment *theEnv)
   {
    if (ConstraintData(theEnv)->NumberOfConstraints != 0)

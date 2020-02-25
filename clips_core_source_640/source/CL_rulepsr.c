@@ -146,7 +146,7 @@ bool CL_ParseDefrule(
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE
    if ((CL_Bloaded(theEnv) == true) && (! ConstructData(theEnv)->CL_CheckSyntaxMode))
      {
-      CannotCL_LoadWithCL_BloadMessage(theEnv,"defrule");
+      Cannot_LoadWith_BloadMessage(theEnv,"defrule");
       return true;
      }
 #endif
@@ -233,9 +233,9 @@ bool CL_ParseDefrule(
 
    CL_SavePPBuffer(theEnv,"\n");
    if (CL_GetConserveMemory(theEnv) == true)
-     { topDisjunct->header.ppFoCL_rm = NULL; }
+     { topDisjunct->header.ppFo_rm = NULL; }
    else
-     { topDisjunct->header.ppFoCL_rm = CL_CopyPPBuffer(theEnv); }
+     { topDisjunct->header.ppFo_rm = CL_CopyPPBuffer(theEnv); }
 
    /*=======================================*/
    /* Store a pointer to the rule's module. */
@@ -247,7 +247,7 @@ bool CL_ParseDefrule(
    for (tempPtr = topDisjunct; tempPtr != NULL; tempPtr = tempPtr->disjunct)
      {
       tempPtr->header.whichModule = (struct defmoduleItemHeader *) theModuleItem;
-      tempPtr->header.ppFoCL_rm = topDisjunct->header.ppFoCL_rm;
+      tempPtr->header.ppFo_rm = topDisjunct->header.ppFo_rm;
      }
 
    /*===============================================*/
@@ -264,18 +264,18 @@ bool CL_ParseDefrule(
    if (BitwiseTest(DefruleData(theEnv)->DeletedRuleDebugFlags,0))
      { CL_SetBreak(topDisjunct); }
    if (BitwiseTest(DefruleData(theEnv)->DeletedRuleDebugFlags,1) ||
-       (CL_GetCL_WatchItem(theEnv,"activations") == 1))
-     { CL_DefruleSetCL_WatchActivations(topDisjunct,true); }
+       (CL_Get_WatchItem(theEnv,"activations") == 1))
+     { CL_DefruleSet_WatchActivations(topDisjunct,true); }
    if (BitwiseTest(DefruleData(theEnv)->DeletedRuleDebugFlags,2) ||
-       (CL_GetCL_WatchItem(theEnv,"rules") == 1))
-     { CL_DefruleSetCL_WatchFirings(topDisjunct,true); }
+       (CL_Get_WatchItem(theEnv,"rules") == 1))
+     { CL_DefruleSet_WatchFirings(topDisjunct,true); }
 #endif
 
    /*================================*/
-   /* PerfoCL_rm the incremental reset. */
+   /* Perfo_rm the incremental reset. */
    /*================================*/
 
-   CL_IncrementalCL_Reset(theEnv,topDisjunct);
+   CL_Incremental_Reset(theEnv,topDisjunct);
 
    /*=============================================*/
    /* Return false to indicate no errors occured. */
@@ -354,7 +354,7 @@ static Defrule *ProcessRuleLHS(
         }
 
       /*=========================================*/
-      /* PerfoCL_rm entity dependent post analysis. */
+      /* Perfo_rm entity dependent post analysis. */
       /*=========================================*/
 
       if (CL_PostPatternAnalysis(theEnv,tempNode))
@@ -365,11 +365,11 @@ static Defrule *ProcessRuleLHS(
         }
 
       /*========================================================*/
-      /* Print out developer infoCL_rmation if it's being watched. */
+      /* Print out developer info_rmation if it's being watched. */
       /*========================================================*/
 
 #if DEVELOPER && DEBUGGING_FUNCTIONS
-      if (CL_GetCL_WatchItem(theEnv,"rule-analysis") == 1)
+      if (CL_Get_WatchItem(theEnv,"rule-analysis") == 1)
         { DumpRuleAnalysis(theEnv,tempNode); }
 #endif
 
@@ -450,7 +450,7 @@ static Defrule *ProcessRuleLHS(
       lastJoin = CL_ConstructJoins(theEnv,logicalJoin,tempNode,1,NULL,true,true);
 
       /*===================================================================*/
-      /* DeteCL_rmine the rule's complexity for use with conflict resolution. */
+      /* Dete_rmine the rule's complexity for use with conflict resolution. */
       /*===================================================================*/
 
       complexity = RuleComplexity(theEnv,tempNode);
@@ -514,7 +514,7 @@ static Defrule *CreateNewDisjunct(
    /*===================================================*/
 
    newDisjunct = get_struct(theEnv,defrule);
-   newDisjunct->header.ppFoCL_rm = NULL;
+   newDisjunct->header.ppFo_rm = NULL;
    newDisjunct->header.next = NULL;
    newDisjunct->header.usrData = NULL;
    newDisjunct->logicalJoin = NULL;
@@ -530,7 +530,7 @@ static Defrule *CreateNewDisjunct(
    newDisjunct->watchFiring = 0;
    newDisjunct->executing = 0;
    newDisjunct->complexity = complexity;
-   newDisjunct->autoCL_Focus = PatternData(theEnv)->GlobalAutoCL_Focus;
+   newDisjunct->auto_Focus = PatternData(theEnv)->GlobalAuto_Focus;
    newDisjunct->dynamicSalience = PatternData(theEnv)->SalienceExpression;
    newDisjunct->localVarCnt = localVarCnt;
 
@@ -550,7 +550,7 @@ static Defrule *CreateNewDisjunct(
    newDisjunct->lastJoin = lastJoin;
 
    /*=================================================*/
-   /* DeteCL_rmine the rule's logical join if it exists. */
+   /* Dete_rmine the rule's logical join if it exists. */
    /*=================================================*/
 
    tempJoin = lastJoin;
@@ -659,12 +659,12 @@ static struct expr *ParseRuleRHS(
    if (actions == NULL) return NULL;
 
    /*=============================*/
-   /* RefoCL_rmat the closing token. */
+   /* Refo_rmat the closing token. */
    /*=============================*/
 
    CL_PPBackup(theEnv);
    CL_PPBackup(theEnv);
-   CL_SavePPBuffer(theEnv,theToken.printFoCL_rm);
+   CL_SavePPBuffer(theEnv,theToken.printFo_rm);
 
    /*======================================================*/
    /* Check for the closing right parenthesis of the rule. */
@@ -722,7 +722,7 @@ static unsigned short RuleComplexity(
   }
 
 /********************************************************************/
-/* ExpressionComplexity: DeteCL_rmines the complexity of a expression. */
+/* ExpressionComplexity: Dete_rmines the complexity of a expression. */
 /********************************************************************/
 static unsigned short ExpressionComplexity(
   Environment *theEnv,
@@ -850,7 +850,7 @@ static int LogicalAnalysis(
 
    /*============================================*/
    /* If logical CEs were found, then return the */
-   /* join number where the logical infoCL_rmation  */
+   /* join number where the logical info_rmation  */
    /* will be stored in the join network.        */
    /*============================================*/
 
@@ -872,7 +872,7 @@ static int LogicalAnalysis(
 /*  rule will have the strictest constraints (because it will    */
 /*  have been intersected with all of the other constraints for  */
 /*  the variable on the LHS of the rule). The strictest          */
-/*  constraints are useful for perfoCL_rming type checking on the   */
+/*  constraints are useful for perfo_rming type checking on the   */
 /*  RHS of the rule.                                             */
 /*****************************************************************/
 struct lhsParseNode *CL_FindVariable(
@@ -989,7 +989,7 @@ static void AddToDefruleList(
 #if DEVELOPER && DEBUGGING_FUNCTIONS
 
 /************************************************************/
-/* DumpRuleAnalysis: Displays the infoCL_rmation about network */
+/* DumpRuleAnalysis: Displays the info_rmation about network */
 /*   expressions generated from the analysis of the rule.   */
 /************************************************************/
 void DumpRuleAnalysis(

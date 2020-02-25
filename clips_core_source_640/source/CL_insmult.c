@@ -25,8 +25,8 @@
 /*                                                           */
 /*            Changed integer type/precision.                */
 /*                                                           */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*      6.40: Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -322,7 +322,7 @@ void CL_MVSlotDeleteCommand(
        (((long long) ((size_t) end)) != end))
      {
       CL_MVRangeError(theEnv,start,end,oldseg.range,"slot-delete$");
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       CL_SetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
@@ -339,7 +339,7 @@ void CL_MVSlotDeleteCommand(
    if ((rs > srcLen) || (re > srcLen))
      {
       CL_MVRangeError(theEnv,start,end,oldseg.range,"slot-delete$");
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       CL_SetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
@@ -607,7 +607,7 @@ void CL_DirectMVDeleteCommand(
    if ((rs > srcLen) || (re > srcLen))
      {
       CL_MVRangeError(theEnv,start,end,oldseg.range,"direct-slot-delete$");
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       CL_SetMultifieldErrorValue(theEnv,returnValue);
       return;
      }
@@ -670,7 +670,7 @@ static Instance *CheckMultifieldSlotInstance(
       if (ins->garbage == 1)
         {
          CL_StaleInstanceAddress(theEnv,CL_UDFContextFunctionName(context),0);
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          return NULL;
         }
      }
@@ -731,7 +731,7 @@ static InstanceSlot *CheckMultifieldSlotModify(
    if (temp.header->type != SYMBOL_TYPE)
      {
       CL_ExpectedTypeError1(theEnv,func,start,"symbol");
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return NULL;
      }
    sp = CL_FindInstanceSlot(theEnv,ins,temp.lexemeValue);
@@ -750,14 +750,14 @@ static InstanceSlot *CheckMultifieldSlotModify(
       CL_WriteString(theEnv,STDERR,"' in instance [");
       CL_WriteString(theEnv,STDERR,ins->name->contents);
       CL_WriteString(theEnv,STDERR,"].\n");
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return NULL;
      }
    CL_EvaluateExpression(theEnv,args->nextArg,&temp);
    if (temp.header->type != INTEGER_TYPE)
      {
       CL_ExpectedTypeError1(theEnv,func,start+1,"integer");
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return NULL;
      }
    args = args->nextArg->nextArg;
@@ -768,7 +768,7 @@ static InstanceSlot *CheckMultifieldSlotModify(
       if (temp.header->type != INTEGER_TYPE)
         {
          CL_ExpectedTypeError1(theEnv,func,start+2,"integer");
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          return NULL;
         }
       *re = temp.integerValue->contents;

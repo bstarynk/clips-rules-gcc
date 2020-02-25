@@ -35,7 +35,7 @@
 /*                                                            */
 /*      6.30: Used %zd for printing size_t arguments.         */
 /*                                                            */
-/*            Added EnvCL_SlotDefaultP function.                 */
+/*            Added Env_SlotDefaultP function.                 */
 /*                                                            */
 /*            Borland C (IBM_TBC) and Metrowerks CodeWarrior  */
 /*            (MAC_MCW, IBM_MCW) are no longer supported.     */
@@ -48,8 +48,8 @@
 /*                                                            */
 /*            Converted API macros to function calls.         */
 /*                                                            */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and      */
-/*            SetCL_EvaluationError functions.                   */
+/*      6.40: Added Env prefix to Get_EvaluationError and      */
+/*            Set_EvaluationError functions.                   */
 /*                                                            */
 /*            Pragma once and other inclusion changes.        */
 /*                                                            */
@@ -106,7 +106,7 @@
    static void                    DisplaySeparator(Environment *,const char *,char *,int,int);
    static void                    DisplaySlotBasicInfo(Environment *,const char *,const char *,const char *,
                                                        char *,Defclass *);
-   static bool                    CL_PrintCL_SlotSources(Environment *,const char *,CLIPSLexeme *,PACKED_CLASS_LINKS *,
+   static bool                    CL_Print_SlotSources(Environment *,const char *,CLIPSLexeme *,PACKED_CLASS_LINKS *,
                                                    unsigned long,bool);
    static void                    DisplaySlotConstraintInfo(Environment *,const char *,const char *,char *,unsigned,Defclass *);
    static const char             *ConstraintCode(CONSTRAINT_RECORD *,unsigned,unsigned);
@@ -175,7 +175,7 @@ void CL_BrowseClasses(
   }
 
 /****************************************************************
-  NAME         : DescribeCL_ClassCommand
+  NAME         : Describe_ClassCommand
   DESCRIPTION  : Displays direct superclasses and
                    subclasses and the entire precedence
                    list for a class
@@ -184,7 +184,7 @@ void CL_BrowseClasses(
   SIDE EFFECTS : None
   NOTES        : Syntax : (describe-class <class-name>)
  ****************************************************************/
-void DescribeCL_ClassCommand(
+void Describe_ClassCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -221,8 +221,8 @@ void CL_DescribeClass(
   const char *logicalName)
   {
    char buf[83],
-        slotNamePrintFoCL_rmat[12],
-        overrideMessagePrintFoCL_rmat[12];
+        slotNamePrintFo_rmat[12],
+        overrideMessagePrintFo_rmat[12];
    bool messageBanner;
    unsigned long i;
    size_t slotNameLength, maxSlotNameLength;
@@ -258,7 +258,7 @@ void CL_DescribeClass(
          slotNameLength = strlen(theDefclass->instanceTemplate[i]->slotName->name->contents);
          if (slotNameLength > maxSlotNameLength)
            maxSlotNameLength = slotNameLength;
-         if (theDefclass->instanceTemplate[i]->noCL_Write == 0)
+         if (theDefclass->instanceTemplate[i]->no_Write == 0)
            {
             overrideMessageLength =
               strlen(theDefclass->instanceTemplate[i]->overrideMessage->contents);
@@ -272,24 +272,24 @@ void CL_DescribeClass(
         maxOverrideMessageLength = 12;
 /*        
 #if WIN_MVC
-      CL_gensprintf(slotNamePrintFoCL_rmat,"%%-%Id.%Ids : ",maxSlotNameLength,maxSlotNameLength);
-      CL_gensprintf(overrideMessagePrintFoCL_rmat,"%%-%Id.%Ids ",maxOverrideMessageLength,
+      CL_gensprintf(slotNamePrintFo_rmat,"%%-%Id.%Ids : ",maxSlotNameLength,maxSlotNameLength);
+      CL_gensprintf(overrideMessagePrintFo_rmat,"%%-%Id.%Ids ",maxOverrideMessageLength,
                                               maxOverrideMessageLength);
 #elif WIN_GCC
-      CL_gensprintf(slotNamePrintFoCL_rmat,"%%-%ld.%lds : ",(long) maxSlotNameLength,(long) maxSlotNameLength);
-      CL_gensprintf(overrideMessagePrintFoCL_rmat,"%%-%ld.%lds ",(long) maxOverrideMessageLength,
+      CL_gensprintf(slotNamePrintFo_rmat,"%%-%ld.%lds : ",(long) maxSlotNameLength,(long) maxSlotNameLength);
+      CL_gensprintf(overrideMessagePrintFo_rmat,"%%-%ld.%lds ",(long) maxOverrideMessageLength,
                                             (long) maxOverrideMessageLength);
 #else
 */
-      CL_gensprintf(slotNamePrintFoCL_rmat,"%%-%zd.%zds : ",maxSlotNameLength,maxSlotNameLength);
-      CL_gensprintf(overrideMessagePrintFoCL_rmat,"%%-%zd.%zds ",maxOverrideMessageLength,
+      CL_gensprintf(slotNamePrintFo_rmat,"%%-%zd.%zds : ",maxSlotNameLength,maxSlotNameLength);
+      CL_gensprintf(overrideMessagePrintFo_rmat,"%%-%zd.%zds ",maxOverrideMessageLength,
                                               maxOverrideMessageLength);
 /*
 #endif
 */
-      DisplaySlotBasicInfo(theEnv,logicalName,slotNamePrintFoCL_rmat,overrideMessagePrintFoCL_rmat,buf,theDefclass);
-      CL_WriteString(theEnv,logicalName,"\nConstraint infoCL_rmation for slots:\n\n");
-      DisplaySlotConstraintInfo(theEnv,logicalName,slotNamePrintFoCL_rmat,buf,82,theDefclass);
+      DisplaySlotBasicInfo(theEnv,logicalName,slotNamePrintFo_rmat,overrideMessagePrintFo_rmat,buf,theDefclass);
+      CL_WriteString(theEnv,logicalName,"\nConstraint info_rmation for slots:\n\n");
+      DisplaySlotConstraintInfo(theEnv,logicalName,slotNamePrintFo_rmat,buf,82,theDefclass);
      }
    if (theDefclass->handlerCount > 0)
      messageBanner = true;
@@ -328,10 +328,10 @@ void CL_DescribeClass(
 const char *CL_GetCreateAccessorString(
   SlotDescriptor *sd)
   {
-   if (sd->createReadAccessor && sd->createCL_WriteAccessor)
+   if (sd->createReadAccessor && sd->create_WriteAccessor)
      return("RW");
 
-   if ((sd->createReadAccessor == 0) && (sd->createCL_WriteAccessor == 0))
+   if ((sd->createReadAccessor == 0) && (sd->create_WriteAccessor == 0))
      return("NIL");
    else
      {
@@ -341,14 +341,14 @@ const char *CL_GetCreateAccessorString(
   }
 
 /************************************************************
-  NAME         : GetCL_DefclassModuleCommand
-  DESCRIPTION  : DeteCL_rmines to which module a class belongs
+  NAME         : Get_DefclassModuleCommand
+  DESCRIPTION  : Dete_rmines to which module a class belongs
   INPUTS       : None
   RETURNS      : The symbolic name of the module
   SIDE EFFECTS : None
   NOTES        : H/L Syntax: (defclass-module <class-name>)
  ************************************************************/
-void GetCL_DefclassModuleCommand(
+void Get_DefclassModuleCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -358,7 +358,7 @@ void GetCL_DefclassModuleCommand(
 
 /*********************************************************************
   NAME         : CL_SuperclassPCommand
-  DESCRIPTION  : DeteCL_rmines if a class is a superclass of another
+  DESCRIPTION  : Dete_rmines if a class is a superclass of another
   INPUTS       : None
   RETURNS      : True if class-1 is a superclass of class-2
   SIDE EFFECTS : None
@@ -382,7 +382,7 @@ void CL_SuperclassPCommand(
 
 /***************************************************
   NAME         : CL_SuperclassP
-  DESCRIPTION  : DeteCL_rmines if the first class is
+  DESCRIPTION  : Dete_rmines if the first class is
                  a superclass of the other
   INPUTS       : 1) First class
                  2) Second class
@@ -401,7 +401,7 @@ bool CL_SuperclassP(
 
 /*********************************************************************
   NAME         : CL_SubclassPCommand
-  DESCRIPTION  : DeteCL_rmines if a class is a subclass of another
+  DESCRIPTION  : Dete_rmines if a class is a subclass of another
   INPUTS       : None
   RETURNS      : True if class-1 is a subclass of class-2
   SIDE EFFECTS : None
@@ -425,7 +425,7 @@ void CL_SubclassPCommand(
 
 /***************************************************
   NAME         : CL_SubclassP
-  DESCRIPTION  : DeteCL_rmines if the first class is
+  DESCRIPTION  : Dete_rmines if the first class is
                  a subclass of the other
   INPUTS       : 1) First class
                  2) Second class
@@ -444,7 +444,7 @@ bool CL_SubclassP(
 
 /*********************************************************************
   NAME         : CL_SlotExistPCommand
-  DESCRIPTION  : DeteCL_rmines if a slot is present in a class
+  DESCRIPTION  : Dete_rmines if a slot is present in a class
   INPUTS       : None
   RETURNS      : True if the slot exists, false otherwise
   SIDE EFFECTS : None
@@ -475,7 +475,7 @@ void CL_SlotExistPCommand(
       if (strcmp(theArg.lexemeValue->contents,"inherit") != 0)
         {
          CL_UDFInvalidArgumentMessage(context,"keyword \"inherit\"");
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          returnValue->lexemeValue = FalseSymbol(theEnv);
          return;
         }
@@ -487,7 +487,7 @@ void CL_SlotExistPCommand(
 
 /***************************************************
   NAME         : CL_SlotExistP
-  DESCRIPTION  : DeteCL_rmines if a slot exists
+  DESCRIPTION  : Dete_rmines if a slot exists
   INPUTS       : 1) The class
                  2) The slot name
                  3) A flag indicating if the slot
@@ -510,7 +510,7 @@ bool CL_SlotExistP(
 
 /************************************************************************************
   NAME         : CL_MessageHandlerExistPCommand
-  DESCRIPTION  : DeteCL_rmines if a message-handler is present in a class
+  DESCRIPTION  : Dete_rmines if a message-handler is present in a class
   INPUTS       : None
   RETURNS      : True if the message header is present, false otherwise
   SIDE EFFECTS : None
@@ -548,7 +548,7 @@ void CL_MessageHandlerExistPCommand(
       mtype = CL_HandlerType(theEnv,"message-handler-existp",true,theArg.lexemeValue->contents);
       if (mtype == MERROR)
         {
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          returnValue->lexemeValue = FalseSymbol(theEnv);
          return;
         }
@@ -562,7 +562,7 @@ void CL_MessageHandlerExistPCommand(
 
 /**********************************************************************
   NAME         : CL_SlotWritablePCommand
-  DESCRIPTION  : DeteCL_rmines if an existing slot can be written to
+  DESCRIPTION  : Dete_rmines if an existing slot can be written to
   INPUTS       : None
   RETURNS      : True if the slot is writable, false otherwise
   SIDE EFFECTS : None
@@ -580,12 +580,12 @@ void CL_SlotWritablePCommand(
    if (sd == NULL)
      { returnValue->lexemeValue = FalseSymbol(theEnv); }
    else
-     { returnValue->lexemeValue = CL_CreateBoolean(theEnv,(sd->noCL_Write || sd->initializeOnly) ? false : true); }
+     { returnValue->lexemeValue = CL_CreateBoolean(theEnv,(sd->no_Write || sd->initializeOnly) ? false : true); }
   }
 
 /***************************************************
   NAME         : CL_SlotWritableP
-  DESCRIPTION  : DeteCL_rmines if a slot is writable
+  DESCRIPTION  : Dete_rmines if a slot is writable
   INPUTS       : 1) The class
                  2) The slot name
   RETURNS      : True if slot is writable,
@@ -602,12 +602,12 @@ bool CL_SlotWritableP(
   
    if ((sd = LookupSlot(theEnv,theDefclass,slotName,true)) == NULL)
      return false;
-   return((sd->noCL_Write || sd->initializeOnly) ? false : true);
+   return((sd->no_Write || sd->initializeOnly) ? false : true);
   }
 
 /**********************************************************************
   NAME         : CL_SlotInitablePCommand
-  DESCRIPTION  : DeteCL_rmines if an existing slot can be initialized
+  DESCRIPTION  : Dete_rmines if an existing slot can be initialized
                    via an init message-handler or slot-override
   INPUTS       : None
   RETURNS      : True if the slot is writable, false otherwise
@@ -626,12 +626,12 @@ void CL_SlotInitablePCommand(
    if (sd == NULL)
      { returnValue->lexemeValue = FalseSymbol(theEnv); }
    else
-     { returnValue->lexemeValue = CL_CreateBoolean(theEnv,(sd->noCL_Write && (sd->initializeOnly == 0)) ? false : true); }
+     { returnValue->lexemeValue = CL_CreateBoolean(theEnv,(sd->no_Write && (sd->initializeOnly == 0)) ? false : true); }
   }
 
 /***************************************************
   NAME         : CL_SlotInitableP
-  DESCRIPTION  : DeteCL_rmines if a slot is initable
+  DESCRIPTION  : Dete_rmines if a slot is initable
   INPUTS       : 1) The class
                  2) The slot name
   RETURNS      : True if slot is initable,
@@ -648,12 +648,12 @@ bool CL_SlotInitableP(
 
    if ((sd = LookupSlot(theEnv,theDefclass,slotName,true)) == NULL)
      return false;
-   return((sd->noCL_Write && (sd->initializeOnly == 0)) ? false : true);
+   return((sd->no_Write && (sd->initializeOnly == 0)) ? false : true);
   }
 
 /**********************************************************************
   NAME         : CL_SlotPublicPCommand
-  DESCRIPTION  : DeteCL_rmines if an existing slot is publicly visible
+  DESCRIPTION  : Dete_rmines if an existing slot is publicly visible
                    for direct reference by subclasses
   INPUTS       : None
   RETURNS      : True if the slot is public, false otherwise
@@ -677,7 +677,7 @@ void CL_SlotPublicPCommand(
 
 /***************************************************
   NAME         : CL_SlotPublicP
-  DESCRIPTION  : DeteCL_rmines if a slot is public
+  DESCRIPTION  : Dete_rmines if a slot is public
   INPUTS       : 1) The class
                  2) The slot name
   RETURNS      : True if slot is public,
@@ -699,7 +699,7 @@ bool CL_SlotPublicP(
 
 /***************************************************
   NAME         : CL_SlotDefaultP
-  DESCRIPTION  : DeteCL_rmines if a slot has a default value
+  DESCRIPTION  : Dete_rmines if a slot has a default value
   INPUTS       : 1) The class
                  2) The slot name
   RETURNS      : True if slot is public,
@@ -728,7 +728,7 @@ int CL_SlotDefaultP(
 
 /**********************************************************************
   NAME         : CL_SlotDirectAccessPCommand
-  DESCRIPTION  : DeteCL_rmines if an existing slot can be directly
+  DESCRIPTION  : Dete_rmines if an existing slot can be directly
                    referenced by the class - i.e., if the slot is
                    private, is the slot defined in the class
   INPUTS       : None
@@ -754,7 +754,7 @@ void CL_SlotDirectAccessPCommand(
 
 /***************************************************
   NAME         : CL_SlotDirectAccessP
-  DESCRIPTION  : DeteCL_rmines if a slot is directly
+  DESCRIPTION  : Dete_rmines if a slot is directly
                  accessible from message-handlers
                  on class
   INPUTS       : 1) The class
@@ -779,7 +779,7 @@ bool CL_SlotDirectAccessP(
 
 /**********************************************************************
   NAME         : CL_SlotDefaultValueCommand
-  DESCRIPTION  : DeteCL_rmines the default avlue for the specified slot
+  DESCRIPTION  : Dete_rmines the default avlue for the specified slot
                  of the specified class
   INPUTS       : None
   RETURNS      : Nothing useful
@@ -816,7 +816,7 @@ void CL_SlotDefaultValueCommand(
 
 /*********************************************************
   NAME         : CL_SlotDefaultValue
-  DESCRIPTION  : DeteCL_rmines the default value for
+  DESCRIPTION  : Dete_rmines the default value for
                  the specified slot of the specified class
   INPUTS       : 1) The class
                  2) The slot name
@@ -852,7 +852,7 @@ bool CL_SlotDefaultValue(
       rv = CL_EvaluateAndStoreInDataObject(theEnv,sd->multiple,
                                          (Expression *) sd->defaultValue,
                                          &result,true);
-      CL_NoCL_rmalizeMultifield(theEnv,&result);
+      CL_No_rmalizeMultifield(theEnv,&result);
       theValue->value = result.value;
       return rv;
      }
@@ -864,7 +864,7 @@ bool CL_SlotDefaultValue(
 
 /********************************************************
   NAME         : CL_ClassExistPCommand
-  DESCRIPTION  : DeteCL_rmines if a class exists
+  DESCRIPTION  : Dete_rmines if a class exists
   INPUTS       : None
   RETURNS      : True if class exists, false otherwise
   SIDE EFFECTS : None
@@ -972,7 +972,7 @@ static SlotDescriptor *CheckSlotExists(
       if (existsErrorFlag)
         {
          CL_SlotExistError(theEnv,ssym->contents,func);
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
         }
       return NULL;
      }
@@ -989,7 +989,7 @@ static SlotDescriptor *CheckSlotExists(
    CL_WriteString(theEnv,STDERR," is not valid for function '");
    CL_WriteString(theEnv,STDERR,func);
    CL_WriteString(theEnv,STDERR,"'.\n");
-   SetCL_EvaluationError(theEnv,true);
+   Set_EvaluationError(theEnv,true);
    return NULL;
   }
 
@@ -1150,9 +1150,9 @@ static void DisplaySeparator(
                   The function also displays the source
                   class(es) for the facets
   INPUTS       : 1) The logical name of the output
-                 2) A foCL_rmat string for use in sprintf
+                 2) A fo_rmat string for use in sprintf
                     (for printing slot names)
-                 3) A foCL_rmat string for use in sprintf
+                 3) A fo_rmat string for use in sprintf
                     (for printing slot override message names)
                  4) A buffer to store the display in
                  5) A pointer to the class
@@ -1163,8 +1163,8 @@ static void DisplaySeparator(
 static void DisplaySlotBasicInfo(
   Environment *theEnv,
   const char *logicalName,
-  const char *slotNamePrintFoCL_rmat,
-  const char *overrideMessagePrintFoCL_rmat,
+  const char *slotNamePrintFo_rmat,
+  const char *overrideMessagePrintFo_rmat,
   char *buf,
   Defclass *cls)
   {
@@ -1172,20 +1172,20 @@ static void DisplaySlotBasicInfo(
    SlotDescriptor *sp;
    const char *createString;
 
-   CL_gensprintf(buf,slotNamePrintFoCL_rmat,"SLOTS");
+   CL_gensprintf(buf,slotNamePrintFo_rmat,"SLOTS");
 #if DEFRULE_CONSTRUCT
    CL_genstrcat(buf,"FLD DEF PRP ACC STO MCH SRC VIS CRT ");
 #else
    CL_genstrcat(buf,"FLD DEF PRP ACC STO SRC VIS CRT ");
 #endif
    CL_WriteString(theEnv,logicalName,buf);
-   CL_gensprintf(buf,overrideMessagePrintFoCL_rmat,"OVRD-MSG");
+   CL_gensprintf(buf,overrideMessagePrintFo_rmat,"OVRD-MSG");
    CL_WriteString(theEnv,logicalName,buf);
    CL_WriteString(theEnv,logicalName,"SOURCE(S)\n");
    for (i = 0 ; i < cls->instanceSlotCount ; i++)
      {
       sp = cls->instanceTemplate[i];
-      CL_gensprintf(buf,slotNamePrintFoCL_rmat,sp->slotName->name->contents);
+      CL_gensprintf(buf,slotNamePrintFo_rmat,sp->slotName->name->contents);
       CL_genstrcat(buf,sp->multiple ? "MLT " : "SGL ");
       if (sp->noDefault)
         CL_genstrcat(buf,"NIL ");
@@ -1194,7 +1194,7 @@ static void DisplaySlotBasicInfo(
       CL_genstrcat(buf,sp->noInherit ? "NIL " : "INH ");
       if (sp->initializeOnly)
         CL_genstrcat(buf,"INT ");
-      else if (sp->noCL_Write)
+      else if (sp->no_Write)
         CL_genstrcat(buf," R  ");
       else
         CL_genstrcat(buf,"RW  ");
@@ -1212,16 +1212,16 @@ static void DisplaySlotBasicInfo(
         CL_genstrcat(buf," ");
       CL_genstrcat(buf," ");
       CL_WriteString(theEnv,logicalName,buf);
-      CL_gensprintf(buf,overrideMessagePrintFoCL_rmat,
-              sp->noCL_Write ? "NIL" : sp->overrideMessage->contents);
+      CL_gensprintf(buf,overrideMessagePrintFo_rmat,
+              sp->no_Write ? "NIL" : sp->overrideMessage->contents);
       CL_WriteString(theEnv,logicalName,buf);
-      CL_PrintCL_SlotSources(theEnv,logicalName,sp->slotName->name,&sp->cls->allSuperclasses,0,true);
+      CL_Print_SlotSources(theEnv,logicalName,sp->slotName->name,&sp->cls->allSuperclasses,0,true);
       CL_WriteString(theEnv,logicalName,"\n");
      }
   }
 
 /***************************************************
-  NAME         : CL_PrintCL_SlotSources
+  NAME         : CL_Print_SlotSources
   DESCRIPTION  : Displays a list of source classes
                    for a composite class (in order
                    of most general to specific)
@@ -1240,7 +1240,7 @@ static void DisplaySlotBasicInfo(
                  memebers from list in reverse order
   NOTES        : None
  ***************************************************/
-static bool CL_PrintCL_SlotSources(
+static bool CL_Print_SlotSources(
   Environment *theEnv,
   const char *logicalName,
   CLIPSLexeme *sname,
@@ -1257,14 +1257,14 @@ static bool CL_PrintCL_SlotSources(
      {
       if (csp->composite)
         {
-         if (CL_PrintCL_SlotSources(theEnv,logicalName,sname,sprec,theIndex+1,false))
+         if (CL_Print_SlotSources(theEnv,logicalName,sname,sprec,theIndex+1,false))
            CL_WriteString(theEnv,logicalName," ");
         }
       CL_PrintClassName(theEnv,logicalName,sprec->classArray[theIndex],false,false);
       return true;
      }
    else
-     return(CL_PrintCL_SlotSources(theEnv,logicalName,sname,sprec,theIndex+1,false));
+     return(CL_Print_SlotSources(theEnv,logicalName,sname,sprec,theIndex+1,false));
   }
 
 /*********************************************************
@@ -1284,7 +1284,7 @@ static bool CL_PrintCL_SlotSources(
 
                   The function also displays the source
                   class(es) for the facets
-  INPUTS       : 1) A foCL_rmat string for use in sprintf
+  INPUTS       : 1) A fo_rmat string for use in sprintf
                  2) A buffer to store the display in
                  3) Maximum buffer size
                  4) A pointer to the class
@@ -1295,7 +1295,7 @@ static bool CL_PrintCL_SlotSources(
 static void DisplaySlotConstraintInfo(
   Environment *theEnv,
   const char *logicalName,
-  const char *slotNamePrintFoCL_rmat,
+  const char *slotNamePrintFo_rmat,
   char *buf,
   unsigned maxlen,
   Defclass *cls)
@@ -1304,13 +1304,13 @@ static void DisplaySlotConstraintInfo(
    CONSTRAINT_RECORD *cr;
    const char *strdest = "***describe-class***";
 
-   CL_gensprintf(buf,slotNamePrintFoCL_rmat,"SLOTS");
+   CL_gensprintf(buf,slotNamePrintFo_rmat,"SLOTS");
    CL_genstrcat(buf,"SYM STR INN INA EXA FTA INT FLT\n");
    CL_WriteString(theEnv,logicalName,buf);
    for (i = 0 ; i < cls->instanceSlotCount ; i++)
      {
       cr = cls->instanceTemplate[i]->constraint;
-      CL_gensprintf(buf,slotNamePrintFoCL_rmat,cls->instanceTemplate[i]->slotName->name->contents);
+      CL_gensprintf(buf,slotNamePrintFo_rmat,cls->instanceTemplate[i]->slotName->name->contents);
       if (cr != NULL)
         {
          CL_genstrcat(buf,ConstraintCode(cr,cr->symbolsAllowed,cr->symbolRestriction));

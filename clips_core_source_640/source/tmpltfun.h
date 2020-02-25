@@ -53,7 +53,7 @@
 /*                                                           */
 /*            Added code to prevent a clear command from     */
 /*            being executed during fact assertions via      */
-/*            Increment/DecrementCL_ClearReadyLocks API.        */
+/*            Increment/Decrement_ClearReadyLocks API.        */
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
@@ -91,24 +91,24 @@
    void                           CL_DuplicateCommand(Environment *,UDFContext *,UDFValue *);
    void                           CL_DeftemplateSlotNamesFunction(Environment *,UDFContext *,UDFValue *);
    void                           CL_DeftemplateSlotNames(Deftemplate *,CLIPSValue *);
-   void                           CL_DeftemplateCL_SlotDefaultValueFunction(Environment *,UDFContext *,UDFValue *);
-   bool                           CL_DeftemplateCL_SlotDefaultValue(Deftemplate *,const char *,CLIPSValue *);
-   void                           CL_DeftemplateCL_SlotCardinalityFunction(Environment *,UDFContext *,UDFValue *);
-   bool                           CL_DeftemplateCL_SlotCardinality(Deftemplate *,const char *,CLIPSValue *);
-   void                           CL_DeftemplateCL_SlotAllowedValuesFunction(Environment *,UDFContext *,UDFValue *);
-   bool                           CL_DeftemplateCL_SlotAllowedValues(Deftemplate *,const char *,CLIPSValue *);
-   void                           CL_DeftemplateCL_SlotRangeFunction(Environment *,UDFContext *,UDFValue *);
-   bool                           CL_DeftemplateCL_SlotRange(Deftemplate *,const char *,CLIPSValue *);
-   void                           CL_DeftemplateCL_SlotTypesFunction(Environment *,UDFContext *,UDFValue *);
-   bool                           CL_DeftemplateCL_SlotTypes(Deftemplate *,const char *,CLIPSValue *);
+   void                           CL_Deftemplate_SlotDefaultValueFunction(Environment *,UDFContext *,UDFValue *);
+   bool                           CL_Deftemplate_SlotDefaultValue(Deftemplate *,const char *,CLIPSValue *);
+   void                           CL_Deftemplate_SlotCardinalityFunction(Environment *,UDFContext *,UDFValue *);
+   bool                           CL_Deftemplate_SlotCardinality(Deftemplate *,const char *,CLIPSValue *);
+   void                           CL_Deftemplate_SlotAllowedValuesFunction(Environment *,UDFContext *,UDFValue *);
+   bool                           CL_Deftemplate_SlotAllowedValues(Deftemplate *,const char *,CLIPSValue *);
+   void                           CL_Deftemplate_SlotRangeFunction(Environment *,UDFContext *,UDFValue *);
+   bool                           CL_Deftemplate_SlotRange(Deftemplate *,const char *,CLIPSValue *);
+   void                           CL_Deftemplate_SlotTypesFunction(Environment *,UDFContext *,UDFValue *);
+   bool                           CL_Deftemplate_SlotTypes(Deftemplate *,const char *,CLIPSValue *);
    void                           CL_DeftemplateSlotMultiPFunction(Environment *,UDFContext *,UDFValue *);
    bool                           CL_DeftemplateSlotMultiP(Deftemplate *,const char *);
    void                           CL_DeftemplateSlotSinglePFunction(Environment *,UDFContext *,UDFValue *);
    bool                           CL_DeftemplateSlotSingleP(Deftemplate *,const char *);
-   void                           CL_DeftemplateCL_SlotExistPFunction(Environment *,UDFContext *,UDFValue *);
-   bool                           CL_DeftemplateCL_SlotExistP(Deftemplate *,const char *);
-   void                           CL_DeftemplateCL_SlotDefaultPFunction(Environment *,UDFContext *,UDFValue *);
-   DefaultType                    CL_DeftemplateCL_SlotDefaultP(Deftemplate *,const char *);
+   void                           CL_Deftemplate_SlotExistPFunction(Environment *,UDFContext *,UDFValue *);
+   bool                           CL_Deftemplate_SlotExistP(Deftemplate *,const char *);
+   void                           CL_Deftemplate_SlotDefaultPFunction(Environment *,UDFContext *,UDFValue *);
+   DefaultType                    CL_Deftemplate_SlotDefaultP(Deftemplate *,const char *);
    void                           CL_DeftemplateSlotFacetExistPFunction(Environment *,UDFContext *,UDFValue *);
    bool                           CL_DeftemplateSlotFacetExistP(Environment *,Deftemplate *,const char *,const char *);
    void                           CL_DeftemplateSlotFacetValueFunction(Environment *,UDFContext *,UDFValue *);

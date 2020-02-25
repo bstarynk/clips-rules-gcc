@@ -114,7 +114,7 @@ void DeveloperCommands(
   }
 
 /******************************************************/
-/* PrimitiveTablesInfo: Prints infoCL_rmation about the  */
+/* PrimitiveTablesInfo: Prints info_rmation about the  */
 /*   symbol, float, integer, and bitmap tables.       */
 /******************************************************/
 void PrimitiveTablesInfoCommand(
@@ -175,7 +175,7 @@ void PrimitiveTablesInfoCommand(
      }
 
    /*========================*/
-   /* Print the infoCL_rmation. */
+   /* Print the info_rmation. */
    /*========================*/
 
    CL_WriteString(theEnv,STDOUT,"Symbols: ");
@@ -195,7 +195,7 @@ void PrimitiveTablesInfoCommand(
 #define COUNT_SIZE 21
 
 /*********************************************************/
-/* PrimitiveTablesUsageCommand: Prints infoCL_rmation about */
+/* PrimitiveTablesUsageCommand: Prints info_rmation about */
 /*   the symbol, float, integer, and bitmap tables.      */
 /*********************************************************/
 void PrimitiveTablesUsageCommand(
@@ -257,7 +257,7 @@ void PrimitiveTablesUsageCommand(
      }
 
    /*========================*/
-   /* Print the infoCL_rmation. */
+   /* Print the info_rmation. */
    /*========================*/
 
    CL_WriteString(theEnv,STDOUT,"Total Symbols: ");
@@ -541,7 +541,7 @@ static void PrintOPNLevel(
 #if OBJECT_SYSTEM
 
 /*******************************************************/
-/* InstanceTableUsageCommand: Prints infoCL_rmation about */
+/* InstanceTableUsageCommand: Prints info_rmation about */
 /*   the instances in the instance hash table.         */
 /*******************************************************/
 void InstanceTableUsageCommand(
@@ -577,7 +577,7 @@ void InstanceTableUsageCommand(
      }
 
    /*========================*/
-   /* Print the infoCL_rmation. */
+   /* Print the info_rmation. */
    /*========================*/
 
    CL_WriteString(theEnv,STDOUT,"Total CL_Instances: ");

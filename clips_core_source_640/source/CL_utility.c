@@ -64,7 +64,7 @@
 /*            Added CL_GCBlockStart and CL_GCBlockEnd functions    */
 /*            for garbage collection blocks.                 */
 /*                                                           */
-/*            Added StringCL_Builder functions.                 */
+/*            Added String_Builder functions.                 */
 /*                                                           */
 /*************************************************************/
 
@@ -327,7 +327,7 @@ void CL_GCBlockEndUDF(
 void CL_CallCleanupFunctions(
   Environment *theEnv)
   {
-   struct voidCL_CallFunctionItem *cleanupPtr;
+   struct void_CallFunctionItem *cleanupPtr;
 
    for (cleanupPtr = UtilityData(theEnv)->ListOfCleanupFunctions;
         cleanupPtr != NULL;
@@ -342,7 +342,7 @@ void CL_CallCleanupFunctions(
 void CL_CallPeriodicTasks(
   Environment *theEnv)
   {
-   struct voidCL_CallFunctionItem *periodPtr;
+   struct void_CallFunctionItem *periodPtr;
 
    if (UtilityData(theEnv)->PeriodicFunctionsEnabled)
      {
@@ -355,18 +355,18 @@ void CL_CallPeriodicTasks(
 
 /***************************************************/
 /* CL_AddCleanupFunction: Adds a function to the list */
-/*   of functions called to perfoCL_rm cleanup such   */
+/*   of functions called to perfo_rm cleanup such   */
 /*   as returning free memory to the memory pool.  */
 /***************************************************/
 bool CL_AddCleanupFunction(
   Environment *theEnv,
   const char *name,
-  VoidCL_CallFunction *theFunction,
+  Void_CallFunction *theFunction,
   int priority,
   void *context)
   {
    UtilityData(theEnv)->ListOfCleanupFunctions =
-     CL_AddCL_VoidFunctionToCallList(theEnv,name,priority,theFunction,
+     CL_Add_VoidFunctionToCallList(theEnv,name,priority,theFunction,
                            UtilityData(theEnv)->ListOfCleanupFunctions,context);
    return true;
   }
@@ -378,12 +378,12 @@ bool CL_AddCleanupFunction(
 bool CL_AddPeriodicFunction(
   Environment *theEnv,
   const char *name,
-  VoidCL_CallFunction *theFunction,
+  Void_CallFunction *theFunction,
   int priority,
   void *context)
   {
    UtilityData(theEnv)->ListOfPeriodicFunctions =
-     CL_AddCL_VoidFunctionToCallList(theEnv,name,priority,theFunction,
+     CL_Add_VoidFunctionToCallList(theEnv,name,priority,theFunction,
                            UtilityData(theEnv)->ListOfPeriodicFunctions,context);
    return true;
   }
@@ -396,9 +396,9 @@ void *CL_GetPeriodicFunctionContext(
   Environment *theEnv,
   const char *name)
   {
-   struct voidCL_CallFunctionItem *theItem;
+   struct void_CallFunctionItem *theItem;
 
-   theItem = CL_GetCL_VoidFunctionFromCallList(theEnv,name,
+   theItem = CL_Get_VoidFunctionFromCallList(theEnv,name,
                                          UtilityData(theEnv)->ListOfPeriodicFunctions);
 
    if (theItem == NULL) return NULL;
@@ -408,7 +408,7 @@ void *CL_GetPeriodicFunctionContext(
 
 /*******************************************************/
 /* CL_RemoveCleanupFunction: Removes a function from the  */
-/*   list of functions called to perfoCL_rm cleanup such  */
+/*   list of functions called to perfo_rm cleanup such  */
 /*   as returning free memory to the memory pool.      */
 /*******************************************************/
 bool CL_RemoveCleanupFunction(
@@ -418,7 +418,7 @@ bool CL_RemoveCleanupFunction(
    bool found;
 
    UtilityData(theEnv)->ListOfCleanupFunctions =
-      CL_RemoveCL_VoidFunctionFromCallList(theEnv,name,UtilityData(theEnv)->ListOfCleanupFunctions,&found);
+      CL_Remove_VoidFunctionFromCallList(theEnv,name,UtilityData(theEnv)->ListOfCleanupFunctions,&found);
 
    return found;
   }
@@ -434,16 +434,16 @@ bool CL_RemovePeriodicFunction(
    bool found;
 
    UtilityData(theEnv)->ListOfPeriodicFunctions =
-      CL_RemoveCL_VoidFunctionFromCallList(theEnv,name,UtilityData(theEnv)->ListOfPeriodicFunctions,&found);
+      CL_Remove_VoidFunctionFromCallList(theEnv,name,UtilityData(theEnv)->ListOfPeriodicFunctions,&found);
 
    return found;
   }
 
 /*****************************************************/
-/* StringPrintFoCL_rm: Generates printed representation */
+/* StringPrintFo_rm: Generates printed representation */
 /*   of a string. Replaces / with // and " with /".  */
 /*****************************************************/
-const char *StringPrintFoCL_rm(
+const char *StringPrintFo_rm(
   Environment *theEnv,
   const char *str)
   {
@@ -669,7 +669,7 @@ char *CL_AppendNToString(
    size_t newSize;
 
    /*====================================*/
-   /* DeteCL_rmine the number of characters */
+   /* Dete_rmine the number of characters */
    /* to be appended from the string.    */
    /*====================================*/
 
@@ -763,22 +763,22 @@ char *CL_ExpandStringWithChar(
   }
 
 /**********************************************************/
-/* CL_AddCL_VoidFunctionToCallList: Adds a function to a list   */
-/*   of functions which are called to perfoCL_rm certain     */
+/* CL_Add_VoidFunctionToCallList: Adds a function to a list   */
+/*   of functions which are called to perfo_rm certain     */
 /*   operations (e.g. clear, reset, and bload functions). */
 /**********************************************************/
-struct voidCL_CallFunctionItem *CL_AddCL_VoidFunctionToCallList(
+struct void_CallFunctionItem *CL_Add_VoidFunctionToCallList(
   Environment *theEnv,
   const char *name,
   int priority,
-  VoidCL_CallFunction *func,
-  struct voidCL_CallFunctionItem *head,
+  Void_CallFunction *func,
+  struct void_CallFunctionItem *head,
   void *context)
   {
-   struct voidCL_CallFunctionItem *newPtr, *currentPtr, *lastPtr = NULL;
+   struct void_CallFunctionItem *newPtr, *currentPtr, *lastPtr = NULL;
    char  *nameCopy;
 
-   newPtr = get_struct(theEnv,voidCL_CallFunctionItem);
+   newPtr = get_struct(theEnv,void_CallFunctionItem);
 
    nameCopy = (char *) CL_genalloc(theEnv,strlen(name) + 1);
    CL_genstrcpy(nameCopy,name);
@@ -817,21 +817,21 @@ struct voidCL_CallFunctionItem *CL_AddCL_VoidFunctionToCallList(
 
 /**********************************************************/
 /* CL_AddBoolFunctionToCallList: Adds a function to a list   */
-/*   of functions which are called to perfoCL_rm certain     */
+/*   of functions which are called to perfo_rm certain     */
 /*   operations (e.g. clear, reset, and bload functions). */
 /**********************************************************/
-BoolCL_CallFunctionItem *CL_AddBoolFunctionToCallList(
+Bool_CallFunctionItem *CL_AddBoolFunctionToCallList(
   Environment *theEnv,
   const char *name,
   int priority,
-  BoolCL_CallFunction *func,
-  BoolCL_CallFunctionItem *head,
+  Bool_CallFunction *func,
+  Bool_CallFunctionItem *head,
   void *context)
   {
-   struct boolCL_CallFunctionItem *newPtr, *currentPtr, *lastPtr = NULL;
+   struct bool_CallFunctionItem *newPtr, *currentPtr, *lastPtr = NULL;
    char  *nameCopy;
 
-   newPtr = get_struct(theEnv,boolCL_CallFunctionItem);
+   newPtr = get_struct(theEnv,bool_CallFunctionItem);
 
    nameCopy = (char *) CL_genalloc(theEnv,strlen(name) + 1);
    CL_genstrcpy(nameCopy,name);
@@ -869,16 +869,16 @@ BoolCL_CallFunctionItem *CL_AddBoolFunctionToCallList(
   }
 
 /****************************************************************/
-/* CL_GetCL_VoidFunctionFromCallList: Retrieves a function from a list of */
-/*   functions which are called to perfoCL_rm certain operations   */
+/* CL_Get_VoidFunctionFromCallList: Retrieves a function from a list of */
+/*   functions which are called to perfo_rm certain operations   */
 /*   (e.g. clear, reset, and bload functions).                  */
 /****************************************************************/
-struct voidCL_CallFunctionItem *CL_GetCL_VoidFunctionFromCallList(
+struct void_CallFunctionItem *CL_Get_VoidFunctionFromCallList(
   Environment *theEnv,
   const char *name,
-  struct voidCL_CallFunctionItem *head)
+  struct void_CallFunctionItem *head)
   {
-   struct voidCL_CallFunctionItem *currentPtr;
+   struct void_CallFunctionItem *currentPtr;
 
    for (currentPtr = head; currentPtr != NULL; currentPtr = currentPtr->next)
      {
@@ -891,15 +891,15 @@ struct voidCL_CallFunctionItem *CL_GetCL_VoidFunctionFromCallList(
 
 /****************************************************************/
 /* CL_GetBoolFunctionFromCallList: Retrieves a function from a list of */
-/*   functions which are called to perfoCL_rm certain operations   */
+/*   functions which are called to perfo_rm certain operations   */
 /*   (e.g. clear, reset, and bload functions).                  */
 /****************************************************************/
-struct boolCL_CallFunctionItem *CL_GetBoolFunctionFromCallList(
+struct bool_CallFunctionItem *CL_GetBoolFunctionFromCallList(
   Environment *theEnv,
   const char *name,
-  struct boolCL_CallFunctionItem *head)
+  struct bool_CallFunctionItem *head)
   {
-   struct boolCL_CallFunctionItem *currentPtr;
+   struct bool_CallFunctionItem *currentPtr;
 
    for (currentPtr = head; currentPtr != NULL; currentPtr = currentPtr->next)
      {
@@ -911,17 +911,17 @@ struct boolCL_CallFunctionItem *CL_GetBoolFunctionFromCallList(
   }
 
 /******************************************************************/
-/* CL_RemoveCL_VoidFunctionFromCallList: Removes a function from a list */
-/*   of functions which are called to perfoCL_rm certain operations  */
+/* CL_Remove_VoidFunctionFromCallList: Removes a function from a list */
+/*   of functions which are called to perfo_rm certain operations  */
 /*   (e.g. clear, reset, and bload functions).                    */
 /******************************************************************/
-struct voidCL_CallFunctionItem *CL_RemoveCL_VoidFunctionFromCallList(
+struct void_CallFunctionItem *CL_Remove_VoidFunctionFromCallList(
   Environment *theEnv,
   const char *name,
-  struct voidCL_CallFunctionItem *head,
+  struct void_CallFunctionItem *head,
   bool *found)
   {
-   struct voidCL_CallFunctionItem *currentPtr, *lastPtr;
+   struct void_CallFunctionItem *currentPtr, *lastPtr;
 
    *found = false;
    lastPtr = NULL;
@@ -938,7 +938,7 @@ struct voidCL_CallFunctionItem *CL_RemoveCL_VoidFunctionFromCallList(
            { lastPtr->next = currentPtr->next; }
 
          CL_genfree(theEnv,(void *) currentPtr->name,strlen(currentPtr->name) + 1);
-         rtn_struct(theEnv,voidCL_CallFunctionItem,currentPtr);
+         rtn_struct(theEnv,void_CallFunctionItem,currentPtr);
          return head;
         }
 
@@ -951,16 +951,16 @@ struct voidCL_CallFunctionItem *CL_RemoveCL_VoidFunctionFromCallList(
 
 /******************************************************************/
 /* CL_RemoveBoolFunctionFromCallList: Removes a function from a list */
-/*   of functions which are called to perfoCL_rm certain operations  */
+/*   of functions which are called to perfo_rm certain operations  */
 /*   (e.g. clear, reset, and bload functions).                    */
 /******************************************************************/
-struct boolCL_CallFunctionItem *CL_RemoveBoolFunctionFromCallList(
+struct bool_CallFunctionItem *CL_RemoveBoolFunctionFromCallList(
   Environment *theEnv,
   const char *name,
-  struct boolCL_CallFunctionItem *head,
+  struct bool_CallFunctionItem *head,
   bool *found)
   {
-   struct boolCL_CallFunctionItem *currentPtr, *lastPtr;
+   struct bool_CallFunctionItem *currentPtr, *lastPtr;
 
    *found = false;
    lastPtr = NULL;
@@ -977,7 +977,7 @@ struct boolCL_CallFunctionItem *CL_RemoveBoolFunctionFromCallList(
            { lastPtr->next = currentPtr->next; }
 
          CL_genfree(theEnv,(void *) currentPtr->name,strlen(currentPtr->name) + 1);
-         rtn_struct(theEnv,boolCL_CallFunctionItem,currentPtr);
+         rtn_struct(theEnv,bool_CallFunctionItem,currentPtr);
          return head;
         }
 
@@ -990,56 +990,56 @@ struct boolCL_CallFunctionItem *CL_RemoveBoolFunctionFromCallList(
 
 /*************************************************************/
 /* CL_DeallocateVoidCallList: Removes all functions from a list */
-/*   of functions which are called to perfoCL_rm certain        */
+/*   of functions which are called to perfo_rm certain        */
 /*   operations (e.g. clear, reset, and bload functions).    */
 /*************************************************************/
 void CL_DeallocateVoidCallList(
   Environment *theEnv,
-  struct voidCL_CallFunctionItem *theList)
+  struct void_CallFunctionItem *theList)
   {
-   struct voidCL_CallFunctionItem *tmpPtr, *nextPtr;
+   struct void_CallFunctionItem *tmpPtr, *nextPtr;
 
    tmpPtr = theList;
    while (tmpPtr != NULL)
      {
       nextPtr = tmpPtr->next;
       CL_genfree(theEnv,(void *) tmpPtr->name,strlen(tmpPtr->name) + 1);
-      rtn_struct(theEnv,voidCL_CallFunctionItem,tmpPtr);
+      rtn_struct(theEnv,void_CallFunctionItem,tmpPtr);
       tmpPtr = nextPtr;
      }
   }
 
 /*************************************************************/
 /* CL_DeallocateBoolCallList: Removes all functions from a list */
-/*   of functions which are called to perfoCL_rm certain        */
+/*   of functions which are called to perfo_rm certain        */
 /*   operations (e.g. clear, reset, and bload functions).    */
 /*************************************************************/
 void CL_DeallocateBoolCallList(
   Environment *theEnv,
-  struct boolCL_CallFunctionItem *theList)
+  struct bool_CallFunctionItem *theList)
   {
-   struct boolCL_CallFunctionItem *tmpPtr, *nextPtr;
+   struct bool_CallFunctionItem *tmpPtr, *nextPtr;
 
    tmpPtr = theList;
    while (tmpPtr != NULL)
      {
       nextPtr = tmpPtr->next;
       CL_genfree(theEnv,(void *) tmpPtr->name,strlen(tmpPtr->name) + 1);
-      rtn_struct(theEnv,boolCL_CallFunctionItem,tmpPtr);
+      rtn_struct(theEnv,bool_CallFunctionItem,tmpPtr);
       tmpPtr = nextPtr;
      }
   }
 
 /***********************************************************/
 /* CL_AddFunctionToCallListWithArg: Adds a function to a list */
-/*   of functions which are called to perfoCL_rm certain      */
+/*   of functions which are called to perfo_rm certain      */
 /*   operations (e.g. clear, reset, and bload functions).  */
 /***********************************************************/
 struct callFunctionItemWithArg *CL_AddFunctionToCallListWithArg(
   Environment *theEnv,
   const char *name,
   int priority,
-  VoidCL_CallFunctionWithArg *func,
+  Void_CallFunctionWithArg *func,
   struct callFunctionItemWithArg *head,
   void *context)
   {
@@ -1081,7 +1081,7 @@ struct callFunctionItemWithArg *CL_AddFunctionToCallListWithArg(
 
 /**************************************************************/
 /* CL_RemoveFunctionFromCallListWithArg: Removes a function from */
-/*   a list of functions which are called to perfoCL_rm certain  */
+/*   a list of functions which are called to perfo_rm certain  */
 /*   operations (e.g. clear, reset, and bload functions).     */
 /**************************************************************/
 struct callFunctionItemWithArg *CL_RemoveFunctionFromCallListWithArg(
@@ -1119,7 +1119,7 @@ struct callFunctionItemWithArg *CL_RemoveFunctionFromCallListWithArg(
 
 /****************************************************************/
 /* CL_DeallocateCallListWithArg: Removes all functions from a list */
-/*   of functions which are called to perfoCL_rm certain           */
+/*   of functions which are called to perfo_rm certain           */
 /*   operations (e.g. clear, reset, and bload functions).       */
 /****************************************************************/
 void CL_DeallocateCallListWithArg(
@@ -1202,8 +1202,8 @@ size_t CL_ItemHashValue(
 void CL_YieldTime(
   Environment *theEnv)
   {
-   if ((UtilityData(theEnv)->YieldCL_TimeFunction != NULL) && UtilityData(theEnv)->YieldFunctionEnabled)
-     { (*UtilityData(theEnv)->YieldCL_TimeFunction)(); }
+   if ((UtilityData(theEnv)->Yield_TimeFunction != NULL) && UtilityData(theEnv)->YieldFunctionEnabled)
+     { (*UtilityData(theEnv)->Yield_TimeFunction)(); }
   }
 
 /****************************/
@@ -1244,7 +1244,7 @@ bool CL_EnableYieldFunction(
 /*   data structure. An example would be the storage for local variables */
 /*   allocated when a deffunction is executed. Tracking this memory      */
 /*   allows it to be removed later when using longjmp as the code that   */
-/*   would noCL_rmally deallocate the memory would be bypassed.             */
+/*   would no_rmally deallocate the memory would be bypassed.             */
 /*************************************************************************/
 struct trackedMemory *CL_AddTrackedMemory(
   Environment *theEnv,
@@ -1361,20 +1361,20 @@ size_t CL_UTF8CharNum(
   }
 
 /************************/
-/* CL_CreateStringCL_Builder: */
+/* CL_CreateString_Builder: */
 /************************/
-StringCL_Builder *CL_CreateStringCL_Builder(
+String_Builder *CL_CreateString_Builder(
   Environment *theEnv,
   size_t theSize)
   {
-   StringCL_Builder *theSB;
+   String_Builder *theSB;
    
-   theSB = get_struct(theEnv,stringCL_Builder);
+   theSB = get_struct(theEnv,string_Builder);
    if (theSB == NULL) return NULL;
    
    theSize++;
    theSB->sbEnv = theEnv;
-   theSB->bufferCL_Reset = theSize;
+   theSB->buffer_Reset = theSize;
    theSB->bufferMaximum = theSize;
    theSB->length = 0;
    theSB->contents = (char *) CL_gm2(theEnv,theSize);
@@ -1387,7 +1387,7 @@ StringCL_Builder *CL_CreateStringCL_Builder(
 /* CL_SBAppend: */
 /*************/
 void CL_SBAppend(
-  StringCL_Builder *theSB,
+  String_Builder *theSB,
   const char *appendString)
   {
    theSB->contents = CL_AppendToString(theSB->sbEnv,appendString,
@@ -1398,7 +1398,7 @@ void CL_SBAppend(
 /* CL_SBAppendInteger: */
 /********************/
 void CL_SBAppendInteger(
-  StringCL_Builder *theSB,
+  String_Builder *theSB,
   long long value)
   {
    const char *appendString;
@@ -1413,7 +1413,7 @@ void CL_SBAppendInteger(
 /* CL_SBAppendFloat: */
 /******************/
 void CL_SBAppendFloat(
-  StringCL_Builder *theSB,
+  String_Builder *theSB,
   double value)
   {
    const char *appendString;
@@ -1428,7 +1428,7 @@ void CL_SBAppendFloat(
 /* CL_SBAddChar: */
 /**************/
 void CL_SBAddChar(
-  StringCL_Builder *theSB,
+  String_Builder *theSB,
   int theChar)
   {
    theSB->contents = CL_ExpandStringWithChar(theSB->sbEnv,theChar,theSB->contents,
@@ -1437,16 +1437,16 @@ void CL_SBAddChar(
   }
 
 /***********/
-/* SBCL_Reset */
+/* SB_Reset */
 /***********/
-void SBCL_Reset(
-  StringCL_Builder *theSB)
+void SB_Reset(
+  String_Builder *theSB)
   {
-   if (theSB->bufferCL_Reset != theSB->bufferMaximum)
+   if (theSB->buffer_Reset != theSB->bufferMaximum)
      {
       CL_rm(theSB->sbEnv,theSB->contents,theSB->bufferMaximum);
-      theSB->contents = (char *) CL_gm2(theSB->sbEnv,theSB->bufferCL_Reset);
-      theSB->bufferMaximum = theSB->bufferCL_Reset;
+      theSB->contents = (char *) CL_gm2(theSB->sbEnv,theSB->buffer_Reset);
+      theSB->bufferMaximum = theSB->buffer_Reset;
      }
      
    theSB->length = 0;
@@ -1457,7 +1457,7 @@ void SBCL_Reset(
 /* CL_SBCopy */
 /**********/
 char *CL_SBCopy(
-  StringCL_Builder *theSB)
+  String_Builder *theSB)
   {
    char *stringCopy;
 
@@ -1471,10 +1471,10 @@ char *CL_SBCopy(
 /* CL_SBDispose: */
 /**************/
 void CL_SBDispose(
-  StringCL_Builder *theSB)
+  String_Builder *theSB)
   {
    Environment *theEnv = theSB->sbEnv;
    CL_rm(theEnv,theSB->contents,theSB->bufferMaximum);
-   rtn_struct(theEnv,stringCL_Builder,theSB);
+   rtn_struct(theEnv,string_Builder,theSB);
   }
 

@@ -60,11 +60,11 @@
 /*      6.40: Added call to CL_FlushParsingMessages to clear    */
 /*            message buffer after each command.             */
 /*                                                           */
-/*            Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*            Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to CL_GetCL_HaltExecution and       */
-/*            SetCL_HaltExecution functions.                    */
+/*            Added Env prefix to CL_Get_HaltExecution and       */
+/*            Set_HaltExecution functions.                    */
 /*                                                           */
 /*            Refactored code to reduce header dependencies  */
 /*            in sysdep.c.                                   */
@@ -245,7 +245,7 @@ void CL_RerouteStdin(
       switch(theSwitch)
         {
          case BATCH_SWITCH:
-            OpenCL_Batch(theEnv,argv[++i],true);
+            Open_Batch(theEnv,argv[++i],true);
             break;
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
@@ -384,7 +384,7 @@ char *CL_GetCommandString(
   }
 
 /**************************************************************************/
-/* CL_CompleteCommand: DeteCL_rmines whether a string foCL_rms a complete command. */
+/* CL_CompleteCommand: Dete_rmines whether a string fo_rms a complete command. */
 /*   A complete command is either a constant, a variable, or a function   */
 /*   call which is followed (at some point) by a carriage return. Once a  */
 /*   complete command is found (not including the parenthesis),           */
@@ -407,7 +407,7 @@ int CL_CompleteCommand(
 
    /*===================================================*/
    /* Loop through each character of the command string */
-   /* to deteCL_rmine if there is a complete command.      */
+   /* to dete_rmine if there is a complete command.      */
    /*===================================================*/
 
    i = 0;
@@ -442,7 +442,7 @@ int CL_CompleteCommand(
 
          /*======================================================*/
          /* If the opening quotation of a string is encountered, */
-         /* deteCL_rmine if the closing quotation of the string is  */
+         /* dete_rmine if the closing quotation of the string is  */
          /* in the command buffer. Until the closing quotation   */
          /* is found, a complete command can not be made.        */
          /*======================================================*/
@@ -471,7 +471,7 @@ int CL_CompleteCommand(
          /* the current command by 1. Don't bother to increase */
          /* the depth if the first token encountered was not   */
          /* a parenthesis (e.g. for the command string         */
-         /* "red (+ 3 4", the symbol red already foCL_rms a       */
+         /* "red (+ 3 4", the symbol red already fo_rms a       */
          /* complete command, so the next carriage return will */
          /* cause evaluation of red--the closing parenthesis   */
          /* for "(+ 3 4" does not have to be found).           */
@@ -618,7 +618,7 @@ static int DoComment(
 
 /**************************************************************/
 /* DoWhiteSpace: Skips over white space consisting of spaces, */
-/*   tabs, and foCL_rm feeds that is contained within a string.  */
+/*   tabs, and fo_rm feeds that is contained within a string.  */
 /**************************************************************/
 static int DoWhiteSpace(
   const char *str,
@@ -647,8 +647,8 @@ void CL_CommandLoop(
    int inchar;
 
    CL_WriteString(theEnv,STDOUT,CommandLineData(theEnv)->BannerString);
-   SetCL_HaltExecution(theEnv,false);
-   SetCL_EvaluationError(theEnv,false);
+   Set_HaltExecution(theEnv,false);
+   Set_EvaluationError(theEnv,false);
 
    CL_CleanCurrentGarbageFrame(theEnv,NULL);
    CL_CallPeriodicTasks(theEnv);
@@ -668,7 +668,7 @@ void CL_CommandLoop(
 
       if (CL_BatchActive(theEnv) == true)
         {
-         inchar = LLGetcCL_Batch(theEnv,STDIN,true);
+         inchar = LLGetc_Batch(theEnv,STDIN,true);
          if (inchar == EOF)
            { (*CommandLineData(theEnv)->EventCallback)(theEnv); }
          else
@@ -682,10 +682,10 @@ void CL_CommandLoop(
       /* from the command buffer.                        */
       /*=================================================*/
 
-      if (CL_GetCL_HaltExecution(theEnv) == true)
+      if (CL_Get_HaltExecution(theEnv) == true)
         {
-         SetCL_HaltExecution(theEnv,false);
-         SetCL_EvaluationError(theEnv,false);
+         Set_HaltExecution(theEnv,false);
+         Set_EvaluationError(theEnv,false);
          CL_FlushCommandString(theEnv);
          CL_WriteString(theEnv,STDOUT,"\n");
          CL_PrintPrompt(theEnv);
@@ -701,15 +701,15 @@ void CL_CommandLoop(
   }
 
 /***********************************************************/
-/* CL_CommandLoopCL_Batch: Loop which waits for commands from a  */
+/* CL_CommandLoop_Batch: Loop which waits for commands from a  */
 /*   batch file and then executes them. Returns when there */
 /*   are no longer any active batch files.                 */
 /***********************************************************/
-void CL_CommandLoopCL_Batch(
+void CL_CommandLoop_Batch(
   Environment *theEnv)
   {
-   SetCL_HaltExecution(theEnv,false);
-   SetCL_EvaluationError(theEnv,false);
+   Set_HaltExecution(theEnv,false);
+   Set_EvaluationError(theEnv,false);
 
    CL_CleanCurrentGarbageFrame(theEnv,NULL);
    CL_CallPeriodicTasks(theEnv);
@@ -719,38 +719,38 @@ void CL_CommandLoopCL_Batch(
    RouterData(theEnv)->InputUngets = 0;
    RouterData(theEnv)->AwaitingInput = true;
 
-   CL_CommandLoopCL_BatchDriver(theEnv);
+   CL_CommandLoop_BatchDriver(theEnv);
   }
 
 /************************************************************/
-/* CL_CommandLoopOnceThenCL_Batch: Loop which waits for commands  */
+/* CL_CommandLoopOnceThen_Batch: Loop which waits for commands  */
 /*   from a batch file and then executes them. Returns when */
 /*   there are no longer any active batch files.            */
 /************************************************************/
-void CL_CommandLoopOnceThenCL_Batch(
+void CL_CommandLoopOnceThen_Batch(
   Environment *theEnv)
   {
    if (! CL_ExecuteIfCommandComplete(theEnv)) return;
 
-   CL_CommandLoopCL_BatchDriver(theEnv);
+   CL_CommandLoop_BatchDriver(theEnv);
   }
 
 /*********************************************************/
-/* CL_CommandLoopCL_BatchDriver: Loop which waits for commands */
+/* CL_CommandLoop_BatchDriver: Loop which waits for commands */
 /*   from a batch file and then executes them. Returns   */
 /*   when there are no longer any active batch files.    */
 /*********************************************************/
-void CL_CommandLoopCL_BatchDriver(
+void CL_CommandLoop_BatchDriver(
   Environment *theEnv)
   {
    int inchar;
 
    while (true)
      {
-      if (GetCL_HaltCL_CommandLoopCL_Batch(theEnv) == true)
+      if (Get_Halt_CommandLoop_Batch(theEnv) == true)
         {
-         CloseAllCL_BatchSources(theEnv);
-         SetCL_HaltCL_CommandLoopCL_Batch(theEnv,false);
+         CloseAll_BatchSources(theEnv);
+         Set_Halt_CommandLoop_Batch(theEnv,false);
         }
 
       /*===================================================*/
@@ -761,7 +761,7 @@ void CL_CommandLoopCL_BatchDriver(
 
       if (CL_BatchActive(theEnv) == true)
         {
-         inchar = LLGetcCL_Batch(theEnv,STDIN,true);
+         inchar = LLGetc_Batch(theEnv,STDIN,true);
          if (inchar == EOF)
            { return; }
          else
@@ -775,10 +775,10 @@ void CL_CommandLoopCL_BatchDriver(
       /* from the command buffer.                        */
       /*=================================================*/
 
-      if (CL_GetCL_HaltExecution(theEnv) == true)
+      if (CL_Get_HaltExecution(theEnv) == true)
         {
-         SetCL_HaltExecution(theEnv,false);
-         SetCL_EvaluationError(theEnv,false);
+         Set_HaltExecution(theEnv,false);
+         Set_EvaluationError(theEnv,false);
          CL_FlushCommandString(theEnv);
          CL_WriteString(theEnv,STDOUT,"\n");
          CL_PrintPrompt(theEnv);
@@ -794,7 +794,7 @@ void CL_CommandLoopCL_BatchDriver(
   }
 
 /**********************************************************/
-/* CL_ExecuteIfCommandComplete: Checks to deteCL_rmine if there */
+/* CL_ExecuteIfCommandComplete: Checks to dete_rmine if there */
 /*   is a completed command and if so executes it.        */
 /**********************************************************/
 bool CL_ExecuteIfCommandComplete(
@@ -821,8 +821,8 @@ bool CL_ExecuteIfCommandComplete(
 #if (! BLOAD_ONLY)
    CL_FlushParsingMessages(theEnv);
 #endif
-   SetCL_HaltExecution(theEnv,false);
-   SetCL_EvaluationError(theEnv,false);
+   Set_HaltExecution(theEnv,false);
+   Set_EvaluationError(theEnv,false);
    CL_FlushCommandString(theEnv);
 
    CL_CleanCurrentGarbageFrame(theEnv,NULL);
@@ -1018,9 +1018,9 @@ bool CL_RouteCommand(
    /*========================*/
 
    danglingConstructs = ConstructData(theEnv)->DanglingConstructs;
-   CommandLineData(theEnv)->ParsingCL_TopLevelCommand = true;
+   CommandLineData(theEnv)->Parsing_TopLevelCommand = true;
    top = CL_Function2Parse(theEnv,"command",commandName);
-   CommandLineData(theEnv)->ParsingCL_TopLevelCommand = false;
+   CommandLineData(theEnv)->Parsing_TopLevelCommand = false;
    CL_ClearParsedBindNames(theEnv);
 
    /*================================*/
@@ -1043,11 +1043,11 @@ bool CL_RouteCommand(
 
    CL_ExpressionInstall(theEnv,top);
 
-   CommandLineData(theEnv)->CL_EvaluatingCL_TopLevelCommand = true;
+   CommandLineData(theEnv)->CL_Evaluating_TopLevelCommand = true;
    CommandLineData(theEnv)->CurrentCommand = top;
    CL_EvaluateExpression(theEnv,top,&returnValue);
    CommandLineData(theEnv)->CurrentCommand = NULL;
-   CommandLineData(theEnv)->CL_EvaluatingCL_TopLevelCommand = false;
+   CommandLineData(theEnv)->CL_Evaluating_TopLevelCommand = false;
 
    CL_ExpressionDeinstall(theEnv,top);
    CL_ReturnExpression(theEnv,top);
@@ -1109,7 +1109,7 @@ EventFunction *CL_SetEventFunction(
 bool CL_TopLevelCommand(
   Environment *theEnv)
   {
-   return(CommandLineData(theEnv)->ParsingCL_TopLevelCommand);
+   return(CommandLineData(theEnv)->Parsing_TopLevelCommand);
   }
 
 /***********************************************************/
@@ -1161,7 +1161,7 @@ const char *CL_GetCommandCompletionString(
    ScannerData(theEnv)->IgnoreCompletionErrors = false;
 
    /*===============================================*/
-   /* DeteCL_rmine if the last token can be completed. */
+   /* Dete_rmine if the last token can be completed. */
    /*===============================================*/
 
    if (lastToken.tknType == SYMBOL_TOKEN)
@@ -1191,22 +1191,22 @@ const char *CL_GetCommandCompletionString(
   }
 
 /****************************************************************/
-/* SetCL_HaltCL_CommandLoopCL_Batch: Sets the CL_HaltCL_CommandLoopCL_Batch flag. */
+/* Set_Halt_CommandLoop_Batch: Sets the CL_Halt_CommandLoop_Batch flag. */
 /****************************************************************/
-void SetCL_HaltCL_CommandLoopCL_Batch(
+void Set_Halt_CommandLoop_Batch(
   Environment *theEnv,
   bool value)
   {
-   CommandLineData(theEnv)->CL_HaltCL_CommandLoopCL_Batch = value;
+   CommandLineData(theEnv)->CL_Halt_CommandLoop_Batch = value;
   }
 
 /*******************************************************************/
-/* GetCL_HaltCL_CommandLoopCL_Batch: Returns the CL_HaltCL_CommandLoopCL_Batch flag. */
+/* Get_Halt_CommandLoop_Batch: Returns the CL_Halt_CommandLoop_Batch flag. */
 /*******************************************************************/
-bool GetCL_HaltCL_CommandLoopCL_Batch(
+bool Get_Halt_CommandLoop_Batch(
   Environment *theEnv)
   {
-   return(CommandLineData(theEnv)->CL_HaltCL_CommandLoopCL_Batch);
+   return(CommandLineData(theEnv)->CL_Halt_CommandLoop_Batch);
   }
 
 #endif

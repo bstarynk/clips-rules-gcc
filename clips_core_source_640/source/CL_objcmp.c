@@ -299,7 +299,7 @@ static void ReadyObjectsForCode(
                  them later.
 
                  Also, the partitions and offsets are
-                 predeteCL_rmined for every slot and
+                 predete_rmined for every slot and
                  packed into a single long (the slot
                  bsave index) for use in printing
                  references to them later
@@ -313,7 +313,7 @@ static void ReadyObjectsForCode(
   SIDE EFFECTS : CL_Bsave indices of classes and slots set
   NOTES        : The template slots are written at the
                  same time as the real slots - thus the
-                 references must be predeteCL_rmined
+                 references must be predete_rmined
  ************************************************************/
 static void MarkDefclassAndSlots(
   Environment *theEnv,
@@ -394,7 +394,7 @@ static void InitObjectsCode(
 #pragma unused(maxIndices)
 #endif
 
-   fprintf(initFP,"   ObjectsCL_RunTimeInitialize(theEnv,%s%u_1,%s%u_1,%s%u_1,%s%u);\n",
+   fprintf(initFP,"   Objects_RunTimeInitialize(theEnv,%s%u_1,%s%u_1,%s%u_1,%s%u);\n",
                       ClassHashPrefix(),imageID,SlotNameHashPrefix(),imageID,
                       ClassIDPrefix(),imageID,MaxClassIDPrefix(),imageID);
   }
@@ -974,7 +974,7 @@ static void SingleDefclassToCode(
    
 #if DEFRULE_CONSTRUCT
    fprintf(theFile,",");
-   CL_ClassAlphaLinkReference(theEnv,theDefclass->relevant_teCL_rminal_alpha_nodes,theFile,imageID,maxIndices);
+   CL_ClassAlphaLinkReference(theEnv,theDefclass->relevant_te_rminal_alpha_nodes,theFile,imageID,maxIndices);
 #endif
 
    fprintf(theFile,",\"\"");
@@ -1005,7 +1005,7 @@ static void SingleDefclassToCode(
                      buffer file can be reopened later
                  12) A pointer to the file info for
                      this data if the last file needs
-                     to be reopened for teCL_rmination
+                     to be reopened for te_rmination
   RETURNS      : True if all OK, false otherwise
   SIDE EFFECTS : Inheritance links written
   NOTES        : None
@@ -1102,7 +1102,7 @@ static bool InheritanceLinksToCode(
                      buffer file can be reopened later
                  12) A pointer to the file info for
                      this data if the last file needs
-                     to be reopened for teCL_rmination
+                     to be reopened for te_rmination
   RETURNS      : True if all OK, FALSE
                  otherwise
   SIDE EFFECTS : Slots written
@@ -1149,11 +1149,11 @@ static bool SlotsToCode(
       fprintf(*slotFile,"{ %u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,",
                         sd->shared,sd->multiple,
                         sd->composite,sd->noInherit,
-                        sd->noCL_Write,sd->initializeOnly,
+                        sd->no_Write,sd->initializeOnly,
                         sd->dynamicDefault,sd->defaultSpecified,
                         sd->noDefault,sd->reactive,
                         sd->publicVisibility,sd->createReadAccessor,
-                        sd->createCL_WriteAccessor,sd->overrideMessageSpecified);
+                        sd->create_WriteAccessor,sd->overrideMessageSpecified);
       CL_PrintClassReference(theEnv,*slotFile,sd->cls,imageID,maxIndices);
       fprintf(*slotFile,",");
       CL_PrintSlotNameReference(theEnv,*slotFile,sd->slotName,imageID,maxIndices);
@@ -1217,7 +1217,7 @@ static bool SlotsToCode(
                      buffer file can be reopened later
                  12) A pointer to the file info for
                      this data if the last file needs
-                     to be reopened for teCL_rmination
+                     to be reopened for te_rmination
   RETURNS      : True if all OK, false
                  otherwise
   SIDE EFFECTS : Templates written
@@ -1296,7 +1296,7 @@ static bool TemplateSlotsToCode(
                      buffer file can be reopened later
                  12) A pointer to the file info for
                      this data if the last file needs
-                     to be reopened for teCL_rmination
+                     to be reopened for te_rmination
   RETURNS      : True if all OK, false
                  otherwise
   SIDE EFFECTS : Slot maps written
@@ -1367,7 +1367,7 @@ static bool OrderedSlotsToCode(
                      buffer file can be reopened later
                  12) A pointer to the file info for
                      this data if the last file needs
-                     to be reopened for teCL_rmination
+                     to be reopened for te_rmination
   RETURNS      : True if all OK, false
                  otherwise
   SIDE EFFECTS : Handlers written
@@ -1451,7 +1451,7 @@ static bool HandlersToCode(
                      buffer file can be reopened later
                  12) A pointer to the file info for
                      this data if the last file needs
-                     to be reopened for teCL_rmination
+                     to be reopened for te_rmination
   RETURNS      : True if all OK, false
                  otherwise
   SIDE EFFECTS : Handler maps written

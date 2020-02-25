@@ -296,7 +296,7 @@ void CL_ReturnExpression(
 
 /***************************************************
   NAME         : FindHashedExpression
-  DESCRIPTION  : DeteCL_rmines if a given expression
+  DESCRIPTION  : Dete_rmines if a given expression
                  is in the expression hash table
   INPUTS       : 1) The expression
                  2) A buffer to hold the hash
@@ -333,7 +333,7 @@ static EXPRESSION_HN *FindHashedExpression(
 
 /***************************************************
   NAME         : HashExpression
-  DESCRIPTION  : Assigns a deteCL_rministic number to
+  DESCRIPTION  : Assigns a dete_rministic number to
                  an expression
   INPUTS       : The expression
   RETURNS      : The "value" of the expression

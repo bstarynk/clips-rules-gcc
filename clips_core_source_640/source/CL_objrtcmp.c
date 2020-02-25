@@ -80,9 +80,9 @@
    static void                    InitObjectPatternsCode(Environment *,FILE *,unsigned int,unsigned int);
    static bool                    ObjectPatternsToCode(Environment *,const char *,const char *,char *,
                                                        unsigned int,FILE *,unsigned int,unsigned int);
-   static void                    InteCL_rmediatePatternNodeReference(Environment *,OBJECT_PATTERN_NODE *,FILE *,
+   static void                    Inte_rmediatePatternNodeReference(Environment *,OBJECT_PATTERN_NODE *,FILE *,
                                                                    unsigned int,unsigned int);
-   static unsigned                InteCL_rmediatePatternNodesToCode(Environment *,const char *,const char *,
+   static unsigned                Inte_rmediatePatternNodesToCode(Environment *,const char *,const char *,
                                                                  char *,unsigned int,FILE *,unsigned int,
                                                                  unsigned int,unsigned int);
    static unsigned                AlphaPatternNodesToCode(Environment *,const char *,const char *,char *,
@@ -198,7 +198,7 @@ void CL_ClassAlphaLinkReference(
 
 /*****************************************************
   NAME         : BeforeObjectPatternsToCode
-  DESCRIPTION  : Marks all object pattern inteCL_rmediate
+  DESCRIPTION  : Marks all object pattern inte_rmediate
                  and alpha memory nodes with a
                  unique integer id prior to the
                  constructs-to-c execution
@@ -211,26 +211,26 @@ static void BeforeObjectPatternsToCode(
   Environment *theEnv)
   {
    unsigned long whichPattern;
-   OBJECT_PATTERN_NODE *inteCL_rmediateNode;
+   OBJECT_PATTERN_NODE *inte_rmediateNode;
    OBJECT_ALPHA_NODE *alphaNode;
    Defmodule *theModule;
    Defclass *theDefclass;
    CLASS_ALPHA_LINK *theLink;
 
    whichPattern = 0L;
-   inteCL_rmediateNode = CL_ObjectNetworkPointer(theEnv);
-   while (inteCL_rmediateNode != NULL)
+   inte_rmediateNode = CL_ObjectNetworkPointer(theEnv);
+   while (inte_rmediateNode != NULL)
      {
-      inteCL_rmediateNode->bsaveID = whichPattern++;
-      inteCL_rmediateNode = GetNextObjectPatternNode(inteCL_rmediateNode);
+      inte_rmediateNode->bsaveID = whichPattern++;
+      inte_rmediateNode = GetNextObjectPatternNode(inte_rmediateNode);
      }
 
    whichPattern = 0L;
-   alphaNode = CL_ObjectNetworkTeCL_rminalPointer(theEnv);
+   alphaNode = CL_ObjectNetworkTe_rminalPointer(theEnv);
    while (alphaNode != NULL)
      {
       alphaNode->bsaveID = whichPattern++;
-      alphaNode = alphaNode->nxtTeCL_rminal;
+      alphaNode = alphaNode->nxtTe_rminal;
      }
      
    whichPattern = 0L;
@@ -243,7 +243,7 @@ static void BeforeObjectPatternsToCode(
            theDefclass != NULL ;
            theDefclass = CL_GetNextDefclass(theEnv,theDefclass))
         {
-         for (theLink = theDefclass->relevant_teCL_rminal_alpha_nodes;
+         for (theLink = theDefclass->relevant_te_rminal_alpha_nodes;
               theLink != NULL;
               theLink = theLink->next)
            { theLink->bsaveID = whichPattern++; }
@@ -255,7 +255,7 @@ static void BeforeObjectPatternsToCode(
   NAME         : GetNextObjectPatternNode
   DESCRIPTION  : Grabs the next node in a depth
                  first perusal of the object pattern
-                 inteCL_rmediate nodes
+                 inte_rmediate nodes
   INPUTS       : The previous node
   RETURNS      : The next node (NULL if done)
   SIDE EFFECTS : None
@@ -294,25 +294,25 @@ static void InitObjectPatternsCode(
   unsigned int imageID,
   unsigned int maxIndices)
   {
-   unsigned long firstInteCL_rmediateNode, firstAlphaNode;
+   unsigned long firstInte_rmediateNode, firstAlphaNode;
 
    if (CL_ObjectNetworkPointer(theEnv) != NULL)
      {
-      firstInteCL_rmediateNode = CL_ObjectNetworkPointer(theEnv)->bsaveID;
-      firstAlphaNode = CL_ObjectNetworkTeCL_rminalPointer(theEnv)->bsaveID;
-      fprintf(initFP,"   SetCL_ObjectNetworkPointer(theEnv,&%s%u_%lu[%lu]);\n",
+      firstInte_rmediateNode = CL_ObjectNetworkPointer(theEnv)->bsaveID;
+      firstAlphaNode = CL_ObjectNetworkTe_rminalPointer(theEnv)->bsaveID;
+      fprintf(initFP,"   Set_ObjectNetworkPointer(theEnv,&%s%u_%lu[%lu]);\n",
                        ObjectPNPrefix(),imageID,
-                       ((firstInteCL_rmediateNode / maxIndices) + 1),
-                       (firstInteCL_rmediateNode % maxIndices));
-      fprintf(initFP,"   SetCL_ObjectNetworkTeCL_rminalPointer(theEnv,&%s%u_%lu[%lu]);\n",
+                       ((firstInte_rmediateNode / maxIndices) + 1),
+                       (firstInte_rmediateNode % maxIndices));
+      fprintf(initFP,"   SetCL_ObjectNetworkTe_rminalPointer(theEnv,&%s%u_%lu[%lu]);\n",
                        ObjectANPrefix(),imageID,
                        ((firstAlphaNode / maxIndices) + 1),
                        (firstAlphaNode % maxIndices));
      }
    else
      {
-      fprintf(initFP,"   SetCL_ObjectNetworkPointer(theEnv,NULL);\n");
-      fprintf(initFP,"   SetCL_ObjectNetworkTeCL_rminalPointer(theEnv,NULL);\n");
+      fprintf(initFP,"   Set_ObjectNetworkPointer(theEnv,NULL);\n");
+      fprintf(initFP,"   SetCL_ObjectNetworkTe_rminalPointer(theEnv,NULL);\n");
      }
   }
 
@@ -348,7 +348,7 @@ static bool ObjectPatternsToCode(
    if (version == 0)
      return(0);
 
-   version = InteCL_rmediatePatternNodesToCode(theEnv,fileName,pathName,fileNameBuffer,
+   version = Inte_rmediatePatternNodesToCode(theEnv,fileName,pathName,fileNameBuffer,
                                             fileID,headerFP,imageID,maxIndices,version);
    if (version == 0)
      return false;
@@ -359,11 +359,11 @@ static bool ObjectPatternsToCode(
   }
 
 /***************************************************
-  NAME         : InteCL_rmediatePatternNodeReference
+  NAME         : Inte_rmediatePatternNodeReference
   DESCRIPTION  : Prints out a reference to an
-                 object pattern inteCL_rmediate node
+                 object pattern inte_rmediate node
   INPUTS       : 1) A pointer to the object pattern
-                    inteCL_rmediate node
+                    inte_rmediate node
                  2) A pointer to the output file
                  3) The id of constructs-to-c image
                  4) The maximum number of indices
@@ -374,7 +374,7 @@ static bool ObjectPatternsToCode(
                  memory printed
   NOTES        : None
  ***************************************************/
-static void InteCL_rmediatePatternNodeReference(
+static void Inte_rmediatePatternNodeReference(
   Environment *theEnv,
   OBJECT_PATTERN_NODE *thePattern,
   FILE *theFile,
@@ -393,9 +393,9 @@ static void InteCL_rmediatePatternNodeReference(
   }
 
 /*************************************************************
-  NAME         : InteCL_rmediatePatternNodesToCode
+  NAME         : Inte_rmediatePatternNodesToCode
   DESCRIPTION  : CL_Writes out data structures for run-time
-                 creation of object pattern inteCL_rmediate nodes
+                 creation of object pattern inte_rmediate nodes
   INPUTS       : 1) The base image output file name
                  2) The base image file id
                  3) A pointer to the header output file
@@ -407,7 +407,7 @@ static void InteCL_rmediatePatternNodeReference(
   SIDE EFFECTS : Object patterns code written to files
   NOTES        : None
  *************************************************************/
-static unsigned InteCL_rmediatePatternNodesToCode(
+static unsigned Inte_rmediatePatternNodesToCode(
   Environment *theEnv,
   const char *fileName,
   const char *pathName,
@@ -462,13 +462,13 @@ static unsigned InteCL_rmediatePatternNodesToCode(
 
       CL_PrintHashedExpressionReference(theEnv,fp,thePattern->networkTest,imageID,maxIndices);
       fprintf(fp,",");
-      InteCL_rmediatePatternNodeReference(theEnv,thePattern->nextLevel,fp,imageID,maxIndices);
+      Inte_rmediatePatternNodeReference(theEnv,thePattern->nextLevel,fp,imageID,maxIndices);
       fprintf(fp,",");
-      InteCL_rmediatePatternNodeReference(theEnv,thePattern->lastLevel,fp,imageID,maxIndices);
+      Inte_rmediatePatternNodeReference(theEnv,thePattern->lastLevel,fp,imageID,maxIndices);
       fprintf(fp,",");
-      InteCL_rmediatePatternNodeReference(theEnv,thePattern->leftNode,fp,imageID,maxIndices);
+      Inte_rmediatePatternNodeReference(theEnv,thePattern->leftNode,fp,imageID,maxIndices);
       fprintf(fp,",");
-      InteCL_rmediatePatternNodeReference(theEnv,thePattern->rightNode,fp,imageID,maxIndices);
+      Inte_rmediatePatternNodeReference(theEnv,thePattern->rightNode,fp,imageID,maxIndices);
       fprintf(fp,",");
       CL_ObjectPatternNodeReference(theEnv,thePattern->alphaNode,fp,imageID,maxIndices);
       fprintf(fp,",0L}");
@@ -532,7 +532,7 @@ static unsigned AlphaPatternNodesToCode(
    /* ================
       Create the file.
       ================ */
-   if (CL_ObjectNetworkTeCL_rminalPointer(theEnv) == NULL)
+   if (CL_ObjectNetworkTe_rminalPointer(theEnv) == NULL)
      { return version; }
 
    /* =================================
@@ -545,7 +545,7 @@ static unsigned AlphaPatternNodesToCode(
    arrayVersion = 1;
    i = 1;
 
-   thePattern = CL_ObjectNetworkTeCL_rminalPointer(theEnv);
+   thePattern = CL_ObjectNetworkTe_rminalPointer(theEnv);
    while (thePattern != NULL)
      {
       if (newHeader)
@@ -566,15 +566,15 @@ static unsigned AlphaPatternNodesToCode(
       fprintf(fp,",");
       CL_PrintBitMapReference(theEnv,fp,thePattern->slotbmp);
       fprintf(fp,",");
-      InteCL_rmediatePatternNodeReference(theEnv,thePattern->patternNode,fp,imageID,maxIndices);
+      Inte_rmediatePatternNodeReference(theEnv,thePattern->patternNode,fp,imageID,maxIndices);
       fprintf(fp,",");
       CL_ObjectPatternNodeReference(theEnv,thePattern->nxtInGroup,fp,imageID,maxIndices);
       fprintf(fp,",");
-      CL_ObjectPatternNodeReference(theEnv,thePattern->nxtTeCL_rminal,fp,imageID,maxIndices);
+      CL_ObjectPatternNodeReference(theEnv,thePattern->nxtTe_rminal,fp,imageID,maxIndices);
       fprintf(fp,",0L}");
 
       i++;
-      thePattern = thePattern->nxtTeCL_rminal;
+      thePattern = thePattern->nxtTe_rminal;
 
       if ((i > maxIndices) || (thePattern == NULL))
         {
@@ -708,7 +708,7 @@ static CLASS_ALPHA_LINK *GetNextAlphaLink(
         {
          *theClass = CL_GetNextDefclass(theEnv,*theClass);
          if (*theClass != NULL)
-           { theLink = (*theClass)->relevant_teCL_rminal_alpha_nodes; }
+           { theLink = (*theClass)->relevant_te_rminal_alpha_nodes; }
          if (theLink != NULL)
            { return theLink; }
         }
@@ -721,7 +721,7 @@ static CLASS_ALPHA_LINK *GetNextAlphaLink(
          *theClass = CL_GetNextDefclass(theEnv,*theClass);
          if (*theClass != NULL)
            {
-            theLink = (*theClass)->relevant_teCL_rminal_alpha_nodes;
+            theLink = (*theClass)->relevant_te_rminal_alpha_nodes;
             if (theLink != NULL)
               { return theLink; }
            }

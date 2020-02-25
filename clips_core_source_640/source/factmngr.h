@@ -82,15 +82,15 @@
 
 #define _H_factmngr
 
-typedef struct factCL_Builder FactCL_Builder;
+typedef struct fact_Builder Fact_Builder;
 typedef struct factModifier FactModifier;
 
 #include "entities.h"
 #include "conscomp.h"
 #include "tmpltdef.h"
 
-typedef void ModifyCL_CallFunction(Environment *,Fact *,Fact *,void *);
-typedef struct modifyCL_CallFunctionItem ModifyCL_CallFunctionItem;
+typedef void Modify_CallFunction(Environment *,Fact *,Fact *,void *);
+typedef struct modify_CallFunctionItem Modify_CallFunctionItem;
 
 typedef enum
   {
@@ -126,7 +126,7 @@ typedef enum
    FBE_IMPLIED_DEFTEMPLATE_ERROR,
    FBE_COULD_NOT_ASSERT_ERROR,
    FBE_RULE_NETWORK_ERROR
-  } FactCL_BuilderError;
+  } Fact_BuilderError;
 
 typedef enum
   {
@@ -138,12 +138,12 @@ typedef enum
    FME_RULE_NETWORK_ERROR
   } FactModifierError;
 
-struct modifyCL_CallFunctionItem
+struct modify_CallFunctionItem
   {
    const char *name;
-   ModifyCL_CallFunction *func;
+   Modify_CallFunction *func;
    int priority;
-   ModifyCL_CallFunctionItem *next;
+   Modify_CallFunctionItem *next;
    void *context;
   };
 
@@ -167,7 +167,7 @@ struct fact
    Multifield theProposition;
   };
 
-struct factCL_Builder
+struct fact_Builder
   {
    Environment *fbEnv;
    Deftemplate *fbDeftemplate;
@@ -190,17 +190,17 @@ struct factsData
   {
    bool ChangeToFactList;
 #if DEBUGGING_FUNCTIONS
-   bool CL_WatchCL_Facts;
+   bool CL_Watch_Facts;
 #endif
    Fact DummyFact;
-   Fact *GarbageCL_Facts;
+   Fact *Garbage_Facts;
    Fact *LastFact;
    Fact *FactList;
-   long long NextCL_FactIndex;
-   unsigned long NumberOfCL_Facts;
-   struct callFunctionItemWithArg *ListOfCL_AssertFunctions;
-   struct callFunctionItemWithArg *ListOfCL_RetractFunctions;
-   ModifyCL_CallFunctionItem *ListOfModifyFunctions;
+   long long Next_FactIndex;
+   unsigned long NumberOf_Facts;
+   struct callFunctionItemWithArg *ListOf_AssertFunctions;
+   struct callFunctionItemWithArg *ListOf_RetractFunctions;
+   Modify_CallFunctionItem *ListOfModifyFunctions;
    struct patternEntityRecord  FactInfo;
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    Deftemplate *CurrentDeftemplate;
@@ -220,13 +220,13 @@ struct factsData
    CL_AssertError assertError;
    CL_AssertStringError assertStringError;
    FactModifierError factModifierError;
-   FactCL_BuilderError factCL_BuilderError;
+   Fact_BuilderError fact_BuilderError;
   };
 
 #define FactData(theEnv) ((struct factsData *) GetEnvironmentData(theEnv,FACTS_DATA))
 
    Fact                          *CL_Assert(Fact *);
-   CL_AssertStringError              GetCL_AssertStringError(Environment *);
+   CL_AssertStringError              Get_AssertStringError(Environment *);
    Fact                          *CL_AssertDriver(Fact *,long long,Fact *,Fact *,char *);
    Fact                          *CL_AssertString(Environment *,const char *);
    Fact                          *CL_CreateFact(Deftemplate *);
@@ -236,20 +236,20 @@ struct factsData
    GetSlotError                   CL_GetFactSlot(Fact *,const char *,CLIPSValue *);
    void                           CL_PrintFactWithIdentifier(Environment *,const char *,Fact *,const char *);
    void                           CL_PrintFact(Environment *,const char *,Fact *,bool,bool,const char *);
-   void                           CL_PrintFactIdentifierInLongFoCL_rm(Environment *,const char *,Fact *);
+   void                           CL_PrintFactIdentifierInLongFo_rm(Environment *,const char *,Fact *);
    CL_RetractError                   CL_Retract(Fact *);
    CL_RetractError                   CL_RetractDriver(Environment *,Fact *,bool,char *);
-   CL_RetractError                   CL_RetractAllCL_Facts(Environment *);
+   CL_RetractError                   CL_RetractAll_Facts(Environment *);
    Fact                          *CL_CreateFactBySize(Environment *,size_t);
    void                           CL_FactInstall(Environment *,Fact *);
    void                           CL_FactDeinstall(Environment *,Fact *);
    Fact                          *CL_GetNextFact(Environment *,Fact *);
    Fact                          *CL_GetNextFactInScope(Environment *,Fact *);
-   void                           CL_FactPPFoCL_rm(Fact *,StringCL_Builder *,bool);
+   void                           CL_FactPPFo_rm(Fact *,String_Builder *,bool);
    bool                           CL_GetFactListChanged(Environment *);
    void                           CL_SetFactListChanged(Environment *,bool);
-   unsigned long                  GetNumberOfCL_Facts(Environment *);
-   void                           InitializeCL_Facts(Environment *);
+   unsigned long                  GetNumberOf_Facts(Environment *);
+   void                           Initialize_Facts(Environment *);
    Fact                          *CL_FindIndexedFact(Environment *,long long);
    void                           CL_RetainFact(Fact *);
    void                           CL_IncrementFactCallback(Environment *,Fact *);
@@ -261,34 +261,34 @@ struct factsData
    void                           CL_MatchFactFunction(Environment *,Fact *);
    bool                           CL_PutFactSlot(Fact *,const char *,CLIPSValue *);
    bool                           CL_AssignFactSlotDefaults(Fact *);
-   bool                           CL_CopyCL_FactSlotValues(Environment *,Fact *,Fact *);
+   bool                           CL_Copy_FactSlotValues(Environment *,Fact *,Fact *);
    bool                           CL_DeftemplateSlotDefault(Environment *,Deftemplate *,
                                                          struct templateSlot *,UDFValue *,bool);
-   bool                           CL_AddCL_AssertFunction(Environment *,const char *,
-                                                    VoidCL_CallFunctionWithArg *,int,void *);
-   bool                           RemoveCL_AssertFunction(Environment *,const char *);
-   bool                           CL_AddCL_RetractFunction(Environment *,const char *,
-                                                     VoidCL_CallFunctionWithArg *,int,void *);
-   bool                           CL_RemoveCL_RetractFunction(Environment *,const char *);
-   FactCL_Builder                   *CL_CreateFactCL_Builder(Environment *,const char *);
-   PutSlotError                   CL_FBPutSlot(FactCL_Builder *,const char *,CLIPSValue *);
-   Fact                          *FBCL_Assert(FactCL_Builder *);
-   void                           CL_FBDispose(FactCL_Builder *);
-   void                           CL_FBAbort(FactCL_Builder *);
-   FactCL_BuilderError               CL_FBSetDeftemplate(FactCL_Builder *,const char *);
-   PutSlotError                   CL_FBPutSlotCLIPSInteger(FactCL_Builder *,const char *,CLIPSInteger *);
-   PutSlotError                   CL_FBPutSlotInteger(FactCL_Builder *,const char *,long long);
-   PutSlotError                   CL_FBPutSlotCLIPSFloat(FactCL_Builder *,const char *,CLIPSFloat *);
-   PutSlotError                   CL_FBPutSlotFloat(FactCL_Builder *,const char *,double);
-   PutSlotError                   CL_FBPutSlotCLIPSLexeme(FactCL_Builder *,const char *,CLIPSLexeme *);
-   PutSlotError                   CL_FBPutSlotSymbol(FactCL_Builder *,const char *,const char *);
-   PutSlotError                   CL_FBPutSlotString(FactCL_Builder *,const char *,const char *);
-   PutSlotError                   CL_FBPutSlotCL_InstanceName(FactCL_Builder *,const char *,const char *);
-   PutSlotError                   CL_FBPutSlotFact(FactCL_Builder *,const char *,Fact *);
-   PutSlotError                   CL_FBPutSlotInstance(FactCL_Builder *,const char *,Instance *);
-   PutSlotError                   CL_FBPutSlotCLIPSExternalAddress(FactCL_Builder *,const char *,CLIPSExternalAddress *);
-   PutSlotError                   CL_FBPutSlotMultifield(FactCL_Builder *,const char *,Multifield *);
-   FactCL_BuilderError               CL_FBError(Environment *);
+   bool                           CL_Add_AssertFunction(Environment *,const char *,
+                                                    Void_CallFunctionWithArg *,int,void *);
+   bool                           Remove_AssertFunction(Environment *,const char *);
+   bool                           CL_Add_RetractFunction(Environment *,const char *,
+                                                     Void_CallFunctionWithArg *,int,void *);
+   bool                           CL_Remove_RetractFunction(Environment *,const char *);
+   Fact_Builder                   *CL_CreateFact_Builder(Environment *,const char *);
+   PutSlotError                   CL_FBPutSlot(Fact_Builder *,const char *,CLIPSValue *);
+   Fact                          *FB_Assert(Fact_Builder *);
+   void                           CL_FBDispose(Fact_Builder *);
+   void                           CL_FBAbort(Fact_Builder *);
+   Fact_BuilderError               CL_FBSetDeftemplate(Fact_Builder *,const char *);
+   PutSlotError                   CL_FBPutSlotCLIPSInteger(Fact_Builder *,const char *,CLIPSInteger *);
+   PutSlotError                   CL_FBPutSlotInteger(Fact_Builder *,const char *,long long);
+   PutSlotError                   CL_FBPutSlotCLIPSFloat(Fact_Builder *,const char *,CLIPSFloat *);
+   PutSlotError                   CL_FBPutSlotFloat(Fact_Builder *,const char *,double);
+   PutSlotError                   CL_FBPutSlotCLIPSLexeme(Fact_Builder *,const char *,CLIPSLexeme *);
+   PutSlotError                   CL_FBPutSlotSymbol(Fact_Builder *,const char *,const char *);
+   PutSlotError                   CL_FBPutSlotString(Fact_Builder *,const char *,const char *);
+   PutSlotError                   CL_FBPutSlot_InstanceName(Fact_Builder *,const char *,const char *);
+   PutSlotError                   CL_FBPutSlotFact(Fact_Builder *,const char *,Fact *);
+   PutSlotError                   CL_FBPutSlotInstance(Fact_Builder *,const char *,Instance *);
+   PutSlotError                   CL_FBPutSlotCLIPSExternalAddress(Fact_Builder *,const char *,CLIPSExternalAddress *);
+   PutSlotError                   CL_FBPutSlotMultifield(Fact_Builder *,const char *,Multifield *);
+   Fact_BuilderError               CL_FBError(Environment *);
    FactModifier                  *CL_CreateFactModifier(Environment *,Fact *);
    PutSlotError                   CL_FMPutSlot(FactModifier *,const char *,CLIPSValue *);
    Fact                          *CL_FMModify(FactModifier *);
@@ -302,20 +302,20 @@ struct factsData
    PutSlotError                   CL_FMPutSlotCLIPSLexeme(FactModifier *,const char *,CLIPSLexeme *);
    PutSlotError                   CL_FMPutSlotSymbol(FactModifier *,const char *,const char *);
    PutSlotError                   CL_FMPutSlotString(FactModifier *,const char *,const char *);
-   PutSlotError                   CL_FMPutSlotCL_InstanceName(FactModifier *,const char *,const char *);
+   PutSlotError                   CL_FMPutSlot_InstanceName(FactModifier *,const char *,const char *);
    PutSlotError                   CL_FMPutSlotFact(FactModifier *,const char *,Fact *);
    PutSlotError                   CL_FMPutSlotInstance(FactModifier *,const char *,Instance *);
    PutSlotError                   CL_FMPutSlotExternalAddress(FactModifier *,const char *,CLIPSExternalAddress *);
    PutSlotError                   CL_FMPutSlotMultifield(FactModifier *,const char *,Multifield *);
    FactModifierError              CL_FMError(Environment *);
 
-   bool                           CL_AddModifyFunction(Environment *,const char *,ModifyCL_CallFunction *,int,void *);
+   bool                           CL_AddModifyFunction(Environment *,const char *,Modify_CallFunction *,int,void *);
    bool                           CL_RemoveModifyFunction(Environment *,const char *);
-   ModifyCL_CallFunctionItem        *CL_AddModifyFunctionToCallList(Environment *,const char *,int,
-                                                              ModifyCL_CallFunction *,ModifyCL_CallFunctionItem *,void *);
-   ModifyCL_CallFunctionItem        *CL_RemoveModifyFunctionFromCallList(Environment *,const char *,
-                                                                   ModifyCL_CallFunctionItem *,bool *);
-   void                           CL_DeallocateModifyCallList(Environment *,ModifyCL_CallFunctionItem *);
+   Modify_CallFunctionItem        *CL_AddModifyFunctionToCallList(Environment *,const char *,int,
+                                                              Modify_CallFunction *,Modify_CallFunctionItem *,void *);
+   Modify_CallFunctionItem        *CL_RemoveModifyFunctionFromCallList(Environment *,const char *,
+                                                                   Modify_CallFunctionItem *,bool *);
+   void                           CL_DeallocateModifyCallList(Environment *,Modify_CallFunctionItem *);
 
 #endif /* _H_factmngr */
 

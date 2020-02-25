@@ -23,7 +23,7 @@
 /*                                                           */
 /*            Added CL_EvaluateAndStoreInDataObject function.   */
 /*                                                           */
-/*      6.30: Added support for passing context infoCL_rmation  */
+/*      6.30: Added support for passing context info_rmation  */
 /*            to user defined functions.                     */
 /*                                                           */
 /*            Added support for external address hash table  */
@@ -42,11 +42,11 @@
 /*                                                           */
 /*            Converted API macros to function calls.        */
 /*                                                           */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*      6.40: Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to CL_GetCL_HaltExecution and       */
-/*            SetCL_HaltExecution functions.                    */
+/*            Added Env prefix to CL_Get_HaltExecution and       */
+/*            Set_HaltExecution functions.                    */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -111,7 +111,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    DeallocateCL_EvaluationData(Environment *);
+   static void                    Deallocate_EvaluationData(Environment *);
    static void                    PrintCAddress(Environment *,const char *,void *);
    static void                    NewCAddress(UDFContext *,UDFValue *);
    /*
@@ -119,24 +119,24 @@
    */
 
 /**************************************************/
-/* InitializeCL_EvaluationData: Allocates environment */
+/* Initialize_EvaluationData: Allocates environment */
 /*    data for expression evaluation.             */
 /**************************************************/
-void InitializeCL_EvaluationData(
+void Initialize_EvaluationData(
   Environment *theEnv)
   {
    struct externalAddressType cPointer = { "C", PrintCAddress, PrintCAddress, NULL, NewCAddress, NULL };
 
-   CL_AllocateEnvironmentData(theEnv,EVALUATION_DATA,sizeof(struct evaluationData),DeallocateCL_EvaluationData);
+   CL_AllocateEnvironmentData(theEnv,EVALUATION_DATA,sizeof(struct evaluationData),Deallocate_EvaluationData);
 
    CL_InstallExternalAddressType(theEnv,&cPointer);
   }
 
 /*****************************************************/
-/* DeallocateCL_EvaluationData: Deallocates environment */
+/* Deallocate_EvaluationData: Deallocates environment */
 /*    data for evaluation data.                      */
 /*****************************************************/
-static void DeallocateCL_EvaluationData(
+static void Deallocate_EvaluationData(
   Environment *theEnv)
   {
    int i;
@@ -191,9 +191,9 @@ bool CL_EvaluateExpression(
          fptr = problem->functionValue;
 
 #if PROFILING_FUNCTIONS
-         StartCL_Profile(theEnv,&profileFrame,
+         Start_Profile(theEnv,&profileFrame,
                       &fptr->usrData,
-                      CL_ProfileFunctionData(theEnv)->CL_ProfileCL_UserFunctions);
+                      CL_ProfileFunctionData(theEnv)->CL_Profile_UserFunctions);
 #endif
 
          oldArgument = CL_EvaluationData(theEnv)->CurrentExpression;
@@ -211,7 +211,7 @@ bool CL_EvaluateExpression(
            { returnValue->range = returnValue->multifieldValue->length; }
 
 #if PROFILING_FUNCTIONS
-        CL_EndCL_Profile(theEnv,&profileFrame);
+        CL_End_Profile(theEnv,&profileFrame);
 #endif
 
         CL_EvaluationData(theEnv)->CurrentExpression = oldArgument;
@@ -237,7 +237,7 @@ bool CL_EvaluateExpression(
            CL_WriteString(theEnv,STDERR,problem->lexemeValue->contents);
            CL_WriteString(theEnv,STDERR," is unbound.\n");
            returnValue->value = FalseSymbol(theEnv);
-           SetCL_EvaluationError(theEnv,true);
+           Set_EvaluationError(theEnv,true);
           }
         break;
 
@@ -248,7 +248,7 @@ bool CL_EvaluateExpression(
            CL_ExitRouter(theEnv,EXIT_FAILURE);
           }
 
-        if (CL_EvaluationData(theEnv)->PrimitivesArray[problem->type]->copyToCL_Evaluate)
+        if (CL_EvaluationData(theEnv)->PrimitivesArray[problem->type]->copyTo_Evaluate)
           {
            returnValue->value = problem->value;
            break;
@@ -264,15 +264,15 @@ bool CL_EvaluateExpression(
         CL_EvaluationData(theEnv)->CurrentExpression = problem;
 
 #if PROFILING_FUNCTIONS
-        StartCL_Profile(theEnv,&profileFrame,
+        Start_Profile(theEnv,&profileFrame,
                      &CL_EvaluationData(theEnv)->PrimitivesArray[problem->type]->usrData,
-                     CL_ProfileFunctionData(theEnv)->CL_ProfileCL_UserFunctions);
+                     CL_ProfileFunctionData(theEnv)->CL_Profile_UserFunctions);
 #endif
 
         (*CL_EvaluationData(theEnv)->PrimitivesArray[problem->type]->evaluateFunction)(theEnv,problem->value,returnValue);
 
 #if PROFILING_FUNCTIONS
-        CL_EndCL_Profile(theEnv,&profileFrame);
+        CL_End_Profile(theEnv,&profileFrame);
 #endif
 
         CL_EvaluationData(theEnv)->CurrentExpression = oldArgument;
@@ -336,9 +336,9 @@ void CL_ResetErrorFlags(
   }
 
 /******************************************************/
-/* SetCL_EvaluationError: Sets the CL_EvaluationError flag. */
+/* Set_EvaluationError: Sets the CL_EvaluationError flag. */
 /******************************************************/
-void SetCL_EvaluationError(
+void Set_EvaluationError(
   Environment *theEnv,
   bool value)
   {
@@ -348,18 +348,18 @@ void SetCL_EvaluationError(
   }
 
 /*********************************************************/
-/* GetCL_EvaluationError: Returns the CL_EvaluationError flag. */
+/* Get_EvaluationError: Returns the CL_EvaluationError flag. */
 /*********************************************************/
-bool GetCL_EvaluationError(
+bool Get_EvaluationError(
   Environment *theEnv)
   {
    return(CL_EvaluationData(theEnv)->CL_EvaluationError);
   }
 
 /**************************************************/
-/* SetCL_HaltExecution: Sets the CL_HaltExecution flag. */
+/* Set_HaltExecution: Sets the CL_HaltExecution flag. */
 /**************************************************/
-void SetCL_HaltExecution(
+void Set_HaltExecution(
   Environment *theEnv,
   bool value)
   {
@@ -367,9 +367,9 @@ void SetCL_HaltExecution(
   }
 
 /*****************************************************/
-/* CL_GetCL_HaltExecution: Returns the CL_HaltExecution flag. */
+/* CL_Get_HaltExecution: Returns the CL_HaltExecution flag. */
 /*****************************************************/
-bool CL_GetCL_HaltExecution(
+bool CL_Get_HaltExecution(
   Environment *theEnv)
   {
    return(CL_EvaluationData(theEnv)->CL_HaltExecution);
@@ -431,8 +431,8 @@ void CL_WriteCLIPSValue(
         CL_WriteString(theEnv,fileid,"<UnknownPrintType");
         CL_WriteInteger(theEnv,fileid,argPtr->header->type);
         CL_WriteString(theEnv,fileid,">");
-        SetCL_HaltExecution(theEnv,true);
-        SetCL_EvaluationError(theEnv,true);
+        Set_HaltExecution(theEnv,true);
+        Set_EvaluationError(theEnv,true);
         break;
      }
   }
@@ -471,8 +471,8 @@ void CL_WriteUDFValue(
         CL_WriteString(theEnv,fileid,"<UnknownPrintType");
         CL_WriteInteger(theEnv,fileid,argPtr->header->type);
         CL_WriteString(theEnv,fileid,">");
-        SetCL_HaltExecution(theEnv,true);
-        SetCL_EvaluationError(theEnv,true);
+        Set_HaltExecution(theEnv,true);
+        Set_EvaluationError(theEnv,true);
         break;
      }
   }
@@ -1054,7 +1054,7 @@ bool CL_GetFunctionReference(
   }
 
 /*******************************************************/
-/* CL_DOsEqual: DeteCL_rmines if two DATA_OBJECTS are equal. */
+/* CL_DOsEqual: Dete_rmines if two DATA_OBJECTS are equal. */
 /*******************************************************/
 bool CL_DOsEqual(
   UDFValue *dobj1,
@@ -1065,7 +1065,7 @@ bool CL_DOsEqual(
 
    if (dobj1->header->type == MULTIFIELD_TYPE)
      {
-      if (MultifieldCL_DOsEqual(dobj1,dobj2) == false)
+      if (Multifield_DOsEqual(dobj1,dobj2) == false)
         { return false; }
      }
    else if (dobj1->value != dobj2->value)
@@ -1148,7 +1148,7 @@ static void NewCAddress(
      {
       CL_PrintErrorID(theEnv,"NEW",1,false);
       CL_WriteString(theEnv,STDERR,"Function new expected no additional arguments for the C external language type.\n");
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return;
      }
 
@@ -1156,20 +1156,20 @@ static void NewCAddress(
   }
 
 /******************************/
-/* CL_CreateFunctionCallCL_Builder: */
+/* CL_CreateFunctionCall_Builder: */
 /******************************/
-FunctionCallCL_Builder *CL_CreateFunctionCallCL_Builder(
+FunctionCall_Builder *CL_CreateFunctionCall_Builder(
   Environment *theEnv,
   size_t theSize)
   {
-   FunctionCallCL_Builder *theFC;
+   FunctionCall_Builder *theFC;
 
    if (theEnv == NULL) return NULL;
    
-   theFC = get_struct(theEnv,functionCallCL_Builder);
+   theFC = get_struct(theEnv,functionCall_Builder);
    
    theFC->fcbEnv = theEnv;
-   theFC->bufferCL_Reset = theSize;
+   theFC->buffer_Reset = theSize;
    theFC->bufferMaximum = theSize;
    theFC->length = 0;
    
@@ -1185,7 +1185,7 @@ FunctionCallCL_Builder *CL_CreateFunctionCallCL_Builder(
 /* CL_FCBAppendUDFValue: */
 /**********************/
 void CL_FCBAppendUDFValue(
-  FunctionCallCL_Builder *theFCB,
+  FunctionCall_Builder *theFCB,
   UDFValue *theValue)
   {
    Environment *theEnv = theFCB->fcbEnv;
@@ -1200,7 +1200,7 @@ void CL_FCBAppendUDFValue(
      { return; }
 
    /*=======================================*/
-   /* DeteCL_rmine the amount of space needed. */
+   /* Dete_rmine the amount of space needed. */
    /*=======================================*/
    
    neededSize = theFCB->length + 1;
@@ -1247,7 +1247,7 @@ void CL_FCBAppendUDFValue(
 /* CL_FCBAppend: */
 /**************/
 void CL_FCBAppend(
-  FunctionCallCL_Builder *theFCB,
+  FunctionCall_Builder *theFCB,
   CLIPSValue *theValue)
   {
    Environment *theEnv = theFCB->fcbEnv;
@@ -1262,7 +1262,7 @@ void CL_FCBAppend(
      { return; }
 
    /*=======================================*/
-   /* DeteCL_rmine the amount of space needed. */
+   /* Dete_rmine the amount of space needed. */
    /*=======================================*/
    
    neededSize = theFCB->length + 1;
@@ -1300,7 +1300,7 @@ void CL_FCBAppend(
 /* CL_FCBAppendCLIPSInteger: */
 /**************************/
 void CL_FCBAppendCLIPSInteger(
-  FunctionCallCL_Builder *theFCB,
+  FunctionCall_Builder *theFCB,
   CLIPSInteger *pv)
   {
    CLIPSValue theValue;
@@ -1313,7 +1313,7 @@ void CL_FCBAppendCLIPSInteger(
 /* CL_FCBAppendInteger: */
 /*********************/
 void CL_FCBAppendInteger(
-  FunctionCallCL_Builder *theFCB,
+  FunctionCall_Builder *theFCB,
   long long intValue)
   {
    CLIPSValue theValue;
@@ -1327,7 +1327,7 @@ void CL_FCBAppendInteger(
 /* CL_FCBAppendCLIPSFloat: */
 /************************/
 void CL_FCBAppendCLIPSFloat(
-  FunctionCallCL_Builder *theFCB,
+  FunctionCall_Builder *theFCB,
   CLIPSFloat *pv)
   {
    CLIPSValue theValue;
@@ -1340,7 +1340,7 @@ void CL_FCBAppendCLIPSFloat(
 /* CL_FCBAppendFloat: */
 /*******************/
 void CL_FCBAppendFloat(
-  FunctionCallCL_Builder *theFCB,
+  FunctionCall_Builder *theFCB,
   double floatValue)
   {
    CLIPSValue theValue;
@@ -1354,7 +1354,7 @@ void CL_FCBAppendFloat(
 /* CL_FCBAppendCLIPSLexeme: */
 /*************************/
 void CL_FCBAppendCLIPSLexeme(
-  FunctionCallCL_Builder *theFCB,
+  FunctionCall_Builder *theFCB,
   CLIPSLexeme *pv)
   {
    CLIPSValue theValue;
@@ -1367,7 +1367,7 @@ void CL_FCBAppendCLIPSLexeme(
 /* CL_FCBAppendSymbol: */
 /********************/
 void CL_FCBAppendSymbol(
-  FunctionCallCL_Builder *theFCB,
+  FunctionCall_Builder *theFCB,
   const char *strValue)
   {
    CLIPSValue theValue;
@@ -1381,7 +1381,7 @@ void CL_FCBAppendSymbol(
 /* CL_FCBAppendString: */
 /********************/
 void CL_FCBAppendString(
-  FunctionCallCL_Builder *theFCB,
+  FunctionCall_Builder *theFCB,
   const char *strValue)
   {
    CLIPSValue theValue;
@@ -1392,14 +1392,14 @@ void CL_FCBAppendString(
   }
 
 /**************************/
-/* CL_FCBAppendCL_InstanceName: */
+/* CL_FCBAppend_InstanceName: */
 /**************************/
-void CL_FCBAppendCL_InstanceName(
-  FunctionCallCL_Builder *theFCB,
+void CL_FCBAppend_InstanceName(
+  FunctionCall_Builder *theFCB,
   const char *strValue)
   {
    CLIPSValue theValue;
-   CLIPSLexeme *pv = CL_CreateCL_InstanceName(theFCB->fcbEnv,strValue);
+   CLIPSLexeme *pv = CL_Create_InstanceName(theFCB->fcbEnv,strValue);
    
    theValue.lexemeValue = pv;
    CL_FCBAppend(theFCB,&theValue);
@@ -1409,7 +1409,7 @@ void CL_FCBAppendCL_InstanceName(
 /* CL_FCBAppendCLIPSExternalAddress: */
 /**********************************/
 void CL_FCBAppendCLIPSExternalAddress(
-  FunctionCallCL_Builder *theFCB,
+  FunctionCall_Builder *theFCB,
   CLIPSExternalAddress *pv)
   {
    CLIPSValue theValue;
@@ -1422,7 +1422,7 @@ void CL_FCBAppendCLIPSExternalAddress(
 /* CL_FCBAppendFact: */
 /******************/
 void CL_FCBAppendFact(
-  FunctionCallCL_Builder *theFCB,
+  FunctionCall_Builder *theFCB,
   Fact *pv)
   {
    CLIPSValue theValue;
@@ -1435,7 +1435,7 @@ void CL_FCBAppendFact(
 /* CL_FCBAppendInstance: */
 /**********************/
 void CL_FCBAppendInstance(
-  FunctionCallCL_Builder *theFCB,
+  FunctionCall_Builder *theFCB,
   Instance *pv)
   {
    CLIPSValue theValue;
@@ -1448,7 +1448,7 @@ void CL_FCBAppendInstance(
 /* CL_FCBAppendMultifield: */
 /************************/
 void CL_FCBAppendMultifield(
-  FunctionCallCL_Builder *theFCB,
+  FunctionCall_Builder *theFCB,
   Multifield *pv)
   {
    CLIPSValue theValue;
@@ -1460,8 +1460,8 @@ void CL_FCBAppendMultifield(
 /***********/
 /* CL_FCBCall */
 /***********/
-FunctionCallCL_BuilderError CL_FCBCall(
-  FunctionCallCL_Builder *theFCB,
+FunctionCall_BuilderError CL_FCBCall(
+  FunctionCall_Builder *theFCB,
   const char *functionName,
   CLIPSValue *returnValue)
   {
@@ -1488,7 +1488,7 @@ FunctionCallCL_BuilderError CL_FCBCall(
      
    /*============================================*/
    /* Functions with specialized parsers  cannot */
-   /* be used with a FunctionCallCL_Builder.        */
+   /* be used with a FunctionCall_Builder.        */
    /*============================================*/
    
    if (theReference.type == FCALL)
@@ -1617,7 +1617,7 @@ FunctionCallCL_BuilderError CL_FCBCall(
    /* Convert a partial multifield to a full multifield. */
    /*====================================================*/
    
-   CL_NoCL_rmalizeMultifield(theEnv,&udfReturnValue);
+   CL_No_rmalizeMultifield(theEnv,&udfReturnValue);
    
    /*========================================*/
    /* Return the expression data structures. */
@@ -1636,7 +1636,7 @@ FunctionCallCL_BuilderError CL_FCBCall(
      { CL_GCBlockEnd(theEnv,&gcb); }
      
    /*==========================================*/
-   /* PerfoCL_rm periodic cleanup if the eval was */
+   /* Perfo_rm periodic cleanup if the eval was */
    /* issued from an embedded controller.      */
    /*==========================================*/
 
@@ -1652,33 +1652,33 @@ FunctionCallCL_BuilderError CL_FCBCall(
    if (returnValue != NULL)
      { returnValue->value = udfReturnValue.value; }
      
-   if (GetCL_EvaluationError(theEnv)) return FCBE_PROCESSING_ERROR;
+   if (Get_EvaluationError(theEnv)) return FCBE_PROCESSING_ERROR;
 
    return FCBE_NO_ERROR;
   }
 
 /*************/
-/* CL_FCBCL_Reset: */
+/* CL_FCB_Reset: */
 /*************/
-void CL_FCBCL_Reset(
-  FunctionCallCL_Builder *theFCB)
+void CL_FCB_Reset(
+  FunctionCall_Builder *theFCB)
   {
    size_t i;
    
    for (i = 0; i < theFCB->length; i++)
      { CL_Release(theFCB->fcbEnv,theFCB->contents[i].header); }
      
-   if (theFCB->bufferCL_Reset != theFCB->bufferMaximum)
+   if (theFCB->buffer_Reset != theFCB->bufferMaximum)
      {
       if (theFCB->bufferMaximum != 0)
         { CL_rm(theFCB->fcbEnv,theFCB->contents,sizeof(CLIPSValue) * theFCB->bufferMaximum); }
       
-      if (theFCB->bufferCL_Reset == 0)
+      if (theFCB->buffer_Reset == 0)
         { theFCB->contents = NULL; }
       else
-        { theFCB->contents = (CLIPSValue *) CL_gm2(theFCB->fcbEnv,sizeof(CLIPSValue) * theFCB->bufferCL_Reset); }
+        { theFCB->contents = (CLIPSValue *) CL_gm2(theFCB->fcbEnv,sizeof(CLIPSValue) * theFCB->buffer_Reset); }
       
-      theFCB->bufferMaximum = theFCB->bufferCL_Reset;
+      theFCB->bufferMaximum = theFCB->buffer_Reset;
      }
      
    theFCB->length = 0;
@@ -1688,7 +1688,7 @@ void CL_FCBCL_Reset(
 /* CL_FCBDispose: */
 /***************/
 void CL_FCBDispose(
-  FunctionCallCL_Builder *theFCB)
+  FunctionCall_Builder *theFCB)
   {
    Environment *theEnv = theFCB->fcbEnv;
    size_t i;
@@ -1699,7 +1699,7 @@ void CL_FCBDispose(
    if (theFCB->bufferMaximum != 0)
      { CL_rm(theFCB->fcbEnv,theFCB->contents,sizeof(CLIPSValue) * theFCB->bufferMaximum); }
      
-   rtn_struct(theEnv,multifieldCL_Builder,theFCB);
+   rtn_struct(theEnv,multifield_Builder,theFCB);
   }
 
 /*******************************/

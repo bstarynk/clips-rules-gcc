@@ -35,11 +35,11 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*      6.40: Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to CL_GetCL_HaltExecution and       */
-/*            SetCL_HaltExecution functions.                    */
+/*            Added Env prefix to CL_Get_HaltExecution and       */
+/*            Set_HaltExecution functions.                    */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -110,11 +110,11 @@ void CL_InvalidDeftemplateSlotMessage(
   }
 
 /**********************************************************/
-/* CL_SingleFieldCL_SlotCardinalityError: Generic error message */
+/* CL_SingleField_SlotCardinalityError: Generic error message */
 /*   used when an attempt is made to placed a multifield  */
 /*   value into a single field slot.                      */
 /**********************************************************/
-void CL_SingleFieldCL_SlotCardinalityError(
+void CL_SingleField_SlotCardinalityError(
   Environment *theEnv,
   const char *slotName)
   {
@@ -125,7 +125,7 @@ void CL_SingleFieldCL_SlotCardinalityError(
   }
 
 /**********************************************************************/
-/* CL_MultiIntoSingleFieldSlotError: DeteCL_rmines if a multifield value is */
+/* CL_MultiIntoSingleFieldSlotError: Dete_rmines if a multifield value is */
 /*   being placed into a single field slot of a deftemplate fact.     */
 /**********************************************************************/
 void CL_MultiIntoSingleFieldSlotError(
@@ -155,7 +155,7 @@ void CL_MultiIntoSingleFieldSlotError(
      { CL_WriteString(theEnv,STDERR,"<<unknown>>"); }
    CL_WriteString(theEnv,STDERR,".\n");
 
-   SetCL_EvaluationError(theEnv,true);
+   Set_EvaluationError(theEnv,true);
   }
 
 /**************************************************************/
@@ -181,7 +181,7 @@ void CL_CheckTemplateFact(
    /*========================================================*/
    /* If the deftemplate corresponding to the first field of */
    /* of the fact cannot be found, then the fact cannot be   */
-   /* checked against the deftemplate foCL_rmat.                */
+   /* checked against the deftemplate fo_rmat.                */
    /*========================================================*/
 
    theDeftemplate = theFact->whichDeftemplate;
@@ -198,7 +198,7 @@ void CL_CheckTemplateFact(
         slotPtr = slotPtr->next)
      {
       /*================================================*/
-      /* Store the slot value in the appropriate foCL_rmat */
+      /* Store the slot value in the appropriate fo_rmat */
       /* for a call to the constraint checking routine. */
       /*================================================*/
 
@@ -230,7 +230,7 @@ void CL_CheckTemplateFact(
          CL_WriteUDFValue(theEnv,STDERR,&theData);
          CL_ConstraintViolationErrorMessage(theEnv,NULL,thePlace,false,0,slotPtr->slotName,
                                          0,rv,slotPtr->constraints,true);
-         SetCL_HaltExecution(theEnv,true);
+         Set_HaltExecution(theEnv,true);
          return;
         }
      }
@@ -239,11 +239,11 @@ void CL_CheckTemplateFact(
   }
 
 /***********************************************************************/
-/* CL_CheckRHSCL_SlotTypes: Checks the validity of a change to a slot as the */
+/* CL_CheckRHS_SlotTypes: Checks the validity of a change to a slot as the */
 /*   result of an assert, modify, or duplicate command. This checking  */
-/*   is perfoCL_rmed statically (i.e. when the command is being parsed).  */
+/*   is perfo_rmed statically (i.e. when the command is being parsed).  */
 /***********************************************************************/
-bool CL_CheckRHSCL_SlotTypes(
+bool CL_CheckRHS_SlotTypes(
   Environment *theEnv,
   struct expr *rhsSlots,
   struct templateSlot *slotPtr,
@@ -416,8 +416,8 @@ static struct templateSlot *GetNextTemplateSlotToPrint(
 
 /**********************************************************/
 /* CL_PrintTemplateFact: Prints a fact using the deftemplate */
-/*   foCL_rmat. Returns true if the fact was printed using   */
-/*   this foCL_rmat, otherwise false.                        */
+/*   fo_rmat. Returns true if the fact was printed using   */
+/*   this fo_rmat, otherwise false.                        */
 /**********************************************************/
 void CL_PrintTemplateFact(
   Environment *theEnv,
@@ -434,7 +434,7 @@ void CL_PrintTemplateFact(
    bool slotPrinted = false;
 
    /*==============================*/
-   /* Initialize some infoCL_rmation. */
+   /* Initialize some info_rmation. */
    /*==============================*/
 
    theDeftemplate = theFact->whichDeftemplate;
@@ -581,7 +581,7 @@ Deftemplate *CL_CreateImpliedDeftemplate(
 
    newDeftemplate = get_struct(theEnv,deftemplate);
    newDeftemplate->header.name = deftemplateName;
-   newDeftemplate->header.ppFoCL_rm = NULL;
+   newDeftemplate->header.ppFo_rm = NULL;
    newDeftemplate->header.usrData = NULL;
    newDeftemplate->header.constructType = DEFTEMPLATE;
    newDeftemplate->header.env = theEnv;
@@ -597,8 +597,8 @@ Deftemplate *CL_CreateImpliedDeftemplate(
    newDeftemplate->header.next = NULL;
 
 #if DEBUGGING_FUNCTIONS
-   if (CL_GetCL_WatchItem(theEnv,"facts") == 1)
-     { CL_DeftemplateSetCL_Watch(newDeftemplate,true); }
+   if (CL_Get_WatchItem(theEnv,"facts") == 1)
+     { CL_DeftemplateSet_Watch(newDeftemplate,true); }
 #endif
 
    newDeftemplate->header.whichModule = (struct defmoduleItemHeader *)

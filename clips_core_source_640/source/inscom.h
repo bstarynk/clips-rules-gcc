@@ -90,7 +90,7 @@ typedef enum
    IBE_DEFCLASS_NOT_FOUND_ERROR,
    IBE_COULD_NOT_CREATE_ERROR,
    IBE_RULE_NETWORK_ERROR
-  } InstanceCL_BuilderError;
+  } Instance_BuilderError;
 
 typedef enum
   {
@@ -110,37 +110,37 @@ struct instanceData
   {
    Instance DummyInstance;
    Instance **InstanceTable;
-   bool MaintainGarbageCL_Instances;
+   bool MaintainGarbage_Instances;
    bool MkInsMsgPass;
-   bool ChangesToCL_Instances;
+   bool ChangesTo_Instances;
    IGARBAGE *InstanceGarbageList;
    struct patternEntityRecord InstanceInfo;
    Instance *InstanceList;
-   unsigned long GlobalNumberOfCL_Instances;
+   unsigned long GlobalNumberOf_Instances;
    Instance *CurrentInstance;
    Instance *InstanceListBottom;
    bool ObjectModDupMsgValid;
    CL_UnmakeInstanceError unmakeInstanceError;
    CL_MakeInstanceError makeInstanceError;
    InstanceModifierError instanceModifierError;
-   InstanceCL_BuilderError instanceCL_BuilderError;
+   Instance_BuilderError instance_BuilderError;
   };
 
 #define InstanceData(theEnv) ((struct instanceData *) GetEnvironmentData(theEnv,INSTANCE_DATA))
 
-   void                           SetupCL_Instances(Environment *);
+   void                           Setup_Instances(Environment *);
    CL_UnmakeInstanceError            CL_DeleteInstance(Instance *);
-   CL_UnmakeInstanceError            CL_DeleteAllCL_Instances(Environment *);
+   CL_UnmakeInstanceError            CL_DeleteAll_Instances(Environment *);
    CL_UnmakeInstanceError            CL_UnmakeInstance(Instance *);
    bool                           CL_UnmakeInstanceCallback(Instance *,Environment *);
-   CL_UnmakeInstanceError            UnmakeAllCL_Instances(Environment *);
+   CL_UnmakeInstanceError            UnmakeAll_Instances(Environment *);
 #if DEBUGGING_FUNCTIONS
    void                           CL_InstancesCommand(Environment *,UDFContext *,UDFValue *);
    void                           CL_PPInstanceCommand(Environment *,UDFContext *,UDFValue *);
    void                           CL_Instances(Environment *,const char *,Defmodule *,const char *,bool);
 #endif
    Instance                      *CL_MakeInstance(Environment *,const char *);
-   CL_MakeInstanceError              CL_GetCL_MakeInstanceError(Environment *);
+   CL_MakeInstanceError              CL_Get_MakeInstanceError(Environment *);
    Instance                      *CL_CreateRawInstance(Environment *,Defclass *,const char *);
    Instance                      *CL_FindInstance(Environment *,Defmodule *,const char *,bool);
    bool                           CL_ValidInstanceAddress(Instance *);
@@ -150,7 +150,7 @@ struct instanceData
    PutSlotError                   CL_DirectPutSlotFloat(Instance *,const char *,double);
    PutSlotError                   CL_DirectPutSlotSymbol(Instance *,const char *,const char *);
    PutSlotError                   CL_DirectPutSlotString(Instance *,const char *,const char *);
-   PutSlotError                   CL_DirectPutSlotCL_InstanceName(Instance *,const char *,const char *);
+   PutSlotError                   CL_DirectPutSlot_InstanceName(Instance *,const char *,const char *);
    PutSlotError                   CL_DirectPutSlotCLIPSInteger(Instance *,const char *,CLIPSInteger *);
    PutSlotError                   CL_DirectPutSlotCLIPSFloat(Instance *,const char *,CLIPSFloat *);
    PutSlotError                   CL_DirectPutSlotCLIPSLexeme(Instance *,const char *,CLIPSLexeme *);
@@ -160,16 +160,16 @@ struct instanceData
    PutSlotError                   CL_DirectPutSlotCLIPSExternalAddress(Instance *,const char *,CLIPSExternalAddress *);
    const char                    *CL_InstanceName(Instance *);
    Defclass                      *CL_InstanceClass(Instance *);
-   unsigned long                  CL_GetGlobalNumberOfCL_Instances(Environment *);
+   unsigned long                  CL_GetGlobalNumberOf_Instances(Environment *);
    Instance                      *CL_GetNextInstance(Environment *,Instance *);
    Instance                      *CL_GetNextInstanceInScope(Environment *,Instance *);
    Instance                      *CL_GetNextInstanceInClass(Defclass *,Instance *);
    Instance                      *CL_GetNextInstanceInClassAndSubclasses(Defclass **,Instance *,UDFValue *);
-   void                           CL_InstancePPFoCL_rm(Instance *,StringCL_Builder *);
+   void                           CL_InstancePPFo_rm(Instance *,String_Builder *);
    void                           CL_ClassCommand(Environment *,UDFContext *,UDFValue *);
    void                           CL_DeleteInstanceCommand(Environment *,UDFContext *,UDFValue *);
    void                           CL_UnmakeInstanceCommand(Environment *,UDFContext *,UDFValue *);
-   void                           SymbolToCL_InstanceNameFunction(Environment *,UDFContext *,UDFValue *);
+   void                           SymbolTo_InstanceNameFunction(Environment *,UDFContext *,UDFValue *);
    void                           CL_InstanceNameToSymbolFunction(Environment *,UDFContext *,UDFValue *);
    void                           CL_InstanceAddressCommand(Environment *,UDFContext *,UDFValue *);
    void                           CL_InstanceNameCommand(Environment *,UDFContext *,UDFValue *);

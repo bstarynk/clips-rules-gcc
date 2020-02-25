@@ -62,17 +62,17 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static struct expr            *ParseCL_AssertSlotValues(Environment *,const char *,struct token *,struct templateSlot *,bool *,bool);
-   static struct expr            *ReorderCL_AssertSlotValues(Environment *,struct templateSlot *,struct expr *,bool *);
-   static struct expr            *GetSlotCL_AssertValues(Environment *,struct templateSlot *,struct expr *,bool *);
-   static struct expr            *FindCL_AssertSlotItem(struct templateSlot *,struct expr *);
+   static struct expr            *Parse_AssertSlotValues(Environment *,const char *,struct token *,struct templateSlot *,bool *,bool);
+   static struct expr            *Reorder_AssertSlotValues(Environment *,struct templateSlot *,struct expr *,bool *);
+   static struct expr            *GetSlot_AssertValues(Environment *,struct templateSlot *,struct expr *,bool *);
+   static struct expr            *Find_AssertSlotItem(struct templateSlot *,struct expr *);
    static struct templateSlot    *CL_ParseSlotLabel(Environment *,const char *,struct token *,Deftemplate *,bool *,TokenType);
 
 /******************************************************************/
-/* ParseCL_AssertTemplate: Parses and builds the list of values that */
+/* Parse_AssertTemplate: Parses and builds the list of values that */
 /*   are used for an assert of a fact with a deftemplate.         */
 /******************************************************************/
-struct expr *ParseCL_AssertTemplate(
+struct expr *Parse_AssertTemplate(
   Environment *theEnv,
   const char *readSource,
   struct token *theToken,
@@ -115,7 +115,7 @@ struct expr *ParseCL_AssertTemplate(
       /* Parse the values to be stored in the slot. */
       /*============================================*/
 
-      nextSlot = ParseCL_AssertSlotValues(theEnv,readSource,theToken,
+      nextSlot = Parse_AssertSlotValues(theEnv,readSource,theToken,
                                        slotPtr,error,constantsOnly);
 
       if (*error)
@@ -129,7 +129,7 @@ struct expr *ParseCL_AssertTemplate(
       /* the slot violate the slot's constraints.   */
       /*============================================*/
 
-      if (CL_CheckRHSCL_SlotTypes(theEnv,nextSlot->argList,slotPtr,"assert") == 0)
+      if (CL_CheckRHS_SlotTypes(theEnv,nextSlot->argList,slotPtr,"assert") == 0)
         {
          *error = true;
          CL_ReturnExpression(theEnv,firstSlot);
@@ -163,7 +163,7 @@ struct expr *ParseCL_AssertTemplate(
    /* Reorder the arguments to the order used by the deftemplate. */
    /*=============================================================*/
 
-   firstArg = ReorderCL_AssertSlotValues(theEnv,theDeftemplate->slotList,firstSlot,error);
+   firstArg = Reorder_AssertSlotValues(theEnv,theDeftemplate->slotList,firstSlot,error);
    CL_ReturnExpression(theEnv,firstSlot);
 
    /*==============================*/
@@ -209,7 +209,7 @@ static struct templateSlot *CL_ParseSlotLabel(
 
    CL_PPBackup(theEnv);
    CL_SavePPBuffer(theEnv," ");
-   CL_SavePPBuffer(theEnv,tempToken->printFoCL_rm);
+   CL_SavePPBuffer(theEnv,tempToken->printFo_rm);
 
    /*=======================================================*/
    /* Slot definition begins with opening left parenthesis. */
@@ -254,9 +254,9 @@ static struct templateSlot *CL_ParseSlotLabel(
   }
 
 /**************************************************************************/
-/* ParseCL_AssertSlotValues: Gets a single assert slot value for a template. */
+/* Parse_AssertSlotValues: Gets a single assert slot value for a template. */
 /**************************************************************************/
-static struct expr *ParseCL_AssertSlotValues(
+static struct expr *Parse_AssertSlotValues(
   Environment *theEnv,
   const char *inputSource,
   struct token *tempToken,
@@ -280,7 +280,7 @@ static struct expr *ParseCL_AssertSlotValues(
 
       CL_SavePPBuffer(theEnv," ");
 
-      newField = GetCL_AssertArgument(theEnv,inputSource,tempToken,error,
+      newField = Get_AssertArgument(theEnv,inputSource,tempToken,error,
                                    RIGHT_PARENTHESIS_TOKEN,constantsOnly,&printError);
       if (*error)
         {
@@ -296,7 +296,7 @@ static struct expr *ParseCL_AssertSlotValues(
       if (newField == NULL)
        {
         *error = true;
-        CL_SingleFieldCL_SlotCardinalityError(theEnv,slotPtr->slotName->contents);
+        CL_SingleField_SlotCardinalityError(theEnv,slotPtr->slotName->contents);
         return NULL;
        }
 
@@ -308,7 +308,7 @@ static struct expr *ParseCL_AssertSlotValues(
       if (newField->type == MF_VARIABLE)
         {
          *error = true;
-         CL_SingleFieldCL_SlotCardinalityError(theEnv,slotPtr->slotName->contents);
+         CL_SingleField_SlotCardinalityError(theEnv,slotPtr->slotName->contents);
          CL_ReturnExpression(theEnv,newField);
          return NULL;
         }
@@ -317,7 +317,7 @@ static struct expr *ParseCL_AssertSlotValues(
         if ((ExpressionUnknownFunctionType(newField) & SINGLEFIELD_BITS) == 0)
           {
            *error = true;
-           CL_SingleFieldCL_SlotCardinalityError(theEnv,slotPtr->slotName->contents);
+           CL_SingleField_SlotCardinalityError(theEnv,slotPtr->slotName->contents);
            CL_ReturnExpression(theEnv,newField);
            return NULL;
           }
@@ -338,7 +338,7 @@ static struct expr *ParseCL_AssertSlotValues(
    else
      {
       CL_SavePPBuffer(theEnv," ");
-      valueList = GetCL_AssertArgument(theEnv,inputSource,tempToken,error,
+      valueList = Get_AssertArgument(theEnv,inputSource,tempToken,error,
                                     RIGHT_PARENTHESIS_TOKEN,constantsOnly,&printError);
       if (*error)
         {
@@ -363,10 +363,10 @@ static struct expr *ParseCL_AssertSlotValues(
            {
             /* CL_PPBackup(theEnv); */
             CL_SavePPBuffer(theEnv," ");
-            /* CL_SavePPBuffer(theEnv,tempToken->printFoCL_rm); */
+            /* CL_SavePPBuffer(theEnv,tempToken->printFo_rm); */
            }
 
-         newField = GetCL_AssertArgument(theEnv,inputSource,tempToken,error,
+         newField = Get_AssertArgument(theEnv,inputSource,tempToken,error,
                                       RIGHT_PARENTHESIS_TOKEN,constantsOnly,&printError);
          if (*error)
            {
@@ -395,7 +395,7 @@ static struct expr *ParseCL_AssertSlotValues(
 
    if (tempToken->tknType != RIGHT_PARENTHESIS_TOKEN)
      {
-      CL_SingleFieldCL_SlotCardinalityError(theEnv,slotPtr->slotName->contents);
+      CL_SingleField_SlotCardinalityError(theEnv,slotPtr->slotName->contents);
       *error = true;
       CL_ReturnExpression(theEnv,newField);
       return NULL;
@@ -412,10 +412,10 @@ static struct expr *ParseCL_AssertSlotValues(
   }
 
 /*************************************************************************/
-/* ReorderCL_AssertSlotValues: Rearranges the asserted values to correspond */
+/* Reorder_AssertSlotValues: Rearranges the asserted values to correspond */
 /*   to the order of the values described by the deftemplate.            */
 /*************************************************************************/
-static struct expr *ReorderCL_AssertSlotValues(
+static struct expr *Reorder_AssertSlotValues(
   Environment *theEnv,
   struct templateSlot *slotPtr,
   struct expr *firstSlot,
@@ -438,7 +438,7 @@ static struct expr *ReorderCL_AssertSlotValues(
       /* command or the default value for the slot.   */
       /*==============================================*/
 
-      newArg = GetSlotCL_AssertValues(theEnv,slotPtr,firstSlot,error);
+      newArg = GetSlot_AssertValues(theEnv,slotPtr,firstSlot,error);
 
       if (*error)
         {
@@ -471,12 +471,12 @@ static struct expr *ReorderCL_AssertSlotValues(
   }
 
 /***************************************************************/
-/* GetSlotCL_AssertValues: Gets the assert value for a given slot */
+/* GetSlot_AssertValues: Gets the assert value for a given slot */
 /*   of a deftemplate. If the value was supplied by the user,  */
 /*   it will be used. If not the default value or default      */
 /*   default value will be used.                               */
 /***************************************************************/
-static struct expr *GetSlotCL_AssertValues(
+static struct expr *GetSlot_AssertValues(
   Environment *theEnv,
   struct templateSlot *slotPtr,
   struct expr *firstSlot,
@@ -488,10 +488,10 @@ static struct expr *GetSlotCL_AssertValues(
    const char *nullBitMap = "\0";
 
    /*==================================================*/
-   /* DeteCL_rmine if the slot is assigned in the assert. */
+   /* Dete_rmine if the slot is assigned in the assert. */
    /*==================================================*/
 
-   slotItem = FindCL_AssertSlotItem(slotPtr,firstSlot);
+   slotItem = Find_AssertSlotItem(slotPtr,firstSlot);
 
    /*==========================================*/
    /* If the slot is assigned, use that value. */
@@ -569,9 +569,9 @@ static struct expr *GetSlotCL_AssertValues(
   }
 
 /*******************************************************************/
-/* FindCL_AssertSlotItem: Finds a particular slot in a list of slots. */
+/* Find_AssertSlotItem: Finds a particular slot in a list of slots. */
 /*******************************************************************/
-static struct expr *FindCL_AssertSlotItem(
+static struct expr *Find_AssertSlotItem(
   struct templateSlot *slotPtr,
   struct expr *listOfSlots)
   {

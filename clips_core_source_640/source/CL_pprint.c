@@ -134,7 +134,7 @@ void CL_SavePPBuffer(
      { return; }
 
    /*===============================*/
-   /* DeteCL_rmine the increment size. */
+   /* Dete_rmine the increment size. */
    /*===============================*/
 
    increment = 512;

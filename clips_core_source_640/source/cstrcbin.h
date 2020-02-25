@@ -44,7 +44,7 @@ struct bsaveConstructHeader
 
 #if BLOAD_AND_BSAVE
 void CL_MarkConstructHeaderNeededItems(ConstructHeader *,unsigned long);
-void CL_AssignCL_BsaveConstructHeaderVals(struct bsaveConstructHeader *,
+void CL_Assign_BsaveConstructHeaderVals(struct bsaveConstructHeader *,
                                     ConstructHeader *);
 #endif
 

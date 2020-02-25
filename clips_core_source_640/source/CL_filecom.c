@@ -50,11 +50,11 @@
 /*      6.40: Split inputSource to fileSource and            */
 /*            logicalSource.                                 */
 /*                                                           */
-/*            Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*            Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to CL_GetCL_HaltExecution and       */
-/*            SetCL_HaltExecution functions.                    */
+/*            Added Env prefix to CL_Get_HaltExecution and       */
+/*            Set_HaltExecution functions.                    */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -122,8 +122,8 @@ void CL_FileCommandDefinitions(
    CL_AddUDF(theEnv,"bsave","b",1,1,"sy",CL_BsaveCommand,"CL_BsaveCommand",NULL);
 #endif
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE
-   InitializeCL_BsaveData(theEnv);
-   InitializeCL_BloadData(theEnv);
+   Initialize_BsaveData(theEnv);
+   Initialize_BloadData(theEnv);
    CL_AddUDF(theEnv,"bload","b",1,1,"sy",CL_BloadCommand,"CL_BloadCommand",NULL);
 #endif
 #endif
@@ -138,13 +138,13 @@ static void DeallocateFileCommandData(
   {
    struct batchEntry *theEntry, *nextEntry;
 
-   theEntry = FileCommandData(theEnv)->TopOfCL_BatchList;
+   theEntry = FileCommandData(theEnv)->TopOf_BatchList;
    while (theEntry != NULL)
      {
       nextEntry = theEntry->next;
 
       if (theEntry->batchType == FILE_BATCH)
-        { CL_GenClose(theEnv,FileCommandData(theEnv)->TopOfCL_BatchList->fileSource); }
+        { CL_GenClose(theEnv,FileCommandData(theEnv)->TopOf_BatchList->fileSource); }
       else
         { CL_rm(theEnv,(void *) theEntry->theString,strlen(theEntry->theString) + 1); }
 
@@ -223,7 +223,7 @@ void CL_BatchCommand(
       return;
      }
 
-   returnValue->lexemeValue = CL_CreateBoolean(theEnv,OpenCL_Batch(theEnv,fileName,false));
+   returnValue->lexemeValue = CL_CreateBoolean(theEnv,Open_Batch(theEnv,fileName,false));
   }
 
 /******************************************/
@@ -264,19 +264,19 @@ void CL_LoadCommand(
       return;
      }
 
-   if (CommandLineData(theEnv)->CL_EvaluatingCL_TopLevelCommand)
-     { SetPrintWhileCL_Loading(theEnv,true); }
+   if (CommandLineData(theEnv)->CL_Evaluating_TopLevelCommand)
+     { SetPrintWhile_Loading(theEnv,true); }
 
    if ((rv = CL_Load(theEnv,theFileName)) == LE_OPEN_FILE_ERROR)
      {
-      SetPrintWhileCL_Loading(theEnv,false);
+      SetPrintWhile_Loading(theEnv,false);
       CL_OpenErrorMessage(theEnv,"load",theFileName);
       returnValue->lexemeValue = FalseSymbol(theEnv);
       return;
      }
 
-   if (CommandLineData(theEnv)->CL_EvaluatingCL_TopLevelCommand)
-     { SetPrintWhileCL_Loading(theEnv,false); }
+   if (CommandLineData(theEnv)->CL_Evaluating_TopLevelCommand)
+     { SetPrintWhile_Loading(theEnv,false); }
 
    if (rv == LE_PARSING_ERROR) returnValue->lexemeValue = FalseSymbol(theEnv);
    else returnValue->lexemeValue = TrueSymbol(theEnv);

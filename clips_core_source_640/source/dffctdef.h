@@ -91,12 +91,12 @@ struct deffactsModule
    Deffacts                      *CL_GetNextDeffacts(Environment *,Deffacts *);
    void                           CreateInitialFactDeffacts(void);
    bool                           CL_DeffactsIsDeletable(Deffacts *);
-   struct deffactsModule         *GetCL_DeffactsModuleItem(Environment *,Defmodule *);
+   struct deffactsModule         *Get_DeffactsModuleItem(Environment *,Defmodule *);
    const char                    *CL_DeffactsModule(Deffacts *);
    const char                    *CL_DeffactsName(Deffacts *);
-   const char                    *CL_DeffactsPPFoCL_rm(Deffacts *);
+   const char                    *CL_DeffactsPPFo_rm(Deffacts *);
 #if RUN_TIME
-   void                           DeffactsCL_RunTimeInitialize(Environment *);
+   void                           Deffacts_RunTimeInitialize(Environment *);
 #endif
 
 #endif /* _H_dffctdef */

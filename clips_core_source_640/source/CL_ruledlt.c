@@ -76,7 +76,7 @@
 /* CL_ReturnDefrule: Returns a defrule data structure and its associated */
 /*   data structures to the memory manager. Note that the first       */
 /*   disjunct of a rule is the only disjunct which allocates storage  */
-/*   for the rule's dynamic salience and pretty print foCL_rm (so these  */
+/*   for the rule's dynamic salience and pretty print fo_rm (so these  */
 /*   are only deallocated for the first disjunct).                    */
 /**********************************************************************/
 void CL_ReturnDefrule(
@@ -106,7 +106,7 @@ void CL_ReturnDefrule(
    /* activations added by the rule. */
    /*================================*/
 
-   CL_ClearRuleFromCL_Agenda(theEnv,theDefrule);
+   CL_ClearRuleFrom_Agenda(theEnv,theDefrule);
 
    /*======================*/
    /* Get rid of the rule. */
@@ -122,7 +122,7 @@ void CL_ReturnDefrule(
 
       /*=============================================*/
       /* If this is the first disjunct, get rid of   */
-      /* the dynamic salience and pretty print foCL_rm. */
+      /* the dynamic salience and pretty print fo_rm. */
       /*=============================================*/
 
       if (first)
@@ -133,18 +133,18 @@ void CL_ReturnDefrule(
            CL_ReturnPackedExpression(theEnv,theDefrule->dynamicSalience);
            theDefrule->dynamicSalience = NULL;
           }
-         if (theDefrule->header.ppFoCL_rm != NULL)
+         if (theDefrule->header.ppFo_rm != NULL)
            {
-            CL_rm(theEnv,(void *) theDefrule->header.ppFoCL_rm,strlen(theDefrule->header.ppFoCL_rm) + 1);
-            theDefrule->header.ppFoCL_rm = NULL;
+            CL_rm(theEnv,(void *) theDefrule->header.ppFo_rm,strlen(theDefrule->header.ppFo_rm) + 1);
+            theDefrule->header.ppFo_rm = NULL;
 
             /*=======================================================*/
             /* All of the rule disjuncts share the same pretty print */
-            /* foCL_rm, so we want to avoid deleting it again.          */
+            /* fo_rm, so we want to avoid deleting it again.          */
             /*=======================================================*/
 
             for (tmpPtr = theDefrule->disjunct; tmpPtr != NULL; tmpPtr = tmpPtr->disjunct)
-              { tmpPtr->header.ppFoCL_rm = NULL; }
+              { tmpPtr->header.ppFo_rm = NULL; }
            }
 
          first = false;
@@ -186,7 +186,7 @@ void CL_ReturnDefrule(
    /* Free up partial matches. */
    /*==========================*/
 
-   if (EngineData(theEnv)->ExecutingRule == NULL) CL_FlushGarbagePartialCL_Matches(theEnv);
+   if (EngineData(theEnv)->ExecutingRule == NULL) CL_FlushGarbagePartial_Matches(theEnv);
 #endif
   }
 
@@ -213,19 +213,19 @@ void CL_DestroyDefrule(
          if (theDefrule->dynamicSalience != NULL)
            { CL_ReturnPackedExpression(theEnv,theDefrule->dynamicSalience); }
 
-         if (theDefrule->header.ppFoCL_rm != NULL)
+         if (theDefrule->header.ppFo_rm != NULL)
            {
             Defrule *tmpPtr;
 
-            CL_rm(theEnv,(void *) theDefrule->header.ppFoCL_rm,strlen(theDefrule->header.ppFoCL_rm) + 1);
+            CL_rm(theEnv,(void *) theDefrule->header.ppFo_rm,strlen(theDefrule->header.ppFo_rm) + 1);
 
             /*=======================================================*/
             /* All of the rule disjuncts share the same pretty print */
-            /* foCL_rm, so we want to avoid deleting it again.          */
+            /* fo_rm, so we want to avoid deleting it again.          */
             /*=======================================================*/
 
             for (tmpPtr = theDefrule->disjunct; tmpPtr != NULL; tmpPtr = tmpPtr->disjunct)
-              { tmpPtr->header.ppFoCL_rm = NULL; }
+              { tmpPtr->header.ppFo_rm = NULL; }
            }
 #endif
 
@@ -549,8 +549,8 @@ static void RemoveIntranetworkLink(
    struct joinNode *joinPtr, *lastJoin;
 
    /*================================================*/
-   /* DeteCL_rmine the pattern that enters this join.   */
-   /* DeteCL_rmine the list of joins which this pattern */
+   /* Dete_rmine the pattern that enters this join.   */
+   /* Dete_rmine the list of joins which this pattern */
    /* enters from the right.                         */
    /*================================================*/
 
@@ -583,7 +583,7 @@ static void RemoveIntranetworkLink(
      }
 
    /*===================================================*/
-   /* If the teCL_rminal node of the pattern doesn't point */
+   /* If the te_rminal node of the pattern doesn't point */
    /* to any joins, then start removing the pattern.    */
    /*===================================================*/
 

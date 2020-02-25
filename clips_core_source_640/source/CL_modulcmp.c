@@ -206,7 +206,7 @@ static bool ConstructToCode(
         }
 
       /*======================================*/
-      /* CL_Write the construct name and ppfoCL_rm. */
+      /* CL_Write the construct name and ppfo_rm. */
       /*======================================*/
 
       fprintf(moduleFile,"{");

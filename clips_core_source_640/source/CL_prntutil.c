@@ -50,8 +50,8 @@
 /*                                                           */
 /*            Added under/overflow error message.            */
 /*                                                           */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*      6.40: Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -171,7 +171,7 @@ void CL_PrintAtom(
         break;
       case STRING_TYPE:
         if (PrintUtilityData(theEnv)->PreserveEscapedCharacters)
-          { CL_WriteString(theEnv,logicalName,StringPrintFoCL_rm(theEnv,((CLIPSLexeme *) value)->contents)); }
+          { CL_WriteString(theEnv,logicalName,StringPrintFo_rm(theEnv,((CLIPSLexeme *) value)->contents)); }
         else
           {
            CL_WriteString(theEnv,logicalName,"\"");
@@ -186,8 +186,8 @@ void CL_PrintAtom(
         if (PrintUtilityData(theEnv)->AddressesToStrings) CL_WriteString(theEnv,logicalName,"\"");
 
         if ((CL_EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type] != NULL) &&
-            (CL_EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type]->longCL_PrintFunction != NULL))
-          { (*CL_EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type]->longCL_PrintFunction)(theEnv,logicalName,value); }
+            (CL_EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type]->long_PrintFunction != NULL))
+          { (*CL_EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type]->long_PrintFunction)(theEnv,logicalName,value); }
         else
           {
            CL_WriteString(theEnv,logicalName,"<Pointer-");
@@ -216,12 +216,12 @@ void CL_PrintAtom(
 
       default:
         if (CL_EvaluationData(theEnv)->PrimitivesArray[type] == NULL) break;
-        if (CL_EvaluationData(theEnv)->PrimitivesArray[type]->longCL_PrintFunction == NULL)
+        if (CL_EvaluationData(theEnv)->PrimitivesArray[type]->long_PrintFunction == NULL)
           {
            CL_WriteString(theEnv,logicalName,"<unknown atom type>");
            break;
           }
-        (*CL_EvaluationData(theEnv)->PrimitivesArray[type]->longCL_PrintFunction)(theEnv,logicalName,value);
+        (*CL_EvaluationData(theEnv)->PrimitivesArray[type]->long_PrintFunction)(theEnv,logicalName,value);
         break;
      }
   }
@@ -278,7 +278,7 @@ void CL_PrintErrorID(
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    if ((ConstructData(theEnv)->ParserErrorCallback == NULL) &&
-       (CL_GetCL_LoadInProgress(theEnv) == true))
+       (CL_Get_LoadInProgress(theEnv) == true))
      {
       const char *fileName;
 
@@ -322,7 +322,7 @@ void CL_PrintWarningID(
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    if ((ConstructData(theEnv)->ParserErrorCallback == NULL) &&
-       (CL_GetCL_LoadInProgress(theEnv) == true))
+       (CL_Get_LoadInProgress(theEnv) == true))
      {
       const char *fileName;
 
@@ -437,7 +437,7 @@ void CL_SyntaxErrorMessage(
      }
 
    CL_WriteString(theEnv,STDERR,".\n");
-   SetCL_EvaluationError(theEnv,true);
+   Set_EvaluationError(theEnv,true);
   }
 
 /****************************************************/
@@ -521,7 +521,7 @@ void CL_ArgumentOverUnderflowErrorMessage(
   }
 
 /*******************************************************/
-/* CL_FloatToString: Converts number to KB string foCL_rmat. */
+/* CL_FloatToString: Converts number to KB string fo_rmat. */
 /*******************************************************/
 const char *CL_FloatToString(
   Environment *theEnv,
@@ -550,7 +550,7 @@ const char *CL_FloatToString(
   }
 
 /*******************************************************************/
-/* CL_LongIntegerToString: Converts long integer to KB string foCL_rmat. */
+/* CL_LongIntegerToString: Converts long integer to KB string fo_rmat. */
 /*******************************************************************/
 const char *CL_LongIntegerToString(
   Environment *theEnv,
@@ -566,7 +566,7 @@ const char *CL_LongIntegerToString(
   }
 
 /******************************************************************/
-/* CL_DataObjectToString: Converts a UDFValue to KB string foCL_rmat. */
+/* CL_DataObjectToString: Converts a UDFValue to KB string fo_rmat. */
 /******************************************************************/
 const char *CL_DataObjectToString(
   Environment *theEnv,
@@ -578,7 +578,7 @@ const char *CL_DataObjectToString(
    const char *prefix, *postfix;
    size_t length;
    CLIPSExternalAddress *theAddress;
-   StringCL_Builder *theSB;
+   String_Builder *theSB;
    
    char buffer[30];
 
@@ -628,7 +628,7 @@ const char *CL_DataObjectToString(
          else
            {
             prefix = "<Instance-";
-            theString = CL_GetFullCL_InstanceName(theEnv,theDO->instanceValue)->contents;
+            theString = CL_GetFull_InstanceName(theEnv,theDO->instanceValue)->contents;
             postfix = ">";
            }
 
@@ -638,13 +638,13 @@ const char *CL_DataObjectToString(
       case EXTERNAL_ADDRESS_TYPE:
         theAddress = theDO->externalAddressValue;
         
-        theSB = CL_CreateStringCL_Builder(theEnv,30);
+        theSB = CL_CreateString_Builder(theEnv,30);
 
-        OpenStringCL_BuilderDestination(theEnv,"DOTS",theSB);
+        OpenString_BuilderDestination(theEnv,"DOTS",theSB);
 
         if ((CL_EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type] != NULL) &&
-            (CL_EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type]->longCL_PrintFunction != NULL))
-          { (*CL_EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type]->longCL_PrintFunction)(theEnv,"DOTS",theAddress); }
+            (CL_EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type]->long_PrintFunction != NULL))
+          { (*CL_EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type]->long_PrintFunction)(theEnv,"DOTS",theAddress); }
         else
           {
            CL_WriteString(theEnv,"DOTS","<Pointer-");
@@ -660,7 +660,7 @@ const char *CL_DataObjectToString(
         thePtr = CL_CreateString(theEnv,theSB->contents);
         CL_SBDispose(theSB);
 
-        CloseStringCL_BuilderDestination(theEnv,"DOTS");
+        CloseString_BuilderDestination(theEnv,"DOTS");
         return thePtr->contents;
 
 #if DEFTEMPLATE_CONSTRUCT
@@ -689,10 +689,10 @@ const char *CL_DataObjectToString(
   }
 
 /************************************************************/
-/* SalienceInfoCL_rmationError: Error message for errors which */
+/* SalienceInfo_rmationError: Error message for errors which */
 /*   occur during the evaluation of a salience value.       */
 /************************************************************/
-void SalienceInfoCL_rmationError(
+void SalienceInfo_rmationError(
   Environment *theEnv,
   const char *constructType,
   const char *constructName)
@@ -740,10 +740,10 @@ void CL_SalienceNonIntegerError(
   }
 
 /****************************************************/
-/* CL_FactCL_RetractedErrorMessage: Generic error message */
+/* CL_Fact_RetractedErrorMessage: Generic error message */
 /*  when a fact has been retracted.                 */
 /****************************************************/
-void CL_FactCL_RetractedErrorMessage(
+void CL_Fact_RetractedErrorMessage(
   Environment *theEnv,
   Fact *theFact)
   {
@@ -871,5 +871,5 @@ void CL_SlotExistError(
    CL_WriteString(theEnv,STDERR,"' in function '");
    CL_WriteString(theEnv,STDERR,func);
    CL_WriteString(theEnv,STDERR,"'.\n");
-   SetCL_EvaluationError(theEnv,true);
+   Set_EvaluationError(theEnv,true);
   }

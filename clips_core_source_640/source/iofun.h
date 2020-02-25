@@ -19,7 +19,7 @@
 /*      6.24: Added the get-char, set-locale, and            */
 /*            read-number functions.                         */
 /*                                                           */
-/*            Modified printing of floats in the foCL_rmat      */
+/*            Modified printing of floats in the fo_rmat      */
 /*            function to use the locale from the set-locale */
 /*            function.                                      */
 /*                                                           */
@@ -31,7 +31,7 @@
 /*            Support for long long integers.                */
 /*                                                           */
 /*            Removed the undocumented use of t in the       */
-/*            printout command to perfoCL_rm the same function  */
+/*            printout command to perfo_rm the same function  */
 /*            as crlf.                                       */
 /*                                                           */
 /*            Replaced EXT_IO and BASIC_IO compiler flags    */
@@ -99,7 +99,7 @@
    void                           CL_UngetCharFunction(Environment *,UDFContext *,UDFValue *);
    void                           CL_PutCharFunction(Environment *,UDFContext *,UDFValue *);
    void                           CL_ReadlineFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_FoCL_rmatFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_Fo_rmatFunction(Environment *,UDFContext *,UDFValue *);
    void                           CL_RemoveFunction(Environment *,UDFContext *,UDFValue *);
    void                           CL_ChdirFunction(Environment *,UDFContext *,UDFValue *);
    void                           CL_RenameFunction(Environment *,UDFContext *,UDFValue *);

@@ -116,10 +116,10 @@ Environment *CL_CreateEnvironment()
   }
 
 /**********************************************************/
-/* CL_CreateCL_RuntimeEnvironment: Creates an environment data  */
+/* CL_Create_RuntimeEnvironment: Creates an environment data  */
 /*   structure and initializes its content to zero/null.  */
 /**********************************************************/
-Environment *CL_CreateCL_RuntimeEnvironment(
+Environment *CL_Create_RuntimeEnvironment(
   CLIPSLexeme **symbolTable,
   CLIPSFloat **floatTable,
   CLIPSInteger **integerTable,
@@ -281,7 +281,7 @@ static void RemoveEnvironmentCleanupFunctions(
   }
 
 /**************************************************/
-/* InitializeEnvironment: PerfoCL_rms initialization */
+/* InitializeEnvironment: Perfo_rms initialization */
 /*   of the KB environment.                       */
 /**************************************************/
 static void InitializeEnvironment(
@@ -314,7 +314,7 @@ static void InitializeEnvironment(
    CL_InitializeConstructCompilerData(theEnvironment);
 #endif
    CL_InitializeConstructData(theEnvironment);
-   InitializeCL_EvaluationData(theEnvironment);
+   Initialize_EvaluationData(theEnvironment);
    CL_InitializeExternalFunctionData(theEnvironment);
    CL_InitializePrettyPrintData(theEnvironment);
    CL_InitializePrintUtilityData(theEnvironment);
@@ -323,7 +323,7 @@ static void InitializeEnvironment(
    CL_InitializeUserDataData(theEnvironment);
    CL_InitializeUtilityData(theEnvironment);
 #if DEBUGGING_FUNCTIONS
-   CL_InitializeCL_WatchData(theEnvironment);
+   CL_Initialize_WatchData(theEnvironment);
 #endif
 
    /*===============================================*/

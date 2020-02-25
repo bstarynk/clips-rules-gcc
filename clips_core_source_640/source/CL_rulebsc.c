@@ -105,16 +105,16 @@
 void CL_DefruleBasicCommands(
   Environment *theEnv)
   {
-   CL_AddCL_ResetFunction(theEnv,"defrule",CL_ResetDefrules,70,NULL);
-   CL_AddCL_ResetFunction(theEnv,"defrule",CL_ResetDefrulesPrime,10,NULL);
-   CL_AddCL_SaveFunction(theEnv,"defrule",CL_SaveDefrules,0,NULL);
+   CL_Add_ResetFunction(theEnv,"defrule",CL_ResetDefrules,70,NULL);
+   CL_Add_ResetFunction(theEnv,"defrule",CL_ResetDefrulesPrime,10,NULL);
+   CL_Add_SaveFunction(theEnv,"defrule",CL_SaveDefrules,0,NULL);
 #if (! RUN_TIME)
-   CL_AddCL_ClearReadyFunction(theEnv,"defrule",CL_ClearDefrulesReady,0,NULL);
-   CL_AddCL_ClearFunction(theEnv,"defrule",CL_ClearDefrules,0,NULL);
+   CL_Add_ClearReadyFunction(theEnv,"defrule",CL_ClearDefrulesReady,0,NULL);
+   CL_Add_ClearFunction(theEnv,"defrule",CL_ClearDefrules,0,NULL);
 #endif
 
 #if DEBUGGING_FUNCTIONS
-   CL_AddCL_WatchItem(theEnv,"rules",0,&DefruleData(theEnv)->CL_WatchRules,70,CL_DefruleCL_WatchAccess,CL_DefruleCL_WatchPrint);
+   CL_Add_WatchItem(theEnv,"rules",0,&DefruleData(theEnv)->CL_WatchRules,70,CL_Defrule_WatchAccess,CL_Defrule_WatchPrint);
 #endif
 
 #if ! RUN_TIME
@@ -155,14 +155,14 @@ static void CL_ResetDefrules(
    struct partialMatch *notParent;
 
    DefruleData(theEnv)->CurrentEntityTimeTag = 1L;
-   CL_ClearCL_FocusStack(theEnv);
+   CL_Clear_FocusStack(theEnv);
    theModule = CL_FindDefmodule(theEnv,"MAIN");
    CL_Focus(theModule);
 
    for (theLink = DefruleData(theEnv)->RightPrimeJoins;
         theLink != NULL;
         theLink = theLink->next)
-     { CL_PosEntryCL_RetractAlpha(theEnv,theLink->join->rightMemory->beta[0],NETWORK_ASSERT); }
+     { CL_PosEntry_RetractAlpha(theEnv,theLink->join->rightMemory->beta[0],NETWORK_ASSERT); }
 
    for (theLink = DefruleData(theEnv)->LeftPrimeJoins;
         theLink != NULL;
@@ -183,7 +183,7 @@ static void CL_ResetDefrules(
          notParent->marker = notParent;
 
          if (notParent->children != NULL)
-           { CL_PosEntryCL_RetractBeta(theEnv,notParent,notParent->children,NETWORK_ASSERT); }
+           { CL_PosEntry_RetractBeta(theEnv,notParent,notParent->children,NETWORK_ASSERT); }
            /*
          if (notParent->dependents != NULL)
            { CL_RemoveLogicalSupport(theEnv,notParent); } */
@@ -204,7 +204,7 @@ static void CL_ResetDefrulesPrime(
    for (theLink = DefruleData(theEnv)->RightPrimeJoins;
         theLink != NULL;
         theLink = theLink->next)
-     { NetworkCL_Assert(theEnv,theLink->join->rightMemory->beta[0],theLink->join); }
+     { Network_Assert(theEnv,theLink->join->rightMemory->beta[0],theLink->join); }
 
    for (theLink = DefruleData(theEnv)->LeftPrimeJoins;
         theLink != NULL;
@@ -242,7 +242,7 @@ static bool CL_ClearDefrulesReady(
 
    if (EngineData(theEnv)->JoinOperationInProgress) return false;
 
-   CL_ClearCL_FocusStack(theEnv);
+   CL_Clear_FocusStack(theEnv);
    if (CL_GetCurrentModule(theEnv) == NULL) return false;
 
    DefruleData(theEnv)->CurrentEntityTimeTag = 1L;
@@ -336,7 +336,7 @@ void CL_GetDefruleList(
    UDFValue result;
    
    CL_GetConstructList(theEnv,&result,DefruleData(theEnv)->DefruleConstruct,theModule);
-   CL_NoCL_rmalizeMultifield(theEnv,&result);
+   CL_No_rmalizeMultifield(theEnv,&result);
    returnValue->value = result.value;
   }
 
@@ -403,11 +403,11 @@ void CL_ListDefrules(
   }
 
 /*******************************************************/
-/* CL_DefruleGetCL_WatchActivations: C access routine for    */
+/* CL_DefruleGet_WatchActivations: C access routine for    */
 /*   retrieving the current watch value of a defrule's */
 /*   activations.                                      */
 /*******************************************************/
-bool CL_DefruleGetCL_WatchActivations(
+bool CL_DefruleGet_WatchActivations(
   Defrule *rulePtr)
   {
    Defrule *thePtr;
@@ -421,11 +421,11 @@ bool CL_DefruleGetCL_WatchActivations(
   }
 
 /********************************************/
-/* CL_DefruleGetCL_WatchFirings: C access routine */
+/* CL_DefruleGet_WatchFirings: C access routine */
 /*   for retrieving the current watch value */
 /*   of a defrule's firings.                */
 /********************************************/
-bool CL_DefruleGetCL_WatchFirings(
+bool CL_DefruleGet_WatchFirings(
   Defrule *rulePtr)
   {
    Defrule *thePtr;
@@ -439,11 +439,11 @@ bool CL_DefruleGetCL_WatchFirings(
   }
 
 /************************************************/
-/* CL_DefruleSetCL_WatchActivations: C access routine */
+/* CL_DefruleSet_WatchActivations: C access routine */
 /*   for setting the current watch value of a   */
 /*   defrule's activations.                     */
 /************************************************/
-void CL_DefruleSetCL_WatchActivations(
+void CL_DefruleSet_WatchActivations(
   Defrule *rulePtr,
   bool newState)
   {
@@ -456,11 +456,11 @@ void CL_DefruleSetCL_WatchActivations(
   }
 
 /********************************************/
-/* CL_DefruleSetCL_WatchFirings: C access routine */
+/* CL_DefruleSet_WatchFirings: C access routine */
 /*   for setting the current watch value of */
 /*   a defrule's firings.                   */
 /********************************************/
-void CL_DefruleSetCL_WatchFirings(
+void CL_DefruleSet_WatchFirings(
   Defrule *rulePtr,
   bool newState)
   {
@@ -473,43 +473,43 @@ void CL_DefruleSetCL_WatchFirings(
   }
 
 /*******************************************************************/
-/* CL_DefruleCL_WatchAccess: Access function for setting the watch flags */
+/* CL_Defrule_WatchAccess: Access function for setting the watch flags */
 /*   associated with rules (activations and rule firings).         */
 /*******************************************************************/
-bool CL_DefruleCL_WatchAccess(
+bool CL_Defrule_WatchAccess(
   Environment *theEnv,
   int code,
   bool newState,
   struct expr *argExprs)
   {
    if (code)
-     return(CL_ConstructSetCL_WatchAccess(theEnv,DefruleData(theEnv)->DefruleConstruct,newState,argExprs,
-                                    (ConstructGetCL_WatchFunction *) CL_DefruleGetCL_WatchActivations,
-                                    (ConstructSetCL_WatchFunction *) CL_DefruleSetCL_WatchActivations));
+     return(CL_ConstructSet_WatchAccess(theEnv,DefruleData(theEnv)->DefruleConstruct,newState,argExprs,
+                                    (ConstructGet_WatchFunction *) CL_DefruleGet_WatchActivations,
+                                    (ConstructSet_WatchFunction *) CL_DefruleSet_WatchActivations));
    else
-     return(CL_ConstructSetCL_WatchAccess(theEnv,DefruleData(theEnv)->DefruleConstruct,newState,argExprs,
-                                    (ConstructGetCL_WatchFunction *) CL_DefruleGetCL_WatchFirings,
-                                    (ConstructSetCL_WatchFunction *) CL_DefruleSetCL_WatchFirings));
+     return(CL_ConstructSet_WatchAccess(theEnv,DefruleData(theEnv)->DefruleConstruct,newState,argExprs,
+                                    (ConstructGet_WatchFunction *) CL_DefruleGet_WatchFirings,
+                                    (ConstructSet_WatchFunction *) CL_DefruleSet_WatchFirings));
   }
 
 /*****************************************************************/
-/* CL_DefruleCL_WatchPrint: Access routine for printing which defrules */
+/* CL_Defrule_WatchPrint: Access routine for printing which defrules */
 /*   have their watch flag set via the list-watch-items command. */
 /*****************************************************************/
-bool CL_DefruleCL_WatchPrint(
+bool CL_Defrule_WatchPrint(
   Environment *theEnv,
   const char *logName,
   int code,
   struct expr *argExprs)
   {
    if (code)
-     return(CL_ConstructPrintCL_WatchAccess(theEnv,DefruleData(theEnv)->DefruleConstruct,logName,argExprs,
-                                      (ConstructGetCL_WatchFunction *) CL_DefruleGetCL_WatchActivations,
-                                      (ConstructSetCL_WatchFunction *) CL_DefruleSetCL_WatchActivations));
+     return(CL_ConstructPrint_WatchAccess(theEnv,DefruleData(theEnv)->DefruleConstruct,logName,argExprs,
+                                      (ConstructGet_WatchFunction *) CL_DefruleGet_WatchActivations,
+                                      (ConstructSet_WatchFunction *) CL_DefruleSet_WatchActivations));
    else
-     return(CL_ConstructPrintCL_WatchAccess(theEnv,DefruleData(theEnv)->DefruleConstruct,logName,argExprs,
-                                      (ConstructGetCL_WatchFunction *) CL_DefruleGetCL_WatchActivations,
-                                      (ConstructSetCL_WatchFunction *) CL_DefruleGetCL_WatchActivations));
+     return(CL_ConstructPrint_WatchAccess(theEnv,DefruleData(theEnv)->DefruleConstruct,logName,argExprs,
+                                      (ConstructGet_WatchFunction *) CL_DefruleGet_WatchActivations,
+                                      (ConstructSet_WatchFunction *) CL_DefruleGet_WatchActivations));
   }
 
 #endif /* DEBUGGING_FUNCTIONS */

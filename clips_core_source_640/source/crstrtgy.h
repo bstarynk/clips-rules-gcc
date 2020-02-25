@@ -7,7 +7,7 @@
    /*******************************************************/
 
 /*************************************************************/
-/* Purpose: Used to deteCL_rmine where a new activation is      */
+/* Purpose: Used to dete_rmine where a new activation is      */
 /*   placed on the agenda based on the current conflict      */
 /*   resolution strategy (depth, breadth, mea, lex,          */
 /*   simplicity, or complexity). Also provides the           */
@@ -26,7 +26,7 @@
 /*      6.24: Removed CONFLICT_RESOLUTION_STRATEGIES         */
 /*            compilation flag.                              */
 /*                                                           */
-/*      6.30: Added salience groups to improve perfoCL_rmance   */
+/*      6.30: Added salience groups to improve perfo_rmance   */
 /*            with large numbers of activations of different */
 /*            saliences.                                     */
 /*                                                           */

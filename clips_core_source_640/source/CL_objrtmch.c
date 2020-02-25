@@ -44,11 +44,11 @@
 /*      6.31: Optimization for marking relevant alpha nodes  */
 /*            in the object pattern network.                 */
 /*                                                           */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and      */
-/*            SetCL_EvaluationError functions.                   */
+/*      6.40: Added Env prefix to Get_EvaluationError and      */
+/*            Set_EvaluationError functions.                   */
 /*                                                            */
-/*            Added Env prefix to CL_GetCL_HaltExecution and        */
-/*            SetCL_HaltExecution functions.                     */
+/*            Added Env prefix to CL_Get_HaltExecution and        */
+/*            Set_HaltExecution functions.                     */
 /*                                                            */
 /*            Pragma once and other inclusion changes.        */
 /*                                                            */
@@ -105,9 +105,9 @@
    static void                    CreateObjectAlphaMatch(Environment *,OBJECT_ALPHA_NODE *);
    static bool                    CL_EvaluateObjectPatternTest(Environment *,size_t,struct multifieldMarker *,
                                                             Expression *,OBJECT_PATTERN_NODE *);
-   static void                    ObjectCL_AssertAction(Environment *,Instance *);
+   static void                    Object_AssertAction(Environment *,Instance *);
    static void                    ObjectModifyAction(Environment *,Instance *,SLOT_BITMAP *);
-   static void                    ObjectCL_RetractAction(Environment *,Instance *,SLOT_BITMAP *);
+   static void                    Object_RetractAction(Environment *,Instance *,SLOT_BITMAP *);
    static void                    ObjectPatternNetErrorMessage(Environment *,OBJECT_PATTERN_NODE *);
    static void                    TraceErrorToObjectPattern(Environment *,bool,OBJECT_PATTERN_NODE *);
 
@@ -140,10 +140,10 @@ void CL_ObjectMatchDelay(
 
    if (CL_EvaluationData(theEnv)->CL_EvaluationError)
      {
-      SetCL_HaltExecution(theEnv,false);
-      SetCL_EvaluationError(theEnv,false);
+      Set_HaltExecution(theEnv,false);
+      Set_EvaluationError(theEnv,false);
       CL_SetDelayObjectPatternMatching(theEnv,ov);
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
      }
    else
      CL_SetDelayObjectPatternMatching(theEnv,ov);
@@ -151,7 +151,7 @@ void CL_ObjectMatchDelay(
 
 /***************************************************
   NAME         : CL_SetDelayObjectPatternMatching
-  DESCRIPTION  : Sets the flag deteCL_rmining if Rete
+  DESCRIPTION  : Sets the flag dete_rmining if Rete
                  network activity is to be delayed
                  for objects or not
   INPUTS       : The value of the flag
@@ -159,7 +159,7 @@ void CL_ObjectMatchDelay(
   SIDE EFFECTS : DelayObjectPatternMatching set
   NOTES        : When the delay is set to false,
                  all pending Rete network updates
-                 are perfoCL_rmed
+                 are perfo_rmed
  ***************************************************/
 bool CL_SetDelayObjectPatternMatching(
   Environment *theEnv,
@@ -180,7 +180,7 @@ bool CL_SetDelayObjectPatternMatching(
 
 /***************************************************
   NAME         : CL_GetDelayObjectPatternMatching
-  DESCRIPTION  : Gets the flag deteCL_rmining if Rete
+  DESCRIPTION  : Gets the flag dete_rmining if Rete
                  network activity is to be delayed
                  for objects or not
   INPUTS       : None
@@ -210,21 +210,21 @@ OBJECT_PATTERN_NODE *CL_ObjectNetworkPointer(
   }
 
 /********************************************************
-  NAME         : CL_ObjectNetworkTeCL_rminalPointer
-  DESCRIPTION  : Returns the first teCL_rminal pattern node
+  NAME         : CL_ObjectNetworkTe_rminalPointer
+  DESCRIPTION  : Returns the first te_rminal pattern node
   INPUTS       : None
   RETURNS      : The last node of a pattern
   SIDE EFFECTS : None
   NOTES        : None
  ********************************************************/
-OBJECT_ALPHA_NODE *CL_ObjectNetworkTeCL_rminalPointer(
+OBJECT_ALPHA_NODE *CL_ObjectNetworkTe_rminalPointer(
   Environment *theEnv)
   {
-   return(ObjectReteData(theEnv)->ObjectPatternNetworkTeCL_rminalPointer);
+   return(ObjectReteData(theEnv)->ObjectPatternNetworkTe_rminalPointer);
   }
 
 /***************************************************
-  NAME         : SetCL_ObjectNetworkPointer
+  NAME         : Set_ObjectNetworkPointer
   DESCRIPTION  : Sets the object pattern network to
                   the given network
   INPUTS       : Top of the new pattern network
@@ -232,7 +232,7 @@ OBJECT_ALPHA_NODE *CL_ObjectNetworkTeCL_rminalPointer(
   SIDE EFFECTS : ObjectPatternNetworkPointer set
   NOTES        : None
  ***************************************************/
-void SetCL_ObjectNetworkPointer(
+void Set_ObjectNetworkPointer(
   Environment *theEnv,
   OBJECT_PATTERN_NODE *value)
   {
@@ -240,20 +240,20 @@ void SetCL_ObjectNetworkPointer(
   }
 
 /*******************************************************
-  NAME         : SetCL_ObjectNetworkTeCL_rminalPointer
-  DESCRIPTION  : Sets the global list of teCL_rminal
+  NAME         : SetCL_ObjectNetworkTe_rminalPointer
+  DESCRIPTION  : Sets the global list of te_rminal
                  pattern nodes (the ones containing
                  the bitmaps) to the given node
   INPUTS       : The last node of a pattern
   RETURNS      : Nothing useful
-  SIDE EFFECTS : ObjectPatternNetworkTeCL_rminalPointer set
+  SIDE EFFECTS : ObjectPatternNetworkTe_rminalPointer set
   NOTES        : None
  *******************************************************/
-void SetCL_ObjectNetworkTeCL_rminalPointer(
+void SetCL_ObjectNetworkTe_rminalPointer(
   Environment *theEnv,
   OBJECT_ALPHA_NODE *value)
   {
-   ObjectReteData(theEnv)->ObjectPatternNetworkTeCL_rminalPointer = value;
+   ObjectReteData(theEnv)->ObjectPatternNetworkTe_rminalPointer = value;
   }
 
 /************************************************************************
@@ -262,14 +262,14 @@ void SetCL_ObjectNetworkTeCL_rminalPointer(
                  If the pattern-matching is current delayed or another
                  object is currently being pattern-matched, the requested
                  match action is queued for later processing.
-                 Otherwise, the match action is perfoCL_rmed and the
+                 Otherwise, the match action is perfo_rmed and the
                  Rete network is updated.
   INPUTS       : 1) The match action type
                     OBJECT_ASSERT  (1)
                     OBJECT_RETRACT (2)
                     OBJECT_MODIFY  (3)
                  2) The instance to be matched (can be NULL if only
-                    want pending actions to be perfoCL_rmed)
+                    want pending actions to be perfo_rmed)
                  3) The name id of the slot being updated (can be -1)
                     If this argument is -1, it is assumed that any
                     pattern which could match this instance must be
@@ -320,10 +320,10 @@ void CL_ObjectNetworkAction(
         switch (type)
         {
          case OBJECT_ASSERT  :
-           ObjectCL_AssertAction(theEnv,ins);
+           Object_AssertAction(theEnv,ins);
            break;
          case OBJECT_RETRACT :
-           ObjectCL_RetractAction(theEnv,ins,NULL);
+           Object_RetractAction(theEnv,ins,NULL);
            break;
          default             :
            tmpMap = QueueModifySlotMap(theEnv,NULL,slotNameID);
@@ -342,14 +342,14 @@ void CL_ObjectNetworkAction(
 
    EngineData(theEnv)->JoinOperationInProgress = false;
 
-   CL_ForceLogicalCL_Retractions(theEnv);
+   CL_ForceLogical_Retractions(theEnv);
 
    /*=========================================*/
    /* Free partial matches that were released */
    /* by the assertion of the fact.           */
    /*=========================================*/
 
-   if (EngineData(theEnv)->ExecutingRule == NULL) CL_FlushGarbagePartialCL_Matches(theEnv);
+   if (EngineData(theEnv)->ExecutingRule == NULL) CL_FlushGarbagePartial_Matches(theEnv);
   }
 
 /* =========================================
@@ -387,7 +387,7 @@ void CL_ResetObjectMatchTimeTags(
    if ((ObjectReteData(theEnv)->CurrentObjectMatchTimeTag + 1L) > ObjectReteData(theEnv)->CurrentObjectMatchTimeTag)
      return;
    ObjectReteData(theEnv)->CurrentObjectMatchTimeTag = 0L;
-   alphaPtr = CL_ObjectNetworkTeCL_rminalPointer(theEnv);
+   alphaPtr = CL_ObjectNetworkTe_rminalPointer(theEnv);
    while (alphaPtr != NULL)
      {
       alphaPtr->matchTimeTag = 0L;
@@ -399,7 +399,7 @@ void CL_ResetObjectMatchTimeTags(
          lastLevel->matchTimeTag = 0L;
          lastLevel = lastLevel->lastLevel;
         }
-      alphaPtr = alphaPtr->nxtTeCL_rminal;
+      alphaPtr = alphaPtr->nxtTe_rminal;
      }
   }
 
@@ -425,7 +425,7 @@ static void QueueObjectMatchAction(
   int slotNameID)
   {
    OBJECT_MATCH_ACTION *prv,*cur,*newMatch;
-   OBJECT_MATCH_ACTION *prvCL_Retract = NULL; /* DR0873 */
+   OBJECT_MATCH_ACTION *prv_Retract = NULL; /* DR0873 */
 
    prv = NULL;
    cur = ObjectReteData(theEnv)->ObjectMatchActionQueue;
@@ -498,7 +498,7 @@ static void QueueObjectMatchAction(
         }
 
       if (cur->type == OBJECT_RETRACT) /* DR0873 */
-        { prvCL_Retract = cur; }          /* DR0873 */
+        { prv_Retract = cur; }          /* DR0873 */
       prv = cur;
       cur = cur->nxt;
      }
@@ -522,15 +522,15 @@ static void QueueObjectMatchAction(
 
    if (type == OBJECT_RETRACT)
      {
-      if (prvCL_Retract == NULL)
+      if (prv_Retract == NULL)
         {
          newMatch->nxt = ObjectReteData(theEnv)->ObjectMatchActionQueue;
          ObjectReteData(theEnv)->ObjectMatchActionQueue = newMatch;
         }
       else
         {
-         newMatch->nxt = prvCL_Retract->nxt;
-         prvCL_Retract->nxt = newMatch;
+         newMatch->nxt = prv_Retract->nxt;
+         prv_Retract->nxt = newMatch;
         }
      }
    else
@@ -628,10 +628,10 @@ static void ProcessObjectMatchQueue(
       switch(cur->type)
         {
          case OBJECT_ASSERT  :
-           ObjectCL_AssertAction(theEnv,cur->ins);
+           Object_AssertAction(theEnv,cur->ins);
            break;
          case OBJECT_RETRACT :
-           ObjectCL_RetractAction(theEnv,cur->ins,cur->slotNameIDs);
+           Object_RetractAction(theEnv,cur->ins,cur->slotNameIDs);
            break;
          default             :
            ObjectModifyAction(theEnv,cur->ins,cur->slotNameIDs);
@@ -643,7 +643,7 @@ static void ProcessObjectMatchQueue(
 
 /******************************************************
   NAME         : MarkObjectPatternNetwork
-  DESCRIPTION  : Iterates through all teCL_rminal
+  DESCRIPTION  : Iterates through all te_rminal
                  pattern nodes checking class and
                  slot bitmaps.  If a pattern is
                  applicable to the object/slot change,
@@ -668,7 +668,7 @@ static void MarkObjectPatternNetwork(
    CLASS_ALPHA_LINK *current_alpha_link;
 
    cls = ObjectReteData(theEnv)->CurrentPatternObject->cls;
-   current_alpha_link = cls->relevant_teCL_rminal_alpha_nodes;
+   current_alpha_link = cls->relevant_te_rminal_alpha_nodes;
 
    CL_ResetObjectMatchTimeTags(theEnv);
    ObjectReteData(theEnv)->CurrentObjectMatchTimeTag++;
@@ -682,7 +682,7 @@ static void MarkObjectPatternNetwork(
          pattern has been marked for initialization before proceeding.
          ============================================================= */
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-      if (EngineData(theEnv)->CL_IncrementalCL_ResetInProgress &&
+      if (EngineData(theEnv)->CL_Incremental_ResetInProgress &&
           (alphaPtr->header.initialize == false))
         {
          current_alpha_link = current_alpha_link->next;
@@ -769,7 +769,7 @@ static bool CompareSlotBitMaps(
   NAME         : ObjectPatternMatch
   DESCRIPTION  : Iterates through all the pattern nodes on one level
                  in the pattern network.  A node is only processed
-                 if it can lead to a teCL_rminating class bitmap node
+                 if it can lead to a te_rminating class bitmap node
                  which applies to the object being matched.  This
                  allows for a significant reduction in the number of
                  patterns considered.
@@ -787,12 +787,12 @@ static bool CompareSlotBitMaps(
                  CurrentPatternObjectSlot - the current slot being examined
                  CurrentObjectSlotLength - the cardinality of the slot value
 
-                 An optimization is perfoCL_rmed when evaluating
+                 An optimization is perfo_rmed when evaluating
                  constant tests on a slot value field.  All
                  pattern nodes on a level which restrict the same slot
                  are grouped together.  Those which are constant
                  tests are placed at the far right.  Thus, as soon
-                 as one of these constant tests succeeds, the reCL_maining
+                 as one of these constant tests succeeds, the re_maining
                  nodes for that slot on this level can be skipped
  **********************************************************************************/
 static void ObjectPatternMatch(
@@ -888,7 +888,7 @@ static void ObjectPatternMatch(
 
 /**********************************************************************************
   NAME         : ProcessPatternNode
-  DESCRIPTION  : DeteCL_rmines if a pattern node satsifies the corresponding
+  DESCRIPTION  : Dete_rmines if a pattern node satsifies the corresponding
                  slot value field(s) in an object.  If it does,
                  ObjectPatternMatch() is recursively called to process
                  the child nodes of this node.  In this mutual recursion
@@ -896,7 +896,7 @@ static void ObjectPatternMatch(
                  the nodes of all applicable patterns are processed
                  to completion.  ObjectPatternMatch() enters an object
                  into a pattern's aplha memory when the traversal reaches
-                 a teCL_rminal class bitmap node.
+                 a te_rminal class bitmap node.
   INPUTS       : 1) The offset of the slot index from the pattern index
                  2) The pattern node being examined
                  3) The end of the list of multifield markers for the pattern
@@ -1021,7 +1021,7 @@ static void ProcessPatternNode(
    /* multifield pattern node: from no values to all values from */
    /* the starting position of the multifield to the end of the  */
    /* object slot.  Otherwise, bind the multifield to all the    */
-   /* reCL_maining fields in the slot value and continue with       */
+   /* re_maining fields in the slot value and continue with       */
    /* pattern-matching.                                          */
    /*============================================================*/
 
@@ -1136,7 +1136,7 @@ static void CreateObjectAlphaMatch(
          /* ===================================================
             If we have reached the class bitmap of the pattern,
             place the object in the alpha memory of each of
-            the teCL_rminal nodes underneath and drive
+            the te_rminal nodes underneath and drive
             the partial matches through the join network.
 
             Insert the instance into the alpha memory
@@ -1164,7 +1164,7 @@ static void CreateObjectAlphaMatch(
          listOfJoins = alphaPtr->header.entryJoin;
          while (listOfJoins != NULL)
            {
-            NetworkCL_Assert(theEnv,theMatch,listOfJoins);
+            Network_Assert(theEnv,theMatch,listOfJoins);
             listOfJoins = listOfJoins->rightMatchNode;
            }
         }
@@ -1179,7 +1179,7 @@ static void CreateObjectAlphaMatch(
   INPUTS       : 1) The actual index of the slot value
                     field currently being examined
                  2) The multifield marker (if any)
-                    for the pattern node being exCL_mained
+                    for the pattern node being ex_mained
                  3) The pattern network test expression
                  4) The pattern node being examined
   RETURNS      : True if the node passes the
@@ -1220,7 +1220,7 @@ static bool CL_EvaluateObjectPatternTest(
      }
 
    /* =========================================================
-      CL_Evaluate or expressions expressed in the foCL_rmat:
+      CL_Evaluate or expressions expressed in the fo_rmat:
          (or <expression 1> <expression 2> ... <expression n>)
        Returns true (1.0) if any of the expression are true,
        otherwise returns false (0.0).
@@ -1246,7 +1246,7 @@ static bool CL_EvaluateObjectPatternTest(
      }
 
    /* ==========================================================
-      CL_Evaluate and expressions expressed in the foCL_rmat:
+      CL_Evaluate and expressions expressed in the fo_rmat:
        (and <expression 1> <expression 2> ... <expression n>)
       Returns false if any of the expression are false,
       otherwise returns true.
@@ -1288,7 +1288,7 @@ static bool CL_EvaluateObjectPatternTest(
   }
 
 /***************************************************
-  NAME         : ObjectCL_AssertAction
+  NAME         : Object_AssertAction
   DESCRIPTION  : Filters an instance through the
                  object pattern network
   INPUTS       : The instance
@@ -1296,7 +1296,7 @@ static bool CL_EvaluateObjectPatternTest(
   SIDE EFFECTS : Instance matched
   NOTES        : None
  ***************************************************/
-static void ObjectCL_AssertAction(
+static void Object_AssertAction(
   Environment *theEnv,
   Instance *ins)
   {
@@ -1327,7 +1327,7 @@ static void ObjectModifyAction(
   SLOT_BITMAP *slotNameIDs)
   {
    ins->patternHeader.timeTag = ObjectReteData(theEnv)->UseEntityTimeTag;
-   ObjectCL_RetractAction(theEnv,ins,slotNameIDs);
+   Object_RetractAction(theEnv,ins,slotNameIDs);
    ObjectReteData(theEnv)->CurrentPatternObject = ins;
    ObjectReteData(theEnv)->CurrentPatternObjectSlot = NULL;
    MarkObjectPatternNetwork(theEnv,slotNameIDs);
@@ -1336,7 +1336,7 @@ static void ObjectModifyAction(
   }
 
 /****************************************************
-  NAME         : ObjectCL_RetractAction
+  NAME         : Object_RetractAction
   DESCRIPTION  : CL_Retracts the instance from the
                  applicable patterns for the object
                  (if the slotNameID != -1, then the
@@ -1348,10 +1348,10 @@ static void ObjectModifyAction(
                     (NULL if the instance is actually
                      being removed)
   RETURNS      : Nothing useful
-  SIDE EFFECTS : CL_Retractions perfoCL_rmed
+  SIDE EFFECTS : CL_Retractions perfo_rmed
   NOTES        : None
  ****************************************************/
-static void ObjectCL_RetractAction(
+static void Object_RetractAction(
   Environment *theEnv,
   Instance *ins,
   SLOT_BITMAP *slotNameIDs)
@@ -1359,7 +1359,7 @@ static void ObjectCL_RetractAction(
    struct patternMatch *prvMatch,*tmpMatch,
                        *deleteMatch,*lastDeleteMatch;
    OBJECT_ALPHA_NODE *alphaPtr;
-   void *saveCL_Dependents;
+   void *save_Dependents;
 
    if (slotNameIDs == NULL)
      {
@@ -1371,7 +1371,7 @@ static void ObjectCL_RetractAction(
             ins->busy--;
             tmpMatch = tmpMatch->next;
            }
-         CL_NetworkCL_Retract(theEnv,(struct patternMatch *) ins->partialMatchList);
+         CL_Network_Retract(theEnv,(struct patternMatch *) ins->partialMatchList);
          ins->partialMatchList = NULL;
         }
      }
@@ -1425,10 +1425,10 @@ static void ObjectCL_RetractAction(
          ============================================= */
       if (deleteMatch != NULL)
         {
-         saveCL_Dependents = ins->patternHeader.dependents;
+         save_Dependents = ins->patternHeader.dependents;
          ins->patternHeader.dependents = NULL;
-         CL_NetworkCL_Retract(theEnv,deleteMatch);
-         ins->patternHeader.dependents = saveCL_Dependents;
+         CL_Network_Retract(theEnv,deleteMatch);
+         ins->patternHeader.dependents = save_Dependents;
         }
      }
    ins->reteSynchronized = true;

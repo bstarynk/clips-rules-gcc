@@ -68,7 +68,7 @@
                                                   struct factPatternNode **,bool,bool);
    static struct factPatternNode    *CreateNewPatternNode(Environment *,struct lhsParseNode *,struct factPatternNode *,
                                                        struct factPatternNode *,bool,bool);
-   static void                       CL_ClearPatternCL_Matches(Environment *,struct factPatternNode *);
+   static void                       CL_ClearPattern_Matches(Environment *,struct factPatternNode *);
    static void                       DetachFactPattern(Environment *,struct patternNodeHeader *);
    static struct patternNodeHeader  *PlaceFactPattern(Environment *,struct lhsParseNode *);
    static struct lhsParseNode       *RemoveUnneededSlots(Environment *,struct lhsParseNode *);
@@ -128,8 +128,8 @@ void CL_InitializeFactPatterns(
    newPtr->copyUserDataFunction = NULL;
 #endif
 
-   newPtr->markIRPatternFunction = MarkFactPatternForCL_IncrementalCL_Reset;
-   newPtr->incrementalCL_ResetFunction = CL_FactsCL_IncrementalCL_Reset;
+   newPtr->markIRPatternFunction = MarkFactPatternForCL_Incremental_Reset;
+   newPtr->incremental_ResetFunction = CL_FactsCL_Incremental_Reset;
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
 #if CONSTRUCT_COMPILER
@@ -263,7 +263,7 @@ static struct patternNodeHeader *PlaceFactPattern(
         }
 
       /*============================================*/
-      /* DeteCL_rmine if the last pattern field within */
+      /* Dete_rmine if the last pattern field within */
       /* a multifield slot is being processed.      */
       /*============================================*/
 
@@ -522,12 +522,12 @@ static struct lhsParseNode *RemoveUnneededSlots(
         {
          /*=======================================================*/
          /* Add an expression to the first pattern restriction in */
-         /* the multifield slot that deteCL_rmines whether or not    */
+         /* the multifield slot that dete_rmines whether or not    */
          /* the fact's slot value contains the minimum number of  */
          /* required fields to satisfy the pattern restrictions   */
          /* for this slot. The length check is place before any   */
          /* other tests, so that preceeding checks do not have to */
-         /* deteCL_rmine if there are enough fields in the slot to   */
+         /* dete_rmine if there are enough fields in the slot to   */
          /* safely retrieve a value.                              */
          /*=======================================================*/
 
@@ -743,7 +743,7 @@ static void DetachFactPattern(
    /*=====================================================*/
 
    patternPtr = (struct factPatternNode *) thePattern;
-   CL_ClearPatternCL_Matches(theEnv,patternPtr);
+   CL_ClearPattern_Matches(theEnv,patternPtr);
 
    /*=======================================================*/
    /* If there are no joins entered from this pattern, then */
@@ -953,13 +953,13 @@ static void FindAndSetDeftemplatePatternNetwork(
   }
 
 /***************************************************************/
-/* CL_ClearPatternCL_Matches: CL_Clears the fact list of all pointers   */
+/* CL_ClearPattern_Matches: CL_Clears the fact list of all pointers   */
 /*   which point to a specific pattern.  The pointers are used */
 /*   to remember which patterns were matched by a fact to      */
 /*   make retraction easier.  When a rule is excised, the      */
 /*   pointers need to be removed.                              */
 /***************************************************************/
-static void CL_ClearPatternCL_Matches(
+static void CL_ClearPattern_Matches(
   Environment *theEnv,
   struct factPatternNode *patternPtr)
   {

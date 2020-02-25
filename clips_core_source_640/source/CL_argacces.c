@@ -38,11 +38,11 @@
 /*            dependents functions are given a retracted     */
 /*            fact.                                          */
 /*                                                           */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*      6.40: Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to CL_GetCL_HaltExecution and       */
-/*            SetCL_HaltExecution functions.                    */
+/*            Added Env prefix to CL_Get_HaltExecution and       */
+/*            Set_HaltExecution functions.                    */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -77,7 +77,7 @@
 
 /*********************************************************************/
 /* CL_GetLogicalName: Retrieves the nth argument passed to the function */
-/*   call currently being evaluated and deteCL_rmines if it is a valid  */
+/*   call currently being evaluated and dete_rmines if it is a valid  */
 /*   logical name. If valid, the logical name is returned, otherwise */
 /*   NULL is returned.                                               */
 /*********************************************************************/
@@ -115,7 +115,7 @@ const char *CL_GetLogicalName(
 
 /************************************************************/
 /* CL_GetFileName: Retrieves the nth argument passed to the    */
-/*   function call currently being evaluated and deteCL_rmines */
+/*   function call currently being evaluated and dete_rmines */
 /*   if it is a valid file name. If valid, the file name is */
 /*   returned, otherwise NULL is returned.                  */
 /************************************************************/
@@ -148,7 +148,7 @@ void CL_OpenErrorMessage(
 
 /************************************************************/
 /* CL_GetModuleName: Retrieves the nth argument passed to the  */
-/*   function call currently being evaluated and deteCL_rmines */
+/*   function call currently being evaluated and dete_rmines */
 /*   if it is a valid module name. If valid, the module     */
 /*   name is returned or NULL is returned to indicate all   */
 /*   modules.                                               */
@@ -199,7 +199,7 @@ Defmodule *CL_GetModuleName(
 
 /****************************************************************/
 /* CL_GetConstructName: Retrieves the 1st argument passed to the   */
-/*   function call currently being evaluated and deteCL_rmines if  */
+/*   function call currently being evaluated and dete_rmines if  */
 /*   it is a valid name for a construct. Also checks that the   */
 /*   function is only passed a single argument. This routine    */
 /*   is used by functions such as ppdeftemplate, undefrule,     */
@@ -281,14 +281,14 @@ bool CL_CheckFunctionArgCount(
    functionName = func->callFunctionName->contents;
 
    /*===========================================*/
-   /* DeteCL_rmine the minimum number of arguments */
+   /* Dete_rmine the minimum number of arguments */
    /* required by the function.                 */
    /*===========================================*/
 
    minArguments = func->minArgs;
 
    /*===========================================*/
-   /* DeteCL_rmine the maximum number of arguments */
+   /* Dete_rmine the maximum number of arguments */
    /* required by the function.                 */
    /*===========================================*/
 
@@ -312,7 +312,7 @@ bool CL_CheckFunctionArgCount(
       if (argumentCount != minArguments)
         {
          CL_ExpectedCountError(theEnv,functionName,EXACTLY,minArguments);
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          return false;
         }
       return true;
@@ -326,7 +326,7 @@ bool CL_CheckFunctionArgCount(
    if (argumentCount < minArguments)
      {
       CL_ExpectedCountError(theEnv,functionName,AT_LEAST,minArguments);
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return false;
      }
 
@@ -338,7 +338,7 @@ bool CL_CheckFunctionArgCount(
    if ((maxArguments != UNBOUNDED) && (argumentCount > maxArguments))
      {
       CL_ExpectedCountError(theEnv,functionName,NO_MORE_THAN,maxArguments);
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return false;
      }
 
@@ -434,7 +434,7 @@ void *CL_GetFactOrInstanceArgument(
      {
       if (item->factValue->garbage)
         {
-         CL_FactCL_RetractedErrorMessage(theEnv,item->factValue);
+         CL_Fact_RetractedErrorMessage(theEnv,item->factValue);
          return NULL;
         }
         

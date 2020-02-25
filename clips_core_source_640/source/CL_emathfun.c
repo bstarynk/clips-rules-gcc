@@ -36,11 +36,11 @@
 /*                                                           */
 /*      6.31: Fix for overflow error in div function.        */
 /*                                                           */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*      6.40: Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to CL_GetCL_HaltExecution and       */
-/*            SetCL_HaltExecution functions.                    */
+/*            Added Env prefix to CL_Get_HaltExecution and       */
+/*            Set_HaltExecution functions.                    */
 /*                                                           */
 /*            Added support for booleans with <stdbool.h>.   */
 /*                                                           */
@@ -89,7 +89,7 @@
 
    static bool                    SingleNumberCheck(UDFContext *,UDFValue *);
    static bool                    TestProximity(double,double);
-   static void                    DoCL_mainErrorMessage(UDFContext *,UDFValue *);
+   static void                    Do_mainErrorMessage(UDFContext *,UDFValue *);
    static void                    ArgumentOverflowErrorMessage(UDFContext *,UDFValue *);
    static void                    SingularityErrorMessage(UDFContext *,UDFValue *);
    static double                  genacosh(double);
@@ -186,11 +186,11 @@ static bool TestProximity(
   }
 
 /********************************************************/
-/* DoCL_mainErrorMessage: Generic error message used when  */
-/*   a doCL_main error is detected during a call to one of */
+/* Do_mainErrorMessage: Generic error message used when  */
+/*   a do_main error is detected during a call to one of */
 /*   the extended math functions.                       */
 /********************************************************/
-static void DoCL_mainErrorMessage(
+static void Do_mainErrorMessage(
   UDFContext *context,
   UDFValue *returnValue)
   {
@@ -198,11 +198,11 @@ static void DoCL_mainErrorMessage(
 
    CL_SetErrorValue(theEnv,&CL_CreateSymbol(theEnv,"DOMAIN_ERROR")->header);
    CL_PrintErrorID(theEnv,"EMATHFUN",1,false);
-   CL_WriteString(theEnv,STDERR,"DoCL_main error for '");
+   CL_WriteString(theEnv,STDERR,"Do_main error for '");
    CL_WriteString(theEnv,STDERR,CL_UDFContextFunctionName(context));
    CL_WriteString(theEnv,STDERR,"' function.\n");
-   SetCL_HaltExecution(theEnv,true);
-   SetCL_EvaluationError(theEnv,true);
+   Set_HaltExecution(theEnv,true);
+   Set_EvaluationError(theEnv,true);
    returnValue->floatValue = CL_CreateFloat(theEnv,0.0);
   }
 
@@ -222,8 +222,8 @@ static void ArgumentOverflowErrorMessage(
    CL_WriteString(theEnv,STDERR,"Argument overflow for '");
    CL_WriteString(theEnv,STDERR,CL_UDFContextFunctionName(context));
    CL_WriteString(theEnv,STDERR,"' function.\n");
-   SetCL_HaltExecution(theEnv,true);
-   SetCL_EvaluationError(theEnv,true);
+   Set_HaltExecution(theEnv,true);
+   Set_EvaluationError(theEnv,true);
    returnValue->floatValue = CL_CreateFloat(theEnv,0.0);
   }
 
@@ -243,8 +243,8 @@ static void SingularityErrorMessage(
    CL_WriteString(theEnv,STDERR,"Singularity at asymptote in '");
    CL_WriteString(theEnv,STDERR,CL_UDFContextFunctionName(context));
    CL_WriteString(theEnv,STDERR,"' function.\n");
-   SetCL_HaltExecution(theEnv,true);
-   SetCL_EvaluationError(theEnv,true);
+   Set_HaltExecution(theEnv,true);
+   Set_EvaluationError(theEnv,true);
    returnValue->floatValue = CL_CreateFloat(theEnv,0.0);
   }
 
@@ -402,7 +402,7 @@ void CL_AcosFunction(
 
    if ((num > 1.0) || (num < -1.0))
      {
-      DoCL_mainErrorMessage(context,returnValue);
+      Do_mainErrorMessage(context,returnValue);
       return;
      }
 
@@ -428,7 +428,7 @@ void CL_AsinFunction(
    num = CVCoerceToFloat(returnValue);
    if ((num > 1.0) || (num < -1.0))
      {
-      DoCL_mainErrorMessage(context,returnValue);
+      Do_mainErrorMessage(context,returnValue);
       return;
      }
 
@@ -469,7 +469,7 @@ void CL_AsecFunction(
    num = CVCoerceToFloat(returnValue);
    if ((num < 1.0) && (num > -1.0))
      {
-      DoCL_mainErrorMessage(context,returnValue);
+      Do_mainErrorMessage(context,returnValue);
       return;
      }
 
@@ -496,7 +496,7 @@ void CL_AcscFunction(
    num = CVCoerceToFloat(returnValue);
    if ((num < 1.0) && (num > -1.0))
      {
-      DoCL_mainErrorMessage(context,returnValue);
+      Do_mainErrorMessage(context,returnValue);
       return;
      }
 
@@ -670,7 +670,7 @@ void CL_AcoshFunction(
    num = CVCoerceToFloat(returnValue);
    if (num < 1.0)
      {
-      DoCL_mainErrorMessage(context,returnValue);
+      Do_mainErrorMessage(context,returnValue);
       return;
      }
 
@@ -711,7 +711,7 @@ void CL_AtanhFunction(
    num = CVCoerceToFloat(returnValue);
    if ((num >= 1.0) || (num <= -1.0))
      {
-      DoCL_mainErrorMessage(context,returnValue);
+      Do_mainErrorMessage(context,returnValue);
       return;
      }
 
@@ -737,7 +737,7 @@ void CL_AsechFunction(
    num = CVCoerceToFloat(returnValue);
    if ((num > 1.0) || (num <= 0.0))
      {
-      DoCL_mainErrorMessage(context,returnValue);
+      Do_mainErrorMessage(context,returnValue);
       return;
      }
 
@@ -763,7 +763,7 @@ void CL_AcschFunction(
    num = CVCoerceToFloat(returnValue);
    if (num == 0.0)
      {
-      DoCL_mainErrorMessage(context,returnValue);
+      Do_mainErrorMessage(context,returnValue);
       return;
      }
 
@@ -789,7 +789,7 @@ void CL_AcothFunction(
    num = CVCoerceToFloat(returnValue);
    if ((num <= 1.0) && (num >= -1.0))
      {
-      DoCL_mainErrorMessage(context,returnValue);
+      Do_mainErrorMessage(context,returnValue);
       return;
      }
 
@@ -830,7 +830,7 @@ void CL_LogFunction(
    num = CVCoerceToFloat(returnValue);
    if (num < 0.0)
      {
-      DoCL_mainErrorMessage(context,returnValue);
+      Do_mainErrorMessage(context,returnValue);
       return;
      }
    else if (num == 0.0)
@@ -861,7 +861,7 @@ void CL_Log10Function(
    num = CVCoerceToFloat(returnValue);
    if (num < 0.0)
      {
-      DoCL_mainErrorMessage(context,returnValue);
+      Do_mainErrorMessage(context,returnValue);
       return;
      }
    else if (num == 0.0)
@@ -892,7 +892,7 @@ void CL_SqrtFunction(
    num = CVCoerceToFloat(returnValue);
    if (num < 0.00000)
      {
-      DoCL_mainErrorMessage(context,returnValue);
+      Do_mainErrorMessage(context,returnValue);
       return;
      }
 
@@ -924,7 +924,7 @@ void CL_PowFunction(
      { return; }
 
     /*=====================*/
-    /* DoCL_main error check. */
+    /* Do_main error check. */
     /*=====================*/
 
     num1 = CVCoerceToFloat(&value1);
@@ -933,7 +933,7 @@ void CL_PowFunction(
     if (((num1 == 0.0) && (num2 <= 0.0)) ||
        ((num1 < 0.0) && (dtrunc(num2) != num2)))
      {
-      DoCL_mainErrorMessage(context,returnValue);
+      Do_mainErrorMessage(context,returnValue);
       return;
      }
 
@@ -975,7 +975,7 @@ void CL_ModFunction(
        (CVIsType(&item2,FLOAT_BIT) ? (item2.floatValue->contents == 0.0) : false))
      {
       CL_DivideByZeroErrorMessage(theEnv,"mod");
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       returnValue->integerValue = CL_CreateInteger(theEnv,0);
       return;
      }
@@ -998,7 +998,7 @@ void CL_ModFunction(
       if ((lnum1 == LLONG_MIN) && (lnum2 == -1))
         {
          CL_ArgumentOverUnderflowErrorMessage(theEnv,"mod",true);
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          returnValue->integerValue = CL_CreateInteger(theEnv,0);
          return;
         }

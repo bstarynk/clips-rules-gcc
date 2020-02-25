@@ -101,7 +101,7 @@
    void                           CL_OperatingSystemFunction(Environment *,UDFContext *,UDFValue *);
    void                           CL_ExpandFuncCall(Environment *,UDFContext *,UDFValue *);
    void                           CL_DummyExpandFuncMultifield(Environment *,UDFContext *,UDFValue *);
-   void                           CL_CauseCL_EvaluationError(Environment *,UDFContext *,UDFValue *);
+   void                           CL_Cause_EvaluationError(Environment *,UDFContext *,UDFValue *);
    void                           CL_SetSORCommand(Environment *,UDFContext *,UDFValue *);
    void                           CL_GetSORCommand(Environment *,UDFContext *,UDFValue *);
    void                           CL_GetFunctionRestrictions(Environment *,UDFContext *,UDFValue *);
@@ -114,8 +114,8 @@
    void                           CL_TimerFunction(Environment *,UDFContext *,UDFValue *);
    void                           CL_TimeFunction(Environment *,UDFContext *,UDFValue *);
    void                           CL_SystemCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_LocalCL_TimeFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_GMCL_TimeFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_Local_TimeFunction(Environment *,UDFContext *,UDFValue *);
+   void                           CL_GM_TimeFunction(Environment *,UDFContext *,UDFValue *);
    void                           CL_GetErrorFunction(Environment *,UDFContext *,UDFValue *);
    void                           CL_ClearErrorValue(Environment *);
    void                           CL_ClearErrorFunction(Environment *,UDFContext *,UDFValue *);

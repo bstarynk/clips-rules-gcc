@@ -7,7 +7,7 @@
    /*******************************************************/
 
 /**************************************************************/
-/* Purpose: Class InfoCL_rmation Interface Support Routines      */
+/* Purpose: Class Info_rmation Interface Support Routines      */
 /*                                                            */
 /* Principal Programmer(s):                                   */
 /*      Brian L. Dantes                                       */
@@ -39,8 +39,8 @@
 /*                                                            */
 /*            Converted API macros to function calls.         */
 /*                                                            */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*      6.40: Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -93,7 +93,7 @@
 
 /*********************************************************************
   NAME         : CL_ClassAbstractPCommand
-  DESCRIPTION  : DeteCL_rmines if direct instances of a class can be made
+  DESCRIPTION  : Dete_rmines if direct instances of a class can be made
   INPUTS       : None
   RETURNS      : True (1) if class is abstract, false (0) if concrete
   SIDE EFFECTS : None
@@ -125,7 +125,7 @@ void CL_ClassAbstractPCommand(
 
 /*****************************************************************
   NAME         : CL_ClassReactivePCommand
-  DESCRIPTION  : DeteCL_rmines if instances of a class can match rule
+  DESCRIPTION  : Dete_rmines if instances of a class can match rule
                  patterns
   INPUTS       : None
   RETURNS      : True (1) if class is reactive, false (0)
@@ -202,7 +202,7 @@ Defclass *CL_ClassInfoFnxArgs(
       else
         {
          CL_SyntaxErrorMessage(theEnv,fnx);
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          return NULL;
         }
      }
@@ -336,7 +336,7 @@ void CL_GetDefmessageHandlersListCmd(
   }
 
 /*********************************
- Slot InfoCL_rmation Access Functions
+ Slot Info_rmation Access Functions
  *********************************/
 void CL_SlotFacetsCommand(
   Environment *theEnv,
@@ -396,7 +396,7 @@ void CL_SlotCardinalityCommand(
 
 /********************************************************************
   NAME         : CL_ClassAbstractP
-  DESCRIPTION  : DeteCL_rmines if a class is abstract or not
+  DESCRIPTION  : Dete_rmines if a class is abstract or not
   INPUTS       : Generic pointer to class
   RETURNS      : 1 if class is abstract, 0 otherwise
   SIDE EFFECTS : None
@@ -412,7 +412,7 @@ bool CL_ClassAbstractP(
 
 /********************************************************************
   NAME         : CL_ClassReactiveP
-  DESCRIPTION  : DeteCL_rmines if a class is reactive or not
+  DESCRIPTION  : Dete_rmines if a class is reactive or not
   INPUTS       : Generic pointer to class
   RETURNS      : 1 if class is reactive, 0 otherwise
   SIDE EFFECTS : None
@@ -538,7 +538,7 @@ void CL_GetDefmessageHandlerList(
 
          for (j = 0 ; j < supcls->handlerCount ; j++)
            {
-            returnValue->multifieldValue->contents[i++].value = GetCL_DefclassNamePointer(supcls);
+            returnValue->multifieldValue->contents[i++].value = Get_DefclassNamePointer(supcls);
             returnValue->multifieldValue->contents[i++].value = supcls->handlers[j].header.name;
             returnValue->multifieldValue->contents[i++].value = CL_CreateSymbol(theEnv,MessageHandlerData(theEnv)->hndquals[supcls->handlers[j].type]);
            }
@@ -591,7 +591,7 @@ void CL_ClassSuperclasses(
 
    for (i = offset, j = 0 ; i < plinks->classCount; i++, j++)
      {
-      returnValue->multifieldValue->contents[j].value = GetCL_DefclassNamePointer(plinks->classArray[i]);
+      returnValue->multifieldValue->contents[j].value = Get_DefclassNamePointer(plinks->classArray[i]);
      }
   }
 
@@ -677,7 +677,7 @@ void CL_ClassSubclassAddresses(
    CL_ReleaseTraversalID(theEnv);
   }
 /**************************************************************************
-  NAME         : Slot...  Slot infoCL_rmation access functions
+  NAME         : Slot...  Slot info_rmation access functions
   DESCRIPTION  : Groups the sources/facets/types/allowed-values/range or
                    cardinality  of a slot for a class into a multifield
                    value for dynamic perusal
@@ -704,7 +704,7 @@ bool CL_SlotFacets(
 
    if ((sp = SlotInfoSlot(theEnv,&result,theDefclass,sname,"slot-facets")) == NULL)
      {
-      CL_NoCL_rmalizeMultifield(theEnv,&result);
+      CL_No_rmalizeMultifield(theEnv,&result);
       returnValue->value = result.value;
       return false;
      }
@@ -737,7 +737,7 @@ bool CL_SlotFacets(
 
    if (sp->initializeOnly)
      returnValue->multifieldValue->contents[3].lexemeValue = CL_CreateSymbol(theEnv,"INT");
-   else if (sp->noCL_Write)
+   else if (sp->no_Write)
      returnValue->multifieldValue->contents[3].lexemeValue = CL_CreateSymbol(theEnv,"R");
    else
      returnValue->multifieldValue->contents[3].lexemeValue = CL_CreateSymbol(theEnv,"RW");
@@ -764,7 +764,7 @@ bool CL_SlotFacets(
      returnValue->multifieldValue->contents[7].lexemeValue = CL_CreateSymbol(theEnv,"PRV");
 
    returnValue->multifieldValue->contents[8].lexemeValue = CL_CreateSymbol(theEnv,CL_GetCreateAccessorString(sp));
-   returnValue->multifieldValue->contents[9].lexemeValue = (sp->noCL_Write ? CL_CreateSymbol(theEnv,"NIL") : sp->overrideMessage);
+   returnValue->multifieldValue->contents[9].lexemeValue = (sp->no_Write ? CL_CreateSymbol(theEnv,"NIL") : sp->overrideMessage);
 #else
    if (sp->composite)
      returnValue->multifieldValue->contents[5].lexemeValue = CL_CreateSymbol(theEnv,"CMP");
@@ -777,7 +777,7 @@ bool CL_SlotFacets(
      returnValue->multifieldValue->contents[6].lexemeValue = CL_CreateSymbol(theEnv,"PRV");
 
    returnValue->multifieldValue->contents[7].lexemeValue = CL_CreateSymbol(theEnv,CL_GetCreateAccessorString(sp));
-   returnValue->multifieldValue->contents[8].lexemeValue = (sp->noCL_Write ? CL_CreateSymbol(theEnv,"NIL") : sp->overrideMessage);
+   returnValue->multifieldValue->contents[8].lexemeValue = (sp->no_Write ? CL_CreateSymbol(theEnv,"NIL") : sp->overrideMessage);
 #endif
 
    return true;
@@ -801,7 +801,7 @@ bool CL_SlotSources(
 
    if ((sp = SlotInfoSlot(theEnv,&result,theDefclass,sname,"slot-sources")) == NULL)
      {
-      CL_NoCL_rmalizeMultifield(theEnv,&result);
+      CL_No_rmalizeMultifield(theEnv,&result);
       returnValue->value = result.value;
       return false;
      }
@@ -831,7 +831,7 @@ bool CL_SlotSources(
    returnValue->value = CL_CreateMultifield(theEnv,i);
    for (ctmp = ctop , i = 0 ; ctmp != NULL ; ctmp = ctmp->nxt , i++)
      {
-      returnValue->multifieldValue->contents[i].value = GetCL_DefclassNamePointer(ctmp->cls);
+      returnValue->multifieldValue->contents[i].value = Get_DefclassNamePointer(ctmp->cls);
      }
    CL_DeleteClassLinks(theEnv,ctop);
    
@@ -855,7 +855,7 @@ bool CL_SlotTypes(
    
    if ((sp = SlotInfoSlot(theEnv,&result,theDefclass,sname,"slot-types")) == NULL)
      {
-      CL_NoCL_rmalizeMultifield(theEnv,&result);
+      CL_No_rmalizeMultifield(theEnv,&result);
       returnValue->value = result.value;
       return false;
      }
@@ -920,7 +920,7 @@ bool CL_SlotTypes(
       if (TestBitMap(typemap,j))
        {
         returnValue->multifieldValue->contents[i].value =
-                   GetCL_DefclassNamePointer(DefclassData(theEnv)->PrimitiveClassMap[j]);
+                   Get_DefclassNamePointer(DefclassData(theEnv)->PrimitiveClassMap[j]);
         i++;
        }
       j++;
@@ -945,7 +945,7 @@ bool CL_SlotAllowedValues(
 
    if ((sp = SlotInfoSlot(theEnv,&result,theDefclass,sname,"slot-allowed-values")) == NULL)
      {
-      CL_NoCL_rmalizeMultifield(theEnv,&result);
+      CL_No_rmalizeMultifield(theEnv,&result);
       returnValue->value = result.value;
       return false;
      }
@@ -985,7 +985,7 @@ bool CL_SlotAllowedClasses(
 
    if ((sp = SlotInfoSlot(theEnv,&result,theDefclass,sname,"slot-allowed-classes")) == NULL)
      {
-      CL_NoCL_rmalizeMultifield(theEnv,&result);
+      CL_No_rmalizeMultifield(theEnv,&result);
       returnValue->value = result.value;
       return false;
      }
@@ -1021,7 +1021,7 @@ bool CL_SlotRange(
 
    if ((sp = SlotInfoSlot(theEnv,&result,theDefclass,sname,"slot-range")) == NULL)
      {
-      CL_NoCL_rmalizeMultifield(theEnv,&result);
+      CL_No_rmalizeMultifield(theEnv,&result);
       returnValue->value = result.value;
       return false;
      }
@@ -1054,7 +1054,7 @@ bool CL_SlotCardinality(
      
    if ((sp = SlotInfoSlot(theEnv,&result,theDefclass,sname,"slot-cardinality")) == NULL)
      {
-      CL_NoCL_rmalizeMultifield(theEnv,&result);
+      CL_No_rmalizeMultifield(theEnv,&result);
       returnValue->value = result.value;
       return false;
      }
@@ -1183,7 +1183,7 @@ static unsigned StoreSubclasses(
          SetTraversalID(subcls->traversalRecord,tvid);
          if (storeName)
            {
-            mfval->contents[i++].value = GetCL_DefclassNamePointer(subcls);
+            mfval->contents[i++].value = Get_DefclassNamePointer(subcls);
            }
          else
            {
@@ -1223,7 +1223,7 @@ static SlotDescriptor *SlotInfoSlot(
 
    if ((ssym = CL_FindSymbolHN(theEnv,sname,SYMBOL_BIT)) == NULL)
      {
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       CL_SetMultifieldErrorValue(theEnv,returnValue);
       return NULL;
      }
@@ -1232,7 +1232,7 @@ static SlotDescriptor *SlotInfoSlot(
    if (i == -1)
      {
       CL_SlotExistError(theEnv,sname,fnxname);
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       CL_SetMultifieldErrorValue(theEnv,returnValue);
       return NULL;
      }

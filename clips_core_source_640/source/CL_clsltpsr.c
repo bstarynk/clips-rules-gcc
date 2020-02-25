@@ -134,7 +134,7 @@
    static void                    CL_BuildCompositeFacets(Environment *,SlotDescriptor *,PACKED_CLASS_LINKS *,const char *,
                                                        CONSTRAINT_PARSE_RECORD *);
    static bool                    CheckForFacetConflicts(Environment *,SlotDescriptor *,CONSTRAINT_PARSE_RECORD *);
-   static bool                    CL_EvaluateCL_SlotDefaultValue(Environment *,SlotDescriptor *,const char *);
+   static bool                    CL_Evaluate_SlotDefaultValue(Environment *,SlotDescriptor *,const char *);
 
 /* =========================================
    *****************************************
@@ -249,7 +249,7 @@ TEMP_SLOT_LINK *CL_ParseSlot(
          if (rtnCode == -1)
            goto CL_ParseSlotError;
          else if (rtnCode == 1)
-           slot->noCL_Write = 1;
+           slot->no_Write = 1;
          else if (rtnCode == 2)
            slot->initializeOnly = 1;
         }
@@ -306,7 +306,7 @@ TEMP_SLOT_LINK *CL_ParseSlot(
          if ((rtnCode == 0) || (rtnCode == 2))
            slot->createReadAccessor = true;
          if ((rtnCode == 1) || (rtnCode == 2))
-           slot->createCL_WriteAccessor = true;
+           slot->create_WriteAccessor = true;
         }
       else if (strcmp(DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents,OVERRIDE_MSG_FACET) == 0)
         {
@@ -324,7 +324,7 @@ TEMP_SLOT_LINK *CL_ParseSlot(
         }
       else if (CL_StandardConstraint(DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents))
         {
-         if (CL_ParseCL_StandardConstraint(theEnv,readSource,DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents,
+         if (CL_Parse_StandardConstraint(theEnv,readSource,DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents,
                 slot->constraint,&parsedConstraint,true) == false)
            goto CL_ParseSlotError;
         }
@@ -347,8 +347,8 @@ TEMP_SLOT_LINK *CL_ParseSlot(
         {
          slot->createReadAccessor = true;
 
-         if (! slot->noCL_Write)
-           { slot->createCL_WriteAccessor = true; }
+         if (! slot->no_Write)
+           { slot->create_WriteAccessor = true; }
         }
      }
 
@@ -358,9 +358,9 @@ TEMP_SLOT_LINK *CL_ParseSlot(
      goto CL_ParseSlotError;
    if (CL_CheckConstraintParseConflicts(theEnv,slot->constraint) == false)
      goto CL_ParseSlotError;
-   if (CL_EvaluateCL_SlotDefaultValue(theEnv,slot,specbits) == false)
+   if (CL_Evaluate_SlotDefaultValue(theEnv,slot,specbits) == false)
      goto CL_ParseSlotError;
-   if ((slot->dynamicDefault == 0) && (slot->noCL_Write == 1) &&
+   if ((slot->dynamicDefault == 0) && (slot->no_Write == 1) &&
        (slot->initializeOnly == 0))
      slot->shared = 1;
    slot->constraint = CL_AddConstraint(theEnv,slot->constraint);
@@ -422,7 +422,7 @@ void CL_DeleteSlots(
   INPUTS       : The symbolic name of the new slot
   RETURNS      : The address of the new slot
   SIDE EFFECTS : None
-  NOTES        : Also adds symbols of the foCL_rm get-<name> and
+  NOTES        : Also adds symbols of the fo_rm get-<name> and
                    put-<name> for slot accessors
  **************************************************************/
 static SlotDescriptor *NewSlot(
@@ -439,7 +439,7 @@ static SlotDescriptor *NewSlot(
    slot->reactive = 1;
 #endif
    slot->noInherit = 0;
-   slot->noCL_Write = 0;
+   slot->no_Write = 0;
    slot->initializeOnly = 0;
    slot->shared = 0;
    slot->multiple = 0;
@@ -447,7 +447,7 @@ static SlotDescriptor *NewSlot(
    slot->sharedCount = 0;
    slot->publicVisibility = 0;
    slot->createReadAccessor = false;
-   slot->createCL_WriteAccessor = false;
+   slot->create_WriteAccessor = false;
    slot->overrideMessageSpecified = 0;
    slot->cls = NULL;
    slot->defaultValue = NULL;
@@ -683,7 +683,7 @@ static bool CL_ParseDefaultFacet(
                    by the most specific class to be obtained from other
                    classes.
 
-                 Since all superclasses are predeteCL_rmined before creating
+                 Since all superclasses are predete_rmined before creating
                    a new class based on them, this routine need only
                    examine the immediately next most specific class for
                    extra facets.  Even if that slot is also composite, the
@@ -743,7 +743,7 @@ static void CL_BuildCompositeFacets(
         sd->shared = compslot->shared;
       if (! TestBitMap(specbits,ACCESS_BIT))
         {
-         sd->noCL_Write = compslot->noCL_Write;
+         sd->no_Write = compslot->no_Write;
          sd->initializeOnly = compslot->initializeOnly;
         }
 #if DEFRULE_CONSTRUCT
@@ -755,7 +755,7 @@ static void CL_BuildCompositeFacets(
       if (! TestBitMap(specbits,CREATE_ACCESSOR_BIT))
         {
          sd->createReadAccessor = compslot->createReadAccessor;
-         sd->createCL_WriteAccessor = compslot->createCL_WriteAccessor;
+         sd->create_WriteAccessor = compslot->create_WriteAccessor;
         }
       if ((! TestBitMap(specbits,OVERRIDE_MSG_BIT)) &&
           compslot->overrideMessageSpecified)
@@ -771,7 +771,7 @@ static void CL_BuildCompositeFacets(
 
 /***************************************************
   NAME         : CheckForFacetConflicts
-  DESCRIPTION  : DeteCL_rmines if all facets specified
+  DESCRIPTION  : Dete_rmines if all facets specified
                  (and inherited) for a slot are
                  consistent
   INPUTS       : 1) The slot descriptor
@@ -804,13 +804,13 @@ static bool CheckForFacetConflicts(
          sd->constraint->maxFields = CL_GenConstant(theEnv,INTEGER_TYPE,CL_CreateInteger(theEnv,1LL));
         }
      }
-   if (sd->noDefault && sd->noCL_Write)
+   if (sd->noDefault && sd->no_Write)
      {
       CL_PrintErrorID(theEnv,"CLSLTPSR",4,true);
       CL_WriteString(theEnv,STDERR,"Slots with an 'access' facet value of 'read-only' must have a default value.\n");
       return false;
      }
-   if (sd->noCL_Write && (sd->createCL_WriteAccessor || sd->overrideMessageSpecified))
+   if (sd->no_Write && (sd->create_WriteAccessor || sd->overrideMessageSpecified))
      {
       CL_PrintErrorID(theEnv,"CLSLTPSR",5,true);
       CL_WriteString(theEnv,STDERR,"Slots with an 'access' facet value of 'read-only' cannot have a write accessor.\n");
@@ -826,7 +826,7 @@ static bool CheckForFacetConflicts(
   }
 
 /********************************************************************
-  NAME         : CL_EvaluateCL_SlotDefaultValue
+  NAME         : CL_Evaluate_SlotDefaultValue
   DESCRIPTION  : Checks the default value against the slot
                  constraints and evaluates static default values
   INPUTS       : 1) The slot descriptor
@@ -838,7 +838,7 @@ static bool CheckForFacetConflicts(
   NOTES        : On errors, slot is marked as dynamix so that
                  CL_DeleteSlots() will erase the slot expression
  ********************************************************************/
-static bool CL_EvaluateCL_SlotDefaultValue(
+static bool CL_Evaluate_SlotDefaultValue(
   Environment *theEnv,
   SlotDescriptor *sd,
   const char *specbits)
@@ -864,14 +864,14 @@ static bool CL_EvaluateCL_SlotDefaultValue(
       if (TestBitMap(specbits,DEFAULT_BIT))
         {
          oldce = CL_ExecutingConstruct(theEnv);
-         SetCL_ExecutingConstruct(theEnv,true);
+         Set_ExecutingConstruct(theEnv,true);
          olddcc = CL_SetDynamicConstraintChecking(theEnv,true);
          vPass = CL_EvaluateAndStoreInDataObject(theEnv,sd->multiple,
                   (Expression *) sd->defaultValue,&temp,true);
          if (vPass != false)
            vPass = (CL_ValidSlotValue(theEnv,&temp,sd,NULL,"the 'default' facet") == PSE_NO_ERROR);
          CL_SetDynamicConstraintChecking(theEnv,olddcc);
-         SetCL_ExecutingConstruct(theEnv,oldce);
+         Set_ExecutingConstruct(theEnv,oldce);
          if (vPass)
            {
             CL_ExpressionDeinstall(theEnv,(Expression *) sd->defaultValue);

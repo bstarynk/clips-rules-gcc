@@ -104,7 +104,7 @@ bool CL_ParseDeftemplate(
    struct token inputToken;
 
    /*================================================*/
-   /* Initialize pretty print and error infoCL_rmation. */
+   /* Initialize pretty print and error info_rmation. */
    /*================================================*/
 
    DeftemplateData(theEnv)->DeftemplateError = false;
@@ -119,7 +119,7 @@ bool CL_ParseDeftemplate(
 #if BLOAD || BLOAD_AND_BSAVE
    if ((CL_Bloaded(theEnv) == true) && (! ConstructData(theEnv)->CL_CheckSyntaxMode))
      {
-      CannotCL_LoadWithCL_BloadMessage(theEnv,"deftemplate");
+      Cannot_LoadWith_BloadMessage(theEnv,"deftemplate");
       return true;
      }
 #endif
@@ -186,7 +186,7 @@ bool CL_ParseDeftemplate(
                                         CL_GetModuleItem(theEnv,NULL,DeftemplateData(theEnv)->CL_DeftemplateModuleIndex);
 
    /*================================*/
-   /* DeteCL_rmine the number of slots. */
+   /* Dete_rmine the number of slots. */
    /*================================*/
 
    while (slots != NULL)
@@ -200,9 +200,9 @@ bool CL_ParseDeftemplate(
    /*====================================*/
 
    if (CL_GetConserveMemory(theEnv) == true)
-     { newDeftemplate->header.ppFoCL_rm = NULL; }
+     { newDeftemplate->header.ppFo_rm = NULL; }
    else
-     { newDeftemplate->header.ppFoCL_rm = CL_CopyPPBuffer(theEnv); }
+     { newDeftemplate->header.ppFo_rm = CL_CopyPPBuffer(theEnv); }
 
    /*=======================================================================*/
    /* If a template is redefined, then we want to restore its watch status. */
@@ -210,8 +210,8 @@ bool CL_ParseDeftemplate(
 
 #if DEBUGGING_FUNCTIONS
    if ((BitwiseTest(DeftemplateData(theEnv)->DeletedTemplateDebugFlags,0)) ||
-       (CL_GetCL_WatchItem(theEnv,"facts") == 1))
-     { CL_DeftemplateSetCL_Watch(newDeftemplate,true); }
+       (CL_Get_WatchItem(theEnv,"facts") == 1))
+     { CL_DeftemplateSet_Watch(newDeftemplate,true); }
 #endif
 
    /*==============================================*/
@@ -333,7 +333,7 @@ static struct templateSlot *SlotDeclarations(
         {
          CL_PPBackup(theEnv);
          CL_SavePPBuffer(theEnv,"\n   ");
-         CL_SavePPBuffer(theEnv,inputToken->printFoCL_rm);
+         CL_SavePPBuffer(theEnv,inputToken->printFo_rm);
         }
      }
 
@@ -375,7 +375,7 @@ static struct templateSlot *CL_ParseSlot(
      }
 
    /*===============================================*/
-   /* DeteCL_rmine if multifield slot is being parsed. */
+   /* Dete_rmine if multifield slot is being parsed. */
    /*===============================================*/
 
    if ((strcmp(inputToken->lexemeValue->contents,"multifield") == 0) ||
@@ -400,7 +400,7 @@ static struct templateSlot *CL_ParseSlot(
    slotName = inputToken->lexemeValue;
 
    /*================================================*/
-   /* DeteCL_rmine if the slot has already been parsed. */
+   /* Dete_rmine if the slot has already been parsed. */
    /*================================================*/
 
    while (slotList != NULL)
@@ -505,7 +505,7 @@ static struct templateSlot *DefinedSlots(
      {
       CL_PPBackup(theEnv);
       CL_SavePPBuffer(theEnv," ");
-      CL_SavePPBuffer(theEnv,inputToken->printFoCL_rm);
+      CL_SavePPBuffer(theEnv,inputToken->printFo_rm);
 
       /*================================================*/
       /* Slot attributes begin with a left parenthesis. */
@@ -533,12 +533,12 @@ static struct templateSlot *DefinedSlots(
         }
 
       /*================================================================*/
-      /* DeteCL_rmine if the attribute is one of the standard constraints. */
+      /* Dete_rmine if the attribute is one of the standard constraints. */
       /*================================================================*/
 
       if (CL_StandardConstraint(inputToken->lexemeValue->contents))
         {
-         if (CL_ParseCL_StandardConstraint(theEnv,readSource,(inputToken->lexemeValue->contents),
+         if (CL_Parse_StandardConstraint(theEnv,readSource,(inputToken->lexemeValue->contents),
                                      newSlot->constraints,&parsedConstraints,
                                      multifieldSlot) == false)
            {
@@ -571,7 +571,7 @@ static struct templateSlot *DefinedSlots(
          newSlot->noDefault = false;
 
          /*=====================================================*/
-         /* DeteCL_rmine whether the default is dynamic or static. */
+         /* Dete_rmine whether the default is dynamic or static. */
          /*=====================================================*/
 
          if (strcmp(inputToken->lexemeValue->contents,"default") == 0)

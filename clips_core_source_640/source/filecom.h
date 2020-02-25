@@ -108,8 +108,8 @@ struct fileCommandData
    char *CL_BatchBuffer;
    size_t CL_BatchCurrentPosition;
    size_t CL_BatchMaximumPosition;
-   CL_BatchEntry *TopOfCL_BatchList;
-   CL_BatchEntry *BottomOfCL_BatchList;
+   CL_BatchEntry *TopOf_BatchList;
+   CL_BatchEntry *BottomOf_BatchList;
    char *batchPriorParsingFile;
   };
 

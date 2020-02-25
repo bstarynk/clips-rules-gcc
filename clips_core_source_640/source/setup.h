@@ -304,7 +304,7 @@
 
 /*******************************************************************/
 /* BLOAD/BSAVE_INSTANCES: Determines if the save/restore-instances */
-/*  functions can be enhanced to perfoCL_rm more quickly by using     */
+/*  functions can be enhanced to perfo_rm more quickly by using     */
 /*  binary files                                                   */
 /*******************************************************************/
 
@@ -324,7 +324,7 @@
 
 /****************************************************************/
 /* EXTENDED MATH PACKAGE FLAG: If this is on, then the extended */
-/* math package functions will be available for use, (noCL_rmal    */
+/* math package functions will be available for use, (no_rmal    */
 /* default). If this flag is off, then the extended math        */
 /* functions will not be available, and the 30K or so of space  */
 /* they require will be free. Usually a concern only on PC type */

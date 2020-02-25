@@ -57,14 +57,14 @@
 /*                                                           */
 /*            Added code to prevent a clear command from     */
 /*            being executed during fact assertions via      */
-/*            Increment/DecrementCL_ClearReadyLocks API.        */
+/*            Increment/Decrement_ClearReadyLocks API.        */
 /*                                                           */
 /*      6.31: Error messages are now generated when modify   */
 /*            and duplicate functions are given a retracted  */
 /*            fact.                                          */
 /*                                                           */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*      6.40: Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -152,16 +152,16 @@ void CL_DeftemplateFunctions(
    CL_AddUDF(theEnv,"duplicate","bf",0,UNBOUNDED,"*;lf",CL_DuplicateCommand,"CL_DuplicateCommand",NULL);
 
    CL_AddUDF(theEnv,"deftemplate-slot-names","bm",1,1,"y",CL_DeftemplateSlotNamesFunction,"CL_DeftemplateSlotNamesFunction",NULL);
-   CL_AddUDF(theEnv,"deftemplate-slot-default-value","*",2,2,"y",CL_DeftemplateCL_SlotDefaultValueFunction,"CL_DeftemplateCL_SlotDefaultValueFunction",NULL);
-   CL_AddUDF(theEnv,"deftemplate-slot-cardinality","*",2,2,"y",CL_DeftemplateCL_SlotCardinalityFunction,"CL_DeftemplateCL_SlotCardinalityFunction",NULL);
-   CL_AddUDF(theEnv,"deftemplate-slot-allowed-values","*",2,2,"y",CL_DeftemplateCL_SlotAllowedValuesFunction,"CL_DeftemplateCL_SlotAllowedValuesFunction",NULL);
-   CL_AddUDF(theEnv,"deftemplate-slot-range","*",2,2,"y",CL_DeftemplateCL_SlotRangeFunction,"CL_DeftemplateCL_SlotRangeFunction",NULL);
-   CL_AddUDF(theEnv,"deftemplate-slot-types","*",2,2,"y",CL_DeftemplateCL_SlotTypesFunction,"CL_DeftemplateCL_SlotTypesFunction",NULL);
+   CL_AddUDF(theEnv,"deftemplate-slot-default-value","*",2,2,"y",CL_Deftemplate_SlotDefaultValueFunction,"CL_Deftemplate_SlotDefaultValueFunction",NULL);
+   CL_AddUDF(theEnv,"deftemplate-slot-cardinality","*",2,2,"y",CL_Deftemplate_SlotCardinalityFunction,"CL_Deftemplate_SlotCardinalityFunction",NULL);
+   CL_AddUDF(theEnv,"deftemplate-slot-allowed-values","*",2,2,"y",CL_Deftemplate_SlotAllowedValuesFunction,"CL_Deftemplate_SlotAllowedValuesFunction",NULL);
+   CL_AddUDF(theEnv,"deftemplate-slot-range","*",2,2,"y",CL_Deftemplate_SlotRangeFunction,"CL_Deftemplate_SlotRangeFunction",NULL);
+   CL_AddUDF(theEnv,"deftemplate-slot-types","*",2,2,"y",CL_Deftemplate_SlotTypesFunction,"CL_Deftemplate_SlotTypesFunction",NULL);
 
    CL_AddUDF(theEnv,"deftemplate-slot-multip","b",2,2,"y",CL_DeftemplateSlotMultiPFunction,"CL_DeftemplateSlotMultiPFunction",NULL);
    CL_AddUDF(theEnv,"deftemplate-slot-singlep","b",2,2,"y",CL_DeftemplateSlotSinglePFunction,"CL_DeftemplateSlotSinglePFunction",NULL);
-   CL_AddUDF(theEnv,"deftemplate-slot-existp","b",2,2,"y",CL_DeftemplateCL_SlotExistPFunction,"CL_DeftemplateCL_SlotExistPFunction",NULL);
-   CL_AddUDF(theEnv,"deftemplate-slot-defaultp","y",2,2,"y",CL_DeftemplateCL_SlotDefaultPFunction,"CL_DeftemplateCL_SlotDefaultPFunction",NULL);
+   CL_AddUDF(theEnv,"deftemplate-slot-existp","b",2,2,"y",CL_Deftemplate_SlotExistPFunction,"CL_Deftemplate_SlotExistPFunction",NULL);
+   CL_AddUDF(theEnv,"deftemplate-slot-defaultp","y",2,2,"y",CL_Deftemplate_SlotDefaultPFunction,"CL_Deftemplate_SlotDefaultPFunction",NULL);
 
    CL_AddUDF(theEnv,"deftemplate-slot-facet-existp","b",3,3,"y",CL_DeftemplateSlotFacetExistPFunction,"CL_DeftemplateSlotFacetExistPFunction",NULL);
 
@@ -233,9 +233,9 @@ void CL_ModifyCommand(
    /*==================================================*/
 
    testPtr = GetFirstArgument();
-   IncrementCL_ClearReadyLocks(theEnv);
+   Increment_ClearReadyLocks(theEnv);
    CL_EvaluateExpression(theEnv,testPtr,&computeResult);
-   DecrementCL_ClearReadyLocks(theEnv);
+   Decrement_ClearReadyLocks(theEnv);
 
    /*==============================================================*/
    /* If an integer is supplied, then treat it as a fact-index and */
@@ -248,7 +248,7 @@ void CL_ModifyCommand(
       if (factNum < 0)
         {
          CL_ExpectedTypeError2(theEnv,"modify",1);
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          return;
         }
 
@@ -285,7 +285,7 @@ void CL_ModifyCommand(
    else
      {
       CL_ExpectedTypeError2(theEnv,"modify",1);
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return;
      }
 
@@ -295,7 +295,7 @@ void CL_ModifyCommand(
    
    if (oldFact->garbage)
      {
-      CL_FactCL_RetractedErrorMessage(theEnv,oldFact);
+      CL_Fact_RetractedErrorMessage(theEnv,oldFact);
       return;
      }
      
@@ -341,7 +341,7 @@ void CL_ModifyCommand(
       /* If the slot identifier is an integer, then the slot was    */
       /* previously identified and its position within the template */
       /* was stored. Otherwise, the position of the slot within the */
-      /* deftemplate has to be deteCL_rmined by comparing the name of  */
+      /* deftemplate has to be dete_rmined by comparing the name of  */
       /* the slot against the list of slots for the deftemplate.    */
       /*============================================================*/
 
@@ -370,7 +370,7 @@ void CL_ModifyCommand(
            {
             CL_InvalidDeftemplateSlotMessage(theEnv,testPtr->lexemeValue->contents,
                                           templatePtr->header.name->contents,true);
-            SetCL_EvaluationError(theEnv,true);
+            Set_EvaluationError(theEnv,true);
             FreeTemplateValueArray(theEnv,theValueArray,templatePtr);
             if (changeMap != NULL)
               { CL_rm(theEnv,(void *) changeMap,CountToBitMapSize(templatePtr->numberOfSlots)); }
@@ -404,10 +404,10 @@ void CL_ModifyCommand(
          /* CL_Evaluate the expression to be stored in the slot. */
          /*===================================================*/
 
-         IncrementCL_ClearReadyLocks(theEnv);
+         Increment_ClearReadyLocks(theEnv);
          CL_EvaluateExpression(theEnv,testPtr->argList,&computeResult);
-         SetCL_EvaluationError(theEnv,false);
-         DecrementCL_ClearReadyLocks(theEnv);
+         Set_EvaluationError(theEnv,false);
+         Decrement_ClearReadyLocks(theEnv);
 
          /*====================================================*/
          /* If the expression evaluated to a multifield value, */
@@ -444,13 +444,13 @@ void CL_ModifyCommand(
       else
         {
          /*======================================*/
-         /* DeteCL_rmine the new value of the slot. */
+         /* Dete_rmine the new value of the slot. */
          /*======================================*/
 
-         IncrementCL_ClearReadyLocks(theEnv);
+         Increment_ClearReadyLocks(theEnv);
          CL_StoreInMultifield(theEnv,&computeResult,testPtr->argList,false);
-         SetCL_EvaluationError(theEnv,false);
-         DecrementCL_ClearReadyLocks(theEnv);
+         Set_EvaluationError(theEnv,false);
+         Decrement_ClearReadyLocks(theEnv);
 
          /*=============================*/
          /* Store the value in the slot */
@@ -473,7 +473,7 @@ void CL_ModifyCommand(
 
    /*==================================*/
    /* If no slots have changed, then a */
-   /* retract/assert is not perfoCL_rmed. */
+   /* retract/assert is not perfo_rmed. */
    /*==================================*/
 
    if (replacementCount == 0)
@@ -527,7 +527,7 @@ Fact *CL_ReplaceFact(
 
    if (FactData(theEnv)->ListOfModifyFunctions != NULL)
      {
-      ModifyCL_CallFunctionItem *theModifyFunction;
+      Modify_CallFunctionItem *theModifyFunction;
       
       for (theModifyFunction = FactData(theEnv)->ListOfModifyFunctions;
            theModifyFunction != NULL;
@@ -591,7 +591,7 @@ Fact *CL_ReplaceFact(
 
    if (FactData(theEnv)->ListOfModifyFunctions != NULL)
      {
-      ModifyCL_CallFunctionItem *theModifyFunction;
+      Modify_CallFunctionItem *theModifyFunction;
 
       for (theModifyFunction = FactData(theEnv)->ListOfModifyFunctions;
            theModifyFunction != NULL;
@@ -634,9 +634,9 @@ void CL_DuplicateCommand(
    /*==================================================*/
 
    testPtr = GetFirstArgument();
-   IncrementCL_ClearReadyLocks(theEnv);
+   Increment_ClearReadyLocks(theEnv);
    CL_EvaluateExpression(theEnv,testPtr,&computeResult);
-   DecrementCL_ClearReadyLocks(theEnv);
+   Decrement_ClearReadyLocks(theEnv);
 
    /*==============================================================*/
    /* If an integer is supplied, then treat it as a fact-index and */
@@ -649,7 +649,7 @@ void CL_DuplicateCommand(
       if (factNum < 0)
         {
          CL_ExpectedTypeError2(theEnv,"duplicate",1);
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          return;
         }
 
@@ -686,7 +686,7 @@ void CL_DuplicateCommand(
    else
      {
       CL_ExpectedTypeError2(theEnv,"duplicate",1);
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return;
      }
 
@@ -696,7 +696,7 @@ void CL_DuplicateCommand(
    
    if (oldFact->garbage)
      {
-      CL_FactCL_RetractedErrorMessage(theEnv,oldFact);
+      CL_Fact_RetractedErrorMessage(theEnv,oldFact);
       return;
      }
 
@@ -733,7 +733,7 @@ void CL_DuplicateCommand(
       /* If the slot identifier is an integer, then the slot was    */
       /* previously identified and its position within the template */
       /* was stored. Otherwise, the position of the slot within the */
-      /* deftemplate has to be deteCL_rmined by comparing the name of  */
+      /* deftemplate has to be dete_rmined by comparing the name of  */
       /* the slot against the list of slots for the deftemplate.    */
       /*============================================================*/
 
@@ -762,7 +762,7 @@ void CL_DuplicateCommand(
            {
             CL_InvalidDeftemplateSlotMessage(theEnv,testPtr->lexemeValue->contents,
                                           templatePtr->header.name->contents,true);
-            SetCL_EvaluationError(theEnv,true);
+            Set_EvaluationError(theEnv,true);
             CL_ReturnFact(theEnv,newFact);
             return;
            }
@@ -792,10 +792,10 @@ void CL_DuplicateCommand(
          /* CL_Evaluate the expression to be stored in the slot. */
          /*===================================================*/
 
-         IncrementCL_ClearReadyLocks(theEnv);
+         Increment_ClearReadyLocks(theEnv);
          CL_EvaluateExpression(theEnv,testPtr->argList,&computeResult);
-         SetCL_EvaluationError(theEnv,false);
-         DecrementCL_ClearReadyLocks(theEnv);
+         Set_EvaluationError(theEnv,false);
+         Decrement_ClearReadyLocks(theEnv);
 
          /*====================================================*/
          /* If the expression evaluated to a multifield value, */
@@ -824,13 +824,13 @@ void CL_DuplicateCommand(
       else
         {
          /*======================================*/
-         /* DeteCL_rmine the new value of the slot. */
+         /* Dete_rmine the new value of the slot. */
          /*======================================*/
 
-         IncrementCL_ClearReadyLocks(theEnv);
+         Increment_ClearReadyLocks(theEnv);
          CL_StoreInMultifield(theEnv,&computeResult,testPtr->argList,false);
-         SetCL_EvaluationError(theEnv,false);
-         DecrementCL_ClearReadyLocks(theEnv);
+         Set_EvaluationError(theEnv,false);
+         Decrement_ClearReadyLocks(theEnv);
 
          /*=============================*/
          /* Store the value in the slot */
@@ -859,7 +859,7 @@ void CL_DuplicateCommand(
      }
 
    /*===============================*/
-   /* PerfoCL_rm the duplicate action. */
+   /* Perfo_rm the duplicate action. */
    /*===============================*/
 
    theFact = CL_AssertDriver(newFact,0,NULL,NULL,NULL);
@@ -974,10 +974,10 @@ void CL_DeftemplateSlotNames(
   }
 
 /*******************************************************/
-/* CL_DeftemplateCL_SlotDefaultPFunction: H/L access routine */
+/* CL_Deftemplate_SlotDefaultPFunction: H/L access routine */
 /*   for the deftemplate-slot-defaultp function.       */
 /*******************************************************/
-void CL_DeftemplateCL_SlotDefaultPFunction(
+void CL_Deftemplate_SlotDefaultPFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -1001,7 +1001,7 @@ void CL_DeftemplateCL_SlotDefaultPFunction(
    /* Does the slot have a default? */
    /*===============================*/
 
-   defaultType = CL_DeftemplateCL_SlotDefaultP(theDeftemplate,slotName->contents);
+   defaultType = CL_Deftemplate_SlotDefaultP(theDeftemplate,slotName->contents);
 
    if (defaultType == STATIC_DEFAULT)
      { returnValue->lexemeValue = CL_CreateSymbol(theEnv,"static"); }
@@ -1012,10 +1012,10 @@ void CL_DeftemplateCL_SlotDefaultPFunction(
   }
 
 /*************************************************/
-/* CL_DeftemplateCL_SlotDefaultP: C access routine for */
+/* CL_Deftemplate_SlotDefaultP: C access routine for */
 /*   the deftemplate-slot-defaultp function.     */
 /*************************************************/
-DefaultType CL_DeftemplateCL_SlotDefaultP(
+DefaultType CL_Deftemplate_SlotDefaultP(
   Deftemplate *theDeftemplate,
   const char *slotName)
   {
@@ -1035,7 +1035,7 @@ DefaultType CL_DeftemplateCL_SlotDefaultP(
         }
       else
         {
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          CL_InvalidDeftemplateSlotMessage(theEnv,slotName,
                                        theDeftemplate->header.name->contents,false);
          return NO_DEFAULT;
@@ -1049,7 +1049,7 @@ DefaultType CL_DeftemplateCL_SlotDefaultP(
 
    else if ((theSlot = CL_FindSlot(theDeftemplate,CL_CreateSymbol(theEnv,slotName),NULL)) == NULL)
      {
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       CL_InvalidDeftemplateSlotMessage(theEnv,slotName,
                                     theDeftemplate->header.name->contents,false);
       return NO_DEFAULT;
@@ -1068,10 +1068,10 @@ DefaultType CL_DeftemplateCL_SlotDefaultP(
   }
 
 /*************************************************************/
-/* CL_DeftemplateCL_SlotDefaultValueFunction: H/L access routine   */
+/* CL_Deftemplate_SlotDefaultValueFunction: H/L access routine   */
 /*   for the deftemplate-slot-default-value function.        */
 /*************************************************************/
-void CL_DeftemplateCL_SlotDefaultValueFunction(
+void CL_Deftemplate_SlotDefaultValueFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -1095,15 +1095,15 @@ void CL_DeftemplateCL_SlotDefaultValueFunction(
    /* Get the deftemplate slot default value. */
    /*=========================================*/
 
-   CL_DeftemplateCL_SlotDefaultValue(theDeftemplate,slotName->contents,&cv);
+   CL_Deftemplate_SlotDefaultValue(theDeftemplate,slotName->contents,&cv);
    CL_CLIPSToUDFValue(&cv,returnValue);
   }
 
 /******************************************************/
-/* CL_DeftemplateCL_SlotDefaultValue: C access routine for  */
+/* CL_Deftemplate_SlotDefaultValue: C access routine for  */
 /*   the deftemplate-slot-default-value function.     */
 /******************************************************/
-bool CL_DeftemplateCL_SlotDefaultValue(
+bool CL_Deftemplate_SlotDefaultValue(
   Deftemplate *theDeftemplate,
   const char *slotName,
   CLIPSValue *theValue)
@@ -1132,7 +1132,7 @@ bool CL_DeftemplateCL_SlotDefaultValue(
         }
       else
         {
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          CL_InvalidDeftemplateSlotMessage(theEnv,slotName,
                                        theDeftemplate->header.name->contents,false);
          return false;
@@ -1146,7 +1146,7 @@ bool CL_DeftemplateCL_SlotDefaultValue(
 
    else if ((theSlot = CL_FindSlot(theDeftemplate,CL_CreateSymbol(theEnv,slotName),NULL)) == NULL)
      {
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       CL_InvalidDeftemplateSlotMessage(theEnv,slotName,
                                     theDeftemplate->header.name->contents,false);
       return false;
@@ -1160,7 +1160,7 @@ bool CL_DeftemplateCL_SlotDefaultValue(
      { theValue->value = CL_CreateSymbol(theEnv,"?NONE"); }
    else if (CL_DeftemplateSlotDefault(theEnv,theDeftemplate,theSlot,&tempDO,true))
      {
-      CL_NoCL_rmalizeMultifield(theEnv,&tempDO);
+      CL_No_rmalizeMultifield(theEnv,&tempDO);
       theValue->value = tempDO.value;
      }
    else
@@ -1170,10 +1170,10 @@ bool CL_DeftemplateCL_SlotDefaultValue(
   }
 
 /**********************************************************/
-/* CL_DeftemplateCL_SlotCardinalityFunction: H/L access routine */
+/* CL_Deftemplate_SlotCardinalityFunction: H/L access routine */
 /*   for the deftemplate-slot-cardinality function.       */
 /**********************************************************/
-void CL_DeftemplateCL_SlotCardinalityFunction(
+void CL_Deftemplate_SlotCardinalityFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -1197,15 +1197,15 @@ void CL_DeftemplateCL_SlotCardinalityFunction(
    /* Get the deftemplate slot cardinality. */
    /*=======================================*/
 
-   CL_DeftemplateCL_SlotCardinality(theDeftemplate,slotName->contents,&cv);
+   CL_Deftemplate_SlotCardinality(theDeftemplate,slotName->contents,&cv);
    CL_CLIPSToUDFValue(&cv,returnValue);
   }
 
 /****************************************************/
-/* CL_DeftemplateCL_SlotCardinality: C access routine for */
+/* CL_Deftemplate_SlotCardinality: C access routine for */
 /*   the deftemplate-slot-cardinality function.     */
 /****************************************************/
-bool CL_DeftemplateCL_SlotCardinality(
+bool CL_Deftemplate_SlotCardinality(
   Deftemplate *theDeftemplate,
   const char *slotName,
   CLIPSValue *returnValue)
@@ -1230,7 +1230,7 @@ bool CL_DeftemplateCL_SlotCardinality(
       else
         {
          returnValue->multifieldValue = CL_CreateMultifield(theEnv,0L);
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          CL_InvalidDeftemplateSlotMessage(theEnv,slotName,
                                        theDeftemplate->header.name->contents,false);
          return false;
@@ -1245,7 +1245,7 @@ bool CL_DeftemplateCL_SlotCardinality(
    else if ((theSlot = CL_FindSlot(theDeftemplate,CL_CreateSymbol(theEnv,slotName),NULL)) == NULL)
      {
       returnValue->multifieldValue = CL_CreateMultifield(theEnv,0L);
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       CL_InvalidDeftemplateSlotMessage(theEnv,slotName,
                                     theDeftemplate->header.name->contents,false);
       return false;
@@ -1278,10 +1278,10 @@ bool CL_DeftemplateCL_SlotCardinality(
   }
 
 /************************************************************/
-/* CL_DeftemplateCL_SlotAllowedValuesFunction: H/L access routine */
+/* CL_Deftemplate_SlotAllowedValuesFunction: H/L access routine */
 /*   for the deftemplate-slot-allowed-values function.      */
 /************************************************************/
-void CL_DeftemplateCL_SlotAllowedValuesFunction(
+void CL_Deftemplate_SlotAllowedValuesFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -1305,15 +1305,15 @@ void CL_DeftemplateCL_SlotAllowedValuesFunction(
    /* Get the deftemplate slot allowed values. */
    /*==========================================*/
 
-   CL_DeftemplateCL_SlotAllowedValues(theDeftemplate,slotName->contents,&result);
+   CL_Deftemplate_SlotAllowedValues(theDeftemplate,slotName->contents,&result);
    CL_CLIPSToUDFValue(&result,returnValue);
   }
 
 /*******************************************************/
-/* CL_DeftemplateCL_SlotAllowedValues: C access routine      */
+/* CL_Deftemplate_SlotAllowedValues: C access routine      */
 /*   for the deftemplate-slot-allowed-values function. */
 /*******************************************************/
-bool CL_DeftemplateCL_SlotAllowedValues(
+bool CL_Deftemplate_SlotAllowedValues(
   Deftemplate *theDeftemplate,
   const char *slotName,
   CLIPSValue *returnValue)
@@ -1338,7 +1338,7 @@ bool CL_DeftemplateCL_SlotAllowedValues(
       else
         {
          returnValue->multifieldValue = CL_CreateMultifield(theEnv,0L);
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          CL_InvalidDeftemplateSlotMessage(theEnv,slotName,
                                        theDeftemplate->header.name->contents,false);
          return false;
@@ -1353,7 +1353,7 @@ bool CL_DeftemplateCL_SlotAllowedValues(
    else if ((theSlot = CL_FindSlot(theDeftemplate,CL_CreateSymbol(theEnv,slotName),NULL)) == NULL)
      {
       returnValue->multifieldValue = CL_CreateMultifield(theEnv,0L);
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       CL_InvalidDeftemplateSlotMessage(theEnv,slotName,
                                     theDeftemplate->header.name->contents,false);
       return false;
@@ -1384,10 +1384,10 @@ bool CL_DeftemplateCL_SlotAllowedValues(
   }
 
 /****************************************************/
-/* CL_DeftemplateCL_SlotRangeFunction: H/L access routine */
+/* CL_Deftemplate_SlotRangeFunction: H/L access routine */
 /*   for the deftemplate-slot-range function.       */
 /****************************************************/
-void CL_DeftemplateCL_SlotRangeFunction(
+void CL_Deftemplate_SlotRangeFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -1411,15 +1411,15 @@ void CL_DeftemplateCL_SlotRangeFunction(
    /* Get the deftemplate slot range. */
    /*=================================*/
 
-   CL_DeftemplateCL_SlotRange(theDeftemplate,slotName->contents,&cv);
+   CL_Deftemplate_SlotRange(theDeftemplate,slotName->contents,&cv);
    CL_CLIPSToUDFValue(&cv,returnValue);
   }
 
 /**********************************************/
-/* CL_DeftemplateCL_SlotRange: C access routine for */
+/* CL_Deftemplate_SlotRange: C access routine for */
 /*   the deftemplate-slot-range function.     */
 /**********************************************/
-bool CL_DeftemplateCL_SlotRange(
+bool CL_Deftemplate_SlotRange(
   Deftemplate *theDeftemplate,
   const char *slotName,
   CLIPSValue *returnValue)
@@ -1446,7 +1446,7 @@ bool CL_DeftemplateCL_SlotRange(
       else
         {
          returnValue->multifieldValue = CL_CreateMultifield(theEnv,0L);
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          CL_InvalidDeftemplateSlotMessage(theEnv,slotName,
                                        theDeftemplate->header.name->contents,false);
          return false;
@@ -1461,7 +1461,7 @@ bool CL_DeftemplateCL_SlotRange(
    else if ((theSlot = CL_FindSlot(theDeftemplate,CL_CreateSymbol(theEnv,slotName),NULL)) == NULL)
      {
       returnValue->multifieldValue = CL_CreateMultifield(theEnv,0L);
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       CL_InvalidDeftemplateSlotMessage(theEnv,slotName,
                                     theDeftemplate->header.name->contents,false);
       return false;
@@ -1486,10 +1486,10 @@ bool CL_DeftemplateCL_SlotRange(
   }
 
 /****************************************************/
-/* CL_DeftemplateCL_SlotTypesFunction: H/L access routine */
+/* CL_Deftemplate_SlotTypesFunction: H/L access routine */
 /*   for the deftemplate-slot-types function.       */
 /****************************************************/
-void CL_DeftemplateCL_SlotTypesFunction(
+void CL_Deftemplate_SlotTypesFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -1513,15 +1513,15 @@ void CL_DeftemplateCL_SlotTypesFunction(
    /* Get the deftemplate slot types. */
    /*=================================*/
 
-   CL_DeftemplateCL_SlotTypes(theDeftemplate,slotName->contents,&cv);
+   CL_Deftemplate_SlotTypes(theDeftemplate,slotName->contents,&cv);
    CL_CLIPSToUDFValue(&cv,returnValue);
   }
 
 /**********************************************/
-/* CL_DeftemplateCL_SlotTypes: C access routine for */
+/* CL_Deftemplate_SlotTypes: C access routine for */
 /*   the deftemplate-slot-types function.     */
 /**********************************************/
-bool CL_DeftemplateCL_SlotTypes(
+bool CL_Deftemplate_SlotTypes(
   Deftemplate *theDeftemplate,
   const char *slotName,
   CLIPSValue *returnValue)
@@ -1541,7 +1541,7 @@ bool CL_DeftemplateCL_SlotTypes(
       if (strcmp(slotName,"implied") != 0)
         {
          returnValue->multifieldValue = CL_CreateMultifield(theEnv,0L);
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          CL_InvalidDeftemplateSlotMessage(theEnv,slotName,
                                        theDeftemplate->header.name->contents,false);
          return false;
@@ -1556,14 +1556,14 @@ bool CL_DeftemplateCL_SlotTypes(
    else if ((theSlot = CL_FindSlot(theDeftemplate,CL_CreateSymbol(theEnv,slotName),NULL)) == NULL)
      {
       returnValue->multifieldValue = CL_CreateMultifield(theEnv,0L);
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       CL_InvalidDeftemplateSlotMessage(theEnv,slotName,
                                     theDeftemplate->header.name->contents,false);
       return false;
      }
 
    /*==============================================*/
-   /* If the slot has no constraint infoCL_rmation or */
+   /* If the slot has no constraint info_rmation or */
    /* there is no type restriction, then all types */
    /* are allowed for the slot.                    */
    /*==============================================*/
@@ -1700,7 +1700,7 @@ bool CL_DeftemplateSlotMultiP(
         { return true; }
       else
         {
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          CL_InvalidDeftemplateSlotMessage(theEnv,slotName,
                                        theDeftemplate->header.name->contents,false);
          return false;
@@ -1714,7 +1714,7 @@ bool CL_DeftemplateSlotMultiP(
 
    else if ((theSlot = CL_FindSlot(theDeftemplate,CL_CreateSymbol(theEnv,slotName),NULL)) == NULL)
      {
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       CL_InvalidDeftemplateSlotMessage(theEnv,slotName,
                                     theDeftemplate->header.name->contents,false);
       return false;
@@ -1779,7 +1779,7 @@ bool CL_DeftemplateSlotSingleP(
         { return false; }
       else
         {
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          CL_InvalidDeftemplateSlotMessage(theEnv,slotName,
                                        theDeftemplate->header.name->contents,false);
          return false;
@@ -1793,7 +1793,7 @@ bool CL_DeftemplateSlotSingleP(
 
    else if ((theSlot = CL_FindSlot(theDeftemplate,CL_CreateSymbol(theEnv,slotName),NULL)) == NULL)
      {
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       CL_InvalidDeftemplateSlotMessage(theEnv,slotName,
                                     theDeftemplate->header.name->contents,false);
       return false;
@@ -1807,10 +1807,10 @@ bool CL_DeftemplateSlotSingleP(
   }
 
 /*****************************************************/
-/* CL_DeftemplateCL_SlotExistPFunction: H/L access routine */
+/* CL_Deftemplate_SlotExistPFunction: H/L access routine */
 /*   for the deftemplate-slot-existp function.       */
 /*****************************************************/
-void CL_DeftemplateCL_SlotExistPFunction(
+void CL_Deftemplate_SlotExistPFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -1833,14 +1833,14 @@ void CL_DeftemplateCL_SlotExistPFunction(
    /* Does the slot exist? */
    /*======================*/
 
-   returnValue->lexemeValue = CL_CreateBoolean(theEnv,CL_DeftemplateCL_SlotExistP(theDeftemplate,slotName->contents));
+   returnValue->lexemeValue = CL_CreateBoolean(theEnv,CL_Deftemplate_SlotExistP(theDeftemplate,slotName->contents));
   }
 
 /***********************************************/
-/* CL_DeftemplateCL_SlotExistP: C access routine for */
+/* CL_Deftemplate_SlotExistP: C access routine for */
 /*   the deftemplate-slot-existp function.     */
 /***********************************************/
-bool CL_DeftemplateCL_SlotExistP(
+bool CL_Deftemplate_SlotExistP(
   Deftemplate *theDeftemplate,
   const char *slotName)
   {
@@ -2120,7 +2120,7 @@ bool CL_UpdateModifyDuplicate(
    struct templateSlot *slotPtr;
 
    /*========================================*/
-   /* DeteCL_rmine the fact-address or index to */
+   /* Dete_rmine the fact-address or index to */
    /* be retracted by the modify command.    */
    /*========================================*/
 
@@ -2176,25 +2176,25 @@ bool CL_UpdateModifyDuplicate(
         {
          if (tempArg->argList == NULL)
            {
-            CL_SingleFieldCL_SlotCardinalityError(theEnv,slotPtr->slotName->contents);
+            CL_SingleField_SlotCardinalityError(theEnv,slotPtr->slotName->contents);
             return false;
            }
          else if (tempArg->argList->nextArg != NULL)
            {
-            CL_SingleFieldCL_SlotCardinalityError(theEnv,slotPtr->slotName->contents);
+            CL_SingleField_SlotCardinalityError(theEnv,slotPtr->slotName->contents);
             return false;
            }
          else if (tempArg->argList->type == FCALL)
            {
             if ((ExpressionUnknownFunctionType(tempArg->argList) & SINGLEFIELD_BITS) == 0)
               {
-               CL_SingleFieldCL_SlotCardinalityError(theEnv,slotPtr->slotName->contents);
+               CL_SingleField_SlotCardinalityError(theEnv,slotPtr->slotName->contents);
                return false;
               }
            }
          else if (tempArg->argList->type == MF_VARIABLE)
            {
-            CL_SingleFieldCL_SlotCardinalityError(theEnv,slotPtr->slotName->contents);
+            CL_SingleField_SlotCardinalityError(theEnv,slotPtr->slotName->contents);
             return false;
            }
         }
@@ -2203,7 +2203,7 @@ bool CL_UpdateModifyDuplicate(
       /* Are the slot restrictions satisfied? */
       /*======================================*/
 
-      if (CL_CheckRHSCL_SlotTypes(theEnv,tempArg->argList,slotPtr,name) == 0)
+      if (CL_CheckRHS_SlotTypes(theEnv,tempArg->argList,slotPtr,name) == 0)
         return false;
 
       /*=============================================*/
@@ -2341,7 +2341,7 @@ static struct expr *ModAndDupParse(
    nextOne = top->argList;
 
    /*=======================================================*/
-   /* Parse the reCL_maining modify/duplicate slot specifiers. */
+   /* Parse the re_maining modify/duplicate slot specifiers. */
    /*=======================================================*/
 
    CL_GetToken(theEnv,logicalName,&theToken);
@@ -2349,7 +2349,7 @@ static struct expr *ModAndDupParse(
      {
       CL_PPBackup(theEnv);
       CL_SavePPBuffer(theEnv," ");
-      CL_SavePPBuffer(theEnv,theToken.printFoCL_rm);
+      CL_SavePPBuffer(theEnv,theToken.printFo_rm);
 
       /*=================================================*/
       /* Slot definition begins with a left parenthesis. */
@@ -2407,7 +2407,7 @@ static struct expr *ModAndDupParse(
       while (! done)
         {
          CL_SavePPBuffer(theEnv," ");
-         newField = GetCL_AssertArgument(theEnv,logicalName,&theToken,&error,
+         newField = Get_AssertArgument(theEnv,logicalName,&theToken,&error,
                                       RIGHT_PARENTHESIS_TOKEN,false,&printError);
 
          if (error)

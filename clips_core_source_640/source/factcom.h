@@ -38,7 +38,7 @@
 /*                                                           */
 /*            Added code to prevent a clear command from     */
 /*            being executed during fact assertions via      */
-/*            Increment/DecrementCL_ClearReadyLocks API.        */
+/*            Increment/Decrement_ClearReadyLocks API.        */
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */
@@ -71,12 +71,12 @@
    void                           CL_Facts(Environment *,const char *,Defmodule *,long long,long long,long long);
    void                           CL_SetFactDuplicationCommand(Environment *,UDFContext *,UDFValue *);
    void                           CL_GetFactDuplicationCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_SaveCL_FactsCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_LoadCL_FactsCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           CL_SaveCL_Facts(Environment *,const char *,CL_SaveScope);
-   bool                           CL_SaveCL_FactsDriver(Environment *,const char *,CL_SaveScope,struct expr *);
-   bool                           CL_LoadCL_Facts(Environment *,const char *);
-   bool                           CL_LoadCL_FactsFromString(Environment *,const char *,size_t);
+   void                           CL_Save_FactsCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_Load_FactsCommand(Environment *,UDFContext *,UDFValue *);
+   bool                           CL_Save_Facts(Environment *,const char *,CL_SaveScope);
+   bool                           CL_Save_FactsDriver(Environment *,const char *,CL_SaveScope,struct expr *);
+   bool                           CL_Load_Facts(Environment *,const char *);
+   bool                           CL_Load_FactsFromString(Environment *,const char *,size_t);
    void                           CL_FactIndexFunction(Environment *,UDFContext *,UDFValue *);
 
 #endif /* _H_factcom */

@@ -16,7 +16,7 @@
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
-/*      6.30: Support for perfoCL_rmance optimizations.         */
+/*      6.30: Support for perfo_rmance optimizations.         */
 /*                                                           */
 /*            Increased maximum values for pattern/slot      */
 /*            indices.                                       */
@@ -197,7 +197,7 @@ struct factCompVarsJN2Call
 
 /**********************************************************/
 /* factCheckLengthPNCall: This structure is used to store */
-/*   the  arguments to the routine for deteCL_rmining if the */
+/*   the  arguments to the routine for dete_rmining if the */
 /*   length of a multifield slot is equal or greater than */
 /*   a specified value.                                   */
 /**********************************************************/

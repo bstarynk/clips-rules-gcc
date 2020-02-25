@@ -63,13 +63,13 @@
 #include "factlhs.h"
 
 /***********************************************/
-/* SequenceCL_RestrictionParse: Parses an ordered */
+/* Sequence_RestrictionParse: Parses an ordered */
 /*   fact pattern conditional element.         */
 /*                                             */
 /*   <ordered-fact-pattern-CE>                 */
 /*             ::= (<symbol> <constraint>+)    */
 /***********************************************/
-struct lhsParseNode *SequenceCL_RestrictionParse(
+struct lhsParseNode *Sequence_RestrictionParse(
   Environment *theEnv,
   const char *readSource,
   struct token *theToken)
@@ -109,7 +109,7 @@ struct lhsParseNode *SequenceCL_RestrictionParse(
      }
 
    /*============================================================*/
-   /* Treat the reCL_maining constraints of an ordered fact pattern */
+   /* Treat the re_maining constraints of an ordered fact pattern */
    /* as if they were contained in a multifield slot.            */
    /*============================================================*/
 
@@ -129,7 +129,7 @@ struct lhsParseNode *SequenceCL_RestrictionParse(
      {
       CL_PPBackup(theEnv);
       CL_SavePPBuffer(theEnv," ");
-      CL_SavePPBuffer(theEnv,theToken->printFoCL_rm);
+      CL_SavePPBuffer(theEnv,theToken->printFo_rm);
       CL_SyntaxErrorMessage(theEnv,"fact patterns");
       CL_ReturnLHSParseNodes(theEnv,topNode);
       return NULL;
@@ -241,7 +241,7 @@ struct lhsParseNode *CL_FactPatternParse(
    /* Parse an ordered fact pattern. */
    /*================================*/
 
-   return(SequenceCL_RestrictionParse(theEnv,readSource,theToken));
+   return(Sequence_RestrictionParse(theEnv,readSource,theToken));
   }
 
 #endif /* DEFTEMPLATE_CONSTRUCT && DEFRULE_CONSTRUCT && (! RUN_TIME) && (! BLOAD_ONLY) */

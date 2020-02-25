@@ -126,7 +126,7 @@ void CL_DefinstancesCModuleReference(
 static void ReadyDefinstancesForCode(
   Environment *theEnv)
   {
-   MarkConstructCL_BsaveIDs(theEnv,DefinstancesData(theEnv)->CL_DefinstancesModuleIndex);
+   MarkConstruct_BsaveIDs(theEnv,DefinstancesData(theEnv)->CL_DefinstancesModuleIndex);
   }
 
 /***************************************************/
@@ -144,7 +144,7 @@ static void InitDefinstancesCode(
 #pragma unused(imageID)
 #pragma unused(theEnv)
 #endif
-   fprintf(initFP,"   DefinstancesCL_RunTimeInitialize(theEnv);\n");
+   fprintf(initFP,"   Definstances_RunTimeInitialize(theEnv);\n");
   }
 
 /*******************************************************

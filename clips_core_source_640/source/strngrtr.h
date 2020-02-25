@@ -46,7 +46,7 @@
 #define _H_strngrtr
 
 typedef struct stringRouter StringRouter;
-typedef struct stringCL_BuilderRouter StringCL_BuilderRouter;
+typedef struct string_BuilderRouter String_BuilderRouter;
 
 #include <stdio.h>
 #include "utility.h"
@@ -60,21 +60,21 @@ struct stringRouter
    char *writeString;
    size_t currentPosition;
    size_t maximumPosition;
-   int readCL_WriteType;
+   int read_WriteType;
    StringRouter *next;
   };
 
-struct stringCL_BuilderRouter
+struct string_BuilderRouter
   {
    const char *name;
-   StringCL_Builder *SBR;
-   StringCL_BuilderRouter *next;
+   String_Builder *SBR;
+   String_BuilderRouter *next;
   };
 
 struct stringRouterData
   {
    StringRouter *ListOfStringRouters;
-   StringCL_BuilderRouter *ListOfStringCL_BuilderRouters;
+   String_BuilderRouter *ListOfString_BuilderRouters;
   };
 
 #define StringRouterData(theEnv) ((struct stringRouterData *) GetEnvironmentData(theEnv,STRING_ROUTER_DATA))
@@ -89,8 +89,8 @@ struct stringRouterData
    bool                           CL_CloseStringSource(Environment *,const char *);
    bool                           CL_OpenStringDestination(Environment *,const char *,char *,size_t);
    bool                           CL_CloseStringDestination(Environment *,const char *);
-   bool                           OpenStringCL_BuilderDestination(Environment *,const char *,StringCL_Builder *);
-   bool                           CloseStringCL_BuilderDestination(Environment *,const char *);
+   bool                           OpenString_BuilderDestination(Environment *,const char *,String_Builder *);
+   bool                           CloseString_BuilderDestination(Environment *,const char *);
 
 #endif /* _H_strngrtr */
 

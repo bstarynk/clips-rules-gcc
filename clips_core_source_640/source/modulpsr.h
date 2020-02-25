@@ -58,7 +58,7 @@ struct portConstructItem
   };
 
    void                           CL_SetNumberOfDefmodules(Environment *,unsigned short);
-   void                           CL_AddAfterModuleDefinedFunction(Environment *,const char *,VoidCL_CallFunction *,int,void *);
+   void                           CL_AddAfterModuleDefinedFunction(Environment *,const char *,Void_CallFunction *,int,void *);
    bool                           CL_ParseDefmodule(Environment *,const char *);
    void                           CL_AddPortConstructItem(Environment *,const char *,TokenType);
    struct portConstructItem      *CL_ValidPortConstructItem(Environment *,const char *);

@@ -77,10 +77,10 @@
 void CL_DefmoduleBasicCommands(
   Environment *theEnv)
   {
-   CL_AddCL_ClearFunction(theEnv,"defmodule",CL_ClearDefmodules,2000,NULL);
+   CL_Add_ClearFunction(theEnv,"defmodule",CL_ClearDefmodules,2000,NULL);
 
 #if DEFMODULE_CONSTRUCT
-   CL_AddCL_SaveFunction(theEnv,"defmodule",CL_SaveDefmodules,1100,NULL);
+   CL_Add_SaveFunction(theEnv,"defmodule",CL_SaveDefmodules,1100,NULL);
 
 #if ! RUN_TIME
    CL_AddUDF(theEnv,"get-defmodule-list","m",0,0,NULL,CL_GetDefmoduleListFunction,"CL_GetDefmoduleListFunction",NULL);
@@ -136,12 +136,12 @@ static void CL_SaveDefmodules(
   const char *logicalName,
   void *context)
   {
-   const char *ppfoCL_rm;
+   const char *ppfo_rm;
 
-   ppfoCL_rm = CL_DefmodulePPFoCL_rm(theModule);
-   if (ppfoCL_rm != NULL)
+   ppfo_rm = CL_DefmodulePPFo_rm(theModule);
+   if (ppfo_rm != NULL)
      {
-      CL_WriteString(theEnv,logicalName,ppfoCL_rm);
+      CL_WriteString(theEnv,logicalName,ppfo_rm);
       CL_WriteString(theEnv,logicalName,"\n");
      }
   }
@@ -174,7 +174,7 @@ void CL_GetDefmoduleList(
    Multifield *theList;
 
    /*====================================*/
-   /* DeteCL_rmine the number of constructs */
+   /* Dete_rmine the number of constructs */
    /* of the specified type.             */
    /*====================================*/
 
@@ -221,7 +221,7 @@ void CL_PPDefmoduleCommand(
   {
    const char *defmoduleName;
    const char *logicalName;
-   const char *ppFoCL_rm;
+   const char *ppFo_rm;
 
    defmoduleName = CL_GetConstructName(context,"ppdefmodule","defmodule name");
    if (defmoduleName == NULL) return;
@@ -232,8 +232,8 @@ void CL_PPDefmoduleCommand(
       if (logicalName == NULL)
         {
          CL_IllegalLogicalNameMessage(theEnv,"ppdefmodule");
-         SetCL_HaltExecution(theEnv,true);
-         SetCL_EvaluationError(theEnv,true);
+         Set_HaltExecution(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          return;
         }
      }
@@ -242,12 +242,12 @@ void CL_PPDefmoduleCommand(
 
    if (strcmp(logicalName,"nil") == 0)
      {
-      ppFoCL_rm = CL_PPDefmoduleNil(theEnv,defmoduleName);
+      ppFo_rm = CL_PPDefmoduleNil(theEnv,defmoduleName);
       
-      if (ppFoCL_rm == NULL)
+      if (ppFo_rm == NULL)
         { CL_CantFindItemErrorMessage(theEnv,"defmodule",defmoduleName,true); }
 
-      returnValue->lexemeValue = CL_CreateString(theEnv,ppFoCL_rm);
+      returnValue->lexemeValue = CL_CreateString(theEnv,ppFo_rm);
       
       return;
      }
@@ -274,9 +274,9 @@ const char *CL_PPDefmoduleNil(
       return NULL;
      }
 
-   if (CL_DefmodulePPFoCL_rm(defmodulePtr) == NULL) return "";
+   if (CL_DefmodulePPFo_rm(defmodulePtr) == NULL) return "";
    
-   return CL_DefmodulePPFoCL_rm(defmodulePtr);
+   return CL_DefmodulePPFo_rm(defmodulePtr);
   }
 
 /*************************************/
@@ -297,8 +297,8 @@ bool CL_PPDefmodule(
       return false;
      }
 
-   if (CL_DefmodulePPFoCL_rm(defmodulePtr) == NULL) return true;
-   CL_WriteString(theEnv,logicalName,CL_DefmodulePPFoCL_rm(defmodulePtr));
+   if (CL_DefmodulePPFo_rm(defmodulePtr) == NULL) return true;
+   CL_WriteString(theEnv,logicalName,CL_DefmodulePPFo_rm(defmodulePtr));
 
    return true;
   }

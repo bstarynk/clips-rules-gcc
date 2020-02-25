@@ -98,12 +98,12 @@ struct instanceQueryData
    void                           CL_SetupQuery(Environment *);
    void                           CL_GetQueryInstance(Environment *,UDFContext *,UDFValue *);
    void                           CL_GetQueryInstanceSlot(Environment *,UDFContext *,UDFValue *);
-   void                           CL_AnyCL_Instances(Environment *,UDFContext *,UDFValue *);
-   void                           QueryCL_FindInstance(Environment *,UDFContext *,UDFValue *);
-   void                           QueryFindAllCL_Instances(Environment *,UDFContext *,UDFValue *);
+   void                           CL_Any_Instances(Environment *,UDFContext *,UDFValue *);
+   void                           Query_FindInstance(Environment *,UDFContext *,UDFValue *);
+   void                           QueryFindAll_Instances(Environment *,UDFContext *,UDFValue *);
    void                           CL_QueryDoForInstance(Environment *,UDFContext *,UDFValue *);
-   void                           QueryDoForAllCL_Instances(Environment *,UDFContext *,UDFValue *);
-   void                           CL_DelayedQueryDoForAllCL_Instances(Environment *,UDFContext *,UDFValue *);
+   void                           QueryDoForAll_Instances(Environment *,UDFContext *,UDFValue *);
+   void                           CL_DelayedQueryDoForAll_Instances(Environment *,UDFContext *,UDFValue *);
 
 #endif /* INSTANCE_SET_QUERIES */
 

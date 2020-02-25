@@ -79,7 +79,7 @@ struct token
       CLIPSFloat *floatValue;
       CLIPSInteger *integerValue;
      };
-   const char *printFoCL_rm;
+   const char *printFo_rm;
   };
 
 #define SCANNER_DATA 57

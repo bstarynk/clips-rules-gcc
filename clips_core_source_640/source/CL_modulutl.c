@@ -26,8 +26,8 @@
 /*                                                           */
 /*      6.31: Used strstr function to find module separator. */
 /*                                                           */
-/*      6.40: Added Env prefix to CL_GetCL_HaltExecution and       */
-/*            SetCL_HaltExecution functions.                    */
+/*      6.40: Added Env prefix to CL_Get_HaltExecution and       */
+/*            Set_HaltExecution functions.                    */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -163,7 +163,7 @@ CLIPSLexeme *CL_ExtractConstructName(
    if (thePosition == 0) return CL_CreateSymbol(theEnv,theString);
 
    /*=====================================*/
-   /* DeteCL_rmine the length of the string. */
+   /* Dete_rmine the length of the string. */
    /*=====================================*/
 
    theLength = strlen(theString);
@@ -197,7 +197,7 @@ CLIPSLexeme *CL_ExtractConstructName(
    if (returnType == SYMBOL_TYPE)
      { returnValue = CL_CreateSymbol(theEnv,newString); }
    else if (returnType == INSTANCE_NAME_TYPE)
-     { returnValue = CL_CreateCL_InstanceName(theEnv,newString); }
+     { returnValue = CL_Create_InstanceName(theEnv,newString); }
    else
      { returnValue = CL_CreateString(theEnv,newString); }
 
@@ -479,7 +479,7 @@ static ConstructHeader *SearchImportedConstructModules(
    while (theImportList != NULL)
      {
       /*===================================================*/
-      /* DeteCL_rmine if the module should be searched (based */
+      /* Dete_rmine if the module should be searched (based */
       /* upon whether the entire module, all constructs of */
       /* a specific type, or specifically named constructs */
       /* are imported).                                    */
@@ -495,7 +495,7 @@ static ConstructHeader *SearchImportedConstructModules(
         }
 
       /*=================================*/
-      /* DeteCL_rmine if the module exists. */
+      /* Dete_rmine if the module exists. */
       /*=================================*/
 
       if (searchModule)
@@ -505,7 +505,7 @@ static ConstructHeader *SearchImportedConstructModules(
         }
 
       /*=======================================================*/
-      /* DeteCL_rmine if the construct is exported by the module. */
+      /* Dete_rmine if the construct is exported by the module. */
       /*=======================================================*/
 
       if (searchModule)
@@ -735,7 +735,7 @@ long CL_DoForAllModules(
      {
       CL_SetCurrentModule(theEnv,theModule);
 
-      if ((interruptable) && CL_GetCL_HaltExecution(theEnv))
+      if ((interruptable) && CL_Get_HaltExecution(theEnv))
         {
          CL_RestoreCurrentModule(theEnv);
          return(-1L);
@@ -855,7 +855,7 @@ CLIPSLexeme *CL_GetConstructNameAndComment(
    name = inputToken->lexemeValue;
 
    /*===============================*/
-   /* DeteCL_rmine the current module. */
+   /* Dete_rmine the current module. */
    /*===============================*/
 
    separatorPosition = CL_FindModuleSeparator(name->contents);
@@ -892,7 +892,7 @@ CLIPSLexeme *CL_GetConstructNameAndComment(
 
    /*=====================================================*/
    /* If the module was not specified, record the current */
-   /* module name as part of the pretty-print foCL_rm.       */
+   /* module name as part of the pretty-print fo_rm.       */
    /*=====================================================*/
 
    else
@@ -955,8 +955,8 @@ CLIPSLexeme *CL_GetConstructNameAndComment(
    /*=============================================*/
 
 #if DEBUGGING_FUNCTIONS
-   if ((CL_GetCL_WatchItem(theEnv,"compilations") == 1) &&
-       CL_GetPrintWhileCL_Loading(theEnv) && (! ConstructData(theEnv)->CL_CheckSyntaxMode))
+   if ((CL_Get_WatchItem(theEnv,"compilations") == 1) &&
+       CL_GetPrintWhile_Loading(theEnv) && (! ConstructData(theEnv)->CL_CheckSyntaxMode))
      {
       const char *outRouter = STDOUT;
       if (redefining && (! ignoreRedefinition))
@@ -977,7 +977,7 @@ CLIPSLexeme *CL_GetConstructNameAndComment(
    else
 #endif
      {
-      if (CL_GetPrintWhileCL_Loading(theEnv) && (! ConstructData(theEnv)->CL_CheckSyntaxMode))
+      if (CL_GetPrintWhile_Loading(theEnv) && (! ConstructData(theEnv)->CL_CheckSyntaxMode))
         { CL_WriteString(theEnv,STDOUT,constructSymbol); }
      }
 
@@ -990,20 +990,20 @@ CLIPSLexeme *CL_GetConstructNameAndComment(
      {
       CL_PPBackup(theEnv);
       CL_SavePPBuffer(theEnv," ");
-      CL_SavePPBuffer(theEnv,inputToken->printFoCL_rm);
+      CL_SavePPBuffer(theEnv,inputToken->printFo_rm);
       CL_GetToken(theEnv,readSource,inputToken);
       if (inputToken->tknType != RIGHT_PARENTHESIS_TOKEN)
         {
          CL_PPBackup(theEnv);
          CL_SavePPBuffer(theEnv,"\n   ");
-         CL_SavePPBuffer(theEnv,inputToken->printFoCL_rm);
+         CL_SavePPBuffer(theEnv,inputToken->printFo_rm);
         }
      }
    else if (inputToken->tknType != RIGHT_PARENTHESIS_TOKEN)
      {
       CL_PPBackup(theEnv);
       CL_SavePPBuffer(theEnv,"\n   ");
-      CL_SavePPBuffer(theEnv,inputToken->printFoCL_rm);
+      CL_SavePPBuffer(theEnv,inputToken->printFo_rm);
      }
 
    /*===================================*/

@@ -28,7 +28,7 @@
 /*      6.30: Added support for hashed memories.             */
 /*                                                           */
 /*            Added additional developer statistics to help  */
-/*            analyze join network perfoCL_rmance.              */
+/*            analyze join network perfo_rmance.              */
 /*                                                           */
 /*            Removed pseudo-facts used in not CEs.          */
 /*                                                           */
@@ -77,17 +77,17 @@
                                                            struct partialMatch *,
                                                            struct joinNode *,struct partialMatch *,int);
    static bool                    PartialMatchDefunct(Environment *,struct partialMatch *);
-   static void                    NegEntryCL_RetractAlpha(Environment *,struct partialMatch *,int);
-   static void                    NegEntryCL_RetractBeta(Environment *,struct joinNode *,struct partialMatch *,
+   static void                    NegEntry_RetractAlpha(Environment *,struct partialMatch *,int);
+   static void                    NegEntry_RetractBeta(Environment *,struct joinNode *,struct partialMatch *,
                                                       struct partialMatch *,int);
 
 /************************************************************/
-/* CL_NetworkCL_Retract:  CL_Retracts a data entity (such as a fact  */
+/* CL_Network_Retract:  CL_Retracts a data entity (such as a fact  */
 /*   or instance) from the pattern and join networks given  */
 /*   a pointer to the list of patterns which the data       */
 /*   entity matched.                                        */
 /************************************************************/
-void CL_NetworkCL_Retract(
+void CL_Network_Retract(
   Environment *theEnv,
   struct patternMatch *listOfMatchedPatterns)
   {
@@ -101,16 +101,16 @@ void CL_NetworkCL_Retract(
       tempMatch->theMatch->deleting = true;
       
       if (tempMatch->theMatch->children != NULL)
-        { CL_PosEntryCL_RetractAlpha(theEnv,tempMatch->theMatch,NETWORK_RETRACT); }
+        { CL_PosEntry_RetractAlpha(theEnv,tempMatch->theMatch,NETWORK_RETRACT); }
 
       if (tempMatch->theMatch->blockList != NULL)
-        { NegEntryCL_RetractAlpha(theEnv,tempMatch->theMatch,NETWORK_RETRACT); }
+        { NegEntry_RetractAlpha(theEnv,tempMatch->theMatch,NETWORK_RETRACT); }
 
       /*===================================================*/
       /* Remove from the alpha memory of the pattern node. */
       /*===================================================*/
 
-      RemoveAlphaMemoryCL_Matches(theEnv,tempMatch->matchingPattern,
+      RemoveAlphaMemory_Matches(theEnv,tempMatch->matchingPattern,
                                tempMatch->theMatch,
                                tempMatch->theMatch->binds[0].gm.theMatch);
 
@@ -121,9 +121,9 @@ void CL_NetworkCL_Retract(
   }
 
 /*************************/
-/* CL_PosEntryCL_RetractAlpha: */
+/* CL_PosEntry_RetractAlpha: */
 /*************************/
-void CL_PosEntryCL_RetractAlpha(
+void CL_PosEntry_RetractAlpha(
   Environment *theEnv,
   struct partialMatch *alphaMatch,
   int operation)
@@ -137,10 +137,10 @@ void CL_PosEntryCL_RetractAlpha(
       joinPtr = (struct joinNode *) betaMatch->owner;
 
       if (betaMatch->children != NULL)
-        { CL_PosEntryCL_RetractBeta(theEnv,betaMatch,betaMatch->children,operation); }
+        { CL_PosEntry_RetractBeta(theEnv,betaMatch,betaMatch->children,operation); }
 
       if (betaMatch->rhsMemory)
-        { NegEntryCL_RetractAlpha(theEnv,betaMatch,operation); }
+        { NegEntry_RetractAlpha(theEnv,betaMatch,operation); }
 
       /* Remove the beta match. */
 
@@ -155,16 +155,16 @@ void CL_PosEntryCL_RetractAlpha(
 	  else
 		{ CL_UnlinkBetaPMFromNodeAndLineage(theEnv,joinPtr,betaMatch,LHS); }
 
-      CL_DeletePartialCL_Matches(theEnv,betaMatch);
+      CL_DeletePartial_Matches(theEnv,betaMatch);
 
       betaMatch = tempMatch;
      }
   }
 
 /*************************/
-/* NegEntryCL_RetractAlpha: */
+/* NegEntry_RetractAlpha: */
 /*************************/
-static void NegEntryCL_RetractAlpha(
+static void NegEntry_RetractAlpha(
   Environment *theEnv,
   struct partialMatch *alphaMatch,
   int operation)
@@ -186,15 +186,15 @@ static void NegEntryCL_RetractAlpha(
          continue;
         }
 
-      NegEntryCL_RetractBeta(theEnv,joinPtr,alphaMatch,betaMatch,operation);
+      NegEntry_RetractBeta(theEnv,joinPtr,alphaMatch,betaMatch,operation);
       betaMatch = alphaMatch->blockList;
      }
   }
 
 /************************/
-/* NegEntryCL_RetractBeta: */
+/* NegEntry_RetractBeta: */
 /************************/
-static void NegEntryCL_RetractBeta(
+static void NegEntry_RetractBeta(
   Environment *theEnv,
   struct joinNode *joinPtr,
   struct partialMatch *alphaMatch,
@@ -213,7 +213,7 @@ static void NegEntryCL_RetractBeta(
    else if (joinPtr->patternIsExists)
      {
       if (betaMatch->children != NULL)
-        { CL_PosEntryCL_RetractBeta(theEnv,betaMatch,betaMatch->children,operation); }
+        { CL_PosEntry_RetractBeta(theEnv,betaMatch,betaMatch->children,operation); }
       return;
      }
    else if (joinPtr->firstJoin && (joinPtr->patternIsNegated || joinPtr->joinFromTheRight) && (! joinPtr->patternIsExists))
@@ -253,9 +253,9 @@ static void NegEntryCL_RetractBeta(
   }
 
 /************************/
-/* CL_PosEntryCL_RetractBeta: */
+/* CL_PosEntry_RetractBeta: */
 /************************/
-void CL_PosEntryCL_RetractBeta(
+void CL_PosEntry_RetractBeta(
   Environment *theEnv,
   struct partialMatch *parentMatch,
   struct partialMatch *betaMatch,
@@ -280,7 +280,7 @@ void CL_PosEntryCL_RetractBeta(
         }
 
       if (betaMatch->blockList != NULL)
-        { NegEntryCL_RetractAlpha(theEnv,betaMatch,operation); }
+        { NegEntry_RetractAlpha(theEnv,betaMatch,operation); }
       else if ((((struct joinNode *) betaMatch->owner)->ruleToActivate != NULL) ?
                (betaMatch->marker != NULL) : false)
         { CL_RemoveActivation(theEnv,(struct activation *) betaMatch->marker,true,true); }
@@ -441,7 +441,7 @@ static bool FindNextConflictingMatch(
   }
 
 /***********************************************************/
-/* PartialMatchDefunct: DeteCL_rmines if any pattern entities */
+/* PartialMatchDefunct: Dete_rmines if any pattern entities */
 /*   contained within the partial match have changed since */
 /*   this partial match was generated. Assumes counterf is */
 /*   false.                                                */
@@ -467,7 +467,7 @@ static bool PartialMatchDefunct(
   }
 
 /*****************************************************************/
-/* CL_PartialMatchWillBeDeleted: DeteCL_rmines if any pattern entities */
+/* CL_PartialMatchWillBeDeleted: Dete_rmines if any pattern entities */
 /*   contained within the partial match were deleted as part of  */
 /*   a retraction/deletion. When rules have multiple patterns    */
 /*   that can be matched by the same fact it's possible that a   */
@@ -498,10 +498,10 @@ bool CL_PartialMatchWillBeDeleted(
   }
 
 /***************************************************/
-/* CL_DeletePartialCL_Matches: Returns a list of partial */
+/* CL_DeletePartial_Matches: Returns a list of partial */
 /*   matches to the pool of free memory.           */
 /***************************************************/
-void CL_DeletePartialCL_Matches(
+void CL_DeletePartial_Matches(
   Environment *theEnv,
   struct partialMatch *listOfPMs)
   {
@@ -562,8 +562,8 @@ void CL_ReturnPartialMatch(
 
    if (waste->busy)
      {
-      waste->nextInMemory = EngineData(theEnv)->GarbagePartialCL_Matches;
-      EngineData(theEnv)->GarbagePartialCL_Matches = waste;
+      waste->nextInMemory = EngineData(theEnv)->GarbagePartial_Matches;
+      EngineData(theEnv)->GarbagePartial_Matches = waste;
       return;
      }
 
@@ -587,7 +587,7 @@ void CL_ReturnPartialMatch(
    /* the logical CE.                                 */
    /*=================================================*/
 
-   if (waste->dependents != NULL) RemovePMCL_Dependencies(theEnv,waste);
+   if (waste->dependents != NULL) RemovePM_Dependencies(theEnv,waste);
 
    /*======================================================*/
    /* Return the partial match to the pool of free memory. */
@@ -626,7 +626,7 @@ void CL_DestroyPartialMatch(
    /* the logical CE.                                 */
    /*=================================================*/
 
-   if (waste->dependents != NULL) DestroyPMCL_Dependencies(theEnv,waste);
+   if (waste->dependents != NULL) DestroyPM_Dependencies(theEnv,waste);
 
    /*======================================================*/
    /* Return the partial match to the pool of free memory. */
@@ -657,14 +657,14 @@ static void ReturnMarkers(
   }
 
 /*************************************************************/
-/* CL_FlushGarbagePartialCL_Matches:  Returns partial matches and  */
+/* CL_FlushGarbagePartial_Matches:  Returns partial matches and  */
 /*   associated structures that were removed as part of a    */
 /*   retraction. It is necessary to postpone returning these */
 /*   structures to memory because RHS actions retrieve their */
 /*   variable bindings directly from the fact and instance   */
 /*   data structures through the alpha memory bindings.      */
 /*************************************************************/
-void CL_FlushGarbagePartialCL_Matches(
+void CL_FlushGarbagePartial_Matches(
   Environment *theEnv)
   {
    struct partialMatch *pmPtr;
@@ -675,11 +675,11 @@ void CL_FlushGarbagePartialCL_Matches(
    /* the alpha memories of the pattern networks.       */
    /*===================================================*/
 
-   while (EngineData(theEnv)->GarbageAlphaCL_Matches != NULL)
+   while (EngineData(theEnv)->GarbageAlpha_Matches != NULL)
      {
-      amPtr = EngineData(theEnv)->GarbageAlphaCL_Matches->next;
-      rtn_struct(theEnv,alphaMatch,EngineData(theEnv)->GarbageAlphaCL_Matches);
-      EngineData(theEnv)->GarbageAlphaCL_Matches = amPtr;
+      amPtr = EngineData(theEnv)->GarbageAlpha_Matches->next;
+      rtn_struct(theEnv,alphaMatch,EngineData(theEnv)->GarbageAlpha_Matches);
+      EngineData(theEnv)->GarbageAlpha_Matches = amPtr;
      }
 
    /*==============================================*/
@@ -687,22 +687,22 @@ void CL_FlushGarbagePartialCL_Matches(
    /* from the beta memories of the join networks. */
    /*==============================================*/
 
-   while (EngineData(theEnv)->GarbagePartialCL_Matches != NULL)
+   while (EngineData(theEnv)->GarbagePartial_Matches != NULL)
      {
       /*=====================================================*/
       /* Remember the next garbage partial match to process. */
       /*=====================================================*/
 
-      pmPtr = EngineData(theEnv)->GarbagePartialCL_Matches->nextInMemory;
+      pmPtr = EngineData(theEnv)->GarbagePartial_Matches->nextInMemory;
 
       /*============================================*/
       /* Dispose of the garbage partial match being */
       /* examined and move on to the next one.      */
       /*============================================*/
 
-      EngineData(theEnv)->GarbagePartialCL_Matches->busy = false;
-      CL_ReturnPartialMatch(theEnv,EngineData(theEnv)->GarbagePartialCL_Matches);
-      EngineData(theEnv)->GarbagePartialCL_Matches = pmPtr;
+      EngineData(theEnv)->GarbagePartial_Matches->busy = false;
+      CL_ReturnPartialMatch(theEnv,EngineData(theEnv)->GarbagePartial_Matches);
+      EngineData(theEnv)->GarbagePartial_Matches = pmPtr;
      }
   }
 

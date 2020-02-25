@@ -31,7 +31,7 @@
 /*            compilers/operating systems (IBM_MCW and       */
 /*            MAC_MCW).                                      */
 /*                                                           */
-/*            Modified EnvSetCL_IncrementalCL_Reset to check for   */
+/*            Modified EnvSetCL_Incremental_Reset to check for   */
 /*            the existance of rules.                        */
 /*                                                           */
 /*            Converted API macros to function calls.        */
@@ -39,8 +39,8 @@
 /*      6.31: Fix for slow incremental reset of rule with    */
 /*            several dozen nand joins.                      */
 /*                                                           */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*      6.40: Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -79,19 +79,19 @@
 /***************************************/
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   static void                    MarkNetworkForCL_IncrementalCL_Reset(Environment *,Defrule *,bool);
-   static void                    MarkJoinsForCL_IncrementalCL_Reset(Environment *,struct joinNode *,bool);
+   static void                    MarkNetworkForCL_Incremental_Reset(Environment *,Defrule *,bool);
+   static void                    MarkJoinsForCL_Incremental_Reset(Environment *,struct joinNode *,bool);
    static void                    CheckForPrimableJoins(Environment *,Defrule *,struct joinNode *);
    static void                    PrimeJoinFromLeftMemory(Environment *,struct joinNode *);
    static void                    PrimeJoinFromRightMemory(Environment *,struct joinNode *);
-   static void                    MarkPatternForCL_IncrementalCL_Reset(Environment *,unsigned short,
+   static void                    MarkPatternForCL_Incremental_Reset(Environment *,unsigned short,
                                                                  struct patternNodeHeader *,bool);
 #endif
 
 /**************************************************************/
-/* CL_IncrementalCL_Reset: Incrementally resets the specified rule. */
+/* CL_Incremental_Reset: Incrementally resets the specified rule. */
 /**************************************************************/
-void CL_IncrementalCL_Reset(
+void CL_Incremental_Reset(
   Environment *theEnv,
   Defrule *tempRule)
   {
@@ -104,13 +104,13 @@ void CL_IncrementalCL_Reset(
    /* associated with the rule being incrementally reset. */
    /*=====================================================*/
 
-   MarkNetworkForCL_IncrementalCL_Reset(theEnv,tempRule,true);
+   MarkNetworkForCL_Incremental_Reset(theEnv,tempRule,true);
 
    /*==========================*/
    /* Begin incremental reset. */
    /*==========================*/
 
-   EngineData(theEnv)->CL_IncrementalCL_ResetInProgress = true;
+   EngineData(theEnv)->CL_Incremental_ResetInProgress = true;
 
    /*============================================================*/
    /* If the new rule shares patterns or joins with other rules, */
@@ -132,32 +132,32 @@ void CL_IncrementalCL_Reset(
         theParser != NULL;
         theParser = theParser->next)
      {
-      if (theParser->incrementalCL_ResetFunction != NULL)
-        { (*theParser->incrementalCL_ResetFunction)(theEnv); }
+      if (theParser->incremental_ResetFunction != NULL)
+        { (*theParser->incremental_ResetFunction)(theEnv); }
      }
 
    /*========================*/
    /* End incremental reset. */
    /*========================*/
 
-   EngineData(theEnv)->CL_IncrementalCL_ResetInProgress = false;
+   EngineData(theEnv)->CL_Incremental_ResetInProgress = false;
 
    /*====================================================*/
    /* Remove the marks in the pattern and join networks. */
    /*====================================================*/
 
-   MarkNetworkForCL_IncrementalCL_Reset(theEnv,tempRule,false);
+   MarkNetworkForCL_Incremental_Reset(theEnv,tempRule,false);
 #endif
   }
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
 
 /**********************************************************************/
-/* MarkNetworkForCL_IncrementalCL_Reset: Coordinates marking the initialize */
+/* MarkNetworkForCL_Incremental_Reset: Coordinates marking the initialize */
 /*   flags in the pattern and join networks both before and after an  */
 /*   incremental reset.                                               */
 /**********************************************************************/
-static void MarkNetworkForCL_IncrementalCL_Reset(
+static void MarkNetworkForCL_Incremental_Reset(
   Environment *theEnv,
   Defrule *tempRule,
   bool value)
@@ -169,15 +169,15 @@ static void MarkNetworkForCL_IncrementalCL_Reset(
    for (;
         tempRule != NULL;
         tempRule = tempRule->disjunct)
-     { MarkJoinsForCL_IncrementalCL_Reset(theEnv,tempRule->lastJoin,value); }
+     { MarkJoinsForCL_Incremental_Reset(theEnv,tempRule->lastJoin,value); }
   }
 
 /**********************************************************************/
-/* MarkJoinsForCL_IncrementalCL_Reset: Coordinates marking the initialize */
+/* MarkJoinsForCL_Incremental_Reset: Coordinates marking the initialize */
 /*   flags in the pattern and join networks both before and after an  */
 /*   incremental reset.                                               */
 /**********************************************************************/
-static void MarkJoinsForCL_IncrementalCL_Reset(
+static void MarkJoinsForCL_Incremental_Reset(
   Environment *theEnv,
   struct joinNode *joinPtr,
   bool value)
@@ -196,7 +196,7 @@ static void MarkJoinsForCL_IncrementalCL_Reset(
         }
 
       //if (joinPtr->joinFromTheRight)
-      //  { MarkJoinsForCL_IncrementalCL_Reset(theEnv,(struct joinNode *) joinPtr->rightSideEntryStructure,value); }
+      //  { MarkJoinsForCL_Incremental_Reset(theEnv,(struct joinNode *) joinPtr->rightSideEntryStructure,value); }
 
       /*================*/
       /* Mark the join. */
@@ -211,7 +211,7 @@ static void MarkJoinsForCL_IncrementalCL_Reset(
            {
             patternPtr = (struct patternNodeHeader *) GetPatternForJoin(joinPtr);
             if (patternPtr != NULL)
-              { MarkPatternForCL_IncrementalCL_Reset(theEnv,joinPtr->rhsType,patternPtr,value); }
+              { MarkPatternForCL_Incremental_Reset(theEnv,joinPtr->rhsType,patternPtr,value); }
            }
         }
      }
@@ -310,7 +310,7 @@ static void PrimeJoinFromLeftMemory(
    if (joinPtr->firstJoin == true)
      {
       if (joinPtr->rightSideEntryStructure == NULL)
-        { NetworkCL_Assert(theEnv,joinPtr->rightMemory->beta[0],joinPtr); }
+        { Network_Assert(theEnv,joinPtr->rightMemory->beta[0],joinPtr); }
       else if (joinPtr->patternIsNegated)
         {
          notParent = joinPtr->leftMemory->beta[0];
@@ -343,7 +343,7 @@ static void PrimeJoinFromLeftMemory(
             for (theList = listOfHashNodes->alphaMemory;
                  theList != NULL;
                  theList = theList->nextInMemory)
-              { NetworkCL_Assert(theEnv,theList,joinPtr); }
+              { Network_Assert(theEnv,theList,joinPtr); }
            }
         }
       return;
@@ -392,7 +392,7 @@ static void PrimeJoinFromLeftMemory(
 
          CL_UpdateBetaPMLinks(theEnv,linker,theList->leftParent,theList->rightParent,joinPtr,hashValue,LHS);
 
-         NetworkCL_AssertLeft(theEnv,linker,joinPtr,NETWORK_ASSERT);
+         Network_AssertLeft(theEnv,linker,joinPtr,NETWORK_ASSERT);
         }
      }
   }
@@ -482,7 +482,7 @@ static void PrimeJoinFromRightMemory(
            { hashValue = 0; }
 
          CL_UpdateBetaPMLinks(theEnv,linker,theList->leftParent,theList->rightParent,joinPtr,hashValue,RHS);
-         NetworkCL_Assert(theEnv,linker,joinPtr);
+         Network_Assert(theEnv,linker,joinPtr);
         }
      }
 
@@ -503,12 +503,12 @@ static void PrimeJoinFromRightMemory(
   }
 
 /*********************************************************************/
-/* MarkPatternForCL_IncrementalCL_Reset: Given a pattern node and its type */
+/* MarkPatternForCL_Incremental_Reset: Given a pattern node and its type */
 /*   (fact, instance, etc.), calls the appropriate function to mark  */
 /*   the pattern for an incremental reset. Used to mark the pattern  */
 /*   nodes both before and after an incremental reset.               */
 /*********************************************************************/
-static void MarkPatternForCL_IncrementalCL_Reset(
+static void MarkPatternForCL_Incremental_Reset(
   Environment *theEnv,
   unsigned short rhsType,
   struct patternNodeHeader *theHeader,

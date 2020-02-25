@@ -127,7 +127,7 @@ typedef struct bsaveGenericModule
    static void                    UpdateMethod(Environment *,void *,unsigned long);
    static void                    UpdateRestriction(Environment *,void *,unsigned long);
    static void                    UpdateType(Environment *,void *,unsigned long);
-   static void                    CL_ClearCL_BloadGenerics(Environment *);
+   static void                    CL_Clear_BloadGenerics(Environment *);
    static void                    DeallocateDefgenericBinaryData(Environment *);
 
 /* =========================================
@@ -137,7 +137,7 @@ typedef struct bsaveGenericModule
    ***************************************** */
 
 /***********************************************************
-  NAME         : SetupGenericsCL_Bload
+  NAME         : SetupGenerics_Bload
   DESCRIPTION  : Initializes data structures and
                    routines for binary loads of
                    generic function constructs
@@ -146,7 +146,7 @@ typedef struct bsaveGenericModule
   SIDE EFFECTS : Routines defined and structures initialized
   NOTES        : None
  ***********************************************************/
-void SetupGenericsCL_Bload(
+void SetupGenerics_Bload(
   Environment *theEnv)
   {
    CL_AllocateEnvironmentData(theEnv,GENRCBIN_DATA,sizeof(struct defgenericBinaryData),DeallocateDefgenericBinaryData);
@@ -154,12 +154,12 @@ void SetupGenericsCL_Bload(
    CL_AddBinaryItem(theEnv,"generic functions",0,CL_BsaveGenericsFind,CL_BsaveGenericsExpressions,
                              CL_BsaveStorageGenerics,CL_BsaveGenerics,
                              CL_BloadStorageGenerics,CL_BloadGenerics,
-                             CL_ClearCL_BloadGenerics);
+                             CL_Clear_BloadGenerics);
 #endif
 #if BLOAD || BLOAD_ONLY
    CL_AddBinaryItem(theEnv,"generic functions",0,NULL,NULL,NULL,NULL,
                              CL_BloadStorageGenerics,CL_BloadGenerics,
-                             CL_ClearCL_BloadGenerics);
+                             CL_Clear_BloadGenerics);
 #endif
   }
 
@@ -191,7 +191,7 @@ static void DeallocateDefgenericBinaryData(
   }
 
 /***************************************************
-  NAME         : CL_BloadCL_DefgenericModuleReference
+  NAME         : CL_Bload_DefgenericModuleReference
   DESCRIPTION  : Returns a pointer to the
                  appropriate defgeneric module
   INPUTS       : The index of the module
@@ -199,7 +199,7 @@ static void DeallocateDefgenericBinaryData(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-void *CL_BloadCL_DefgenericModuleReference(
+void *CL_Bload_DefgenericModuleReference(
   Environment *theEnv,
   unsigned long theIndex)
   {
@@ -234,11 +234,11 @@ void *CL_BloadCL_DefgenericModuleReference(
 static void CL_BsaveGenericsFind(
   Environment *theEnv)
   {
-   CL_SaveCL_BloadCount(theEnv,DefgenericBinaryData(theEnv)->ModuleCount);
-   CL_SaveCL_BloadCount(theEnv,DefgenericBinaryData(theEnv)->GenericCount);
-   CL_SaveCL_BloadCount(theEnv,DefgenericBinaryData(theEnv)->MethodCount);
-   CL_SaveCL_BloadCount(theEnv,DefgenericBinaryData(theEnv)->RestrictionCount);
-   CL_SaveCL_BloadCount(theEnv,DefgenericBinaryData(theEnv)->TypeCount);
+   CL_Save_BloadCount(theEnv,DefgenericBinaryData(theEnv)->ModuleCount);
+   CL_Save_BloadCount(theEnv,DefgenericBinaryData(theEnv)->GenericCount);
+   CL_Save_BloadCount(theEnv,DefgenericBinaryData(theEnv)->MethodCount);
+   CL_Save_BloadCount(theEnv,DefgenericBinaryData(theEnv)->RestrictionCount);
+   CL_Save_BloadCount(theEnv,DefgenericBinaryData(theEnv)->TypeCount);
 
    DefgenericBinaryData(theEnv)->GenericCount = 0L;
    DefgenericBinaryData(theEnv)->MethodCount = 0L;
@@ -386,17 +386,17 @@ static void CL_BsaveStorageGenerics(
    size_t space;
 
    space = sizeof(long) * 5;
-   CL_GenCL_Write(&space,sizeof(size_t),fp);
-   CL_GenCL_Write(&DefgenericBinaryData(theEnv)->ModuleCount,sizeof(long),fp);
-   CL_GenCL_Write(&DefgenericBinaryData(theEnv)->GenericCount,sizeof(long),fp);
-   CL_GenCL_Write(&DefgenericBinaryData(theEnv)->MethodCount,sizeof(long),fp);
-   CL_GenCL_Write(&DefgenericBinaryData(theEnv)->RestrictionCount,sizeof(long),fp);
-   CL_GenCL_Write(&DefgenericBinaryData(theEnv)->TypeCount,sizeof(long),fp);
+   CL_Gen_Write(&space,sizeof(size_t),fp);
+   CL_Gen_Write(&DefgenericBinaryData(theEnv)->ModuleCount,sizeof(long),fp);
+   CL_Gen_Write(&DefgenericBinaryData(theEnv)->GenericCount,sizeof(long),fp);
+   CL_Gen_Write(&DefgenericBinaryData(theEnv)->MethodCount,sizeof(long),fp);
+   CL_Gen_Write(&DefgenericBinaryData(theEnv)->RestrictionCount,sizeof(long),fp);
+   CL_Gen_Write(&DefgenericBinaryData(theEnv)->TypeCount,sizeof(long),fp);
   }
 
 /****************************************************************************************
   NAME         : CL_BsaveGenerics
-  DESCRIPTION  : CL_Writes out generic function in binary foCL_rmat
+  DESCRIPTION  : CL_Writes out generic function in binary fo_rmat
                  Space required (unsigned long)
                  All generic modules (sizeof(DEFGENERIC_MODULE) * Number of generic modules)
                  All generic headers (sizeof(Defgeneric) * Number of generics)
@@ -430,7 +430,7 @@ static void CL_BsaveGenerics(
       CL_Write out the total amount of space required:  modules,headers,
       methods, restrictions, types
       ================================================================ */
-   CL_GenCL_Write(&space,sizeof(size_t),fp);
+   CL_Gen_Write(&space,sizeof(size_t),fp);
 
    /* ======================================
       CL_Write out the generic function modules
@@ -441,9 +441,9 @@ static void CL_BsaveGenerics(
      {
       theModuleItem = (DEFGENERIC_MODULE *)
                       CL_GetModuleItem(theEnv,theModule,CL_FindModuleItem(theEnv,"defgeneric")->moduleIndex);
-      CL_AssignCL_BsaveDefmdlItemHdrVals(&dummy_generic_module.header,
+      CL_Assign_BsaveDefmdlItemHdrVals(&dummy_generic_module.header,
                                            &theModuleItem->header);
-      CL_GenCL_Write(&dummy_generic_module,
+      CL_Gen_Write(&dummy_generic_module,
                sizeof(BSAVE_DEFGENERIC_MODULE),fp);
       theModule = CL_GetNextDefmodule(theEnv,theModule);
      }
@@ -476,11 +476,11 @@ static void CL_BsaveGenerics(
    CL_DoForAllConstructs(theEnv,CL_BsaveRestrictionTypes,DefgenericData(theEnv)->CL_DefgenericModuleIndex,
                       false,fp);
 
-   RestoreCL_BloadCount(theEnv,&DefgenericBinaryData(theEnv)->ModuleCount);
-   RestoreCL_BloadCount(theEnv,&DefgenericBinaryData(theEnv)->GenericCount);
-   RestoreCL_BloadCount(theEnv,&DefgenericBinaryData(theEnv)->MethodCount);
-   RestoreCL_BloadCount(theEnv,&DefgenericBinaryData(theEnv)->RestrictionCount);
-   RestoreCL_BloadCount(theEnv,&DefgenericBinaryData(theEnv)->TypeCount);
+   Restore_BloadCount(theEnv,&DefgenericBinaryData(theEnv)->ModuleCount);
+   Restore_BloadCount(theEnv,&DefgenericBinaryData(theEnv)->GenericCount);
+   Restore_BloadCount(theEnv,&DefgenericBinaryData(theEnv)->MethodCount);
+   Restore_BloadCount(theEnv,&DefgenericBinaryData(theEnv)->RestrictionCount);
+   Restore_BloadCount(theEnv,&DefgenericBinaryData(theEnv)->TypeCount);
   }
 
 /***************************************************
@@ -500,7 +500,7 @@ static void CL_BsaveDefgenericHeader(
    Defgeneric *gfunc = (Defgeneric *) theDefgeneric;
    BSAVE_GENERIC dummy_generic;
 
-   CL_AssignCL_BsaveConstructHeaderVals(&dummy_generic.header,&gfunc->header);
+   CL_Assign_BsaveConstructHeaderVals(&dummy_generic.header,&gfunc->header);
    dummy_generic.mcnt = gfunc->mcnt;
    if (gfunc->methods != NULL)
      {
@@ -509,7 +509,7 @@ static void CL_BsaveDefgenericHeader(
      }
    else
      dummy_generic.methods = ULONG_MAX;
-   CL_GenCL_Write(&dummy_generic,sizeof(BSAVE_GENERIC),(FILE *) userBuffer);
+   CL_Gen_Write(&dummy_generic,sizeof(BSAVE_GENERIC),(FILE *) userBuffer);
   }
 
 /***************************************************
@@ -535,7 +535,7 @@ static void CL_BsaveMethods(
      {
       meth = &gfunc->methods[i];
       
-      CL_AssignCL_BsaveConstructHeaderVals(&dummy_method.header,&meth->header);
+      CL_Assign_BsaveConstructHeaderVals(&dummy_method.header,&meth->header);
 
       dummy_method.index = meth->index;
       dummy_method.restrictionCount = meth->restrictionCount;
@@ -557,7 +557,7 @@ static void CL_BsaveMethods(
         }
       else
         dummy_method.actions = ULONG_MAX;
-      CL_GenCL_Write(&dummy_method,sizeof(BSAVE_METHOD),(FILE *) userBuffer);
+      CL_Gen_Write(&dummy_method,sizeof(BSAVE_METHOD),(FILE *) userBuffer);
      }
   }
 
@@ -600,7 +600,7 @@ static void CL_BsaveMethodRestrictions(
            }
          else
            dummy_restriction.query = ULONG_MAX;
-         CL_GenCL_Write(&dummy_restriction,
+         CL_Gen_Write(&dummy_restriction,
                   sizeof(BSAVE_RESTRICTION),(FILE *) userBuffer);
         }
      }
@@ -640,7 +640,7 @@ static void CL_BsaveRestrictionTypes(
 #else
             dummy_type = (unsigned long) ((CLIPSInteger *) rptr->types[k])->contents;
 #endif
-            CL_GenCL_Write(&dummy_type,sizeof(unsigned long),(FILE *) userBuffer);
+            CL_Gen_Write(&dummy_type,sizeof(unsigned long),(FILE *) userBuffer);
            }
         }
      }
@@ -710,7 +710,7 @@ static void CL_BloadStorageGenerics(
 
 /*********************************************************************
   NAME         : CL_BloadGenerics
-  DESCRIPTION  : This routine reads generic function infoCL_rmation from
+  DESCRIPTION  : This routine reads generic function info_rmation from
                  a binary file in four chunks:
                  Generic-header array
                  Method array
@@ -732,13 +732,13 @@ static void CL_BloadGenerics(
    CL_GenReadBinary(theEnv,&space,sizeof(size_t));
    if (DefgenericBinaryData(theEnv)->ModuleCount == 0L)
      return;
-   CL_BloadandCL_Refresh(theEnv,DefgenericBinaryData(theEnv)->ModuleCount,sizeof(BSAVE_DEFGENERIC_MODULE),UpdateGenericModule);
+   CL_Bloadand_Refresh(theEnv,DefgenericBinaryData(theEnv)->ModuleCount,sizeof(BSAVE_DEFGENERIC_MODULE),UpdateGenericModule);
    if (DefgenericBinaryData(theEnv)->GenericCount == 0L)
      return;
-   CL_BloadandCL_Refresh(theEnv,DefgenericBinaryData(theEnv)->GenericCount,sizeof(BSAVE_GENERIC),UpdateGeneric);
-   CL_BloadandCL_Refresh(theEnv,DefgenericBinaryData(theEnv)->MethodCount,sizeof(BSAVE_METHOD),UpdateMethod);
-   CL_BloadandCL_Refresh(theEnv,DefgenericBinaryData(theEnv)->RestrictionCount,sizeof(BSAVE_RESTRICTION),UpdateRestriction);
-   CL_BloadandCL_Refresh(theEnv,DefgenericBinaryData(theEnv)->TypeCount,sizeof(long),UpdateType);
+   CL_Bloadand_Refresh(theEnv,DefgenericBinaryData(theEnv)->GenericCount,sizeof(BSAVE_GENERIC),UpdateGeneric);
+   CL_Bloadand_Refresh(theEnv,DefgenericBinaryData(theEnv)->MethodCount,sizeof(BSAVE_METHOD),UpdateMethod);
+   CL_Bloadand_Refresh(theEnv,DefgenericBinaryData(theEnv)->RestrictionCount,sizeof(BSAVE_RESTRICTION),UpdateRestriction);
+   CL_Bloadand_Refresh(theEnv,DefgenericBinaryData(theEnv)->TypeCount,sizeof(long),UpdateType);
   }
 
 /*********************************************
@@ -840,7 +840,7 @@ static void UpdateType(
   }
 
 /***************************************************************
-  NAME         : CL_ClearCL_BloadGenerics
+  NAME         : CL_Clear_BloadGenerics
   DESCRIPTION  : CL_Release all binary-loaded generic function
                    structure arrays
                  CL_Resets generic function list to NULL
@@ -849,7 +849,7 @@ static void UpdateType(
   SIDE EFFECTS : Memory cleared
   NOTES        : Generic function name symbol counts decremented
  ***************************************************************/
-static void CL_ClearCL_BloadGenerics(
+static void CL_Clear_BloadGenerics(
   Environment *theEnv)
   {
    unsigned long i;

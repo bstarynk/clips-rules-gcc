@@ -17,7 +17,7 @@
 /* Revision History:                                         */
 /*                                                           */
 /*      6.24: Created file to seperate CL_UserFunctions and     */
-/*            EnvCL_UserFunctions from CL_main.c.                  */
+/*            Env_UserFunctions from CL_main.c.                  */
 /*                                                           */
 /*      6.30: Removed conditional code for unsupported       */
 /*            compilers/operating systems (IBM_MCW,          */
@@ -30,11 +30,11 @@
 
 /***************************************************************************/
 /*                                                                         */
-/* PeCL_rmission is hereby granted, free of charge, to any person obtaining   */
+/* Pe_rmission is hereby granted, free of charge, to any person obtaining   */
 /* a copy of this software and associated documentation files (the         */
 /* "Software"), to deal in the Software without restriction, including     */
 /* without limitation the rights to use, copy, modify, merge, publish,     */
-/* distribute, and/or sell copies of the Software, and to peCL_rmit persons   */
+/* distribute, and/or sell copies of the Software, and to pe_rmit persons   */
 /* to whom the Software is furnished to do so.                             */
 /*                                                                         */
 /* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS */
@@ -53,7 +53,7 @@
 void CL_UserFunctions(Environment *);
 
 /*********************************************************/
-/* CL_UserFunctions: InfoCL_rms the expert system environment  */
+/* CL_UserFunctions: Info_rms the expert system environment  */
 /*   of any user defined functions. In the default case, */
 /*   there are no user defined functions. To define      */
 /*   functions, either this function must be replaced by */

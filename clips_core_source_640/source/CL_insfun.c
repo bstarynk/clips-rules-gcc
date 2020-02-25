@@ -56,11 +56,11 @@
 /*                                                           */
 /*            Fixed slot override default ?NONE bug.         */
 /*                                                           */
-/*            CL_Instances of the foCL_rm [<name>] are now         */
+/*            CL_Instances of the fo_rm [<name>] are now         */
 /*            searched for in all modules.                   */
 /*                                                           */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*      6.40: Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -220,7 +220,7 @@ void CL_InitializeInstanceTable(
   }
 
 /*******************************************************
-  NAME         : CL_CleanupCL_Instances
+  NAME         : CL_Cleanup_Instances
   DESCRIPTION  : Iterates through instance garbage
                    list looking for nodes that
                    have become unused - and purges
@@ -230,13 +230,13 @@ void CL_InitializeInstanceTable(
   SIDE EFFECTS : Non-busy instance garbage nodes deleted
   NOTES        : None
  *******************************************************/
-void CL_CleanupCL_Instances(
+void CL_Cleanup_Instances(
   Environment *theEnv,
   void *context)
   {
    IGARBAGE *gprv,*gtmp,*dump;
 
-   if (InstanceData(theEnv)->MaintainGarbageCL_Instances)
+   if (InstanceData(theEnv)->MaintainGarbage_Instances)
      return;
    gprv = NULL;
    gtmp = InstanceData(theEnv)->InstanceGarbageList;
@@ -289,7 +289,7 @@ unsigned CL_HashInstance(
   }
 
 /***************************************************
-  NAME         : CL_DestroyAllCL_Instances
+  NAME         : CL_DestroyAll_Instances
   DESCRIPTION  : Deallocates all instances,
                   reinitializes hash table and
                   resets class instance pointers
@@ -298,16 +298,16 @@ unsigned CL_HashInstance(
   SIDE EFFECTS : All instances deallocated
   NOTES        : None
  ***************************************************/
-void CL_DestroyAllCL_Instances(
+void CL_DestroyAll_Instances(
   Environment *theEnv,
   void *context)
   {
    Instance *iptr;
-   bool svCL_maintain;
+   bool sv_maintain;
 
    CL_SaveCurrentModule(theEnv);
-   svCL_maintain = InstanceData(theEnv)->MaintainGarbageCL_Instances;
-   InstanceData(theEnv)->MaintainGarbageCL_Instances = true;
+   sv_maintain = InstanceData(theEnv)->MaintainGarbage_Instances;
+   InstanceData(theEnv)->MaintainGarbage_Instances = true;
    iptr = InstanceData(theEnv)->InstanceList;
    while (iptr != NULL)
      {
@@ -317,7 +317,7 @@ void CL_DestroyAllCL_Instances(
       while ((iptr != NULL) ? iptr->garbage : false)
         iptr = iptr->nxtList;
      }
-   InstanceData(theEnv)->MaintainGarbageCL_Instances = svCL_maintain;
+   InstanceData(theEnv)->MaintainGarbage_Instances = sv_maintain;
    CL_RestoreCurrentModule(theEnv);
   }
 
@@ -380,12 +380,12 @@ void CL_RemoveInstanceData(
   NOTES        : An instance is searched for by name first in the
                  current module - then in imported modules according
                  to the order given in the current module's definition.
-                 CL_Instances of the foCL_rm [<name>] are now searched for in
+                 CL_Instances of the fo_rm [<name>] are now searched for in
                  all modules.
  ***************************************************************************/
 Instance *CL_FindInstanceBySymbol(
   Environment *theEnv,
-  CLIPSLexeme *moduleAndCL_InstanceName)
+  CLIPSLexeme *moduleAnd_InstanceName)
   {
    unsigned modulePosition;
    bool searchImports;
@@ -395,20 +395,20 @@ Instance *CL_FindInstanceBySymbol(
    currentModule = CL_GetCurrentModule(theEnv);
 
    /* =======================================
-      Instance names of the foCL_rm [<name>] are
+      Instance names of the fo_rm [<name>] are
       searched for only in the current module
       ======================================= */
-   modulePosition = CL_FindModuleSeparator(moduleAndCL_InstanceName->contents);
+   modulePosition = CL_FindModuleSeparator(moduleAnd_InstanceName->contents);
    if (modulePosition == 0)
      {
       Instance *ins;
-      if (moduleAndCL_InstanceName->header.type == SYMBOL_TYPE)
-        { moduleAndCL_InstanceName = CL_CreateCL_InstanceName(theEnv,moduleAndCL_InstanceName->contents); }
+      if (moduleAnd_InstanceName->header.type == SYMBOL_TYPE)
+        { moduleAnd_InstanceName = CL_Create_InstanceName(theEnv,moduleAnd_InstanceName->contents); }
 
-      ins = InstanceData(theEnv)->InstanceTable[CL_HashInstance(moduleAndCL_InstanceName)];
+      ins = InstanceData(theEnv)->InstanceTable[CL_HashInstance(moduleAnd_InstanceName)];
       while (ins != NULL)
         {
-         if (ins->name == moduleAndCL_InstanceName)
+         if (ins->name == moduleAnd_InstanceName)
            { return ins; }
          ins = ins->nxtHash;
         }
@@ -416,26 +416,26 @@ Instance *CL_FindInstanceBySymbol(
      }
 
    /* =========================================
-      Instance names of the foCL_rm [::<name>] are
+      Instance names of the fo_rm [::<name>] are
       searched for in the current module and
       imported modules in the definition order
       ========================================= */
    else if (modulePosition == 1)
      {
       theModule = currentModule;
-      instanceName = CL_ExtractConstructName(theEnv,modulePosition,moduleAndCL_InstanceName->contents,INSTANCE_NAME_TYPE);
+      instanceName = CL_ExtractConstructName(theEnv,modulePosition,moduleAnd_InstanceName->contents,INSTANCE_NAME_TYPE);
       searchImports = true;
      }
 
    /* =============================================
-      Instance names of the foCL_rm [<module>::<name>]
+      Instance names of the fo_rm [<module>::<name>]
       are searched for in the specified module
       ============================================= */
    else
      {
-      moduleName = CL_ExtractModuleName(theEnv,modulePosition,moduleAndCL_InstanceName->contents);
+      moduleName = CL_ExtractModuleName(theEnv,modulePosition,moduleAnd_InstanceName->contents);
       theModule = CL_FindDefmodule(theEnv,moduleName->contents);
-      instanceName = CL_ExtractConstructName(theEnv,modulePosition,moduleAndCL_InstanceName->contents,INSTANCE_NAME_TYPE);
+      instanceName = CL_ExtractConstructName(theEnv,modulePosition,moduleAnd_InstanceName->contents,INSTANCE_NAME_TYPE);
       if (theModule == NULL)
         return NULL;
       searchImports = false;
@@ -501,7 +501,7 @@ Instance *CL_FindInstanceInModule(
        return(ins);
 
    /* ================================
-      For ::<name> foCL_rmats, we need to
+      For ::<name> fo_rmats, we need to
       search imported modules too
       ================================ */
    if (searchImports == false)
@@ -532,7 +532,7 @@ InstanceSlot *CL_FindInstanceSlot(
 
 /********************************************************************
   NAME         : CL_FindInstanceTemplateSlot
-  DESCRIPTION  : PerfoCL_rms a search on an class's instance
+  DESCRIPTION  : Perfo_rms a search on an class's instance
                    template slot array to find a slot by name
   INPUTS       : 1) The address of the class
                  2) The symbolic name of the slot
@@ -590,11 +590,11 @@ PutSlotError CL_PutSlotValue(
       setVal->value = FalseSymbol(theEnv);
       return rv;
      }
-   return CL_DirectCL_PutSlotValue(theEnv,ins,sp,val,setVal);
+   return CL_Direct_PutSlotValue(theEnv,ins,sp,val,setVal);
   }
 
 /*******************************************************
-  NAME         : CL_DirectCL_PutSlotValue
+  NAME         : CL_Direct_PutSlotValue
   DESCRIPTION  : CL_Evaluates new slot-expression and
                    stores it as a multifield
                    variable for the slot.
@@ -610,7 +610,7 @@ PutSlotError CL_PutSlotValue(
                  New value symbols installed
   NOTES        : None
  *******************************************************/
-PutSlotError CL_DirectCL_PutSlotValue(
+PutSlotError CL_Direct_PutSlotValue(
   Environment *theEnv,
   Instance *ins,
   InstanceSlot *sp,
@@ -649,7 +649,7 @@ PutSlotError CL_DirectCL_PutSlotValue(
          CL_WriteString(theEnv,STDERR,"' in instance [");
          CL_WriteString(theEnv,STDERR,ins->name->contents);
          CL_WriteString(theEnv,STDERR,"].\n");
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          return PSE_EVALUATION_ERROR;
         }
      }
@@ -660,7 +660,7 @@ PutSlotError CL_DirectCL_PutSlotValue(
       CL_PrintErrorID(theEnv,"INSFUN",5,false);
       CL_WriteString(theEnv,STDERR,"Cannot modify reactive instance slots while ");
       CL_WriteString(theEnv,STDERR,"pattern-matching is in process.\n");
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return PSE_RULE_NETWORK_ERROR;
      }
 
@@ -759,14 +759,14 @@ PutSlotError CL_DirectCL_PutSlotValue(
       CL_WriteString(theEnv,STDOUT,"\n");
      }
 #endif
-   InstanceData(theEnv)->ChangesToCL_Instances = true;
+   InstanceData(theEnv)->ChangesTo_Instances = true;
 
 #if DEFRULE_CONSTRUCT
    if (ins->cls->reactive && sp->desc->reactive)
      {
       /* ============================================
          If we have changed a shared slot, we need to
-         perfoCL_rm a Rete update for every instance
+         perfo_rm a Rete update for every instance
          which contains this slot
          ============================================ */
       if (sp->desc->shared)
@@ -798,7 +798,7 @@ PutSlotError CL_DirectCL_PutSlotValue(
 
 /*******************************************************************
   NAME         : CL_ValidSlotValue
-  DESCRIPTION  : DeteCL_rmines if a value is appropriate
+  DESCRIPTION  : Dete_rmines if a value is appropriate
                    for a slot-value
   INPUTS       : 1) The value buffer
                  2) Slot descriptor
@@ -835,7 +835,7 @@ PutSlotError CL_ValidSlotValue(
       CL_WriteString(theEnv,STDERR," is illegal for single-field ");
       CL_PrintSlot(theEnv,STDERR,sd,ins,theCommand);
       CL_WriteString(theEnv,STDERR,".\n");
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return PSE_CARDINALITY_ERROR;
      }
    if (val->header->type == VOID_TYPE)
@@ -844,7 +844,7 @@ PutSlotError CL_ValidSlotValue(
       CL_WriteString(theEnv,STDERR,"Void function illegal value for ");
       CL_PrintSlot(theEnv,STDERR,sd,ins,theCommand);
       CL_WriteString(theEnv,STDERR,".\n");
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return PSE_CARDINALITY_ERROR;
      }
    if (CL_GetDynamicConstraintChecking(theEnv))
@@ -863,7 +863,7 @@ PutSlotError CL_ValidSlotValue(
          CL_PrintSlot(theEnv,STDERR,sd,ins,theCommand);
          CL_ConstraintViolationErrorMessage(theEnv,NULL,NULL,0,0,NULL,0,
                                          violationCode,sd->constraint,false);
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
 
          switch(violationCode)
            {
@@ -917,7 +917,7 @@ Instance *CL_CheckInstance(
       if (ins->garbage == 1)
         {
          CL_StaleInstanceAddress(theEnv,CL_UDFContextFunctionName(context),0);
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          return NULL;
         }
      }
@@ -932,7 +932,7 @@ Instance *CL_CheckInstance(
      }
    else if (temp.header->type == SYMBOL_TYPE)
      {
-      temp.value = CL_CreateCL_InstanceName(theEnv,temp.lexemeValue->contents);
+      temp.value = CL_Create_InstanceName(theEnv,temp.lexemeValue->contents);
       ins = CL_FindInstanceBySymbol(theEnv,temp.lexemeValue);
       if (ins == NULL)
         {
@@ -946,7 +946,7 @@ Instance *CL_CheckInstance(
       CL_WriteString(theEnv,STDERR,"Expected a valid instance in function '");
       CL_WriteString(theEnv,STDERR,CL_UDFContextFunctionName(context));
       CL_WriteString(theEnv,STDERR,"'.\n");
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return NULL;
      }
    return(ins);
@@ -974,7 +974,7 @@ void CL_NoInstanceError(
    CL_WriteString(theEnv,STDERR,"] in function '");
    CL_WriteString(theEnv,STDERR,func);
    CL_WriteString(theEnv,STDERR,"'.\n");
-   SetCL_EvaluationError(theEnv,true);
+   Set_EvaluationError(theEnv,true);
   }
 
 /***************************************************
@@ -1005,7 +1005,7 @@ void CL_StaleInstanceAddress(
   }
 
 /**********************************************************************
-  NAME         : CL_GetCL_InstancesChanged
+  NAME         : CL_Get_InstancesChanged
   DESCRIPTION  : Returns whether instances have changed
                    (any were added/deleted or slot values were changed)
                    since last time flag was set to false
@@ -1014,25 +1014,25 @@ void CL_StaleInstanceAddress(
   SIDE EFFECTS : None
   NOTES        : Used by interfaces to update instance windows
  **********************************************************************/
-bool CL_GetCL_InstancesChanged(
+bool CL_Get_InstancesChanged(
   Environment *theEnv)
   {
-   return InstanceData(theEnv)->ChangesToCL_Instances;
+   return InstanceData(theEnv)->ChangesTo_Instances;
   }
 
 /*******************************************************
-  NAME         : SetCL_InstancesChanged
+  NAME         : Set_InstancesChanged
   DESCRIPTION  : Sets instances-changed flag (see above)
   INPUTS       : The value (true or false)
   RETURNS      : Nothing useful
   SIDE EFFECTS : The flag is set
   NOTES        : None
  *******************************************************/
-void SetCL_InstancesChanged(
+void Set_InstancesChanged(
   Environment *theEnv,
   bool changed)
   {
-   InstanceData(theEnv)->ChangesToCL_Instances = changed;
+   InstanceData(theEnv)->ChangesTo_Instances = changed;
   }
 
 /*******************************************************************
@@ -1078,7 +1078,7 @@ void CL_PrintSlot(
   }
 
 /*****************************************************
-  NAME         : PrintCL_InstanceNameAndClass
+  NAME         : Print_InstanceNameAndClass
   DESCRIPTION  : Displays an instance's name and class
   INPUTS       : 1) Logical name of output
                  2) The instance
@@ -1088,7 +1088,7 @@ void CL_PrintSlot(
   SIDE EFFECTS : Instnace name and class printed
   NOTES        : None
  *****************************************************/
-void PrintCL_InstanceNameAndClass(
+void Print_InstanceNameAndClass(
   Environment *theEnv,
   const char *logicalName,
   Instance *theInstance,
@@ -1101,7 +1101,7 @@ void PrintCL_InstanceNameAndClass(
   }
 
 /***************************************************
-  NAME         : PrintCL_InstanceName
+  NAME         : Print_InstanceName
   DESCRIPTION  : Used by the rule system commands
                  such as (matches) and (agenda)
                  to print out the name of an instance
@@ -1111,7 +1111,7 @@ void PrintCL_InstanceNameAndClass(
   SIDE EFFECTS : Name of instance printed
   NOTES        : None
  ***************************************************/
-void PrintCL_InstanceName(
+void Print_InstanceName(
   Environment *theEnv,
   const char *logName,
   Instance *theInstance)
@@ -1125,13 +1125,13 @@ void PrintCL_InstanceName(
    else
      {
       CL_WriteString(theEnv,logName,"[");
-      CL_WriteString(theEnv,logName,CL_GetFullCL_InstanceName(theEnv,theInstance)->contents);
+      CL_WriteString(theEnv,logName,CL_GetFull_InstanceName(theEnv,theInstance)->contents);
       CL_WriteString(theEnv,logName,"]");
      }
   }
 
 /***************************************************
-  NAME         : CL_PrintInstanceLongFoCL_rm
+  NAME         : CL_PrintInstanceLongFo_rm
   DESCRIPTION  : Used by kernel to print
                  instance addresses
   INPUTS       : 1) The logical output name
@@ -1140,7 +1140,7 @@ void PrintCL_InstanceName(
   SIDE EFFECTS : Address of instance printed
   NOTES        : None
  ***************************************************/
-void CL_PrintInstanceLongFoCL_rm(
+void CL_PrintInstanceLongFo_rm(
   Environment *theEnv,
   const char *logName,
   Instance *theInstance)
@@ -1152,7 +1152,7 @@ void CL_PrintInstanceLongFoCL_rm(
       else
         {
          CL_WriteString(theEnv,logName,"[");
-         CL_WriteString(theEnv,logName,CL_GetFullCL_InstanceName(theEnv,theInstance)->contents);
+         CL_WriteString(theEnv,logName,CL_GetFull_InstanceName(theEnv,theInstance)->contents);
          CL_WriteString(theEnv,logName,"]");
         }
      }
@@ -1171,7 +1171,7 @@ void CL_PrintInstanceLongFoCL_rm(
       else
         {
          CL_WriteString(theEnv,logName,"<Instance-");
-         CL_WriteString(theEnv,logName,CL_GetFullCL_InstanceName(theEnv,theInstance)->contents);
+         CL_WriteString(theEnv,logName,CL_GetFull_InstanceName(theEnv,theInstance)->contents);
          CL_WriteString(theEnv,logName,">");
         }
       if (PrintUtilityData(theEnv)->AddressesToStrings)
@@ -1282,7 +1282,7 @@ void CL_MatchObjectFunction(
 
 /***************************************************
   NAME         : CL_NetworkSynchronized
-  DESCRIPTION  : DeteCL_rmines if state of instance is
+  DESCRIPTION  : Dete_rmines if state of instance is
                  consistent with last push through
                  pattern-matching network
   INPUTS       : The instance
@@ -1305,7 +1305,7 @@ bool CL_NetworkSynchronized(
 
 /***************************************************
   NAME         : CL_InstanceIsDeleted
-  DESCRIPTION  : DeteCL_rmines if an instance has been
+  DESCRIPTION  : Dete_rmines if an instance has been
                  deleted
   INPUTS       : The instance
   RETURNS      : True if instance has been deleted,
@@ -1392,7 +1392,7 @@ static Instance *FindImportedInstance(
 
 /*****************************************************
   NAME         : NetworkModifyForSharedSlot
-  DESCRIPTION  : PerfoCL_rms a Rete network modify for
+  DESCRIPTION  : Perfo_rms a Rete network modify for
                  all instances which contain a
                  specific shared slot
   INPUTS       : 1) The traversal id to use when

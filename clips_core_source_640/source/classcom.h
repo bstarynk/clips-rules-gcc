@@ -66,18 +66,18 @@ typedef enum
 #include "symbol.h"
 
    const char             *CL_DefclassName(Defclass *);
-   const char             *CL_DefclassPPFoCL_rm(Defclass *);
+   const char             *CL_DefclassPPFo_rm(Defclass *);
    struct defmoduleItemHeader
-                          *GetCL_DefclassModule(Environment *,Defclass *);
+                          *Get_DefclassModule(Environment *,Defclass *);
    const char             *CL_DefclassModule(Defclass *);
-   CLIPSLexeme            *GetCL_DefclassNamePointer(Defclass *);
+   CLIPSLexeme            *Get_DefclassNamePointer(Defclass *);
    void                    CL_SetNextDefclass(Defclass *,Defclass *);
-   void                    SetCL_DefclassPPFoCL_rm(Environment *,Defclass *,char *);
+   void                    SetCL_DefclassPPFo_rm(Environment *,Defclass *,char *);
 
    Defclass               *CL_FindDefclass(Environment *,const char *);
    Defclass               *CL_FindDefclassInModule(Environment *,const char *);
    Defclass               *CL_LookupDefclassByMdlOrScope(Environment *,const char *);
-   Defclass               *LookupCL_DefclassInScope(Environment *,const char *);
+   Defclass               *Lookup_DefclassInScope(Environment *,const char *);
    Defclass               *CL_LookupDefclassAnywhere(Environment *,Defmodule *,const char *);
    bool                    CL_DefclassInScope(Environment *,Defclass *,Defmodule *);
    Defclass               *CL_GetNextDefclass(Environment *,Defclass *);
@@ -93,12 +93,12 @@ typedef enum
    void                    CL_PPDefclassCommand(Environment *,UDFContext *,UDFValue *);
    void                    CL_ListDefclassesCommand(Environment *,UDFContext *,UDFValue *);
    void                    CL_ListDefclasses(Environment *,const char *,Defmodule *);
-   bool                    CL_DefclassGetCL_WatchCL_Instances(Defclass *);
-   void                    CL_DefclassSetCL_WatchCL_Instances(Defclass *,bool);
-   bool                    CL_DefclassGetCL_WatchSlots(Defclass *);
-   void                    CL_DefclassSetCL_WatchSlots(Defclass *,bool);
-   bool                    CL_DefclassCL_WatchAccess(Environment *,int,bool,Expression *);
-   bool                    CL_DefclassCL_WatchPrint(Environment *,const char *,int,Expression *);
+   bool                    CL_DefclassGet_Watch_Instances(Defclass *);
+   void                    CL_DefclassSet_Watch_Instances(Defclass *,bool);
+   bool                    CL_DefclassGet_WatchSlots(Defclass *);
+   void                    CL_DefclassSet_WatchSlots(Defclass *,bool);
+   bool                    CL_Defclass_WatchAccess(Environment *,int,bool,Expression *);
+   bool                    CL_Defclass_WatchPrint(Environment *,const char *,int,Expression *);
 #endif
 
    void                    CL_GetDefclassListFunction(Environment *,UDFContext *,UDFValue *);

@@ -136,7 +136,7 @@ void CL_FactPatternMatch(
    while (patternPtr != NULL)
      {
       /*=============================================================*/
-      /* DeteCL_rmine the position of the field we're going to pattern  */
+      /* Dete_rmine the position of the field we're going to pattern  */
       /* match. If this routine has been entered recursively because */
       /* of multifield wildcards or variables, then add in the       */
       /* additional offset caused by the values which match these    */
@@ -149,7 +149,7 @@ void CL_FactPatternMatch(
         { theSlotField = theSlotField + offset - multifieldsProcessed; }
         
       /*===================================*/
-      /* DeteCL_rmine if we want to skip this */
+      /* Dete_rmine if we want to skip this */
       /* node during an incremental reset. */
       /*===================================*/
 
@@ -157,7 +157,7 @@ void CL_FactPatternMatch(
         { patternPtr = CL_GetNextFactPatternNode(theEnv,true,patternPtr); }
 
       /*=========================================================*/
-      /* If this is a single field pattern node, then deteCL_rmine  */
+      /* If this is a single field pattern node, then dete_rmine  */
       /* if the constraints for the node have been satisfied for */
       /* the current field in the slot being examined.           */
       /*=========================================================*/
@@ -247,7 +247,7 @@ void CL_FactPatternMatch(
         }
 
       /*======================================================*/
-      /* If this is a multifield pattern node, then deteCL_rmine */
+      /* If this is a multifield pattern node, then dete_rmine */
       /* if the constraints for the node have been satisfied  */
       /* for the current field in the slot being examined.    */
       /*======================================================*/
@@ -255,7 +255,7 @@ void CL_FactPatternMatch(
       else if (patternPtr->header.multifieldNode)
         {
          /*========================================================*/
-         /* DeteCL_rmine if the multifield pattern node's constraints */
+         /* Dete_rmine if the multifield pattern node's constraints */
          /* are satisfied. If we've traversed to a different slot  */
          /* than the one we started this routine with, then the    */
          /* offset into the slot is reset to zero.                 */
@@ -296,7 +296,7 @@ static void ProcessMultifieldNode(
   size_t multifieldsProcessed)
   {
    struct multifieldMarker *newMark, *oldMark;
-   size_t fieldsReCL_maining;
+   size_t fieldsRe_maining;
    size_t i;
    size_t repeatCount;
    Multifield *theSlotValue;
@@ -351,7 +351,7 @@ static void ProcessMultifieldNode(
         { newMark->range = theSlotValue->length - (newMark->startPosition + thePattern->leaveFields); }
 
       /*===========================================*/
-      /* DeteCL_rmine if the constraint is satisfied. */
+      /* Dete_rmine if the constraint is satisfied. */
       /*===========================================*/
 
       if (thePattern->header.selector)
@@ -421,14 +421,14 @@ static void ProcessMultifieldNode(
      }
      
    /*==============================================*/
-   /* PerfoCL_rm matching for nodes beneath this one. */
+   /* Perfo_rm matching for nodes beneath this one. */
    /*==============================================*/
    
-   fieldsReCL_maining = theSlotValue->length - (newMark->startPosition + thePattern->leaveFields);
+   fieldsRe_maining = theSlotValue->length - (newMark->startPosition + thePattern->leaveFields);
      
-   for (i = 0; i <= fieldsReCL_maining; i++)
+   for (i = 0; i <= fieldsRe_maining; i++)
      {
-      repeatCount = fieldsReCL_maining - i;
+      repeatCount = fieldsRe_maining - i;
       
       newMark->range = repeatCount;
 
@@ -549,7 +549,7 @@ static void ProcessFactAlphaMatch(
   struct factPatternNode *thePattern)
   {
    struct partialMatch *theMatch;
-   struct patternMatch *listOfCL_Matches;
+   struct patternMatch *listOf_Matches;
    struct joinNode *listOfJoins;
    unsigned long hashValue;
 
@@ -570,9 +570,9 @@ static void ProcessFactAlphaMatch(
   /* Add the pattern to the list of matches for this fact. */
   /*=======================================================*/
 
-  listOfCL_Matches = (struct patternMatch *) theFact->list;
+  listOf_Matches = (struct patternMatch *) theFact->list;
   theFact->list = get_struct(theEnv,patternMatch);
-  ((struct patternMatch *) theFact->list)->next = listOfCL_Matches;
+  ((struct patternMatch *) theFact->list)->next = listOf_Matches;
   ((struct patternMatch *) theFact->list)->matchingPattern = (struct patternNodeHeader *) thePattern;
   ((struct patternMatch *) theFact->list)->theMatch = theMatch;
 
@@ -583,11 +583,11 @@ static void ProcessFactAlphaMatch(
   for (listOfJoins = thePattern->header.entryJoin;
        listOfJoins != NULL;
        listOfJoins = listOfJoins->rightMatchNode)
-     { NetworkCL_Assert(theEnv,theMatch,listOfJoins); }
+     { Network_Assert(theEnv,theMatch,listOfJoins); }
   }
 
 /*****************************************************************/
-/* CL_EvaluatePatternExpression: PerfoCL_rms a faster evaluation for   */
+/* CL_EvaluatePatternExpression: Perfo_rms a faster evaluation for   */
 /*   fact pattern network expressions than if CL_EvaluateExpression */
 /*   were used directly.                                         */
 /*****************************************************************/
@@ -640,7 +640,7 @@ static bool CL_EvaluatePatternExpression(
         return(rv);
 
       /*================================================*/
-      /* This primitive deteCL_rmines if a multifield slot */
+      /* This primitive dete_rmines if a multifield slot */
       /* contains at least a certain number of fields.  */
       /*================================================*/
 
@@ -712,7 +712,7 @@ static bool CL_EvaluatePatternExpression(
   }
 
 /************************************************************************/
-/* PatternNetErrorMessage: Prints the infoCL_rmational header to the error */
+/* PatternNetErrorMessage: Prints the info_rmational header to the error */
 /*   message that occurs when a error occurs as the  result of          */
 /*   evaluating an expression in the fact pattern network. Prints the   */
 /*   fact currently being pattern matched and the field number or slot  */
@@ -809,7 +809,7 @@ static bool SkipFactPatternNode(
   struct factPatternNode *thePattern)
   {
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   if (EngineData(theEnv)->CL_IncrementalCL_ResetInProgress &&
+   if (EngineData(theEnv)->CL_Incremental_ResetInProgress &&
        (thePattern->header.initialize == false))
      { return true; }
 #endif
@@ -818,7 +818,7 @@ static bool SkipFactPatternNode(
   }
 
 /***************************************************************/
-/* MarkFactPatternForCL_IncrementalCL_Reset: Sets the initialization */
+/* MarkFactPatternForCL_Incremental_Reset: Sets the initialization */
 /*  field of a fact pattern for use with incremental reset.    */
 /*  This is called before an incremental reset for newly added */
 /*  patterns to indicate that the pattern nodes should be      */
@@ -826,7 +826,7 @@ static bool SkipFactPatternNode(
 /*  that the nodes were traversed ("initialized") by the       */
 /*  incremental reset.                                         */
 /***************************************************************/
-void MarkFactPatternForCL_IncrementalCL_Reset(
+void MarkFactPatternForCL_Incremental_Reset(
   Environment *theEnv,
   struct patternNodeHeader *thePattern,
   bool value)
@@ -875,13 +875,13 @@ void MarkFactPatternForCL_IncrementalCL_Reset(
   }
 
 /**************************************************************/
-/* CL_FactsCL_IncrementalCL_Reset: Incremental reset function for the  */
+/* CL_FactsCL_Incremental_Reset: Incremental reset function for the  */
 /*   fact pattern network. CL_Asserts all facts in the fact-list */
 /*   so that they repeat the pattern matching process. During */
 /*   an incremental reset, newly added patterns should be the */
 /*   only active patterns in the fact pattern network.        */
 /**************************************************************/
-void CL_FactsCL_IncrementalCL_Reset(
+void CL_FactsCL_Incremental_Reset(
   Environment *theEnv)
   {
    Fact *factPtr;

@@ -131,7 +131,7 @@ struct defgenericData
    Defmethod *CurrentMethod;
    UDFValue *GenericCurrentArgument;
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   unsigned OldGenericBusyCL_Save;
+   unsigned OldGenericBusy_Save;
 #endif
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
    struct CodeGeneratorItem *DefgenericCodeItem;
@@ -139,15 +139,15 @@ struct defgenericData
   };
 
 #define DefgenericData(theEnv) ((struct defgenericData *) GetEnvironmentData(theEnv,DEFGENERIC_DATA))
-#define CL_SaveBusyCount(gfunc)    (DefgenericData(theEnv)->OldGenericBusyCL_Save = gfunc->busy)
-#define RestoreBusyCount(gfunc) (gfunc->busy = DefgenericData(theEnv)->OldGenericBusyCL_Save)
+#define CL_SaveBusyCount(gfunc)    (DefgenericData(theEnv)->OldGenericBusy_Save = gfunc->busy)
+#define RestoreBusyCount(gfunc) (gfunc->busy = DefgenericData(theEnv)->OldGenericBusy_Save)
 
 #if ! RUN_TIME
    bool                           CL_ClearDefgenericsReady(Environment *,void *);
-   void                          *CL_AllocateCL_DefgenericModule(Environment *);
-   void                           FreeCL_DefgenericModule(Environment *,void *);
+   void                          *CL_Allocate_DefgenericModule(Environment *);
+   void                           Free_DefgenericModule(Environment *,void *);
 #else
-   void                           DefgenericCL_RunTimeInitialize(Environment *);
+   void                           Defgeneric_RunTimeInitialize(Environment *);
 #endif
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
@@ -167,7 +167,7 @@ struct defgenericData
 
    unsigned short                 CL_FindMethodByIndex(Defgeneric *,unsigned short);
 #if DEBUGGING_FUNCTIONS || PROFILING_FUNCTIONS
-   void                           CL_PrintMethod(Environment *,Defmethod *,StringCL_Builder *);
+   void                           CL_PrintMethod(Environment *,Defmethod *,String_Builder *);
 #endif
 #if DEBUGGING_FUNCTIONS
    void                           CL_PreviewGeneric(Environment *,UDFContext *,UDFValue *);

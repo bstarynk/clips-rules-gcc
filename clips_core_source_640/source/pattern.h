@@ -97,7 +97,7 @@ struct patternParser
    void (*returnUserDataFunction)(Environment *,void *);
    void *(*copyUserDataFunction)(Environment *,void *);
    void (*markIRPatternFunction)(Environment *,struct patternNodeHeader *,bool);
-   void (*incrementalCL_ResetFunction)(Environment *);
+   void (*incremental_ResetFunction)(Environment *);
    void (*codeReferenceFunction)(Environment *,void *,FILE *,unsigned int,unsigned int);
    int priority;
    struct patternParser *next;
@@ -119,10 +119,10 @@ struct patternData
    struct patternParser *ListOfPatternParsers;
    struct patternParser *PatternParserArray[MAX_POSITIONS];
    unsigned short NextPosition;
-   struct reservedSymbol *ListOfCL_ReservedPatternSymbols;
+   struct reservedSymbol *ListOf_ReservedPatternSymbols;
    bool WithinNotCE;
    int GlobalSalience;
-   bool GlobalAutoCL_Focus;
+   bool GlobalAuto_Focus;
    struct expr *SalienceExpression;
    struct patternNodeHashEntry **PatternHashTable;
    unsigned long PatternHashTableSize;
@@ -144,7 +144,7 @@ struct patternData
    bool                           CL_PostPatternAnalysis(Environment *,struct lhsParseNode *);
    void                           CL_PatternNodeHeaderToCode(Environment *,FILE *,struct patternNodeHeader *,
                                                           unsigned int,unsigned int);
-   void                           CL_AddCL_ReservedPatternSymbol(Environment *,const char *,const char *);
+   void                           CL_Add_ReservedPatternSymbol(Environment *,const char *,const char *);
    bool                           CL_ReservedPatternSymbol(Environment *,const char *,const char *);
    void                           CL_ReservedPatternSymbolErrorMsg(Environment *,const char *,const char *);
    void                           CL_AddHashedPatternNode(Environment *,void *,void *,unsigned short,void *);

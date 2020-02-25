@@ -37,8 +37,8 @@
 /*            imported modules are search when locating a    */
 /*            named construct.                               */
 /*                                                           */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*      6.40: Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -103,8 +103,8 @@
 void CL_DeffactsBasicCommands(
   Environment *theEnv)
   {
-   CL_AddCL_ResetFunction(theEnv,"deffacts",CL_ResetDeffacts,0,NULL);
-   CL_AddCL_SaveFunction(theEnv,"deffacts",CL_SaveDeffacts,10,NULL);
+   CL_Add_ResetFunction(theEnv,"deffacts",CL_ResetDeffacts,0,NULL);
+   CL_Add_SaveFunction(theEnv,"deffacts",CL_SaveDeffacts,10,NULL);
 
 #if ! RUN_TIME
    CL_AddUDF(theEnv,"get-deffacts-list","m",0,1,"y",CL_GetDeffactsListFunction,"CL_GetDeffactsListFunction",NULL);
@@ -159,7 +159,7 @@ static void CL_ResetDeffactsAction(
 
    if (theDeffacts->assertList == NULL) return;
 
-   SetCL_EvaluationError(theEnv,false);
+   Set_EvaluationError(theEnv,false);
 
    CL_EvaluateExpression(theEnv,theDeffacts->assertList,&returnValue);
   }
@@ -235,7 +235,7 @@ void CL_GetDeffactsList(
    UDFValue result;
    
    CL_GetConstructList(theEnv,&result,DeffactsData(theEnv)->DeffactsConstruct,theModule);
-   CL_NoCL_rmalizeMultifield(theEnv,&result);
+   CL_No_rmalizeMultifield(theEnv,&result);
    returnValue->value = result.value;
   }
 

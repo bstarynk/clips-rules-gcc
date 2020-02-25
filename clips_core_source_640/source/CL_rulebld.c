@@ -242,7 +242,7 @@ struct joinNode *CL_ConstructJoins(
         }
 
       /*======================================================*/
-      /* DeteCL_rmine if the join being added is a logical join. */
+      /* Dete_rmine if the join being added is a logical join. */
       /*======================================================*/
 
       if ((startDepth == 1) && (joinNumber == logicalJoin)) isLogical = true;
@@ -268,7 +268,7 @@ struct joinNode *CL_ConstructJoins(
         { theLinks = lastRightJoin->nextLinks; }
 
       /*=======================================================*/
-      /* DeteCL_rmine if the next join to be added can be shared. */
+      /* Dete_rmine if the next join to be added can be shared. */
       /*=======================================================*/
 
       if ((tryToReuse == true) &&
@@ -278,7 +278,7 @@ struct joinNode *CL_ConstructJoins(
                                         leftHash,rightHash)) != NULL) )
         {
 #if DEBUGGING_FUNCTIONS
-         if ((CL_GetCL_WatchItem(theEnv,"compilations") == 1) && CL_GetPrintWhileCL_Loading(theEnv))
+         if ((CL_Get_WatchItem(theEnv,"compilations") == 1) && CL_GetPrintWhile_Loading(theEnv))
            { CL_WriteString(theEnv,STDOUT,"=j"); }
 #endif
          lastJoin = oldJoin;
@@ -337,8 +337,8 @@ struct joinNode *CL_ConstructJoins(
 
 #if DEBUGGING_FUNCTIONS
    if ((startDepth == 1) &&
-       (CL_GetCL_WatchItem(theEnv,"compilations") == 1) &&
-       CL_GetPrintWhileCL_Loading(theEnv))
+       (CL_Get_WatchItem(theEnv,"compilations") == 1) &&
+       CL_GetPrintWhile_Loading(theEnv))
      { CL_WriteString(theEnv,STDOUT,"\n"); }
 #endif
 
@@ -902,7 +902,7 @@ void CL_AttachTestCEsToPatternCEs(
   }
 
 /********************************************************************/
-/* FindShareableJoin: DeteCL_rmines whether a join exists that can be  */
+/* FindShareableJoin: Dete_rmines whether a join exists that can be  */
 /*   reused for the join currently being added to the join network. */
 /*   Returns a pointer to the join to be shared if one if found,    */
 /*   otherwise returns a NULL pointer.                              */
@@ -939,7 +939,7 @@ static struct joinNode *FindShareableJoin(
       /*=========================================================*/
       /* If the join being tested for reuse is connected on the  */
       /* RHS to the end node of the pattern node associated with */
-      /* the join to be added, then deteCL_rmine if the join can    */
+      /* the join to be added, then dete_rmine if the join can    */
       /* be reused. If so, return the join.                      */
       /*=========================================================*/
 
@@ -981,7 +981,7 @@ static struct joinNode *FindShareableJoin(
   }
 
 /**************************************************************/
-/* TestJoinForReuse: DeteCL_rmines if the specified join can be  */
+/* TestJoinForReuse: Dete_rmines if the specified join can be  */
 /*   shared with a join being added for a rule being defined. */
 /*   Returns true if the join can be shared, otherwise false. */
 /**************************************************************/
@@ -1085,7 +1085,7 @@ static struct joinNode *CreateNewJoin(
    /*===============================================*/
 
 #if DEBUGGING_FUNCTIONS
-   if ((CL_GetCL_WatchItem(theEnv,"compilations") == 1) && CL_GetPrintWhileCL_Loading(theEnv))
+   if ((CL_Get_WatchItem(theEnv,"compilations") == 1) && CL_GetPrintWhile_Loading(theEnv))
      { CL_WriteString(theEnv,STDOUT,"+j"); }
 #endif
 
@@ -1196,7 +1196,7 @@ static struct joinNode *CreateNewJoin(
    newJoin->memoryCompares = 0;
 
    /*==============================================*/
-   /* Install the expressions used to deteCL_rmine    */
+   /* Install the expressions used to dete_rmine    */
    /* if a partial match satisfies the constraints */
    /* associated with this join.                   */
    /*==============================================*/
@@ -1206,7 +1206,7 @@ static struct joinNode *CreateNewJoin(
 
    /*=====================================================*/
    /* Install the expression used to hash the beta memory */
-   /* partial match to deteCL_rmine the location to search   */
+   /* partial match to dete_rmine the location to search   */
    /* in the alpha memory.                                */
    /*=====================================================*/
 

@@ -198,7 +198,7 @@ void CL_DefgenericCModuleReference(
 static void ReadyDefgenericsForCode(
   Environment *theEnv)
   {
-   MarkConstructCL_BsaveIDs(theEnv,DefgenericData(theEnv)->CL_DefgenericModuleIndex);
+   MarkConstruct_BsaveIDs(theEnv,DefgenericData(theEnv)->CL_DefgenericModuleIndex);
   }
 
 /**************************************************/
@@ -216,7 +216,7 @@ static void InitDefgenericsCode(
 #pragma unused(imageID)
 #pragma unused(theEnv)
 #endif
-   fprintf(initFP,"   DefgenericCL_RunTimeInitialize(theEnv);\n");
+   fprintf(initFP,"   Defgeneric_RunTimeInitialize(theEnv);\n");
   }
 
 /*******************************************************

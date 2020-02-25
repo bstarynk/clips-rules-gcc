@@ -24,7 +24,7 @@
 /*                                                           */
 /*            Made CL_gensystem functional for Xcode.           */
 /*                                                           */
-/*            Added BeforeCL_OpenFunction and AfterCL_OpenFunction */
+/*            Added Before_OpenFunction and After_OpenFunction */
 /*            hooks.                                         */
 /*                                                           */
 /*            Added environment parameter to CL_GenClose.       */
@@ -125,9 +125,9 @@
    bool                        CL_genremove(Environment *,const char *);
    bool                        CL_genrename(Environment *,const char *,const char *);
    char                       *CL_gengetcwd(char *,int);
-   void                        CL_GenCL_Write(void *,size_t,FILE *);
-   int                       (*SetBeforeCL_OpenFunction(Environment *,int (*)(Environment *)))(Environment *);
-   int                       (*SetAfterCL_OpenFunction(Environment *,int (*)(Environment *)))(Environment *);
+   void                        CL_Gen_Write(void *,size_t,FILE *);
+   int                       (*SetBefore_OpenFunction(Environment *,int (*)(Environment *)))(Environment *);
+   int                       (*SetAfter_OpenFunction(Environment *,int (*)(Environment *)))(Environment *);
    int                         CL_gensprintf(char *,const char *,...);
    char                       *CL_genstrcpy(char *,const char *);
    char                       *CL_genstrncpy(char *,const char *,size_t);

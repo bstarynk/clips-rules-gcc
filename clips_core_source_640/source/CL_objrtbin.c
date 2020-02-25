@@ -94,7 +94,7 @@ typedef struct bsaveObjectAlphaNode
         slotbmp,
         patternNode,
         nxtInGroup,
-        nxtTeCL_rminal;
+        nxtTe_rminal;
   } BSAVE_OBJECT_ALPHA_NODE;
 
 typedef struct bsaveClassAlphaLink
@@ -126,7 +126,7 @@ typedef struct bsaveClassAlphaLink
    static void                    UpdateAlpha(Environment *,void *,unsigned long);
    static void                    UpdatePattern(Environment *,void *,unsigned long);
    static void                    UpdateLink(Environment *,void *,unsigned long);
-   static void                    CL_ClearCL_BloadObjectPatterns(Environment *);
+   static void                    CL_Clear_BloadObjectPatterns(Environment *);
    static void                    DeallocateObjectReteBinaryData(Environment *);
 
 /* =========================================
@@ -136,7 +136,7 @@ typedef struct bsaveClassAlphaLink
    ***************************************** */
 
 /***********************************************************
-  NAME         : SetupObjectPatternsCL_Bload
+  NAME         : SetupObjectPatterns_Bload
   DESCRIPTION  : Initializes data structures and
                    routines for binary loads of
                    generic function constructs
@@ -145,7 +145,7 @@ typedef struct bsaveClassAlphaLink
   SIDE EFFECTS : Routines defined and structures initialized
   NOTES        : None
  ***********************************************************/
-void SetupObjectPatternsCL_Bload(
+void SetupObjectPatterns_Bload(
   Environment *theEnv)
   {
    CL_AllocateEnvironmentData(theEnv,OBJECTRETEBIN_DATA,sizeof(struct objectReteBinaryData),DeallocateObjectReteBinaryData);
@@ -154,12 +154,12 @@ void SetupObjectPatternsCL_Bload(
    CL_AddBinaryItem(theEnv,"object patterns",0,CL_BsaveObjectPatternsFind,NULL,
                              CL_BsaveStorageObjectPatterns,CL_BsaveObjectPatterns,
                              CL_BloadStorageObjectPatterns,CL_BloadObjectPatterns,
-                             CL_ClearCL_BloadObjectPatterns);
+                             CL_Clear_BloadObjectPatterns);
 #endif
 #if BLOAD || BLOAD_ONLY
    CL_AddBinaryItem(theEnv,"object patterns",0,NULL,NULL,NULL,NULL,
                              CL_BloadStorageObjectPatterns,CL_BloadObjectPatterns,
-                             CL_ClearCL_BloadObjectPatterns);
+                             CL_Clear_BloadObjectPatterns);
 #endif
   }
 
@@ -200,7 +200,7 @@ static void DeallocateObjectReteBinaryData(
   NAME         : CL_BsaveObjectPatternsFind
   DESCRIPTION  : Sets the CL_Bsave IDs for the object
                  pattern data structures and
-                 deteCL_rmines how much space
+                 dete_rmines how much space
                  (including padding) is necessary
                  for the alpha node bitmPS
   INPUTS       : None
@@ -214,22 +214,22 @@ static void CL_BsaveObjectPatternsFind(
    OBJECT_ALPHA_NODE *alphaPtr;
    OBJECT_PATTERN_NODE *patternPtr;
 
-   CL_SaveCL_BloadCount(theEnv,ObjectReteBinaryData(theEnv)->AlphaNodeCount);
-   CL_SaveCL_BloadCount(theEnv,ObjectReteBinaryData(theEnv)->PatternNodeCount);
-   CL_SaveCL_BloadCount(theEnv,ObjectReteBinaryData(theEnv)->AlphaLinkCount);
+   CL_Save_BloadCount(theEnv,ObjectReteBinaryData(theEnv)->AlphaNodeCount);
+   CL_Save_BloadCount(theEnv,ObjectReteBinaryData(theEnv)->PatternNodeCount);
+   CL_Save_BloadCount(theEnv,ObjectReteBinaryData(theEnv)->AlphaLinkCount);
 
    ObjectReteBinaryData(theEnv)->AlphaLinkCount = 0L;
    CL_DoForAllConstructs(theEnv,MarkDefclassItems,DefclassData(theEnv)->CL_DefclassModuleIndex,false,NULL);
 
    ObjectReteBinaryData(theEnv)->AlphaNodeCount = 0L;
-   alphaPtr = CL_ObjectNetworkTeCL_rminalPointer(theEnv);
+   alphaPtr = CL_ObjectNetworkTe_rminalPointer(theEnv);
    while (alphaPtr != NULL)
      {
       alphaPtr->classbmp->neededBitMap = true;
       if (alphaPtr->slotbmp != NULL)
         alphaPtr->slotbmp->neededBitMap = true;
       alphaPtr->bsaveID = ObjectReteBinaryData(theEnv)->AlphaNodeCount++;
-      alphaPtr = alphaPtr->nxtTeCL_rminal;
+      alphaPtr = alphaPtr->nxtTe_rminal;
      }
 
    ObjectReteBinaryData(theEnv)->PatternNodeCount = 0L;
@@ -273,7 +273,7 @@ static void MarkDefclassItems(
    Defclass *cls = (Defclass *) theDefclass;
    CLASS_ALPHA_LINK *alphaLink;
 
-   for (alphaLink = cls->relevant_teCL_rminal_alpha_nodes;
+   for (alphaLink = cls->relevant_te_rminal_alpha_nodes;
         alphaLink != NULL;
         alphaLink = alphaLink->next)
      { alphaLink->bsaveID = ObjectReteBinaryData(theEnv)->AlphaLinkCount++; }
@@ -284,7 +284,7 @@ static void MarkDefclassItems(
   DESCRIPTION  : CL_Writes out the number of bytes
                  required for object pattern bitmaps,
                  and the number of object pattern
-                 alpha an inteCL_rmediate nodes
+                 alpha an inte_rmediate nodes
   INPUTS       : CL_Bsave file stream pointer
   RETURNS      : Nothing useful
   SIDE EFFECTS : Counts written
@@ -297,10 +297,10 @@ static void CL_BsaveStorageObjectPatterns(
    size_t space;
 
    space = sizeof(long) * 3;
-   CL_GenCL_Write(&space,sizeof(size_t),fp);
-   CL_GenCL_Write(&ObjectReteBinaryData(theEnv)->AlphaNodeCount,sizeof(long),fp);
-   CL_GenCL_Write(&ObjectReteBinaryData(theEnv)->PatternNodeCount,sizeof(long),fp);
-   CL_GenCL_Write(&ObjectReteBinaryData(theEnv)->AlphaLinkCount,sizeof(long),fp);
+   CL_Gen_Write(&space,sizeof(size_t),fp);
+   CL_Gen_Write(&ObjectReteBinaryData(theEnv)->AlphaNodeCount,sizeof(long),fp);
+   CL_Gen_Write(&ObjectReteBinaryData(theEnv)->PatternNodeCount,sizeof(long),fp);
+   CL_Gen_Write(&ObjectReteBinaryData(theEnv)->AlphaLinkCount,sizeof(long),fp);
   }
 
 /***************************************************
@@ -327,17 +327,17 @@ static void CL_BsaveObjectPatterns(
    space = (sizeof(BSAVE_OBJECT_ALPHA_NODE) * ObjectReteBinaryData(theEnv)->AlphaNodeCount) +
            (sizeof(BSAVE_OBJECT_PATTERN_NODE) * ObjectReteBinaryData(theEnv)->PatternNodeCount) +
            (sizeof(BSAVE_CLASS_ALPHA_LINK) * ObjectReteBinaryData(theEnv)->AlphaLinkCount);
-   CL_GenCL_Write(&space,sizeof(size_t),fp);
+   CL_Gen_Write(&space,sizeof(size_t),fp);
 
    CL_DoForAllConstructs(theEnv,CL_BsaveAlphaLinks,DefclassData(theEnv)->CL_DefclassModuleIndex,false,fp);
 
    /* ==========================================
-      CL_Write out the alpha teCL_rminal pattern nodes
+      CL_Write out the alpha te_rminal pattern nodes
       ========================================== */
-   alphaPtr = CL_ObjectNetworkTeCL_rminalPointer(theEnv);
+   alphaPtr = CL_ObjectNetworkTe_rminalPointer(theEnv);
    while (alphaPtr != NULL)
      {
-      CL_AssignCL_BsavePatternHeaderValues(theEnv,&dummyAlpha.header,&alphaPtr->header);
+      CL_Assign_BsavePatternHeaderValues(theEnv,&dummyAlpha.header,&alphaPtr->header);
       dummyAlpha.classbmp = alphaPtr->classbmp->bucket;
       if (alphaPtr->slotbmp != NULL)
         dummyAlpha.slotbmp = alphaPtr->slotbmp->bucket;
@@ -345,13 +345,13 @@ static void CL_BsaveObjectPatterns(
         dummyAlpha.slotbmp = ULONG_MAX;
       dummyAlpha.patternNode = CL_BsaveObjectPatternIndex(alphaPtr->patternNode);
       dummyAlpha.nxtInGroup = CL_BsaveObjectAlphaIndex(alphaPtr->nxtInGroup);
-      dummyAlpha.nxtTeCL_rminal = CL_BsaveObjectAlphaIndex(alphaPtr->nxtTeCL_rminal);
-      CL_GenCL_Write(&dummyAlpha,sizeof(BSAVE_OBJECT_ALPHA_NODE),fp);
-      alphaPtr = alphaPtr->nxtTeCL_rminal;
+      dummyAlpha.nxtTe_rminal = CL_BsaveObjectAlphaIndex(alphaPtr->nxtTe_rminal);
+      CL_Gen_Write(&dummyAlpha,sizeof(BSAVE_OBJECT_ALPHA_NODE),fp);
+      alphaPtr = alphaPtr->nxtTe_rminal;
      }
 
    /* ========================================
-      CL_Write out the inteCL_rmediate pattern nodes
+      CL_Write out the inte_rmediate pattern nodes
       ======================================== */
    patternPtr = CL_ObjectNetworkPointer(theEnv);
    while (patternPtr != NULL)
@@ -368,7 +368,7 @@ static void CL_BsaveObjectPatterns(
       dummyPattern.leftNode = CL_BsaveObjectPatternIndex(patternPtr->leftNode);
       dummyPattern.rightNode = CL_BsaveObjectPatternIndex(patternPtr->rightNode);
       dummyPattern.alphaNode = CL_BsaveObjectAlphaIndex(patternPtr->alphaNode);
-      CL_GenCL_Write(&dummyPattern,sizeof(BSAVE_OBJECT_PATTERN_NODE),fp);
+      CL_Gen_Write(&dummyPattern,sizeof(BSAVE_OBJECT_PATTERN_NODE),fp);
 
       if (patternPtr->nextLevel == NULL)
         {
@@ -377,9 +377,9 @@ static void CL_BsaveObjectPatterns(
             patternPtr = patternPtr->lastLevel;
             if (patternPtr == NULL)
               {
-               RestoreCL_BloadCount(theEnv,&ObjectReteBinaryData(theEnv)->AlphaNodeCount);
-               RestoreCL_BloadCount(theEnv,&ObjectReteBinaryData(theEnv)->PatternNodeCount);
-               RestoreCL_BloadCount(theEnv,&ObjectReteBinaryData(theEnv)->AlphaLinkCount);
+               Restore_BloadCount(theEnv,&ObjectReteBinaryData(theEnv)->AlphaNodeCount);
+               Restore_BloadCount(theEnv,&ObjectReteBinaryData(theEnv)->PatternNodeCount);
+               Restore_BloadCount(theEnv,&ObjectReteBinaryData(theEnv)->AlphaLinkCount);
                return;
               }
            }
@@ -389,9 +389,9 @@ static void CL_BsaveObjectPatterns(
         patternPtr = patternPtr->nextLevel;
      }
 
-   RestoreCL_BloadCount(theEnv,&ObjectReteBinaryData(theEnv)->AlphaNodeCount);
-   RestoreCL_BloadCount(theEnv,&ObjectReteBinaryData(theEnv)->PatternNodeCount);
-   RestoreCL_BloadCount(theEnv,&ObjectReteBinaryData(theEnv)->AlphaLinkCount);
+   Restore_BloadCount(theEnv,&ObjectReteBinaryData(theEnv)->AlphaNodeCount);
+   Restore_BloadCount(theEnv,&ObjectReteBinaryData(theEnv)->PatternNodeCount);
+   Restore_BloadCount(theEnv,&ObjectReteBinaryData(theEnv)->AlphaLinkCount);
   }
 
 /***************************************************
@@ -412,7 +412,7 @@ static void CL_BsaveAlphaLinks(
    BSAVE_CLASS_ALPHA_LINK dummy_alpha_link;
    CLASS_ALPHA_LINK *alphaLink;
 
-   for (alphaLink = cls->relevant_teCL_rminal_alpha_nodes;
+   for (alphaLink = cls->relevant_te_rminal_alpha_nodes;
         alphaLink != NULL;
         alphaLink = alphaLink->next)
      {
@@ -423,7 +423,7 @@ static void CL_BsaveAlphaLinks(
       else
         { dummy_alpha_link.next = ULONG_MAX; }
 
-      CL_GenCL_Write((void *) &dummy_alpha_link,sizeof(BSAVE_CLASS_ALPHA_LINK),(FILE *) buf);
+      CL_Gen_Write((void *) &dummy_alpha_link,sizeof(BSAVE_CLASS_ALPHA_LINK),(FILE *) buf);
      }
   }
 
@@ -497,12 +497,12 @@ static void CL_BloadObjectPatterns(
      return;
 
    /* ================================================
-      Read in the alpha and inteCL_rmediate pattern nodes
+      Read in the alpha and inte_rmediate pattern nodes
       ================================================ */
 
-   CL_BloadandCL_Refresh(theEnv,ObjectReteBinaryData(theEnv)->AlphaLinkCount,sizeof(BSAVE_CLASS_ALPHA_LINK),UpdateLink);
-   CL_BloadandCL_Refresh(theEnv,ObjectReteBinaryData(theEnv)->AlphaNodeCount,sizeof(BSAVE_OBJECT_ALPHA_NODE),UpdateAlpha);
-   CL_BloadandCL_Refresh(theEnv,ObjectReteBinaryData(theEnv)->PatternNodeCount,sizeof(BSAVE_OBJECT_PATTERN_NODE),UpdatePattern);
+   CL_Bloadand_Refresh(theEnv,ObjectReteBinaryData(theEnv)->AlphaLinkCount,sizeof(BSAVE_CLASS_ALPHA_LINK),UpdateLink);
+   CL_Bloadand_Refresh(theEnv,ObjectReteBinaryData(theEnv)->AlphaNodeCount,sizeof(BSAVE_OBJECT_ALPHA_NODE),UpdateAlpha);
+   CL_Bloadand_Refresh(theEnv,ObjectReteBinaryData(theEnv)->PatternNodeCount,sizeof(BSAVE_OBJECT_PATTERN_NODE),UpdatePattern);
 
    for (i = 0; i < ObjectReteBinaryData(theEnv)->PatternNodeCount; i++)
      {
@@ -519,8 +519,8 @@ static void CL_BloadObjectPatterns(
    /* =======================
       Set the global pointers
       ======================= */
-   SetCL_ObjectNetworkTeCL_rminalPointer(theEnv,(OBJECT_ALPHA_NODE *) &ObjectReteBinaryData(theEnv)->AlphaArray[0]);
-   SetCL_ObjectNetworkPointer(theEnv,(OBJECT_PATTERN_NODE *) &ObjectReteBinaryData(theEnv)->PatternArray[0]);
+   SetCL_ObjectNetworkTe_rminalPointer(theEnv,(OBJECT_ALPHA_NODE *) &ObjectReteBinaryData(theEnv)->AlphaArray[0]);
+   Set_ObjectNetworkPointer(theEnv,(OBJECT_PATTERN_NODE *) &ObjectReteBinaryData(theEnv)->PatternArray[0]);
   }
 
 /***************************************************
@@ -560,7 +560,7 @@ static void UpdateAlpha(
    IncrementBitMapCount(ap->classbmp);
    ap->patternNode = ObjectPatternPointer(bap->patternNode);
    ap->nxtInGroup = ObjectAlphaPointer(bap->nxtInGroup);
-   ap->nxtTeCL_rminal = ObjectAlphaPointer(bap->nxtTeCL_rminal);
+   ap->nxtTe_rminal = ObjectAlphaPointer(bap->nxtTe_rminal);
    ap->bsaveID = 0L;
   }
 
@@ -635,7 +635,7 @@ static void UpdateLink(
   }
 
 /***************************************************
-  NAME         : CL_ClearCL_BloadObjectPatterns
+  NAME         : CL_Clear_BloadObjectPatterns
   DESCRIPTION  : CL_Releases all emmory associated
                  with binary image object patterns
   INPUTS       : None
@@ -644,7 +644,7 @@ static void UpdateLink(
                  network pointers set to NULL
   NOTES        : None
  ***************************************************/
-static void CL_ClearCL_BloadObjectPatterns(
+static void CL_Clear_BloadObjectPatterns(
   Environment *theEnv)
   {
    size_t space;
@@ -690,8 +690,8 @@ static void CL_ClearCL_BloadObjectPatterns(
       ObjectReteBinaryData(theEnv)->AlphaLinkCount = 0;
      }
 
-   SetCL_ObjectNetworkTeCL_rminalPointer(theEnv,NULL);
-   SetCL_ObjectNetworkPointer(theEnv,NULL);
+   SetCL_ObjectNetworkTe_rminalPointer(theEnv,NULL);
+   Set_ObjectNetworkPointer(theEnv,NULL);
 #if BLOAD_ONLY
    CL_ResetObjectMatchTimeTags(theEnv);
 #endif

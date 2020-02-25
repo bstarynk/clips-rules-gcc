@@ -102,12 +102,12 @@
 /*=========================================================*/
 /*Status returns for the file loading and lookup functions */
 /*=========================================================*/
-#define NORMAL 0          /*Entry infoCL_rmation found in file       */
+#define NORMAL 0          /*Entry info_rmation found in file       */
 #define NO_FILE -10       /*File not found for reference          */
 #define NEW_FILE -15      /*File loaded onto internal lookup table*/
 #define OLD_FILE -20      /*File was already on the lookup table  */
 
-#define NO_TOPIC -25      /*No entry infoCL_rmation was found in file*/
+#define NO_TOPIC -25      /*No entry info_rmation was found in file*/
 #define EXIT -30          /*Branch-up from root; exit lookup table*/
 #define BRANCH_UP -35     /*Move up from subtopic entry to parent */
 #define BRANCH_DOWN -40   /*Move down from CL_main topic to subtopic */
@@ -116,7 +116,7 @@
 /*Entry data types */
 /*=================*/
 #define MENU -45    /*Entry has subtopics*/
-#define INFO -50    /*Entry is a leaf; contains only infoCL_rmation*/
+#define INFO -50    /*Entry is a leaf; contains only info_rmation*/
 
 /*==========================================*/
 /*Entry node type for internal lookup table */
@@ -150,7 +150,7 @@ struct lists
 #define BDLEN 12
 #define EDELIM "END-ENTRY"
 #define EDLEN 9
-#define BFORMAT "%d%1s%12s%s"   /*FoCL_rmat string for sscanf*/
+#define BFORMAT "%d%1s%12s%s"   /*Fo_rmat string for sscanf*/
 #define LIT_DELIM ('$')
 
 #define OPEN_READ "r"
@@ -197,20 +197,20 @@ struct textProcessingData
 /*         2) caller-allocated buffer to contain an error message (if any)  */
 /*         3) size of error message buffer                                  */
 /* Output :                                                                 */
-/* This function attempts to load the file's topic infoCL_rmation into the     */
-/* lookup table according to the foCL_rmat below :                             */
+/* This function attempts to load the file's topic info_rmation into the     */
+/* lookup table according to the fo_rmat below :                             */
 /*                                                                          */
 /* <level-num><entry-type-code>BEGIN-ENTRY-<topic-name>                     */
 /*                .                                                         */
 /*                .                                                         */
-/*    Entry infoCL_rmation in the foCL_rm in which                                */
+/*    Entry info_rmation in the fo_rm in which                                */
 /*    it is to be displayed when referenced.                                */
 /*                .                                                         */
 /*                .                                                         */
 /* END-ENTRY                                                                */
 /*                                                                          */
 /* The function returns the number of entries loaded if the entire file was */
-/*   was correctly foCL_rmatted, else it returns -1.                           */
+/*   was correctly fo_rmatted, else it returns -1.                           */
 /****************************************************************************/
 static int TextLookupFetch(
   Environment *theEnv,
@@ -386,7 +386,7 @@ static bool TextLookupToss(
 /*         3) name of the entry to be accessed in the file                    */
 /*         4) caller allocated buffer for a status code (see LOOKUP).         */
 /* Output : 1) returns a pointer into the stream of the lookup file which     */
-/*             indicates the starting position of the lookup infoCL_rmation      */
+/*             indicates the starting position of the lookup info_rmation      */
 /*             (NULL if the topic was not found)                              */
 /* This function passes its input directly to LOOKUP.  See its description    */
 /* for further detail.                                                        */
@@ -994,14 +994,14 @@ static void TossFunction(
 /* CL_PrintRegionCommand accesses the loaded file to display a requested       */
 /* entry, and HelpFunction() provides an on-line help facility              */
 /* using the external help data file specified in the header file setup.h.  */
-/* For infoCL_rmation on the foCL_rmat of the data file(s) required, see the      */
+/* For info_rmation on the fo_rmat of the data file(s) required, see the      */
 /* internal documentation in LOOKUP.C and the external documentation.       */
 /*                                                                          */
 /* For usage of these functions, see the external documentation.            */
 /****************************************************************************/
 /****************************************************************************/
 
-#define SCREEN_LN 22   /*Typical teCL_rminal screen length -- 22 lines*/
+#define SCREEN_LN 22   /*Typical te_rminal screen length -- 22 lines*/
                        /*Used for scrolling in the help facility   */
 
 /*==========================================*/
@@ -1071,7 +1071,7 @@ void CL_FetchCommand(
 /* Input : Via the argument "stack", logical name for the output, the name of the */
 /*         file to be accessed, and the name of the topic(s) to be looked up. */
 /* Output : This function accesses a previously loaded file and prints the    */
-/*          infoCL_rmation of the topic entry requested to the screen.  The tree */
+/*          info_rmation of the topic entry requested to the screen.  The tree */
 /*          structure must currently be at the correct level in order for the */
 /*          topic to be accessed.  To branch down the tree, each topic in the */
 /*          path to the one desired must be named.  Multiple arguments are    */

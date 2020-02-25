@@ -7,7 +7,7 @@
    /*******************************************************/
 
 /*************************************************************/
-/* Purpose: Provides functions for perfoCL_rming operations on  */
+/* Purpose: Provides functions for perfo_rming operations on  */
 /*   constraint records including computing the intersection */
 /*   and union of constraint records.                        */
 /*                                                           */
@@ -386,7 +386,7 @@ static void IntersectNumericExpressions(
    theMaxList = NULL;
 
    /*=================================*/
-   /* DeteCL_rmine the min/max values of */
+   /* Dete_rmine the min/max values of */
    /* the first constraint record.    */
    /*=================================*/
 
@@ -437,7 +437,7 @@ static void IntersectNumericExpressions(
            tmpmin2 = tmpmin2->nextArg, tmpmax2 = tmpmax2->nextArg)
         {
          /*==============================================*/
-         /* DeteCL_rmine the relationship between the four  */
+         /* Dete_rmine the relationship between the four  */
          /* combinations of min/max values (>, <, or =). */
          /*==============================================*/
 
@@ -586,7 +586,7 @@ static void UpdateRestrictionFlags(
   }
 
 /*************************************************************/
-/* FindItemInExpression: DeteCL_rmines if a particular constant */
+/* FindItemInExpression: Dete_rmines if a particular constant */
 /*   (such as 27) or a class of constants (such as integers) */
 /*   can be found in a list of constants. Returns true if    */
 /*   such a constant can be found, otherwise false.          */
@@ -612,7 +612,7 @@ static bool FindItemInExpression(
   }
 
 /**************************************************/
-/* RestrictionOnType: DeteCL_rmines if a restriction */
+/* RestrictionOnType: Dete_rmines if a restriction */
 /*   is present for a specific type. Returns true */
 /*   if there is, otherwise false.                */
 /**************************************************/
@@ -777,7 +777,7 @@ static void UnionNumericExpressions(
    theMaxList = NULL;
 
    /*=================================*/
-   /* DeteCL_rmine the min/max values of */
+   /* Dete_rmine the min/max values of */
    /* the first constraint record.    */
    /*=================================*/
 
@@ -803,7 +803,7 @@ static void UnionNumericExpressions(
      { UnionRangeMinMaxValueWithList(theEnv,tmpmin,tmpmax,&theMinList,&theMaxList); }
 
    /*=================================*/
-   /* DeteCL_rmine the min/max values of */
+   /* Dete_rmine the min/max values of */
    /* the second constraint record.   */
    /*=================================*/
 
@@ -1088,7 +1088,7 @@ static struct expr *AddToUnionList(
    for (;theList1 != NULL; theList1 = theList1->nextArg)
      {
       /*===================================*/
-      /* DeteCL_rmine if the value is already */
+      /* Dete_rmine if the value is already */
       /* in the unioned list.              */
       /*===================================*/
 

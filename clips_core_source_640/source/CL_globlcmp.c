@@ -82,7 +82,7 @@ void CL_DefglobalCompilerSetup(
 static void BeforeDefglobalsToCode(
   Environment *theEnv)
   {
-   MarkConstructCL_BsaveIDs(theEnv,DefglobalData(theEnv)->CL_DefglobalModuleIndex);
+   MarkConstruct_BsaveIDs(theEnv,DefglobalData(theEnv)->CL_DefglobalModuleIndex);
   }
 
 /*************************************************/
@@ -100,7 +100,7 @@ static void InitDefglobalsCode(
 #pragma unused(imageID)
 #pragma unused(theEnv)
 #endif
-   fprintf(initFP,"   DefglobalCL_RunTimeInitialize(theEnv);\n");
+   fprintf(initFP,"   Defglobal_RunTimeInitialize(theEnv);\n");
    fprintf(initFP,"   CL_ResetDefglobals(theEnv,NULL);\n");
   }
 

@@ -48,7 +48,7 @@
    void                           CL_WriteNeededConstraints(Environment *,FILE *);
 #endif
    void                           CL_ReadNeededConstraints(Environment *);
-   void                           CL_ClearCL_BloadedConstraints(Environment *);
+   void                           CL_Clear_BloadedConstraints(Environment *);
 
 #endif /* _H_cstrnbin */
 

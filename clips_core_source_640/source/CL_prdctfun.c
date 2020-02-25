@@ -113,7 +113,7 @@ void CL_EqFunction(
    struct expr *theExpression;
 
    /*====================================*/
-   /* DeteCL_rmine the number of arguments. */
+   /* Dete_rmine the number of arguments. */
    /*====================================*/
 
    numArgs = CL_UDFArgumentCount(context);
@@ -149,7 +149,7 @@ void CL_EqFunction(
 
       if (nextItem.header->type == MULTIFIELD_TYPE)
         {
-         if (MultifieldCL_DOsEqual(&nextItem,&item) == false)
+         if (Multifield_DOsEqual(&nextItem,&item) == false)
            {
             returnValue->lexemeValue = FalseSymbol(theEnv);
             return;
@@ -186,7 +186,7 @@ void CL_NeqFunction(
    struct expr *theExpression;
 
    /*====================================*/
-   /* DeteCL_rmine the number of arguments. */
+   /* Dete_rmine the number of arguments. */
    /*====================================*/
 
    numArgs = CL_UDFArgumentCount(context);
@@ -218,7 +218,7 @@ void CL_NeqFunction(
         { continue; }
       else if (nextItem.header->type == MULTIFIELD_TYPE)
         {
-         if (MultifieldCL_DOsEqual(&nextItem,&item) == true)
+         if (Multifield_DOsEqual(&nextItem,&item) == true)
            {
             returnValue->lexemeValue = FalseSymbol(theEnv);
             return;

@@ -29,15 +29,15 @@
 /*                                                           */
 /*            Added access functions to the CL_HaltRules flag.  */
 /*                                                           */
-/*            Added EnvGetNextCL_Focus, EnvGetCL_FocusChanged, and */
-/*            EnvSetCL_FocusChanged functions.                  */
+/*            Added EnvGetNext_Focus, EnvGet_FocusChanged, and */
+/*            EnvSet_FocusChanged functions.                  */
 /*                                                           */
 /*      6.30: Added additional developer statistics to help  */
-/*            analyze join network perfoCL_rmance.              */
+/*            analyze join network perfo_rmance.              */
 /*                                                           */
 /*            Removed pseudo-facts used in not CEs.          */
 /*                                                           */
-/*            Added context infoCL_rmation for run functions.   */
+/*            Added context info_rmation for run functions.   */
 /*                                                           */
 /*            Added before rule firing callback function.    */
 /*                                                           */
@@ -45,7 +45,7 @@
 /*                                                           */
 /*            Changed integer type/precision.                */
 /*                                                           */
-/*            Added EnvCL_Halt function.                        */
+/*            Added Env_Halt function.                        */
 /*                                                           */
 /*            Used CL_gensprintf instead of sprintf.            */
 /*                                                           */
@@ -91,7 +91,7 @@ typedef struct focalModule FocalModule;
 struct focalModule
   {
    Defmodule *theModule;
-   struct defruleModule *theCL_DefruleModule;
+   struct defruleModule *the_DefruleModule;
    FocalModule *next;
   };
 
@@ -119,20 +119,20 @@ struct engineData
    bool alreadyEntered;
    RuleFiredFunctionItem *ListOfAfterRuleFiresFunctions;
    RuleFiredFunctionItem *ListOfBeforeRuleFiresFunctions;
-   FocalModule *CurrentCL_Focus;
+   FocalModule *Current_Focus;
    bool CL_FocusChanged;
 #if DEBUGGING_FUNCTIONS
    bool CL_WatchStatistics;
-   bool CL_WatchCL_Focus;
+   bool CL_Watch_Focus;
 #endif
-   bool CL_IncrementalCL_ResetInProgress;
+   bool CL_Incremental_ResetInProgress;
    bool JoinOperationInProgress;
    struct partialMatch *GlobalLHSBinds;
    struct partialMatch *GlobalRHSBinds;
    struct joinNode *GlobalJoin;
-   struct partialMatch *GarbagePartialCL_Matches;
-   struct alphaMatch *GarbageAlphaCL_Matches;
-   bool AlreadyCL_Running;
+   struct partialMatch *GarbagePartial_Matches;
+   struct alphaMatch *GarbageAlpha_Matches;
+   bool Already_Running;
 #if DEVELOPER
    long leftToRightComparisons;
    long rightToLeftComparisons;
@@ -176,22 +176,22 @@ struct engineData
    void                    CL_ShowBreaksCommand(Environment *,UDFContext *,UDFValue *);
    void                    CL_HaltCommand(Environment *,UDFContext *,UDFValue *);
    void                    CL_FocusCommand(Environment *,UDFContext *,UDFValue *);
-   void                    CL_ClearCL_FocusStackCommand(Environment *,UDFContext *,UDFValue *);
-   void                    CL_ClearCL_FocusStack(Environment *);
-   FocalModule            *GetNextCL_Focus(Environment *,FocalModule *);
+   void                    CL_Clear_FocusStackCommand(Environment *,UDFContext *,UDFValue *);
+   void                    CL_Clear_FocusStack(Environment *);
+   FocalModule            *GetNext_Focus(Environment *,FocalModule *);
    const char             *CL_FocalModuleName(FocalModule *);
    Defmodule              *CL_FocalModuleModule(FocalModule *);
    void                    CL_Focus(Defmodule *);
-   bool                    GetCL_FocusChanged(Environment *);
-   void                    SetCL_FocusChanged(Environment *,bool);
-   void                    ListCL_FocusStackCommand(Environment *,UDFContext *,UDFValue *);
-   void                    ListCL_FocusStack(Environment *,const char *);
-   void                    GetCL_FocusStackFunction(Environment *,UDFContext *,UDFValue *);
-   void                    GetCL_FocusStack(Environment *,CLIPSValue *);
-   void                    PopCL_FocusFunction(Environment *,UDFContext *,UDFValue *);
-   Defmodule              *PopCL_Focus(Environment *);
-   bool                    CL_GetCL_HaltRules(Environment *);
-   void                    SetCL_HaltRules(Environment *,bool);
+   bool                    Get_FocusChanged(Environment *);
+   void                    Set_FocusChanged(Environment *,bool);
+   void                    List_FocusStackCommand(Environment *,UDFContext *,UDFValue *);
+   void                    List_FocusStack(Environment *,const char *);
+   void                    Get_FocusStackFunction(Environment *,UDFContext *,UDFValue *);
+   void                    Get_FocusStack(Environment *,CLIPSValue *);
+   void                    Pop_FocusFunction(Environment *,UDFContext *,UDFValue *);
+   Defmodule              *Pop_Focus(Environment *);
+   bool                    CL_Get_HaltRules(Environment *);
+   void                    Set_HaltRules(Environment *,bool);
    Activation             *CL_NextActivationToFire(Environment *);
 
 #endif /* _H_engine */

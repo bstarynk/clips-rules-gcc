@@ -8,8 +8,8 @@
 
 /*************************************************************/
 /* Purpose: Analyzes LHS patterns to check for semantic      */
-/*   errors and to deteCL_rmine variable comparisons and other  */
-/*   tests which must be perfoCL_rmed either in the pattern or  */
+/*   errors and to dete_rmine variable comparisons and other  */
+/*   tests which must be perfo_rmed either in the pattern or  */
 /*   join networks.                                          */
 /*                                                           */
 /* Principal Programmer(s):                                  */
@@ -102,7 +102,7 @@
 
 /******************************************************************/
 /* CL_VariableAnalysis: Propagates variables references to other     */
-/*   variables in the LHS and deteCL_rmines if there are any illegal */
+/*   variables in the LHS and dete_rmines if there are any illegal */
 /*   variable references (e.g. referring to an unbound variable). */
 /*   The propagation of variable references simply means all      */
 /*   subsequent references of a variable are made to "point" back */
@@ -117,7 +117,7 @@ bool CL_VariableAnalysis(
    int currentDepth = 1;
 
    /*======================================================*/
-   /* Loop through all of the CEs in the rule to deteCL_rmine */
+   /* Loop through all of the CEs in the rule to dete_rmine */
    /* which variables refer to other variables and whether */
    /* any semantic errors exist when refering to variables */
    /* (such as referring to a variable that was not        */
@@ -150,7 +150,7 @@ bool CL_VariableAnalysis(
       if (patternPtr->pnType == PATTERN_CE_NODE)
         {
          /*====================================================*/
-         /* DeteCL_rmine if the fact address associated with this */
+         /* Dete_rmine if the fact address associated with this */
          /* pattern illegally refers to other variables.       */
          /*====================================================*/
 
@@ -301,7 +301,7 @@ static bool TestCEAnalysis(
    patternPtr->right = NULL;
 
    /*=========================================================*/
-   /* DeteCL_rmine the type and value constraints implied by the */
+   /* Dete_rmine the type and value constraints implied by the */
    /* expression and propagate these constraints to other     */
    /* variables in the LHS. For example, the expression       */
    /* (+ ?x 1) implies that ?x is a number.                   */
@@ -904,8 +904,8 @@ static bool UnboundVariablesInPattern(
            }
 
          /*========================================================*/
-         /* If static constraint checking is being perfoCL_rmed, then */
-         /* deteCL_rmine if constant values have violated the set of  */
+         /* If static constraint checking is being perfo_rmed, then */
+         /* dete_rmine if constant values have violated the set of  */
          /* derived constraints for the slot/field (based on the   */
          /* deftemplate definition and propagated constraints).    */
          /*========================================================*/

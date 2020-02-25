@@ -96,19 +96,19 @@ struct bsaveData
   {
    struct BinaryItem *ListOfBinaryItems;
 #if BLOAD_AND_BSAVE
-   BLOADCNTSV *CL_BloadCountCL_SaveTop;
+   BLOADCNTSV *CL_BloadCount_SaveTop;
 #endif
   };
 
 #define CL_BsaveData(theEnv) ((struct bsaveData *) GetEnvironmentData(theEnv,BSAVE_DATA))
 
-   void                    InitializeCL_BsaveData(Environment *);
+   void                    Initialize_BsaveData(Environment *);
    void                    CL_BsaveCommand(Environment *,UDFContext *,UDFValue *);
 #if BLOAD_AND_BSAVE
    bool                    CL_Bsave(Environment *,const char *);
    void                    CL_MarkNeededItems(Environment *,struct expr *);
-   void                    CL_SaveCL_BloadCount(Environment *,unsigned long);
-   void                    RestoreCL_BloadCount(Environment *,unsigned long *);
+   void                    CL_Save_BloadCount(Environment *,unsigned long);
+   void                    Restore_BloadCount(Environment *,unsigned long *);
 #endif
    bool                    CL_AddBinaryItem(Environment *,const char *,int,
                                          void (*)(Environment *),

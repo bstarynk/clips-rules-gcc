@@ -39,7 +39,7 @@
 /*                                                           */
 /*            Added code to prevent a clear command from     */
 /*            being executed during fact assertions via      */
-/*            Increment/DecrementCL_ClearReadyLocks API.        */
+/*            Increment/Decrement_ClearReadyLocks API.        */
 /*                                                           */
 /*            Changed find construct functionality so that   */
 /*            imported modules are search when locating a    */
@@ -49,11 +49,11 @@
 /*            fact-index function is given a retracted       */
 /*            fact.                                          */
 /*                                                           */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*      6.40: Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to CL_GetCL_HaltExecution and       */
-/*            SetCL_HaltExecution functions.                    */
+/*            Added Env prefix to CL_Get_HaltExecution and       */
+/*            Set_HaltExecution functions.                    */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -119,10 +119,10 @@
 
    static struct expr            *CL_AssertParse(Environment *,struct expr *,const char *);
 #if DEBUGGING_FUNCTIONS
-   static long long               GetCL_FactsArgument(UDFContext *);
+   static long long               Get_FactsArgument(UDFContext *);
 #endif
-   static struct expr            *StandardCL_LoadFact(Environment *,const char *,struct token *);
-   static Deftemplate           **GetCL_SaveCL_FactsCL_DeftemplateNames(Environment *,struct expr *,int,
+   static struct expr            *Standard_LoadFact(Environment *,const char *,struct token *);
+   static Deftemplate           **Get_Save_Facts_DeftemplateNames(Environment *,struct expr *,int,
                                                                unsigned int *,bool *);
 
 /***************************************/
@@ -145,8 +145,8 @@ void CL_FactCommandDefinitions(
    CL_AddUDF(theEnv,"get-fact-duplication","b",0,0,NULL,CL_GetFactDuplicationCommand,"CL_GetFactDuplicationCommand", NULL);
    CL_AddUDF(theEnv,"set-fact-duplication","b",1,1,NULL,CL_SetFactDuplicationCommand,"CL_SetFactDuplicationCommand", NULL);
 
-   CL_AddUDF(theEnv,"save-facts","b",1,UNBOUNDED,"y;sy",CL_SaveCL_FactsCommand,"CL_SaveCL_FactsCommand",NULL);
-   CL_AddUDF(theEnv,"load-facts","b",1,1,"sy",CL_LoadCL_FactsCommand,"CL_LoadCL_FactsCommand",NULL);
+   CL_AddUDF(theEnv,"save-facts","b",1,UNBOUNDED,"y;sy",CL_Save_FactsCommand,"CL_Save_FactsCommand",NULL);
+   CL_AddUDF(theEnv,"load-facts","b",1,1,"sy",CL_Load_FactsCommand,"CL_Load_FactsCommand",NULL);
    CL_AddUDF(theEnv,"fact-index","l",1,1,"f",CL_FactIndexFunction,"CL_FactIndexFunction",NULL);
 
    CL_FuncSeqOvlFlags(theEnv,"assert",false,false);
@@ -213,7 +213,7 @@ void CL_AssertCommand(
    /* the newly created fact.                           */
    /*===================================================*/
 
-   IncrementCL_ClearReadyLocks(theEnv);
+   Increment_ClearReadyLocks(theEnv);
 
    theField = newFact->theProposition.contents;
 
@@ -247,13 +247,13 @@ void CL_AssertCommand(
       theField[i].value = theValue.value;
 
       /*========================================*/
-      /* Get the infoCL_rmation for the next slot. */
+      /* Get the info_rmation for the next slot. */
       /*========================================*/
 
       if (slotPtr != NULL) slotPtr = slotPtr->next;
      }
 
-   DecrementCL_ClearReadyLocks(theEnv);
+   Decrement_ClearReadyLocks(theEnv);
 
    /*============================================*/
    /* If an error occured while generating the   */
@@ -367,7 +367,7 @@ void CL_RetractCommand(
       else if ((CVIsType(&theArg,SYMBOL_BIT)) ?
                (strcmp(theArg.lexemeValue->contents,"*") == 0) : false)
         {
-         CL_RetractAllCL_Facts(theEnv);
+         CL_RetractAll_Facts(theEnv);
          return;
         }
 
@@ -379,7 +379,7 @@ void CL_RetractCommand(
       else
         {
          CL_UDFInvalidArgumentMessage(context,"fact-address, fact-index, or the symbol *");
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
         }
      }
   }
@@ -454,7 +454,7 @@ void CL_FactIndexFunction(
 
    if (theArg.factValue->garbage)
      {
-      CL_FactCL_RetractedErrorMessage(theEnv,theArg.factValue);
+      CL_Fact_RetractedErrorMessage(theEnv,theArg.factValue);
       returnValue->integerValue = CL_CreateInteger(theEnv,-1L);
       return;
      }
@@ -512,12 +512,12 @@ void CL_FactsCommand(
       theModule = CL_FindDefmodule(theEnv,theArg.lexemeValue->contents);
       if ((theModule == NULL) && (strcmp(theArg.lexemeValue->contents,"*") != 0))
         {
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          CL_CantFindItemErrorMessage(theEnv,"defmodule",theArg.lexemeValue->contents,true);
          return;
         }
 
-      if ((start = GetCL_FactsArgument(context)) == INVALID) return;
+      if ((start = Get_FactsArgument(context)) == INVALID) return;
      }
 
    /*================================================*/
@@ -551,8 +551,8 @@ void CL_FactsCommand(
    /* Get the other arguments. */
    /*==========================*/
 
-   if ((end = GetCL_FactsArgument(context)) == INVALID) return;
-   if ((max = GetCL_FactsArgument(context)) == INVALID) return;
+   if ((end = Get_FactsArgument(context)) == INVALID) return;
+   if ((max = Get_FactsArgument(context)) == INVALID) return;
 
    /*=================*/
    /* List the facts. */
@@ -584,7 +584,7 @@ void CL_Facts(
    oldModule = CL_GetCurrentModule(theEnv);
 
    /*=========================================================*/
-   /* DeteCL_rmine if facts from all modules are to be displayed */
+   /* Dete_rmine if facts from all modules are to be displayed */
    /* or just facts from the current module.                  */
    /*=========================================================*/
 
@@ -607,10 +607,10 @@ void CL_Facts(
      {
       /*==================================================*/
       /* Abort the display of facts if the CL_Halt Execution */
-      /* flag has been set (noCL_rmally by user action).     */
+      /* flag has been set (no_rmally by user action).     */
       /*==================================================*/
 
-      if (CL_GetCL_HaltExecution(theEnv) == true)
+      if (CL_Get_HaltExecution(theEnv) == true)
         {
          CL_SetCurrentModule(theEnv,oldModule);
          return;
@@ -675,12 +675,12 @@ void CL_Facts(
   }
 
 /****************************************************************/
-/* GetCL_FactsArgument: Returns an argument for the facts command. */
+/* Get_FactsArgument: Returns an argument for the facts command. */
 /*  A return value of -1 indicates that no value was specified. */
 /*  A return value of -2 indicates that the value specified is  */
 /*  invalid.                                                    */
 /****************************************************************/
-static long long GetCL_FactsArgument(
+static long long Get_FactsArgument(
   UDFContext *context)
   {
    long long factIndex;
@@ -737,10 +737,10 @@ void CL_AssertStringFunction(
   }
 
 /******************************************/
-/* CL_SaveCL_FactsCommand: H/L access routine   */
+/* CL_Save_FactsCommand: H/L access routine   */
 /*   for the save-facts command.          */
 /******************************************/
-void CL_SaveCL_FactsCommand(
+void CL_Save_FactsCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -805,20 +805,20 @@ void CL_SaveCL_FactsCommand(
    if (numArgs > 2) theList = GetFirstArgument()->nextArg->nextArg;
 
    /*====================================*/
-   /* Call the CL_SaveCL_Facts driver routine. */
+   /* Call the CL_Save_Facts driver routine. */
    /*====================================*/
 
-   if (CL_SaveCL_FactsDriver(theEnv,fileName,saveCode,theList) == false)
+   if (CL_Save_FactsDriver(theEnv,fileName,saveCode,theList) == false)
      { returnValue->lexemeValue = FalseSymbol(theEnv); }
    else
      { returnValue->lexemeValue = TrueSymbol(theEnv); }
   }
 
 /******************************************/
-/* CL_LoadCL_FactsCommand: H/L access routine   */
+/* CL_Load_FactsCommand: H/L access routine   */
 /*   for the load-facts command.          */
 /******************************************/
-void CL_LoadCL_FactsCommand(
+void CL_Load_FactsCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -836,27 +836,27 @@ void CL_LoadCL_FactsCommand(
      }
 
    /*====================================*/
-   /* Call the CL_LoadCL_Facts driver routine. */
+   /* Call the CL_Load_Facts driver routine. */
    /*====================================*/
 
-   returnValue->lexemeValue = CL_CreateBoolean(theEnv,CL_LoadCL_Facts(theEnv,fileName));
+   returnValue->lexemeValue = CL_CreateBoolean(theEnv,CL_Load_Facts(theEnv,fileName));
   }
 
 /***********************************************************/
-/* CL_SaveCL_Facts: C access routine for the save-facts command. */
+/* CL_Save_Facts: C access routine for the save-facts command. */
 /***********************************************************/
-bool CL_SaveCL_Facts(
+bool CL_Save_Facts(
   Environment *theEnv,
   const char *fileName,
   CL_SaveScope saveCode)
   {
-   return CL_SaveCL_FactsDriver(theEnv,fileName,saveCode,NULL);
+   return CL_Save_FactsDriver(theEnv,fileName,saveCode,NULL);
   }
 
 /*****************************************************************/
-/* CL_SaveCL_FactsDriver: C access routine for the save-facts command. */
+/* CL_Save_FactsDriver: C access routine for the save-facts command. */
 /*****************************************************************/
-bool CL_SaveCL_FactsDriver(
+bool CL_Save_FactsDriver(
   Environment *theEnv,
   const char *fileName,
   CL_SaveScope saveCode,
@@ -880,7 +880,7 @@ bool CL_SaveCL_FactsDriver(
       return false;
      }
 
-   SetFastCL_Save(theEnv,filePtr);
+   SetFast_Save(theEnv,filePtr);
 
    /*===========================================*/
    /* Set the print flags so that addresses and */
@@ -895,10 +895,10 @@ bool CL_SaveCL_FactsDriver(
    PrintUtilityData(theEnv)->InstanceAddressesToNames = true;
 
    /*===================================================*/
-   /* DeteCL_rmine the list of specific facts to be saved. */
+   /* Dete_rmine the list of specific facts to be saved. */
    /*===================================================*/
 
-   deftemplateArray = GetCL_SaveCL_FactsCL_DeftemplateNames(theEnv,theList,saveCode,&count,&error);
+   deftemplateArray = Get_Save_Facts_DeftemplateNames(theEnv,theList,saveCode,&count,&error);
 
    if (error)
      {
@@ -906,7 +906,7 @@ bool CL_SaveCL_FactsDriver(
       PrintUtilityData(theEnv)->AddressesToStrings = tempValue2;
       PrintUtilityData(theEnv)->InstanceAddressesToNames = tempValue3;
       CL_GenClose(theEnv,filePtr);
-      SetFastCL_Save(theEnv,NULL);
+      SetFast_Save(theEnv,NULL);
       return false;
      }
 
@@ -983,7 +983,7 @@ bool CL_SaveCL_FactsDriver(
    /*=================*/
 
    CL_GenClose(theEnv,filePtr);
-   SetFastCL_Save(theEnv,NULL);
+   SetFast_Save(theEnv,NULL);
 
    /*==================================*/
    /* Free the deftemplate name array. */
@@ -1001,10 +1001,10 @@ bool CL_SaveCL_FactsDriver(
   }
 
 /*******************************************************************/
-/* GetCL_SaveCL_FactsCL_DeftemplateNames: Retrieves the list of deftemplate */
+/* Get_Save_Facts_DeftemplateNames: Retrieves the list of deftemplate */
 /*   names for saving specific facts with the save-facts command.  */
 /*******************************************************************/
-static Deftemplate **GetCL_SaveCL_FactsCL_DeftemplateNames(
+static Deftemplate **Get_Save_Facts_DeftemplateNames(
   Environment *theEnv,
   struct expr *theList,
   int saveCode,
@@ -1035,7 +1035,7 @@ static Deftemplate **GetCL_SaveCL_FactsCL_DeftemplateNames(
      }
 
    /*======================================*/
-   /* DeteCL_rmine the number of deftemplate  */
+   /* Dete_rmine the number of deftemplate  */
    /* names to be stored in the name list. */
    /*======================================*/
 
@@ -1131,9 +1131,9 @@ static Deftemplate **GetCL_SaveCL_FactsCL_DeftemplateNames(
   }
 
 /***********************************************************/
-/* CL_LoadCL_Facts: C access routine for the load-facts command. */
+/* CL_Load_Facts: C access routine for the load-facts command. */
 /***********************************************************/
-bool CL_LoadCL_Facts(
+bool CL_Load_Facts(
   Environment *theEnv,
   const char *fileName)
   {
@@ -1159,7 +1159,7 @@ bool CL_LoadCL_Facts(
       return false;
      }
 
-   SetFastCL_Load(theEnv,filePtr);
+   SetFast_Load(theEnv,filePtr);
 
    /*=================*/
    /* CL_Load the facts. */
@@ -1168,7 +1168,7 @@ bool CL_LoadCL_Facts(
    theToken.tknType = LEFT_PARENTHESIS_TOKEN;
    while (theToken.tknType != STOP_TOKEN)
      {
-      testPtr = StandardCL_LoadFact(theEnv,(char *) filePtr,&theToken);
+      testPtr = Standard_LoadFact(theEnv,(char *) filePtr,&theToken);
       if (testPtr == NULL) theToken.tknType = STOP_TOKEN;
       else CL_EvaluateExpression(theEnv,testPtr,&rv);
       CL_ReturnExpression(theEnv,testPtr);
@@ -1178,7 +1178,7 @@ bool CL_LoadCL_Facts(
    /* Close the file. */
    /*=================*/
 
-   SetFastCL_Load(theEnv,NULL);
+   SetFast_Load(theEnv,NULL);
    CL_GenClose(theEnv,filePtr);
 
    /*================================================*/
@@ -1191,9 +1191,9 @@ bool CL_LoadCL_Facts(
   }
 
 /******************************************/
-/* CL_LoadCL_FactsFromString: C access routine. */
+/* CL_Load_FactsFromString: C access routine. */
 /******************************************/
-bool CL_LoadCL_FactsFromString(
+bool CL_Load_FactsFromString(
   Environment *theEnv,
   const char *theString,
   size_t theMax)
@@ -1225,7 +1225,7 @@ bool CL_LoadCL_FactsFromString(
    theToken.tknType = LEFT_PARENTHESIS_TOKEN;
    while (theToken.tknType != STOP_TOKEN)
      {
-      testPtr = StandardCL_LoadFact(theEnv,theStrRouter,&theToken);
+      testPtr = Standard_LoadFact(theEnv,theStrRouter,&theToken);
       if (testPtr == NULL) theToken.tknType = STOP_TOKEN;
       else CL_EvaluateExpression(theEnv,testPtr,&rv);
       CL_ReturnExpression(theEnv,testPtr);
@@ -1247,9 +1247,9 @@ bool CL_LoadCL_FactsFromString(
   }
 
 /**************************************************************************/
-/* StandardCL_LoadFact: CL_Loads a single fact from the specified logical name. */
+/* Standard_LoadFact: CL_Loads a single fact from the specified logical name. */
 /**************************************************************************/
-static struct expr *StandardCL_LoadFact(
+static struct expr *Standard_LoadFact(
   Environment *theEnv,
   const char *logicalName,
   struct token *theToken)
@@ -1267,7 +1267,7 @@ static struct expr *StandardCL_LoadFact(
    if (error == true)
      {
       CL_WriteString(theEnv,STDERR,"Function load-facts encountered an error\n");
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       CL_ReturnExpression(theEnv,temp);
       return NULL;
      }
@@ -1296,7 +1296,7 @@ static struct expr *CL_AssertParse(
    CL_ReturnExpression(theEnv,top);
    CL_SavePPBuffer(theEnv," ");
    CL_IncrementIndentDepth(theEnv,8);
-   rv = CL_BuildRHSCL_Assert(theEnv,logicalName,&theToken,&error,true,true,"assert command");
+   rv = CL_BuildRHS_Assert(theEnv,logicalName,&theToken,&error,true,true,"assert command");
    CL_DecrementIndentDepth(theEnv,8);
    return(rv);
   }

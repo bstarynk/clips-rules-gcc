@@ -71,7 +71,7 @@ struct bsavePortItem
                                                   struct defmoduleItemHeader *,size_t,void *);
 
 #if BLOAD_AND_BSAVE
-   void                           CL_AssignCL_BsaveDefmdlItemHdrVals
+   void                           CL_Assign_BsaveDefmdlItemHdrVals
                                                  (struct bsaveDefmoduleItemHeader *,
                                                   struct defmoduleItemHeader *);
 #endif

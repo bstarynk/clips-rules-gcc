@@ -201,7 +201,7 @@ bool CL_CheckSyntax(
              NULL,NULL,NULL,NULL);
 
    /*================================*/
-   /* DeteCL_rmine if it's a construct. */
+   /* Dete_rmine if it's a construct. */
    /*================================*/
 
    if (CL_FindConstruct(theEnv,name))
@@ -280,7 +280,7 @@ bool CL_CheckSyntax(
 /**************************************************/
 /* DeactivateErrorCapture: Deactivates the error  */
 /*   capture router and the strings used to store */
-/*   the captured infoCL_rmation.                    */
+/*   the captured info_rmation.                    */
 /**************************************************/
 static void DeactivateErrorCapture(
   Environment *theEnv)

@@ -24,7 +24,7 @@
 /*                                                           */
 /*            Changed integer type/precision.                */
 /*                                                           */
-/*            Added FactWillBeCL_Asserted.                      */
+/*            Added FactWillBe_Asserted.                      */
 /*                                                           */
 /*            Converted API macros to function calls.        */
 /*                                                           */
@@ -74,7 +74,7 @@ struct factHashEntry
    void                           CL_InitializeFactHashTable(Environment *);
    void                           ShowFactHashTableCommand(Environment *,UDFContext *,UDFValue *);
    size_t                         CL_HashFact(Fact *);
-   bool                           FactWillBeCL_Asserted(Environment *,Fact *);
+   bool                           FactWillBe_Asserted(Environment *,Fact *);
 
 #endif /* _H_facthsh */
 

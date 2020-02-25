@@ -20,8 +20,8 @@
 /*      6.30: Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*      6.40: Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -76,12 +76,12 @@
    static void                    TagLHSLogicalNodes(struct lhsParseNode *);
    static struct lhsParseNode    *SimplePatternParse(Environment *,const char *,struct token *,bool *);
    static void                    ParseSalience(Environment *,const char *,const char *,bool *);
-   static void                    ParseAutoCL_Focus(Environment *,const char *,bool *);
+   static void                    ParseAuto_Focus(Environment *,const char *,bool *);
 
 /*******************************************************************/
 /* CL_ParseRuleLHS: Coordinates all the actions necessary for parsing */
 /*   the LHS of a rule including the reordering of pattern         */
-/*   conditional elements to confoCL_rm with the KB Rete topology.    */
+/*   conditional elements to confo_rm with the KB Rete topology.    */
 /*******************************************************************/
 struct lhsParseNode *CL_ParseRuleLHS(
   Environment *theEnv,
@@ -100,7 +100,7 @@ struct lhsParseNode *CL_ParseRuleLHS(
    /*========================================*/
 
    PatternData(theEnv)->GlobalSalience = 0;
-   PatternData(theEnv)->GlobalAutoCL_Focus = false;
+   PatternData(theEnv)->GlobalAuto_Focus = false;
    PatternData(theEnv)->SalienceExpression = NULL;
 
    /*============================*/
@@ -134,7 +134,7 @@ struct lhsParseNode *CL_ParseRuleLHS(
 
 /*********************************************************/
 /* RuleBodyParse: Parses the LHS of a rule, but does not */
-/*   reorder any of the LHS patterns to confoCL_rm with the */
+/*   reorder any of the LHS patterns to confo_rm with the */
 /*   KB Rete Topology.                                   */
 /*                                                       */
 /* <rule-body> ::= [<declaration>]                       */
@@ -194,7 +194,7 @@ static struct lhsParseNode *RuleBodyParse(
 
    /*================================================*/
    /* Construct the final LHS by combining the first */
-   /* pattern with the reCL_maining patterns.           */
+   /* pattern with the re_maining patterns.           */
    /*================================================*/
 
    if (theNode == NULL)
@@ -226,7 +226,7 @@ static void DeclarationParse(
    struct token theToken;
    struct expr *packPtr;
    bool notDone = true;
-   bool salienceParsed = false, autoCL_FocusParsed = false;
+   bool salienceParsed = false, auto_FocusParsed = false;
 
    /*===========================*/
    /* Next token must be a '('. */
@@ -286,15 +286,15 @@ static void DeclarationParse(
 
       else if (strcmp(theToken.lexemeValue->contents,"auto-focus") == 0)
         {
-         if (autoCL_FocusParsed)
+         if (auto_FocusParsed)
            {
             CL_AlreadyParsedErrorMessage(theEnv,"auto-focus declaration",NULL);
             *error = true;
            }
          else
            {
-            ParseAutoCL_Focus(theEnv,readSource,error);
-            autoCL_FocusParsed = true;
+            ParseAuto_Focus(theEnv,readSource,error);
+            auto_FocusParsed = true;
            }
         }
 
@@ -330,7 +330,7 @@ static void DeclarationParse(
         {
          CL_PPBackup(theEnv);
          CL_SavePPBuffer(theEnv," ");
-         CL_SavePPBuffer(theEnv,theToken.printFoCL_rm);
+         CL_SavePPBuffer(theEnv,theToken.printFo_rm);
          CL_ReturnExpression(theEnv,PatternData(theEnv)->SalienceExpression);
          PatternData(theEnv)->SalienceExpression = NULL;
          CL_SyntaxErrorMessage(theEnv,"declare statement");
@@ -397,13 +397,13 @@ static void ParseSalience(
      }
 
    /*============================================================*/
-   /* CL_Evaluate the expression and deteCL_rmine if it is an integer. */
+   /* CL_Evaluate the expression and dete_rmine if it is an integer. */
    /*============================================================*/
 
-   SetCL_EvaluationError(theEnv,false);
+   Set_EvaluationError(theEnv,false);
    if (CL_EvaluateExpression(theEnv,PatternData(theEnv)->SalienceExpression,&salienceValue))
      {
-      SalienceInfoCL_rmationError(theEnv,"defrule",ruleName);
+      SalienceInfo_rmationError(theEnv,"defrule",ruleName);
       *error = true;
       return;
      }
@@ -443,10 +443,10 @@ static void ParseSalience(
   }
 
 /**************************************************************/
-/* ParseAutoCL_Focus: Parses the rest of a defrule auto-focus    */
+/* ParseAuto_Focus: Parses the rest of a defrule auto-focus    */
 /*   declaration once the auto-focus keyword has been parsed. */
 /**************************************************************/
-static void ParseAutoCL_Focus(
+static void ParseAuto_Focus(
   Environment *theEnv,
   const char *readSource,
   bool *error)
@@ -470,13 +470,13 @@ static void ParseAutoCL_Focus(
    /*====================================================*/
    /* The auto-focus value must be either TRUE or FALSE. */
    /* If a valid value is parsed, then set the value of  */
-   /* the global variable GlobalAutoCL_Focus.               */
+   /* the global variable GlobalAuto_Focus.               */
    /*====================================================*/
 
    if (strcmp(theToken.lexemeValue->contents,"TRUE") == 0)
-     { PatternData(theEnv)->GlobalAutoCL_Focus = true; }
+     { PatternData(theEnv)->GlobalAuto_Focus = true; }
    else if (strcmp(theToken.lexemeValue->contents,"FALSE") == 0)
-     { PatternData(theEnv)->GlobalAutoCL_Focus = false; }
+     { PatternData(theEnv)->GlobalAuto_Focus = false; }
    else
      {
       CL_SyntaxErrorMessage(theEnv,"auto-focus statement");
@@ -499,8 +499,8 @@ static void ParseAutoCL_Focus(
 static struct lhsParseNode *LHSPattern(
   Environment *theEnv,
   const char *readSource,
-  TokenType teCL_rminator,
-  const char *teCL_rminatorString,
+  TokenType te_rminator,
+  const char *te_rminatorString,
   bool *error,
   bool allowDeclaration,
   struct token *firstToken,
@@ -584,13 +584,13 @@ static struct lhsParseNode *LHSPattern(
      { theNode = AssignmentParse(theEnv,readSource,theToken.lexemeValue,error); }
 
    /*=================================================*/
-   /* Check for the group teCL_rminator (either a "=>"   */
+   /* Check for the group te_rminator (either a "=>"   */
    /* separating the LHS from the RHS or a ")" ending */
    /* a CE containing other CEs such as an *and* CE). */
    /*=================================================*/
 
-   else if ((theToken.tknType == teCL_rminator) ?
-            (strcmp(theToken.printFoCL_rm,teCL_rminatorString) == 0) : false)
+   else if ((theToken.tknType == te_rminator) ?
+            (strcmp(theToken.printFo_rm,te_rminatorString) == 0) : false)
      { return NULL;  }
 
    /*====================================*/
@@ -725,7 +725,7 @@ static struct lhsParseNode *ConnectedPatternParse(
 
    /*===========================================*/
    /* Parse all of the CEs contained with the   */
-   /* CE. A ) will teCL_rminate the end of the CE. */
+   /* CE. A ) will te_rminate the end of the CE. */
    /*===========================================*/
 
    theGroup = GroupPatterns(theEnv,readSource,RIGHT_PARENTHESIS_TOKEN,")",error);
@@ -893,8 +893,8 @@ static struct lhsParseNode *ConnectedPatternParse(
 static struct lhsParseNode *GroupPatterns(
   Environment *theEnv,
   const char *readSource,
-  TokenType teCL_rminator,
-  const char *teCL_rminatorString,
+  TokenType te_rminator,
+  const char *te_rminatorString,
   bool *error)
   {
    struct lhsParseNode *lastNode, *newNode, *theNode;
@@ -907,7 +907,7 @@ static struct lhsParseNode *GroupPatterns(
       /* Get the next CE. */
       /*==================*/
 
-      newNode = LHSPattern(theEnv,readSource,teCL_rminator,teCL_rminatorString,
+      newNode = LHSPattern(theEnv,readSource,te_rminator,te_rminatorString,
                            error,false,NULL,NULL);
 
       /*=======================================================*/
@@ -923,7 +923,7 @@ static struct lhsParseNode *GroupPatterns(
 
       /*===============================================*/
       /* A NULL value for the CE just parsed indicates */
-      /* that the teCL_rminator for the group of patterns */
+      /* that the te_rminator for the group of patterns */
       /* was encountered (either a "=>" or a ")".      */
       /*===============================================*/
 
@@ -931,12 +931,12 @@ static struct lhsParseNode *GroupPatterns(
         {
          CL_PPBackup(theEnv);
          CL_PPBackup(theEnv);
-         if (teCL_rminator == RIGHT_PARENTHESIS_TOKEN)
-           { CL_SavePPBuffer(theEnv,teCL_rminatorString); }
+         if (te_rminator == RIGHT_PARENTHESIS_TOKEN)
+           { CL_SavePPBuffer(theEnv,te_rminatorString); }
          else
            {
             CL_PPCRAndIndent(theEnv);
-            CL_SavePPBuffer(theEnv,teCL_rminatorString);
+            CL_SavePPBuffer(theEnv,te_rminatorString);
            }
 
          return(theNode);

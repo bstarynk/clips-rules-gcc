@@ -72,9 +72,9 @@
    bool                           CL_PPDefglobal(Environment *,const char *,const char *);
    void                           CL_ListDefglobalsCommand(Environment *,UDFContext *,UDFValue *);
 #if DEBUGGING_FUNCTIONS
-   bool                           CL_DefglobalGetCL_Watch(Defglobal *);
+   bool                           CL_DefglobalGet_Watch(Defglobal *);
    void                           CL_ListDefglobals(Environment *,const char *,Defmodule *);
-   void                           CL_DefglobalSetCL_Watch(Defglobal *,bool);
+   void                           CL_DefglobalSet_Watch(Defglobal *,bool);
 #endif
    void                           CL_ResetDefglobals(Environment *,void *);
 

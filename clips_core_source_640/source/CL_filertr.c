@@ -221,7 +221,7 @@ static int ReadFileCallback(
 
    /*=================================================*/
    /* The following code prevents Control-D on UNIX   */
-   /* machines from teCL_rminating all input from stdin. */
+   /* machines from te_rminating all input from stdin. */
    /*=================================================*/
 
    if ((fptr == stdin) && (theChar == EOF)) clearerr(stdin);

@@ -173,7 +173,7 @@ PACKED_CLASS_LINKS *CL_ParseSuperclasses(
             goto CL_SuperclassParseError;
            }
         }
-      sclass = LookupCL_DefclassInScope(theEnv,DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents);
+      sclass = Lookup_DefclassInScope(theEnv,DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents);
       if (sclass == NULL)
         {
          CL_PrintErrorID(theEnv,"INHERPSR",3,false);
@@ -239,7 +239,7 @@ CL_SuperclassParseError:
                  and successor lists indicate the partial orderings given
                  by the rules of multiple inheritance for the classes:
                  1) a class must precede all its superclasses, and 2) a
-                 class deteCL_rmines the precedence of its immediate superclasses.
+                 class dete_rmines the precedence of its immediate superclasses.
 
                  For example, the following class definitions
 
@@ -312,7 +312,7 @@ CL_SuperclassParseError:
                  (implicitly) and a built-in system class on it explicitly
                  (except for the built-in classes).
 
-                 The precedence deteCL_rmination algorithm is a variation on
+                 The precedence dete_rmination algorithm is a variation on
                  the topological sorting algorithm given in The Art of
                  Computer Programming - Vol. I (Fundamental Algorithms) by
                  Donald Knuth.
@@ -393,7 +393,7 @@ PACKED_CLASS_LINKS *CL_FindPrecedenceList(
         }
 
       /* =========================================================
-         Search for the first class with no reCL_maining predecessors
+         Search for the first class with no re_maining predecessors
          ========================================================= */
       if (pop->pre == 0)
         {
@@ -448,13 +448,13 @@ PACKED_CLASS_LINKS *CL_FindPrecedenceList(
    /* ======================================================================
       If the table of partial orders is not empty and we were unable to find
       a class with no predecessors, then there is no solution! Print out the
-      precedence loop in the partial orders. Delete the reCL_maining partial
+      precedence loop in the partial orders. Delete the re_maining partial
       order table and the partial precedence list.
       ====================================================================== */
    if (po_table != NULL)
      {
       CL_PrintErrorID(theEnv,"INHERPSR",5,false);
-      PrintClassLinks(theEnv,STDERR,"Partial precedence list foCL_rmed:",ptop);
+      PrintClassLinks(theEnv,STDERR,"Partial precedence list fo_rmed:",ptop);
       PrintPartialOrderLoop(theEnv,po_table);
       while (po_table != NULL)
         {
@@ -541,13 +541,13 @@ void CL_PackClassLinks(
   NAME         : InitializePartialOrderTable
   DESCRIPTION  : This function recursively enters the classes
                  that will be used in a precedence list
-                 deteCL_rmination in depth-first pre-order traversal.
+                 dete_rmination in depth-first pre-order traversal.
                  The predecessor counts and successor list are initialized.
 
   INPUTS       : 1) The partial order table
                  2) A list of direct superclasses
                  3) The class for which a precedence class is being
-                    deteCL_rmined (NULL for new class)
+                    dete_rmined (NULL for new class)
                  4) The class which superclass list is being processed
   RETURNS      : The top of partial order table
   SIDE EFFECTS : The partial order table is initialized.
@@ -720,7 +720,7 @@ static PARTIAL_ORDER *FindPartialOrder(
                  A B A.  Notice that this loop reflects the Rule 2 conflicts
                  between Class C and Class D in Class E's precedence list.
 
-  INPUTS       : The reCL_maining partial order table of conflicting partial
+  INPUTS       : The re_maining partial order table of conflicting partial
                  orders
   RETURNS      : Nothing useful
   SIDE EFFECTS : The predecessor counts and successor lists are modified to

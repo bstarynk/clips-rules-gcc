@@ -41,11 +41,11 @@
 /*            Fixed linkage issue when BLOAD_ONLY compiler   */
 /*            flag is set to 1.                              */
 /*                                                           */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*      6.40: Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to CL_GetCL_HaltExecution and       */
-/*            SetCL_HaltExecution functions.                    */
+/*            Added Env prefix to CL_Get_HaltExecution and       */
+/*            Set_HaltExecution functions.                    */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -126,14 +126,14 @@ CL_LoadError CL_Load(
    /* times.                                            */
    /*===================================================*/
 
-   SetFastCL_Load(theEnv,theFile);
+   SetFast_Load(theEnv,theFile);
 
    oldParsingFileName = CL_CopyString(theEnv,CL_GetParsingFileName(theEnv));
    CL_SetParsingFileName(theEnv,fileName);
 
-   SetCL_LoadInProgress(theEnv,true);
+   Set_LoadInProgress(theEnv,true);
    noErrorsDetected = CL_LoadConstructsFromLogicalName(theEnv,(char *) theFile);
-   SetCL_LoadInProgress(theEnv,false);
+   Set_LoadInProgress(theEnv,false);
 
    CL_SetParsingFileName(theEnv,oldParsingFileName);
    CL_DeleteString(theEnv,oldParsingFileName);
@@ -141,7 +141,7 @@ CL_LoadError CL_Load(
    CL_SetWarningFileName(theEnv,NULL);
    CL_SetErrorFileName(theEnv,NULL);
 
-   SetFastCL_Load(theEnv,NULL);
+   SetFast_Load(theEnv,NULL);
 
    /*=================*/
    /* Close the file. */
@@ -307,7 +307,7 @@ bool CL_LoadConstructsFromLogicalName(
    const char *oldLineCountRouter;
 
    /*===================================================*/
-   /* Create a router to capture the error infoCL_rmation. */
+   /* Create a router to capture the error info_rmation. */
    /*===================================================*/
 
    CL_CreateErrorCaptureRouter(theEnv);
@@ -344,7 +344,7 @@ bool CL_LoadConstructsFromLogicalName(
    /* Parse the file until the end of file is reached. */
    /*==================================================*/
 
-   while ((foundConstruct == true) && (CL_GetCL_HaltExecution(theEnv) == false))
+   while ((foundConstruct == true) && (CL_Get_HaltExecution(theEnv) == false))
      {
       /*===========================================================*/
       /* CL_Clear the pretty print buffer in preparation for parsing. */
@@ -411,16 +411,16 @@ bool CL_LoadConstructsFromLogicalName(
    /*========================================================*/
 
 #if DEBUGGING_FUNCTIONS
-   if ((CL_GetCL_WatchItem(theEnv,"compilations") != 1) && CL_GetPrintWhileCL_Loading(theEnv))
+   if ((CL_Get_WatchItem(theEnv,"compilations") != 1) && CL_GetPrintWhile_Loading(theEnv))
 #else
-   if (CL_GetPrintWhileCL_Loading(theEnv))
+   if (CL_GetPrintWhile_Loading(theEnv))
 #endif
      { CL_WriteString(theEnv,STDOUT,"\n"); }
 
    /*=============================================================*/
    /* Once the load is complete, destroy the pretty print buffer. */
    /* This frees up any memory that was used to create the pretty */
-   /* print foCL_rms for constructs during parsing. Thus calls to    */
+   /* print fo_rms for constructs during parsing. Thus calls to    */
    /* the mem-used function will accurately reflect the amount of */
    /* memory being used after a load command.                     */
    /*=============================================================*/
@@ -492,7 +492,7 @@ static bool CL_FindConstructBeginning(
       /* The name of the construct follows the opening left parenthesis. */
       /* If it is the name of a valid construct, then return true.       */
       /* Otherwise, reset the flags to look for the beginning of a       */
-      /* construct. If error correction is being perfoCL_rmed (i.e. the     */
+      /* construct. If error correction is being perfo_rmed (i.e. the     */
       /* last construct parsed had an error in it), then don't bother to */
       /* print an error message, otherwise, print an error message.      */
       /*=================================================================*/
@@ -754,9 +754,9 @@ CL_BuildError CL_ParseConstruct(
    /* Prepare the parsing environment. */
    /*==================================*/
 
-   ov = CL_GetCL_HaltExecution(theEnv);
-   SetCL_EvaluationError(theEnv,false);
-   SetCL_HaltExecution(theEnv,false);
+   ov = CL_Get_HaltExecution(theEnv);
+   Set_EvaluationError(theEnv,false);
+   Set_HaltExecution(theEnv,false);
    CL_ClearParsedBindNames(theEnv);
    CL_PushRtnBrkContexts(theEnv);
    ExpressionData(theEnv)->ReturnContext = false;
@@ -783,7 +783,7 @@ CL_BuildError CL_ParseConstruct(
 
    CL_ClearParsedBindNames(theEnv);
    CL_SetPPBufferStatus(theEnv,false);
-   SetCL_HaltExecution(theEnv,ov);
+   Set_HaltExecution(theEnv,ov);
 
    /*======================================*/
    /* Remove the garbage collection frame. */

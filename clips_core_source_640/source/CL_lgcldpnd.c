@@ -26,8 +26,8 @@
 /*                                                           */
 /*      6.30: Added support for hashed memories.             */
 /*                                                           */
-/*      6.40: Added Env prefix to CL_GetCL_HaltExecution and       */
-/*            SetCL_HaltExecution functions.                    */
+/*      6.40: Added Env prefix to CL_Get_HaltExecution and       */
+/*            Set_HaltExecution functions.                    */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -62,10 +62,10 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static struct dependency      *DetachAssociatedCL_Dependencies(Environment *,struct dependency *,void *);
+   static struct dependency      *DetachAssociated_Dependencies(Environment *,struct dependency *,void *);
 
 /***********************************************************************/
-/* CL_AddLogicalCL_Dependencies: Adds the logical dependency links between a */
+/* CL_AddLogical_Dependencies: Adds the logical dependency links between a */
 /*   data entity (such as a fact or instance) and the partial match    */
 /*   which logically supports that data entity. If a data entity is    */
 /*   unconditionally asserted (i.e. the global variable TheLogicalJoin */
@@ -79,7 +79,7 @@
 /*   creating a fact with the assert command and creating an instance  */
 /*   with the make-instance command.                                   */
 /***********************************************************************/
-bool CL_AddLogicalCL_Dependencies(
+bool CL_AddLogical_Dependencies(
   Environment *theEnv,
   struct patternEntity *theEntity,
   bool existingEntity)
@@ -94,7 +94,7 @@ bool CL_AddLogicalCL_Dependencies(
 
    if (EngineData(theEnv)->TheLogicalJoin == NULL)
      {
-      if (existingEntity) RemoveEntityCL_Dependencies(theEnv,theEntity);
+      if (existingEntity) RemoveEntity_Dependencies(theEnv,theEntity);
       return true;
      }
    else if (existingEntity && (theEntity->dependents == NULL))
@@ -174,13 +174,13 @@ struct partialMatch *CL_FindLogicalBind(
   }
 
 /*********************************************************************/
-/* RemoveEntityCL_Dependencies: Removes all logical support links from  */
+/* RemoveEntity_Dependencies: Removes all logical support links from  */
 /*   a pattern entity that point to partial matches or other pattern */
 /*   entities. Also removes the associated links from the partial    */
 /*   matches or pattern entities which point back to the pattern     */
 /*   entities.                                                       */
 /*********************************************************************/
-void RemoveEntityCL_Dependencies(
+void RemoveEntity_Dependencies(
   Environment *theEnv,
   struct patternEntity *theEntity)
   {
@@ -211,7 +211,7 @@ void RemoveEntityCL_Dependencies(
 
       theBinds = (struct partialMatch *) fdPtr->dPtr;
       theList = (struct dependency *) theBinds->dependents;
-      theList = DetachAssociatedCL_Dependencies(theEnv,theList,theEntity);
+      theList = DetachAssociated_Dependencies(theEnv,theList,theEntity);
       theBinds->dependents = theList;
 
       /*========================*/
@@ -235,11 +235,11 @@ void RemoveEntityCL_Dependencies(
   }
 
 /********************************************************************/
-/* ReturnEntityCL_Dependencies: Removes all logical support links from */
+/* ReturnEntity_Dependencies: Removes all logical support links from */
 /*   a pattern entity. This is unidirectional. The links from the   */
 /*   the partial match to the entity are not removed.               */
 /********************************************************************/
-void ReturnEntityCL_Dependencies(
+void ReturnEntity_Dependencies(
   Environment *theEnv,
   struct patternEntity *theEntity)
   {
@@ -258,13 +258,13 @@ void ReturnEntityCL_Dependencies(
   }
 
 /*******************************************************************/
-/* DetachAssociatedCL_Dependencies: Removes all logical support links */
+/* DetachAssociated_Dependencies: Removes all logical support links */
 /*   which pointer to a pattern entity from a list of dependencies */
 /*   (which may be associated with either a partial match or       */
 /*   another pattern entity). Does not remove links which point in */
 /*   the other direction.                                          */
 /*******************************************************************/
-static struct dependency *DetachAssociatedCL_Dependencies(
+static struct dependency *DetachAssociated_Dependencies(
   Environment *theEnv,
   struct dependency *theList,
   void *theEntity)
@@ -294,11 +294,11 @@ static struct dependency *DetachAssociatedCL_Dependencies(
   }
 
 /**************************************************************************/
-/* RemovePMCL_Dependencies: Removes all logical support links from a partial */
+/* RemovePM_Dependencies: Removes all logical support links from a partial */
 /*   match that point to any data entities. Also removes the associated   */
 /*   links from the data entities which point back to the partial match.  */
 /**************************************************************************/
-void RemovePMCL_Dependencies(
+void RemovePM_Dependencies(
   Environment *theEnv,
   struct partialMatch *theBinds)
   {
@@ -314,7 +314,7 @@ void RemovePMCL_Dependencies(
       theEntity = (struct patternEntity *) fdPtr->dPtr;
 
       theList = (struct dependency *) theEntity->dependents;
-      theList = DetachAssociatedCL_Dependencies(theEnv,theList,theBinds);
+      theList = DetachAssociated_Dependencies(theEnv,theList,theBinds);
       theEntity->dependents = theList;
 
       rtn_struct(theEnv,dependency,fdPtr);
@@ -325,10 +325,10 @@ void RemovePMCL_Dependencies(
   }
 
 /************************************************************/
-/* DestroyPMCL_Dependencies: Removes all logical support links */
+/* DestroyPM_Dependencies: Removes all logical support links */
 /*   from a partial match that point to any data entities.  */
 /************************************************************/
-void DestroyPMCL_Dependencies(
+void DestroyPM_Dependencies(
   Environment *theEnv,
   struct partialMatch *theBinds)
   {
@@ -351,7 +351,7 @@ void DestroyPMCL_Dependencies(
 /* CL_RemoveLogicalSupport: Removes the dependency links between a partial */
 /*   match and the data entities it logically supports. Also removes    */
 /*   the associated links from the data entities which point back to    */
-/*   the partial match by calling DetachAssociatedEntityCL_Dependencies.   */
+/*   the partial match by calling DetachAssociatedEntity_Dependencies.   */
 /*   If an entity has all of its logical support removed as a result of */
 /*   this procedure, the dependency link from the partial match is      */
 /*   added to the list of unsupported data entities so that the entity  */
@@ -387,7 +387,7 @@ void CL_RemoveLogicalSupport(
       tempPtr = dlPtr->next;
 
       /*==========================================================*/
-      /* DeteCL_rmine the data entity associated with the dependency */
+      /* Dete_rmine the data entity associated with the dependency */
       /* structure and delete its dependency references to this   */
       /* partial match.                                           */
       /*==========================================================*/
@@ -395,7 +395,7 @@ void CL_RemoveLogicalSupport(
       theEntity = (struct patternEntity *) dlPtr->dPtr;
 
       theList = (struct dependency *) theEntity->dependents;
-      theList = DetachAssociatedCL_Dependencies(theEnv,theList,theBinds);
+      theList = DetachAssociated_Dependencies(theEnv,theList,theBinds);
       theEntity->dependents = theList;
 
       /*==============================================================*/
@@ -430,14 +430,14 @@ void CL_RemoveLogicalSupport(
   }
 
 /********************************************************************/
-/* CL_ForceLogicalCL_Retractions: Deletes the data entities found on the  */
+/* CL_ForceLogical_Retractions: Deletes the data entities found on the  */
 /*   list of items that have lost their logical support. The delete */
 /*   function associated with each data entity is called to delete  */
 /*   that data entity. Calling the delete function may in turn      */
 /*   add more data entities to the list of data entities which have */
 /*   lost their logical support.                                    */
 /********************************************************************/
-void CL_ForceLogicalCL_Retractions(
+void CL_ForceLogical_Retractions(
   Environment *theEnv)
   {
    struct dependency *tempPtr;
@@ -463,7 +463,7 @@ void CL_ForceLogicalCL_Retractions(
    while (EngineData(theEnv)->UnsupportedDataEntities != NULL)
      {
       /*==========================================*/
-      /* DeteCL_rmine the data entity to be deleted. */
+      /* Dete_rmine the data entity to be deleted. */
       /*==========================================*/
 
       theEntity = (struct patternEntity *) EngineData(theEnv)->UnsupportedDataEntities->dPtr;
@@ -520,7 +520,7 @@ void CL_Dependencies(
         fdPtr != NULL;
         fdPtr = fdPtr->next)
      {
-      if (CL_GetCL_HaltExecution(theEnv) == true) return;
+      if (CL_Get_HaltExecution(theEnv) == true) return;
       CL_PrintPartialMatch(theEnv,STDOUT,(struct partialMatch *) fdPtr->dPtr);
       CL_WriteString(theEnv,STDOUT,"\n");
      }
@@ -547,7 +547,7 @@ void CL_Dependents(
         entityPtr != NULL;
         CL_GetNextPatternEntity(theEnv,&theParser,&entityPtr))
      {
-      if (CL_GetCL_HaltExecution(theEnv) == true) return;
+      if (CL_Get_HaltExecution(theEnv) == true) return;
 
       /*====================================*/
       /* Loop through every dependency link */
@@ -558,7 +558,7 @@ void CL_Dependents(
            fdPtr != NULL;
            fdPtr = fdPtr->next)
         {
-         if (CL_GetCL_HaltExecution(theEnv) == true) return;
+         if (CL_Get_HaltExecution(theEnv) == true) return;
 
          /*=====================================================*/
          /* If the data entity which was the argument passed to */
@@ -573,7 +573,7 @@ void CL_Dependents(
          if (CL_FindEntityInPartialMatch(theEntity,theBinds) == true)
            {
             if (found) CL_WriteString(theEnv,STDOUT,",");
-            (*entityPtr->theInfo->base.shortCL_PrintFunction)(theEnv,STDOUT,entityPtr);
+            (*entityPtr->theInfo->base.short_PrintFunction)(theEnv,STDOUT,entityPtr);
             found = true;
             break;
            }

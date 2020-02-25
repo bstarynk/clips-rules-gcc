@@ -57,10 +57,10 @@
 #endif
    static void                    CL_BloadStorageDefglobals(Environment *);
    static void                    CL_BloadBinaryItem(Environment *);
-   static void                    UpdateCL_DefglobalModule(Environment *,void *,unsigned long);
+   static void                    Update_DefglobalModule(Environment *,void *,unsigned long);
    static void                    UpdateDefglobal(Environment *,void *,unsigned long);
-   static void                    CL_ClearCL_Bload(Environment *);
-   static void                    DeallocateDefglobalCL_BloadData(Environment *);
+   static void                    CL_Clear_Bload(Environment *);
+   static void                    DeallocateDefglobal_BloadData(Environment *);
 
 /*********************************************/
 /* CL_DefglobalBinarySetup: Installs the binary */
@@ -69,30 +69,30 @@
 void CL_DefglobalBinarySetup(
   Environment *theEnv)
   {
-   CL_AllocateEnvironmentData(theEnv,GLOBLBIN_DATA,sizeof(struct defglobalBinaryData),DeallocateDefglobalCL_BloadData);
+   CL_AllocateEnvironmentData(theEnv,GLOBLBIN_DATA,sizeof(struct defglobalBinaryData),DeallocateDefglobal_BloadData);
 #if (BLOAD_AND_BSAVE || BLOAD)
-   CL_AddAfterCL_BloadFunction(theEnv,"defglobal",CL_ResetDefglobals,50,NULL);
+   CL_AddAfter_BloadFunction(theEnv,"defglobal",CL_ResetDefglobals,50,NULL);
 #endif
 
 #if BLOAD_AND_BSAVE
    CL_AddBinaryItem(theEnv,"defglobal",0,CL_BsaveFind,NULL,
                              CL_BsaveStorage,CL_BsaveBinaryItem,
                              CL_BloadStorageDefglobals,CL_BloadBinaryItem,
-                             CL_ClearCL_Bload);
+                             CL_Clear_Bload);
 #endif
 
 #if (BLOAD || BLOAD_ONLY)
    CL_AddBinaryItem(theEnv,"defglobal",0,NULL,NULL,NULL,NULL,
                              CL_BloadStorageDefglobals,CL_BloadBinaryItem,
-                             CL_ClearCL_Bload);
+                             CL_Clear_Bload);
 #endif
   }
 
 /*********************************************************/
-/* DeallocateDefglobalCL_BloadData: Deallocates environment */
+/* DeallocateDefglobal_BloadData: Deallocates environment */
 /*    data for the defglobal bsave functionality.        */
 /*********************************************************/
-static void DeallocateDefglobalCL_BloadData(
+static void DeallocateDefglobal_BloadData(
   Environment *theEnv)
   {
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE) && (! RUN_TIME)
@@ -109,7 +109,7 @@ static void DeallocateDefglobalCL_BloadData(
    if (space != 0)
      { CL_genfree(theEnv,DefglobalBinaryData(theEnv)->DefglobalArray,space); }
 
-   space =  DefglobalBinaryData(theEnv)->NumberOfCL_DefglobalModules * sizeof(struct defglobalModule);
+   space =  DefglobalBinaryData(theEnv)->NumberOf_DefglobalModules * sizeof(struct defglobalModule);
    if (space != 0)
      { CL_genfree(theEnv,DefglobalBinaryData(theEnv)->ModuleArray,space); }
 #endif
@@ -134,8 +134,8 @@ static void CL_BsaveFind(
    /* in the process of saving the binary image.            */
    /*=======================================================*/
 
-   CL_SaveCL_BloadCount(theEnv,DefglobalBinaryData(theEnv)->NumberOfCL_DefglobalModules);
-   CL_SaveCL_BloadCount(theEnv,DefglobalBinaryData(theEnv)->NumberOfDefglobals);
+   CL_Save_BloadCount(theEnv,DefglobalBinaryData(theEnv)->NumberOf_DefglobalModules);
+   CL_Save_BloadCount(theEnv,DefglobalBinaryData(theEnv)->NumberOfDefglobals);
 
    /*============================================*/
    /* Set the count of defglobals and defglobals */
@@ -143,7 +143,7 @@ static void CL_BsaveFind(
    /*============================================*/
 
    DefglobalBinaryData(theEnv)->NumberOfDefglobals = 0;
-   DefglobalBinaryData(theEnv)->NumberOfCL_DefglobalModules = 0;
+   DefglobalBinaryData(theEnv)->NumberOf_DefglobalModules = 0;
 
    for (theModule = CL_GetNextDefmodule(theEnv,NULL);
         theModule != NULL;
@@ -156,7 +156,7 @@ static void CL_BsaveFind(
       /*================================================*/
 
       CL_SetCurrentModule(theEnv,theModule);
-      DefglobalBinaryData(theEnv)->NumberOfCL_DefglobalModules++;
+      DefglobalBinaryData(theEnv)->NumberOf_DefglobalModules++;
 
       /*====================================================*/
       /* Loop through each defglobal in the current module. */
@@ -192,9 +192,9 @@ static void CL_BsaveStorage(
    /*===========================================================*/
 
    space = sizeof(long) * 2;
-   CL_GenCL_Write(&space,sizeof(size_t),fp);
-   CL_GenCL_Write(&DefglobalBinaryData(theEnv)->NumberOfDefglobals,sizeof(long),fp);
-   CL_GenCL_Write(&DefglobalBinaryData(theEnv)->NumberOfCL_DefglobalModules,sizeof(long),fp);
+   CL_Gen_Write(&space,sizeof(size_t),fp);
+   CL_Gen_Write(&DefglobalBinaryData(theEnv)->NumberOfDefglobals,sizeof(long),fp);
+   CL_Gen_Write(&DefglobalBinaryData(theEnv)->NumberOf_DefglobalModules,sizeof(long),fp);
   }
 
 /*********************************************/
@@ -209,7 +209,7 @@ static void CL_BsaveBinaryItem(
    Defglobal *theDefglobal;
    struct bsaveDefglobal newDefglobal;
    Defmodule *theModule;
-   struct bsaveCL_DefglobalModule tempCL_DefglobalModule;
+   struct bsave_DefglobalModule temp_DefglobalModule;
    struct defglobalModule *theModuleItem;
 
    /*==========================================================*/
@@ -218,8 +218,8 @@ static void CL_BsaveBinaryItem(
    /*==========================================================*/
 
    space = DefglobalBinaryData(theEnv)->NumberOfDefglobals * sizeof(struct bsaveDefglobal) +
-           (DefglobalBinaryData(theEnv)->NumberOfCL_DefglobalModules * sizeof(struct bsaveCL_DefglobalModule));
-   CL_GenCL_Write(&space,sizeof(size_t),fp);
+           (DefglobalBinaryData(theEnv)->NumberOf_DefglobalModules * sizeof(struct bsave_DefglobalModule));
+   CL_Gen_Write(&space,sizeof(size_t),fp);
 
    /*=================================================*/
    /* CL_Write out each defglobal module data structure. */
@@ -234,9 +234,9 @@ static void CL_BsaveBinaryItem(
 
       theModuleItem = (struct defglobalModule *)
                       CL_GetModuleItem(theEnv,NULL,CL_FindModuleItem(theEnv,"defglobal")->moduleIndex);
-      CL_AssignCL_BsaveDefmdlItemHdrVals(&tempCL_DefglobalModule.header,
+      CL_Assign_BsaveDefmdlItemHdrVals(&temp_DefglobalModule.header,
                                            &theModuleItem->header);
-      CL_GenCL_Write(&tempCL_DefglobalModule,sizeof(struct bsaveCL_DefglobalModule),fp);
+      CL_Gen_Write(&temp_DefglobalModule,sizeof(struct bsave_DefglobalModule),fp);
      }
 
    /*===========================*/
@@ -254,11 +254,11 @@ static void CL_BsaveBinaryItem(
            theDefglobal != NULL;
            theDefglobal = CL_GetNextDefglobal(theEnv,theDefglobal))
         {
-         CL_AssignCL_BsaveConstructHeaderVals(&newDefglobal.header,
+         CL_Assign_BsaveConstructHeaderVals(&newDefglobal.header,
                                           &theDefglobal->header);
          newDefglobal.initial = CL_HashedExpressionIndex(theEnv,theDefglobal->initial);
 
-         CL_GenCL_Write(&newDefglobal,sizeof(struct bsaveDefglobal),fp);
+         CL_Gen_Write(&newDefglobal,sizeof(struct bsaveDefglobal),fp);
         }
      }
 
@@ -269,8 +269,8 @@ static void CL_BsaveBinaryItem(
    /* (these were overwritten by the binary save).                */
    /*=============================================================*/
 
-   RestoreCL_BloadCount(theEnv,&DefglobalBinaryData(theEnv)->NumberOfCL_DefglobalModules);
-   RestoreCL_BloadCount(theEnv,&DefglobalBinaryData(theEnv)->NumberOfDefglobals);
+   Restore_BloadCount(theEnv,&DefglobalBinaryData(theEnv)->NumberOf_DefglobalModules);
+   Restore_BloadCount(theEnv,&DefglobalBinaryData(theEnv)->NumberOfDefglobals);
   }
 
 #endif /* BLOAD_AND_BSAVE */
@@ -285,26 +285,26 @@ static void CL_BloadStorageDefglobals(
    size_t space;
 
    /*=======================================================*/
-   /* DeteCL_rmine the number of defglobal and defglobalModule */
+   /* Dete_rmine the number of defglobal and defglobalModule */
    /* data structures to be read.                           */
    /*=======================================================*/
 
    CL_GenReadBinary(theEnv,&space,sizeof(size_t));
    CL_GenReadBinary(theEnv,&DefglobalBinaryData(theEnv)->NumberOfDefglobals,sizeof(long));
-   CL_GenReadBinary(theEnv,&DefglobalBinaryData(theEnv)->NumberOfCL_DefglobalModules,sizeof(long));
+   CL_GenReadBinary(theEnv,&DefglobalBinaryData(theEnv)->NumberOf_DefglobalModules,sizeof(long));
 
    /*===================================*/
    /* Allocate the space needed for the */
    /* defglobalModule data structures.  */
    /*===================================*/
 
-   if (DefglobalBinaryData(theEnv)->NumberOfCL_DefglobalModules == 0)
+   if (DefglobalBinaryData(theEnv)->NumberOf_DefglobalModules == 0)
      {
       DefglobalBinaryData(theEnv)->DefglobalArray = NULL;
       DefglobalBinaryData(theEnv)->ModuleArray = NULL;
      }
 
-   space = DefglobalBinaryData(theEnv)->NumberOfCL_DefglobalModules * sizeof(struct defglobalModule);
+   space = DefglobalBinaryData(theEnv)->NumberOf_DefglobalModules * sizeof(struct defglobalModule);
    DefglobalBinaryData(theEnv)->ModuleArray = (struct defglobalModule *) CL_genalloc(theEnv,space);
 
    /*===================================*/
@@ -344,32 +344,32 @@ static void CL_BloadBinaryItem(
    /* and refresh the pointers.                   */
    /*=============================================*/
 
-   CL_BloadandCL_Refresh(theEnv,DefglobalBinaryData(theEnv)->NumberOfCL_DefglobalModules,
-                   sizeof(struct bsaveCL_DefglobalModule),
-                   UpdateCL_DefglobalModule);
+   CL_Bloadand_Refresh(theEnv,DefglobalBinaryData(theEnv)->NumberOf_DefglobalModules,
+                   sizeof(struct bsave_DefglobalModule),
+                   Update_DefglobalModule);
 
    /*=======================================*/
    /* Read in the defglobal data structures */
    /* and refresh the pointers.             */
    /*=======================================*/
 
-   CL_BloadandCL_Refresh(theEnv,DefglobalBinaryData(theEnv)->NumberOfDefglobals,
+   CL_Bloadand_Refresh(theEnv,DefglobalBinaryData(theEnv)->NumberOfDefglobals,
                    sizeof(struct bsaveDefglobal),
                    UpdateDefglobal);
   }
 
 /************************************************/
-/* UpdateCL_DefglobalModule: CL_Bload refresh routine */
+/* Update_DefglobalModule: CL_Bload refresh routine */
 /*   for defglobal module data structures.      */
 /************************************************/
-static void UpdateCL_DefglobalModule(
+static void Update_DefglobalModule(
   Environment *theEnv,
   void *buf,
   unsigned long obji)
   {
-   struct bsaveCL_DefglobalModule *bdmPtr;
+   struct bsave_DefglobalModule *bdmPtr;
 
-   bdmPtr = (struct bsaveCL_DefglobalModule *) buf;
+   bdmPtr = (struct bsave_DefglobalModule *) buf;
 
    CL_UpdateDefmoduleItemHeader(theEnv,&bdmPtr->header,&DefglobalBinaryData(theEnv)->ModuleArray[obji].header,
                              sizeof(Defglobal),
@@ -400,10 +400,10 @@ static void UpdateDefglobal(
   }
 
 /***************************************/
-/* CL_ClearCL_Bload: Defglobal clear routine */
+/* CL_Clear_Bload: Defglobal clear routine */
 /*   when a binary load is in effect.  */
 /***************************************/
-static void CL_ClearCL_Bload(
+static void CL_Clear_Bload(
   Environment *theEnv)
   {
    unsigned long i;
@@ -436,16 +436,16 @@ static void CL_ClearCL_Bload(
    /* Deallocate the space used for the defglobal module data structures. */
    /*=====================================================================*/
 
-   space = DefglobalBinaryData(theEnv)->NumberOfCL_DefglobalModules * sizeof(struct defglobalModule);
+   space = DefglobalBinaryData(theEnv)->NumberOf_DefglobalModules * sizeof(struct defglobalModule);
    if (space != 0) CL_genfree(theEnv,DefglobalBinaryData(theEnv)->ModuleArray,space);
-   DefglobalBinaryData(theEnv)->NumberOfCL_DefglobalModules = 0;
+   DefglobalBinaryData(theEnv)->NumberOf_DefglobalModules = 0;
   }
 
 /********************************************************/
-/* CL_BloadCL_DefglobalModuleReference: Returns the defglobal */
+/* CL_Bload_DefglobalModuleReference: Returns the defglobal */
 /*   module pointer for using with the bload function.  */
 /********************************************************/
-void *CL_BloadCL_DefglobalModuleReference(
+void *CL_Bload_DefglobalModuleReference(
   Environment *theEnv,
   unsigned long theIndex)
   {

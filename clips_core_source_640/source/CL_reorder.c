@@ -8,14 +8,14 @@
 
 /*************************************************************/
 /* Purpose: Provides routines necessary for converting the   */
-/*   the LHS of a rule into an appropriate foCL_rm suitable for */
-/*   the KB Rete topology. This includes transfoCL_rming the    */
+/*   the LHS of a rule into an appropriate fo_rm suitable for */
+/*   the KB Rete topology. This includes transfo_rming the    */
 /*   LHS so there is at most one "or" CE (and this is the    */
 /*   first CE of the LHS if it is used), adding initial      */
 /*   patterns to the LHS (if no LHS is specified or a "test" */
 /*   or "not" CE is the first pattern within an "and" CE),   */
-/*   removing redundant CEs, and deteCL_rmining appropriate     */
-/*   infoCL_rmation on nesting for implementing joins from the  */
+/*   removing redundant CEs, and dete_rmining appropriate     */
+/*   info_rmation on nesting for implementing joins from the  */
 /*   right.                                                  */
 /*                                                           */
 /* Principal Programmer(s):                                  */
@@ -98,13 +98,13 @@ struct groupReference
 /***************************************/
 
    static struct lhsParseNode    *ReverseAndOr(Environment *,struct lhsParseNode *,struct lhsParseNode *,int);
-   static struct lhsParseNode    *PerfoCL_rmReorder1(Environment *,struct lhsParseNode *,bool *,int);
-   static struct lhsParseNode    *PerfoCL_rmReorder2(Environment *,struct lhsParseNode *,bool *,int);
+   static struct lhsParseNode    *Perfo_rmReorder1(Environment *,struct lhsParseNode *,bool *,int);
+   static struct lhsParseNode    *Perfo_rmReorder2(Environment *,struct lhsParseNode *,bool *,int);
    static struct lhsParseNode    *CompressCEs(Environment *,struct lhsParseNode *,bool *,int);
    static void                    IncrementNandDepth(Environment *,struct lhsParseNode *,bool);
    static struct lhsParseNode    *CreateInitialPattern(Environment *);
    static struct lhsParseNode    *ReorderDriver(Environment *,struct lhsParseNode *,bool *,int,int);
-   static struct lhsParseNode    *AddReCL_mainingInitialPatterns(Environment *,struct lhsParseNode *);
+   static struct lhsParseNode    *AddRe_mainingInitialPatterns(Environment *,struct lhsParseNode *);
    static struct lhsParseNode    *AssignPatternIndices(struct lhsParseNode *,short,int,unsigned short);
    static void                    PropagateIndexSlotPatternValues(struct lhsParseNode *,short,unsigned short,
                                                                   CLIPSLexeme *,unsigned short);
@@ -272,8 +272,8 @@ static struct lhsParseNode *ReorderDriver(
           (theLHS->pnType == NOT_CE_NODE) ||
           (theLHS->pnType == OR_CE_NODE))
         {
-         if (pass == 1) theLHS = PerfoCL_rmReorder1(theEnv,theLHS,&newChange,depth);
-         else theLHS = PerfoCL_rmReorder2(theEnv,theLHS,&newChange,depth);
+         if (pass == 1) theLHS = Perfo_rmReorder1(theEnv,theLHS,&newChange,depth);
+         else theLHS = Perfo_rmReorder2(theEnv,theLHS,&newChange,depth);
 
          if (newChange)
            {
@@ -411,18 +411,18 @@ void CL_AddInitialPatterns(
      }
 
    /*================================*/
-   /* Handle the reCL_maining patterns. */
+   /* Handle the re_maining patterns. */
    /*================================*/
 
-   theLHS->right = AddReCL_mainingInitialPatterns(theEnv,theLHS->right);
+   theLHS->right = AddRe_mainingInitialPatterns(theEnv,theLHS->right);
   }
 
 /***********************************************************/
-/* PerfoCL_rmReorder1: Reorders a group of CEs to accommodate */
+/* Perfo_rmReorder1: Reorders a group of CEs to accommodate */
 /*   KB Rete topology. The first pass of this function     */
-/*   transfoCL_rms or CEs into equivalent foCL_rms.              */
+/*   transfo_rms or CEs into equivalent fo_rms.              */
 /***********************************************************/
-static struct lhsParseNode *PerfoCL_rmReorder1(
+static struct lhsParseNode *Perfo_rmReorder1(
   Environment *theEnv,
   struct lhsParseNode *theLHS,
   bool *newChange,
@@ -551,11 +551,11 @@ static struct lhsParseNode *PerfoCL_rmReorder1(
   }
 
 /***********************************************************/
-/* PerfoCL_rmReorder2: Reorders a group of CEs to accommodate */
-/*   KB Rete topology. The second pass perfoCL_rms all other  */
-/*   transfoCL_rmations not associated with the or CE.        */
+/* Perfo_rmReorder2: Reorders a group of CEs to accommodate */
+/*   KB Rete topology. The second pass perfo_rms all other  */
+/*   transfo_rmations not associated with the or CE.        */
 /***********************************************************/
-static struct lhsParseNode *PerfoCL_rmReorder2(
+static struct lhsParseNode *Perfo_rmReorder2(
   Environment *theEnv,
   struct lhsParseNode *theLHS,
   bool *newChange,
@@ -1307,7 +1307,7 @@ struct lhsParseNode *CL_ExpressionToLHSParseNodes(
 
    /*==================================================*/
    /* If the expression is a function call, then store */
-   /* the constraint infoCL_rmation for the functions     */
+   /* the constraint info_rmation for the functions     */
    /* arguments in the lshParseNode data structures.   */
    /*==================================================*/
 
@@ -1470,7 +1470,7 @@ ParseNodeType CL_TypeToNodeType(
 /*   of not/and or not/not CEs which are implemented using  */
 /*   joins from the right. A single pattern within a "not"  */
 /*   CE does not require a join from the right and its nand */
-/*   depth is noCL_rmally not increased (except when it's      */
+/*   depth is no_rmally not increased (except when it's      */
 /*   within a not/and or not/not CE. The begin nand depth   */
 /*   indicates the current nesting for a CE. The end nand   */
 /*   depth indicates the nand depth in the following CE     */
@@ -1538,7 +1538,7 @@ static void IncrementNandDepth(
 
 /***********************************************************/
 /* CreateInitialPattern: Creates a default pattern used in */
-/*  the LHS of a rule under certain ciCL_rmustances (such as  */
+/*  the LHS of a rule under certain ci_rmustances (such as  */
 /*  when a "not" or "test" CE is the first CE in an "and"  */
 /*  CE or when no CEs are specified in the LHS of a rule.  */
 /***********************************************************/
@@ -1560,12 +1560,12 @@ static struct lhsParseNode *CreateInitialPattern(
   }
 
 /*****************************************************************/
-/* AddReCL_mainingInitialPatterns: Finishes adding initial patterns */
+/* AddRe_mainingInitialPatterns: Finishes adding initial patterns */
 /*   where needed on the LHS of a rule. Assumes that an initial  */
 /*   pattern has been added to the beginning of the rule if one  */
 /*   was needed.                                                 */
 /*****************************************************************/
-static struct lhsParseNode *AddReCL_mainingInitialPatterns(
+static struct lhsParseNode *AddRe_mainingInitialPatterns(
   Environment *theEnv,
   struct lhsParseNode *theLHS)
   {
@@ -1602,7 +1602,7 @@ static struct lhsParseNode *AddReCL_mainingInitialPatterns(
 
 /*************************************************************/
 /* AssignPatternIndices: For each pattern CE in the LHS of a */
-/*   rule, deteCL_rmines the pattern index for the CE. A simple */
+/*   rule, dete_rmines the pattern index for the CE. A simple */
 /*   1 to N numbering can't be used since a join from the    */
 /*   right only counts as a single CE to other CEs outside   */
 /*   the lexical scope of the join from the right. For       */

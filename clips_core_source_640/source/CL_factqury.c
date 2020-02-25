@@ -42,8 +42,8 @@
 /*            Matching fact sets containing retracted facts  */
 /*            are pruned.                                    */
 /*                                                           */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*      6.40: Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -92,8 +92,8 @@
    static void                    PushQueryCore(Environment *);
    static void                    PopQueryCore(Environment *);
    static QUERY_CORE             *FindQueryCore(Environment *,long long);
-   static QUERY_TEMPLATE         *DeteCL_rmineQueryTemplates(Environment *,Expression *,const char *,unsigned *);
-   static QUERY_TEMPLATE         *FoCL_rmChain(Environment *,const char *,Deftemplate *,UDFValue *);
+   static QUERY_TEMPLATE         *Dete_rmineQueryTemplates(Environment *,Expression *,const char *,unsigned *);
+   static QUERY_TEMPLATE         *Fo_rmChain(Environment *,const char *,Deftemplate *,UDFValue *);
    static void                    DeleteQueryTemplates(Environment *,QUERY_TEMPLATE *);
    static bool                    TestForFirstInChain(Environment *,QUERY_TEMPLATE *,unsigned);
    static bool                    TestForFirstFactInTemplate(Environment *,Deftemplate *,QUERY_TEMPLATE *,unsigned);
@@ -128,25 +128,25 @@ void CL_SetupFactQuery(
 
    CL_AddUDF(theEnv,"(query-fact-slot)","*",0,UNBOUNDED,NULL,CL_GetQueryFactSlot,"CL_GetQueryFactSlot",NULL);
 
-   CL_AddUDF(theEnv,"any-factp","b",0,UNBOUNDED,NULL,CL_AnyCL_Facts,"CL_AnyCL_Facts",NULL);
+   CL_AddUDF(theEnv,"any-factp","b",0,UNBOUNDED,NULL,CL_Any_Facts,"CL_Any_Facts",NULL);
 
    CL_AddUDF(theEnv,"find-fact","m",0,UNBOUNDED,NULL,CL_QueryFindFact,"CL_QueryFindFact",NULL);
 
-   CL_AddUDF(theEnv,"find-all-facts","m",0,UNBOUNDED,NULL,QueryFindAllCL_Facts,"QueryFindAllCL_Facts",NULL);
+   CL_AddUDF(theEnv,"find-all-facts","m",0,UNBOUNDED,NULL,QueryFindAll_Facts,"QueryFindAll_Facts",NULL);
 
    CL_AddUDF(theEnv,"do-for-fact","*",0,UNBOUNDED,NULL,CL_QueryDoForFact,"CL_QueryDoForFact",NULL);
 
-   CL_AddUDF(theEnv,"do-for-all-facts","*",0,UNBOUNDED,NULL,QueryDoForAllCL_Facts,"QueryDoForAllCL_Facts",NULL);
+   CL_AddUDF(theEnv,"do-for-all-facts","*",0,UNBOUNDED,NULL,QueryDoForAll_Facts,"QueryDoForAll_Facts",NULL);
 
-   CL_AddUDF(theEnv,"delayed-do-for-all-facts","*",0,UNBOUNDED,NULL,CL_DelayedQueryDoForAllCL_Facts,"CL_DelayedQueryDoForAllCL_Facts",NULL);
+   CL_AddUDF(theEnv,"delayed-do-for-all-facts","*",0,UNBOUNDED,NULL,CL_DelayedQueryDoForAll_Facts,"CL_DelayedQueryDoForAll_Facts",NULL);
 #endif
 
-   CL_AddFunctionParser(theEnv,"any-factp",CL_FactCL_ParseQueryNoAction);
-   CL_AddFunctionParser(theEnv,"find-fact",CL_FactCL_ParseQueryNoAction);
-   CL_AddFunctionParser(theEnv,"find-all-facts",CL_FactCL_ParseQueryNoAction);
-   CL_AddFunctionParser(theEnv,"do-for-fact",CL_FactCL_ParseQueryAction);
-   CL_AddFunctionParser(theEnv,"do-for-all-facts",CL_FactCL_ParseQueryAction);
-   CL_AddFunctionParser(theEnv,"delayed-do-for-all-facts",CL_FactCL_ParseQueryAction);
+   CL_AddFunctionParser(theEnv,"any-factp",CL_Fact_ParseQueryNoAction);
+   CL_AddFunctionParser(theEnv,"find-fact",CL_Fact_ParseQueryNoAction);
+   CL_AddFunctionParser(theEnv,"find-all-facts",CL_Fact_ParseQueryNoAction);
+   CL_AddFunctionParser(theEnv,"do-for-fact",CL_Fact_ParseQueryAction);
+   CL_AddFunctionParser(theEnv,"do-for-all-facts",CL_Fact_ParseQueryAction);
+   CL_AddFunctionParser(theEnv,"delayed-do-for-all-facts",CL_Fact_ParseQueryAction);
   }
 
 /*************************************************************
@@ -204,7 +204,7 @@ void CL_GetQueryFactSlot(
    if (theFact->garbage)
      {
       CL_FactVarSlotErrorMessage1(theEnv,theFact,varSlot);
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return;
      }
    
@@ -216,7 +216,7 @@ void CL_GetQueryFactSlot(
    if (temp.header->type != SYMBOL_TYPE)
      {
       CL_InvalidVarSlotErrorMessage(theEnv,varSlot);
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return;
      }
 
@@ -230,7 +230,7 @@ void CL_GetQueryFactSlot(
       if (strcmp(temp.lexemeValue->contents,"implied") != 0)
         {
          CL_FactVarSlotErrorMessage2(theEnv,theFact,varSlot);
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          return;
         }
       position = 0;
@@ -240,7 +240,7 @@ void CL_GetQueryFactSlot(
                      (CLIPSLexeme *) temp.value,&position) == NULL)
      {
       CL_FactVarSlotErrorMessage2(theEnv,theFact,varSlot);
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return;
      }
 
@@ -256,7 +256,7 @@ void CL_GetQueryFactSlot(
    =============================================================================
    Following are the instance query functions :
 
-     any-factp         : DeteCL_rmines if any facts satisfy the query
+     any-factp         : Dete_rmines if any facts satisfy the query
      find-fact         : Finds first (set of) fact(s) which satisfies
                                the query and stores it in a multi-field
      find-all-facts    : Finds all (sets of) facts which satisfy the
@@ -266,12 +266,12 @@ void CL_GetQueryFactSlot(
      do-for-all-facts  : Executes an action for all facts which satisfy
                                the query as they are found
      delayed-do-for-all-facts : Same as above - except that the list of facts
-                               which satisfy the query is foCL_rmed before any
+                               which satisfy the query is fo_rmed before any
                                actions are executed
 
      Fact candidate search algorithm :
 
-     All peCL_rmutations of first restriction template facts with other
+     All pe_rmutations of first restriction template facts with other
        restriction template facts (Rightmost are varied first)
 
      For any one template, fact are examined in the order they were defined
@@ -291,7 +291,7 @@ void CL_GetQueryFactSlot(
 
      (any-factp ((?a a b) (?b c)) <query>)
 
-     The peCL_rmutations (?a ?b) would be examined in the following order :
+     The pe_rmutations (?a ?b) would be examined in the following order :
 
      (a1 c1),(a1 c2),(a2 c1),(a2 c2),
      (b1 c1),(b1 c2),(b2 c1),(b2 c2)
@@ -300,8 +300,8 @@ void CL_GetQueryFactSlot(
    ============================================================================= */
 
 /******************************************************************************
-  NAME         : CL_AnyCL_Facts
-  DESCRIPTION  : DeteCL_rmines if there any existing facts which satisfy
+  NAME         : CL_Any_Facts
+  DESCRIPTION  : Dete_rmines if there any existing facts which satisfy
                    the query
   INPUTS       : None
   RETURNS      : True if the query is satisfied, false otherwise
@@ -309,9 +309,9 @@ void CL_GetQueryFactSlot(
                    and the query boolean-expression is evaluated
                    zero or more times (depending on fact restrictions
                    and how early the expression evaluates to true - if at all).
-  NOTES        : H/L Syntax : See CL_FactCL_ParseQueryNoAction()
+  NOTES        : H/L Syntax : See CL_Fact_ParseQueryNoAction()
  ******************************************************************************/
-void CL_AnyCL_Facts(
+void CL_Any_Facts(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -320,7 +320,7 @@ void CL_AnyCL_Facts(
    unsigned rcnt;
    bool testResult;
 
-   qtemplates = DeteCL_rmineQueryTemplates(theEnv,GetFirstArgument()->nextArg,
+   qtemplates = Dete_rmineQueryTemplates(theEnv,GetFirstArgument()->nextArg,
                                       "any-factp",&rcnt);
    if (qtemplates == NULL)
      {
@@ -363,7 +363,7 @@ void CL_QueryFindFact(
 
    returnValue->begin = 0;
    returnValue->range = 0;
-   qtemplates = DeteCL_rmineQueryTemplates(theEnv,GetFirstArgument()->nextArg,
+   qtemplates = Dete_rmineQueryTemplates(theEnv,GetFirstArgument()->nextArg,
                                       "find-fact",&rcnt);
    if (qtemplates == NULL)
      {
@@ -394,7 +394,7 @@ void CL_QueryFindFact(
   }
 
 /******************************************************************************
-  NAME         : QueryFindAllCL_Facts
+  NAME         : QueryFindAll_Facts
   DESCRIPTION  : Finds all sets of facts which satisfy the query and
                    stores their names in the user's multi-field variable
 
@@ -411,7 +411,7 @@ void CL_QueryFindFact(
                    once for every fact set.
   NOTES        : H/L Syntax : See CL_ParseQueryNoAction()
  ******************************************************************************/
-void QueryFindAllCL_Facts(
+void QueryFindAll_Facts(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -422,7 +422,7 @@ void QueryFindAllCL_Facts(
 
    returnValue->begin = 0;
    returnValue->range = 0;
-   qtemplates = DeteCL_rmineQueryTemplates(theEnv,GetFirstArgument()->nextArg,
+   qtemplates = Dete_rmineQueryTemplates(theEnv,GetFirstArgument()->nextArg,
                                       "find-all-facts",&rcnt);
    if (qtemplates == NULL)
      {
@@ -478,7 +478,7 @@ void CL_QueryDoForFact(
    unsigned i, rcnt;
 
    returnValue->value = FalseSymbol(theEnv);
-   qtemplates = DeteCL_rmineQueryTemplates(theEnv,GetFirstArgument()->nextArg->nextArg,
+   qtemplates = Dete_rmineQueryTemplates(theEnv,GetFirstArgument()->nextArg->nextArg,
                                       "do-for-fact",&rcnt);
    if (qtemplates == NULL)
      return;
@@ -508,7 +508,7 @@ void CL_QueryDoForFact(
   }
 
 /******************************************************************************
-  NAME         : QueryDoForAllCL_Facts
+  NAME         : QueryDoForAll_Facts
   DESCRIPTION  : Finds all sets of facts which satisfy the query and
                    executes a user-function for each set as it is found
   INPUTS       : Caller's result buffer
@@ -518,9 +518,9 @@ void CL_QueryDoForFact(
                    once for every fact set.  Also, the action is
                    executed for every fact set.
                  Caller's result buffer holds result of last action executed.
-  NOTES        : H/L Syntax : See CL_FactCL_ParseQueryAction()
+  NOTES        : H/L Syntax : See CL_Fact_ParseQueryAction()
  ******************************************************************************/
-void QueryDoForAllCL_Facts(
+void QueryDoForAll_Facts(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -530,7 +530,7 @@ void QueryDoForAllCL_Facts(
 
    returnValue->lexemeValue = FalseSymbol(theEnv);
 
-   qtemplates = DeteCL_rmineQueryTemplates(theEnv,GetFirstArgument()->nextArg->nextArg,
+   qtemplates = Dete_rmineQueryTemplates(theEnv,GetFirstArgument()->nextArg->nextArg,
                                       "do-for-all-facts",&rcnt);
    if (qtemplates == NULL)
      return;
@@ -554,12 +554,12 @@ void QueryDoForAllCL_Facts(
   }
 
 /******************************************************************************
-  NAME         : CL_DelayedQueryDoForAllCL_Facts
+  NAME         : CL_DelayedQueryDoForAll_Facts
   DESCRIPTION  : Finds all sets of facts which satisfy the query and
                    and exceutes a user-action for each set
 
-                 This function differs from QueryDoForAllCL_Facts() in
-                   that it foCL_rms the complete list of query satisfactions
+                 This function differs from QueryDoForAll_Facts() in
+                   that it fo_rms the complete list of query satisfactions
                    BEFORE executing any actions.
   INPUTS       : Caller's result buffer
   RETURNS      : Nothing useful
@@ -568,9 +568,9 @@ void QueryDoForAllCL_Facts(
                    once for every fact set.  The action is executed
                    for evry query satisfaction.
                  Caller's result buffer holds result of last action executed.
-  NOTES        : H/L Syntax : See CL_FactCL_ParseQueryNoAction()
+  NOTES        : H/L Syntax : See CL_Fact_ParseQueryNoAction()
  ******************************************************************************/
-void CL_DelayedQueryDoForAllCL_Facts(
+void CL_DelayedQueryDoForAll_Facts(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -582,7 +582,7 @@ void CL_DelayedQueryDoForAllCL_Facts(
    QUERY_SOLN *theSet;
 
    returnValue->value = FalseSymbol(theEnv);
-   qtemplates = DeteCL_rmineQueryTemplates(theEnv,GetFirstArgument()->nextArg->nextArg,
+   qtemplates = Dete_rmineQueryTemplates(theEnv,GetFirstArgument()->nextArg->nextArg,
                                       "delayed-do-for-all-facts",&rcnt);
    if (qtemplates == NULL)
      return;
@@ -614,7 +614,7 @@ void CL_DelayedQueryDoForAllCL_Facts(
      }
 
    /*=====================*/
-   /* PerfoCL_rm the action. */
+   /* Perfo_rm the action. */
    /*=====================*/
 
    for (theSet = FactQueryData(theEnv)->QueryCore->soln_set;
@@ -744,9 +744,9 @@ static QUERY_CORE *FindQueryCore(
   }
 
 /**********************************************************
-  NAME         : DeteCL_rmineQueryTemplates
+  NAME         : Dete_rmineQueryTemplates
   DESCRIPTION  : CL_Builds a list of templates to be used in
-                   fact queries - uses parse foCL_rm.
+                   fact queries - uses parse fo_rm.
   INPUTS       : 1) The parse template expression chain
                  2) The name of the function being executed
                  3) Caller's buffer for restriction count
@@ -760,10 +760,10 @@ static QUERY_CORE *FindQueryCore(
                  Rcnt caller's buffer is set to reflect the
                    total number of chains
                  Assumes templateExp is not NULL and that each
-                   restriction chain is teCL_rminated with
+                   restriction chain is te_rminated with
                    the QUERY_DELIMITER_SYMBOL "(QDS)"
  **********************************************************/
-static QUERY_TEMPLATE *DeteCL_rmineQueryTemplates(
+static QUERY_TEMPLATE *Dete_rmineQueryTemplates(
   Environment *theEnv,
   Expression *templateExp,
   const char *func,
@@ -793,7 +793,7 @@ static QUERY_TEMPLATE *DeteCL_rmineQueryTemplates(
          new_list = true;
          (*rcnt)++;
         }
-      else if ((tmp = FoCL_rmChain(theEnv,func,theDeftemplate,&temp)) != NULL)
+      else if ((tmp = Fo_rmChain(theEnv,func,theDeftemplate,&temp)) != NULL)
         {
          if (clist == NULL)
            { clist = cnxt = cchain = tmp; }
@@ -813,7 +813,7 @@ static QUERY_TEMPLATE *DeteCL_rmineQueryTemplates(
         {
          CL_SyntaxErrorMessage(theEnv,"fact-set query class restrictions");
          DeleteQueryTemplates(theEnv,clist);
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          return NULL;
         }
         
@@ -824,9 +824,9 @@ static QUERY_TEMPLATE *DeteCL_rmineQueryTemplates(
   }
 
 /*************************************************************
-  NAME         : FoCL_rmChain
+  NAME         : Fo_rmChain
   DESCRIPTION  : CL_Builds a list of deftemplates to be used in
-                   fact queries - uses parse foCL_rm.
+                   fact queries - uses parse fo_rm.
   INPUTS       : 1) Name of calling function for error msgs
                  2) Data object - must be a symbol or a
                       multifield value containing all symbols
@@ -836,7 +836,7 @@ static QUERY_TEMPLATE *DeteCL_rmineQueryTemplates(
                  Busy count incremented for all templates
   NOTES        : None
  *************************************************************/
-static QUERY_TEMPLATE *FoCL_rmChain(
+static QUERY_TEMPLATE *Fo_rmChain(
   Environment *theEnv,
   const char *func,
   Deftemplate *theDeftemplate,

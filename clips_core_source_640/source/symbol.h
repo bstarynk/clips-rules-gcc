@@ -10,7 +10,7 @@
 /* Purpose: Manages the atomic data value hash tables for    */
 /*   storing symbols, integers, floats, and bit maps.        */
 /*   Contains routines for adding entries, examining the     */
-/*   hash tables, and perfoCL_rming garbage collection to       */
+/*   hash tables, and perfo_rming garbage collection to       */
 /*   remove entries no longer in use.                        */
 /*                                                           */
 /* Principal Programmer(s):                                  */
@@ -116,7 +116,7 @@ struct genericHashNode
    TypeHeader header;
    struct genericHashNode *next;
    long count;
-   unsigned int peCL_rmanent : 1;
+   unsigned int pe_rmanent : 1;
    unsigned int markedEphemeral : 1;
    unsigned int needed : 1;
    unsigned int bucket : 29;
@@ -224,8 +224,8 @@ struct symbolData
    CLIPSExternalAddress         **CL_GetExternalAddressTable(Environment *);
    void                           CL_SetExternalAddressTable(Environment *,CLIPSExternalAddress **);
    void                           CL_RefreshSpecialSymbols(Environment *);
-   struct symbolMatch            *CL_FindSymbolCL_Matches(Environment *,const char *,unsigned *,size_t *);
-   void                           ReturnSymbolCL_Matches(Environment *,struct symbolMatch *);
+   struct symbolMatch            *CL_FindSymbol_Matches(Environment *,const char *,unsigned *,size_t *);
+   void                           ReturnSymbol_Matches(Environment *,struct symbolMatch *);
    CLIPSLexeme                   *CL_GetNextSymbolMatch(Environment *,const char *,size_t,CLIPSLexeme *,bool,size_t *);
    void                           CL_ClearBitString(void *,size_t);
    void                           CL_SetAtomicValueIndices(Environment *,bool);
@@ -233,7 +233,7 @@ struct symbolData
    void                           CL_EphemerateValue(Environment *,void *);
    CLIPSLexeme                   *CL_CreateSymbol(Environment *,const char *);
    CLIPSLexeme                   *CL_CreateString(Environment *,const char *);
-   CLIPSLexeme                   *CL_CreateCL_InstanceName(Environment *,const char *);
+   CLIPSLexeme                   *CL_Create_InstanceName(Environment *,const char *);
    CLIPSLexeme                   *CL_CreateBoolean(Environment *,bool);
    bool                           CL_BitStringHasBitsSet(void *,unsigned);
 

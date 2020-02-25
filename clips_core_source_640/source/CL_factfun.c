@@ -62,7 +62,7 @@
 /*            Added STDOUT and STDIN logical name            */
 /*            definitions.                                   */
 /*                                                           */
-/*      6.31: Calling EnvCL_FactExistp for a fact that has      */
+/*      6.31: Calling Env_FactExistp for a fact that has      */
 /*            been created, but not asserted now returns     */
 /*            FALSE.                                         */
 /*                                                           */
@@ -71,11 +71,11 @@
 /*            fact-slot-names, and ppfact functions are      */
 /*            given a retracted fact.                        */
 /*                                                           */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*      6.40: Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to CL_GetCL_HaltExecution and       */
-/*            SetCL_HaltExecution functions.                    */
+/*            Added Env prefix to CL_Get_HaltExecution and       */
+/*            Set_HaltExecution functions.                    */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -266,7 +266,7 @@ void CL_FactSlotValue(
      {
       if (strcmp(theSlotName,"implied") != 0)
         {
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          CL_InvalidDeftemplateSlotMessage(theEnv,theSlotName,
                                        theFact->whichDeftemplate->header.name->contents,false);
          returnValue->lexemeValue = FalseSymbol(theEnv);
@@ -276,7 +276,7 @@ void CL_FactSlotValue(
 
    else if (CL_FindSlot(theFact->whichDeftemplate,CL_CreateSymbol(theEnv,theSlotName),NULL) == NULL)
      {
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       CL_InvalidDeftemplateSlotMessage(theEnv,theSlotName,
                                     theFact->whichDeftemplate->header.name->contents,false);
       returnValue->lexemeValue = FalseSymbol(theEnv);
@@ -392,7 +392,7 @@ void CL_GetFactListFunction(
    CLIPSValue result;
 
    /*===========================================*/
-   /* DeteCL_rmine if a module name was specified. */
+   /* Dete_rmine if a module name was specified. */
    /*===========================================*/
 
    if (UDFHasNextArgument(context))
@@ -519,7 +519,7 @@ void CL_PPFactFunction(
    if (theFact == NULL) return;
 
    /*===============================================================*/
-   /* DeteCL_rmine the logical name to which the fact will be printed. */
+   /* Dete_rmine the logical name to which the fact will be printed. */
    /*===============================================================*/
 
    if (UDFHasNextArgument(context))
@@ -528,8 +528,8 @@ void CL_PPFactFunction(
       if (logicalName == NULL)
         {
          CL_IllegalLogicalNameMessage(theEnv,"ppfact");
-         SetCL_HaltExecution(theEnv,true);
-         SetCL_EvaluationError(theEnv,true);
+         Set_HaltExecution(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          return;
         }
      }
@@ -552,16 +552,16 @@ void CL_PPFactFunction(
      }
 
    /*============================================================*/
-   /* DeteCL_rmine if any router recognizes the output destination. */
+   /* Dete_rmine if any router recognizes the output destination. */
    /*============================================================*/
 
    if (strcmp(logicalName,"nil") == 0)
      {
-      StringCL_Builder *theSB;
+      String_Builder *theSB;
       
-      theSB = CL_CreateStringCL_Builder(theEnv,256);
+      theSB = CL_CreateString_Builder(theEnv,256);
       
-      CL_FactPPFoCL_rm(theFact,theSB,ignoreDefaults);
+      CL_FactPPFo_rm(theFact,theSB,ignoreDefaults);
       returnValue->lexemeValue = CL_CreateString(theEnv,theSB->contents);
       
       CL_SBDispose(theSB);
@@ -620,8 +620,8 @@ Fact *CL_GetFactAddressOrIndexArgument(
         {
          if (noFactError)
            {
-            CL_FactCL_RetractedErrorMessage(theEnv,theArg.factValue);
-            SetCL_EvaluationError(theEnv,true);
+            CL_Fact_RetractedErrorMessage(theEnv,theArg.factValue);
+            Set_EvaluationError(theEnv,true);
            }
          return NULL;
         }

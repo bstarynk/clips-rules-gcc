@@ -119,7 +119,7 @@
    static CLIPSLexeme            *ParseMethodNameAndIndex(Environment *,const char *,unsigned short *,struct token *);
 
 #if DEBUGGING_FUNCTIONS
-   static void                    CreateDefaultGenericPPFoCL_rm(Environment *,Defgeneric *);
+   static void                    CreateDefaultGenericPPFo_rm(Environment *,Defgeneric *);
 #endif
 
    static unsigned short          ParseMethodParameters(Environment *,const char *,Expression **,CLIPSLexeme **,struct token *);
@@ -167,7 +167,7 @@ bool CL_ParseDefgeneric(
 #if BLOAD || BLOAD_AND_BSAVE
    if ((CL_Bloaded(theEnv) == true) && (! ConstructData(theEnv)->CL_CheckSyntaxMode))
      {
-      CannotCL_LoadWithCL_BloadMessage(theEnv,"defgeneric");
+      Cannot_LoadWith_BloadMessage(theEnv,"defgeneric");
       return true;
      }
 #endif
@@ -200,7 +200,7 @@ bool CL_ParseDefgeneric(
    gfunc = AddGeneric(theEnv,gname,&newGeneric);
 
 #if DEBUGGING_FUNCTIONS
-   SetCL_DefgenericPPFoCL_rm(theEnv,gfunc,CL_GetConserveMemory(theEnv) ? NULL : CL_CopyPPBuffer(theEnv));
+   SetCL_DefgenericPPFo_rm(theEnv,gfunc,CL_GetConserveMemory(theEnv) ? NULL : CL_CopyPPBuffer(theEnv));
 #endif
    return false;
   }
@@ -247,7 +247,7 @@ bool CL_ParseDefmethod(
 #if BLOAD || BLOAD_AND_BSAVE
    if ((CL_Bloaded(theEnv) == true) && (! ConstructData(theEnv)->CL_CheckSyntaxMode))
      {
-      CannotCL_LoadWithCL_BloadMessage(theEnv,"defmethod");
+      Cannot_LoadWith_BloadMessage(theEnv,"defmethod");
       return true;
      }
 #endif
@@ -267,7 +267,7 @@ bool CL_ParseDefmethod(
 
 #if DEBUGGING_FUNCTIONS
    if (newMethod && (! ConstructData(theEnv)->CL_CheckSyntaxMode))
-      CreateDefaultGenericPPFoCL_rm(theEnv,gfunc);
+      CreateDefaultGenericPPFo_rm(theEnv,gfunc);
 #endif
 
    CL_IncrementIndentDepth(theEnv,1);
@@ -373,7 +373,7 @@ bool CL_ParseDefmethod(
 
    CL_PPBackup(theEnv);
    CL_PPBackup(theEnv);
-   CL_SavePPBuffer(theEnv,genericInputToken.printFoCL_rm);
+   CL_SavePPBuffer(theEnv,genericInputToken.printFo_rm);
    CL_SavePPBuffer(theEnv,"\n");
 
 #if DEBUGGING_FUNCTIONS
@@ -383,7 +383,7 @@ bool CL_ParseDefmethod(
    meth = CL_AddMethod(theEnv,gfunc,meth,mposn,theIndex,params,rcnt,lvars,wildcard,actions,NULL,false);
 #endif
    CL_DeleteTempRestricts(theEnv,params);
-   if (CL_GetPrintWhileCL_Loading(theEnv) && CL_GetCompilationsCL_Watch(theEnv) &&
+   if (CL_GetPrintWhile_Loading(theEnv) && CL_GetCompilations_Watch(theEnv) &&
        (! ConstructData(theEnv)->CL_CheckSyntaxMode))
      {
       const char *outRouter = STDOUT;
@@ -417,7 +417,7 @@ DefmethodParseError:
 /************************************************************************
   NAME         : CL_AddMethod
   DESCRIPTION  : (Re)defines a new method for a generic
-                 If method already exists, deletes old infoCL_rmation
+                 If method already exists, deletes old info_rmation
                     before proceeding.
   INPUTS       : 1) The generic address
                  2) The old method address (can be NULL)
@@ -429,17 +429,17 @@ DefmethodParseError:
                  7) The number of locals vars reqd
                  8) The wildcard symbol (NULL if none)
                  9) Method actions
-                 10) Method pretty-print foCL_rm
+                 10) Method pretty-print fo_rm
                  11) A flag indicating whether to copy the
                      restriction types or just use the pointers
   RETURNS      : The new (old) method address
   SIDE EFFECTS : Method added to (or changed in) method array for generic
                  Restrictions repacked into new method
-                 Actions and pretty-print foCL_rm attached
+                 Actions and pretty-print fo_rm attached
   NOTES        : Assumes if a method is being redefined, its busy
                    count is 0!!
                  IMPORTANT: Expects that CL_FindMethodByRestrictions() has
-                   previously been called to deteCL_rmine if this method
+                   previously been called to dete_rmine if this method
                    is already present or not.  Arguments #1 and #2
                    should be the values obtained from FindMethod...().
  ************************************************************************/
@@ -454,7 +454,7 @@ Defmethod *CL_AddMethod(
   unsigned short lvars,
   CLIPSLexeme *wildcard,
   Expression *actions,
-  char *ppFoCL_rm,
+  char *ppFo_rm,
   bool copyRestricts)
   {
    RESTRICTION *rptr, *rtmp;
@@ -492,13 +492,13 @@ Defmethod *CL_AddMethod(
          ================================ */
       CL_ExpressionDeinstall(theEnv,meth->actions);
       CL_ReturnPackedExpression(theEnv,meth->actions);
-      if (meth->header.ppFoCL_rm != NULL)
-        CL_rm(theEnv,(void *) meth->header.ppFoCL_rm,(sizeof(char) * (strlen(meth->header.ppFoCL_rm)+1)));
+      if (meth->header.ppFo_rm != NULL)
+        CL_rm(theEnv,(void *) meth->header.ppFo_rm,(sizeof(char) * (strlen(meth->header.ppFo_rm)+1)));
      }
    meth->system = 0;
    meth->actions = actions;
    CL_ExpressionInstall(theEnv,meth->actions);
-   meth->header.ppFoCL_rm = ppFoCL_rm;
+   meth->header.ppFo_rm = ppFo_rm;
    if (mposn == -1)
      {
       RestoreBusyCount(gfunc);
@@ -684,7 +684,7 @@ Defmethod *CL_FindMethodByRestrictions(
 
 /***********************************************************
   NAME         : ValidGenericName
-  DESCRIPTION  : DeteCL_rmines if a particular function name
+  DESCRIPTION  : Dete_rmines if a particular function name
                     can be overloaded
   INPUTS       : The name
   RETURNS      : True if OK, false otherwise
@@ -696,7 +696,7 @@ Defmethod *CL_FindMethodByRestrictions(
  ***********************************************************/
 static bool ValidGenericName(
   Environment *theEnv,
-  const char *theCL_DefgenericName)
+  const char *the_DefgenericName)
   {
    Defgeneric *theDefgeneric;
 #if DEFFUNCTION_CONSTRUCT
@@ -710,7 +710,7 @@ static bool ValidGenericName(
    /* construct type, e.g, defclass, defrule, etc. */
    /*==============================================*/
 
-   if (CL_FindConstruct(theEnv,theCL_DefgenericName) != NULL)
+   if (CL_FindConstruct(theEnv,the_DefgenericName) != NULL)
      {
       CL_PrintErrorID(theEnv,"GENRCPSR",3,false);
       CL_WriteString(theEnv,STDERR,"Defgenerics are not allowed to replace constructs.\n");
@@ -723,7 +723,7 @@ static bool ValidGenericName(
       a defffunction (either in this module or
       imported from another)
       ======================================== */
-   theDeffunction = CL_LookupDeffunctionInScope(theEnv,theCL_DefgenericName);
+   theDeffunction = CL_LookupDeffunctionInScope(theEnv,the_DefgenericName);
    if (theDeffunction != NULL)
      {
       theModule = CL_GetConstructModuleItem(&theDeffunction->header)->theModule;
@@ -751,7 +751,7 @@ static bool ValidGenericName(
    /* this module (or is imported from another) */
    /*===========================================*/
 
-   theDefgeneric = CL_FindDefgenericInModule(theEnv,theCL_DefgenericName);
+   theDefgeneric = CL_FindDefgenericInModule(theEnv,the_DefgenericName);
    if (theDefgeneric != NULL)
      {
       /* ===========================================
@@ -770,13 +770,13 @@ static bool ValidGenericName(
       Only certain specific system functions
       may be overloaded by generic functions
       ======================================= */
-   systemFunction = CL_FindFunction(theEnv,theCL_DefgenericName);
+   systemFunction = CL_FindFunction(theEnv,the_DefgenericName);
    if ((systemFunction != NULL) ?
        (systemFunction->overloadable == false) : false)
      {
       CL_PrintErrorID(theEnv,"GENRCPSR",16,false);
       CL_WriteString(theEnv,STDERR,"The system function '");
-      CL_WriteString(theEnv,STDERR,theCL_DefgenericName);
+      CL_WriteString(theEnv,STDERR,the_DefgenericName);
       CL_WriteString(theEnv,STDERR,"' cannot be overloaded.\n");
       return false;
      }
@@ -786,18 +786,18 @@ static bool ValidGenericName(
 #if DEBUGGING_FUNCTIONS
 
 /***************************************************
-  NAME         : CreateDefaultGenericPPFoCL_rm
-  DESCRIPTION  : Adds a default pretty-print foCL_rm
+  NAME         : CreateDefaultGenericPPFo_rm
+  DESCRIPTION  : Adds a default pretty-print fo_rm
                  for a gneric function when it is
                  impliciylt created by the defn
                  of its first method
   INPUTS       : The generic function
   RETURNS      : Nothing useful
-  SIDE EFFECTS : Pretty-print foCL_rm created and
+  SIDE EFFECTS : Pretty-print fo_rm created and
                  attached.
   NOTES        : None
  ***************************************************/
-static void CreateDefaultGenericPPFoCL_rm(
+static void CreateDefaultGenericPPFo_rm(
   Environment *theEnv,
   Defgeneric *gfunc)
   {
@@ -808,7 +808,7 @@ static void CreateDefaultGenericPPFoCL_rm(
    genericName = CL_DefgenericName(gfunc);
    buf = (char *) CL_gm2(theEnv,(sizeof(char) * (strlen(moduleName) + strlen(genericName) + 17)));
    CL_gensprintf(buf,"(defgeneric %s::%s)\n",moduleName,genericName);
-   SetCL_DefgenericPPFoCL_rm(theEnv,gfunc,buf);
+   SetCL_DefgenericPPFo_rm(theEnv,gfunc,buf);
   }
 
 #endif
@@ -845,7 +845,7 @@ static CLIPSLexeme *ParseMethodNameAndIndex(
       CL_PPBackup(theEnv);
       CL_PPBackup(theEnv);
       CL_SavePPBuffer(theEnv," ");
-      CL_SavePPBuffer(theEnv,genericInputToken->printFoCL_rm);
+      CL_SavePPBuffer(theEnv,genericInputToken->printFo_rm);
       tmp = (unsigned short) genericInputToken->integerValue->contents;
       if (tmp < 1)
         {
@@ -862,7 +862,7 @@ static CLIPSLexeme *ParseMethodNameAndIndex(
       CL_PPBackup(theEnv);
       CL_PPBackup(theEnv);
       CL_SavePPBuffer(theEnv," ");
-      CL_SavePPBuffer(theEnv,genericInputToken->printFoCL_rm);
+      CL_SavePPBuffer(theEnv,genericInputToken->printFo_rm);
       CL_PPCRAndIndent(theEnv);
       CL_GetToken(theEnv,readSource,genericInputToken);
      }
@@ -1218,7 +1218,7 @@ static Expression *AddParameter(
 /**************************************************************
   NAME         : ValidType
   DESCRIPTION  : Examines the name of a restriction type and
-                   foCL_rms a list of integer-code expressions
+                   fo_rms a list of integer-code expressions
                    corresponding to the primitive types
                  (or a Class address if COOL is installed)
   INPUTS       : The type name
@@ -1239,7 +1239,7 @@ static Expression *ValidType(
      CL_IllegalModuleSpecifierMessage(theEnv);
    else
      {
-      cls = LookupCL_DefclassInScope(theEnv,tname->contents);
+      cls = Lookup_DefclassInScope(theEnv,tname->contents);
       if (cls == NULL)
         {
          CL_PrintErrorID(theEnv,"GENRCPSR",14,false);
@@ -1288,7 +1288,7 @@ static Expression *ValidType(
 
 /*************************************************************
   NAME         : RedundantClasses
-  DESCRIPTION  : DeteCL_rmines if one class (type) is
+  DESCRIPTION  : Dete_rmines if one class (type) is
                  subsumes (or is subsumed by) another.
   INPUTS       : Two void pointers which are class pointers
                  if COOL is installed or integer hash nodes
@@ -1424,7 +1424,7 @@ static Defmethod *AddGenericMethod(
    narr[mposn].header.constructType = DEFMETHOD;
    narr[mposn].header.env = theEnv;
    narr[mposn].header.whichModule = gfunc->header.whichModule;
-   narr[mposn].header.ppFoCL_rm = NULL;
+   narr[mposn].header.ppFo_rm = NULL;
    narr[mposn].header.usrData = NULL;
 
    if (gfunc->mcnt != 0)
@@ -1438,7 +1438,7 @@ static Defmethod *AddGenericMethod(
   NAME         : RestrictionsCompare
   DESCRIPTION  : Compares the restriction-expression list
                    with an existing methods restrictions to
-                   deteCL_rmine an ordering
+                   dete_rmine an ordering
   INPUTS       : 1) The parameter/restriction expression list
                  2) The total number of restrictions
                  3) The number of minimum restrictions
@@ -1529,7 +1529,7 @@ static int RestrictionsCompare(
 
 /*****************************************************
   NAME         : TypeListCompare
-  DESCRIPTION  : DeteCL_rmines the precedence between
+  DESCRIPTION  : Dete_rmines the precedence between
                    the class lists on two restrictions
   INPUTS       : 1) Restriction address #1
                  2) Restriction address #2

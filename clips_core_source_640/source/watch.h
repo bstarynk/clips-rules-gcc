@@ -23,7 +23,7 @@
 /*                                                           */
 /*      6.24: Renamed BOOLEAN macro type to intBool.         */
 /*                                                           */
-/*            Added EnvCL_SetCL_WatchItem function.                */
+/*            Added EnvCL_Set_WatchItem function.                */
 /*                                                           */
 /*      6.30: Removed conditional code for unsupported       */
 /*            compilers/operating systems (IBM_MCW,          */
@@ -92,7 +92,7 @@ struct watchItemRecord
 
 struct watchData
   {
-   CL_WatchItemRecord *ListOfCL_WatchItems;
+   CL_WatchItemRecord *ListOf_WatchItems;
   };
 
 #define CL_WatchData(theEnv) ((struct watchData *) GetEnvironmentData(theEnv,WATCH_DATA))
@@ -102,21 +102,21 @@ struct watchData
 
    bool                           CL_WatchString(Environment *,const char *);
    bool                           CL_UnwatchString(Environment *,const char *);
-   void                           CL_InitializeCL_WatchData(Environment *);
-   bool                           CL_SetCL_WatchItem(Environment *,const char *,bool,struct expr *);
-   int                            CL_GetCL_WatchItem(Environment *,const char *);
-   bool                           CL_AddCL_WatchItem(Environment *,const char *,int,bool *,int,
+   void                           CL_Initialize_WatchData(Environment *);
+   bool                           CL_Set_WatchItem(Environment *,const char *,bool,struct expr *);
+   int                            CL_Get_WatchItem(Environment *,const char *);
+   bool                           CL_Add_WatchItem(Environment *,const char *,int,bool *,int,
                                                       bool (*)(Environment *,int,bool,struct expr *),
                                                       bool (*)(Environment *,const char *,int,struct expr *));
-   const char                    *CL_GetNthCL_WatchName(Environment *,int);
-   int                            CL_GetNthCL_WatchValue(Environment *,int);
+   const char                    *CL_GetNth_WatchName(Environment *,int);
+   int                            CL_GetNth_WatchValue(Environment *,int);
    void                           CL_WatchCommand(Environment *,UDFContext *,UDFValue *);
    void                           CL_UnwatchCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_ListCL_WatchItemsCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_List_WatchItemsCommand(Environment *,UDFContext *,UDFValue *);
    void                           CL_WatchFunctionDefinitions(Environment *);
-   void                           CL_GetCL_WatchItemCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           CL_GetCL_WatchState(Environment *,CL_WatchItem);
-   void                           CL_SetCL_WatchState(Environment *,CL_WatchItem,bool);
+   void                           CL_Get_WatchItemCommand(Environment *,UDFContext *,UDFValue *);
+   bool                           CL_Get_WatchState(Environment *,CL_WatchItem);
+   void                           CL_Set_WatchState(Environment *,CL_WatchItem,bool);
 
 #endif /* _H_watch */
 

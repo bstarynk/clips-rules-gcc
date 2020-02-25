@@ -31,8 +31,8 @@
 /*                                                           */
 /*            Moved CL_WatchGlobals global to defglobalData.    */
 /*                                                           */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*      6.40: Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -116,7 +116,7 @@ bool CL_ParseDefglobal(
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE
    if ((CL_Bloaded(theEnv) == true) && (! ConstructData(theEnv)->CL_CheckSyntaxMode))
      {
-      CannotCL_LoadWithCL_BloadMessage(theEnv,"defglobal");
+      Cannot_LoadWith_BloadMessage(theEnv,"defglobal");
       return true;
      }
 #endif
@@ -143,7 +143,7 @@ bool CL_ParseDefglobal(
         }
 
       /*=================================*/
-      /* DeteCL_rmine if the module exists. */
+      /* Dete_rmine if the module exists. */
       /*=================================*/
 
       theModule = CL_FindDefmodule(theEnv,theToken.lexemeValue->contents);
@@ -173,7 +173,7 @@ bool CL_ParseDefglobal(
       CL_PPBackup(theEnv);
       CL_SavePPBuffer(theEnv,CL_DefmoduleName(CL_GetCurrentModule(theEnv)));
       CL_SavePPBuffer(theEnv," ");
-      CL_SavePPBuffer(theEnv,theToken.printFoCL_rm);
+      CL_SavePPBuffer(theEnv,theToken.printFo_rm);
      }
 
    /*======================*/
@@ -250,10 +250,10 @@ static bool GetVariableDefinition(
    /*================================*/
 
 #if DEBUGGING_FUNCTIONS
-   if ((CL_GetCL_WatchItem(theEnv,"compilations") == 1) && CL_GetPrintWhileCL_Loading(theEnv))
+   if ((CL_Get_WatchItem(theEnv,"compilations") == 1) && CL_GetPrintWhile_Loading(theEnv))
      {
       const char *outRouter = STDOUT;
-      if (QCL_FindDefglobal(theEnv,variableName) != NULL)
+      if (Q_FindDefglobal(theEnv,variableName) != NULL)
         {
          outRouter = STDWRN;
          CL_PrintWarningID(theEnv,"CSTRCPSR",1,true);
@@ -265,7 +265,7 @@ static bool GetVariableDefinition(
      }
    else
 #endif
-     { if (CL_GetPrintWhileCL_Loading(theEnv)) CL_WriteString(theEnv,STDOUT,":"); }
+     { if (CL_GetPrintWhile_Loading(theEnv)) CL_WriteString(theEnv,STDOUT,":"); }
 
    /*==================================================================*/
    /* Check for import/export conflicts from the construct definition. */
@@ -285,7 +285,7 @@ static bool GetVariableDefinition(
    /*==============================*/
 
    CL_GetToken(theEnv,readSource,theToken);
-   if (strcmp(theToken->printFoCL_rm,"=") != 0)
+   if (strcmp(theToken->printFo_rm,"=") != 0)
      {
       CL_SyntaxErrorMessage(theEnv,"defglobal");
       *defglobalError = true;
@@ -311,7 +311,7 @@ static bool GetVariableDefinition(
 
    if (! ConstructData(theEnv)->CL_CheckSyntaxMode)
      {
-      SetCL_EvaluationError(theEnv,false);
+      Set_EvaluationError(theEnv,false);
       if (CL_EvaluateExpression(theEnv,assignPtr,&assignValue))
         {
          CL_ReturnExpression(theEnv,assignPtr);
@@ -351,7 +351,7 @@ static void AddDefglobal(
    Defglobal *defglobalPtr;
    bool newGlobal = false;
 #if DEBUGGING_FUNCTIONS
-   bool globalHadCL_Watch = false;
+   bool globalHad_Watch = false;
 #endif
 
    /*========================================================*/
@@ -360,7 +360,7 @@ static void AddDefglobal(
    /* been defined, then create a new data structure.        */
    /*========================================================*/
 
-   defglobalPtr = QCL_FindDefglobal(theEnv,name);
+   defglobalPtr = Q_FindDefglobal(theEnv,name);
    if (defglobalPtr == NULL)
      {
       newGlobal = true;
@@ -370,7 +370,7 @@ static void AddDefglobal(
      {
       CL_DeinstallConstructHeader(theEnv,&defglobalPtr->header);
 #if DEBUGGING_FUNCTIONS
-      globalHadCL_Watch = defglobalPtr->watch;
+      globalHad_Watch = defglobalPtr->watch;
 #endif
      }
 
@@ -407,11 +407,11 @@ static void AddDefglobal(
    /*=================================*/
 
 #if DEBUGGING_FUNCTIONS
-   defglobalPtr->watch = globalHadCL_Watch ? true : DefglobalData(theEnv)->CL_WatchGlobals;
+   defglobalPtr->watch = globalHad_Watch ? true : DefglobalData(theEnv)->CL_WatchGlobals;
 #endif
 
    /*======================================*/
-   /* CL_Save the name and pretty print foCL_rm. */
+   /* CL_Save the name and pretty print fo_rm. */
    /*======================================*/
 
    defglobalPtr->header.name = name;
@@ -422,9 +422,9 @@ static void AddDefglobal(
 
    CL_SavePPBuffer(theEnv,"\n");
    if (CL_GetConserveMemory(theEnv) == true)
-     { defglobalPtr->header.ppFoCL_rm = NULL; }
+     { defglobalPtr->header.ppFo_rm = NULL; }
    else
-     { defglobalPtr->header.ppFoCL_rm = CL_CopyPPBuffer(theEnv); }
+     { defglobalPtr->header.ppFo_rm = CL_CopyPPBuffer(theEnv); }
 
    defglobalPtr->inScope = true;
 

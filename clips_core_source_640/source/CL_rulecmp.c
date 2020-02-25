@@ -433,7 +433,7 @@ static void DefruleToCode(
                    theDefrule->salience,theDefrule->localVarCnt,
                    theDefrule->complexity,theDefrule->afterBreakpoint,
                    theDefrule->watchActivation,theDefrule->watchFiring,
-                   theDefrule->autoCL_Focus,theDefrule->executing);
+                   theDefrule->auto_Focus,theDefrule->executing);
 
    /*==================*/
    /* Dynamic Salience */
@@ -709,7 +709,7 @@ static void InitDefruleCode(
 #pragma unused(imageID)
 #endif
 
-   fprintf(initFP,"   DefruleCL_RunTimeInitialize(theEnv,");
+   fprintf(initFP,"   Defrule_RunTimeInitialize(theEnv,");
 
    if (DefruleData(theEnv)->RightPrimeJoins == NULL)
      { fprintf(initFP,"NULL,"); }

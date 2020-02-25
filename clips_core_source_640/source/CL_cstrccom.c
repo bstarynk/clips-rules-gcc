@@ -8,7 +8,7 @@
 
 /*************************************************************/
 /* Purpose: Contains generic routines for deleting, pretty   */
-/*   printing, finding, obtaining module infoCL_rmation,        */
+/*   printing, finding, obtaining module info_rmation,        */
 /*   obtaining lists of constructs, listing constructs, and  */
 /*   manipulation routines.                                  */
 /*                                                           */
@@ -47,8 +47,8 @@
 /*      6.31: Fixed use after free issue for deallocation    */
 /*            functions passed to CL_DoForAllConstructs.        */
 /*                                                           */
-/*      6.40: Added Env prefix to CL_GetCL_HaltExecution and       */
-/*            SetCL_HaltExecution functions.                    */
+/*      6.40: Added Env prefix to CL_Get_HaltExecution and       */
+/*            Set_HaltExecution functions.                    */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -97,13 +97,13 @@
 /***************************************/
 
 #if DEBUGGING_FUNCTIONS
-   static void                    ConstructPrintCL_Watch(Environment *,const char *,Construct *,
+   static void                    ConstructPrint_Watch(Environment *,const char *,Construct *,
                                                       ConstructHeader *,
-                                                      ConstructGetCL_WatchFunction *);
-   static bool                    ConstructCL_WatchSupport(Environment *,Construct *,const char *,
+                                                      ConstructGet_WatchFunction *);
+   static bool                    Construct_WatchSupport(Environment *,Construct *,const char *,
                                                         const char *,Expression *,bool,
-                                                        bool,ConstructGetCL_WatchFunction *,
-                                                        ConstructSetCL_WatchFunction *);
+                                                        bool,ConstructGet_WatchFunction *,
+                                                        ConstructSet_WatchFunction *);
 #endif
 
 #if (! RUN_TIME)
@@ -386,7 +386,7 @@ void CL_PPConstructCommand(
    Environment *theEnv = context->environment;
    const char *constructName;
    const char *logicalName;
-   const char *ppFoCL_rm;
+   const char *ppFo_rm;
    char buffer[80];
 
    /*===============================*/
@@ -405,8 +405,8 @@ void CL_PPConstructCommand(
       if (logicalName == NULL)
         {
          CL_IllegalLogicalNameMessage(theEnv,command);
-         SetCL_HaltExecution(theEnv,true);
-         SetCL_EvaluationError(theEnv,true);
+         Set_HaltExecution(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          return;
         }
      }
@@ -420,12 +420,12 @@ void CL_PPConstructCommand(
 
    if (strcmp(logicalName,"nil") == 0)
      {
-      ppFoCL_rm = CL_PPConstructNil(theEnv,constructName,constructClass);
+      ppFo_rm = CL_PPConstructNil(theEnv,constructName,constructClass);
       
-      if (ppFoCL_rm == NULL)
+      if (ppFo_rm == NULL)
         { CL_CantFindItemErrorMessage(theEnv,constructClass->constructName,constructName,true); }
 
-      returnValue->lexemeValue = CL_CreateString(theEnv,ppFoCL_rm);
+      returnValue->lexemeValue = CL_CreateString(theEnv,ppFo_rm);
       
       return;
      }
@@ -454,19 +454,19 @@ const char *CL_PPConstructNil(
    if (constructPtr == NULL) return NULL;
 
    /*==============================================*/
-   /* If the pretty print foCL_rm is NULL (because of */
+   /* If the pretty print fo_rm is NULL (because of */
    /* conserve-mem), return "" (which indicates    */
    /* the construct was found).                    */
    /*==============================================*/
 
-   if ((*constructClass->getPPFoCL_rmFunction)(constructPtr) == NULL)
+   if ((*constructClass->getPPFo_rmFunction)(constructPtr) == NULL)
      { return ""; }
 
    /*=================================*/
    /* Return the pretty print string. */
    /*=================================*/
 
-   return (*constructClass->getPPFoCL_rmFunction)(constructPtr);
+   return (*constructClass->getPPFo_rmFunction)(constructPtr);
   }
 
 /***********************************/
@@ -490,19 +490,19 @@ bool CL_PPConstruct(
    if (constructPtr == NULL) return false;
 
    /*==============================================*/
-   /* If the pretty print foCL_rm is NULL (because of */
+   /* If the pretty print fo_rm is NULL (because of */
    /* conserve-mem), return true (which indicates  */
    /* the construct was found).                    */
    /*==============================================*/
 
-   if ((*constructClass->getPPFoCL_rmFunction)(constructPtr) == NULL)
+   if ((*constructClass->getPPFo_rmFunction)(constructPtr) == NULL)
      { return true; }
 
    /*================================*/
    /* Print the pretty print string. */
    /*================================*/
 
-   CL_WriteString(theEnv,logicalName,(*constructClass->getPPFoCL_rmFunction)(constructPtr));
+   CL_WriteString(theEnv,logicalName,(*constructClass->getPPFo_rmFunction)(constructPtr));
 
    /*=======================================*/
    /* Return true to indicate the construct */
@@ -528,7 +528,7 @@ CLIPSLexeme *CL_GetConstructModuleCommand(
 
    /*=========================================*/
    /* Get the name of the construct for which */
-   /* we want to deteCL_rmine its module.        */
+   /* we want to dete_rmine its module.        */
    /*=========================================*/
 
    CL_gensprintf(buffer,"%s name",constructClass->constructName);
@@ -742,7 +742,7 @@ void CL_SaveConstruct(
   const char *logicalName,
   Construct *constructClass)
   {
-   const char *ppfoCL_rm;
+   const char *ppfo_rm;
    ConstructHeader *theConstruct;
 
    /*==========================*/
@@ -768,13 +768,13 @@ void CL_SaveConstruct(
         theConstruct = (*constructClass->getNextItemFunction)(theEnv,theConstruct))
      {
       /*==========================================*/
-      /* Print the construct's pretty print foCL_rm. */
+      /* Print the construct's pretty print fo_rm. */
       /*==========================================*/
 
-      ppfoCL_rm = (*constructClass->getPPFoCL_rmFunction)(theConstruct);
-      if (ppfoCL_rm != NULL)
+      ppfo_rm = (*constructClass->getPPFo_rmFunction)(theConstruct);
+      if (ppfo_rm != NULL)
         {
-         CL_WriteString(theEnv,logicalName,ppfoCL_rm);
+         CL_WriteString(theEnv,logicalName,ppfo_rm);
          CL_WriteString(theEnv,logicalName,"\n");
         }
       }
@@ -912,7 +912,7 @@ void CL_GetConstructList(
 
    /*======================================================*/
    /* Count the number of constructs to  be retrieved and  */
-   /* deteCL_rmine the buffer size needed to store the        */
+   /* dete_rmine the buffer size needed to store the        */
    /* module-name::construct-names that will be generated. */
    /*======================================================*/
 
@@ -952,7 +952,7 @@ void CL_GetConstructList(
         }
 
       /*========================================*/
-      /* DeteCL_rmine the size of the module name. */
+      /* Dete_rmine the size of the module name. */
       /*========================================*/
 
       tempSize = strlen(CL_DefmoduleName(loopModule));
@@ -1230,13 +1230,13 @@ struct defmoduleItemHeader *CL_GetConstructModuleItem(
   { return(theConstruct->whichModule); }
 
 /*************************************************/
-/* CL_GetConstructPPFoCL_rm: Returns the pretty print  */
+/* CL_GetConstructPPFo_rm: Returns the pretty print  */
 /*   representation for the specified construct. */
 /*************************************************/
-const char *CL_GetConstructPPFoCL_rm(
+const char *CL_GetConstructPPFo_rm(
   ConstructHeader *theConstruct)
   {
-   return theConstruct->ppFoCL_rm;
+   return theConstruct->ppFo_rm;
   }
 
 /****************************************************/
@@ -1344,7 +1344,7 @@ void CL_DoForAllConstructs(
       CL_SetCurrentModule(theEnv,theModule);
 
       /*================================================*/
-      /* PerfoCL_rm the action for each of the constructs. */
+      /* Perfo_rm the action for each of the constructs. */
       /*================================================*/
 
       theModuleItem = (struct defmoduleItemHeader *)
@@ -1360,7 +1360,7 @@ void CL_DoForAllConstructs(
 
          if (interruptable)
            {
-            if (CL_GetCL_HaltExecution(theEnv) == true)
+            if (CL_Get_HaltExecution(theEnv) == true)
               {
                CL_RestoreCurrentModule(theEnv);
                return;
@@ -1368,14 +1368,14 @@ void CL_DoForAllConstructs(
            }
 
          /*===============================================*/
-         /* DeteCL_rmine the next construct since the action */
+         /* Dete_rmine the next construct since the action */
          /* could delete the current construct.           */
          /*===============================================*/
 
          next = theConstruct->next;
 
          /*===============================================*/
-         /* PerfoCL_rm the action for the current construct. */
+         /* Perfo_rm the action for the current construct. */
          /*===============================================*/
 
          (*actionFunction)(theEnv,theConstruct,userBuffer);
@@ -1418,7 +1418,7 @@ void CL_DoForAllConstructsInModule(
    CL_SetCurrentModule(theEnv,theModule);
 
    /*================================================*/
-   /* PerfoCL_rm the action for each of the constructs. */
+   /* Perfo_rm the action for each of the constructs. */
    /*================================================*/
 
    theModuleItem = (struct defmoduleItemHeader *)
@@ -1430,7 +1430,7 @@ void CL_DoForAllConstructsInModule(
      {
       if (interruptable)
         {
-         if (CL_GetCL_HaltExecution(theEnv) == true)
+         if (CL_Get_HaltExecution(theEnv) == true)
            {
             CL_RestoreCurrentModule(theEnv);
             return;
@@ -1468,7 +1468,7 @@ void CL_InitializeConstructHeader(
 
    theConstruct->whichModule = theItemHeader;
    theConstruct->name = theConstructName;
-   theConstruct->ppFoCL_rm = NULL;
+   theConstruct->ppFo_rm = NULL;
    theConstruct->bsaveID = 0L;
    theConstruct->next = NULL;
    theConstruct->usrData = NULL;
@@ -1477,61 +1477,61 @@ void CL_InitializeConstructHeader(
   }
 
 /*************************************************/
-/* SetConstructPPFoCL_rm: Sets a construct's pretty */
-/*   print foCL_rm and deletes the old one.         */
+/* SetConstructPPFo_rm: Sets a construct's pretty */
+/*   print fo_rm and deletes the old one.         */
 /*************************************************/
-void SetConstructPPFoCL_rm(
+void SetConstructPPFo_rm(
   Environment *theEnv,
   ConstructHeader *theConstruct,
-  const char *ppFoCL_rm)
+  const char *ppFo_rm)
   {
-   if (theConstruct->ppFoCL_rm != NULL)
+   if (theConstruct->ppFo_rm != NULL)
      {
-      CL_rm(theEnv,(void *) theConstruct->ppFoCL_rm,
-         ((strlen(theConstruct->ppFoCL_rm) + 1) * sizeof(char)));
+      CL_rm(theEnv,(void *) theConstruct->ppFo_rm,
+         ((strlen(theConstruct->ppFo_rm) + 1) * sizeof(char)));
      }
-   theConstruct->ppFoCL_rm = ppFoCL_rm;
+   theConstruct->ppFo_rm = ppFo_rm;
   }
 
 #if DEBUGGING_FUNCTIONS
 
 /******************************************************/
-/* CL_ConstructPrintCL_WatchAccess: Provides an interface   */
+/* CL_ConstructPrint_WatchAccess: Provides an interface   */
 /*   to the list-watch-items function for a construct */
 /******************************************************/
-bool CL_ConstructPrintCL_WatchAccess(
+bool CL_ConstructPrint_WatchAccess(
   Environment *theEnv,
   Construct *constructClass,
   const char *logName,
   Expression *argExprs,
-  ConstructGetCL_WatchFunction *getCL_WatchFunc,
-  ConstructSetCL_WatchFunction *setCL_WatchFunc)
+  ConstructGet_WatchFunction *get_WatchFunc,
+  ConstructSet_WatchFunction *set_WatchFunc)
   {
-   return(ConstructCL_WatchSupport(theEnv,constructClass,"list-watch-items",logName,argExprs,
-                                false,false,getCL_WatchFunc,setCL_WatchFunc));
+   return(Construct_WatchSupport(theEnv,constructClass,"list-watch-items",logName,argExprs,
+                                false,false,get_WatchFunc,set_WatchFunc));
   }
 
 /**************************************************/
-/* CL_ConstructSetCL_WatchAccess: Provides an interface */
+/* CL_ConstructSet_WatchAccess: Provides an interface */
 /*   to the watch function for a construct        */
 /**************************************************/
-bool CL_ConstructSetCL_WatchAccess(
+bool CL_ConstructSet_WatchAccess(
   Environment *theEnv,
   Construct *constructClass,
   bool newState,
   Expression *argExprs,
-  ConstructGetCL_WatchFunction *getCL_WatchFunc,
-  ConstructSetCL_WatchFunction *setCL_WatchFunc)
+  ConstructGet_WatchFunction *get_WatchFunc,
+  ConstructSet_WatchFunction *set_WatchFunc)
   {
-   return(ConstructCL_WatchSupport(theEnv,constructClass,"watch",STDERR,argExprs,
-                                true,newState,getCL_WatchFunc,setCL_WatchFunc));
+   return(Construct_WatchSupport(theEnv,constructClass,"watch",STDERR,argExprs,
+                                true,newState,get_WatchFunc,set_WatchFunc));
   }
 
 /******************************************************/
-/* ConstructCL_WatchSupport: Generic construct interface */
+/* Construct_WatchSupport: Generic construct interface */
 /*   into watch and list-watch-items.                 */
 /******************************************************/
-static bool ConstructCL_WatchSupport(
+static bool Construct_WatchSupport(
   Environment *theEnv,
   Construct *constructClass,
   const char *funcName,
@@ -1539,8 +1539,8 @@ static bool ConstructCL_WatchSupport(
   Expression *argExprs,
   bool setFlag,
   bool newState,
-  ConstructGetCL_WatchFunction *getCL_WatchFunc,
-  ConstructSetCL_WatchFunction *setCL_WatchFunc)
+  ConstructGet_WatchFunction *get_WatchFunc,
+  ConstructSet_WatchFunction *set_WatchFunc)
   {
    Defmodule *theModule;
    ConstructHeader *theConstruct;
@@ -1601,11 +1601,11 @@ static bool ConstructCL_WatchSupport(
             /*=============================================*/
 
             if (setFlag)
-              { (*setCL_WatchFunc)(theConstruct,newState); }
+              { (*set_WatchFunc)(theConstruct,newState); }
             else
               {
                CL_WriteString(theEnv,logName,"   ");
-               ConstructPrintCL_Watch(theEnv,logName,constructClass,theConstruct,getCL_WatchFunc);
+               ConstructPrint_Watch(theEnv,logName,constructClass,theConstruct,get_WatchFunc);
               }
            }
         }
@@ -1657,9 +1657,9 @@ static bool ConstructCL_WatchSupport(
       /*=============================================*/
 
       if (setFlag)
-        { (*setCL_WatchFunc)(theConstruct,newState); }
+        { (*set_WatchFunc)(theConstruct,newState); }
       else
-        { ConstructPrintCL_Watch(theEnv,logName,constructClass,theConstruct,getCL_WatchFunc); }
+        { ConstructPrint_Watch(theEnv,logName,constructClass,theConstruct,get_WatchFunc); }
 
       /*===============================*/
       /* Move on to the next argument. */
@@ -1678,18 +1678,18 @@ static bool ConstructCL_WatchSupport(
   }
 
 /*************************************************/
-/* ConstructPrintCL_Watch: Displays the trace value */
+/* ConstructPrint_Watch: Displays the trace value */
 /*   of a construct for list-watch-items         */
 /*************************************************/
-static void ConstructPrintCL_Watch(
+static void ConstructPrint_Watch(
   Environment *theEnv,
   const char *logName,
   Construct *constructClass,
   ConstructHeader *theConstruct,
-  ConstructGetCL_WatchFunction *getCL_WatchFunc)
+  ConstructGet_WatchFunction *get_WatchFunc)
   {
    CL_WriteString(theEnv,logName,(*constructClass->getConstructNameFunction)(theConstruct)->contents);
-   if ((*getCL_WatchFunc)(theConstruct))
+   if ((*get_WatchFunc)(theConstruct))
      CL_WriteString(theEnv,logName," = on\n");
    else
      CL_WriteString(theEnv,logName," = off\n");

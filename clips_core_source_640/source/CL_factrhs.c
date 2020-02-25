@@ -27,14 +27,14 @@
 /*                                                           */
 /*            Added code to prevent a clear command from     */
 /*            being executed during fact assertions via      */
-/*            Increment/DecrementCL_ClearReadyLocks API.        */
+/*            Increment/Decrement_ClearReadyLocks API.        */
 /*                                                           */
 /*            Added code to keep track of pointers to        */
 /*            constructs that are contained externally to    */
 /*            to constructs, DanglingConstructs.             */
 /*                                                           */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*      6.40: Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -86,13 +86,13 @@
 #endif
 
 /**********************************************************************/
-/* CL_BuildRHSCL_Assert: Parses zero or more RHS fact patterns (the foCL_rmat  */
+/* CL_BuildRHS_Assert: Parses zero or more RHS fact patterns (the fo_rmat  */
 /*   which is used by the assert command and the deffacts construct). */
 /*   Each of the RHS patterns is attached to an assert command and if */
 /*   there is more than one assert command, then a progn command is   */
 /*   wrapped around all of the assert commands.                       */
 /**********************************************************************/
-struct expr *CL_BuildRHSCL_Assert(
+struct expr *CL_BuildRHS_Assert(
   Environment *theEnv,
   const char *logicalName,
   struct token *theToken,
@@ -295,7 +295,7 @@ struct expr *CL_GetRHSPattern(
      }
 
    /*=============================================================*/
-   /* DeteCL_rmine if there is an associated deftemplate. If so, let */
+   /* Dete_rmine if there is an associated deftemplate. If so, let */
    /* the deftemplate parsing functions parse the RHS pattern and */
    /* then return the fact pattern that was parsed.               */
    /*=============================================================*/
@@ -354,7 +354,7 @@ struct expr *CL_GetRHSPattern(
    if ((theDeftemplate != NULL) && (theDeftemplate->implied == false))
      {
       firstOne = CL_GenConstant(theEnv,DEFTEMPLATE_PTR,theDeftemplate);
-      firstOne->nextArg = ParseCL_AssertTemplate(theEnv,readSource,tempToken,
+      firstOne->nextArg = Parse_AssertTemplate(theEnv,readSource,tempToken,
                                               error,endType,
                                               constantsOnly,theDeftemplate);
 
@@ -387,7 +387,7 @@ struct expr *CL_GetRHSPattern(
    CL_SavePPBuffer(theEnv," ");
 #endif
 
-   while ((nextOne = GetCL_AssertArgument(theEnv,readSource,tempToken,
+   while ((nextOne = Get_AssertArgument(theEnv,readSource,tempToken,
                                         error,endType,constantsOnly,&printError)) != NULL)
      {
       if (argHead == NULL) argHead = nextOne;
@@ -418,7 +418,7 @@ struct expr *CL_GetRHSPattern(
 #if (! RUN_TIME) && (! BLOAD_ONLY)
    CL_PPBackup(theEnv);
    CL_PPBackup(theEnv);
-   CL_SavePPBuffer(theEnv,tempToken->printFoCL_rm);
+   CL_SavePPBuffer(theEnv,tempToken->printFo_rm);
 #endif
 
    /*==========================================================*/
@@ -438,14 +438,14 @@ struct expr *CL_GetRHSPattern(
   }
 
 /********************************************************************/
-/* GetCL_AssertArgument: Parses a single RHS slot value and returns an */
+/* Get_AssertArgument: Parses a single RHS slot value and returns an */
 /*   expression representing the value. When parsing a deftemplate  */
 /*   slot, the slot name has already been parsed when this function */
 /*   is called. NULL is returned if a slot or fact delimiter is     */
 /*   encountered. In the event of a parse error, the error flag     */
 /*   passed as an argument is set.                                  */
 /********************************************************************/
-struct expr *GetCL_AssertArgument(
+struct expr *Get_AssertArgument(
   Environment *theEnv,
   const char *logicalName,
   struct token *theToken,
@@ -471,12 +471,12 @@ struct expr *GetCL_AssertArgument(
 
    /*=============================================================*/
    /* If an equal sign of left parenthesis was parsed, then parse */
-   /* a function which is to be evaluated to deteCL_rmine the slot's */
+   /* a function which is to be evaluated to dete_rmine the slot's */
    /* value. The equal sign corresponds to the return value       */
    /* constraint which can be used in LHS fact patterns. The      */
    /* equal sign is no longer necessary on either the LHS or RHS  */
    /* of a rule to indicate that a function is being evaluated to */
-   /* deteCL_rmine its value either for assignment or pattern        */
+   /* dete_rmine its value either for assignment or pattern        */
    /* matching.                                                   */
    /*=============================================================*/
 
@@ -504,7 +504,7 @@ struct expr *GetCL_AssertArgument(
         {
          theToken->tknType= RIGHT_PARENTHESIS_TOKEN;
          theToken->value = CL_CreateString(theEnv,")");
-         theToken->printFoCL_rm = ")";
+         theToken->printFo_rm = ")";
         }
 #endif
 
@@ -572,7 +572,7 @@ Fact *CL_StringToFact(
    /* using the router as an input source.    */
    /*=========================================*/
 
-   SetCL_EvaluationError(theEnv,false);
+   Set_EvaluationError(theEnv,false);
 
    CL_OpenStringSource(theEnv,"assert_str",str,0);
 
@@ -602,7 +602,7 @@ Fact *CL_StringToFact(
    if (CL_ExpressionContainsVariables(assertArgs,false))
      {
       CL_LocalVariableErrorMessage(theEnv,"the assert-string function");
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       CL_ReturnExpression(theEnv,assertArgs);
       return NULL;
      }
@@ -622,7 +622,7 @@ Fact *CL_StringToFact(
    /* Copy the fields to the fact data structure. */
    /*=============================================*/
 
-   IncrementCL_ClearReadyLocks(theEnv);
+   Increment_ClearReadyLocks(theEnv);
    CL_ExpressionInstall(theEnv,assertArgs); /* DR0836 */
    whichField = 0;
    for (tempPtr = assertArgs->nextArg; tempPtr != NULL; tempPtr = tempPtr->nextArg)
@@ -633,7 +633,7 @@ Fact *CL_StringToFact(
      }
    CL_ExpressionDeinstall(theEnv,assertArgs); /* DR0836 */
    CL_ReturnExpression(theEnv,assertArgs);
-   DecrementCL_ClearReadyLocks(theEnv);
+   Decrement_ClearReadyLocks(theEnv);
 
    /*==================*/
    /* Return the fact. */

@@ -55,7 +55,7 @@ struct bsaveTemplateSlot
   };
 
 struct bsaveDeftemplate;
-struct bsaveCL_DeftemplateModule;
+struct bsave_DeftemplateModule;
 
 #include "cstrcbin.h"
 
@@ -70,7 +70,7 @@ struct bsaveDeftemplate
 
 #include "modulbin.h"
 
-struct bsaveCL_DeftemplateModule
+struct bsave_DeftemplateModule
   {
    struct bsaveDefmoduleItemHeader header;
   };
@@ -98,7 +98,7 @@ struct deftemplateBinaryData
 #endif
 
    void                           CL_DeftemplateBinarySetup(Environment *);
-   void                          *CL_BloadCL_DeftemplateModuleReference(Environment *,unsigned long);
+   void                          *CL_Bload_DeftemplateModuleReference(Environment *,unsigned long);
 
 #endif /* (! RUN_TIME) */
 

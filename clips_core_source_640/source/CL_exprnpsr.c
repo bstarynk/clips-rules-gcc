@@ -497,7 +497,7 @@ bool CL_RestrictionExists(
 /*****************************************************************/
 /* CL_CheckExpressionAgainstRestrictions: Compares the arguments to */
 /*   a function to the set of restrictions for that function to  */
-/*   deteCL_rmine if any incompatibilities exist. If so, the value  */
+/*   dete_rmine if any incompatibilities exist. If so, the value  */
 /*   true is returned, otherwise false is returned.              */
 /*****************************************************************/
 FunctionArgumentsError CL_CheckExpressionAgainstRestrictions(
@@ -787,7 +787,7 @@ struct expr *CL_GroupActions(
         { readFirstToken = true; }
 
       /*=================================================*/
-      /* Look to see if a symbol has teCL_rminated the list */
+      /* Look to see if a symbol has te_rminated the list */
       /* of actions (such as "else" in an if function).  */
       /*=================================================*/
 

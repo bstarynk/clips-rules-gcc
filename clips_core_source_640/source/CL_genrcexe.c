@@ -28,8 +28,8 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*      6.40: Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -98,7 +98,7 @@
 #endif
 
 #if OBJECT_SYSTEM
-   static Defclass               *DeteCL_rmineRestrictionClass(Environment *,UDFValue *);
+   static Defclass               *Dete_rmineRestrictionClass(Environment *,UDFValue *);
 #endif
 
 /* =========================================
@@ -120,7 +120,7 @@
   RETURNS      : Nothing useful
   SIDE EFFECTS : Any side-effects of evaluating the generic function arguments
                  Any side-effects of evaluating query functions on method parameter
-                   restrictions when deteCL_rmining the core (see warning #1)
+                   restrictions when dete_rmining the core (see warning #1)
                  Any side-effects of actual execution of methods (see warning #2)
                  Caller's buffer set to the result of the generic function call
 
@@ -160,11 +160,11 @@ void CL_GenericDispatch(
    CL_GCBlockStart(theEnv,&gcb);
 
    oldce = CL_ExecutingConstruct(theEnv);
-   SetCL_ExecutingConstruct(theEnv,true);
+   Set_ExecutingConstruct(theEnv,true);
    previousGeneric = DefgenericData(theEnv)->CurrentGeneric;
    previousMethod = DefgenericData(theEnv)->CurrentMethod;
    DefgenericData(theEnv)->CurrentGeneric = gfunc;
-   CL_EvaluationData(theEnv)->CurrentCL_EvaluationDepth++;
+   CL_EvaluationData(theEnv)->Current_EvaluationDepth++;
    gfunc->busy++;
    CL_PushProcParameters(theEnv,params,CL_CountArguments(params),
                       CL_DefgenericName(gfunc),
@@ -174,12 +174,12 @@ void CL_GenericDispatch(
       gfunc->busy--;
       DefgenericData(theEnv)->CurrentGeneric = previousGeneric;
       DefgenericData(theEnv)->CurrentMethod = previousMethod;
-      CL_EvaluationData(theEnv)->CurrentCL_EvaluationDepth--;
+      CL_EvaluationData(theEnv)->Current_EvaluationDepth--;
 
       CL_GCBlockEndUDF(theEnv,&gcb,returnValue);
       CL_CallPeriodicTasks(theEnv);
 
-      SetCL_ExecutingConstruct(theEnv,oldce);
+      Set_ExecutingConstruct(theEnv,oldce);
       return;
      }
    if (meth != NULL)
@@ -192,7 +192,7 @@ void CL_GenericDispatch(
       else
         {
          CL_PrintErrorID(theEnv,"GENRCEXE",4,false);
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          DefgenericData(theEnv)->CurrentMethod = NULL;
          CL_WriteString(theEnv,STDERR,"Generic function '");
          CL_WriteString(theEnv,STDERR,CL_DefgenericName(gfunc));
@@ -224,7 +224,7 @@ void CL_GenericDispatch(
       else
         {
 #if PROFILING_FUNCTIONS
-         StartCL_Profile(theEnv,&profileFrame,
+         Start_Profile(theEnv,&profileFrame,
                       &DefgenericData(theEnv)->CurrentMethod->header.usrData,
                       CL_ProfileFunctionData(theEnv)->CL_ProfileConstructs);
 #endif
@@ -234,7 +234,7 @@ void CL_GenericDispatch(
                              returnValue,CL_UnboundMethodErr);
 
 #if PROFILING_FUNCTIONS
-         CL_EndCL_Profile(theEnv,&profileFrame);
+         CL_End_Profile(theEnv,&profileFrame);
 #endif
         }
       DefgenericData(theEnv)->CurrentMethod->busy--;
@@ -251,19 +251,19 @@ void CL_GenericDispatch(
       CL_WriteString(theEnv,STDERR,"No applicable methods for '");
       CL_WriteString(theEnv,STDERR,CL_DefgenericName(gfunc));
       CL_WriteString(theEnv,STDERR,"'.\n");
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
      }
    gfunc->busy--;
    ProcedureFunctionData(theEnv)->ReturnFlag = false;
    CL_PopProcParameters(theEnv);
    DefgenericData(theEnv)->CurrentGeneric = previousGeneric;
    DefgenericData(theEnv)->CurrentMethod = previousMethod;
-   CL_EvaluationData(theEnv)->CurrentCL_EvaluationDepth--;
+   CL_EvaluationData(theEnv)->Current_EvaluationDepth--;
 
    CL_GCBlockEndUDF(theEnv,&gcb,returnValue);
    CL_CallPeriodicTasks(theEnv);
 
-   SetCL_ExecutingConstruct(theEnv,oldce);
+   Set_ExecutingConstruct(theEnv,oldce);
   }
 
 /*******************************************************
@@ -320,7 +320,7 @@ bool CL_IsMethodApplicable(
       if (rp->tcnt != 0)
         {
 #if OBJECT_SYSTEM
-         type = DeteCL_rmineRestrictionClass(theEnv,&ProceduralPrimitiveData(theEnv)->ProcParamArray[i]);
+         type = Dete_rmineRestrictionClass(theEnv,&ProceduralPrimitiveData(theEnv)->ProcParamArray[i]);
          if (type == NULL)
            return false;
          for (j = 0 ; j < rp->tcnt ; j++)
@@ -375,7 +375,7 @@ bool CL_IsMethodApplicable(
 
 /***************************************************
   NAME         : CL_NextMethodP
-  DESCRIPTION  : DeteCL_rmines if a shadowed generic
+  DESCRIPTION  : Dete_rmines if a shadowed generic
                    function method is available for
                    execution
   INPUTS       : None
@@ -443,7 +443,7 @@ void CL_CallNextMethod(
       DefgenericData(theEnv)->CurrentMethod = oldMethod;
       CL_PrintErrorID(theEnv,"GENRCEXE",2,false);
       CL_WriteString(theEnv,STDERR,"Shadowed methods not applicable in current context.\n");
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return;
      }
 
@@ -464,7 +464,7 @@ void CL_CallNextMethod(
    else
      {
 #if PROFILING_FUNCTIONS
-      StartCL_Profile(theEnv,&profileFrame,
+      Start_Profile(theEnv,&profileFrame,
                    &DefgenericData(theEnv)->CurrentGeneric->header.usrData,
                    CL_ProfileFunctionData(theEnv)->CL_ProfileConstructs);
 #endif
@@ -474,7 +474,7 @@ void CL_CallNextMethod(
                          returnValue,CL_UnboundMethodErr);
 
 #if PROFILING_FUNCTIONS
-      CL_EndCL_Profile(theEnv,&profileFrame);
+      CL_End_Profile(theEnv,&profileFrame);
 #endif
      }
 
@@ -547,7 +547,7 @@ void CL_OverrideNextMethod(
      {
       CL_PrintErrorID(theEnv,"GENRCEXE",2,false);
       CL_WriteString(theEnv,STDERR,"Shadowed methods not applicable in current context.\n");
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return;
      }
    CL_GenericDispatch(theEnv,DefgenericData(theEnv)->CurrentGeneric,DefgenericData(theEnv)->CurrentMethod,NULL,
@@ -558,7 +558,7 @@ void CL_OverrideNextMethod(
   NAME         : CL_GetGenericCurrentArgument
   DESCRIPTION  : Returns the value of the generic function
                    argument being tested in the method
-                   applicability deteCL_rmination process
+                   applicability dete_rmination process
   INPUTS       : A data-object buffer
   RETURNS      : Nothing useful
   SIDE EFFECTS : Data-object set
@@ -643,7 +643,7 @@ static void CL_WatchGeneric(
    CL_WriteString(theEnv,STDOUT,DefgenericData(theEnv)->CurrentGeneric->header.name->contents);
    CL_WriteString(theEnv,STDOUT," ");
    CL_WriteString(theEnv,STDOUT," ED:");
-   CL_WriteInteger(theEnv,STDOUT,CL_EvaluationData(theEnv)->CurrentCL_EvaluationDepth);
+   CL_WriteInteger(theEnv,STDOUT,CL_EvaluationData(theEnv)->Current_EvaluationDepth);
    CL_PrintProcParamArray(theEnv,STDOUT);
   }
 
@@ -682,7 +682,7 @@ static void CL_WatchMethod(
    CL_PrintUnsignedInteger(theEnv,STDOUT,DefgenericData(theEnv)->CurrentMethod->index);
    CL_WriteString(theEnv,STDOUT," ");
    CL_WriteString(theEnv,STDOUT," ED:");
-   CL_WriteInteger(theEnv,STDOUT,CL_EvaluationData(theEnv)->CurrentCL_EvaluationDepth);
+   CL_WriteInteger(theEnv,STDOUT,CL_EvaluationData(theEnv)->Current_EvaluationDepth);
    CL_PrintProcParamArray(theEnv,STDOUT);
   }
 
@@ -691,7 +691,7 @@ static void CL_WatchMethod(
 #if OBJECT_SYSTEM
 
 /***************************************************
-  NAME         : DeteCL_rmineRestrictionClass
+  NAME         : Dete_rmineRestrictionClass
   DESCRIPTION  : Finds the class of an argument in
                    the ProcParamArray
   INPUTS       : The argument data object
@@ -699,7 +699,7 @@ static void CL_WatchMethod(
   SIDE EFFECTS : CL_EvaluationError set on errors
   NOTES        : None
  ***************************************************/
-static Defclass *DeteCL_rmineRestrictionClass(
+static Defclass *Dete_rmineRestrictionClass(
   Environment *theEnv,
   UDFValue *dobj)
   {
@@ -720,9 +720,9 @@ static Defclass *DeteCL_rmineRestrictionClass(
      return(DefclassData(theEnv)->PrimitiveClassMap[dobj->header->type]);
    if (cls == NULL)
      {
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       CL_PrintErrorID(theEnv,"GENRCEXE",3,false);
-      CL_WriteString(theEnv,STDERR,"Unable to deteCL_rmine class of ");
+      CL_WriteString(theEnv,STDERR,"Unable to dete_rmine class of ");
       CL_WriteUDFValue(theEnv,STDERR,dobj);
       CL_WriteString(theEnv,STDERR," in generic function '");
       CL_WriteString(theEnv,STDERR,CL_DefgenericName(DefgenericData(theEnv)->CurrentGeneric));

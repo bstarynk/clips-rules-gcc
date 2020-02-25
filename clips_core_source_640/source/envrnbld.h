@@ -31,7 +31,7 @@
 #include "extnfunc.h"
 
    Environment                   *CL_CreateEnvironment(void);
-   Environment                   *CL_CreateCL_RuntimeEnvironment(CLIPSLexeme **,CLIPSFloat **,
+   Environment                   *CL_Create_RuntimeEnvironment(CLIPSLexeme **,CLIPSFloat **,
                                                            CLIPSInteger **,CLIPSBitMap **,
                                                            struct functionDefinition *);
    bool                           CL_DestroyEnvironment(Environment *);

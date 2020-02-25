@@ -43,8 +43,8 @@
 /*            imported modules are search when locating a    */
 /*            named construct.                               */
 /*                                                           */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*      6.40: Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -100,7 +100,7 @@
    static void                   *AllocateModule(Environment *);
    static void                    ReturnModule(Environment *,void *);
    static void                    ReturnDefglobal(Environment *,Defglobal *);
-   static void                    InitializeCL_DefglobalModules(Environment *);
+   static void                    Initialize_DefglobalModules(Environment *);
    static bool                    EntityGetDefglobalValue(Environment *,void *,UDFValue *);
    static void                    IncrementDefglobalBusyCount(Environment *,Defglobal *);
    static void                    DecrementDefglobalBusyCount(Environment *,Defglobal *);
@@ -123,13 +123,13 @@ void CL_InitializeDefglobals(
                                                        NULL,
                                                        NULL,
                                                        NULL,
-                                                       (EntityCL_EvaluationFunction *)  EntityGetDefglobalValue,
+                                                       (Entity_EvaluationFunction *)  EntityGetDefglobalValue,
                                                        NULL,NULL,
                                                        NULL,NULL,NULL,NULL,NULL,NULL };
 
    struct entityRecord defglobalPtrRecord = { "DEFGLOBAL_PTR", DEFGLOBAL_PTR,0,0,0,
                                                        NULL,NULL,NULL,
-                                                       (EntityCL_EvaluationFunction *) CL_QGetDefglobalUDFValue,
+                                                       (Entity_EvaluationFunction *) CL_QGetDefglobalUDFValue,
                                                        NULL,
                                                        (EntityBusyCountFunction *) DecrementDefglobalBusyCount,
                                                        (EntityBusyCountFunction *) IncrementDefglobalBusyCount,
@@ -147,7 +147,7 @@ void CL_InitializeDefglobals(
    CL_InstallPrimitive(theEnv,&DefglobalData(theEnv)->GlobalInfo,MF_GBL_VARIABLE);
    CL_InstallPrimitive(theEnv,&DefglobalData(theEnv)->DefglobalPtrRecord,DEFGLOBAL_PTR);
 
-   InitializeCL_DefglobalModules(theEnv);
+   Initialize_DefglobalModules(theEnv);
 
    CL_DefglobalBasicCommands(theEnv);
    CL_DefglobalCommandDefinitions(theEnv);
@@ -155,7 +155,7 @@ void CL_InitializeDefglobals(
    DefglobalData(theEnv)->DefglobalConstruct =
       CL_AddConstruct(theEnv,"defglobal","defglobals",CL_ParseDefglobal,
                    (CL_FindConstructFunction *) CL_FindDefglobal,
-                   CL_GetConstructNamePointer,CL_GetConstructPPFoCL_rm,
+                   CL_GetConstructNamePointer,CL_GetConstructPPFo_rm,
                    CL_GetConstructModuleItem,
                    (GetNextConstructFunction *) CL_GetNextDefglobal,
                    CL_SetNextConstruct,
@@ -222,17 +222,17 @@ static void DestroyDefglobalAction(
   }
 
 /*********************************************************/
-/* InitializeCL_DefglobalModules: Initializes the defglobal */
+/* Initialize_DefglobalModules: Initializes the defglobal */
 /*   construct for use with the defmodule construct.     */
 /*********************************************************/
-static void InitializeCL_DefglobalModules(
+static void Initialize_DefglobalModules(
   Environment *theEnv)
   {
    DefglobalData(theEnv)->CL_DefglobalModuleIndex = CL_RegisterModuleItem(theEnv,"defglobal",
                                     AllocateModule,
                                     ReturnModule,
 #if BLOAD_AND_BSAVE || BLOAD || BLOAD_ONLY
-                                    CL_BloadCL_DefglobalModuleReference,
+                                    CL_Bload_DefglobalModuleReference,
 #else
                                     NULL,
 #endif
@@ -269,10 +269,10 @@ static void ReturnModule(
   }
 
 /**************************************************************/
-/* GetCL_DefglobalModuleItem: Returns a pointer to the defmodule */
+/* Get_DefglobalModuleItem: Returns a pointer to the defmodule */
 /*  item for the specified defglobal or defmodule.            */
 /**************************************************************/
-struct defglobalModule *GetCL_DefglobalModuleItem(
+struct defglobalModule *Get_DefglobalModuleItem(
   Environment *theEnv,
   Defmodule *theModule)
   {
@@ -507,11 +507,11 @@ void CL_QSetDefglobalValue(
   }
 
 /**************************************************************/
-/* QCL_FindDefglobal: Searches for a defglobal in the list of    */
+/* Q_FindDefglobal: Searches for a defglobal in the list of    */
 /*   defglobals. Returns a pointer to the defglobal if found, */
 /*   otherwise NULL.                                          */
 /**************************************************************/
-Defglobal *QCL_FindDefglobal(
+Defglobal *Q_FindDefglobal(
   Environment *theEnv,
   CLIPSLexeme *defglobalName)
   {
@@ -526,23 +526,23 @@ Defglobal *QCL_FindDefglobal(
   }
 
 /*******************************************************************/
-/* CL_DefglobalValueFoCL_rm: Returns the pretty print representation of  */
+/* CL_DefglobalValueFo_rm: Returns the pretty print representation of  */
 /*   the current value of the specified defglobal. For example, if */
 /*   the current value of ?*x* is 5, the string "?*x* = 5" would   */
 /*   be returned.                                                  */
 /*******************************************************************/
-void CL_DefglobalValueFoCL_rm(
+void CL_DefglobalValueFo_rm(
   Defglobal *theGlobal,
-  StringCL_Builder *theSB)
+  String_Builder *theSB)
   {
    Environment *theEnv = theGlobal->header.env;
 
-   OpenStringCL_BuilderDestination(theEnv,"GlobalValueFoCL_rm",theSB);
-   CL_WriteString(theEnv,"GlobalValueFoCL_rm","?*");
-   CL_WriteString(theEnv,"GlobalValueFoCL_rm",theGlobal->header.name->contents);
-   CL_WriteString(theEnv,"GlobalValueFoCL_rm","* = ");
-   CL_WriteCLIPSValue(theEnv,"GlobalValueFoCL_rm",&theGlobal->current);
-   CloseStringCL_BuilderDestination(theEnv,"GlobalValueFoCL_rm");
+   OpenString_BuilderDestination(theEnv,"GlobalValueFo_rm",theSB);
+   CL_WriteString(theEnv,"GlobalValueFo_rm","?*");
+   CL_WriteString(theEnv,"GlobalValueFo_rm",theGlobal->header.name->contents);
+   CL_WriteString(theEnv,"GlobalValueFo_rm","* = ");
+   CL_WriteCLIPSValue(theEnv,"GlobalValueFo_rm",&theGlobal->current);
+   CloseString_BuilderDestination(theEnv,"GlobalValueFo_rm");
   }
 
 /*********************************************************/
@@ -596,7 +596,7 @@ static bool EntityGetDefglobalValue(
       CL_WriteString(theEnv,STDERR,((CLIPSLexeme *) theValue)->contents);
       CL_WriteString(theEnv,STDERR,"* is unbound.\n");
       vPtr->value = FalseSymbol(theEnv);
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return false;
      }
 
@@ -610,7 +610,7 @@ static bool EntityGetDefglobalValue(
      {
       CL_AmbiguousReferenceErrorMessage(theEnv,"defglobal",((CLIPSLexeme *) theValue)->contents);
       vPtr->value = FalseSymbol(theEnv);
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return false;
      }
 
@@ -741,15 +741,15 @@ void CL_DefglobalSetString(
   }
 
 /*****************************/
-/* CL_DefglobalSetCL_InstanceName: */
+/* CL_DefglobalSet_InstanceName: */
 /*****************************/
-void CL_DefglobalSetCL_InstanceName(
+void CL_DefglobalSet_InstanceName(
   Defglobal *theDefglobal,
   const char *value)
   {
    CLIPSValue cv;
    
-   cv.lexemeValue = CL_CreateCL_InstanceName(theDefglobal->header.env,value);
+   cv.lexemeValue = CL_Create_InstanceName(theDefglobal->header.env,value);
    
    CL_DefglobalSetValue(theDefglobal,&cv);
   }
@@ -1032,9 +1032,9 @@ static void CL_RuntimeDefglobalAction(
   }
 
 /*******************************/
-/* DefglobalCL_RunTimeInitialize: */
+/* Defglobal_RunTimeInitialize: */
 /*******************************/
-void DefglobalCL_RunTimeInitialize(
+void Defglobal_RunTimeInitialize(
   Environment *theEnv)
   {
    CL_DoForAllConstructs(theEnv,CL_RuntimeDefglobalAction,DefglobalData(theEnv)->CL_DefglobalModuleIndex,true,NULL);
@@ -1058,10 +1058,10 @@ const char *CL_DefglobalName(
    return CL_GetConstructNameString(&theDefglobal->header);
   }
 
-const char *CL_DefglobalPPFoCL_rm(
+const char *CL_DefglobalPPFo_rm(
   Defglobal *theDefglobal)
   {
-   return CL_GetConstructPPFoCL_rm(&theDefglobal->header);
+   return CL_GetConstructPPFo_rm(&theDefglobal->header);
   }
 
 #endif /* DEFGLOBAL_CONSTRUCT */

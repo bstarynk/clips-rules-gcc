@@ -1057,7 +1057,7 @@ static void GetObjectValueGeneral(
      }
    if (matchVar->whichSlot == ISA_ID)
      {
-      returnValue->value = GetCL_DefclassNamePointer(theInstance->cls);
+      returnValue->value = Get_DefclassNamePointer(theInstance->cls);
       return;
      }
    if (matchVar->whichSlot == NAME_ID)
@@ -1202,7 +1202,7 @@ static void GetObjectValueSimple(
 
 /****************************************************
   NAME         : CalculateSlotField
-  DESCRIPTION  : DeteCL_rmines the actual index into the
+  DESCRIPTION  : Dete_rmines the actual index into the
                  an object slot for a given pattern
                  variable
   INPUTS       : 1) The list of markers to examine

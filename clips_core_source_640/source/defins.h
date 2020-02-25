@@ -98,14 +98,14 @@ struct definstancesData
    Definstances                  *CL_FindDefinstancesInModule(Environment *,const char *);
    void                           CL_GetDefinstancesList(Environment *,CLIPSValue *,Defmodule *);
    const char                    *CL_DefinstancesName(Definstances *);
-   CLIPSLexeme                   *GetCL_DefinstancesNamePointer(Environment *,Definstances *);
-   const char                    *CL_DefinstancesPPFoCL_rm(Definstances *);
+   CLIPSLexeme                   *Get_DefinstancesNamePointer(Environment *,Definstances *);
+   const char                    *CL_DefinstancesPPFo_rm(Definstances *);
    Definstances                  *CL_GetNextDefinstances(Environment *,Definstances *);
    bool                           CL_DefinstancesIsDeletable(Definstances *);
-   void                           SetCL_DefinstancesPPFoCL_rm(Environment *,Definstances *,const char *);
+   void                           SetCL_DefinstancesPPFo_rm(Environment *,Definstances *,const char *);
    bool                           CL_Undefinstances(Definstances *,Environment *);
    void                           CL_GetDefinstancesListFunction(Environment *,UDFContext *,UDFValue *);
-   void                           GetCL_DefinstancesModuleCommand(Environment *,UDFContext *,UDFValue *);
+   void                           Get_DefinstancesModuleCommand(Environment *,UDFContext *,UDFValue *);
    void                           CL_SetupDefinstances(Environment *);
    void                           CL_UndefinstancesCommand(Environment *,UDFContext *,UDFValue *);
 #if DEBUGGING_FUNCTIONS
@@ -115,7 +115,7 @@ struct definstancesData
 #endif
 
 #if RUN_TIME
-   void                           DefinstancesCL_RunTimeInitialize(Environment *);
+   void                           Definstances_RunTimeInitialize(Environment *);
 #endif
 
 #endif /* DEFINSTANCES_CONSTRUCT */

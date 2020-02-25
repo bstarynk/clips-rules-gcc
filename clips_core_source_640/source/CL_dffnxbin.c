@@ -61,7 +61,7 @@
                MACROS AND TYPES
    =========================================
    ***************************************** */
-typedef struct bsaveCL_DeffunctionModule
+typedef struct bsave_DeffunctionModule
   {
    struct bsaveDefmoduleItemHeader header;
   } BSAVE_DEFFUNCTION_MODULE;
@@ -92,10 +92,10 @@ typedef struct bsaveDeffunctionStruct
 
    static void                    CL_BloadStorageDeffunctions(Environment *);
    static void                    CL_BloadDeffunctions(Environment *);
-   static void                    UpdateCL_DeffunctionModule(Environment *,void *,unsigned long);
+   static void                    Update_DeffunctionModule(Environment *,void *,unsigned long);
    static void                    UpdateDeffunction(Environment *,void *,unsigned long);
-   static void                    CL_ClearDeffunctionCL_Bload(Environment *);
-   static void                    DeallocateDeffunctionCL_BloadData(Environment *);
+   static void                    CL_ClearDeffunction_Bload(Environment *);
+   static void                    DeallocateDeffunction_BloadData(Environment *);
 
 /* =========================================
    *****************************************
@@ -104,7 +104,7 @@ typedef struct bsaveDeffunctionStruct
    ***************************************** */
 
 /***********************************************************
-  NAME         : CL_SetupDeffunctionsCL_Bload
+  NAME         : CL_SetupDeffunctions_Bload
   DESCRIPTION  : Initializes data structures and
                    routines for binary loads of deffunctions
   INPUTS       : None
@@ -112,27 +112,27 @@ typedef struct bsaveDeffunctionStruct
   SIDE EFFECTS : Routines defined and structures initialized
   NOTES        : None
  ***********************************************************/
-void CL_SetupDeffunctionsCL_Bload(
+void CL_SetupDeffunctions_Bload(
   Environment *theEnv)
   {
-   CL_AllocateEnvironmentData(theEnv,DFFNXBIN_DATA,sizeof(struct deffunctionBinaryData),DeallocateDeffunctionCL_BloadData);
+   CL_AllocateEnvironmentData(theEnv,DFFNXBIN_DATA,sizeof(struct deffunctionBinaryData),DeallocateDeffunction_BloadData);
 #if BLOAD_AND_BSAVE
    CL_AddBinaryItem(theEnv,"deffunctions",0,CL_BsaveDeffunctionFind,CL_BsaveDeffunctionExpressions,
                              CL_BsaveStorageDeffunctions,CL_BsaveDeffunctions,
                              CL_BloadStorageDeffunctions,CL_BloadDeffunctions,
-                             CL_ClearDeffunctionCL_Bload);
+                             CL_ClearDeffunction_Bload);
 #else
    CL_AddBinaryItem(theEnv,"deffunctions",0,NULL,NULL,NULL,NULL,
                              CL_BloadStorageDeffunctions,CL_BloadDeffunctions,
-                             CL_ClearDeffunctionCL_Bload);
+                             CL_ClearDeffunction_Bload);
 #endif
   }
 
 /***********************************************************/
-/* DeallocateDeffunctionCL_BloadData: Deallocates environment */
+/* DeallocateDeffunction_BloadData: Deallocates environment */
 /*    data for the deffunction bsave functionality.        */
 /***********************************************************/
-static void DeallocateDeffunctionCL_BloadData(
+static void DeallocateDeffunction_BloadData(
   Environment *theEnv)
   {
    size_t space;
@@ -147,7 +147,7 @@ static void DeallocateDeffunctionCL_BloadData(
   }
 
 /***************************************************
-  NAME         : CL_BloadCL_DeffunctionModuleReference
+  NAME         : CL_Bload_DeffunctionModuleReference
   DESCRIPTION  : Returns a pointer to the
                  appropriate deffunction module
   INPUTS       : The index of the module
@@ -155,7 +155,7 @@ static void DeallocateDeffunctionCL_BloadData(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-void *CL_BloadCL_DeffunctionModuleReference(
+void *CL_Bload_DeffunctionModuleReference(
   Environment *theEnv,
   unsigned long theIndex)
   {
@@ -188,8 +188,8 @@ void *CL_BloadCL_DeffunctionModuleReference(
 static void CL_BsaveDeffunctionFind(
   Environment *theEnv)
   {
-   CL_SaveCL_BloadCount(theEnv,DeffunctionBinaryData(theEnv)->ModuleCount);
-   CL_SaveCL_BloadCount(theEnv,DeffunctionBinaryData(theEnv)->DeffunctionCount);
+   CL_Save_BloadCount(theEnv,DeffunctionBinaryData(theEnv)->ModuleCount);
+   CL_Save_BloadCount(theEnv,DeffunctionBinaryData(theEnv)->DeffunctionCount);
    DeffunctionBinaryData(theEnv)->DeffunctionCount = 0L;
 
    DeffunctionBinaryData(theEnv)->ModuleCount = CL_GetNumberOfDefmodules(theEnv);
@@ -275,14 +275,14 @@ static void CL_BsaveStorageDeffunctions(
    size_t space;
 
    space = sizeof(unsigned long) * 2;
-   CL_GenCL_Write(&space,sizeof(size_t),fp);
-   CL_GenCL_Write(&DeffunctionBinaryData(theEnv)->ModuleCount,sizeof(unsigned long),fp);
-   CL_GenCL_Write(&DeffunctionBinaryData(theEnv)->DeffunctionCount,sizeof(unsigned long),fp);
+   CL_Gen_Write(&space,sizeof(size_t),fp);
+   CL_Gen_Write(&DeffunctionBinaryData(theEnv)->ModuleCount,sizeof(unsigned long),fp);
+   CL_Gen_Write(&DeffunctionBinaryData(theEnv)->DeffunctionCount,sizeof(unsigned long),fp);
   }
 
 /*************************************************************************************
   NAME         : CL_BsaveDeffunctions
-  DESCRIPTION  : CL_Writes out deffunction in binary foCL_rmat
+  DESCRIPTION  : CL_Writes out deffunction in binary fo_rmat
                  Space required (unsigned long)
                  All deffunctions (sizeof(Deffunction) * Number of deffunctions)
   INPUTS       : File pointer of binary file
@@ -301,7 +301,7 @@ static void CL_BsaveDeffunctions(
 
    space = ((sizeof(BSAVE_DEFFUNCTION_MODULE) * DeffunctionBinaryData(theEnv)->ModuleCount) +
             (sizeof(BSAVE_DEFFUNCTION) * DeffunctionBinaryData(theEnv)->DeffunctionCount));
-   CL_GenCL_Write(&space,sizeof(size_t),fp);
+   CL_Gen_Write(&space,sizeof(size_t),fp);
 
    /* =================================
       CL_Write out each deffunction module
@@ -312,8 +312,8 @@ static void CL_BsaveDeffunctions(
      {
       theModuleItem = (CL_DeffunctionModuleData *)
                       CL_GetModuleItem(theEnv,theModule,CL_FindModuleItem(theEnv,"deffunction")->moduleIndex);
-      CL_AssignCL_BsaveDefmdlItemHdrVals(&dummy_mitem.header,&theModuleItem->header);
-      CL_GenCL_Write(&dummy_mitem,sizeof(BSAVE_DEFFUNCTION_MODULE),fp);
+      CL_Assign_BsaveDefmdlItemHdrVals(&dummy_mitem.header,&theModuleItem->header);
+      CL_Gen_Write(&dummy_mitem,sizeof(BSAVE_DEFFUNCTION_MODULE),fp);
       theModule = CL_GetNextDefmodule(theEnv,theModule);
      }
 
@@ -323,8 +323,8 @@ static void CL_BsaveDeffunctions(
    CL_DoForAllConstructs(theEnv,CL_BsaveDeffunction,DeffunctionData(theEnv)->CL_DeffunctionModuleIndex,
                       false,fp);
 
-   RestoreCL_BloadCount(theEnv,&DeffunctionBinaryData(theEnv)->ModuleCount);
-   RestoreCL_BloadCount(theEnv,&DeffunctionBinaryData(theEnv)->DeffunctionCount);
+   Restore_BloadCount(theEnv,&DeffunctionBinaryData(theEnv)->ModuleCount);
+   Restore_BloadCount(theEnv,&DeffunctionBinaryData(theEnv)->DeffunctionCount);
   }
 
 /***************************************************
@@ -344,7 +344,7 @@ static void CL_BsaveDeffunction(
    Deffunction *dptr = (Deffunction *) theDeffunction;
    BSAVE_DEFFUNCTION dummy_df;
 
-   CL_AssignCL_BsaveConstructHeaderVals(&dummy_df.header,&dptr->header);
+   CL_Assign_BsaveConstructHeaderVals(&dummy_df.header,&dptr->header);
    dummy_df.minNumberOfParameters = dptr->minNumberOfParameters;
    dummy_df.maxNumberOfParameters = dptr->maxNumberOfParameters;
    dummy_df.numberOfLocalVars = dptr->numberOfLocalVars;
@@ -355,7 +355,7 @@ static void CL_BsaveDeffunction(
      }
    else
      dummy_df.code = ULONG_MAX;
-   CL_GenCL_Write(&dummy_df,sizeof(BSAVE_DEFFUNCTION),(FILE *) userBuffer);
+   CL_Gen_Write(&dummy_df,sizeof(BSAVE_DEFFUNCTION),(FILE *) userBuffer);
   }
 
 #endif
@@ -402,7 +402,7 @@ static void CL_BloadStorageDeffunctions(
 
 /*********************************************************************
   NAME         : CL_BloadDeffunctions
-  DESCRIPTION  : This routine reads deffunction infoCL_rmation from
+  DESCRIPTION  : This routine reads deffunction info_rmation from
                    a binary file
                  This routine moves through the deffunction
                    binary array updating pointers
@@ -417,15 +417,15 @@ static void CL_BloadDeffunctions(
    size_t space;
 
    CL_GenReadBinary(theEnv,&space,sizeof(size_t));
-   CL_BloadandCL_Refresh(theEnv,DeffunctionBinaryData(theEnv)->ModuleCount,sizeof(BSAVE_DEFFUNCTION_MODULE),UpdateCL_DeffunctionModule);
-   CL_BloadandCL_Refresh(theEnv,DeffunctionBinaryData(theEnv)->DeffunctionCount,sizeof(BSAVE_DEFFUNCTION),UpdateDeffunction);
+   CL_Bloadand_Refresh(theEnv,DeffunctionBinaryData(theEnv)->ModuleCount,sizeof(BSAVE_DEFFUNCTION_MODULE),Update_DeffunctionModule);
+   CL_Bloadand_Refresh(theEnv,DeffunctionBinaryData(theEnv)->DeffunctionCount,sizeof(BSAVE_DEFFUNCTION),UpdateDeffunction);
   }
 
 /*******************************************************
-  NAME         : UpdateCL_DeffunctionModule
+  NAME         : Update_DeffunctionModule
   DESCRIPTION  : Updates deffunction module with binary
                  load data - sets pointers from
-                 offset infoCL_rmation
+                 offset info_rmation
   INPUTS       : 1) A pointer to the bloaded data
                  2) The index of the binary array
                     element to update
@@ -433,7 +433,7 @@ static void CL_BloadDeffunctions(
   SIDE EFFECTS : Deffunction moudle pointers updated
   NOTES        : None
  *******************************************************/
-static void UpdateCL_DeffunctionModule(
+static void Update_DeffunctionModule(
   Environment *theEnv,
   void *buf,
   unsigned long obji)
@@ -449,7 +449,7 @@ static void UpdateCL_DeffunctionModule(
   NAME         : UpdateDeffunction
   DESCRIPTION  : Updates deffunction with binary
                  load data - sets pointers from
-                 offset infoCL_rmation
+                 offset info_rmation
   INPUTS       : 1) A pointer to the bloaded data
                  2) The index of the binary array
                     element to update
@@ -484,7 +484,7 @@ static void UpdateDeffunction(
   }
 
 /***************************************************************
-  NAME         : CL_ClearDeffunctionCL_Bload
+  NAME         : CL_ClearDeffunction_Bload
   DESCRIPTION  : CL_Release all binary-loaded deffunction
                    structure arrays
                  CL_Resets deffunction list to NULL
@@ -493,7 +493,7 @@ static void UpdateDeffunction(
   SIDE EFFECTS : Memory cleared
   NOTES        : Deffunction name symbol counts decremented
  ***************************************************************/
-static void CL_ClearDeffunctionCL_Bload(
+static void CL_ClearDeffunction_Bload(
   Environment *theEnv)
   {
    unsigned long i;

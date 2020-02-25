@@ -45,8 +45,8 @@
 /*      6.31: Bug fix to prevent rule activations for        */
 /*            partial matches being deleted.                 */
 /*                                                           */
-/*      6.40: Added Env prefix to CL_GetCL_HaltExecution and       */
-/*            SetCL_HaltExecution functions.                    */
+/*      6.40: Added Env prefix to CL_Get_HaltExecution and       */
+/*            Set_HaltExecution functions.                    */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -119,7 +119,7 @@ void CL_PrintPartialMatch(
           (get_nth_pm_match(list,i)->matchingItem != NULL))
         {
          matchingItem = get_nth_pm_match(list,i)->matchingItem;
-         (*matchingItem->theInfo->base.shortCL_PrintFunction)(theEnv,logicalName,matchingItem);
+         (*matchingItem->theInfo->base.short_PrintFunction)(theEnv,logicalName,matchingItem);
         }
       else
         { CL_WriteString(theEnv,logicalName,"*"); }
@@ -582,17 +582,17 @@ static void UnlinkBetaPartialMatchfromAlphaAndBetaLineage(
   }
 
 /********************************************************/
-/* MergePartialCL_Matches: Merges two partial matches. The */
+/* MergePartial_Matches: Merges two partial matches. The */
 /*   second match should either be NULL (indicating a   */
 /*   negated CE) or contain a single match.             */
 /********************************************************/
-struct partialMatch *MergePartialCL_Matches(
+struct partialMatch *MergePartial_Matches(
   Environment *theEnv,
   struct partialMatch *lhsBind,
   struct partialMatch *rhsBind)
   {
    struct partialMatch *linker;
-   static struct partialMatch mergeTemplate = { 1 }; /* betaMemory is true, reCL_mainder are 0 or NULL */
+   static struct partialMatch mergeTemplate = { 1 }; /* betaMemory is true, re_mainder are 0 or NULL */
 
    /*=================================*/
    /* Allocate the new partial match. */
@@ -799,9 +799,9 @@ struct multifieldMarker *CL_CopyMultifieldMarkers(
 /***************************************************************/
 /* CL_FlushAlphaBetaMemory: Returns all partial matches in a list */
 /*   of partial matches either directly to the pool of free    */
-/*   memory or to the list of GarbagePartialCL_Matches. Partial   */
+/*   memory or to the list of GarbagePartial_Matches. Partial   */
 /*   matches stored in alpha memories must be placed on the    */
-/*   list of GarbagePartialCL_Matches.                            */
+/*   list of GarbagePartial_Matches.                            */
 /***************************************************************/
 void CL_FlushAlphaBetaMemory(
   Environment *theEnv,
@@ -1126,7 +1126,7 @@ void CL_ReturnRightMemory(
 /****************************************************************/
 /* CL_DestroyBetaMemory: Destroys the contents of a beta memory in */
 /*   preperation for the deallocation of a join. Destroying is  */
-/*   perfoCL_rmed when the environment is being deallocated and it */
+/*   perfo_rmed when the environment is being deallocated and it */
 /*   is not necessary to leave the environment in a consistent  */
 /*   state (as it would be if just a single rule were being     */
 /*   deleted).                                                  */
@@ -1157,9 +1157,9 @@ void CL_DestroyBetaMemory(
 /*************************************************************/
 /* CL_FlushBetaMemory: Flushes the contents of a beta memory in */
 /*   preperation for the deallocation of a join. Flushing    */
-/*   is perfoCL_rmed when the partial matches in the beta       */
+/*   is perfo_rmed when the partial matches in the beta       */
 /*   memory may still be in use because the environment will */
-/*   reCL_main active.                                          */
+/*   re_main active.                                          */
 /*************************************************************/
 void CL_FlushBetaMemory(
   Environment *theEnv,
@@ -1206,10 +1206,10 @@ bool CL_BetaMemoryNotEmpty(
   }
 
 /*********************************************/
-/* RemoveAlphaMemoryCL_Matches: Removes matches */
+/* RemoveAlphaMemory_Matches: Removes matches */
 /*   from an alpha memory.                   */
 /*********************************************/
-void RemoveAlphaMemoryCL_Matches(
+void RemoveAlphaMemory_Matches(
   Environment *theEnv,
   struct patternNodeHeader *theHeader,
   struct partialMatch *theMatch,
@@ -1238,8 +1238,8 @@ void RemoveAlphaMemoryCL_Matches(
    /* Add the match to the garbage list. */
    /*====================================*/
 
-   theMatch->nextInMemory = EngineData(theEnv)->GarbagePartialCL_Matches;
-   EngineData(theEnv)->GarbagePartialCL_Matches = theMatch;
+   theMatch->nextInMemory = EngineData(theEnv)->GarbagePartial_Matches;
+   EngineData(theEnv)->GarbagePartial_Matches = theMatch;
 
    if ((theAlphaMemory != NULL) && (theAlphaMemory->alphaMemory == NULL))
      { UnlinkAlphaMemory(theEnv,theHeader,theAlphaMemory); }
@@ -1555,24 +1555,24 @@ unsigned long CL_PrintBetaMemory(
   const char *indentString,
   int output)
   {
-   struct partialMatch *listOfCL_Matches;
+   struct partialMatch *listOf_Matches;
    unsigned long b, count = 0;
 
-   if (CL_GetCL_HaltExecution(theEnv) == true)
+   if (CL_Get_HaltExecution(theEnv) == true)
      { return count; }
 
    for (b = 0; b < theMemory->size; b++)
      {
-      listOfCL_Matches = theMemory->beta[b];
+      listOf_Matches = theMemory->beta[b];
 
-      while (listOfCL_Matches != NULL)
+      while (listOf_Matches != NULL)
         {
          /*=========================================*/
          /* Check to see if the user is attempting  */
          /* to stop the display of partial matches. */
          /*=========================================*/
 
-         if (CL_GetCL_HaltExecution(theEnv) == true)
+         if (CL_Get_HaltExecution(theEnv) == true)
            { return count; }
 
          /*=========================================================*/
@@ -1595,7 +1595,7 @@ unsigned long CL_PrintBetaMemory(
 
          if (output == VERBOSE)
            {
-            CL_PrintPartialMatch(theEnv,logName,listOfCL_Matches);
+            CL_PrintPartialMatch(theEnv,logName,listOf_Matches);
             CL_WriteString(theEnv,logName,"\n");
            }
 
@@ -1605,7 +1605,7 @@ unsigned long CL_PrintBetaMemory(
          /* Move on to the next match. */
          /*============================*/
 
-         listOfCL_Matches = listOfCL_Matches->nextInMemory;
+         listOf_Matches = listOf_Matches->nextInMemory;
         }
      }
 

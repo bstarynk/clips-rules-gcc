@@ -26,7 +26,7 @@
 /*                                                           */
 /*            Renamed BOOLEAN macro type to intBool.         */
 /*                                                           */
-/*      6.30: Added EnvCL_SlotDefaultP function.                */
+/*      6.30: Added Env_SlotDefaultP function.                */
 /*                                                           */
 /*            Borland C (IBM_TBC) and Metrowerks CodeWarrior */
 /*            (MAC_MCW, IBM_MCW) are no longer supported.    */
@@ -67,13 +67,13 @@
 
    void                           CL_BrowseClassesCommand(Environment *,UDFContext *,UDFValue *);
    void                           CL_BrowseClasses(Defclass *,const char *);
-   void                           DescribeCL_ClassCommand(Environment *,UDFContext *,UDFValue *);
+   void                           Describe_ClassCommand(Environment *,UDFContext *,UDFValue *);
    void                           CL_DescribeClass(Defclass *,const char *);
 
 #endif /* DEBUGGING_FUNCTIONS */
 
    const char                    *CL_GetCreateAccessorString(SlotDescriptor *);
-   void                           GetCL_DefclassModuleCommand(Environment *,UDFContext *,UDFValue *);
+   void                           Get_DefclassModuleCommand(Environment *,UDFContext *,UDFValue *);
    void                           CL_SuperclassPCommand(Environment *,UDFContext *,UDFValue *);
    bool                           CL_SuperclassP(Defclass *,Defclass *);
    void                           CL_SubclassPCommand(Environment *,UDFContext *,UDFValue *);

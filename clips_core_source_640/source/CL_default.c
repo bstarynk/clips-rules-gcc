@@ -8,7 +8,7 @@
 
 /*************************************************************/
 /* Purpose: Provides functions for parsing the default       */
-/*   attribute and deteCL_rmining default values based on       */
+/*   attribute and dete_rmining default values based on       */
 /*   slot constraints.                                       */
 /*                                                           */
 /* Principal Programmer(s):                                  */
@@ -27,8 +27,8 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*      6.40: Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -105,7 +105,7 @@ void CL_DeriveDefaultFromConstraints(
      }
 
    /*=========================================*/
-   /* DeteCL_rmine the default's type and value. */
+   /* Dete_rmine the default's type and value. */
    /*=========================================*/
 
    if (constraints->anyAllowed || constraints->symbolsAllowed)
@@ -121,7 +121,7 @@ void CL_DeriveDefaultFromConstraints(
      { theValue = FindDefaultValue(theEnv,FLOAT_TYPE,constraints,CL_CreateFloat(theEnv,0.0)); }
 #if OBJECT_SYSTEM
    else if (constraints->instanceNamesAllowed)
-     { theValue = FindDefaultValue(theEnv,INSTANCE_NAME_TYPE,constraints,CL_CreateCL_InstanceName(theEnv,"nil")); }
+     { theValue = FindDefaultValue(theEnv,INSTANCE_NAME_TYPE,constraints,CL_Create_InstanceName(theEnv,"nil")); }
 
    else if (constraints->instanceAddressesAllowed)
      { theValue = &InstanceData(theEnv)->DummyInstance; }
@@ -321,7 +321,7 @@ struct expr *CL_ParseDefault(
             else CL_SyntaxErrorMessage(theEnv,"default attribute");
             CL_PPBackup(theEnv);
             CL_SavePPBuffer(theEnv," ");
-            CL_SavePPBuffer(theEnv,theToken.printFoCL_rm);
+            CL_SavePPBuffer(theEnv,theToken.printFo_rm);
             *error = true;
            }
 
@@ -415,7 +415,7 @@ struct expr *CL_ParseDefault(
 
    while (newItem != NULL)
      {
-      SetCL_EvaluationError(theEnv,false);
+      Set_EvaluationError(theEnv,false);
       if (CL_EvaluateExpression(theEnv,newItem,&theValue)) *error = true;
 
       if ((theValue.header->type == MULTIFIELD_TYPE) &&

@@ -103,12 +103,12 @@ struct printUtilityData
    void                           CL_AlreadyParsedErrorMessage(Environment *,const char *,const char *);
    void                           CL_LocalVariableErrorMessage(Environment *,const char *);
    void                           CL_DivideByZeroErrorMessage(Environment *,const char *);
-   void                           SalienceInfoCL_rmationError(Environment *,const char *,const char *);
+   void                           SalienceInfo_rmationError(Environment *,const char *,const char *);
    void                           CL_SalienceRangeError(Environment *,int,int);
    void                           CL_SalienceNonIntegerError(Environment *);
    void                           CL_CantFindItemInFunctionErrorMessage(Environment *,const char *,const char *,const char *,bool);
    void                           CL_SlotExistError(Environment *,const char *,const char *);
-   void                           CL_FactCL_RetractedErrorMessage(Environment *,Fact *);
+   void                           CL_Fact_RetractedErrorMessage(Environment *,Fact *);
    void                           CL_FactVarSlotErrorMessage1(Environment *,Fact *,const char *);
    void                           CL_FactVarSlotErrorMessage2(Environment *,Fact *,const char *);
    void                           CL_InvalidVarSlotErrorMessage(Environment *,const char *);

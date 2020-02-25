@@ -43,8 +43,8 @@
 /*            Matching instance sets containing deleted      */
 /*            instances are pruned.                          */
 /*                                                           */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*      6.40: Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -94,8 +94,8 @@
    static void                    PushQueryCore(Environment *);
    static void                    PopQueryCore(Environment *);
    static QUERY_CORE             *FindQueryCore(Environment *,long long);
-   static QUERY_CLASS            *DeteCL_rmineQueryClasses(Environment *,Expression *,const char *,unsigned *);
-   static QUERY_CLASS            *FoCL_rmChain(Environment *,const char *,Defclass *,UDFValue *);
+   static QUERY_CLASS            *Dete_rmineQueryClasses(Environment *,Expression *,const char *,unsigned *);
+   static QUERY_CLASS            *Fo_rmChain(Environment *,const char *,Defclass *,UDFValue *);
    static void                    DeleteQueryClasses(Environment *,QUERY_CLASS *);
    static bool                    TestForFirstInChain(Environment *,QUERY_CLASS *,unsigned);
    static bool                    TestForFirstInstanceInClass(Environment *,Defmodule *,int,Defclass *,QUERY_CLASS *,unsigned);
@@ -126,17 +126,17 @@ void CL_SetupQuery(
 
    CL_AddUDF(theEnv,"(query-instance-slot)","*",0,UNBOUNDED,NULL,CL_GetQueryInstanceSlot,"CL_GetQueryInstanceSlot",NULL);
 
-   CL_AddUDF(theEnv,"any-instancep","b",0,UNBOUNDED,NULL,CL_AnyCL_Instances,"CL_AnyCL_Instances",NULL);
+   CL_AddUDF(theEnv,"any-instancep","b",0,UNBOUNDED,NULL,CL_Any_Instances,"CL_Any_Instances",NULL);
 
-   CL_AddUDF(theEnv,"find-instance","m",0,UNBOUNDED,NULL,QueryCL_FindInstance,"QueryCL_FindInstance",NULL);
+   CL_AddUDF(theEnv,"find-instance","m",0,UNBOUNDED,NULL,Query_FindInstance,"Query_FindInstance",NULL);
 
-   CL_AddUDF(theEnv,"find-all-instances","m",0,UNBOUNDED,NULL,QueryFindAllCL_Instances,"QueryFindAllCL_Instances",NULL);
+   CL_AddUDF(theEnv,"find-all-instances","m",0,UNBOUNDED,NULL,QueryFindAll_Instances,"QueryFindAll_Instances",NULL);
 
    CL_AddUDF(theEnv,"do-for-instance","*",0,UNBOUNDED,NULL,CL_QueryDoForInstance,"CL_QueryDoForInstance",NULL);
 
-   CL_AddUDF(theEnv,"do-for-all-instances","*",0,UNBOUNDED,NULL,QueryDoForAllCL_Instances,"QueryDoForAllCL_Instances",NULL);
+   CL_AddUDF(theEnv,"do-for-all-instances","*",0,UNBOUNDED,NULL,QueryDoForAll_Instances,"QueryDoForAll_Instances",NULL);
 
-   CL_AddUDF(theEnv,"delayed-do-for-all-instances","*",0,UNBOUNDED,NULL,CL_DelayedQueryDoForAllCL_Instances,"CL_DelayedQueryDoForAllCL_Instances",NULL);
+   CL_AddUDF(theEnv,"delayed-do-for-all-instances","*",0,UNBOUNDED,NULL,CL_DelayedQueryDoForAll_Instances,"CL_DelayedQueryDoForAll_Instances",NULL);
 #endif
 
    CL_AddFunctionParser(theEnv,"any-instancep",CL_ParseQueryNoAction);
@@ -164,7 +164,7 @@ void CL_GetQueryInstance(
    QUERY_CORE *core;
 
    core = FindQueryCore(theEnv,GetFirstArgument()->integerValue->contents);
-   returnValue->value = CL_GetFullCL_InstanceName(theEnv,core->solns[GetFirstArgument()->nextArg->integerValue->contents]);
+   returnValue->value = CL_GetFull_InstanceName(theEnv,core->solns[GetFirstArgument()->nextArg->integerValue->contents]);
   }
 
 /***************************************************************************
@@ -201,7 +201,7 @@ void CL_GetQueryInstanceSlot(
    if (ins->garbage)
      {
       CL_InstanceVarSlotErrorMessage1(theEnv,ins,varSlot);
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return;
      }
    
@@ -209,14 +209,14 @@ void CL_GetQueryInstanceSlot(
    if (temp.header->type != SYMBOL_TYPE)
      {
       CL_InvalidVarSlotErrorMessage(theEnv,varSlot);
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return;
      }
    sp = CL_FindInstanceSlot(theEnv,ins,temp.lexemeValue);
    if (sp == NULL)
      {
       CL_InstanceVarSlotErrorMessage2(theEnv,ins,varSlot);
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return;
      }
    returnValue->value = sp->value;
@@ -231,7 +231,7 @@ void CL_GetQueryInstanceSlot(
    =============================================================================
    Following are the instance query functions :
 
-     any-instancep         : DeteCL_rmines if any instances satisfy the query
+     any-instancep         : Dete_rmines if any instances satisfy the query
      find-instance         : Finds first (set of) instance(s) which satisfies
                                the query and stores it in a multi-field
      find-all-instances    : Finds all (sets of) instances which satisfy the
@@ -241,14 +241,14 @@ void CL_GetQueryInstanceSlot(
      do-for-all-instances  : Executes an action for all instances which satisfy
                                the query as they are found
      delayed-do-for-all-instances : Same as above - except that the list of instances
-                               which satisfy the query is foCL_rmed before any
+                               which satisfy the query is fo_rmed before any
                                actions are executed
 
      Instance candidate search algorithm :
 
-     All peCL_rmutations of first restriction class instances with other
+     All pe_rmutations of first restriction class instances with other
        restriction class instances (Rightmost are varied first)
-     All peCL_rmutations of first restriction class's subclasses' instances with
+     All pe_rmutations of first restriction class's subclasses' instances with
        other restriction class instances.
      And  so on...
 
@@ -270,7 +270,7 @@ void CL_GetQueryInstanceSlot(
 
      (any-instancep ((?a a b) (?b c)) <query>)
 
-     The peCL_rmutations (?a ?b) would be examined in the following order :
+     The pe_rmutations (?a ?b) would be examined in the following order :
 
      (a1 c1),(a1 c2),(a2 c1),(a2 c2),(d1 c1),(d1 c2),(d2 c1),(d2 c2),
      (b1 c1),(b1 c2),(b2 c1),(b2 c2),(d1 c1),(d1 c2),(d2 c1),(d2 c2)
@@ -280,8 +280,8 @@ void CL_GetQueryInstanceSlot(
    ============================================================================= */
 
 /******************************************************************************
-  NAME         : CL_AnyCL_Instances
-  DESCRIPTION  : DeteCL_rmines if there any existing instances which satisfy
+  NAME         : CL_Any_Instances
+  DESCRIPTION  : Dete_rmines if there any existing instances which satisfy
                    the query
   INPUTS       : None
   RETURNS      : True if the query is satisfied, false otherwise
@@ -291,7 +291,7 @@ void CL_GetQueryInstanceSlot(
                    and how early the expression evaulates to true - if at all).
   NOTES        : H/L Syntax : See CL_ParseQueryNoAction()
  ******************************************************************************/
-void CL_AnyCL_Instances(
+void CL_Any_Instances(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -300,7 +300,7 @@ void CL_AnyCL_Instances(
    unsigned rcnt;
    bool testResult;
 
-   qclasses = DeteCL_rmineQueryClasses(theEnv,GetFirstArgument()->nextArg,
+   qclasses = Dete_rmineQueryClasses(theEnv,GetFirstArgument()->nextArg,
                                       "any-instancep",&rcnt);
    if (qclasses == NULL)
      {
@@ -323,7 +323,7 @@ void CL_AnyCL_Instances(
   }
 
 /******************************************************************************
-  NAME         : QueryCL_FindInstance
+  NAME         : Query_FindInstance
   DESCRIPTION  : Finds the first set of instances which satisfy the query and
                    stores their names in the user's multi-field variable
   INPUTS       : Caller's result buffer
@@ -334,7 +334,7 @@ void CL_AnyCL_Instances(
                    and how early the expression evaulates to true - if at all).
   NOTES        : H/L Syntax : See CL_ParseQueryNoAction()
  ******************************************************************************/
-void QueryCL_FindInstance(
+void Query_FindInstance(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -344,7 +344,7 @@ void QueryCL_FindInstance(
 
    returnValue->begin = 0;
    returnValue->range = 0;
-   qclasses = DeteCL_rmineQueryClasses(theEnv,GetFirstArgument()->nextArg,
+   qclasses = Dete_rmineQueryClasses(theEnv,GetFirstArgument()->nextArg,
                                       "find-instance",&rcnt);
    if (qclasses == NULL)
      {
@@ -363,7 +363,7 @@ void QueryCL_FindInstance(
       for (i = 0 ; i < rcnt ; i++)
         {
          returnValue->multifieldValue->contents[i].lexemeValue =
-            CL_GetFullCL_InstanceName(theEnv,InstanceQueryData(theEnv)->QueryCore->solns[i]);
+            CL_GetFull_InstanceName(theEnv,InstanceQueryData(theEnv)->QueryCore->solns[i]);
         }
      }
    else
@@ -376,7 +376,7 @@ void QueryCL_FindInstance(
   }
 
 /******************************************************************************
-  NAME         : QueryFindAllCL_Instances
+  NAME         : QueryFindAll_Instances
   DESCRIPTION  : Finds all sets of instances which satisfy the query and
                    stores their names in the user's multi-field variable
 
@@ -393,7 +393,7 @@ void QueryCL_FindInstance(
                    once for every instance set.
   NOTES        : H/L Syntax : See CL_ParseQueryNoAction()
  ******************************************************************************/
-void QueryFindAllCL_Instances(
+void QueryFindAll_Instances(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -404,7 +404,7 @@ void QueryFindAllCL_Instances(
 
    returnValue->begin = 0;
    returnValue->range = 0;
-   qclasses = DeteCL_rmineQueryClasses(theEnv,GetFirstArgument()->nextArg,
+   qclasses = Dete_rmineQueryClasses(theEnv,GetFirstArgument()->nextArg,
                                       "find-all-instances",&rcnt);
    if (qclasses == NULL)
      {
@@ -427,7 +427,7 @@ void QueryFindAllCL_Instances(
       for (i = 0 , j = returnValue->range ; i < rcnt ; i++ , j++)
         {
          returnValue->multifieldValue->contents[j].lexemeValue =
-            CL_GetFullCL_InstanceName(theEnv,InstanceQueryData(theEnv)->QueryCore->soln_set->soln[i]);
+            CL_GetFull_InstanceName(theEnv,InstanceQueryData(theEnv)->QueryCore->soln_set->soln[i]);
         }
       returnValue->range = j;
       PopQuerySoln(theEnv);
@@ -461,7 +461,7 @@ void CL_QueryDoForInstance(
    unsigned i, rcnt;
 
    returnValue->lexemeValue = FalseSymbol(theEnv);
-   qclasses = DeteCL_rmineQueryClasses(theEnv,GetFirstArgument()->nextArg->nextArg,
+   qclasses = Dete_rmineQueryClasses(theEnv,GetFirstArgument()->nextArg->nextArg,
                                       "do-for-instance",&rcnt);
    if (qclasses == NULL)
      return;
@@ -491,7 +491,7 @@ void CL_QueryDoForInstance(
   }
 
 /******************************************************************************
-  NAME         : QueryDoForAllCL_Instances
+  NAME         : QueryDoForAll_Instances
   DESCRIPTION  : Finds all sets of instances which satisfy the query and
                    executes a user-function for each set as it is found
   INPUTS       : Caller's result buffer
@@ -503,7 +503,7 @@ void CL_QueryDoForInstance(
                  Caller's result buffer holds result of last action executed.
   NOTES        : H/L Syntax : See CL_ParseQueryAction()
  ******************************************************************************/
-void QueryDoForAllCL_Instances(
+void QueryDoForAll_Instances(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -512,7 +512,7 @@ void QueryDoForAllCL_Instances(
    unsigned rcnt;
 
    returnValue->lexemeValue = FalseSymbol(theEnv);
-   qclasses = DeteCL_rmineQueryClasses(theEnv,GetFirstArgument()->nextArg->nextArg,
+   qclasses = Dete_rmineQueryClasses(theEnv,GetFirstArgument()->nextArg->nextArg,
                                       "do-for-all-instances",&rcnt);
    if (qclasses == NULL)
      return;
@@ -536,12 +536,12 @@ void QueryDoForAllCL_Instances(
   }
 
 /******************************************************************************
-  NAME         : CL_DelayedQueryDoForAllCL_Instances
+  NAME         : CL_DelayedQueryDoForAll_Instances
   DESCRIPTION  : Finds all sets of instances which satisfy the query and
                    and exceutes a user-action for each set
 
-                 This function differs from QueryDoForAllCL_Instances() in
-                   that it foCL_rms the complete list of query satisfactions
+                 This function differs from QueryDoForAll_Instances() in
+                   that it fo_rms the complete list of query satisfactions
                    BEFORE executing any actions.
   INPUTS       : Caller's result buffer
   RETURNS      : Nothing useful
@@ -552,7 +552,7 @@ void QueryDoForAllCL_Instances(
                  Caller's result buffer holds result of last action executed.
   NOTES        : H/L Syntax : See CL_ParseQueryNoAction()
  ******************************************************************************/
-void CL_DelayedQueryDoForAllCL_Instances(
+void CL_DelayedQueryDoForAll_Instances(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -564,7 +564,7 @@ void CL_DelayedQueryDoForAllCL_Instances(
    QUERY_SOLN *theSet;
 
    returnValue->lexemeValue = FalseSymbol(theEnv);
-   qclasses = DeteCL_rmineQueryClasses(theEnv,GetFirstArgument()->nextArg->nextArg,
+   qclasses = Dete_rmineQueryClasses(theEnv,GetFirstArgument()->nextArg->nextArg,
                                       "delayed-do-for-all-instances",&rcnt);
    if (qclasses == NULL)
      return;
@@ -596,7 +596,7 @@ void CL_DelayedQueryDoForAllCL_Instances(
      }
 
    /*=====================*/
-   /* PerfoCL_rm the action. */
+   /* Perfo_rm the action. */
    /*=====================*/
 
    for (theSet = InstanceQueryData(theEnv)->QueryCore->soln_set;
@@ -724,9 +724,9 @@ static QUERY_CORE *FindQueryCore(
   }
 
 /**********************************************************
-  NAME         : DeteCL_rmineQueryClasses
+  NAME         : Dete_rmineQueryClasses
   DESCRIPTION  : CL_Builds a list of classes to be used in
-                   instance queries - uses parse foCL_rm.
+                   instance queries - uses parse fo_rm.
   INPUTS       : 1) The parse class expression chain
                  2) The name of the function being executed
                  3) Caller's buffer for restriction count
@@ -740,10 +740,10 @@ static QUERY_CORE *FindQueryCore(
                  Rcnt caller's buffer is set to reflect the
                    total number of chains
                  Assumes classExp is not NULL and that each
-                   restriction chain is teCL_rminated with
+                   restriction chain is te_rminated with
                    the QUERY_DELIMITER_SYMBOL "(QDS)"
  **********************************************************/
-static QUERY_CLASS *DeteCL_rmineQueryClasses(
+static QUERY_CLASS *Dete_rmineQueryClasses(
   Environment *theEnv,
   Expression *classExp,
   const char *func,
@@ -775,7 +775,7 @@ static QUERY_CLASS *DeteCL_rmineQueryClasses(
          new_list = true;
          (*rcnt)++;
         }
-      else if ((tmp = FoCL_rmChain(theEnv,func,theClass,&temp)) != NULL)
+      else if ((tmp = Fo_rmChain(theEnv,func,theClass,&temp)) != NULL)
         {
          if (clist == NULL)
            clist = cnxt = cchain = tmp;
@@ -794,7 +794,7 @@ static QUERY_CLASS *DeteCL_rmineQueryClasses(
         {
          CL_SyntaxErrorMessage(theEnv,"instance-set query class restrictions");
          DeleteQueryClasses(theEnv,clist);
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          return NULL;
         }
       classExp = classExp->nextArg;
@@ -803,9 +803,9 @@ static QUERY_CLASS *DeteCL_rmineQueryClasses(
   }
 
 /*************************************************************
-  NAME         : FoCL_rmChain
+  NAME         : Fo_rmChain
   DESCRIPTION  : CL_Builds a list of classes to be used in
-                   instance queries - uses parse foCL_rm.
+                   instance queries - uses parse fo_rm.
   INPUTS       : 1) Name of calling function for error msgs
                  2) Data object - must be a symbol or a
                       multifield value containing all symbols
@@ -815,7 +815,7 @@ static QUERY_CLASS *DeteCL_rmineQueryClasses(
                  Busy count incremented for all classes
   NOTES        : None
  *************************************************************/
-static QUERY_CLASS *FoCL_rmChain(
+static QUERY_CLASS *Fo_rmChain(
   Environment *theEnv,
   const char *func,
   Defclass *theClass,

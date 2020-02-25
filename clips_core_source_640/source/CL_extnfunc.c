@@ -21,7 +21,7 @@
 /*      6.24: Corrected code to remove run-time program      */
 /*            compiler warning.                              */
 /*                                                           */
-/*      6.30: Added support for passing context infoCL_rmation  */
+/*      6.30: Added support for passing context info_rmation  */
 /*            to user defined functions.                     */
 /*                                                           */
 /*            Support for long long integers.                */
@@ -597,7 +597,7 @@ void AssignErrorValue(
    else if (context->theFunction->unknownReturnValueType & MULTIFIELD_BIT)
      { CL_SetMultifieldErrorValue(context->environment,context->returnValue); }
    else if (context->theFunction->unknownReturnValueType & INSTANCE_NAME_BIT)
-     { context->returnValue->lexemeValue = CL_CreateCL_InstanceName(context->environment,"nil"); }
+     { context->returnValue->lexemeValue = CL_Create_InstanceName(context->environment,"nil"); }
    else if (context->theFunction->unknownReturnValueType & FACT_ADDRESS_BIT)
      { context->returnValue->factValue = &FactData(context->environment)->DummyFact; }
 #if OBJECT_SYSTEM
@@ -654,8 +654,8 @@ bool CL_UDFNextArgument(
 
    if (argPtr == NULL)
      {
-      SetCL_HaltExecution(theEnv,true);
-      SetCL_EvaluationError(theEnv,true);
+      Set_HaltExecution(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return false;
      }
 
@@ -669,8 +669,8 @@ bool CL_UDFNextArgument(
         if (expectedType & INTEGER_BIT) return true;
         CL_ExpectedTypeError0(theEnv,CL_UDFContextFunctionName(context),argumentPosition);
         CL_PrintTypesString(theEnv,STDERR,expectedType,true);
-        SetCL_HaltExecution(theEnv,true);
-        SetCL_EvaluationError(theEnv,true);
+        Set_HaltExecution(theEnv,true);
+        Set_EvaluationError(theEnv,true);
         AssignErrorValue(context);
         return false;
         break;
@@ -680,8 +680,8 @@ bool CL_UDFNextArgument(
         if (expectedType & FLOAT_BIT) return true;
         CL_ExpectedTypeError0(theEnv,CL_UDFContextFunctionName(context),argumentPosition);
         CL_PrintTypesString(theEnv,STDERR,expectedType,true);
-        SetCL_HaltExecution(theEnv,true);
-        SetCL_EvaluationError(theEnv,true);
+        Set_HaltExecution(theEnv,true);
+        Set_EvaluationError(theEnv,true);
         AssignErrorValue(context);
         return false;
         break;
@@ -697,8 +697,8 @@ bool CL_UDFNextArgument(
           }
         CL_ExpectedTypeError0(theEnv,CL_UDFContextFunctionName(context),argumentPosition);
         CL_PrintTypesString(theEnv,STDERR,expectedType,true);
-        SetCL_HaltExecution(theEnv,true);
-        SetCL_EvaluationError(theEnv,true);
+        Set_HaltExecution(theEnv,true);
+        Set_EvaluationError(theEnv,true);
         AssignErrorValue(context);
         return false;
         break;
@@ -708,8 +708,8 @@ bool CL_UDFNextArgument(
         if (expectedType & STRING_BIT) return true;
         CL_ExpectedTypeError0(theEnv,CL_UDFContextFunctionName(context),argumentPosition);
         CL_PrintTypesString(theEnv,STDERR,expectedType,true);
-        SetCL_HaltExecution(theEnv,true);
-        SetCL_EvaluationError(theEnv,true);
+        Set_HaltExecution(theEnv,true);
+        Set_EvaluationError(theEnv,true);
         AssignErrorValue(context);
         return false;
         break;
@@ -719,8 +719,8 @@ bool CL_UDFNextArgument(
         if (expectedType & INSTANCE_NAME_BIT) return true;
         CL_ExpectedTypeError0(theEnv,CL_UDFContextFunctionName(context),argumentPosition);
         CL_PrintTypesString(theEnv,STDERR,expectedType,true);
-        SetCL_HaltExecution(theEnv,true);
-        SetCL_EvaluationError(theEnv,true);
+        Set_HaltExecution(theEnv,true);
+        Set_EvaluationError(theEnv,true);
         AssignErrorValue(context);
         return false;
         break;
@@ -867,8 +867,8 @@ bool CL_UDFNextArgument(
    CL_ExpectedTypeError0(theEnv,CL_UDFContextFunctionName(context),argumentPosition);
    CL_PrintTypesString(theEnv,STDERR,expectedType,true);
 
-   SetCL_HaltExecution(theEnv,true);
-   SetCL_EvaluationError(theEnv,true);
+   Set_HaltExecution(theEnv,true);
+   Set_EvaluationError(theEnv,true);
    AssignErrorValue(context);
 
    return false;
@@ -916,8 +916,8 @@ void CL_UDFThrowError(
   {
    Environment *theEnv = context->environment;
 
-   SetCL_HaltExecution(theEnv,true);
-   SetCL_EvaluationError(theEnv,true);
+   Set_HaltExecution(theEnv,true);
+   Set_EvaluationError(theEnv,true);
   }
 
 /***************************/

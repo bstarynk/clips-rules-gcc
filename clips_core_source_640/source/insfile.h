@@ -79,24 +79,24 @@ struct instanceFileData
 #endif /* BLOAD_INSTANCES || BSAVE_INSTANCES */
 
    void                           CL_SetupInstanceFileCommands(Environment *);
-   void                           CL_SaveCL_InstancesCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_LoadCL_InstancesCommand(Environment *,UDFContext *,UDFValue *);
-   void                           RestoreCL_InstancesCommand(Environment *,UDFContext *,UDFValue *);
-   long                           CL_SaveCL_InstancesDriver(Environment *,const char *,CL_SaveScope,Expression *,bool);
-   long                           CL_SaveCL_Instances(Environment *,const char *,CL_SaveScope);
+   void                           CL_Save_InstancesCommand(Environment *,UDFContext *,UDFValue *);
+   void                           CL_Load_InstancesCommand(Environment *,UDFContext *,UDFValue *);
+   void                           Restore_InstancesCommand(Environment *,UDFContext *,UDFValue *);
+   long                           CL_Save_InstancesDriver(Environment *,const char *,CL_SaveScope,Expression *,bool);
+   long                           CL_Save_Instances(Environment *,const char *,CL_SaveScope);
 #if BSAVE_INSTANCES
-   void                           CL_BinaryCL_SaveCL_InstancesCommand(Environment *,UDFContext *,UDFValue *);
-   long                           CL_BinaryCL_SaveCL_InstancesDriver(Environment *,const char *,CL_SaveScope,Expression *,bool);
-   long                           CL_BinaryCL_SaveCL_Instances(Environment *,const char *,CL_SaveScope);
+   void                           CL_Binary_Save_InstancesCommand(Environment *,UDFContext *,UDFValue *);
+   long                           CL_Binary_Save_InstancesDriver(Environment *,const char *,CL_SaveScope,Expression *,bool);
+   long                           CL_Binary_Save_Instances(Environment *,const char *,CL_SaveScope);
 #endif
 #if BLOAD_INSTANCES
-   void                           CL_BinaryCL_LoadCL_InstancesCommand(Environment *,UDFContext *,UDFValue *);
-   long                           CL_BinaryCL_LoadCL_Instances(Environment *,const char *);
+   void                           CL_Binary_Load_InstancesCommand(Environment *,UDFContext *,UDFValue *);
+   long                           CL_Binary_Load_Instances(Environment *,const char *);
 #endif
-   long                           CL_LoadCL_Instances(Environment *,const char *);
-   long                           CL_LoadCL_InstancesFromString(Environment *,const char *,size_t);
-   long                           RestoreCL_Instances(Environment *,const char *);
-   long                           RestoreCL_InstancesFromString(Environment *,const char *,size_t);
+   long                           CL_Load_Instances(Environment *,const char *);
+   long                           CL_Load_InstancesFromString(Environment *,const char *,size_t);
+   long                           Restore_Instances(Environment *,const char *);
+   long                           Restore_InstancesFromString(Environment *,const char *,size_t);
 
 #endif /* _H_insfile */
 

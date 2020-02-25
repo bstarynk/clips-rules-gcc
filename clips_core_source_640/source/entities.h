@@ -48,16 +48,16 @@ typedef struct udfContext UDFContext;
 
 typedef struct entityRecord EntityRecord;
 
-typedef void EntityCL_PrintFunction(Environment *,const char *,void *);
-typedef bool EntityCL_EvaluationFunction(Environment *,void *,UDFValue *);
+typedef void Entity_PrintFunction(Environment *,const char *,void *);
+typedef bool Entity_EvaluationFunction(Environment *,void *,UDFValue *);
 typedef void EntityBusyCountFunction(Environment *,void *);
 
 typedef struct patternEntityRecord PatternEntityRecord;
 typedef struct patternEntity PatternEntity;
 
-typedef bool BoolCL_CallFunction(Environment *,void *);
-typedef void VoidCL_CallFunction(Environment *,void *);
-typedef void VoidCL_CallFunctionWithArg(Environment *,void *,void *);
+typedef bool Bool_CallFunction(Environment *,void *);
+typedef void Void_CallFunction(Environment *,void *);
+typedef void Void_CallFunctionWithArg(Environment *,void *,void *);
 
 /**************/
 /* typeHeader */
@@ -84,7 +84,7 @@ struct clipsLexeme
    TypeHeader header;
    CLIPSLexeme *next;
    long count;
-   unsigned int peCL_rmanent : 1;
+   unsigned int pe_rmanent : 1;
    unsigned int markedEphemeral : 1;
    unsigned int neededSymbol : 1;
    unsigned int bucket : 29;
@@ -99,7 +99,7 @@ struct clipsFloat
    TypeHeader header;
    CLIPSFloat *next;
    long count;
-   unsigned int peCL_rmanent : 1;
+   unsigned int pe_rmanent : 1;
    unsigned int markedEphemeral : 1;
    unsigned int neededFloat : 1;
    unsigned int bucket : 29;
@@ -114,7 +114,7 @@ struct clipsInteger
    TypeHeader header;
    CLIPSInteger *next;
    long count;
-   unsigned int peCL_rmanent : 1;
+   unsigned int pe_rmanent : 1;
    unsigned int markedEphemeral : 1;
    unsigned int neededInteger : 1;
    unsigned int bucket : 29;
@@ -129,7 +129,7 @@ struct clipsBitMap
    TypeHeader header;
    CLIPSBitMap *next;
    long count;
-   unsigned int peCL_rmanent : 1;
+   unsigned int pe_rmanent : 1;
    unsigned int markedEphemeral : 1;
    unsigned int neededBitMap : 1;
    unsigned int bucket : 29;
@@ -145,7 +145,7 @@ struct clipsExternalAddress
    TypeHeader header;
    CLIPSExternalAddress *next;
    long count;
-   unsigned int peCL_rmanent : 1;
+   unsigned int pe_rmanent : 1;
    unsigned int markedEphemeral : 1;
    unsigned int neededPointer : 1;
    unsigned int bucket : 29;
@@ -229,13 +229,13 @@ struct entityRecord
   {
    const char *name;
    unsigned int type : 13;
-   unsigned int copyToCL_Evaluate : 1;
+   unsigned int copyTo_Evaluate : 1;
    unsigned int bitMap : 1;
    unsigned int addsToRuleComplexity : 1;
-   EntityCL_PrintFunction *shortCL_PrintFunction;
-   EntityCL_PrintFunction *longCL_PrintFunction;
+   Entity_PrintFunction *short_PrintFunction;
+   Entity_PrintFunction *long_PrintFunction;
    bool (*deleteFunction)(void *,Environment *);
-   EntityCL_EvaluationFunction *evaluateFunction;
+   Entity_EvaluationFunction *evaluateFunction;
    void *(*getNextFunction)(void *,void *);
    EntityBusyCountFunction *decrementBusyCount;
    EntityBusyCountFunction *incrementBusyCount;

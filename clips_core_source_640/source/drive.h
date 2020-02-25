@@ -23,7 +23,7 @@
 /*      6.30: Added support for hashed memories.             */
 /*                                                           */
 /*            Added additional developer statistics to help  */
-/*            analyze join network perfoCL_rmance.              */
+/*            analyze join network perfo_rmance.              */
 /*                                                           */
 /*            Removed pseudo-facts used in not CE.           */
 /*                                                           */
@@ -48,10 +48,10 @@
 #include "match.h"
 #include "network.h"
 
-   void                           NetworkCL_Assert(Environment *,struct partialMatch *,struct joinNode *);
+   void                           Network_Assert(Environment *,struct partialMatch *,struct joinNode *);
    bool                           CL_EvaluateJoinExpression(Environment *,struct expr *,struct joinNode *);
-   void                           NetworkCL_AssertLeft(Environment *,struct partialMatch *,struct joinNode *,int);
-   void                           NetworkCL_AssertRight(Environment *,struct partialMatch *,struct joinNode *,int);
+   void                           Network_AssertLeft(Environment *,struct partialMatch *,struct joinNode *,int);
+   void                           Network_AssertRight(Environment *,struct partialMatch *,struct joinNode *,int);
    void                           CL_PPDrive(Environment *,struct partialMatch *,struct partialMatch *,struct joinNode *,int);
    unsigned long                  CL_BetaMemoryHashValue(Environment *,struct expr *,struct partialMatch *,struct partialMatch *,struct joinNode *);
    bool                           CL_EvaluateSecondaryNetworkTest(Environment *,struct partialMatch *,struct joinNode *);

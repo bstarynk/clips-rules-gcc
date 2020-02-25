@@ -195,8 +195,8 @@ void CL_WriteNeededSymbols(
    /* CL_Write out the symbols and the string sizes. */
    /*=============================================*/
 
-   CL_GenCL_Write(&numberOfUsedSymbols,sizeof(unsigned long),fp);
-   CL_GenCL_Write(&size,sizeof(unsigned long),fp);
+   CL_Gen_Write(&numberOfUsedSymbols,sizeof(unsigned long),fp);
+   CL_Gen_Write(&size,sizeof(unsigned long),fp);
 
    /*=============================*/
    /* CL_Write out the symbol types. */
@@ -209,7 +209,7 @@ void CL_WriteNeededSymbols(
            symbolPtr = symbolPtr->next)
         {
          if (symbolPtr->neededSymbol)
-           { CL_GenCL_Write(&symbolPtr->header.type,sizeof(unsigned short),fp); }
+           { CL_Gen_Write(&symbolPtr->header.type,sizeof(unsigned short),fp); }
         }
      }
      
@@ -226,7 +226,7 @@ void CL_WriteNeededSymbols(
          if (symbolPtr->neededSymbol)
            {
             length = strlen(symbolPtr->contents) + 1;
-            CL_GenCL_Write((void *) symbolPtr->contents,length,fp);
+            CL_Gen_Write((void *) symbolPtr->contents,length,fp);
            }
         }
      }
@@ -267,7 +267,7 @@ void CL_WriteNeededFloats(
    /* CL_Write out the number of floats and the float values. */
    /*======================================================*/
 
-   CL_GenCL_Write(&numberOfUsedFloats,sizeof(unsigned long),fp);
+   CL_Gen_Write(&numberOfUsedFloats,sizeof(unsigned long),fp);
 
    for (i = 0 ; i < FLOAT_HASH_SIZE; i++)
      {
@@ -276,7 +276,7 @@ void CL_WriteNeededFloats(
            floatPtr = floatPtr->next)
         {
          if (floatPtr->neededFloat)
-           { CL_GenCL_Write(&floatPtr->contents,
+           { CL_Gen_Write(&floatPtr->contents,
                       sizeof(floatPtr->contents),fp); }
         }
      }
@@ -319,7 +319,7 @@ void CL_WriteNeededIntegers(
    /* CL_Write out the number of integers and the integer values. */
    /*==========================================================*/
 
-   CL_GenCL_Write(&numberOfUsedIntegers,sizeof(unsigned long),fp);
+   CL_Gen_Write(&numberOfUsedIntegers,sizeof(unsigned long),fp);
 
    for (i = 0 ; i < INTEGER_HASH_SIZE; i++)
      {
@@ -329,7 +329,7 @@ void CL_WriteNeededIntegers(
         {
          if (integerPtr->neededInteger)
            {
-            CL_GenCL_Write(&integerPtr->contents,
+            CL_Gen_Write(&integerPtr->contents,
                      sizeof(integerPtr->contents),fp);
            }
         }
@@ -378,8 +378,8 @@ static void CL_WriteNeededBitMaps(
    /* CL_Write out the bitmaps and their sizes. */
    /*========================================*/
 
-   CL_GenCL_Write(&numberOfUsedBitMaps,sizeof(unsigned long),fp);
-   CL_GenCL_Write(&size,sizeof(unsigned long),fp);
+   CL_Gen_Write(&numberOfUsedBitMaps,sizeof(unsigned long),fp);
+   CL_Gen_Write(&size,sizeof(unsigned long),fp);
 
    for (i = 0; i < BITMAP_HASH_SIZE; i++)
      {
@@ -390,8 +390,8 @@ static void CL_WriteNeededBitMaps(
          if (bitMapPtr->neededBitMap)
            {
             tempSize = bitMapPtr->size;
-            CL_GenCL_Write(&tempSize,sizeof(unsigned short),fp);
-            CL_GenCL_Write((void *) bitMapPtr->contents,bitMapPtr->size,fp);
+            CL_Gen_Write(&tempSize,sizeof(unsigned short),fp);
+            CL_Gen_Write((void *) bitMapPtr->contents,bitMapPtr->size,fp);
            }
         }
      }
@@ -426,7 +426,7 @@ void CL_ReadNeededSymbols(
    unsigned long i;
 
    /*=================================================*/
-   /* DeteCL_rmine the number of symbol names to be read */
+   /* Dete_rmine the number of symbol names to be read */
    /* and space required for them.                    */
    /*=================================================*/
 
@@ -462,7 +462,7 @@ void CL_ReadNeededSymbols(
       else if (types[i] == STRING_TYPE)
         { SymbolData(theEnv)->SymbolArray[i] = CL_CreateString(theEnv,namePtr); }
       else
-        { SymbolData(theEnv)->SymbolArray[i] = CL_CreateCL_InstanceName(theEnv,namePtr); }
+        { SymbolData(theEnv)->SymbolArray[i] = CL_Create_InstanceName(theEnv,namePtr); }
 
       namePtr += strlen(namePtr) + 1;
      }
@@ -486,7 +486,7 @@ void CL_ReadNeededFloats(
    unsigned long i;
 
    /*============================================*/
-   /* DeteCL_rmine the number of floats to be read. */
+   /* Dete_rmine the number of floats to be read. */
    /*============================================*/
 
    CL_GenReadBinary(theEnv,&SymbolData(theEnv)->NumberOfFloats,sizeof(long));
@@ -530,7 +530,7 @@ void CL_ReadNeededIntegers(
    unsigned long i;
 
    /*==============================================*/
-   /* DeteCL_rmine the number of integers to be read. */
+   /* Dete_rmine the number of integers to be read. */
    /*==============================================*/
 
    CL_GenReadBinary(theEnv,&SymbolData(theEnv)->NumberOfIntegers,sizeof(unsigned long));
@@ -576,7 +576,7 @@ static void ReadNeededBitMaps(
    unsigned short *tempSize;
 
    /*=======================================*/
-   /* DeteCL_rmine the number of bitmaps to be */
+   /* Dete_rmine the number of bitmaps to be */
    /* read and space required for them.     */
    /*=======================================*/
 

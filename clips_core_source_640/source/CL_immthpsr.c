@@ -77,7 +77,7 @@
    =========================================
    ***************************************** */
 
-   static void                    FoCL_rmMethodsFromRestrictions(Environment *,Defgeneric *,struct functionDefinition *,Expression *);
+   static void                    Fo_rmMethodsFromRestrictions(Environment *,Defgeneric *,struct functionDefinition *,Expression *);
    static RESTRICTION            *ParseRestrictionType(Environment *,unsigned);
    static Expression             *GenTypeExpression(Environment *,Expression *,int,int,const char *);
    static Expression             *ParseRestrictionCreateTypes(Environment *,CONSTRAINT_RECORD *);
@@ -112,7 +112,7 @@ void CL_AddImplicitMethods(
    action.value = sysfunc;
    action.nextArg = NULL;
    action.argList = NULL;
-   FoCL_rmMethodsFromRestrictions(theEnv,gfunc,sysfunc,&action);
+   Fo_rmMethodsFromRestrictions(theEnv,gfunc,sysfunc,&action);
   }
 
 /* =========================================
@@ -122,7 +122,7 @@ void CL_AddImplicitMethods(
    ***************************************** */
 
 /**********************************************************************
-  NAME         : FoCL_rmMethodsFromRestrictions
+  NAME         : Fo_rmMethodsFromRestrictions
   DESCRIPTION  : Uses restriction string given in DefineFunction2()
                    for system function to create an equivalent method
   INPUTS       : 1) The generic function for the new methods
@@ -133,7 +133,7 @@ void CL_AddImplicitMethods(
   SIDE EFFECTS : Implicit method(s) created
   NOTES        : None
  **********************************************************************/
-static void FoCL_rmMethodsFromRestrictions(
+static void Fo_rmMethodsFromRestrictions(
   Environment *theEnv,
   Defgeneric *gfunc,
   struct functionDefinition *sysfunc,
@@ -164,7 +164,7 @@ static void FoCL_rmMethodsFromRestrictions(
    CL_PopulateRestriction(theEnv,&defaultc2,ANY_TYPE_BITS,rstring,0);
 
    /*==================================================*/
-   /* FoCL_rm a list of method restrictions corresponding */
+   /* Fo_rm a list of method restrictions corresponding */
    /* to the minimum number of arguments.              */
    /*==================================================*/
 

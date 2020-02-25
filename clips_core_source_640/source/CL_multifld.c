@@ -232,7 +232,7 @@ Multifield *CL_StringToMultifield(
           (theToken.tknType == INSTANCE_NAME_TOKEN))
         { theAtom = CL_GenConstant(theEnv,CL_TokenTypeToType(theToken.tknType),theToken.value); }
       else
-        { theAtom = CL_GenConstant(theEnv,SYMBOL_TYPE,CL_CreateSymbol(theEnv,theToken.printFoCL_rm)); }
+        { theAtom = CL_GenConstant(theEnv,SYMBOL_TYPE,CL_CreateSymbol(theEnv,theToken.printFo_rm)); }
 
       numberOfFields++;
       if (topAtom == NULL) topAtom = theAtom;
@@ -453,10 +453,10 @@ void CL_UDFToCLIPSValue(
   }
 
 /************************************************/
-/* CL_NoCL_rmalizeMultifield: Allocates a new segment */
+/* CL_No_rmalizeMultifield: Allocates a new segment */
 /*   and copies results from old value to new.  */
 /************************************************/
-void CL_NoCL_rmalizeMultifield(
+void CL_No_rmalizeMultifield(
   Environment *theEnv,
   UDFValue *theMF)
   {
@@ -690,9 +690,9 @@ void CL_StoreInMultifield(
   }
 
 /*************************************************************/
-/* MultifieldCL_DOsEqual: DeteCL_rmines if two segments are equal. */
+/* Multifield_DOsEqual: Dete_rmines if two segments are equal. */
 /*************************************************************/
-bool MultifieldCL_DOsEqual(
+bool Multifield_DOsEqual(
   UDFValue *dobj1,
   UDFValue *dobj2)
   {
@@ -726,7 +726,7 @@ bool MultifieldCL_DOsEqual(
   }
 
 /******************************************************************/
-/* CL_MultifieldsEqual: DeteCL_rmines if two multifields are identical. */
+/* CL_MultifieldsEqual: Dete_rmines if two multifields are identical. */
 /******************************************************************/
 bool CL_MultifieldsEqual(
   Multifield *segment1,
@@ -876,7 +876,7 @@ CLIPSLexeme *CL_ImplodeMultifield(
    UDFValue tempDO;
 
    /*===================================================*/
-   /* DeteCL_rmine the size of the string to be allocated. */
+   /* Dete_rmine the size of the string to be allocated. */
    /*===================================================*/
 
    theMultifield = value->multifieldValue;
@@ -1002,18 +1002,18 @@ CLIPSLexeme *CL_ImplodeMultifield(
   }
 
 /****************************/
-/* CL_CreateMultifieldCL_Builder: */
+/* CL_CreateMultifield_Builder: */
 /****************************/
-MultifieldCL_Builder *CL_CreateMultifieldCL_Builder(
+Multifield_Builder *CL_CreateMultifield_Builder(
   Environment *theEnv,
   size_t theSize)
   {
-   MultifieldCL_Builder *theMB;
+   Multifield_Builder *theMB;
    
-   theMB = get_struct(theEnv,multifieldCL_Builder);
+   theMB = get_struct(theEnv,multifield_Builder);
    
    theMB->mbEnv = theEnv;
-   theMB->bufferCL_Reset = theSize;
+   theMB->buffer_Reset = theSize;
    theMB->bufferMaximum = theSize;
    theMB->length = 0;
    
@@ -1029,7 +1029,7 @@ MultifieldCL_Builder *CL_CreateMultifieldCL_Builder(
 /* CL_MBAppendUDFValue: */
 /*********************/
 void CL_MBAppendUDFValue(
-  MultifieldCL_Builder *theMB,
+  Multifield_Builder *theMB,
   UDFValue *theValue)
   {
    Environment *theEnv = theMB->mbEnv;
@@ -1045,7 +1045,7 @@ void CL_MBAppendUDFValue(
      { return; }
 
    /*=======================================*/
-   /* DeteCL_rmine the amount of space needed. */
+   /* Dete_rmine the amount of space needed. */
    /*=======================================*/
    
    if (theValue->header->type == MULTIFIELD_TYPE)
@@ -1103,7 +1103,7 @@ void CL_MBAppendUDFValue(
 /* CL_MBAppend: */
 /*************/
 void CL_MBAppend(
-  MultifieldCL_Builder *theMB,
+  Multifield_Builder *theMB,
   CLIPSValue *theValue)
   {
    Environment *theEnv = theMB->mbEnv;
@@ -1119,7 +1119,7 @@ void CL_MBAppend(
      { return; }
 
    /*=======================================*/
-   /* DeteCL_rmine the amount of space needed. */
+   /* Dete_rmine the amount of space needed. */
    /*=======================================*/
    
    if (theValue->header->type == MULTIFIELD_TYPE)
@@ -1177,7 +1177,7 @@ void CL_MBAppend(
 /* CL_MBAppendCLIPSInteger: */
 /*************************/
 void CL_MBAppendCLIPSInteger(
-  MultifieldCL_Builder *theMB,
+  Multifield_Builder *theMB,
   CLIPSInteger *pv)
   {
    CLIPSValue theValue;
@@ -1190,7 +1190,7 @@ void CL_MBAppendCLIPSInteger(
 /* CL_MBAppendInteger: */
 /********************/
 void CL_MBAppendInteger(
-  MultifieldCL_Builder *theMB,
+  Multifield_Builder *theMB,
   long long intValue)
   {
    CLIPSValue theValue;
@@ -1204,7 +1204,7 @@ void CL_MBAppendInteger(
 /* CL_MBAppendCLIPSFloat: */
 /***********************/
 void CL_MBAppendCLIPSFloat(
-  MultifieldCL_Builder *theMB,
+  Multifield_Builder *theMB,
   CLIPSFloat *pv)
   {
    CLIPSValue theValue;
@@ -1217,7 +1217,7 @@ void CL_MBAppendCLIPSFloat(
 /* CL_MBAppendFloat: */
 /******************/
 void CL_MBAppendFloat(
-  MultifieldCL_Builder *theMB,
+  Multifield_Builder *theMB,
   double floatValue)
   {
    CLIPSValue theValue;
@@ -1231,7 +1231,7 @@ void CL_MBAppendFloat(
 /* CL_MBAppendCLIPSLexeme: */
 /************************/
 void CL_MBAppendCLIPSLexeme(
-  MultifieldCL_Builder *theMB,
+  Multifield_Builder *theMB,
   CLIPSLexeme *pv)
   {
    CLIPSValue theValue;
@@ -1244,7 +1244,7 @@ void CL_MBAppendCLIPSLexeme(
 /* CL_MBAppendSymbol: */
 /*******************/
 void CL_MBAppendSymbol(
-  MultifieldCL_Builder *theMB,
+  Multifield_Builder *theMB,
   const char *strValue)
   {
    CLIPSValue theValue;
@@ -1258,7 +1258,7 @@ void CL_MBAppendSymbol(
 /* CL_MBAppendString: */
 /*******************/
 void CL_MBAppendString(
-  MultifieldCL_Builder *theMB,
+  Multifield_Builder *theMB,
   const char *strValue)
   {
    CLIPSValue theValue;
@@ -1269,14 +1269,14 @@ void CL_MBAppendString(
   }
 
 /*************************/
-/* CL_MBAppendCL_InstanceName: */
+/* CL_MBAppend_InstanceName: */
 /*************************/
-void CL_MBAppendCL_InstanceName(
-  MultifieldCL_Builder *theMB,
+void CL_MBAppend_InstanceName(
+  Multifield_Builder *theMB,
   const char *strValue)
   {
    CLIPSValue theValue;
-   CLIPSLexeme *pv = CL_CreateCL_InstanceName(theMB->mbEnv,strValue);
+   CLIPSLexeme *pv = CL_Create_InstanceName(theMB->mbEnv,strValue);
    
    theValue.lexemeValue = pv;
    CL_MBAppend(theMB,&theValue);
@@ -1286,7 +1286,7 @@ void CL_MBAppendCL_InstanceName(
 /* CL_MBAppendCLIPSExternalAddress: */
 /*********************************/
 void CL_MBAppendCLIPSExternalAddress(
-  MultifieldCL_Builder *theMB,
+  Multifield_Builder *theMB,
   CLIPSExternalAddress *pv)
   {
    CLIPSValue theValue;
@@ -1299,7 +1299,7 @@ void CL_MBAppendCLIPSExternalAddress(
 /* CL_MBAppendFact: */
 /*****************/
 void CL_MBAppendFact(
-  MultifieldCL_Builder *theMB,
+  Multifield_Builder *theMB,
   Fact *pv)
   {
    CLIPSValue theValue;
@@ -1312,7 +1312,7 @@ void CL_MBAppendFact(
 /* CL_MBAppendInstance: */
 /*********************/
 void CL_MBAppendInstance(
-  MultifieldCL_Builder *theMB,
+  Multifield_Builder *theMB,
   Instance *pv)
   {
    CLIPSValue theValue;
@@ -1325,7 +1325,7 @@ void CL_MBAppendInstance(
 /* CL_MBAppendMultifield: */
 /***********************/
 void CL_MBAppendMultifield(
-  MultifieldCL_Builder *theMB,
+  Multifield_Builder *theMB,
   Multifield *pv)
   {
    CLIPSValue theValue;
@@ -1338,7 +1338,7 @@ void CL_MBAppendMultifield(
 /* CL_MBCreate: */
 /*************/
 Multifield *CL_MBCreate(
-  MultifieldCL_Builder *theMB)
+  Multifield_Builder *theMB)
   {
    size_t i;
    Multifield *rv;
@@ -1359,27 +1359,27 @@ Multifield *CL_MBCreate(
   }
 
 /************/
-/* CL_MBCL_Reset: */
+/* CL_MB_Reset: */
 /************/
-void CL_MBCL_Reset(
-  MultifieldCL_Builder *theMB)
+void CL_MB_Reset(
+  Multifield_Builder *theMB)
   {
    size_t i;
    
    for (i = 0; i < theMB->length; i++)
      { CL_Release(theMB->mbEnv,theMB->contents[i].header); }
      
-   if (theMB->bufferCL_Reset != theMB->bufferMaximum)
+   if (theMB->buffer_Reset != theMB->bufferMaximum)
      {
       if (theMB->bufferMaximum != 0)
         { CL_rm(theMB->mbEnv,theMB->contents,sizeof(CLIPSValue) * theMB->bufferMaximum); }
       
-      if (theMB->bufferCL_Reset == 0)
+      if (theMB->buffer_Reset == 0)
         { theMB->contents = NULL; }
       else
-        { theMB->contents = (CLIPSValue *) CL_gm2(theMB->mbEnv,sizeof(CLIPSValue) * theMB->bufferCL_Reset); }
+        { theMB->contents = (CLIPSValue *) CL_gm2(theMB->mbEnv,sizeof(CLIPSValue) * theMB->buffer_Reset); }
       
-      theMB->bufferMaximum = theMB->bufferCL_Reset;
+      theMB->bufferMaximum = theMB->buffer_Reset;
      }
      
    theMB->length = 0;
@@ -1389,7 +1389,7 @@ void CL_MBCL_Reset(
 /* CL_MBDispose: */
 /**************/
 void CL_MBDispose(
-  MultifieldCL_Builder *theMB)
+  Multifield_Builder *theMB)
   {
    Environment *theEnv = theMB->mbEnv;
    size_t i;
@@ -1400,5 +1400,5 @@ void CL_MBDispose(
    if (theMB->bufferMaximum != 0)
      { CL_rm(theMB->mbEnv,theMB->contents,sizeof(CLIPSValue) * theMB->bufferMaximum); }
      
-   rtn_struct(theEnv,multifieldCL_Builder,theMB);
+   rtn_struct(theEnv,multifield_Builder,theMB);
   }

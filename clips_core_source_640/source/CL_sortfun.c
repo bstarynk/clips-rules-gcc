@@ -23,7 +23,7 @@
 /*            DR0864                                         */
 /*                                                           */
 /*      6.30: Added environment cleanup call function        */
-/*            DeallocateCL_SortFunctionData.                    */
+/*            Deallocate_SortFunctionData.                    */
 /*                                                           */
 /*      6.40: Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -62,11 +62,11 @@ struct sortFunctionData
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    DoCL_MergeSort(Environment *,UDFValue *,UDFValue *,size_t,
+   static void                    Do_MergeSort(Environment *,UDFValue *,UDFValue *,size_t,
                                               size_t,size_t,size_t,
                                               bool (*)(Environment *,UDFValue *,UDFValue *));
    static bool                    DefaultCompareSwapFunction(Environment *,UDFValue *,UDFValue *);
-   static void                    DeallocateCL_SortFunctionData(Environment *);
+   static void                    Deallocate_SortFunctionData(Environment *);
 
 /****************************************/
 /* CL_SortFunctionDefinitions: Initializes */
@@ -75,17 +75,17 @@ struct sortFunctionData
 void CL_SortFunctionDefinitions(
   Environment *theEnv)
   {
-   CL_AllocateEnvironmentData(theEnv,SORTFUN_DATA,sizeof(struct sortFunctionData),DeallocateCL_SortFunctionData);
+   CL_AllocateEnvironmentData(theEnv,SORTFUN_DATA,sizeof(struct sortFunctionData),Deallocate_SortFunctionData);
 #if ! RUN_TIME
    CL_AddUDF(theEnv,"sort","bm",1,UNBOUNDED,"*;y",CL_SortFunction,"CL_SortFunction",NULL);
 #endif
   }
 
 /*******************************************************/
-/* DeallocateCL_SortFunctionData: Deallocates environment */
+/* Deallocate_SortFunctionData: Deallocates environment */
 /*    data for the sort function.                      */
 /*******************************************************/
-static void DeallocateCL_SortFunctionData(
+static void Deallocate_SortFunctionData(
   Environment *theEnv)
   {
    CL_ReturnExpression(theEnv,CL_SortFunctionData(theEnv)->SortComparisonFunction);
@@ -213,7 +213,7 @@ void CL_SortFunction(
 
    /*=====================================*/
    /* Retrieve the arguments to be sorted */
-   /* and deteCL_rmine how many there are.   */
+   /* and dete_rmine how many there are.   */
    /*=====================================*/
 
    theArguments = (UDFValue *) CL_genalloc(theEnv,(argumentCount - 1) * sizeof(UDFValue));
@@ -318,7 +318,7 @@ void CL_MergeSort(
    /*=====================================*/
 
    middle = (listSize + 1) / 2;
-   DoCL_MergeSort(theEnv,theList,tempList,0,middle-1,middle,listSize - 1,swapFunction);
+   Do_MergeSort(theEnv,theList,tempList,0,middle-1,middle,listSize - 1,swapFunction);
 
    /*==================================*/
    /* Deallocate the temporary storage */
@@ -330,10 +330,10 @@ void CL_MergeSort(
 
 
 /******************************************************/
-/* DoCL_MergeSort: Driver routine for perfoCL_rming a merge */
+/* Do_MergeSort: Driver routine for perfo_rming a merge */
 /*   sort on an array of UDFValue structures.       */
 /******************************************************/
-static void DoCL_MergeSort(
+static void Do_MergeSort(
   Environment *theEnv,
   UDFValue *theList,
   UDFValue *tempList,
@@ -364,7 +364,7 @@ static void DoCL_MergeSort(
      {
       size = ((e1 - s1) + 1);
       middle = s1 + ((size + 1) / 2);
-      DoCL_MergeSort(theEnv,theList,tempList,s1,middle-1,middle,e1,swapFunction);
+      Do_MergeSort(theEnv,theList,tempList,s1,middle-1,middle,e1,swapFunction);
      }
 
    if (s2 == e2)
@@ -382,7 +382,7 @@ static void DoCL_MergeSort(
      {
       size = ((e2 - s2) + 1);
       middle = s2 + ((size + 1) / 2);
-      DoCL_MergeSort(theEnv,theList,tempList,s2,middle-1,middle,e2,swapFunction);
+      Do_MergeSort(theEnv,theList,tempList,s2,middle-1,middle,e2,swapFunction);
      }
 
    /*======================*/

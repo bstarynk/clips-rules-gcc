@@ -32,8 +32,8 @@
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
 /*                                                           */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*      6.40: Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -140,7 +140,7 @@ bool CL_CheckHandlerArgCount(
           (ProceduralPrimitiveData(theEnv)->ProcParamArraySize < hnd->minParams) : // TBD
           (ProceduralPrimitiveData(theEnv)->ProcParamArraySize != hnd->minParams))
      {
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       CL_PrintErrorID(theEnv,"MSGFUN",2,false);
       CL_WriteString(theEnv,STDERR,"Message-handler '");
       CL_WriteString(theEnv,STDERR,hnd->header.name->contents);
@@ -240,7 +240,7 @@ void CL_SlotVisibilityViolationError(
   DESCRIPTION  : Adds a new system handler for a system class
 
                  The handler is assumed to be primary and of
-                 the foCL_rm:
+                 the fo_rm:
 
                  (defmessage-handler <class> <handler> () (<func>))
 
@@ -266,7 +266,7 @@ void CL_NewSystemHandler(
    Defclass *cls;
    DefmessageHandler *hnd;
 
-   cls = LookupCL_DefclassInScope(theEnv,cname);
+   cls = Lookup_DefclassInScope(theEnv,cname);
    hnd = CL_InsertHandlerHeader(theEnv,cls,CL_CreateSymbol(theEnv,mname),MPRIMARY);
    IncrementLexemeCount(hnd->header.name);
    hnd->system = 1;
@@ -340,7 +340,7 @@ DefmessageHandler *CL_InsertHandlerHeader(
    nhnd[cls->handlerCount].maxParams = 0;
    nhnd[cls->handlerCount].localVarCount = 0;
    nhnd[cls->handlerCount].actions = NULL;
-   nhnd[cls->handlerCount].header.ppFoCL_rm = NULL;
+   nhnd[cls->handlerCount].header.ppFo_rm = NULL;
    nhnd[cls->handlerCount].header.usrData = NULL;
    nhnd[cls->handlerCount].header.constructType = DEFMESSAGE_HANDLER;
    nhnd[cls->handlerCount].header.env = theEnv;
@@ -361,7 +361,7 @@ DefmessageHandler *CL_InsertHandlerHeader(
 
 /*****************************************************
   NAME         : CL_HandlersExecuting
-  DESCRIPTION  : DeteCL_rmines if any message-handlers
+  DESCRIPTION  : Dete_rmines if any message-handlers
                    for a class are currently executing
   INPUTS       : The class address
   RETURNS      : True if any handlers are executing,
@@ -517,9 +517,9 @@ void CL_DeallocateMarkedHandlers(
          CL_ExpressionDeinstall(theEnv,hnd->actions);
          CL_ReturnPackedExpression(theEnv,hnd->actions);
          CL_ClearUserDataList(theEnv,hnd->header.usrData);
-         if (hnd->header.ppFoCL_rm != NULL)
-           CL_rm(theEnv,(void *) hnd->header.ppFoCL_rm,
-              (sizeof(char) * (strlen(hnd->header.ppFoCL_rm)+1)));
+         if (hnd->header.ppFo_rm != NULL)
+           CL_rm(theEnv,(void *) hnd->header.ppFo_rm,
+              (sizeof(char) * (strlen(hnd->header.ppFo_rm)+1)));
         }
       else
          /* ============================================
@@ -579,7 +579,7 @@ void CL_DeallocateMarkedHandlers(
 
 /*****************************************************
   NAME         : CL_HandlerType
-  DESCRIPTION  : DeteCL_rmines type of message-handler
+  DESCRIPTION  : Dete_rmines type of message-handler
   INPUTS       : 1) Calling function string
                  2) String representing type
   RETURNS      : MAROUND  (0) for "around"
@@ -645,7 +645,7 @@ bool CL_CheckCurrentMessage(
       CL_WriteString(theEnv,STDERR,"The function '");
       CL_WriteString(theEnv,STDERR,func);
       CL_WriteString(theEnv,STDERR,"' may only be called from within message-handlers.\n");
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return false;
      }
    activeMsgArg = CL_GetNthMessageArgument(theEnv,0);
@@ -655,14 +655,14 @@ bool CL_CheckCurrentMessage(
       CL_WriteString(theEnv,STDERR,"The function '");
       CL_WriteString(theEnv,STDERR,func);
       CL_WriteString(theEnv,STDERR,"' operates only on instances.\n");
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return false;
      }
    if ((activeMsgArg->header->type == INSTANCE_ADDRESS_TYPE) ?
        (activeMsgArg->instanceValue->garbage == 1) : false)
      {
       CL_StaleInstanceAddress(theEnv,func,0);
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return false;
      }
    return true;
@@ -674,7 +674,7 @@ bool CL_CheckCurrentMessage(
   INPUTS       : 1) Logical name of output
                  2) The handler
                  5) Flag indicating whether to
-                    printout a teCL_rminating newline
+                    printout a te_rminating newline
   RETURNS      : Nothing useful
   SIDE EFFECTS : None
   NOTES        : None
@@ -861,7 +861,7 @@ void CL_HandlerDeleteError(
                    to indicate shadowing and where handlers begin
                    and end execution wrt one another.
   INPUTS       : 1) Logical name of output
-                 2) The reCL_maining core
+                 2) The re_maining core
                  3) The number of handlers this (partial) core
                     shadows
   RETURNS      : Nothing useful
@@ -959,7 +959,7 @@ void CL_WatchMessage(
    CL_WriteString(theEnv,logName," ");
    CL_WriteString(theEnv,logName,MessageHandlerData(theEnv)->CurrentMessageName->contents);
    CL_WriteString(theEnv,logName," ED:");
-   CL_WriteInteger(theEnv,logName,CL_EvaluationData(theEnv)->CurrentCL_EvaluationDepth);
+   CL_WriteInteger(theEnv,logName,CL_EvaluationData(theEnv)->Current_EvaluationDepth);
    CL_PrintProcParamArray(theEnv,logName);
   }
 
@@ -993,7 +993,7 @@ void CL_WatchHandler(
    hnd = hndl->hnd;
    CL_PrintHandler(theEnv,logName,hnd,false,true);
    CL_WriteString(theEnv,logName,"       ED:");
-   CL_WriteInteger(theEnv,logName,CL_EvaluationData(theEnv)->CurrentCL_EvaluationDepth);
+   CL_WriteInteger(theEnv,logName,CL_EvaluationData(theEnv)->Current_EvaluationDepth);
    CL_PrintProcParamArray(theEnv,logName);
   }
 
@@ -1015,7 +1015,7 @@ void CL_WatchHandler(
                    to indicate shadowing and where handlers begin
                    and end execution wrt one another.
   INPUTS       : 1) The logical name of the output
-                 2) The reCL_maining core
+                 2) The re_maining core
                  3) The number of handlers this (partial) core
                     shadows
   RETURNS      : The address of the handler following the primary

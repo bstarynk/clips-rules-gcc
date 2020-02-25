@@ -47,7 +47,7 @@ struct bsaveDeffacts
    unsigned long assertList;
   };
 
-struct bsaveCL_DeffactsModule
+struct bsave_DeffactsModule
   {
    struct bsaveDefmoduleItemHeader header;
   };
@@ -59,13 +59,13 @@ struct deffactsBinaryData
    Deffacts *DeffactsArray;
    unsigned long NumberOfDeffacts;
    struct deffactsModule *ModuleArray;
-   unsigned long NumberOfCL_DeffactsModules;
+   unsigned long NumberOf_DeffactsModules;
   };
 
 #define DeffactsBinaryData(theEnv) ((struct deffactsBinaryData *) GetEnvironmentData(theEnv,DFFCTBIN_DATA))
 
    void                           CL_DeffactsBinarySetup(Environment *);
-   void                          *CL_BloadCL_DeffactsModuleReference(Environment *,unsigned long);
+   void                          *CL_Bload_DeffactsModuleReference(Environment *,unsigned long);
 
 #endif /* (! RUN_TIME) */
 

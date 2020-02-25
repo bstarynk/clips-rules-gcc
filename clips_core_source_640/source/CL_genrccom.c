@@ -54,8 +54,8 @@
 /*            constructs that are contained externally to    */
 /*            to constructs, DanglingConstructs.             */
 /*                                                           */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*      6.40: Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -148,15 +148,15 @@
 
 #if DEBUGGING_FUNCTIONS
    static unsigned short          ListMethodsForGeneric(Environment *,const char *,Defgeneric *);
-   static bool                    DefgenericCL_WatchAccess(Environment *,int,bool,Expression *);
-   static bool                    DefgenericCL_WatchPrint(Environment *,const char *,int,Expression *);
-   static bool                    DefmethodCL_WatchAccess(Environment *,int,bool,Expression *);
-   static bool                    DefmethodCL_WatchPrint(Environment *,const char *,int,Expression *);
-   static bool                    DefmethodCL_WatchSupport(Environment *,const char *,const char *,bool,
+   static bool                    Defgeneric_WatchAccess(Environment *,int,bool,Expression *);
+   static bool                    Defgeneric_WatchPrint(Environment *,const char *,int,Expression *);
+   static bool                    Defmethod_WatchAccess(Environment *,int,bool,Expression *);
+   static bool                    Defmethod_WatchPrint(Environment *,const char *,int,Expression *);
+   static bool                    Defmethod_WatchSupport(Environment *,const char *,const char *,bool,
                                                         void (*)(Environment *,const char *,Defgeneric *,unsigned short),
                                                         void (*)(Defgeneric *,unsigned short,bool),
                                                         Expression *);
-   static void                    CL_PrintMethodCL_WatchFlag(Environment *,const char *,Defgeneric *,unsigned short);
+   static void                    CL_PrintMethod_WatchFlag(Environment *,const char *,Defgeneric *,unsigned short);
 #endif
 
 /* =========================================
@@ -179,10 +179,10 @@ void CL_SetupGenericFunctions(
   {
    EntityRecord genericEntityRecord =
                      { "GCALL", GCALL,0,0,1,
-                       (EntityCL_PrintFunction *) PrintGenericCall,
-                       (EntityCL_PrintFunction *) PrintGenericCall,
+                       (Entity_PrintFunction *) PrintGenericCall,
+                       (Entity_PrintFunction *) PrintGenericCall,
                        NULL,
-                       (EntityCL_EvaluationFunction *) CL_EvaluateGenericCall,
+                       (Entity_EvaluationFunction *) CL_EvaluateGenericCall,
                        NULL,
                        (EntityBusyCountFunction *) DecrementGenericBusyCount,
                        (EntityBusyCountFunction *) IncrementGenericBusyCount,
@@ -196,13 +196,13 @@ void CL_SetupGenericFunctions(
    DefgenericData(theEnv)->CL_DefgenericModuleIndex =
                 CL_RegisterModuleItem(theEnv,"defgeneric",
 #if (! RUN_TIME)
-                                    CL_AllocateCL_DefgenericModule,
-                                    FreeCL_DefgenericModule,
+                                    CL_Allocate_DefgenericModule,
+                                    Free_DefgenericModule,
 #else
                                     NULL,NULL,
 #endif
 #if BLOAD_AND_BSAVE || BLOAD || BLOAD_ONLY
-                                    CL_BloadCL_DefgenericModuleReference,
+                                    CL_Bload_DefgenericModuleReference,
 #else
                                     NULL,
 #endif
@@ -220,7 +220,7 @@ void CL_SetupGenericFunctions(
                                        NULL,
 #endif
                                        (CL_FindConstructFunction *) CL_FindDefgeneric,
-                                       CL_GetConstructNamePointer,CL_GetConstructPPFoCL_rm,
+                                       CL_GetConstructNamePointer,CL_GetConstructPPFo_rm,
                                        CL_GetConstructModuleItem,
                                        (GetNextConstructFunction *) CL_GetNextDefgeneric,
                                        CL_SetNextConstruct,
@@ -235,10 +235,10 @@ void CL_SetupGenericFunctions(
 
 
 #if ! RUN_TIME
-   CL_AddCL_ClearReadyFunction(theEnv,"defgeneric",CL_ClearDefgenericsReady,0,NULL);
+   CL_Add_ClearReadyFunction(theEnv,"defgeneric",CL_ClearDefgenericsReady,0,NULL);
 
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE
-   SetupGenericsCL_Bload(theEnv);
+   SetupGenerics_Bload(theEnv);
 #endif
 
 #if CONSTRUCT_COMPILER
@@ -259,8 +259,8 @@ void CL_SetupGenericFunctions(
      Need to be cleared in two stages so that mutually dependent
        constructs (like classes) can be cleared
      ================================================================ */
-   CL_AddCL_SaveFunction(theEnv,"defgeneric",CL_SaveDefgenerics,1000,NULL);
-   CL_AddCL_SaveFunction(theEnv,"defmethod",CL_SaveDefmethods,-1000,NULL);
+   CL_Add_SaveFunction(theEnv,"defgeneric",CL_SaveDefgenerics,1000,NULL);
+   CL_Add_SaveFunction(theEnv,"defmethod",CL_SaveDefmethods,-1000,NULL);
    CL_AddUDF(theEnv,"undefgeneric","v",1,1,"y",CL_UndefgenericCommand,"CL_UndefgenericCommand",NULL);
    CL_AddUDF(theEnv,"undefmethod","v",2,2,"*;y;ly",CL_UndefmethodCommand,"CL_UndefmethodCommand",NULL);
 #endif
@@ -287,7 +287,7 @@ void CL_SetupGenericFunctions(
    CL_AddUDF(theEnv,"get-defgeneric-list","m",0,1,"y",CL_GetDefgenericListFunction,"CL_GetDefgenericListFunction",NULL);
    CL_AddUDF(theEnv,"get-defmethod-list","m",0,1,"y",CL_GetDefmethodListCommand,"CL_GetDefmethodListCommand",NULL);
    CL_AddUDF(theEnv,"get-method-restrictions","m",2,2,"l;y",CL_GetMethodRestrictionsCommand,"CL_GetMethodRestrictionsCommand",NULL);
-   CL_AddUDF(theEnv,"defgeneric-module","y",1,1,"y",GetCL_DefgenericModuleCommand,"GetCL_DefgenericModuleCommand",NULL);
+   CL_AddUDF(theEnv,"defgeneric-module","y",1,1,"y",Get_DefgenericModuleCommand,"Get_DefgenericModuleCommand",NULL);
 
 #if OBJECT_SYSTEM
    CL_AddUDF(theEnv,"type","*",1,1,"*",CL_ClassCommand,"CL_ClassCommand",NULL);
@@ -298,10 +298,10 @@ void CL_SetupGenericFunctions(
 #endif
 
 #if DEBUGGING_FUNCTIONS
-   CL_AddCL_WatchItem(theEnv,"generic-functions",0,&DefgenericData(theEnv)->CL_WatchGenerics,34,
-                DefgenericCL_WatchAccess,DefgenericCL_WatchPrint);
-   CL_AddCL_WatchItem(theEnv,"methods",0,&DefgenericData(theEnv)->CL_WatchMethods,33,
-                DefmethodCL_WatchAccess,DefmethodCL_WatchPrint);
+   CL_Add_WatchItem(theEnv,"generic-functions",0,&DefgenericData(theEnv)->CL_WatchGenerics,34,
+                Defgeneric_WatchAccess,Defgeneric_WatchPrint);
+   CL_Add_WatchItem(theEnv,"methods",0,&DefgenericData(theEnv)->CL_WatchMethods,33,
+                Defmethod_WatchAccess,Defmethod_WatchPrint);
 #endif
   }
 
@@ -516,7 +516,7 @@ Defmethod *CL_GetDefmethodPointer(
 
 /***************************************************
   NAME         : IsDefgenericDeletable
-  DESCRIPTION  : DeteCL_rmines if a generic function
+  DESCRIPTION  : Dete_rmines if a generic function
                    can be deleted
   INPUTS       : Address of the generic function
   RETURNS      : True if deletable, false otherwise
@@ -536,7 +536,7 @@ bool CL_DefgenericIsDeletable(
 
 /***************************************************
   NAME         : CL_DefmethodIsDeletable
-  DESCRIPTION  : DeteCL_rmines if a generic function
+  DESCRIPTION  : Dete_rmines if a generic function
                    method can be deleted
   INPUTS       : 1) Address of the generic function
                  2) Index of the method
@@ -584,14 +584,14 @@ void CL_UndefgenericCommand(
   }
 
 /****************************************************************
-  NAME         : GetCL_DefgenericModuleCommand
-  DESCRIPTION  : DeteCL_rmines to which module a defgeneric belongs
+  NAME         : Get_DefgenericModuleCommand
+  DESCRIPTION  : Dete_rmines to which module a defgeneric belongs
   INPUTS       : None
   RETURNS      : The symbolic name of the module
   SIDE EFFECTS : None
   NOTES        : H/L Syntax: (defgeneric-module <generic-name>)
  ****************************************************************/
-void GetCL_DefgenericModuleCommand(
+void Get_DefgenericModuleCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -660,7 +660,7 @@ void CL_UndefmethodCommand(
   }
 
 /**************************************************************
-  NAME         : EnvCL_Undefgeneric
+  NAME         : Env_Undefgeneric
   DESCRIPTION  : Deletes all methods for a generic function
   INPUTS       : The generic-function address (NULL for all)
   RETURNS      : True if generic successfully deleted,
@@ -825,29 +825,29 @@ bool CL_Undefmethod(
                    restrictions into caller's buffer
   INPUTS       : 1) Caller's buffer
                  2) Buffer size (not including space
-                    for teCL_rminating '\0')
+                    for te_rminating '\0')
                  3) Address of generic function
                  4) Index of method
   RETURNS      : Nothing useful
   SIDE EFFECTS : Caller's buffer written
-  NOTES        : TeCL_rminating '\n' not written
+  NOTES        : Te_rminating '\n' not written
  *****************************************************/
 void CL_DefmethodDescription(
   Defgeneric *theDefgeneric,
   unsigned short theIndex,
-  StringCL_Builder *theSB)
+  String_Builder *theSB)
   {
    long mi;
    Environment *theEnv = theDefgeneric->header.env;
 
    mi = CL_FindMethodByIndex(theDefgeneric,theIndex);
 
-   OpenStringCL_BuilderDestination(theEnv,"MethodDescription",theSB);
+   OpenString_BuilderDestination(theEnv,"MethodDescription",theSB);
 
    if (mi != METHOD_NOT_FOUND)
      { CL_PrintMethod(theEnv,&theDefgeneric->methods[mi],theSB); }
    
-   CloseStringCL_BuilderDestination(theEnv,"MethodDescription");
+   CloseString_BuilderDestination(theEnv,"MethodDescription");
 
   }
 #endif /* DEBUGGING_FUNCTIONS || PROFILING_FUNCTIONS */
@@ -855,8 +855,8 @@ void CL_DefmethodDescription(
 #if DEBUGGING_FUNCTIONS
 
 /*********************************************************
-  NAME         : GetDefgenericCL_Watch
-  DESCRIPTION  : DeteCL_rmines if trace messages are
+  NAME         : GetDefgeneric_Watch
+  DESCRIPTION  : Dete_rmines if trace messages are
                  gnerated when executing generic function
   INPUTS       : A pointer to the generic
   RETURNS      : True if a trace is active,
@@ -864,14 +864,14 @@ void CL_DefmethodDescription(
   SIDE EFFECTS : None
   NOTES        : None
  *********************************************************/
-bool CL_DefgenericGetCL_Watch(
+bool CL_DefgenericGet_Watch(
   Defgeneric *theGeneric)
   {
    return theGeneric->trace;
   }
 
 /*********************************************************
-  NAME         : SetDefgenericCL_Watch
+  NAME         : SetDefgeneric_Watch
   DESCRIPTION  : Sets the trace to ON/OFF for the
                  generic function
   INPUTS       : 1) True to set the trace on,
@@ -881,7 +881,7 @@ bool CL_DefgenericGetCL_Watch(
   SIDE EFFECTS : CL_Watch flag for the generic set
   NOTES        : None
  *********************************************************/
-void CL_DefgenericSetCL_Watch(
+void CL_DefgenericSet_Watch(
   Defgeneric *theGeneric,
   bool newState)
   {
@@ -889,8 +889,8 @@ void CL_DefgenericSetCL_Watch(
   }
 
 /*********************************************************
-  NAME         : CL_DefmethodGetCL_Watch
-  DESCRIPTION  : DeteCL_rmines if trace messages for calls
+  NAME         : CL_DefmethodGet_Watch
+  DESCRIPTION  : Dete_rmines if trace messages for calls
                  to this method will be generated or not
   INPUTS       : 1) A pointer to the generic
                  2) The index of the method
@@ -899,7 +899,7 @@ void CL_DefgenericSetCL_Watch(
   SIDE EFFECTS : None
   NOTES        : None
  *********************************************************/
-bool CL_DefmethodGetCL_Watch(
+bool CL_DefmethodGet_Watch(
   Defgeneric *theGeneric,
   unsigned short theIndex)
   {
@@ -914,7 +914,7 @@ bool CL_DefmethodGetCL_Watch(
   }
 
 /*********************************************************
-  NAME         : CL_DefmethodSetCL_Watch
+  NAME         : CL_DefmethodSet_Watch
   DESCRIPTION  : Sets the trace to ON/OFF for the
                  calling of the method
   INPUTS       : 1) True to set the trace on,
@@ -925,7 +925,7 @@ bool CL_DefmethodGetCL_Watch(
   SIDE EFFECTS : CL_Watch flag for the method set
   NOTES        : None
  *********************************************************/
-void CL_DefmethodSetCL_Watch(
+void CL_DefmethodSet_Watch(
   Defgeneric *theGeneric,
   unsigned short theIndex,
   bool newState)
@@ -941,7 +941,7 @@ void CL_DefmethodSetCL_Watch(
 
 /********************************************************
   NAME         : CL_PPDefgenericCommand
-  DESCRIPTION  : Displays the pretty-print foCL_rm of
+  DESCRIPTION  : Displays the pretty-print fo_rm of
                   a generic function header
   INPUTS       : None
   RETURNS      : Nothing useful
@@ -958,7 +958,7 @@ void CL_PPDefgenericCommand(
 
 /**********************************************************
   NAME         : CL_PPDefmethodCommand
-  DESCRIPTION  : Displays the pretty-print foCL_rm of
+  DESCRIPTION  : Displays the pretty-print fo_rm of
                   a method
   INPUTS       : None
   RETURNS      : Nothing useful
@@ -987,8 +987,8 @@ void CL_PPDefmethodCommand(
       if (logicalName == NULL)
         {
          CL_IllegalLogicalNameMessage(theEnv,"ppdefmethod");
-         SetCL_HaltExecution(theEnv,true);
-         SetCL_EvaluationError(theEnv,true);
+         Set_HaltExecution(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          return;
         }
      }
@@ -1005,15 +1005,15 @@ void CL_PPDefmethodCommand(
      
    if (strcmp(logicalName,"nil") == 0)
      {
-      if (gfunc->methods[gi].header.ppFoCL_rm != NULL)
-        { returnValue->lexemeValue = CL_CreateString(theEnv,gfunc->methods[gi].header.ppFoCL_rm); }
+      if (gfunc->methods[gi].header.ppFo_rm != NULL)
+        { returnValue->lexemeValue = CL_CreateString(theEnv,gfunc->methods[gi].header.ppFo_rm); }
       else
         { returnValue->lexemeValue = CL_CreateString(theEnv,""); }
      }
    else
      {
-      if (gfunc->methods[gi].header.ppFoCL_rm != NULL)
-        CL_WriteString(theEnv,logicalName,gfunc->methods[gi].header.ppFoCL_rm);
+      if (gfunc->methods[gi].header.ppFo_rm != NULL)
+        CL_WriteString(theEnv,logicalName,gfunc->methods[gi].header.ppFo_rm);
      }
   }
 
@@ -1047,15 +1047,15 @@ void CL_ListDefmethodsCommand(
   }
 
 /***************************************************************
-  NAME         : CL_DefmethodPPFoCL_rm
-  DESCRIPTION  : Getsa generic function method pretty print foCL_rm
+  NAME         : CL_DefmethodPPFo_rm
+  DESCRIPTION  : Getsa generic function method pretty print fo_rm
   INPUTS       : 1) Address of the generic function
                  2) Index of the method
-  RETURNS      : Method ppfoCL_rm
+  RETURNS      : Method ppfo_rm
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************************/
-const char *CL_DefmethodPPFoCL_rm(
+const char *CL_DefmethodPPFo_rm(
   Defgeneric *theDefgeneric,
   unsigned short theIndex)
   {
@@ -1064,7 +1064,7 @@ const char *CL_DefmethodPPFoCL_rm(
    mi = CL_FindMethodByIndex(theDefgeneric,theIndex);
    
    if (mi != METHOD_NOT_FOUND)
-     { return theDefgeneric->methods[mi].header.ppFoCL_rm; }
+     { return theDefgeneric->methods[mi].header.ppFo_rm; }
      
    return "";
   }
@@ -1176,7 +1176,7 @@ void CL_GetDefgenericList(
    UDFValue result;
    
    CL_GetConstructList(theEnv,&result,DefgenericData(theEnv)->DefgenericConstruct,theModule);
-   CL_NoCL_rmalizeMultifield(theEnv,&result);
+   CL_No_rmalizeMultifield(theEnv,&result);
    returnValue->value = result.value;
   }
 
@@ -1265,7 +1265,7 @@ void CL_GetDefmethodList(
      {
       for (j = 0 ; j < gfunc->mcnt ; j++)
         {
-         theList->contents[i++].value = GetCL_DefgenericNamePointer(gfunc);
+         theList->contents[i++].value = Get_DefgenericNamePointer(gfunc);
          theList->contents[i++].integerValue = CL_CreateInteger(theEnv,(long long) gfunc->methods[j].index);
         }
      }
@@ -1324,7 +1324,7 @@ void CL_GetMethodRestrictionsCommand(
   RETURNS      : Nothing useful
   SIDE EFFECTS : Multifield created (length zero on errors)
   NOTES        : The restrictions are stored in the multifield
-                 in the following foCL_rmat:
+                 in the following fo_rmat:
 
                  <min-number-of-arguments>
                  <max-number-of-arguments> (-1 if wildcard allowed)
@@ -1517,7 +1517,7 @@ static void IncrementGenericBusyCount(
 
 /**********************************************************************
   NAME         : CL_SaveDefgenerics
-  DESCRIPTION  : Outputs pretty-print foCL_rms of generic function headers
+  DESCRIPTION  : Outputs pretty-print fo_rms of generic function headers
   INPUTS       : The logical name of the output
   RETURNS      : Nothing useful
   SIDE EFFECTS : None
@@ -1534,7 +1534,7 @@ static void CL_SaveDefgenerics(
 
 /**********************************************************************
   NAME         : CL_SaveDefmethods
-  DESCRIPTION  : Outputs pretty-print foCL_rms of generic function methods
+  DESCRIPTION  : Outputs pretty-print fo_rms of generic function methods
   INPUTS       : The logical name of the output
   RETURNS      : Nothing useful
   SIDE EFFECTS : None
@@ -1554,7 +1554,7 @@ static void CL_SaveDefmethods(
 
 /***************************************************
   NAME         : CL_SaveDefmethodsForDefgeneric
-  DESCRIPTION  : CL_Save the pretty-print foCL_rms of
+  DESCRIPTION  : CL_Save the pretty-print fo_rms of
                  all methods for a generic function
                  to a file
   INPUTS       : 1) The defgeneric
@@ -1574,9 +1574,9 @@ static void CL_SaveDefmethodsForDefgeneric(
 
    for (i = 0 ; i < gfunc->mcnt ; i++)
      {
-      if (gfunc->methods[i].header.ppFoCL_rm != NULL)
+      if (gfunc->methods[i].header.ppFo_rm != NULL)
         {
-         CL_WriteString(theEnv,logName,gfunc->methods[i].header.ppFoCL_rm);
+         CL_WriteString(theEnv,logName,gfunc->methods[i].header.ppFo_rm);
          CL_WriteString(theEnv,logName,"\n");
         }
      }
@@ -1604,7 +1604,7 @@ static void CL_RemoveDefgenericMethod(
 
    if (gfunc->methods[gi].system)
      {
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       CL_PrintErrorID(theEnv,"GENRCCOM",4,false);
       CL_WriteString(theEnv,STDERR,"Cannot remove implicit system function method for generic function '");
       CL_WriteString(theEnv,STDERR,CL_DefgenericName(gfunc));
@@ -1653,9 +1653,9 @@ static unsigned short ListMethodsForGeneric(
   Defgeneric *gfunc)
   {
    unsigned short gi;
-   StringCL_Builder *theSB;
+   String_Builder *theSB;
    
-   theSB = CL_CreateStringCL_Builder(theEnv,256);
+   theSB = CL_CreateString_Builder(theEnv,256);
 
    for (gi = 0 ; gi < gfunc->mcnt ; gi++)
      {
@@ -1672,9 +1672,9 @@ static unsigned short ListMethodsForGeneric(
   }
 
 /******************************************************************
-  NAME         : DefgenericCL_WatchAccess
+  NAME         : Defgeneric_WatchAccess
   DESCRIPTION  : Parses a list of generic names passed by
-                 CL_AddCL_WatchItem() and sets the traces accordingly
+                 CL_Add_WatchItem() and sets the traces accordingly
   INPUTS       : 1) A code indicating which trace flag is to be set
                     Ignored
                  2) The value to which to set the trace flags
@@ -1682,9 +1682,9 @@ static unsigned short ListMethodsForGeneric(
                     of the generics for which to set traces
   RETURNS      : True if all OK, false otherwise
   SIDE EFFECTS : CL_Watch flags set in specified generics
-  NOTES        : Accessory function for CL_AddCL_WatchItem()
+  NOTES        : Accessory function for CL_Add_WatchItem()
  ******************************************************************/
-static bool DefgenericCL_WatchAccess(
+static bool Defgeneric_WatchAccess(
   Environment *theEnv,
   int code,
   bool newState,
@@ -1694,15 +1694,15 @@ static bool DefgenericCL_WatchAccess(
 #pragma unused(code)
 #endif
 
-   return(CL_ConstructSetCL_WatchAccess(theEnv,DefgenericData(theEnv)->DefgenericConstruct,newState,argExprs,
-                                  (ConstructGetCL_WatchFunction *) CL_DefgenericGetCL_Watch,
-                                  (ConstructSetCL_WatchFunction *) CL_DefgenericSetCL_Watch));
+   return(CL_ConstructSet_WatchAccess(theEnv,DefgenericData(theEnv)->DefgenericConstruct,newState,argExprs,
+                                  (ConstructGet_WatchFunction *) CL_DefgenericGet_Watch,
+                                  (ConstructSet_WatchFunction *) CL_DefgenericSet_Watch));
   }
 
 /***********************************************************************
-  NAME         : DefgenericCL_WatchPrint
+  NAME         : Defgeneric_WatchPrint
   DESCRIPTION  : Parses a list of generic names passed by
-                 CL_AddCL_WatchItem() and displays the traces accordingly
+                 CL_Add_WatchItem() and displays the traces accordingly
   INPUTS       : 1) The logical name of the output
                  2) A code indicating which trace flag is to be examined
                     Ignored
@@ -1710,9 +1710,9 @@ static bool DefgenericCL_WatchAccess(
                     of the generics for which to examine traces
   RETURNS      : True if all OK, false otherwise
   SIDE EFFECTS : CL_Watch flags displayed for specified generics
-  NOTES        : Accessory function for CL_AddCL_WatchItem()
+  NOTES        : Accessory function for CL_Add_WatchItem()
  ***********************************************************************/
-static bool DefgenericCL_WatchPrint(
+static bool Defgeneric_WatchPrint(
   Environment *theEnv,
   const char *logName,
   int code,
@@ -1722,15 +1722,15 @@ static bool DefgenericCL_WatchPrint(
 #pragma unused(code)
 #endif
 
-   return(CL_ConstructPrintCL_WatchAccess(theEnv,DefgenericData(theEnv)->DefgenericConstruct,logName,argExprs,
-                                    (ConstructGetCL_WatchFunction *) CL_DefgenericGetCL_Watch,
-                                    (ConstructSetCL_WatchFunction *) CL_DefgenericSetCL_Watch));
+   return(CL_ConstructPrint_WatchAccess(theEnv,DefgenericData(theEnv)->DefgenericConstruct,logName,argExprs,
+                                    (ConstructGet_WatchFunction *) CL_DefgenericGet_Watch,
+                                    (ConstructSet_WatchFunction *) CL_DefgenericSet_Watch));
   }
 
 /******************************************************************
-  NAME         : DefmethodCL_WatchAccess
+  NAME         : Defmethod_WatchAccess
   DESCRIPTION  : Parses a list of methods passed by
-                 CL_AddCL_WatchItem() and sets the traces accordingly
+                 CL_Add_WatchItem() and sets the traces accordingly
   INPUTS       : 1) A code indicating which trace flag is to be set
                     Ignored
                  2) The value to which to set the trace flags
@@ -1738,9 +1738,9 @@ static bool DefgenericCL_WatchPrint(
                    for which to set traces
   RETURNS      : True if all OK, false otherwise
   SIDE EFFECTS : CL_Watch flags set in specified methods
-  NOTES        : Accessory function for CL_AddCL_WatchItem()
+  NOTES        : Accessory function for CL_Add_WatchItem()
  ******************************************************************/
-static bool DefmethodCL_WatchAccess(
+static bool Defmethod_WatchAccess(
   Environment *theEnv,
   int code,
   bool newState,
@@ -1750,15 +1750,15 @@ static bool DefmethodCL_WatchAccess(
 #pragma unused(code)
 #endif
    if (newState)
-     return(DefmethodCL_WatchSupport(theEnv,"watch",NULL,newState,NULL,CL_DefmethodSetCL_Watch,argExprs));
+     return(Defmethod_WatchSupport(theEnv,"watch",NULL,newState,NULL,CL_DefmethodSet_Watch,argExprs));
    else
-     return(DefmethodCL_WatchSupport(theEnv,"unwatch",NULL,newState,NULL,CL_DefmethodSetCL_Watch,argExprs));
+     return(Defmethod_WatchSupport(theEnv,"unwatch",NULL,newState,NULL,CL_DefmethodSet_Watch,argExprs));
   }
 
 /***********************************************************************
-  NAME         : DefmethodCL_WatchPrint
+  NAME         : Defmethod_WatchPrint
   DESCRIPTION  : Parses a list of methods passed by
-                 CL_AddCL_WatchItem() and displays the traces accordingly
+                 CL_Add_WatchItem() and displays the traces accordingly
   INPUTS       : 1) The logical name of the output
                  2) A code indicating which trace flag is to be examined
                     Ignored
@@ -1766,9 +1766,9 @@ static bool DefmethodCL_WatchAccess(
                     which to examine traces
   RETURNS      : True if all OK, false otherwise
   SIDE EFFECTS : CL_Watch flags displayed for specified methods
-  NOTES        : Accessory function for CL_AddCL_WatchItem()
+  NOTES        : Accessory function for CL_Add_WatchItem()
  ***********************************************************************/
-static bool DefmethodCL_WatchPrint(
+static bool Defmethod_WatchPrint(
   Environment *theEnv,
   const char *logName,
   int code,
@@ -1777,12 +1777,12 @@ static bool DefmethodCL_WatchPrint(
 #if MAC_XCD
 #pragma unused(code)
 #endif
-   return(DefmethodCL_WatchSupport(theEnv,"list-watch-items",logName,0,
-                                CL_PrintMethodCL_WatchFlag,NULL,argExprs));
+   return(Defmethod_WatchSupport(theEnv,"list-watch-items",logName,0,
+                                CL_PrintMethod_WatchFlag,NULL,argExprs));
   }
 
 /*******************************************************
-  NAME         : DefmethodCL_WatchSupport
+  NAME         : Defmethod_WatchSupport
   DESCRIPTION  : Sets or displays methods specified
   INPUTS       : 1) The calling function name
                  2) The logical output name for displays
@@ -1796,7 +1796,7 @@ static bool DefmethodCL_WatchPrint(
   SIDE EFFECTS : Method trace flags set or displayed
   NOTES        : None
  *******************************************************/
-static bool DefmethodCL_WatchSupport(
+static bool Defmethod_WatchSupport(
   Environment *theEnv,
   const char *funcName,
   const char *logName,
@@ -1909,7 +1909,7 @@ static bool DefmethodCL_WatchSupport(
   }
 
 /***************************************************
-  NAME         : CL_PrintMethodCL_WatchFlag
+  NAME         : CL_PrintMethod_WatchFlag
   DESCRIPTION  : Displays trace value for method
   INPUTS       : 1) The logical name of the output
                  2) The generic function
@@ -1918,19 +1918,19 @@ static bool DefmethodCL_WatchSupport(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-static void CL_PrintMethodCL_WatchFlag(
+static void CL_PrintMethod_WatchFlag(
   Environment *theEnv,
   const char *logName,
   Defgeneric *theGeneric,
   unsigned short theMethod)
   {
-   StringCL_Builder *theSB = CL_CreateStringCL_Builder(theEnv,60);
+   String_Builder *theSB = CL_CreateString_Builder(theEnv,60);
 
    CL_WriteString(theEnv,logName,CL_DefgenericName(theGeneric));
    CL_WriteString(theEnv,logName," ");
    CL_DefmethodDescription(theGeneric,theMethod,theSB);
    CL_WriteString(theEnv,logName,theSB->contents);
-   if (CL_DefmethodGetCL_Watch(theGeneric,theMethod))
+   if (CL_DefmethodGet_Watch(theGeneric,theMethod))
      CL_WriteString(theEnv,logName," = on\n");
    else
      CL_WriteString(theEnv,logName," = off\n");
@@ -1992,24 +1992,24 @@ const char *CL_DefgenericName(
    return CL_GetConstructNameString(&theDefgeneric->header);
   }
 
-const char *CL_DefgenericPPFoCL_rm(
+const char *CL_DefgenericPPFo_rm(
   Defgeneric *theDefgeneric)
   {
-   return CL_GetConstructPPFoCL_rm(&theDefgeneric->header);
+   return CL_GetConstructPPFo_rm(&theDefgeneric->header);
   }
 
-CLIPSLexeme *GetCL_DefgenericNamePointer(
+CLIPSLexeme *Get_DefgenericNamePointer(
   Defgeneric *theDefgeneric)
   {
    return CL_GetConstructNamePointer(&theDefgeneric->header);
   }
 
-void SetCL_DefgenericPPFoCL_rm(
+void SetCL_DefgenericPPFo_rm(
   Environment *theEnv,
   Defgeneric *theDefgeneric,
-  const char *thePPFoCL_rm)
+  const char *thePPFo_rm)
   {
-   SetConstructPPFoCL_rm(theEnv,&theDefgeneric->header,thePPFoCL_rm);
+   SetConstructPPFo_rm(theEnv,&theDefgeneric->header,thePPFo_rm);
   }
 
 

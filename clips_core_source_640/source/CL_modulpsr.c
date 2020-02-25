@@ -99,12 +99,12 @@ void CL_SetNumberOfDefmodules(
 void CL_AddAfterModuleDefinedFunction(
   Environment *theEnv,
   const char *name,
-  VoidCL_CallFunction *func,
+  Void_CallFunction *func,
   int priority,
   void *context)
   {
    DefmoduleData(theEnv)->AfterModuleDefinedFunctions =
-     CL_AddCL_VoidFunctionToCallList(theEnv,name,priority,func,DefmoduleData(theEnv)->AfterModuleDefinedFunctions,context);
+     CL_Add_VoidFunctionToCallList(theEnv,name,priority,func,DefmoduleData(theEnv)->AfterModuleDefinedFunctions,context);
   }
 
 /******************************************************/
@@ -141,7 +141,7 @@ bool CL_ParseDefmodule(
    struct moduleItem *theItem;
    struct portItem *portSpecs, *nextSpec;
    struct defmoduleItemHeader *theHeader;
-   struct voidCL_CallFunctionItem *defineFunctions;
+   struct void_CallFunctionItem *defineFunctions;
    Defmodule *redefiningMainModule = NULL;
    bool parseError;
    struct portItem *oldImportList = NULL, *oldExportList = NULL;
@@ -166,7 +166,7 @@ bool CL_ParseDefmodule(
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE
    if ((CL_Bloaded(theEnv) == true) && (! ConstructData(theEnv)->CL_CheckSyntaxMode))
      {
-      CannotCL_LoadWithCL_BloadMessage(theEnv,"defmodule");
+      Cannot_LoadWith_BloadMessage(theEnv,"defmodule");
       return true;
      }
 #endif
@@ -331,9 +331,9 @@ bool CL_ParseDefmodule(
    CL_SavePPBuffer(theEnv,"\n");
 
    if (CL_GetConserveMemory(theEnv) == true)
-     { newDefmodule->header.ppFoCL_rm = NULL; }
+     { newDefmodule->header.ppFo_rm = NULL; }
    else
-     { newDefmodule->header.ppFoCL_rm = CL_CopyPPBuffer(theEnv); }
+     { newDefmodule->header.ppFo_rm = CL_CopyPPBuffer(theEnv); }
 
    /*==============================================*/
    /* Add the defmodule to the list of defmodules. */
@@ -367,7 +367,7 @@ bool CL_ParseDefmodule(
   }
 
 /*************************************************************/
-/* DeleteDefmodule: Used by the parsing routine to deteCL_rmine */
+/* DeleteDefmodule: Used by the parsing routine to dete_rmine */
 /*   if a module can be redefined. Only the MAIN module can  */
 /*   be redefined (and it can only be redefined once).       */
 /*************************************************************/
@@ -539,7 +539,7 @@ static bool ParseImportSpec(
      }
 
    /*==============================================*/
-   /* Parse the reCL_maining portion of the import    */
+   /* Parse the re_maining portion of the import    */
    /* specification and return if an error occurs. */
    /*==============================================*/
 
@@ -648,7 +648,7 @@ static bool ParseImportSpec(
 /**********************************************************/
 /* ParseExportSpec: Parses export specifications found in */
 /*   a defmodule construct. This includes parsing the     */
-/*   reCL_maining specification found in an import           */
+/*   re_maining specification found in an import           */
 /*   specification after the module name.                 */
 /**********************************************************/
 static bool ParseExportSpec(
@@ -721,7 +721,7 @@ static bool ParseExportSpec(
          if (newPort != NULL) rtn_struct(theEnv,portItem,newPort);
          CL_PPBackup(theEnv);
          CL_SavePPBuffer(theEnv," ");
-         CL_SavePPBuffer(theEnv,theToken->printFoCL_rm);
+         CL_SavePPBuffer(theEnv,theToken->printFo_rm);
          CL_SyntaxErrorMessage(theEnv,errorMessage);
          return true;
         }
@@ -817,7 +817,7 @@ static bool ParseExportSpec(
          if (newPort != NULL) rtn_struct(theEnv,portItem,newPort);
          CL_PPBackup(theEnv);
          CL_SavePPBuffer(theEnv," ");
-         CL_SavePPBuffer(theEnv,theToken->printFoCL_rm);
+         CL_SavePPBuffer(theEnv,theToken->printFo_rm);
          CL_SyntaxErrorMessage(theEnv,errorMessage);
          return true;
         }
@@ -944,7 +944,7 @@ struct portConstructItem *CL_ValidPortConstructItem(
   }
 
 /***********************************************************/
-/* FindMultiImportConflict: DeteCL_rmines if a module imports */
+/* FindMultiImportConflict: Dete_rmines if a module imports */
 /*   the same named construct from more than one module    */
 /*   (i.e. an ambiguous reference which is not allowed).   */
 /***********************************************************/
@@ -1068,7 +1068,7 @@ static void NotExportedErrorMessage(
   }
 
 /*************************************************************/
-/* CL_FindImportExportConflict: DeteCL_rmines if the definition of */
+/* CL_FindImportExportConflict: Dete_rmines if the definition of */
 /*   a construct would cause an import/export conflict. The  */
 /*   construct is not yet defined when this function is      */
 /*   called. True is returned if an import/export conflicts  */

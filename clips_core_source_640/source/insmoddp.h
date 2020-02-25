@@ -65,15 +65,15 @@
    void                           CL_SetupInstanceModDupCommands(Environment *);
 
    void                           CL_ModifyInstance(Environment *,UDFContext *,UDFValue *);
-   void                           MsgCL_ModifyInstance(Environment *,UDFContext *,UDFValue *);
+   void                           Msg_ModifyInstance(Environment *,UDFContext *,UDFValue *);
    void                           CL_DuplicateInstance(Environment *,UDFContext *,UDFValue *);
-   void                           MsgCL_DuplicateInstance(Environment *,UDFContext *,UDFValue *);
+   void                           Msg_DuplicateInstance(Environment *,UDFContext *,UDFValue *);
 
 #if DEFRULE_CONSTRUCT && OBJECT_SYSTEM
-   void                           CL_InactiveCL_ModifyInstance(Environment *,UDFContext *,UDFValue *);
-   void                           CL_InactiveMsgCL_ModifyInstance(Environment *,UDFContext *,UDFValue *);
-   void                           InactiveCL_DuplicateInstance(Environment *,UDFContext *,UDFValue *);
-   void                           InactiveMsgCL_DuplicateInstance(Environment *,UDFContext *,UDFValue *);
+   void                           CL_Inactive_ModifyInstance(Environment *,UDFContext *,UDFValue *);
+   void                           CL_InactiveMsg_ModifyInstance(Environment *,UDFContext *,UDFValue *);
+   void                           Inactive_DuplicateInstance(Environment *,UDFContext *,UDFValue *);
+   void                           InactiveMsg_DuplicateInstance(Environment *,UDFContext *,UDFValue *);
 #endif
 
    void                           CL_DirectModifyMsgHandler(Environment *,UDFContext *,UDFValue *);

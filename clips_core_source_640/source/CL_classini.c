@@ -188,7 +188,7 @@ void CL_SetupObjectSystem(
 #endif
 
    SetupDefclasses(theEnv);
-   SetupCL_Instances(theEnv);
+   Setup_Instances(theEnv);
    CL_SetupMessageHandlers(theEnv);
 
 #if DEFINSTANCES_CONSTRUCT
@@ -200,7 +200,7 @@ void CL_SetupObjectSystem(
 #endif
 
 #if BLOAD_AND_BSAVE || BLOAD || BLOAD_ONLY
-   SetupObjectsCL_Bload(theEnv);
+   SetupObjects_Bload(theEnv);
 #endif
 
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
@@ -344,7 +344,7 @@ static void CL_DestroyDefclassAction(
 #if RUN_TIME
 
 /***************************************************
-  NAME         : ObjectsCL_RunTimeInitialize
+  NAME         : Objects_RunTimeInitialize
   DESCRIPTION  : Initializes objects system lists
                    in a run-time module
   INPUTS       : 1) Pointer to new class hash table
@@ -353,7 +353,7 @@ static void CL_DestroyDefclassAction(
   SIDE EFFECTS : Global pointers set
   NOTES        : None
  ***************************************************/
-void ObjectsCL_RunTimeInitialize(
+void Objects_RunTimeInitialize(
   Environment *theEnv,
   Defclass *ctable[],
   SLOT_NAME *sntable[],
@@ -588,7 +588,7 @@ static void SetupDefclasses(
                                     NULL,NULL,
 #endif
 #if BLOAD_AND_BSAVE || BLOAD || BLOAD_ONLY
-                                    CL_BloadCL_DefclassModuleReference,
+                                    CL_Bload_DefclassModuleReference,
 #else
                                     NULL,
 #endif
@@ -606,7 +606,7 @@ static void SetupDefclasses(
                                      NULL,
 #endif
                                      (CL_FindConstructFunction *) CL_FindDefclass,
-                                     CL_GetConstructNamePointer,CL_GetConstructPPFoCL_rm,
+                                     CL_GetConstructNamePointer,CL_GetConstructPPFo_rm,
                                      CL_GetConstructModuleItem,
                                      (GetNextConstructFunction *) CL_GetNextDefclass,
                                      CL_SetNextConstruct,
@@ -619,10 +619,10 @@ static void SetupDefclasses(
 #endif
                                      );
 
-   CL_AddCL_ClearReadyFunction(theEnv,"defclass",CL_InstancesPurge,0,NULL);
+   CL_Add_ClearReadyFunction(theEnv,"defclass",CL_InstancesPurge,0,NULL);
 
 #if ! RUN_TIME
-   CL_AddCL_ClearFunction(theEnv,"defclass",CL_CreateSystemClasses,0,NULL);
+   CL_Add_ClearFunction(theEnv,"defclass",CL_CreateSystemClasses,0,NULL);
    CL_InitializeClasses(theEnv);
 
 #if ! BLOAD_ONLY
@@ -632,13 +632,13 @@ static void SetupDefclasses(
 #endif
    CL_AddUDF(theEnv,"undefclass","v",1,1,"y",CL_UndefclassCommand,"CL_UndefclassCommand",NULL);
 
-   CL_AddCL_SaveFunction(theEnv,"defclass",CL_SaveDefclasses,10,NULL);
+   CL_Add_SaveFunction(theEnv,"defclass",CL_SaveDefclasses,10,NULL);
 #endif
 
 #if DEBUGGING_FUNCTIONS
    CL_AddUDF(theEnv,"list-defclasses","v",0,1,"y",CL_ListDefclassesCommand,"CL_ListDefclassesCommand",NULL);
    CL_AddUDF(theEnv,"ppdefclass","vs",1,2,";y;ldsyn",CL_PPDefclassCommand,"CL_PPDefclassCommand",NULL);
-   CL_AddUDF(theEnv,"describe-class","v",1,1,"y",DescribeCL_ClassCommand,"DescribeCL_ClassCommand",NULL);
+   CL_AddUDF(theEnv,"describe-class","v",1,1,"y",Describe_ClassCommand,"Describe_ClassCommand",NULL);
    CL_AddUDF(theEnv,"browse-classes","v",0,1,"y",CL_BrowseClassesCommand,"CL_BrowseClassesCommand",NULL);
 #endif
 
@@ -668,14 +668,14 @@ static void SetupDefclasses(
    CL_AddUDF(theEnv,"slot-publicp","b",2,2,"y",CL_SlotPublicPCommand,"CL_SlotPublicPCommand",NULL);
    CL_AddUDF(theEnv,"slot-direct-accessp","b",2,2,"y",CL_SlotDirectAccessPCommand,"CL_SlotDirectAccessPCommand",NULL);
    CL_AddUDF(theEnv,"slot-default-value","*",2,2,"y",CL_SlotDefaultValueCommand,"CL_SlotDefaultValueCommand",NULL);
-   CL_AddUDF(theEnv,"defclass-module","y",1,1,"y",GetCL_DefclassModuleCommand,"GetCL_DefclassModuleCommand",NULL);
+   CL_AddUDF(theEnv,"defclass-module","y",1,1,"y",Get_DefclassModuleCommand,"Get_DefclassModuleCommand",NULL);
    CL_AddUDF(theEnv,"get-class-defaults-mode","y",0,0,NULL,CL_GetClassDefaultsModeCommand,"CL_GetClassDefaultsModeCommand",NULL);
    CL_AddUDF(theEnv,"set-class-defaults-mode","y",1,1,"y",CL_SetClassDefaultsModeCommand,"CL_SetClassDefaultsModeCommand",NULL);
 #endif
 
 #if DEBUGGING_FUNCTIONS
-   CL_AddCL_WatchItem(theEnv,"instances",0,&DefclassData(theEnv)->CL_WatchCL_Instances,75,CL_DefclassCL_WatchAccess,CL_DefclassCL_WatchPrint);
-   CL_AddCL_WatchItem(theEnv,"slots",1,&DefclassData(theEnv)->CL_WatchSlots,74,CL_DefclassCL_WatchAccess,CL_DefclassCL_WatchPrint);
+   CL_Add_WatchItem(theEnv,"instances",0,&DefclassData(theEnv)->CL_Watch_Instances,75,CL_Defclass_WatchAccess,CL_Defclass_WatchPrint);
+   CL_Add_WatchItem(theEnv,"slots",1,&DefclassData(theEnv)->CL_WatchSlots,74,CL_Defclass_WatchAccess,CL_Defclass_WatchPrint);
 #endif
   }
 
@@ -683,17 +683,17 @@ static void SetupDefclasses(
 
 /*********************************************************
   NAME         : AddSystemClass
-  DESCRIPTION  : PerfoCL_rms all necessary allocations
+  DESCRIPTION  : Perfo_rms all necessary allocations
                    for adding a system class
   INPUTS       : 1) The name-string of the system class
                  2) The address of the parent class
                     (NULL if none)
   RETURNS      : The address of the new system class
-  SIDE EFFECTS : Allocations perfoCL_rmed
+  SIDE EFFECTS : Allocations perfo_rmed
   NOTES        : Assumes system-class name is unique
                  Also assumes SINGLE INHERITANCE for
                    system classes to simplify precedence
-                   list deteCL_rmination
+                   list dete_rmination
                  Adds classes to has table but NOT to
                   class list (this is responsibility
                   of caller)

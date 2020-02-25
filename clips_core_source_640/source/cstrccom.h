@@ -49,8 +49,8 @@
 
 #define _H_cstrccom
 
-typedef bool ConstructGetCL_WatchFunction(void *);
-typedef void ConstructSetCL_WatchFunction(void *,bool);
+typedef bool ConstructGet_WatchFunction(void *);
+typedef void ConstructSet_WatchFunction(void *,bool);
 
 #include "moduldef.h"
 #include "constrct.h"
@@ -81,7 +81,7 @@ typedef void ConstructActionFunction(Environment *,ConstructHeader *,void *);
    void                           CL_ListConstruct(Environment *,Construct *,const char *,Defmodule *);
    void                           CL_SetNextConstruct(ConstructHeader *,ConstructHeader *);
    struct defmoduleItemHeader    *CL_GetConstructModuleItem(ConstructHeader *);
-   const char                    *CL_GetConstructPPFoCL_rm(ConstructHeader *);
+   const char                    *CL_GetConstructPPFo_rm(ConstructHeader *);
    void                           CL_PPConstructCommand(UDFContext *,const char *,Construct *,UDFValue *);
    ConstructHeader               *CL_GetNextConstructItem(Environment *,ConstructHeader *,unsigned);
    struct defmoduleItemHeader    *CL_GetConstructModuleItemByIndex(Environment *,Defmodule *,unsigned);
@@ -95,17 +95,17 @@ typedef void ConstructActionFunction(Environment *,ConstructHeader *,void *);
                                                              unsigned,bool,void *);
    void                           CL_InitializeConstructHeader(Environment *,const char *,ConstructType,
                                                             ConstructHeader *,CLIPSLexeme *);
-   void                           SetConstructPPFoCL_rm(Environment *,ConstructHeader *,const char *);
+   void                           SetConstructPPFo_rm(Environment *,ConstructHeader *,const char *);
    ConstructHeader        *CL_LookupConstruct(Environment *,Construct *,const char *,bool);
 #if DEBUGGING_FUNCTIONS
-   bool                           CL_ConstructPrintCL_WatchAccess(Environment *,Construct *,const char *,
+   bool                           CL_ConstructPrint_WatchAccess(Environment *,Construct *,const char *,
                                             Expression *,
-                                            ConstructGetCL_WatchFunction *,
-                                            ConstructSetCL_WatchFunction *);
-   bool                           CL_ConstructSetCL_WatchAccess(Environment *,Construct *,bool,
+                                            ConstructGet_WatchFunction *,
+                                            ConstructSet_WatchFunction *);
+   bool                           CL_ConstructSet_WatchAccess(Environment *,Construct *,bool,
                                             Expression *,
-                                            ConstructGetCL_WatchFunction *,
-                                            ConstructSetCL_WatchFunction *);
+                                            ConstructGet_WatchFunction *,
+                                            ConstructSet_WatchFunction *);
 #endif
    bool                           CL_ConstructsDeletable(Environment *);
 

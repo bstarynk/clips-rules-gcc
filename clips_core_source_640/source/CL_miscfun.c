@@ -59,7 +59,7 @@
 /*            deprecation warnings.                          */
 /*                                                           */
 /*            Removed deallocating message parameter from    */
-/*            EnvCL_ReleaseMem.                                 */
+/*            Env_ReleaseMem.                                 */
 /*                                                           */
 /*            Removed support for BLOCK_MEMORY.              */
 /*                                                           */
@@ -70,11 +70,11 @@
 /*            originating from sources that are not          */
 /*            statically allocated.                          */
 /*                                                           */
-/*            Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*            Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to CL_GetCL_HaltExecution and       */
-/*            SetCL_HaltExecution functions.                    */
+/*            Added Env prefix to CL_Get_HaltExecution and       */
+/*            Set_HaltExecution functions.                    */
 /*                                                           */
 /*            Refactored code to reduce header dependencies  */
 /*            in sysdep.c.                                   */
@@ -174,8 +174,8 @@ void CL_MiscFunctionDefinitions(
    CL_AddUDF(theEnv,"system","ly",0,UNBOUNDED,"sy",CL_SystemCommand,"CL_SystemCommand",NULL);
    CL_AddUDF(theEnv,"length$","l",1,1,"m",CL_LengthFunction,"CL_LengthFunction",NULL);
    CL_AddUDF(theEnv,"time","d",0,0,NULL,CL_TimeFunction,"CL_TimeFunction",NULL);
-   CL_AddUDF(theEnv,"local-time","m",0,0,NULL,CL_LocalCL_TimeFunction,"CL_LocalCL_TimeFunction",NULL);
-   CL_AddUDF(theEnv,"gm-time","m",0,0,NULL,CL_GMCL_TimeFunction,"CL_GMCL_TimeFunction",NULL);
+   CL_AddUDF(theEnv,"local-time","m",0,0,NULL,CL_Local_TimeFunction,"CL_Local_TimeFunction",NULL);
+   CL_AddUDF(theEnv,"gm-time","m",0,0,NULL,CL_GM_TimeFunction,"CL_GM_TimeFunction",NULL);
 
    CL_AddUDF(theEnv,"random","l",0,2,"l",CL_RandomFunction,"CL_RandomFunction",NULL);
    CL_AddUDF(theEnv,"seed","v",1,1,"l",CL_SeedFunction,"CL_SeedFunction",NULL);
@@ -192,7 +192,7 @@ void CL_MiscFunctionDefinitions(
    CL_AddUDF(theEnv,"(expansion-call)","*",0,UNBOUNDED,NULL,CL_ExpandFuncCall,"CL_ExpandFuncCall",NULL);
    CL_AddUDF(theEnv,"expand$","*",1,1,"m",CL_DummyExpandFuncMultifield,"CL_DummyExpandFuncMultifield",NULL);
    CL_FuncSeqOvlFlags(theEnv,"expand$",false,false);
-   CL_AddUDF(theEnv,"(set-evaluation-error)","y",0,0,NULL,CL_CauseCL_EvaluationError,"CL_CauseCL_EvaluationError",NULL);
+   CL_AddUDF(theEnv,"(set-evaluation-error)","y",0,0,NULL,CL_Cause_EvaluationError,"CL_Cause_EvaluationError",NULL);
    CL_AddUDF(theEnv,"set-sequence-operator-recognition","b",1,1,"y",CL_SetSORCommand,"CL_SetSORCommand",NULL);
    CL_AddUDF(theEnv,"get-sequence-operator-recognition","b",0,0,NULL,CL_GetSORCommand,"CL_GetSORCommand",NULL);
    CL_AddUDF(theEnv,"get-function-restrictions","s",1,1,"y",CL_GetFunctionRestrictions,"CL_GetFunctionRestrictions",NULL);
@@ -234,7 +234,7 @@ void CL_ExitCommand(
        { CL_ExitRouter(theEnv,EXIT_SUCCESS); }
 
      status = (int) theArg.integerValue->contents;
-     if (GetCL_EvaluationError(theEnv)) return;
+     if (Get_EvaluationError(theEnv)) return;
      CL_ExitRouter(theEnv,status);
     }
 
@@ -600,7 +600,7 @@ void CL_AproposCommand(
      { return; }
 
    /*=======================================*/
-   /* DeteCL_rmine the length of the argument. */
+   /* Dete_rmine the length of the argument. */
    /*=======================================*/
 
    argument = theArg.lexemeValue->contents;
@@ -885,7 +885,7 @@ void CL_OperatingSystemFunction(
 
 /********************************************************************
   NAME         : CL_ExpandFuncCall
-  DESCRIPTION  : This function is a wrap-around for a noCL_rmal
+  DESCRIPTION  : This function is a wrap-around for a no_rmal
                    function call.  It preexamines the argument
                    expression list and expands any references to the
                    sequence operator.  It builds a copy of the
@@ -943,7 +943,7 @@ void CL_ExpandFuncCall(
         {
          returnValue->lexemeValue = FalseSymbol(theEnv);
          CL_ReturnExpression(theEnv,fcallexp);
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          return;
         }
      }
@@ -972,7 +972,7 @@ void CL_DummyExpandFuncMultifield(
   UDFValue *returnValue)
   {
    returnValue->lexemeValue = FalseSymbol(theEnv);
-   SetCL_EvaluationError(theEnv,true);
+   Set_EvaluationError(theEnv,true);
    CL_PrintErrorID(theEnv,"MISCFUN",1,false);
    CL_WriteString(theEnv,STDERR,"The function 'expand$' must be used in the argument list of a function call.\n");
   }
@@ -989,7 +989,7 @@ void CL_DummyExpandFuncMultifield(
                  4) The address of the H/L function expand$
   RETURNS      : Nothing useful
   SIDE EFFECTS : Expressions allocated/deallocated as necessary
-                 CL_Evaluations perfoCL_rmed
+                 CL_Evaluations perfo_rmed
                  On errors, argument expression set to call a function
                    which causes an evaluation error when evaluated
                    a second time by actual caller.
@@ -1064,7 +1064,7 @@ static void ExpandFuncMultifield(
   }
 
 /****************************************************************
-  NAME         : CL_CauseCL_EvaluationError
+  NAME         : CL_Cause_EvaluationError
   DESCRIPTION  : Dummy function use to cause evaluation errors on
                    a function call to generate error messages
   INPUTS       : None
@@ -1072,12 +1072,12 @@ static void ExpandFuncMultifield(
   SIDE EFFECTS : CL_EvaluationError set
   NOTES        : None
  ****************************************************************/
-void CL_CauseCL_EvaluationError(
+void CL_Cause_EvaluationError(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
-   SetCL_EvaluationError(theEnv,true);
+   Set_EvaluationError(theEnv,true);
    returnValue->lexemeValue = FalseSymbol(theEnv);
   }
 
@@ -1140,7 +1140,7 @@ void CL_GetFunctionRestrictions(
    if (fptr == NULL)
      {
       CL_CantFindItemErrorMessage(theEnv,"function",theArg.lexemeValue->contents,true);
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       returnValue->lexemeValue = CL_CreateString(theEnv,"");
       return;
      }
@@ -1488,7 +1488,7 @@ void CL_CallFunction(
 
    /*===============================================*/
    /* If the first argument is an external address, */
-   /* then we can deteCL_rmine the external language   */
+   /* then we can dete_rmine the external language   */
    /* type be examining the pointer.                */
    /*===============================================*/
 
@@ -1602,10 +1602,10 @@ static void ConvertTime(
   }
 
 /*****************************************/
-/* CL_LocalCL_TimeFunction: H/L access routine */
+/* CL_Local_TimeFunction: H/L access routine */
 /*   for the local-time function.        */
 /*****************************************/
-void CL_LocalCL_TimeFunction(
+void CL_Local_TimeFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -1624,10 +1624,10 @@ void CL_LocalCL_TimeFunction(
   }
 
 /**************************************/
-/* CL_GMCL_TimeFunction: H/L access routine */
+/* CL_GM_TimeFunction: H/L access routine */
 /*   for the gm-time function.        */
 /**************************************/
-void CL_GMCL_TimeFunction(
+void CL_GM_TimeFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -1660,7 +1660,7 @@ void CL_TimerFunction(
    startTime = CL_gentime();
 
    while (UDFHasNextArgument(context) &&
-          (! CL_GetCL_HaltExecution(theEnv)))
+          (! CL_Get_HaltExecution(theEnv)))
      { CL_UDFNextArgument(context,ANY_TYPE_BITS,&theArg); }
 
    returnValue->floatValue = CL_CreateFloat(theEnv,CL_gentime() - startTime);
@@ -1682,7 +1682,7 @@ void CL_SystemCommand(
    const char *theString;
 
    /*============================================================*/
-   /* Concatenate the arguments together to foCL_rm a single string */
+   /* Concatenate the arguments together to fo_rm a single string */
    /* containing the command to be sent to the operating system. */
    /*============================================================*/
 
@@ -1781,7 +1781,7 @@ void CL_SetErrorFunction(
    if (! CL_UDFFirstArgument(context,ANY_TYPE_BITS,&theArg))
      { return; }
      
-   CL_NoCL_rmalizeMultifield(theEnv,&theArg);
+   CL_No_rmalizeMultifield(theEnv,&theArg);
    cv.value = theArg.value;
    CL_SetErrorValue(theEnv,cv.header);
   }

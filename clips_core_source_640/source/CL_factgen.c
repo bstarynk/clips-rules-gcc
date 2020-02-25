@@ -21,7 +21,7 @@
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
-/*      6.30: Support for perfoCL_rmance optimizations.         */
+/*      6.30: Support for perfo_rmance optimizations.         */
 /*                                                           */
 /*            Increased maximum values for pattern/slot      */
 /*            indices.                                       */
@@ -107,83 +107,83 @@ void CL_InitializeFactReteFunctions(
   {
 #if DEFRULE_CONSTRUCT
    struct entityRecord   factJNGV1Info = { "FACT_JN_VAR1", FACT_JN_VAR1,0,1,0,
-                                                  PrintCL_FactJNGetVar1,
-                                                  PrintCL_FactJNGetVar1,NULL,
+                                                  Print_FactJNGetVar1,
+                                                  Print_FactJNGetVar1,NULL,
                                                   CL_FactJNGetVar1,
                                                   NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL };
 
    struct entityRecord   factJNGV2Info = { "FACT_JN_VAR2", FACT_JN_VAR2,0,1,0,
-                                                  PrintCL_FactJNGetVar2,
-                                                  PrintCL_FactJNGetVar2,NULL,
+                                                  Print_FactJNGetVar2,
+                                                  Print_FactJNGetVar2,NULL,
                                                   CL_FactJNGetVar2,
                                                   NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL };
 
    struct entityRecord   factJNGV3Info = { "FACT_JN_VAR3", FACT_JN_VAR3,0,1,0,
-                                                  PrintCL_FactJNGetVar3,
-                                                  PrintCL_FactJNGetVar3,NULL,
+                                                  Print_FactJNGetVar3,
+                                                  Print_FactJNGetVar3,NULL,
                                                   CL_FactJNGetVar3,
                                                   NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL };
 
    struct entityRecord   factPNGV1Info = { "FACT_PN_VAR1", FACT_PN_VAR1,0,1,0,
-                                                  PrintCL_FactPNGetVar1,
-                                                  PrintCL_FactPNGetVar1,NULL,
+                                                  Print_FactPNGetVar1,
+                                                  Print_FactPNGetVar1,NULL,
                                                   CL_FactPNGetVar1,
                                                   NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL };
 
    struct entityRecord   factPNGV2Info = { "FACT_PN_VAR2", FACT_PN_VAR2,0,1,0,
-                                                  PrintCL_FactPNGetVar2,
-                                                  PrintCL_FactPNGetVar2,NULL,
+                                                  Print_FactPNGetVar2,
+                                                  Print_FactPNGetVar2,NULL,
                                                   CL_FactPNGetVar2,
                                                   NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL };
 
    struct entityRecord   factPNGV3Info = { "FACT_PN_VAR3", FACT_PN_VAR3,0,1,0,
-                                                  PrintCL_FactPNGetVar3,
-                                                  PrintCL_FactPNGetVar3,NULL,
+                                                  Print_FactPNGetVar3,
+                                                  Print_FactPNGetVar3,NULL,
                                                   CL_FactPNGetVar3,
                                                   NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL };
 
    struct entityRecord   factJNCV1Info = { "FACT_JN_CMP1", FACT_JN_CMP1,0,1,1,
-                                                  PrintCL_FactJNCompVars1,
-                                                  PrintCL_FactJNCompVars1,NULL,
+                                                  Print_FactJNCompVars1,
+                                                  Print_FactJNCompVars1,NULL,
                                                   CL_FactJNCompVars1,
                                                   NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL };
 
    struct entityRecord   factJNCV2Info = { "FACT_JN_CMP2", FACT_JN_CMP2,0,1,1,
-                                                  PrintCL_FactJNCompVars2,
-                                                  PrintCL_FactJNCompVars2,NULL,
+                                                  Print_FactJNCompVars2,
+                                                  Print_FactJNCompVars2,NULL,
                                                   CL_FactJNCompVars2,
                                                   NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL };
 
    struct entityRecord   factPNCV1Info = { "FACT_PN_CMP1", FACT_PN_CMP1,0,1,1,
-                                                  PrintCL_FactPNCompVars1,
-                                                  PrintCL_FactPNCompVars1,NULL,
+                                                  Print_FactPNCompVars1,
+                                                  Print_FactPNCompVars1,NULL,
                                                   CL_FactPNCompVars1,
                                                   NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL };
 
    struct entityRecord   factStoreMFInfo = { "FACT_STORE_MULTIFIELD",
                                                     FACT_STORE_MULTIFIELD,0,1,0,
                                                     NULL,NULL,NULL,
-                                                    (EntityCL_EvaluationFunction *) CL_FactStoreMultifield,
+                                                    (Entity_EvaluationFunction *) CL_FactStoreMultifield,
                                                     NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL };
 
    struct entityRecord   factSlotLengthInfo = { "FACT_SLOT_LENGTH",
                                                        FACT_SLOT_LENGTH,0,1,0,
-                                                       PrintCL_FactSlotLength,
-                                                       PrintCL_FactSlotLength,NULL,
+                                                       Print_FactSlotLength,
+                                                       Print_FactSlotLength,NULL,
                                                        CL_FactSlotLength,
                                                        NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL };
 
    struct entityRecord   factPNConstant1Info = { "FACT_PN_CONSTANT1",
                                                         FACT_PN_CONSTANT1,0,1,1,
-                                                        PrintCL_FactPNConstant1,
-                                                        PrintCL_FactPNConstant1,NULL,
+                                                        Print_FactPNConstant1,
+                                                        Print_FactPNConstant1,NULL,
                                                         CL_FactPNConstant1,
                                                         NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL };
 
    struct entityRecord   factPNConstant2Info = { "FACT_PN_CONSTANT2",
                                                         FACT_PN_CONSTANT2,0,1,1,
-                                                        PrintCL_FactPNConstant2,
-                                                        PrintCL_FactPNConstant2,NULL,
+                                                        Print_FactPNConstant2,
+                                                        Print_FactPNConstant2,NULL,
                                                         CL_FactPNConstant2,
                                                         NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL };
 
@@ -315,7 +315,7 @@ struct expr *CL_FactGenPNConstant(
      }
 
    /*===============================================================*/
-   /* Return the expression for perfoCL_rming the constant comparison. */
+   /* Return the expression for perfo_rming the constant comparison. */
    /*===============================================================*/
 
    return(top);
@@ -406,7 +406,7 @@ struct expr *CL_FactGenGetvar(
 
 /**************************************************************/
 /* CL_FactGenCheckLength: Generates an expression for use in the */
-/*   fact pattern network that deteCL_rmines if the value of a   */
+/*   fact pattern network that dete_rmines if the value of a   */
 /*   multifield slot contains enough fields to satisfy the    */
 /*   number of pattern matching constaints. For example, the  */
 /*   slot constraints (foo ?x a $? ?y) couldn't be matched    */
@@ -466,7 +466,7 @@ struct expr *CL_FactGenCheckLength(
 
 /**************************************************************/
 /* CL_FactGenCheckZeroLength: Generates an expression for use in */
-/*   the fact pattern network that deteCL_rmines if the value of */
+/*   the fact pattern network that dete_rmines if the value of */
 /*   a multifield slot is a zero length multifield value.     */
 /**************************************************************/
 struct expr *CL_FactGenCheckZeroLength(
@@ -600,7 +600,7 @@ void CL_FactReplaceGetfield(
 /*************************************************************/
 /* FactGetVarJN1: Creates the arguments for the most general */
 /*   routine for retrieving a variable's value from the slot */
-/*   of a fact. The retrieval relies on infoCL_rmation stored   */
+/*   of a fact. The retrieval relies on info_rmation stored   */
 /*   in a partial match, so this retrieval mechanism is used */
 /*   by expressions in the join network or from the RHS of a */
 /*   rule.                                                   */
@@ -693,7 +693,7 @@ static void *FactGetVarJN1(
 /**************************************************************/
 /* FactGetVarJN2: Creates the arguments for the routine which */
 /*   retrieves a variable's value from a single field slot of */
-/*   a fact. The retrieval relies on infoCL_rmation stored in a  */
+/*   a fact. The retrieval relies on info_rmation stored in a  */
 /*   partial match, so this retrieval mechanism is used by    */
 /*   expressions in the join network or from the RHS of a     */
 /*   rule.                                                    */
@@ -751,7 +751,7 @@ static void *FactGetVarJN2(
 /*   from a multifield slot that contains at most one        */
 /*   multifield variable or contains no multifield variables */
 /*   before the variable's value to be retrieved. The        */
-/*   retrieval relies on infoCL_rmation stored in a partial     */
+/*   retrieval relies on info_rmation stored in a partial     */
 /*   match, so this retrieval mechanism is used by           */
 /*   expressions in the join network or from the RHS of a    */
 /*   rule.                                                   */
@@ -863,7 +863,7 @@ static void *FactGetVarJN3(
 /**************************************************************/
 /* FactGetVarPN1: Creates the arguments for the most general  */
 /*   routine for retrieving a variable's value from the slot  */
-/*   of a fact. The retrieval relies on infoCL_rmation stored    */
+/*   of a fact. The retrieval relies on info_rmation stored    */
 /*   during fact pattern matching, so this retrieval          */
 /*   mechanism is only used by expressions in the pattern     */
 /*   network.                                                 */
@@ -933,7 +933,7 @@ static void *FactGetVarPN1(
 /***************************************************************/
 /* FactGetVarPN2: Creates the arguments for the routine which  */
 /*   retrieves a variable's value from a single field slot of  */
-/*   a fact. The retrieval relies on infoCL_rmation stored during */
+/*   a fact. The retrieval relies on info_rmation stored during */
 /*   fact pattern matching, so this retrieval mechanism is     */
 /*   only used by expressions in the pattern network.          */
 /***************************************************************/
@@ -970,7 +970,7 @@ static void *FactGetVarPN2(
 /*   from a multifield slot that contains at most one        */
 /*   multifield variable or contains no multifield variables */
 /*   before the variable's value to be retrieved. The        */
-/*   retrieval relies on infoCL_rmation stored during fact      */
+/*   retrieval relies on info_rmation stored during fact      */
 /*   pattern matching, so this retrieval mechanism is only   */
 /*   used by expressions in the pattern network.             */
 /*************************************************************/
@@ -1111,7 +1111,7 @@ struct expr *CL_FactPNVariableComparison(
      }
 
    /*======================================*/
-   /* Return the expression for perfoCL_rming */
+   /* Return the expression for perfo_rming */
    /* the variable comparison.             */
    /*======================================*/
 
@@ -1268,7 +1268,7 @@ struct expr *CL_FactJNVariableComparison(
      }
 
    /*======================================*/
-   /* Return the expression for perfoCL_rming */
+   /* Return the expression for perfo_rming */
    /* the variable comparison.             */
    /*======================================*/
 

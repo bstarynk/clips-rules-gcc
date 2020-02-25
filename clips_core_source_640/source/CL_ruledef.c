@@ -37,14 +37,14 @@
 /*            Added support for hashed memories.             */
 /*                                                           */
 /*            Added additional developer statistics to help  */
-/*            analyze join network perfoCL_rmance.              */
+/*            analyze join network perfo_rmance.              */
 /*                                                           */
-/*            Added salience groups to improve perfoCL_rmance   */
+/*            Added salience groups to improve perfo_rmance   */
 /*            with large numbers of activations of different */
 /*            saliences.                                     */
 /*                                                           */
-/*            Added EnvCL_GetDisjunctCount and                  */
-/*            EnvCL_GetNthDisjunct functions.                   */
+/*            Added Env_GetDisjunctCount and                  */
+/*            Env_GetNthDisjunct functions.                   */
 /*                                                           */
 /*            Added const qualifiers to remove C++           */
 /*            deprecation warnings.                          */
@@ -102,7 +102,7 @@
 
    static void                   *AllocateModule(Environment *);
    static void                    ReturnModule(Environment *,void *);
-   static void                    InitializeCL_DefruleModules(Environment *);
+   static void                    Initialize_DefruleModules(Environment *);
    static void                    DeallocateDefruleData(Environment *);
    static void                    CL_DestroyDefruleAction(Environment *,ConstructHeader *,void *);
 #if RUN_TIME
@@ -119,17 +119,17 @@ void CL_InitializeDefrules(
    CL_AllocateEnvironmentData(theEnv,DEFRULE_DATA,sizeof(struct defruleData),DeallocateDefruleData);
 
    CL_InitializeEngine(theEnv);
-   InitializeCL_Agenda(theEnv);
+   Initialize_Agenda(theEnv);
    CL_InitializePatterns(theEnv);
-   InitializeCL_DefruleModules(theEnv);
+   Initialize_DefruleModules(theEnv);
 
-   CL_AddCL_ReservedPatternSymbol(theEnv,"and",NULL);
-   CL_AddCL_ReservedPatternSymbol(theEnv,"not",NULL);
-   CL_AddCL_ReservedPatternSymbol(theEnv,"or",NULL);
-   CL_AddCL_ReservedPatternSymbol(theEnv,"test",NULL);
-   CL_AddCL_ReservedPatternSymbol(theEnv,"logical",NULL);
-   CL_AddCL_ReservedPatternSymbol(theEnv,"exists",NULL);
-   CL_AddCL_ReservedPatternSymbol(theEnv,"forall",NULL);
+   CL_Add_ReservedPatternSymbol(theEnv,"and",NULL);
+   CL_Add_ReservedPatternSymbol(theEnv,"not",NULL);
+   CL_Add_ReservedPatternSymbol(theEnv,"or",NULL);
+   CL_Add_ReservedPatternSymbol(theEnv,"test",NULL);
+   CL_Add_ReservedPatternSymbol(theEnv,"logical",NULL);
+   CL_Add_ReservedPatternSymbol(theEnv,"exists",NULL);
+   CL_Add_ReservedPatternSymbol(theEnv,"forall",NULL);
 
    CL_DefruleBasicCommands(theEnv);
 
@@ -139,7 +139,7 @@ void CL_InitializeDefrules(
       CL_AddConstruct(theEnv,"defrule","defrules",
                    CL_ParseDefrule,
                    (CL_FindConstructFunction *) CL_FindDefrule,
-                   CL_GetConstructNamePointer,CL_GetConstructPPFoCL_rm,
+                   CL_GetConstructNamePointer,CL_GetConstructPPFo_rm,
                    CL_GetConstructModuleItem,
                    (GetNextConstructFunction *) CL_GetNextDefrule,
                    CL_SetNextConstruct,
@@ -232,17 +232,17 @@ static void CL_DestroyDefruleAction(
   }
 
 /*****************************************************/
-/* InitializeCL_DefruleModules: Initializes the defrule */
+/* Initialize_DefruleModules: Initializes the defrule */
 /*   construct for use with the defmodule construct. */
 /*****************************************************/
-static void InitializeCL_DefruleModules(
+static void Initialize_DefruleModules(
   Environment *theEnv)
   {
    DefruleData(theEnv)->CL_DefruleModuleIndex = CL_RegisterModuleItem(theEnv,"defrule",
                                     AllocateModule,
                                     ReturnModule,
 #if BLOAD_AND_BSAVE || BLOAD || BLOAD_ONLY
-                                    CL_BloadCL_DefruleModuleReference,
+                                    CL_Bload_DefruleModuleReference,
 #else
                                     NULL,
 #endif
@@ -280,10 +280,10 @@ static void ReturnModule(
   }
 
 /************************************************************/
-/* GetCL_DefruleModuleItem: Returns a pointer to the defmodule */
+/* Get_DefruleModuleItem: Returns a pointer to the defmodule */
 /*  item for the specified defrule or defmodule.            */
 /************************************************************/
-struct defruleModule *GetCL_DefruleModuleItem(
+struct defruleModule *Get_DefruleModuleItem(
   Environment *theEnv,
   Defmodule *theModule)
   {
@@ -349,7 +349,7 @@ bool CL_DefruleIsDeletable(
 
 /********************************************************/
 /* CL_GetDisjunctCount: Returns the number of disjuncts of */
-/*   a rule (peCL_rmutations caused by the use of or CEs). */
+/*   a rule (pe_rmutations caused by the use of or CEs). */
 /********************************************************/
 long CL_GetDisjunctCount(
   Environment *theEnv,
@@ -392,10 +392,10 @@ Defrule *CL_GetNthDisjunct(
 #if RUN_TIME
 
 /******************************************/
-/* DefruleCL_RunTimeInitialize:  Initializes */
+/* Defrule_RunTimeInitialize:  Initializes */
 /*   defrule in a run-time module.        */
 /******************************************/
-void DefruleCL_RunTimeInitialize(
+void Defrule_RunTimeInitialize(
   Environment *theEnv,
   struct joinLink *rightPrime,
   struct joinLink *leftPrime)
@@ -548,10 +548,10 @@ const char *CL_DefruleName(
    return CL_GetConstructNameString(&theDefrule->header);
   }
 
-const char *CL_DefrulePPFoCL_rm(
+const char *CL_DefrulePPFo_rm(
   Defrule *theDefrule)
   {
-   return CL_GetConstructPPFoCL_rm(&theDefrule->header);
+   return CL_GetConstructPPFo_rm(&theDefrule->header);
   }
 
 #endif /* DEFRULE_CONSTRUCT */

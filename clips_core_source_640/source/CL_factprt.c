@@ -51,10 +51,10 @@
 #include "factprt.h"
 
 /***************************************/
-/* PrintCL_FactJNCompVars1: Print routine */
+/* Print_FactJNCompVars1: Print routine */
 /*   for the CL_FactJNCompVars1 function. */
 /***************************************/
-void PrintCL_FactJNCompVars1(
+void Print_FactJNCompVars1(
   Environment *theEnv,
   const char *logicalName,
   void *theValue)
@@ -99,10 +99,10 @@ void PrintCL_FactJNCompVars1(
   }
 
 /***************************************/
-/* PrintCL_FactJNCompVars2: Print routine */
+/* Print_FactJNCompVars2: Print routine */
 /*   for the CL_FactJNCompVars2 function. */
 /***************************************/
-void PrintCL_FactJNCompVars2(
+void Print_FactJNCompVars2(
   Environment *theEnv,
   const char *logicalName,
   void *theValue)
@@ -159,10 +159,10 @@ void PrintCL_FactJNCompVars2(
   }
 
 /***************************************/
-/* PrintCL_FactPNCompVars1: Print routine */
+/* Print_FactPNCompVars1: Print routine */
 /*   for the CL_FactPNCompVars1 function. */
 /***************************************/
-void PrintCL_FactPNCompVars1(
+void Print_FactPNCompVars1(
   Environment *theEnv,
   const char *logicalName,
   void *theValue)
@@ -188,10 +188,10 @@ void PrintCL_FactPNCompVars1(
   }
 
 /**************************************/
-/* PrintCL_FactSlotLength: Print routine */
+/* Print_FactSlotLength: Print routine */
 /*   for the CL_FactSlotLength function. */
 /**************************************/
-void PrintCL_FactSlotLength(
+void Print_FactSlotLength(
   Environment *theEnv,
   const char *logicalName,
   void *theValue)
@@ -218,10 +218,10 @@ void PrintCL_FactSlotLength(
   }
 
 /*************************************/
-/* PrintCL_FactJNGetVar1: Print routine */
+/* Print_FactJNGetVar1: Print routine */
 /*   for the FactJNGetvar1 function. */
 /*************************************/
-void PrintCL_FactJNGetVar1(
+void Print_FactJNGetVar1(
   Environment *theEnv,
   const char *logicalName,
   void *theValue)
@@ -258,10 +258,10 @@ void PrintCL_FactJNGetVar1(
   }
 
 /*************************************/
-/* PrintCL_FactJNGetVar2: Print routine */
+/* Print_FactJNGetVar2: Print routine */
 /*   for the FactJNGetvar2 function. */
 /*************************************/
-void PrintCL_FactJNGetVar2(
+void Print_FactJNGetVar2(
   Environment *theEnv,
   const char *logicalName,
   void *theValue)
@@ -291,10 +291,10 @@ void PrintCL_FactJNGetVar2(
   }
 
 /*************************************/
-/* PrintCL_FactJNGetVar3: Print routine */
+/* Print_FactJNGetVar3: Print routine */
 /*   for the CL_FactJNGetVar3 function. */
 /*************************************/
-void PrintCL_FactJNGetVar3(
+void Print_FactJNGetVar3(
   Environment *theEnv,
   const char *logicalName,
   void *theValue)
@@ -334,10 +334,10 @@ void PrintCL_FactJNGetVar3(
   }
 
 /*************************************/
-/* PrintCL_FactPNGetVar1: Print routine */
+/* Print_FactPNGetVar1: Print routine */
 /*   for the FactPNGetvar1 function. */
 /*************************************/
-void PrintCL_FactPNGetVar1(
+void Print_FactPNGetVar1(
   Environment *theEnv,
   const char *logicalName,
   void *theValue)
@@ -366,10 +366,10 @@ void PrintCL_FactPNGetVar1(
   }
 
 /*************************************/
-/* PrintCL_FactPNGetVar2: Print routine */
+/* Print_FactPNGetVar2: Print routine */
 /*   for the FactPNGetvar2 function. */
 /*************************************/
-void PrintCL_FactPNGetVar2(
+void Print_FactPNGetVar2(
   Environment *theEnv,
   const char *logicalName,
   void *theValue)
@@ -391,10 +391,10 @@ void PrintCL_FactPNGetVar2(
   }
 
 /*************************************/
-/* PrintCL_FactPNGetVar3: Print routine */
+/* Print_FactPNGetVar3: Print routine */
 /*   for the FactPNGetvar3 function. */
 /*************************************/
-void PrintCL_FactPNGetVar3(
+void Print_FactPNGetVar3(
   Environment *theEnv,
   const char *logicalName,
   void *theValue)
@@ -426,10 +426,10 @@ void PrintCL_FactPNGetVar3(
   }
 
 /***************************************/
-/* PrintCL_FactPNConstant1: Print routine */
+/* Print_FactPNConstant1: Print routine */
 /*   for the CL_FactPNConstant1 function. */
 /***************************************/
-void PrintCL_FactPNConstant1(
+void Print_FactPNConstant1(
   Environment *theEnv,
   const char *logicalName,
   void *theValue)
@@ -458,10 +458,10 @@ void PrintCL_FactPNConstant1(
   }
 
 /***************************************/
-/* PrintCL_FactPNConstant2: Print routine */
+/* Print_FactPNConstant2: Print routine */
 /*   for the CL_FactPNConstant2 function. */
 /***************************************/
-void PrintCL_FactPNConstant2(
+void Print_FactPNConstant2(
   Environment *theEnv,
   const char *logicalName,
   void *theValue)

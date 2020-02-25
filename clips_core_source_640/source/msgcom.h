@@ -95,13 +95,13 @@ struct messageHandlerData
 
    void             CL_SetupMessageHandlers(Environment *);
    const char      *CL_DefmessageHandlerName(Defclass *,unsigned);
-   const char      *CL_DefmessageCL_HandlerType(Defclass *,unsigned);
+   const char      *CL_Defmessage_HandlerType(Defclass *,unsigned);
    unsigned         CL_GetNextDefmessageHandler(Defclass *,unsigned);
    DefmessageHandler
                    *CL_GetDefmessageHandlerPointer(Defclass *,unsigned int);
 #if DEBUGGING_FUNCTIONS
-   bool             CL_DefmessageHandlerGetCL_Watch(Defclass *,unsigned);
-   void             CL_DefmessageHandlerSetCL_Watch(Defclass *,unsigned,bool);
+   bool             CL_DefmessageHandlerGet_Watch(Defclass *,unsigned);
+   void             CL_DefmessageHandlerSet_Watch(Defclass *,unsigned,bool);
 #endif
    unsigned         CL_FindDefmessageHandler(Defclass *,const char *,const char *);
    bool             CL_DefmessageHandlerIsDeletable(Defclass *,unsigned);
@@ -110,10 +110,10 @@ struct messageHandlerData
 #if DEBUGGING_FUNCTIONS
    void             CL_PPDefmessageHandlerCommand(Environment *,UDFContext *,UDFValue *);
    void             CL_ListDefmessageHandlersCommand(Environment *,UDFContext *,UDFValue *);
-   void             CL_PreviewCL_SendCommand(Environment *,UDFContext *,UDFValue *);
-   const char      *CL_DefmessageHandlerPPFoCL_rm(Defclass *,unsigned);
+   void             CL_Preview_SendCommand(Environment *,UDFContext *,UDFValue *);
+   const char      *CL_DefmessageHandlerPPFo_rm(Defclass *,unsigned);
    void             CL_ListDefmessageHandlers(Environment *,Defclass *,const char *,bool);
-   void             CL_PreviewCL_Send(Defclass *,const char *,const char *);
+   void             CL_Preview_Send(Defclass *,const char *,const char *);
    unsigned long    CL_DisplayHandlersInLinks(Environment *,const char *,PACKED_CLASS_LINKS *,unsigned int);
 #endif
 

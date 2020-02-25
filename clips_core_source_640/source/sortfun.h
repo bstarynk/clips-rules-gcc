@@ -23,7 +23,7 @@
 /*            DR0864                                         */
 /*                                                           */
 /*      6.30: Added environment cleanup call function        */
-/*            DeallocateCL_SortFunctionData.                    */
+/*            Deallocate_SortFunctionData.                    */
 /*                                                           */
 /*      6.40: Removed LOCALE definition.                     */
 /*                                                           */

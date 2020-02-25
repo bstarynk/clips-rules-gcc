@@ -41,8 +41,8 @@
 
 #include "dffnxfun.h"
 
-   void                           CL_SetupDeffunctionsCL_Bload(Environment *);
-   void                          *CL_BloadCL_DeffunctionModuleReference(Environment *,unsigned long);
+   void                           CL_SetupDeffunctions_Bload(Environment *);
+   void                          *CL_Bload_DeffunctionModuleReference(Environment *,unsigned long);
 
 #define DFFNXBIN_DATA 24
 

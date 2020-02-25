@@ -56,8 +56,8 @@
                                                    struct factPatternNode *,size_t,size_t,
                                                    struct multifieldMarker *,
                                                    struct multifieldMarker *);
-   void                           MarkFactPatternForCL_IncrementalCL_Reset(Environment *,struct patternNodeHeader *,bool);
-   void                           CL_FactsCL_IncrementalCL_Reset(Environment *);
+   void                           MarkFactPatternForCL_Incremental_Reset(Environment *,struct patternNodeHeader *,bool);
+   void                           CL_FactsCL_Incremental_Reset(Environment *);
 
 #endif /* _H_factmch */
 

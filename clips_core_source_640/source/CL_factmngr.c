@@ -62,21 +62,21 @@
 /*            to constructs, DanglingConstructs.             */
 /*                                                           */
 /*      6.31: Added NULL check for slotName in function      */
-/*            EnvCL_GetFactSlot. Return value of FALSE now      */
+/*            Env_GetFactSlot. Return value of FALSE now      */
 /*            returned if garbage flag set for fact.         */
 /*                                                           */
 /*            Added constraint checking for slot value in    */
-/*            EnvCL_PutFactSlot function.                       */
+/*            Env_PutFactSlot function.                       */
 /*                                                           */
-/*            Calling EnvCL_FactExistp for a fact that has      */
+/*            Calling Env_FactExistp for a fact that has      */
 /*            been created, but not asserted now returns     */
 /*            FALSE.                                         */
 /*                                                           */
-/*            Calling EnvCL_Retract for a fact that has been    */
+/*            Calling Env_Retract for a fact that has been    */
 /*            created, but not asserted now returns FALSE.   */
 /*                                                           */
-/*            Calling EnvCL_AssignFactSlotDefaults or           */
-/*            EnvCL_PutFactSlot for a fact that has been        */
+/*            Calling Env_AssignFactSlotDefaults or           */
+/*            Env_PutFactSlot for a fact that has been        */
 /*            asserted now returns FALSE.                    */
 /*                                                           */
 /*            CL_Retracted and existing facts cannot be         */
@@ -85,8 +85,8 @@
 /*            Crash bug fix for modifying fact with invalid  */
 /*            slot name.                                     */
 /*                                                           */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*      6.40: Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -153,24 +153,24 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    CL_ResetCL_Facts(Environment *,void *);
-   static bool                    CL_ClearCL_FactsReady(Environment *,void *);
-   static void                    RemoveGarbageCL_Facts(Environment *,void *);
+   static void                    CL_Reset_Facts(Environment *,void *);
+   static bool                    CL_Clear_FactsReady(Environment *,void *);
+   static void                    RemoveGarbage_Facts(Environment *,void *);
    static void                    DeallocateFactData(Environment *);
    static bool                    CL_RetractCallback(Fact *,Environment *);
 
 /**************************************************************/
-/* InitializeCL_Facts: Initializes the fact data representation. */
+/* Initialize_Facts: Initializes the fact data representation. */
 /*   CL_Facts are only available when both the defrule and       */
 /*   deftemplate constructs are available.                    */
 /**************************************************************/
-void InitializeCL_Facts(
+void Initialize_Facts(
   Environment *theEnv)
   {
    struct patternEntityRecord factInfo =
       { { "FACT_ADDRESS_TYPE", FACT_ADDRESS_TYPE,1,0,0,
-          (EntityCL_PrintFunction *) CL_PrintFactIdentifier,
-          (EntityCL_PrintFunction *) CL_PrintFactIdentifierInLongFoCL_rm,
+          (Entity_PrintFunction *) CL_PrintFactIdentifier,
+          (Entity_PrintFunction *) CL_PrintFactIdentifierInLongFo_rm,
           (bool (*)(void *,Environment *)) CL_RetractCallback,
           NULL,
           (void *(*)(void *,void *)) CL_GetNextFact,
@@ -199,7 +199,7 @@ void InitializeCL_Facts(
 
    /*=========================================*/
    /* Initialize the fact hash table (used to */
-   /* quickly deteCL_rmine if a fact exists).    */
+   /* quickly dete_rmine if a fact exists).    */
    /*=========================================*/
 
    CL_InitializeFactHashTable(theEnv);
@@ -209,15 +209,15 @@ void InitializeCL_Facts(
    /* use with the reset and clear commands.     */
    /*============================================*/
 
-   CL_AddCL_ResetFunction(theEnv,"facts",CL_ResetCL_Facts,60,NULL);
-   CL_AddCL_ClearReadyFunction(theEnv,"facts",CL_ClearCL_FactsReady,0,NULL);
+   CL_Add_ResetFunction(theEnv,"facts",CL_Reset_Facts,60,NULL);
+   CL_Add_ClearReadyFunction(theEnv,"facts",CL_Clear_FactsReady,0,NULL);
 
    /*=============================*/
    /* Initialize periodic garbage */
    /* collection for facts.       */
    /*=============================*/
 
-   CL_AddCleanupFunction(theEnv,"facts",RemoveGarbageCL_Facts,0,NULL);
+   CL_AddCleanupFunction(theEnv,"facts",RemoveGarbage_Facts,0,NULL);
 
    /*===================================*/
    /* Initialize fact pattern matching. */
@@ -231,8 +231,8 @@ void InitializeCL_Facts(
    /*==================================*/
 
 #if DEBUGGING_FUNCTIONS
-   CL_AddCL_WatchItem(theEnv,"facts",0,&FactData(theEnv)->CL_WatchCL_Facts,80,
-                CL_DeftemplateCL_WatchAccess,CL_DeftemplateCL_WatchPrint);
+   CL_Add_WatchItem(theEnv,"facts",0,&FactData(theEnv)->CL_Watch_Facts,80,
+                CL_Deftemplate_WatchAccess,CL_Deftemplate_WatchPrint);
 #endif
 
    /*=========================================*/
@@ -309,13 +309,13 @@ static void DeallocateFactData(
          theMatch = tmpMatch;
         }
 
-      ReturnEntityCL_Dependencies(theEnv,(struct patternEntity *) tmpFactPtr);
+      ReturnEntity_Dependencies(theEnv,(struct patternEntity *) tmpFactPtr);
 
       CL_ReturnFact(theEnv,tmpFactPtr);
       tmpFactPtr = nextFactPtr;
      }
 
-   tmpFactPtr = FactData(theEnv)->GarbageCL_Facts;
+   tmpFactPtr = FactData(theEnv)->Garbage_Facts;
    while (tmpFactPtr != NULL)
      {
       nextFactPtr = tmpFactPtr->nextFact;
@@ -323,8 +323,8 @@ static void DeallocateFactData(
       tmpFactPtr = nextFactPtr;
      }
 
-   CL_DeallocateCallListWithArg(theEnv,FactData(theEnv)->ListOfCL_AssertFunctions);
-   CL_DeallocateCallListWithArg(theEnv,FactData(theEnv)->ListOfCL_RetractFunctions);
+   CL_DeallocateCallListWithArg(theEnv,FactData(theEnv)->ListOf_AssertFunctions);
+   CL_DeallocateCallListWithArg(theEnv,FactData(theEnv)->ListOf_RetractFunctions);
    CL_DeallocateModifyCallList(theEnv,FactData(theEnv)->ListOfModifyFunctions);
   }
 
@@ -360,10 +360,10 @@ void CL_PrintFactIdentifier(
   }
 
 /********************************************/
-/* CL_PrintFactIdentifierInLongFoCL_rm: Display a */
-/*   fact identifier in a longer foCL_rmat.    */
+/* CL_PrintFactIdentifierInLongFo_rm: Display a */
+/*   fact identifier in a longer fo_rmat.    */
 /********************************************/
-void CL_PrintFactIdentifierInLongFoCL_rm(
+void CL_PrintFactIdentifierInLongFo_rm(
   Environment *theEnv,
   const char *logicalName,
   Fact *factPtr)
@@ -527,7 +527,7 @@ CL_RetractError CL_RetractDriver(
   char *changeMap)
   {
    Deftemplate *theTemplate = theFact->whichDeftemplate;
-   struct callFunctionItemWithArg *theCL_RetractFunction;
+   struct callFunctionItemWithArg *the_RetractFunction;
 
    FactData(theEnv)->retractError = RE_NO_ERROR;
 
@@ -547,7 +547,7 @@ CL_RetractError CL_RetractDriver(
      {
       CL_PrintErrorID(theEnv,"FACTMNGR",1,true);
       CL_WriteString(theEnv,STDERR,"CL_Facts may not be retracted during pattern-matching.\n");
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       FactData(theEnv)->retractError = RE_COULD_NOT_RETRACT_ERROR;
       return RE_COULD_NOT_RETRACT_ERROR;
      }
@@ -558,7 +558,7 @@ CL_RetractError CL_RetractDriver(
    /*====================================*/
 
    if (theFact == NULL)
-     { return CL_RetractAllCL_Facts(theEnv); }
+     { return CL_RetractAll_Facts(theEnv); }
 
    /*=================================================*/
    /* Check to see if the fact has not been asserted. */
@@ -575,11 +575,11 @@ CL_RetractError CL_RetractDriver(
    /* to be called before each fact retraction. */
    /*===========================================*/
 
-   for (theCL_RetractFunction = FactData(theEnv)->ListOfCL_RetractFunctions;
-        theCL_RetractFunction != NULL;
-        theCL_RetractFunction = theCL_RetractFunction->next)
+   for (the_RetractFunction = FactData(theEnv)->ListOf_RetractFunctions;
+        the_RetractFunction != NULL;
+        the_RetractFunction = the_RetractFunction->next)
      {
-      (*theCL_RetractFunction->func)(theEnv,theFact,theCL_RetractFunction->context);
+      (*the_RetractFunction->func)(theEnv,theFact,the_RetractFunction->context);
      }
 
    /*============================*/
@@ -611,7 +611,7 @@ CL_RetractError CL_RetractDriver(
    /* used to keep track of logical dependencies.   */
    /*===============================================*/
 
-   RemoveEntityCL_Dependencies(theEnv,(struct patternEntity *) theFact);
+   RemoveEntity_Dependencies(theEnv,(struct patternEntity *) theFact);
 
    /*===========================================*/
    /* Remove the fact from the fact hash table. */
@@ -666,8 +666,8 @@ CL_RetractError CL_RetractDriver(
 
    if (! modifyOperation)
      {
-      theFact->nextFact = FactData(theEnv)->GarbageCL_Facts;
-      FactData(theEnv)->GarbageCL_Facts = theFact;
+      theFact->nextFact = FactData(theEnv)->Garbage_Facts;
+      FactData(theEnv)->Garbage_Facts = theFact;
       UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
      }
    else
@@ -681,7 +681,7 @@ CL_RetractError CL_RetractDriver(
    /* will be evaluated as part of the retract.         */
    /*===================================================*/
 
-   SetCL_EvaluationError(theEnv,false);
+   Set_EvaluationError(theEnv,false);
 
    /*===========================================*/
    /* Loop through the list of all the patterns */
@@ -690,7 +690,7 @@ CL_RetractError CL_RetractDriver(
    /*===========================================*/
 
    EngineData(theEnv)->JoinOperationInProgress = true;
-   CL_NetworkCL_Retract(theEnv,(struct patternMatch *) theFact->list);
+   CL_Network_Retract(theEnv,(struct patternMatch *) theFact->list);
    theFact->list = NULL;
    EngineData(theEnv)->JoinOperationInProgress = false;
 
@@ -700,18 +700,18 @@ CL_RetractError CL_RetractDriver(
    /*=========================================*/
 
    if (EngineData(theEnv)->ExecutingRule == NULL)
-     { CL_FlushGarbagePartialCL_Matches(theEnv); }
+     { CL_FlushGarbagePartial_Matches(theEnv); }
 
    /*=========================================*/
    /* CL_Retract other facts that were logically */
    /* dependent on the fact just retracted.   */
    /*=========================================*/
 
-   CL_ForceLogicalCL_Retractions(theEnv);
+   CL_ForceLogical_Retractions(theEnv);
 
    /*==================================*/
    /* Update busy counts and ephemeral */
-   /* garbage infoCL_rmation.             */
+   /* garbage info_rmation.             */
    /*==================================*/
 
    CL_FactDeinstall(theEnv,theFact);
@@ -720,7 +720,7 @@ CL_RetractError CL_RetractDriver(
    /* Return the appropriate error code. */
    /*====================================*/
 
-   if (GetCL_EvaluationError(theEnv))
+   if (Get_EvaluationError(theEnv))
      {
       FactData(theEnv)->retractError = RE_RULE_NETWORK_ERROR;
       return RE_RULE_NETWORK_ERROR;
@@ -773,19 +773,19 @@ CL_RetractError CL_Retract(
   }
 
 /*******************************************************************/
-/* RemoveGarbageCL_Facts: Returns facts that have been retracted to   */
+/* RemoveGarbage_Facts: Returns facts that have been retracted to   */
 /*   the pool of available memory. It is necessary to postpone     */
 /*   returning the facts to memory because RHS actions retrieve    */
 /*   their variable bindings directly from the fact data structure */
 /*   and the facts may be in use in other data structures.         */
 /*******************************************************************/
-static void RemoveGarbageCL_Facts(
+static void RemoveGarbage_Facts(
   Environment *theEnv,
   void *context)
   {
    Fact *factPtr, *nextPtr, *lastPtr = NULL;
 
-   factPtr = FactData(theEnv)->GarbageCL_Facts;
+   factPtr = FactData(theEnv)->Garbage_Facts;
 
    while (factPtr != NULL)
      {
@@ -801,7 +801,7 @@ static void RemoveGarbageCL_Facts(
            { CL_AtomDeinstall(theEnv,theSegment->contents[i].header->type,theSegment->contents[i].value); }
 
          CL_ReturnFact(theEnv,factPtr);
-         if (lastPtr == NULL) FactData(theEnv)->GarbageCL_Facts = nextPtr;
+         if (lastPtr == NULL) FactData(theEnv)->Garbage_Facts = nextPtr;
          else lastPtr->nextFact = nextPtr;
         }
       else
@@ -825,7 +825,7 @@ Fact *CL_AssertDriver(
    size_t length, i;
    CLIPSValue *theField;
    Fact *duplicate;
-   struct callFunctionItemWithArg *theCL_AssertFunction;
+   struct callFunctionItemWithArg *the_AssertFunction;
    Environment *theEnv = theFact->whichDeftemplate->header.env;
 
    FactData(theEnv)->assertError = AE_NO_ERROR;
@@ -886,14 +886,14 @@ Fact *CL_AssertDriver(
    /* fact and the partial match which is its logical support. */
    /*==========================================================*/
 
-   if (CL_AddLogicalCL_Dependencies(theEnv,(struct patternEntity *) theFact,false) == false)
+   if (CL_AddLogical_Dependencies(theEnv,(struct patternEntity *) theFact,false) == false)
      {
       if (reuseIndex == 0)
         { CL_ReturnFact(theEnv,theFact); }
       else
         {
-         theFact->nextFact = FactData(theEnv)->GarbageCL_Facts;
-         FactData(theEnv)->GarbageCL_Facts = theFact;
+         theFact->nextFact = FactData(theEnv)->Garbage_Facts;
+         FactData(theEnv)->Garbage_Facts = theFact;
          UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
          theFact->garbage = true;
         }
@@ -969,7 +969,7 @@ Fact *CL_AssertDriver(
    if (reuseIndex > 0)
      { theFact->factIndex = reuseIndex; }
    else
-     { theFact->factIndex = FactData(theEnv)->NextCL_FactIndex++; }
+     { theFact->factIndex = FactData(theEnv)->Next_FactIndex++; }
 
    theFact->patternHeader.timeTag = DefruleData(theEnv)->CurrentEntityTimeTag++;
 
@@ -993,10 +993,10 @@ Fact *CL_AssertDriver(
    /* to be called before each fact assertion. */
    /*==========================================*/
 
-   for (theCL_AssertFunction = FactData(theEnv)->ListOfCL_AssertFunctions;
-        theCL_AssertFunction != NULL;
-        theCL_AssertFunction = theCL_AssertFunction->next)
-     { (*theCL_AssertFunction->func)(theEnv,theFact,theCL_AssertFunction->context); }
+   for (the_AssertFunction = FactData(theEnv)->ListOf_AssertFunctions;
+        the_AssertFunction != NULL;
+        the_AssertFunction = the_AssertFunction->next)
+     { (*the_AssertFunction->func)(theEnv,theFact,the_AssertFunction->context); }
 
    /*==========================*/
    /* Print assert output if   */
@@ -1032,7 +1032,7 @@ Fact *CL_AssertDriver(
    /* will be evaluated as part of the assert .         */
    /*===================================================*/
 
-   SetCL_EvaluationError(theEnv,false);
+   Set_EvaluationError(theEnv,false);
 
    /*=============================================*/
    /* Pattern match the fact using the associated */
@@ -1048,14 +1048,14 @@ Fact *CL_AssertDriver(
    /* on the non-existence of the fact just asserted.   */
    /*===================================================*/
 
-   CL_ForceLogicalCL_Retractions(theEnv);
+   CL_ForceLogical_Retractions(theEnv);
 
    /*=========================================*/
    /* Free partial matches that were released */
    /* by the assertion of the fact.           */
    /*=========================================*/
 
-   if (EngineData(theEnv)->ExecutingRule == NULL) CL_FlushGarbagePartialCL_Matches(theEnv);
+   if (EngineData(theEnv)->ExecutingRule == NULL) CL_FlushGarbagePartial_Matches(theEnv);
 
    /*===============================*/
    /* Return a pointer to the fact. */
@@ -1077,19 +1077,19 @@ Fact *CL_Assert(
   }
 
 /*************************/
-/* GetCL_AssertStringError: */
+/* Get_AssertStringError: */
 /*************************/
-CL_AssertStringError GetCL_AssertStringError(
+CL_AssertStringError Get_AssertStringError(
   Environment *theEnv)
   {
    return FactData(theEnv)->assertStringError;
   }
 
 /**************************************/
-/* CL_RetractAllCL_Facts: Loops through the */
+/* CL_RetractAll_Facts: Loops through the */
 /*   fact-list and removes each fact. */
 /**************************************/
-CL_RetractError CL_RetractAllCL_Facts(
+CL_RetractError CL_RetractAll_Facts(
   Environment *theEnv)
   {
    CL_RetractError rv;
@@ -1378,7 +1378,7 @@ bool CL_AssignFactSlotDefaults(
   }
 
 /********************************************************/
-/* CL_DeftemplateSlotDefault: DeteCL_rmines the default value */
+/* CL_DeftemplateSlotDefault: Dete_rmines the default value */
 /*   for the specified slot of a deftemplate.           */
 /********************************************************/
 bool CL_DeftemplateSlotDefault(
@@ -1455,10 +1455,10 @@ bool CL_DeftemplateSlotDefault(
   }
 
 /***************************************************************/
-/* CL_CopyCL_FactSlotValues: Copies the slot values from one fact to */
+/* CL_Copy_FactSlotValues: Copies the slot values from one fact to */
 /*   another. Both facts must have the same relation name.     */
 /***************************************************************/
-bool CL_CopyCL_FactSlotValues(
+bool CL_Copy_FactSlotValues(
   Environment *theEnv,
   Fact *theDestFact,
   Fact *theSourceFact)
@@ -1582,7 +1582,7 @@ void CL_FactInstall(
   Environment *theEnv,
   Fact *newFact)
   {
-   FactData(theEnv)->NumberOfCL_Facts++;
+   FactData(theEnv)->NumberOf_Facts++;
    newFact->whichDeftemplate->busyCount++;
    newFact->patternHeader.busyCount++;
   }
@@ -1595,7 +1595,7 @@ void CL_FactDeinstall(
   Environment *theEnv,
   Fact *newFact)
   {
-   FactData(theEnv)->NumberOfCL_Facts--;
+   FactData(theEnv)->NumberOf_Facts--;
    newFact->whichDeftemplate->busyCount--;
    newFact->patternHeader.busyCount--;
   }
@@ -1688,7 +1688,7 @@ Fact *CL_GetNextFactInScope(
    /* we're just beginning a traversal of the fact list. If */
    /* the module index has changed since that last time the */
    /* fact list was traversed by this routine, then         */
-   /* deteCL_rmine all of the deftemplates that are in scope   */
+   /* dete_rmine all of the deftemplates that are in scope   */
    /* of the current module.                                */
    /*=======================================================*/
 
@@ -1704,7 +1704,7 @@ Fact *CL_GetNextFactInScope(
 
    /*==================================================*/
    /* Otherwise, if the fact passed as an argument has */
-   /* been retracted, then there's no way to deteCL_rmine */
+   /* been retracted, then there's no way to dete_rmine */
    /* the next fact, so return a NULL pointer.         */
    /*==================================================*/
 
@@ -1737,19 +1737,19 @@ Fact *CL_GetNextFactInScope(
   }
 
 /*************************************/
-/* CL_FactPPFoCL_rm: Returns the pretty    */
+/* CL_FactPPFo_rm: Returns the pretty    */
 /*   print representation of a fact. */
 /*************************************/
-void CL_FactPPFoCL_rm(
+void CL_FactPPFo_rm(
   Fact *theFact,
-  StringCL_Builder *theSB,
+  String_Builder *theSB,
   bool ignoreDefaults)
   {
    Environment *theEnv = theFact->whichDeftemplate->header.env;
    
-   OpenStringCL_BuilderDestination(theEnv,"CL_FactPPFoCL_rm",theSB);
-   CL_PrintFact(theEnv,"CL_FactPPFoCL_rm",theFact,true,ignoreDefaults,NULL);
-   CloseStringCL_BuilderDestination(theEnv,"CL_FactPPFoCL_rm");
+   OpenString_BuilderDestination(theEnv,"CL_FactPPFo_rm",theSB);
+   CL_PrintFact(theEnv,"CL_FactPPFo_rm",theFact,true,ignoreDefaults,NULL);
+   CloseString_BuilderDestination(theEnv,"CL_FactPPFo_rm");
   }
 
 /**********************************/
@@ -1850,20 +1850,20 @@ void CL_SetFactListChanged(
   }
 
 /****************************************/
-/* GetNumberOfCL_Facts: Returns the number */
+/* GetNumberOf_Facts: Returns the number */
 /* of facts in the fact-list.           */
 /****************************************/
-unsigned long GetNumberOfCL_Facts(
+unsigned long GetNumberOf_Facts(
   Environment *theEnv)
   {
-   return(FactData(theEnv)->NumberOfCL_Facts);
+   return(FactData(theEnv)->NumberOf_Facts);
   }
 
 /***********************************************************/
-/* CL_ResetCL_Facts: CL_Reset function for facts. Sets the starting */
+/* CL_Reset_Facts: CL_Reset function for facts. Sets the starting */
 /*   fact index to zero and removes all facts.             */
 /***********************************************************/
-static void CL_ResetCL_Facts(
+static void CL_Reset_Facts(
   Environment *theEnv,
   void *context)
   {
@@ -1871,21 +1871,21 @@ static void CL_ResetCL_Facts(
    /* Initialize the fact index to zero. */
    /*====================================*/
 
-   FactData(theEnv)->NextCL_FactIndex = 1L;
+   FactData(theEnv)->Next_FactIndex = 1L;
 
    /*======================================*/
    /* Remove all facts from the fact list. */
    /*======================================*/
 
-   CL_RetractAllCL_Facts(theEnv);
+   CL_RetractAll_Facts(theEnv);
   }
 
 /************************************************************/
-/* CL_ClearCL_FactsReady: CL_Clear ready function for facts. Returns */
+/* CL_Clear_FactsReady: CL_Clear ready function for facts. Returns */
 /*   true if facts were successfully removed and the clear  */
 /*   command can continue, otherwise false.                 */
 /************************************************************/
-static bool CL_ClearCL_FactsReady(
+static bool CL_Clear_FactsReady(
   Environment *theEnv,
   void *context)
   {
@@ -1900,17 +1900,17 @@ static bool CL_ClearCL_FactsReady(
    /* Initialize the fact index to zero. */
    /*====================================*/
 
-   FactData(theEnv)->NextCL_FactIndex = 1L;
+   FactData(theEnv)->Next_FactIndex = 1L;
 
    /*======================================*/
    /* Remove all facts from the fact list. */
    /*======================================*/
 
-   CL_RetractAllCL_Facts(theEnv);
+   CL_RetractAll_Facts(theEnv);
 
    /*==============================================*/
    /* If for some reason there are any facts still */
-   /* reCL_maining, don't continue with the clear.    */
+   /* re_maining, don't continue with the clear.    */
    /*==============================================*/
 
    if (CL_GetNextFact(theEnv,NULL) != NULL) return false;
@@ -1945,34 +1945,34 @@ Fact *CL_FindIndexedFact(
   }
 
 /**************************************/
-/* CL_AddCL_AssertFunction: Adds a function */
-/*   to the ListOfCL_AssertFunctions.    */
+/* CL_Add_AssertFunction: Adds a function */
+/*   to the ListOf_AssertFunctions.    */
 /**************************************/
-bool CL_AddCL_AssertFunction(
+bool CL_Add_AssertFunction(
   Environment *theEnv,
   const char *name,
-  VoidCL_CallFunctionWithArg *functionPtr,
+  Void_CallFunctionWithArg *functionPtr,
   int priority,
   void *context)
   {
-   FactData(theEnv)->ListOfCL_AssertFunctions =
+   FactData(theEnv)->ListOf_AssertFunctions =
       CL_AddFunctionToCallListWithArg(theEnv,name,priority,functionPtr,
-                                   FactData(theEnv)->ListOfCL_AssertFunctions,context);
+                                   FactData(theEnv)->ListOf_AssertFunctions,context);
    return true;
   }
 
 /********************************************/
-/* RemoveCL_AssertFunction: Removes a function */
-/*   from the ListOfCL_AssertFunctions.        */
+/* Remove_AssertFunction: Removes a function */
+/*   from the ListOf_AssertFunctions.        */
 /********************************************/
-bool RemoveCL_AssertFunction(
+bool Remove_AssertFunction(
   Environment *theEnv,
   const char *name)
   {
    bool found;
 
-   FactData(theEnv)->ListOfCL_AssertFunctions =
-      CL_RemoveFunctionFromCallListWithArg(theEnv,name,FactData(theEnv)->ListOfCL_AssertFunctions,&found);
+   FactData(theEnv)->ListOf_AssertFunctions =
+      CL_RemoveFunctionFromCallListWithArg(theEnv,name,FactData(theEnv)->ListOf_AssertFunctions,&found);
 
    if (found) return true;
 
@@ -1980,34 +1980,34 @@ bool RemoveCL_AssertFunction(
   }
 
 /***************************************/
-/* CL_AddCL_RetractFunction: Adds a function */
-/*   to the ListOfCL_RetractFunctions.    */
+/* CL_Add_RetractFunction: Adds a function */
+/*   to the ListOf_RetractFunctions.    */
 /***************************************/
-bool CL_AddCL_RetractFunction(
+bool CL_Add_RetractFunction(
   Environment *theEnv,
   const char *name,
-  VoidCL_CallFunctionWithArg *functionPtr,
+  Void_CallFunctionWithArg *functionPtr,
   int priority,
   void *context)
   {
-   FactData(theEnv)->ListOfCL_RetractFunctions =
+   FactData(theEnv)->ListOf_RetractFunctions =
       CL_AddFunctionToCallListWithArg(theEnv,name,priority,functionPtr,
-                                   FactData(theEnv)->ListOfCL_RetractFunctions,context);
+                                   FactData(theEnv)->ListOf_RetractFunctions,context);
    return true;
   }
 
 /*********************************************/
-/* CL_RemoveCL_RetractFunction: Removes a function */
-/*   from the ListOfCL_RetractFunctions.        */
+/* CL_Remove_RetractFunction: Removes a function */
+/*   from the ListOf_RetractFunctions.        */
 /*********************************************/
-bool CL_RemoveCL_RetractFunction(
+bool CL_Remove_RetractFunction(
   Environment *theEnv,
   const char *name)
   {
    bool found;
 
-   FactData(theEnv)->ListOfCL_RetractFunctions =
-      CL_RemoveFunctionFromCallListWithArg(theEnv,name,FactData(theEnv)->ListOfCL_RetractFunctions,&found);
+   FactData(theEnv)->ListOf_RetractFunctions =
+      CL_RemoveFunctionFromCallListWithArg(theEnv,name,FactData(theEnv)->ListOf_RetractFunctions,&found);
 
    if (found) return true;
 
@@ -2021,7 +2021,7 @@ bool CL_RemoveCL_RetractFunction(
 bool CL_AddModifyFunction(
   Environment *theEnv,
   const char *name,
-  ModifyCL_CallFunction *functionPtr,
+  Modify_CallFunction *functionPtr,
   int priority,
   void *context)
   {
@@ -2052,21 +2052,21 @@ bool CL_RemoveModifyFunction(
 
 /**********************************************************/
 /* CL_AddModifyFunctionToCallList: Adds a function to a list */
-/*   of functions which are called to perfoCL_rm certain     */
+/*   of functions which are called to perfo_rm certain     */
 /*   operations (e.g. clear, reset, and bload functions). */
 /**********************************************************/
-ModifyCL_CallFunctionItem *CL_AddModifyFunctionToCallList(
+Modify_CallFunctionItem *CL_AddModifyFunctionToCallList(
   Environment *theEnv,
   const char *name,
   int priority,
-  ModifyCL_CallFunction *func,
-  ModifyCL_CallFunctionItem *head,
+  Modify_CallFunction *func,
+  Modify_CallFunctionItem *head,
   void *context)
   {
-   ModifyCL_CallFunctionItem *newPtr, *currentPtr, *lastPtr = NULL;
+   Modify_CallFunctionItem *newPtr, *currentPtr, *lastPtr = NULL;
    char  *nameCopy;
 
-   newPtr = get_struct(theEnv,modifyCL_CallFunctionItem);
+   newPtr = get_struct(theEnv,modify_CallFunctionItem);
 
    nameCopy = (char *) CL_genalloc(theEnv,strlen(name) + 1);
    CL_genstrcpy(nameCopy,name);
@@ -2105,16 +2105,16 @@ ModifyCL_CallFunctionItem *CL_AddModifyFunctionToCallList(
 
 /********************************************************************/
 /* CL_RemoveModifyFunctionFromCallList: Removes a function from a list */
-/*   of functions which are called to perfoCL_rm certain operations    */
+/*   of functions which are called to perfo_rm certain operations    */
 /*   (e.g. clear, reset, and bload functions).                      */
 /********************************************************************/
-ModifyCL_CallFunctionItem *CL_RemoveModifyFunctionFromCallList(
+Modify_CallFunctionItem *CL_RemoveModifyFunctionFromCallList(
   Environment *theEnv,
   const char *name,
-  ModifyCL_CallFunctionItem *head,
+  Modify_CallFunctionItem *head,
   bool *found)
   {
-   ModifyCL_CallFunctionItem *currentPtr, *lastPtr;
+   Modify_CallFunctionItem *currentPtr, *lastPtr;
 
    *found = false;
    lastPtr = NULL;
@@ -2131,7 +2131,7 @@ ModifyCL_CallFunctionItem *CL_RemoveModifyFunctionFromCallList(
            { lastPtr->next = currentPtr->next; }
 
          CL_genfree(theEnv,(void *) currentPtr->name,strlen(currentPtr->name) + 1);
-         rtn_struct(theEnv,modifyCL_CallFunctionItem,currentPtr);
+         rtn_struct(theEnv,modify_CallFunctionItem,currentPtr);
          return head;
         }
 
@@ -2145,33 +2145,33 @@ ModifyCL_CallFunctionItem *CL_RemoveModifyFunctionFromCallList(
 
 /***************************************************************/
 /* CL_DeallocateModifyCallList: Removes all functions from a list */
-/*   of functions which are called to perfoCL_rm certain          */
+/*   of functions which are called to perfo_rm certain          */
 /*   operations (e.g. clear, reset, and bload functions).      */
 /***************************************************************/
 void CL_DeallocateModifyCallList(
   Environment *theEnv,
-  ModifyCL_CallFunctionItem *theList)
+  Modify_CallFunctionItem *theList)
   {
-   ModifyCL_CallFunctionItem *tmpPtr, *nextPtr;
+   Modify_CallFunctionItem *tmpPtr, *nextPtr;
 
    tmpPtr = theList;
    while (tmpPtr != NULL)
      {
       nextPtr = tmpPtr->next;
       CL_genfree(theEnv,(void *) tmpPtr->name,strlen(tmpPtr->name) + 1);
-      rtn_struct(theEnv,modifyCL_CallFunctionItem,tmpPtr);
+      rtn_struct(theEnv,modify_CallFunctionItem,tmpPtr);
       tmpPtr = nextPtr;
      }
   }
 
 /**********************/
-/* CL_CreateFactCL_Builder: */
+/* CL_CreateFact_Builder: */
 /**********************/
-FactCL_Builder *CL_CreateFactCL_Builder(
+Fact_Builder *CL_CreateFact_Builder(
   Environment *theEnv,
   const char *deftemplateName)
   {
-   FactCL_Builder *theFB;
+   Fact_Builder *theFB;
    Deftemplate *theDeftemplate;
    int i;
    
@@ -2182,20 +2182,20 @@ FactCL_Builder *CL_CreateFactCL_Builder(
       theDeftemplate = CL_FindDeftemplate(theEnv,deftemplateName);
       if (theDeftemplate == NULL)
         {
-         FactData(theEnv)->factCL_BuilderError = FBE_DEFTEMPLATE_NOT_FOUND_ERROR;
+         FactData(theEnv)->fact_BuilderError = FBE_DEFTEMPLATE_NOT_FOUND_ERROR;
          return NULL;
         }
    
       if (theDeftemplate->implied)
         {
-         FactData(theEnv)->factCL_BuilderError = FBE_IMPLIED_DEFTEMPLATE_ERROR;
+         FactData(theEnv)->fact_BuilderError = FBE_IMPLIED_DEFTEMPLATE_ERROR;
          return NULL;
         }
      }
    else
      { theDeftemplate = NULL; }
      
-   theFB = get_struct(theEnv,factCL_Builder);
+   theFB = get_struct(theEnv,fact_Builder);
    theFB->fbEnv = theEnv;
    theFB->fbDeftemplate = theDeftemplate;
       
@@ -2208,7 +2208,7 @@ FactCL_Builder *CL_CreateFactCL_Builder(
         { theFB->fbValueArray[i].voidValue = VoidConstant(theEnv); }
      }
 
-   FactData(theEnv)->factCL_BuilderError = FBE_NO_ERROR;
+   FactData(theEnv)->fact_BuilderError = FBE_NO_ERROR;
    
    return theFB;
   }
@@ -2217,7 +2217,7 @@ FactCL_Builder *CL_CreateFactCL_Builder(
 /* CL_FBPutSlotCLIPSInteger */
 /*************************/
 PutSlotError CL_FBPutSlotCLIPSInteger(
-  FactCL_Builder *theFB,
+  Fact_Builder *theFB,
   const char *slotName,
   CLIPSInteger *slotValue)
   {
@@ -2231,7 +2231,7 @@ PutSlotError CL_FBPutSlotCLIPSInteger(
 /* CL_FBPutSlotInteger */
 /********************/
 PutSlotError CL_FBPutSlotInteger(
-  FactCL_Builder *theFB,
+  Fact_Builder *theFB,
   const char *slotName,
   long long longLongValue)
   {
@@ -2248,7 +2248,7 @@ PutSlotError CL_FBPutSlotInteger(
 /* CL_FBPutSlotCLIPSLexeme */
 /************************/
 PutSlotError CL_FBPutSlotCLIPSLexeme(
-  FactCL_Builder *theFB,
+  Fact_Builder *theFB,
   const char *slotName,
   CLIPSLexeme *slotValue)
   {
@@ -2262,7 +2262,7 @@ PutSlotError CL_FBPutSlotCLIPSLexeme(
 /* CL_FBPutSlotSymbol */
 /*******************/
 PutSlotError CL_FBPutSlotSymbol(
-  FactCL_Builder *theFB,
+  Fact_Builder *theFB,
   const char *slotName,
   const char *stringValue)
   {
@@ -2279,7 +2279,7 @@ PutSlotError CL_FBPutSlotSymbol(
 /* CL_FBPutSlotString */
 /*******************/
 PutSlotError CL_FBPutSlotString(
-  FactCL_Builder *theFB,
+  Fact_Builder *theFB,
   const char *slotName,
   const char *stringValue)
   {
@@ -2293,10 +2293,10 @@ PutSlotError CL_FBPutSlotString(
   }
 
 /*************************/
-/* CL_FBPutSlotCL_InstanceName */
+/* CL_FBPutSlot_InstanceName */
 /*************************/
-PutSlotError CL_FBPutSlotCL_InstanceName(
-  FactCL_Builder *theFB,
+PutSlotError CL_FBPutSlot_InstanceName(
+  Fact_Builder *theFB,
   const char *slotName,
   const char *stringValue)
   {
@@ -2305,7 +2305,7 @@ PutSlotError CL_FBPutSlotCL_InstanceName(
    if (theFB == NULL)
      { return PSE_NULL_POINTER_ERROR; }
 
-   theValue.lexemeValue = CL_CreateCL_InstanceName(theFB->fbEnv,stringValue);
+   theValue.lexemeValue = CL_Create_InstanceName(theFB->fbEnv,stringValue);
    return CL_FBPutSlot(theFB,slotName,&theValue);
   }
 
@@ -2313,7 +2313,7 @@ PutSlotError CL_FBPutSlotCL_InstanceName(
 /* CL_FBPutSlotCLIPSFloat */
 /***********************/
 PutSlotError CL_FBPutSlotCLIPSFloat(
-  FactCL_Builder *theFB,
+  Fact_Builder *theFB,
   const char *slotName,
   CLIPSFloat *slotValue)
   {
@@ -2327,7 +2327,7 @@ PutSlotError CL_FBPutSlotCLIPSFloat(
 /* CL_FBPutSlotFloat */
 /******************/
 PutSlotError CL_FBPutSlotFloat(
-  FactCL_Builder *theFB,
+  Fact_Builder *theFB,
   const char *slotName,
   double floatValue)
   {
@@ -2344,7 +2344,7 @@ PutSlotError CL_FBPutSlotFloat(
 /* CL_FBPutSlotFact */
 /*****************/
 PutSlotError CL_FBPutSlotFact(
-  FactCL_Builder *theFB,
+  Fact_Builder *theFB,
   const char *slotName,
   Fact *slotValue)
   {
@@ -2358,7 +2358,7 @@ PutSlotError CL_FBPutSlotFact(
 /* CL_FBPutSlotInstance */
 /*********************/
 PutSlotError CL_FBPutSlotInstance(
-  FactCL_Builder *theFB,
+  Fact_Builder *theFB,
   const char *slotName,
   Instance *slotValue)
   {
@@ -2372,7 +2372,7 @@ PutSlotError CL_FBPutSlotInstance(
 /* CL_FBPutSlotCLIPSExternalAddress */
 /*********************************/
 PutSlotError CL_FBPutSlotCLIPSExternalAddress(
-  FactCL_Builder *theFB,
+  Fact_Builder *theFB,
   const char *slotName,
   CLIPSExternalAddress *slotValue)
   {
@@ -2386,7 +2386,7 @@ PutSlotError CL_FBPutSlotCLIPSExternalAddress(
 /* CL_FBPutSlotMultifield */
 /***********************/
 PutSlotError CL_FBPutSlotMultifield(
-  FactCL_Builder *theFB,
+  Fact_Builder *theFB,
   const char *slotName,
   Multifield *slotValue)
   {
@@ -2400,7 +2400,7 @@ PutSlotError CL_FBPutSlotMultifield(
 /* CL_FBPutSlot: */
 /**************/
 PutSlotError CL_FBPutSlot(
-  FactCL_Builder *theFB,
+  Fact_Builder *theFB,
   const char *slotName,
   CLIPSValue *slotValue)
   {
@@ -2518,10 +2518,10 @@ PutSlotError CL_FBPutSlot(
   }
 
 /*************/
-/* FBCL_Assert: */
+/* FB_Assert: */
 /*************/
-Fact *FBCL_Assert(
-  FactCL_Builder *theFB)
+Fact *FB_Assert(
+  Fact_Builder *theFB)
   {
    Environment *theEnv;
    int i;
@@ -2532,7 +2532,7 @@ Fact *FBCL_Assert(
    
    if (theFB->fbDeftemplate == NULL)
      {
-      FactData(theEnv)->factCL_BuilderError = FBE_NULL_POINTER_ERROR;
+      FactData(theEnv)->fact_BuilderError = FBE_NULL_POINTER_ERROR;
       return NULL;
      }
      
@@ -2555,7 +2555,7 @@ Fact *FBCL_Assert(
    switch (FactData(theEnv)->assertError)
      {
       case AE_NO_ERROR:
-        FactData(theEnv)->factCL_BuilderError = FBE_NO_ERROR;
+        FactData(theEnv)->fact_BuilderError = FBE_NO_ERROR;
         break;
         
       case AE_NULL_POINTER_ERROR:
@@ -2565,11 +2565,11 @@ Fact *FBCL_Assert(
         break;
         
       case AE_COULD_NOT_ASSERT_ERROR:
-        FactData(theEnv)->factCL_BuilderError = FBE_COULD_NOT_ASSERT_ERROR;
+        FactData(theEnv)->fact_BuilderError = FBE_COULD_NOT_ASSERT_ERROR;
         break;
       
       case AE_RULE_NETWORK_ERROR:
-        FactData(theEnv)->factCL_BuilderError = FBE_RULE_NETWORK_ERROR;
+        FactData(theEnv)->fact_BuilderError = FBE_RULE_NETWORK_ERROR;
         break;
      }
    
@@ -2580,7 +2580,7 @@ Fact *FBCL_Assert(
 /* CL_FBDispose: */
 /**************/
 void CL_FBDispose(
-  FactCL_Builder *theFB)
+  Fact_Builder *theFB)
   {
    Environment *theEnv;
 
@@ -2593,14 +2593,14 @@ void CL_FBDispose(
    if (theFB->fbValueArray != NULL)
      { CL_rm(theEnv,theFB->fbValueArray,sizeof(CLIPSValue) * theFB->fbDeftemplate->numberOfSlots); }
    
-   rtn_struct(theEnv,factCL_Builder,theFB);
+   rtn_struct(theEnv,fact_Builder,theFB);
   }
 
 /************/
 /* CL_FBAbort: */
 /************/
 void CL_FBAbort(
-  FactCL_Builder *theFB)
+  Fact_Builder *theFB)
   {
    Environment *theEnv;
    GCBlock gcb;
@@ -2630,8 +2630,8 @@ void CL_FBAbort(
 /********************/
 /* CL_FBSetDeftemplate */
 /********************/
-FactCL_BuilderError CL_FBSetDeftemplate(
-  FactCL_Builder *theFB,
+Fact_BuilderError CL_FBSetDeftemplate(
+  Fact_Builder *theFB,
   const char *deftemplateName)
   {
    Deftemplate *theDeftemplate;
@@ -2651,13 +2651,13 @@ FactCL_BuilderError CL_FBSetDeftemplate(
    
       if (theDeftemplate == NULL)
         {
-         FactData(theEnv)->factCL_BuilderError = FBE_DEFTEMPLATE_NOT_FOUND_ERROR;
+         FactData(theEnv)->fact_BuilderError = FBE_DEFTEMPLATE_NOT_FOUND_ERROR;
          return FBE_DEFTEMPLATE_NOT_FOUND_ERROR;
         }
      
       if (theDeftemplate->implied)
         {
-         FactData(theEnv)->factCL_BuilderError = FBE_IMPLIED_DEFTEMPLATE_ERROR;
+         FactData(theEnv)->fact_BuilderError = FBE_IMPLIED_DEFTEMPLATE_ERROR;
          return FBE_IMPLIED_DEFTEMPLATE_ERROR;
         }
      }
@@ -2678,17 +2678,17 @@ FactCL_BuilderError CL_FBSetDeftemplate(
         { theFB->fbValueArray[i].voidValue = VoidConstant(theEnv); }
      }
 
-   FactData(theEnv)->factCL_BuilderError = FBE_NO_ERROR;
+   FactData(theEnv)->fact_BuilderError = FBE_NO_ERROR;
    return FBE_NO_ERROR;
   }
 
 /************/
 /* CL_FBError: */
 /************/
-FactCL_BuilderError CL_FBError(
+Fact_BuilderError CL_FBError(
   Environment *theEnv)
   {
-   return FactData(theEnv)->factCL_BuilderError;
+   return FactData(theEnv)->fact_BuilderError;
   }
 
 /***********************/
@@ -2824,9 +2824,9 @@ PutSlotError CL_FMPutSlotString(
   }
 
 /*************************/
-/* CL_FMPutSlotCL_InstanceName */
+/* CL_FMPutSlot_InstanceName */
 /*************************/
-PutSlotError CL_FMPutSlotCL_InstanceName(
+PutSlotError CL_FMPutSlot_InstanceName(
   FactModifier *theFM,
   const char *slotName,
   const char *stringValue)
@@ -2836,7 +2836,7 @@ PutSlotError CL_FMPutSlotCL_InstanceName(
    if (theFM == NULL)
      { return PSE_NULL_POINTER_ERROR; }
 
-   theValue.lexemeValue = CL_CreateCL_InstanceName(theFM->fmEnv,stringValue);
+   theValue.lexemeValue = CL_Create_InstanceName(theFM->fmEnv,stringValue);
    return CL_FMPutSlot(theFM,slotName,&theValue);
   }
 

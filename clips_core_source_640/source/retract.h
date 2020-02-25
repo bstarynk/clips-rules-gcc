@@ -28,7 +28,7 @@
 /*      6.30: Added support for hashed memories.             */
 /*                                                           */
 /*            Added additional developer statistics to help  */
-/*            analyze join network perfoCL_rmance.              */
+/*            analyze join network perfo_rmance.              */
 /*                                                           */
 /*            Removed pseudo-facts used in not CEs.          */
 /*                                                           */
@@ -59,13 +59,13 @@ struct rdriveinfo
    struct rdriveinfo *next;
   };
 
-void                           CL_NetworkCL_Retract(Environment *,struct patternMatch *);
+void                           CL_Network_Retract(Environment *,struct patternMatch *);
 void                           CL_ReturnPartialMatch(Environment *,struct partialMatch *);
 void                           CL_DestroyPartialMatch(Environment *,struct partialMatch *);
-void                           CL_FlushGarbagePartialCL_Matches(Environment *);
-void                           CL_DeletePartialCL_Matches(Environment *,struct partialMatch *);
-void                           CL_PosEntryCL_RetractBeta(Environment *,struct partialMatch *,struct partialMatch *,int);
-void                           CL_PosEntryCL_RetractAlpha(Environment *,struct partialMatch *,int);
+void                           CL_FlushGarbagePartial_Matches(Environment *);
+void                           CL_DeletePartial_Matches(Environment *,struct partialMatch *);
+void                           CL_PosEntry_RetractBeta(Environment *,struct partialMatch *,struct partialMatch *,int);
+void                           CL_PosEntry_RetractAlpha(Environment *,struct partialMatch *,int);
 bool                           CL_PartialMatchWillBeDeleted(Environment *,struct partialMatch *);
 
 #endif /* _H_retract */

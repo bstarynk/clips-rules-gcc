@@ -40,12 +40,12 @@
 /*            specified.                                     */
 /*                                                           */
 /*      6.31: Prior error flags are cleared before           */
-/*            EnvCL_LoadCL_Instances, EnvRestoreCL_Instances,         */
-/*            EnvCL_LoadCL_InstancesFromString, and                */
-/*            EnvRestoreCL_InstancesFromString are processed.   */
+/*            Env_Load_Instances, EnvRestore_Instances,         */
+/*            Env_Load_InstancesFromString, and                */
+/*            EnvRestore_InstancesFromString are processed.   */
 /*                                                           */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*      6.40: Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
 /*            Refactored code to reduce header dependencies  */
 /*            in sysdep.c.                                   */
@@ -132,14 +132,14 @@ struct classItem
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static long                    CL_InstancesCL_SaveCommandParser(UDFContext *,
+   static long                    CL_Instances_SaveCommandParser(UDFContext *,
                                                              long (*)(Environment *,const char *,
                                                                       CL_SaveScope,Expression *,bool));
-   static struct classItem       *ProcessCL_SaveClassList(Environment *,const char *,Expression *,CL_SaveScope,bool);
-   static void                    ReturnCL_SaveClassList(Environment *,struct classItem *);
-   static long                    CL_SaveOrMarkCL_Instances(Environment *,FILE *,int,struct classItem *,bool,bool,
+   static struct classItem       *Process_SaveClassList(Environment *,const char *,Expression *,CL_SaveScope,bool);
+   static void                    Return_SaveClassList(Environment *,struct classItem *);
+   static long                    CL_SaveOrMark_Instances(Environment *,FILE *,int,struct classItem *,bool,bool,
                                                       void (*)(Environment *,FILE *,Instance *));
-   static long                    CL_SaveOrMarkCL_InstancesOfClass(Environment *,FILE *,Defmodule *,int,Defclass *,
+   static long                    CL_SaveOrMark_InstancesOfClass(Environment *,FILE *,Defmodule *,int,Defclass *,
                                                              bool,int,void (*)(Environment *,FILE *,Instance *));
    static void                    CL_SaveSingleInstanceText(Environment *,FILE *,Instance *);
    static void                    ProcessFileErrorMessage(Environment *,const char *,const char *);
@@ -151,12 +151,12 @@ struct classItem
    static void                    CL_SaveAtomBinary(Environment *,unsigned short,void *,FILE *);
 #endif
 
-   static long                    CL_LoadOrRestoreCL_Instances(Environment *,const char *,bool,bool);
+   static long                    CL_LoadOrRestore_Instances(Environment *,const char *,bool,bool);
 
 #if BLOAD_INSTANCES
    static bool                    VerifyBinaryHeader(Environment *,const char *);
    static bool                    CL_LoadSingleBinaryInstance(Environment *);
-   static void                    BinaryCL_LoadInstanceError(Environment *,CLIPSLexeme *,Defclass *);
+   static void                    Binary_LoadInstanceError(Environment *,CLIPSLexeme *,Defclass *);
    static void                    CreateSlotValue(Environment *,UDFValue *,struct bsaveSlotValueAtom *,unsigned long);
    static void                   *GetBinaryAtomValue(Environment *,struct bsaveSlotValueAtom *);
    static void                    BufferedRead(Environment *,void *,size_t);
@@ -189,15 +189,15 @@ void CL_SetupInstanceFileCommands(
 #endif
 
 #if (! RUN_TIME)
-   CL_AddUDF(theEnv,"save-instances","l",1,UNBOUNDED,"y;sy",CL_SaveCL_InstancesCommand,"CL_SaveCL_InstancesCommand",NULL);
-   CL_AddUDF(theEnv,"load-instances","l",1,1,"sy",CL_LoadCL_InstancesCommand,"CL_LoadCL_InstancesCommand",NULL);
-   CL_AddUDF(theEnv,"restore-instances","l",1,1,"sy",RestoreCL_InstancesCommand,"RestoreCL_InstancesCommand",NULL);
+   CL_AddUDF(theEnv,"save-instances","l",1,UNBOUNDED,"y;sy",CL_Save_InstancesCommand,"CL_Save_InstancesCommand",NULL);
+   CL_AddUDF(theEnv,"load-instances","l",1,1,"sy",CL_Load_InstancesCommand,"CL_Load_InstancesCommand",NULL);
+   CL_AddUDF(theEnv,"restore-instances","l",1,1,"sy",Restore_InstancesCommand,"Restore_InstancesCommand",NULL);
 
 #if BSAVE_INSTANCES
-   CL_AddUDF(theEnv,"bsave-instances","l",1,UNBOUNDED,"y;sy",CL_BinaryCL_SaveCL_InstancesCommand,"CL_BinaryCL_SaveCL_InstancesCommand",NULL);
+   CL_AddUDF(theEnv,"bsave-instances","l",1,UNBOUNDED,"y;sy",CL_Binary_Save_InstancesCommand,"CL_Binary_Save_InstancesCommand",NULL);
 #endif
 #if BLOAD_INSTANCES
-   CL_AddUDF(theEnv,"bload-instances","l",1,1,"sy",CL_BinaryCL_LoadCL_InstancesCommand,"CL_BinaryCL_LoadCL_InstancesCommand",NULL);
+   CL_AddUDF(theEnv,"bload-instances","l",1,1,"sy",CL_Binary_Load_InstancesCommand,"CL_Binary_Load_InstancesCommand",NULL);
 #endif
 
 #endif
@@ -205,7 +205,7 @@ void CL_SetupInstanceFileCommands(
 
 
 /****************************************************************************
-  NAME         : CL_SaveCL_InstancesCommand
+  NAME         : CL_Save_InstancesCommand
   DESCRIPTION  : H/L interface for saving
                    current instances to a file
   INPUTS       : None
@@ -214,16 +214,16 @@ void CL_SetupInstanceFileCommands(
   NOTES        : H/L Syntax :
                  (save-instances <file> [local|visible [[inherit] <class>+]])
  ****************************************************************************/
-void CL_SaveCL_InstancesCommand(
+void CL_Save_InstancesCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
-   returnValue->integerValue = CL_CreateInteger(theEnv,CL_InstancesCL_SaveCommandParser(context,CL_SaveCL_InstancesDriver));
+   returnValue->integerValue = CL_CreateInteger(theEnv,CL_Instances_SaveCommandParser(context,CL_Save_InstancesDriver));
   }
 
 /******************************************************
-  NAME         : CL_LoadCL_InstancesCommand
+  NAME         : CL_Load_InstancesCommand
   DESCRIPTION  : H/L interface for loading
                    instances from a file
   INPUTS       : None
@@ -231,7 +231,7 @@ void CL_SaveCL_InstancesCommand(
   SIDE EFFECTS : CL_Instances loaded from named file
   NOTES        : H/L Syntax : (load-instances <file>)
  ******************************************************/
-void CL_LoadCL_InstancesCommand(
+void CL_Load_InstancesCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -245,7 +245,7 @@ void CL_LoadCL_InstancesCommand(
 
    fileFound = theArg.lexemeValue->contents;
 
-   instanceCount = CL_LoadCL_Instances(theEnv,fileFound);
+   instanceCount = CL_Load_Instances(theEnv,fileFound);
    if (CL_EvaluationData(theEnv)->CL_EvaluationError)
      { ProcessFileErrorMessage(theEnv,"load-instances",fileFound); }
 
@@ -253,22 +253,22 @@ void CL_LoadCL_InstancesCommand(
   }
 
 /***************************************************
-  NAME         : CL_LoadCL_Instances
+  NAME         : CL_Load_Instances
   DESCRIPTION  : CL_Loads instances from named file
   INPUTS       : The name of the input file
   RETURNS      : The number of instances loaded
   SIDE EFFECTS : CL_Instances loaded from file
   NOTES        : None
  ***************************************************/
-long CL_LoadCL_Instances(
+long CL_Load_Instances(
   Environment *theEnv,
   const char *file)
   {
-   return(CL_LoadOrRestoreCL_Instances(theEnv,file,true,true));
+   return(CL_LoadOrRestore_Instances(theEnv,file,true,true));
   }
 
 /***************************************************
-  NAME         : CL_LoadCL_InstancesFromString
+  NAME         : CL_Load_InstancesFromString
   DESCRIPTION  : CL_Loads instances from given string
   INPUTS       : 1) The input string
                  2) Index of char in string after
@@ -277,7 +277,7 @@ long CL_LoadCL_Instances(
   SIDE EFFECTS : CL_Instances loaded from string
   NOTES        : Uses string routers
  ***************************************************/
-long CL_LoadCL_InstancesFromString(
+long CL_Load_InstancesFromString(
   Environment *theEnv,
   const char *theString,
   size_t theMax)
@@ -289,7 +289,7 @@ long CL_LoadCL_InstancesFromString(
                               (! CL_OpenTextSource(theEnv,theStrRouter,theString,0,theMax)))
      { return -1; }
 
-   theCount = CL_LoadOrRestoreCL_Instances(theEnv,theStrRouter,true,false);
+   theCount = CL_LoadOrRestore_Instances(theEnv,theStrRouter,true,false);
 
    CL_CloseStringSource(theEnv,theStrRouter);
 
@@ -297,7 +297,7 @@ long CL_LoadCL_InstancesFromString(
   }
 
 /*********************************************************
-  NAME         : RestoreCL_InstancesCommand
+  NAME         : Restore_InstancesCommand
   DESCRIPTION  : H/L interface for loading
                    instances from a file w/o messages
   INPUTS       : None
@@ -305,7 +305,7 @@ long CL_LoadCL_InstancesFromString(
   SIDE EFFECTS : CL_Instances loaded from named file
   NOTES        : H/L Syntax : (restore-instances <file>)
  *********************************************************/
-void RestoreCL_InstancesCommand(
+void Restore_InstancesCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -319,7 +319,7 @@ void RestoreCL_InstancesCommand(
 
    fileFound = theArg.lexemeValue->contents;
 
-   instanceCount = RestoreCL_Instances(theEnv,fileFound);
+   instanceCount = Restore_Instances(theEnv,fileFound);
    if (CL_EvaluationData(theEnv)->CL_EvaluationError)
      { ProcessFileErrorMessage(theEnv,"restore-instances",fileFound); }
 
@@ -327,22 +327,22 @@ void RestoreCL_InstancesCommand(
   }
 
 /***************************************************
-  NAME         : RestoreCL_Instances
+  NAME         : Restore_Instances
   DESCRIPTION  : Restores instances from named file
   INPUTS       : The name of the input file
   RETURNS      : The number of instances restored
   SIDE EFFECTS : CL_Instances restored from file
   NOTES        : None
  ***************************************************/
-long RestoreCL_Instances(
+long Restore_Instances(
   Environment *theEnv,
   const char *file)
   {
-   return(CL_LoadOrRestoreCL_Instances(theEnv,file,false,true));
+   return(CL_LoadOrRestore_Instances(theEnv,file,false,true));
   }
 
 /***************************************************
-  NAME         : RestoreCL_InstancesFromString
+  NAME         : Restore_InstancesFromString
   DESCRIPTION  : Restores instances from given string
   INPUTS       : 1) The input string
                  2) Index of char in string after
@@ -351,7 +351,7 @@ long RestoreCL_Instances(
   SIDE EFFECTS : CL_Instances loaded from string
   NOTES        : Uses string routers
  ***************************************************/
-long RestoreCL_InstancesFromString(
+long Restore_InstancesFromString(
   Environment *theEnv,
   const char *theString,
   size_t theMax)
@@ -363,7 +363,7 @@ long RestoreCL_InstancesFromString(
                               (! CL_OpenTextSource(theEnv,theStrRouter,theString,0,theMax)))
      { return(-1); }
 
-   theCount = CL_LoadOrRestoreCL_Instances(theEnv,theStrRouter,false,false);
+   theCount = CL_LoadOrRestore_Instances(theEnv,theStrRouter,false,false);
 
    CL_CloseStringSource(theEnv,theStrRouter);
 
@@ -373,7 +373,7 @@ long RestoreCL_InstancesFromString(
 #if BLOAD_INSTANCES
 
 /*******************************************************
-  NAME         : CL_BinaryCL_LoadCL_InstancesCommand
+  NAME         : CL_Binary_Load_InstancesCommand
   DESCRIPTION  : H/L interface for loading
                    instances from a binary file
   INPUTS       : None
@@ -381,7 +381,7 @@ long RestoreCL_InstancesFromString(
   SIDE EFFECTS : CL_Instances loaded from named binary file
   NOTES        : H/L Syntax : (bload-instances <file>)
  *******************************************************/
-void CL_BinaryCL_LoadCL_InstancesCommand(
+void CL_Binary_Load_InstancesCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -395,14 +395,14 @@ void CL_BinaryCL_LoadCL_InstancesCommand(
 
    fileFound = theArg.lexemeValue->contents;
 
-   instanceCount = CL_BinaryCL_LoadCL_Instances(theEnv,fileFound);
+   instanceCount = CL_Binary_Load_Instances(theEnv,fileFound);
    if (CL_EvaluationData(theEnv)->CL_EvaluationError)
      { ProcessFileErrorMessage(theEnv,"bload-instances",fileFound); }
    returnValue->integerValue = CL_CreateInteger(theEnv,instanceCount);
   }
 
 /****************************************************
-  NAME         : CL_BinaryCL_LoadCL_Instances
+  NAME         : CL_Binary_Load_Instances
   DESCRIPTION  : CL_Loads instances quickly from a
                  binary file
   INPUTS       : The file name
@@ -410,7 +410,7 @@ void CL_BinaryCL_LoadCL_InstancesCommand(
   SIDE EFFECTS : CL_Instances loaded w/o message-passing
   NOTES        : None
  ****************************************************/
-long CL_BinaryCL_LoadCL_Instances(
+long CL_Binary_Load_Instances(
   Environment *theEnv,
   const char *theFile)
   {
@@ -427,13 +427,13 @@ long CL_BinaryCL_LoadCL_Instances(
    if (CL_GenOpenReadBinary(theEnv,"bload-instances",theFile) == 0)
      {
       CL_OpenErrorMessage(theEnv,"bload-instances",theFile);
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return -1L;
      }
    if (VerifyBinaryHeader(theEnv,theFile) == false)
      {
       CL_GenCloseBinary(theEnv);
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return -1L;
      }
 
@@ -452,7 +452,7 @@ long CL_BinaryCL_LoadCL_Instances(
          FreeReadBuffer(theEnv);
          CL_FreeAtomicValueStorage(theEnv);
          CL_GenCloseBinary(theEnv);
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          CL_GCBlockEnd(theEnv,&gcb);
          return i;
         }
@@ -469,7 +469,7 @@ long CL_BinaryCL_LoadCL_Instances(
 #endif
 
 /*******************************************************
-  NAME         : CL_SaveCL_Instances
+  NAME         : CL_Save_Instances
   DESCRIPTION  : CL_Saves current instances to named file
   INPUTS       : 1) The name of the output file
                  2) A flag indicating whether to
@@ -486,16 +486,16 @@ long CL_BinaryCL_LoadCL_Instances(
   SIDE EFFECTS : CL_Instances saved to file
   NOTES        : None
  *******************************************************/
-long CL_SaveCL_Instances(
+long CL_Save_Instances(
   Environment *theEnv,
   const char *file,
   CL_SaveScope saveCode)
   {
-   return CL_SaveCL_InstancesDriver(theEnv,file,saveCode,NULL,true);
+   return CL_Save_InstancesDriver(theEnv,file,saveCode,NULL,true);
   }
 
 /*******************************************************
-  NAME         : CL_SaveCL_InstancesDriver
+  NAME         : CL_Save_InstancesDriver
   DESCRIPTION  : CL_Saves current instances to named file
   INPUTS       : 1) The name of the output file
                  2) A flag indicating whether to
@@ -512,7 +512,7 @@ long CL_SaveCL_Instances(
   SIDE EFFECTS : CL_Instances saved to file
   NOTES        : None
  *******************************************************/
-long CL_SaveCL_InstancesDriver(
+long CL_Save_InstancesDriver(
   Environment *theEnv,
   const char *file,
   CL_SaveScope saveCode,
@@ -531,19 +531,19 @@ long CL_SaveCL_InstancesDriver(
    if (CL_EvaluationData(theEnv)->CurrentExpression == NULL)
      { CL_ResetErrorFlags(theEnv); }
 
-   classList = ProcessCL_SaveClassList(theEnv,"save-instances",classExpressionList,
+   classList = Process_SaveClassList(theEnv,"save-instances",classExpressionList,
                                     saveCode,inheritFlag);
    if ((classList == NULL) && (classExpressionList != NULL))
      return(0L);
 
-   CL_SaveOrMarkCL_Instances(theEnv,sfile,saveCode,classList,
+   CL_SaveOrMark_Instances(theEnv,sfile,saveCode,classList,
                              inheritFlag,true,NULL);
 
    if ((sfile = CL_GenOpen(theEnv,file,"w")) == NULL)
      {
       CL_OpenErrorMessage(theEnv,"save-instances",file);
-      ReturnCL_SaveClassList(theEnv,classList);
-      SetCL_EvaluationError(theEnv,true);
+      Return_SaveClassList(theEnv,classList);
+      Set_EvaluationError(theEnv,true);
       return(0L);
      }
 
@@ -554,41 +554,41 @@ long CL_SaveCL_InstancesDriver(
    oldIAN = PrintUtilityData(theEnv)->InstanceAddressesToNames;
    PrintUtilityData(theEnv)->InstanceAddressesToNames = true;
 
-   SetFastCL_Save(theEnv,sfile);
-   instanceCount = CL_SaveOrMarkCL_Instances(theEnv,sfile,saveCode,classList,
+   SetFast_Save(theEnv,sfile);
+   instanceCount = CL_SaveOrMark_Instances(theEnv,sfile,saveCode,classList,
                                        inheritFlag,true,CL_SaveSingleInstanceText);
    CL_GenClose(theEnv,sfile);
-   SetFastCL_Save(theEnv,NULL);
+   SetFast_Save(theEnv,NULL);
 
    PrintUtilityData(theEnv)->PreserveEscapedCharacters = oldPEC;
    PrintUtilityData(theEnv)->AddressesToStrings = oldATS;
    PrintUtilityData(theEnv)->InstanceAddressesToNames = oldIAN;
-   ReturnCL_SaveClassList(theEnv,classList);
+   Return_SaveClassList(theEnv,classList);
    return(instanceCount);
   }
 
 #if BSAVE_INSTANCES
 
 /****************************************************************************
-  NAME         : CL_BinaryCL_SaveCL_InstancesCommand
+  NAME         : CL_Binary_Save_InstancesCommand
   DESCRIPTION  : H/L interface for saving
                    current instances to a binary file
   INPUTS       : None
   RETURNS      : The number of instances saved
-  SIDE EFFECTS : CL_Instances saved (in binary foCL_rmat) to named file
+  SIDE EFFECTS : CL_Instances saved (in binary fo_rmat) to named file
   NOTES        : H/L Syntax :
                  (bsave-instances <file> [local|visible [[inherit] <class>+]])
  *****************************************************************************/
-void CL_BinaryCL_SaveCL_InstancesCommand(
+void CL_Binary_Save_InstancesCommand(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
   {
-   returnValue->integerValue = CL_CreateInteger(theEnv,CL_InstancesCL_SaveCommandParser(context,CL_BinaryCL_SaveCL_InstancesDriver));
+   returnValue->integerValue = CL_CreateInteger(theEnv,CL_Instances_SaveCommandParser(context,CL_Binary_Save_InstancesDriver));
   }
 
 /*******************************************************
-  NAME         : CL_BinaryCL_SaveCL_Instances
+  NAME         : CL_Binary_Save_Instances
   DESCRIPTION  : CL_Saves current instances to binary file
   INPUTS       : 1) The name of the output file
                  2) A flag indicating whether to
@@ -599,16 +599,16 @@ void CL_BinaryCL_SaveCL_InstancesCommand(
   SIDE EFFECTS : CL_Instances saved to file
   NOTES        : None
  *******************************************************/
-long CL_BinaryCL_SaveCL_Instances(
+long CL_Binary_Save_Instances(
   Environment *theEnv,
   const char *file,
   CL_SaveScope saveCode)
   {
-   return CL_BinaryCL_SaveCL_InstancesDriver(theEnv,file,saveCode,NULL,true);
+   return CL_Binary_Save_InstancesDriver(theEnv,file,saveCode,NULL,true);
   }
 
 /*******************************************************
-  NAME         : CL_BinaryCL_SaveCL_InstancesDriver
+  NAME         : CL_Binary_Save_InstancesDriver
   DESCRIPTION  : CL_Saves current instances to binary file
   INPUTS       : 1) The name of the output file
                  2) A flag indicating whether to
@@ -625,7 +625,7 @@ long CL_BinaryCL_SaveCL_Instances(
   SIDE EFFECTS : CL_Instances saved to file
   NOTES        : None
  *******************************************************/
-long CL_BinaryCL_SaveCL_InstancesDriver(
+long CL_Binary_Save_InstancesDriver(
   Environment *theEnv,
   const char *file,
   CL_SaveScope saveCode,
@@ -643,21 +643,21 @@ long CL_BinaryCL_SaveCL_InstancesDriver(
    if (CL_EvaluationData(theEnv)->CurrentExpression == NULL)
      { CL_ResetErrorFlags(theEnv); }
 
-   classList = ProcessCL_SaveClassList(theEnv,"bsave-instances",classExpressionList,
+   classList = Process_SaveClassList(theEnv,"bsave-instances",classExpressionList,
                                     saveCode,inheritFlag);
    if ((classList == NULL) && (classExpressionList != NULL))
      return(0L);
 
    InstanceFileData(theEnv)->BinaryInstanceFileSize = 0L;
    CL_InitAtomicValueNeededFlags(theEnv);
-   instanceCount = CL_SaveOrMarkCL_Instances(theEnv,NULL,saveCode,classList,inheritFlag,
+   instanceCount = CL_SaveOrMark_Instances(theEnv,NULL,saveCode,classList,inheritFlag,
                                        false,MarkSingleInstance);
 
    if ((bsaveFP = CL_GenOpen(theEnv,file,"wb")) == NULL)
      {
       CL_OpenErrorMessage(theEnv,"bsave-instances",file);
-      ReturnCL_SaveClassList(theEnv,classList);
-      SetCL_EvaluationError(theEnv,true);
+      Return_SaveClassList(theEnv,classList);
+      Set_EvaluationError(theEnv,true);
       return(0L);
      }
    CL_WriteBinaryHeader(theEnv,bsaveFP);
@@ -667,11 +667,11 @@ long CL_BinaryCL_SaveCL_InstancesDriver(
    fwrite(&instanceCount,sizeof(long),1,bsaveFP);
 
    CL_SetAtomicValueIndices(theEnv,false);
-   CL_SaveOrMarkCL_Instances(theEnv,bsaveFP,saveCode,classList,
+   CL_SaveOrMark_Instances(theEnv,bsaveFP,saveCode,classList,
                        inheritFlag,false,CL_SaveSingleInstanceBinary);
    CL_RestoreAtomicValueBuckets(theEnv);
    CL_GenClose(theEnv,bsaveFP);
-   ReturnCL_SaveClassList(theEnv,classList);
+   Return_SaveClassList(theEnv,classList);
    return(instanceCount);
   }
 
@@ -684,7 +684,7 @@ long CL_BinaryCL_SaveCL_InstancesDriver(
    ***************************************** */
 
 /******************************************************
-  NAME         : CL_InstancesCL_SaveCommandParser
+  NAME         : CL_Instances_SaveCommandParser
   DESCRIPTION  : Argument parser for save-instances
                  and bsave-instances
   INPUTS       : 1) The name of the calling function
@@ -694,7 +694,7 @@ long CL_BinaryCL_SaveCL_InstancesDriver(
   SIDE EFFECTS : CL_Instances saved/bsaved
   NOTES        : None
  ******************************************************/
-static long CL_InstancesCL_SaveCommandParser(
+static long CL_Instances_SaveCommandParser(
   UDFContext *context,
   long (*saveFunction)(Environment *,const char *,CL_SaveScope,Expression *,bool))
   {
@@ -723,7 +723,7 @@ static long CL_InstancesCL_SaveCommandParser(
       else
         {
          CL_UDFInvalidArgumentMessage(context,"symbol \"local\" or \"visible\"");
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          return(0L);
         }
       classList = GetFirstArgument()->nextArg->nextArg;
@@ -748,7 +748,7 @@ static long CL_InstancesCL_SaveCommandParser(
   }
 
 /****************************************************
-  NAME         : ProcessCL_SaveClassList
+  NAME         : Process_SaveClassList
   DESCRIPTION  : CL_Evaluates a list of class name
                  expressions and stores them in a
                  data object list
@@ -766,7 +766,7 @@ static long CL_InstancesCL_SaveCommandParser(
                  classes validated
   NOTES        : None
  ****************************************************/
-static struct classItem *ProcessCL_SaveClassList(
+static struct classItem *Process_SaveClassList(
   Environment *theEnv,
   const char *functionName,
   Expression *classExps,
@@ -833,22 +833,22 @@ ProcessClassListError:
    else
      CL_ExpectedTypeError1(theEnv,functionName,argIndex,"'valid concrete class name'");
    
-   ReturnCL_SaveClassList(theEnv,head);
+   Return_SaveClassList(theEnv,head);
    
-   SetCL_EvaluationError(theEnv,true);
+   Set_EvaluationError(theEnv,true);
    return NULL;
   }
 
 /****************************************************
-  NAME         : ReturnCL_SaveClassList
+  NAME         : Return_SaveClassList
   DESCRIPTION  : Deallocates the class data object
-                 list created by ProcessCL_SaveClassList
+                 list created by Process_SaveClassList
   INPUTS       : The class data object list
   RETURNS      : Nothing useful
   SIDE EFFECTS : Class data object returned
   NOTES        : None
  ****************************************************/
-static void ReturnCL_SaveClassList(
+static void Return_SaveClassList(
   Environment *theEnv,
   struct classItem *classList)
   {
@@ -863,11 +863,11 @@ static void ReturnCL_SaveClassList(
   }
 
 /***************************************************
-  NAME         : CL_SaveOrMarkCL_Instances
+  NAME         : CL_SaveOrMark_Instances
   DESCRIPTION  : Iterates through all specified
                  instances either marking needed
                  atoms or writing instances in
-                 binary/text foCL_rmat
+                 binary/text fo_rmat
   INPUTS       : 1) NULL (for marking) or
                     file pointer (for text/binary saves)
                  2) A cope flag indicating LOCAL
@@ -887,7 +887,7 @@ static void ReturnCL_SaveClassList(
   SIDE EFFECTS : CL_Instances amrked or saved
   NOTES        : None
  ***************************************************/
-static long CL_SaveOrMarkCL_Instances(
+static long CL_SaveOrMark_Instances(
   Environment *theEnv,
   FILE *theOutput,
   int saveCode,
@@ -911,7 +911,7 @@ static long CL_SaveOrMarkCL_Instances(
          for (tmp = classList ;
               (! ((tmp == NULL) || (CL_EvaluationData(theEnv)->CL_HaltExecution && interruptOK))) ;
               tmp = tmp->next)
-           instanceCount += CL_SaveOrMarkCL_InstancesOfClass(theEnv,theOutput,currentModule,saveCode,
+           instanceCount += CL_SaveOrMark_InstancesOfClass(theEnv,theOutput,currentModule,saveCode,
                                                        tmp->classPtr,inheritFlag,
                                                        traversalID,saveInstanceFunc);
          CL_ReleaseTraversalID(theEnv);
@@ -936,7 +936,7 @@ static long CL_SaveOrMarkCL_Instances(
   }
 
 /***************************************************
-  NAME         : CL_SaveOrMarkCL_InstancesOfClass
+  NAME         : CL_SaveOrMark_InstancesOfClass
   DESCRIPTION  : CL_Saves off the direct (and indirect)
                  instance of the specified class
   INPUTS       : 1) The logical name of the output
@@ -958,7 +958,7 @@ static long CL_SaveOrMarkCL_Instances(
   SIDE EFFECTS : Appropriate instances saved
   NOTES        : None
  ***************************************************/
-static long CL_SaveOrMarkCL_InstancesOfClass(
+static long CL_SaveOrMark_InstancesOfClass(
   Environment *theEnv,
   FILE *theOutput,
   Defmodule *currentModule,
@@ -995,7 +995,7 @@ static long CL_SaveOrMarkCL_InstancesOfClass(
       for (i = 0 ; i < theDefclass->directSubclasses.classCount ; i++)
         {
          subclass = theDefclass->directSubclasses.classArray[i];
-           instanceCount += CL_SaveOrMarkCL_InstancesOfClass(theEnv,theOutput,currentModule,saveCode,
+           instanceCount += CL_SaveOrMark_InstancesOfClass(theEnv,theOutput,currentModule,saveCode,
                                                        subclass,true,traversalID,
                                                        saveInstanceFunc);
         }
@@ -1014,12 +1014,12 @@ static long CL_SaveOrMarkCL_InstancesOfClass(
  ***************************************************/
 static void CL_SaveSingleInstanceText(
   Environment *theEnv,
-  FILE *fastCL_SaveFile,
+  FILE *fast_SaveFile,
   Instance *theInstance)
   {
    long i;
    InstanceSlot *sp;
-   const char *logicalName = (const char *) fastCL_SaveFile;
+   const char *logicalName = (const char *) fast_SaveFile;
 
    CL_WriteString(theEnv,logicalName,"([");
    CL_WriteString(theEnv,logicalName,theInstance->name->contents);
@@ -1151,7 +1151,7 @@ static void MarkNeededAtom(
          ((CLIPSInteger *) value)->neededInteger = true;
          break;
       case INSTANCE_ADDRESS_TYPE:
-         CL_GetFullCL_InstanceName(theEnv,(Instance *) value)->neededSymbol = true;
+         CL_GetFull_InstanceName(theEnv,(Instance *) value)->neededSymbol = true;
          break;
      }
   }
@@ -1286,7 +1286,7 @@ static void CL_SaveAtomBinary(
          break;
       case INSTANCE_ADDRESS_TYPE:
          bsa.type = INSTANCE_NAME_TYPE;
-         bsa.value = CL_GetFullCL_InstanceName(theEnv,(Instance *) value)->bucket;
+         bsa.value = CL_GetFull_InstanceName(theEnv,(Instance *) value)->bucket;
          break;
       default:
          bsa.value = ULONG_MAX;
@@ -1298,7 +1298,7 @@ static void CL_SaveAtomBinary(
 #endif
 
 /**********************************************************************
-  NAME         : CL_LoadOrRestoreCL_Instances
+  NAME         : CL_LoadOrRestore_Instances
   DESCRIPTION  : CL_Loads instances from named file
   INPUTS       : 1) The name of the input file
                  2) An integer flag indicating whether or
@@ -1310,7 +1310,7 @@ static void CL_SaveAtomBinary(
   SIDE EFFECTS : CL_Instances loaded from file
   NOTES        : None
  **********************************************************************/
-static long CL_LoadOrRestoreCL_Instances(
+static long CL_LoadOrRestore_Instances(
   Environment *theEnv,
   const char *file,
   bool usemsgs,
@@ -1334,12 +1334,12 @@ static long CL_LoadOrRestoreCL_Instances(
      {
       if ((sfile = CL_GenOpen(theEnv,file,"r")) == NULL)
         {
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          return -1L;
         }
-      svload = CL_GetFastCL_Load(theEnv);
+      svload = CL_GetFast_Load(theEnv);
       ilog = (char *) sfile;
-      SetFastCL_Load(theEnv,sfile);
+      SetFast_Load(theEnv,sfile);
      }
    else
      { ilog = file; }
@@ -1358,9 +1358,9 @@ static long CL_LoadOrRestoreCL_Instances(
          if (isFileName)
            {
             CL_GenClose(theEnv,sfile);
-            SetFastCL_Load(theEnv,svload);
+            SetFast_Load(theEnv,svload);
            }
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          InstanceData(theEnv)->MkInsMsgPass = svoverride;
          return instanceCount;
         }
@@ -1370,10 +1370,10 @@ static long CL_LoadOrRestoreCL_Instances(
          if (isFileName)
            {
             CL_GenClose(theEnv,sfile);
-            SetFastCL_Load(theEnv,svload);
+            SetFast_Load(theEnv,svload);
            }
          InstanceData(theEnv)->MkInsMsgPass = svoverride;
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
          return instanceCount;
         }
       CL_ExpressionInstall(theEnv,top);
@@ -1390,7 +1390,7 @@ static long CL_LoadOrRestoreCL_Instances(
    if (isFileName)
      {
       CL_GenClose(theEnv,sfile);
-      SetFastCL_Load(theEnv,svload);
+      SetFast_Load(theEnv,svload);
      }
    InstanceData(theEnv)->MkInsMsgPass = svoverride;
    return instanceCount;
@@ -1517,7 +1517,7 @@ static bool CL_LoadSingleBinaryInstance(
      }
    if (theDefclass->instanceSlotCount != slotCount)
      {
-      BinaryCL_LoadInstanceError(theEnv,instanceName,theDefclass);
+      Binary_LoadInstanceError(theEnv,instanceName,theDefclass);
       return false;
      }
 
@@ -1527,7 +1527,7 @@ static bool CL_LoadSingleBinaryInstance(
    newInstance = CL_BuildInstance(theEnv,instanceName,theDefclass,false);
    if (newInstance == NULL)
      {
-      BinaryCL_LoadInstanceError(theEnv,instanceName,theDefclass);
+      Binary_LoadInstanceError(theEnv,instanceName,theDefclass);
       return false;
      }
    if (slotCount == 0)
@@ -1580,7 +1580,7 @@ static bool CL_LoadSingleBinaryInstance(
    return true;
 
 CL_LoadError:
-   BinaryCL_LoadInstanceError(theEnv,instanceName,theDefclass);
+   Binary_LoadInstanceError(theEnv,instanceName,theDefclass);
    CL_QuashInstance(theEnv,newInstance);
    CL_rm(theEnv,bsArray,(sizeof(struct bsaveSlotValue) * slotCount));
    CL_rm(theEnv,bsaArray,(totalValueCount * sizeof(struct bsaveSlotValueAtom)));
@@ -1588,7 +1588,7 @@ CL_LoadError:
   }
 
 /***************************************************
-  NAME         : BinaryCL_LoadInstanceError
+  NAME         : Binary_LoadInstanceError
   DESCRIPTION  : Prints out an error message when
                  an instance could not be
                  successfully loaded from a
@@ -1599,7 +1599,7 @@ CL_LoadError:
   SIDE EFFECTS : Error message printed
   NOTES        : None
  ***************************************************/
-static void BinaryCL_LoadInstanceError(
+static void Binary_LoadInstanceError(
   Environment *theEnv,
   CLIPSLexeme *instanceName,
   Defclass *theDefclass)

@@ -97,12 +97,12 @@ struct factQueryData
    void                           CL_SetupFactQuery(Environment *);
    void                           CL_GetQueryFact(Environment *,UDFContext *,UDFValue *);
    void                           CL_GetQueryFactSlot(Environment *,UDFContext *,UDFValue *);
-   void                           CL_AnyCL_Facts(Environment *,UDFContext *,UDFValue *);
+   void                           CL_Any_Facts(Environment *,UDFContext *,UDFValue *);
    void                           CL_QueryFindFact(Environment *,UDFContext *,UDFValue *);
-   void                           QueryFindAllCL_Facts(Environment *,UDFContext *,UDFValue *);
+   void                           QueryFindAll_Facts(Environment *,UDFContext *,UDFValue *);
    void                           CL_QueryDoForFact(Environment *,UDFContext *,UDFValue *);
-   void                           QueryDoForAllCL_Facts(Environment *,UDFContext *,UDFValue *);
-   void                           CL_DelayedQueryDoForAllCL_Facts(Environment *,UDFContext *,UDFValue *);
+   void                           QueryDoForAll_Facts(Environment *,UDFContext *,UDFValue *);
+   void                           CL_DelayedQueryDoForAll_Facts(Environment *,UDFContext *,UDFValue *);
 
 #endif /* FACT_SET_QUERIES */
 

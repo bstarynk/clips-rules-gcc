@@ -32,13 +32,13 @@
    bool                           CL_DribbleActive(Environment *);
    bool                           CL_DribbleOff(Environment *);
    void                           CL_AppendDribble(Environment *,const char *);
-   int                            LLGetcCL_Batch(Environment *,const char *,bool);
+   int                            LLGetc_Batch(Environment *,const char *,bool);
    bool                           CL_Batch(Environment *,const char *);
-   bool                           OpenCL_Batch(Environment *,const char *,bool);
-   bool                           OpenStringCL_Batch(Environment *,const char *,const char *,bool);
-   bool                           RemoveCL_Batch(Environment *);
+   bool                           Open_Batch(Environment *,const char *,bool);
+   bool                           OpenString_Batch(Environment *,const char *,const char *,bool);
+   bool                           Remove_Batch(Environment *);
    bool                           CL_BatchActive(Environment *);
-   void                           CloseAllCL_BatchSources(Environment *);
+   void                           CloseAll_BatchSources(Environment *);
    bool                           CL_BatchStar(Environment *,const char *);
 
 #endif /* _H_fileutil */

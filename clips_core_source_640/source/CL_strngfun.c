@@ -50,11 +50,11 @@
 /*      6.31: Prior error flags are cleared before CL_Eval      */
 /*            and CL_Build are processed.                       */
 /*                                                           */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*      6.40: Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
-/*            Added Env prefix to CL_GetCL_HaltExecution and       */
-/*            SetCL_HaltExecution functions.                    */
+/*            Added Env prefix to CL_Get_HaltExecution and       */
+/*            Set_HaltExecution functions.                    */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -116,7 +116,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    StrOrCL_SymCatFunction(UDFContext *,UDFValue *,unsigned short);
+   static void                    StrOr_SymCatFunction(UDFContext *,UDFValue *,unsigned short);
 
 /******************************************/
 /* CL_StringFunctionDefinitions: Initializes */
@@ -128,7 +128,7 @@ void CL_StringFunctionDefinitions(
 #if ! RUN_TIME
    CL_AddUDF(theEnv,"str-cat","sy",1,UNBOUNDED,"synld" ,CL_StrCatFunction,"CL_StrCatFunction",NULL);
    CL_AddUDF(theEnv,"sym-cat","sy",1,UNBOUNDED,"synld" ,CL_SymCatFunction,"CL_SymCatFunction",NULL);
-   CL_AddUDF(theEnv,"str-length","l",1,1,"syn",StrCL_LengthFunction,"StrCL_LengthFunction",NULL);
+   CL_AddUDF(theEnv,"str-length","l",1,1,"syn",Str_LengthFunction,"Str_LengthFunction",NULL);
    CL_AddUDF(theEnv,"str-compare","l",2,3,"*;syn;syn;l" ,CL_StrCompareFunction,"CL_StrCompareFunction",NULL);
    CL_AddUDF(theEnv,"upcase","syn",1,1,"syn",CL_UpcaseFunction,"CL_UpcaseFunction",NULL);
    CL_AddUDF(theEnv,"lowcase","syn",1,1,"syn",CL_LowcaseFunction,"CL_LowcaseFunction",NULL);
@@ -153,7 +153,7 @@ void CL_StrCatFunction(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   StrOrCL_SymCatFunction(context,returnValue,STRING_TYPE);
+   StrOr_SymCatFunction(context,returnValue,STRING_TYPE);
   }
 
 /****************************************/
@@ -165,14 +165,14 @@ void CL_SymCatFunction(
   UDFContext *context,
   UDFValue *returnValue)
   {
-   StrOrCL_SymCatFunction(context,returnValue,SYMBOL_TYPE);
+   StrOr_SymCatFunction(context,returnValue,SYMBOL_TYPE);
   }
 
 /********************************************************/
-/* StrOrCL_SymCatFunction: Driver routine for implementing */
+/* StrOr_SymCatFunction: Driver routine for implementing */
 /*   the str-cat and sym-cat functions.                 */
 /********************************************************/
-static void StrOrCL_SymCatFunction(
+static void StrOr_SymCatFunction(
   UDFContext *context,
   UDFValue *returnValue,
   unsigned short returnType)
@@ -188,7 +188,7 @@ static void StrOrCL_SymCatFunction(
    Environment *theEnv = context->environment;
 
    /*===============================================*/
-   /* DeteCL_rmine the number of arguments as create a */
+   /* Dete_rmine the number of arguments as create a */
    /* string array which is large enough to store   */
    /* the string representation of each argument.   */
    /*===============================================*/
@@ -236,7 +236,7 @@ static void StrOrCL_SymCatFunction(
 
          default:
            CL_UDFInvalidArgumentMessage(context,"string, instance name, symbol, float, or integer");
-           SetCL_EvaluationError(theEnv,true);
+           Set_EvaluationError(theEnv,true);
            break;
         }
 
@@ -296,10 +296,10 @@ static void StrOrCL_SymCatFunction(
   }
 
 /*******************************************/
-/* StrCL_LengthFunction: H/L access routine   */
+/* Str_LengthFunction: H/L access routine   */
 /*   for the str-length function.          */
 /*******************************************/
-void StrCL_LengthFunction(
+void Str_LengthFunction(
   Environment *theEnv,
   UDFContext *context,
   UDFValue *returnValue)
@@ -368,7 +368,7 @@ void CL_UpcaseFunction(
    if (CVIsType(&theArg,SYMBOL_BIT))
      { returnValue->value = CL_CreateSymbol(theEnv,nsptr); }
    else if (CVIsType(&theArg,INSTANCE_NAME_BIT))
-     { returnValue->value = CL_CreateCL_InstanceName(theEnv,nsptr); }
+     { returnValue->value = CL_Create_InstanceName(theEnv,nsptr); }
    else
      { returnValue->value = CL_CreateString(theEnv,nsptr); }
    CL_rm(theEnv,nsptr,slen);
@@ -422,7 +422,7 @@ void CL_LowcaseFunction(
    if (CVIsType(&theArg,SYMBOL_BIT))
      { returnValue->value = CL_CreateSymbol(theEnv,nsptr); }
    else if (CVIsType(&theArg,INSTANCE_NAME_BIT))
-     { returnValue->value = CL_CreateCL_InstanceName(theEnv,nsptr); }
+     { returnValue->value = CL_Create_InstanceName(theEnv,nsptr); }
    else
      { returnValue->value = CL_CreateString(theEnv,nsptr); }
    CL_rm(theEnv,nsptr,slen);
@@ -687,7 +687,7 @@ void CL_StringToField(
       returnValue->lexemeValue = FalseSymbol(theEnv);
      }
    else
-     { returnValue->value = CL_CreateSymbol(theEnv,theToken.printFoCL_rm); }
+     { returnValue->value = CL_CreateSymbol(theEnv,theToken.printFo_rm); }
   }
 
 /**************************************/
@@ -793,7 +793,7 @@ CL_EvalError CL_Eval(
 
    if (top == NULL)
      {
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       CL_CloseStringSource(theEnv,logicalNameBuffer);
       CL_GCBlockEnd(theEnv,&gcb);
       if (returnValue != NULL)
@@ -812,7 +812,7 @@ CL_EvalError CL_Eval(
      {
       CL_PrintErrorID(theEnv,"STRNGFUN",2,false);
       CL_WriteString(theEnv,STDERR,"Function 'eval' encountered extraneous input.\n");
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       CL_ReturnExpression(theEnv,top);
       CL_CloseStringSource(theEnv,logicalNameBuffer);
       CL_GCBlockEnd(theEnv,&gcb);
@@ -840,7 +840,7 @@ CL_EvalError CL_Eval(
    /* Convert a partial multifield to a full multifield. */
    /*====================================================*/
    
-   CL_NoCL_rmalizeMultifield(theEnv,&evalResult);
+   CL_No_rmalizeMultifield(theEnv,&evalResult);
     
    /*==============================================*/
    /* If embedded, reset dangling construct count. */
@@ -859,7 +859,7 @@ CL_EvalError CL_Eval(
      { CL_GCBlockEnd(theEnv,&gcb); }
 
    /*==========================================*/
-   /* PerfoCL_rm periodic cleanup if the eval was */
+   /* Perfo_rm periodic cleanup if the eval was */
    /* issued from an embedded controller.      */
    /*==========================================*/
 
@@ -875,7 +875,7 @@ CL_EvalError CL_Eval(
    if (returnValue != NULL)
      { returnValue->value = evalResult.value; }
    
-   if (GetCL_EvaluationError(theEnv)) return EE_PROCESSING_ERROR;
+   if (Get_EvaluationError(theEnv)) return EE_PROCESSING_ERROR;
    
    return EE_NO_ERROR;
   }
@@ -1024,7 +1024,7 @@ CL_BuildError CL_Build(
      {
       CL_PrintErrorID(theEnv,"STRNGFUN",2,false);
       CL_WriteString(theEnv,STDERR,"Function 'build' encountered extraneous input.\n");
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       errorFlag = BE_PARSING_ERROR;
      }
 

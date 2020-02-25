@@ -41,8 +41,8 @@
 /*            in scope in order to sent a message to an      */
 /*            instance of that class.                        */
 /*                                                           */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*      6.40: Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -99,7 +99,7 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static bool                    PerfoCL_rmMessage(Environment *,UDFValue *,Expression *,CLIPSLexeme *);
+   static bool                    Perfo_rmMessage(Environment *,UDFValue *,Expression *,CLIPSLexeme *);
    static HANDLER_LINK           *FindApplicableHandlers(Environment *,Defclass *,CLIPSLexeme *);
    static void                    CallHandlers(Environment *,UDFValue *);
    static void                    EarlySlotBindError(Environment *,Instance *,Defclass *,unsigned);
@@ -113,7 +113,7 @@
 /*****************************************************
   NAME         : CL_DirectMessage
   DESCRIPTION  : Plugs in given instance and
-                  perfoCL_rms specified message
+                  perfo_rms specified message
   INPUTS       : 1) Message symbolic name
                  2) The instance address
                  3) Address of UDFValue buffer
@@ -142,7 +142,7 @@ bool CL_DirectMessage(
    args.type = INSTANCE_ADDRESS_TYPE;
    args.value = ins;
 
-   return PerfoCL_rmMessage(theEnv,resultbuf,&args,msg);
+   return Perfo_rmMessage(theEnv,resultbuf,&args,msg);
   }
 
 /***************************************************
@@ -192,7 +192,7 @@ void CL_Send(
    if (msym == NULL)
      {
       CL_PrintNoHandlerError(theEnv,msg);
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return;
      }
      
@@ -201,16 +201,16 @@ void CL_Send(
    if (error == true)
      {
       CL_ReturnExpression(theEnv,iexp);
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return;
      }
      
-   PerfoCL_rmMessage(theEnv,&result,iexp,msym);
+   Perfo_rmMessage(theEnv,&result,iexp,msym);
    CL_ReturnExpression(theEnv,iexp);
    
    if (returnValue != NULL)
      {
-      CL_NoCL_rmalizeMultifield(theEnv,&result);
+      CL_No_rmalizeMultifield(theEnv,&result);
       returnValue->value = result.value;
      }
   }
@@ -241,7 +241,7 @@ void CL_DestroyHandlerLinks(
 
 /***********************************************************************
   NAME         : CL_SendCommand
-  DESCRIPTION  : DeteCL_rmines the applicable handler(s) and sets up the
+  DESCRIPTION  : Dete_rmines the applicable handler(s) and sets up the
                    core calling frame.  Then calls the core frame.
   INPUTS       : Caller's space for storing the result of the handler(s)
   RETURNS      : Nothing useful
@@ -271,7 +271,7 @@ void CL_SendCommand(
    args.argList = GetFirstArgument()->argList;
    args.nextArg = GetFirstArgument()->nextArg->nextArg;
 
-   PerfoCL_rmMessage(theEnv,returnValue,&args,msg);
+   Perfo_rmMessage(theEnv,returnValue,&args,msg);
   }
 
 /***************************************************
@@ -307,7 +307,7 @@ void CL_NextHandlerAvailableFunction(
 
 /*****************************************************
   NAME         : CL_NextHandlerAvailable
-  DESCRIPTION  : DeteCL_rmines if there the currently
+  DESCRIPTION  : Dete_rmines if there the currently
                    executing handler can call a
                    shadowed handler
                  Used before calling call-next-handler
@@ -376,7 +376,7 @@ void CL_CallNextHandler(
      {
       CL_PrintErrorID(theEnv,"MSGPASS",1,false);
       CL_WriteString(theEnv,STDERR,"Shadowed message-handlers not applicable in current context.\n");
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return;
      }
    if (CL_EvaluationData(theEnv)->CurrentExpression->value == (void *) CL_FindFunction(theEnv,"override-next-handler"))
@@ -415,7 +415,7 @@ void CL_CallNextHandler(
          if (CL_CheckHandlerArgCount(theEnv))
            {
 #if PROFILING_FUNCTIONS
-            StartCL_Profile(theEnv,&profileFrame,
+            Start_Profile(theEnv,&profileFrame,
                          &MessageHandlerData(theEnv)->CurrentCore->hnd->header.usrData,
                          CL_ProfileFunctionData(theEnv)->CL_ProfileConstructs);
 #endif
@@ -425,7 +425,7 @@ void CL_CallNextHandler(
                                MessageHandlerData(theEnv)->CurrentCore->hnd->localVarCount,
                                returnValue,CL_UnboundHandlerErr);
 #if PROFILING_FUNCTIONS
-            CL_EndCL_Profile(theEnv,&profileFrame);
+            CL_End_Profile(theEnv,&profileFrame);
 #endif
            }
 #if DEBUGGING_FUNCTIONS
@@ -447,7 +447,7 @@ void CL_CallNextHandler(
       if (CL_CheckHandlerArgCount(theEnv))
         {
 #if PROFILING_FUNCTIONS
-        StartCL_Profile(theEnv,&profileFrame,
+        Start_Profile(theEnv,&profileFrame,
                      &MessageHandlerData(theEnv)->CurrentCore->hnd->header.usrData,
                      CL_ProfileFunctionData(theEnv)->CL_ProfileConstructs);
 #endif
@@ -457,7 +457,7 @@ void CL_CallNextHandler(
                             MessageHandlerData(theEnv)->CurrentCore->hnd->localVarCount,
                             returnValue,CL_UnboundHandlerErr);
 #if PROFILING_FUNCTIONS
-         CL_EndCL_Profile(theEnv,&profileFrame);
+         CL_End_Profile(theEnv,&profileFrame);
 #endif
         }
 
@@ -560,7 +560,7 @@ HANDLER_LINK *CL_JoinHandlerLinks(
      CL_PrintNoHandlerError(theEnv,mname->contents);
      for (i = MAROUND ; i <= MAFTER ; i++)
        CL_DestroyHandlerLinks(theEnv,tops[i]);
-     SetCL_EvaluationError(theEnv,true);
+     Set_EvaluationError(theEnv,true);
      return NULL;
     }
 
@@ -584,7 +584,7 @@ HANDLER_LINK *CL_JoinHandlerLinks(
   }
 
 /***************************************************
-  NAME         : PrintCL_HandlerSlotGetFunction
+  NAME         : Print_HandlerSlotGetFunction
   DESCRIPTION  : Developer access function for
                  printing direct slot references
                  in message-handlers
@@ -594,7 +594,7 @@ HANDLER_LINK *CL_JoinHandlerLinks(
   SIDE EFFECTS : Expression printed
   NOTES        : None
  ***************************************************/
-void PrintCL_HandlerSlotGetFunction(
+void Print_HandlerSlotGetFunction(
   Environment *theEnv,
   const char *logicalName,
   void *theValue)
@@ -665,7 +665,7 @@ bool CL_HandlerSlotGetFunction(
       CL_PrintErrorID(theEnv,"INSFUN",4,false);
       CL_WriteString(theEnv,STDERR,"Invalid instance-address in ?self slot reference.\n");
       theResult->value = FalseSymbol(theEnv);
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return false;
      }
 
@@ -697,12 +697,12 @@ bool CL_HandlerSlotGetFunction(
 HandlerGetError:
    EarlySlotBindError(theEnv,theInstance,theDefclass,theReference->slotID);
    theResult->value = FalseSymbol(theEnv);
-   SetCL_EvaluationError(theEnv,true);
+   Set_EvaluationError(theEnv,true);
    return false;
   }
 
 /***************************************************
-  NAME         : PrintCL_HandlerSlotPutFunction
+  NAME         : Print_HandlerSlotPutFunction
   DESCRIPTION  : Developer access function for
                  printing direct slot bindings
                  in message-handlers
@@ -712,7 +712,7 @@ HandlerGetError:
   SIDE EFFECTS : Expression printed
   NOTES        : None
  ***************************************************/
-void PrintCL_HandlerSlotPutFunction(
+void Print_HandlerSlotPutFunction(
   Environment *theEnv,
   const char *logicalName,
   void *theValue)
@@ -789,7 +789,7 @@ bool CL_HandlerSlotPutFunction(
      {
       CL_StaleInstanceAddress(theEnv,"for slot put",0);
       theResult->value = FalseSymbol(theEnv);
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return false;
      }
 
@@ -850,7 +850,7 @@ HandlerPutError:
 
 HandlerPutError2:
    theResult->value = FalseSymbol(theEnv);
-   SetCL_EvaluationError(theEnv,true);
+   Set_EvaluationError(theEnv,true);
 
    return false;
   }
@@ -880,7 +880,7 @@ void CL_DynamicHandlerGetSlot(
    if (temp.header->type != SYMBOL_TYPE)
      {
       CL_ExpectedTypeError1(theEnv,"dynamic-get",1,"symbol");
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return;
      }
    ins = GetActiveInstance(theEnv);
@@ -894,7 +894,7 @@ void CL_DynamicHandlerGetSlot(
        (MessageHandlerData(theEnv)->CurrentCore->hnd->cls != sp->desc->cls))
      {
       CL_SlotVisibilityViolationError(theEnv,sp->desc,MessageHandlerData(theEnv)->CurrentCore->hnd->cls,false);
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return;
      }
    returnValue->value = sp->value;
@@ -931,7 +931,7 @@ void CL_DynamicHandlerPutSlot(
    if (temp.header->type != SYMBOL_TYPE)
      {
       CL_ExpectedTypeError1(theEnv,"dynamic-put",1,"symbol");
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return;
      }
    ins = GetActiveInstance(theEnv);
@@ -941,19 +941,19 @@ void CL_DynamicHandlerPutSlot(
       CL_SlotExistError(theEnv,temp.lexemeValue->contents,"dynamic-put");
       return;
      }
-   if ((sp->desc->noCL_Write == 0) ? false :
+   if ((sp->desc->no_Write == 0) ? false :
        ((sp->desc->initializeOnly == 0) || (!ins->initializeInProgress)))
      {
       CL_SlotAccessViolationError(theEnv,sp->desc->slotName->name->contents,
                                ins,NULL);
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return;
      }
    if ((sp->desc->publicVisibility == 0) &&
        (MessageHandlerData(theEnv)->CurrentCore->hnd->cls != sp->desc->cls))
      {
       CL_SlotVisibilityViolationError(theEnv,sp->desc,MessageHandlerData(theEnv)->CurrentCore->hnd->cls,false);
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       return;
      }
    if (GetFirstArgument()->nextArg)
@@ -978,7 +978,7 @@ void CL_DynamicHandlerPutSlot(
    ***************************************** */
 
 /*****************************************************
-  NAME         : PerfoCL_rmMessage
+  NAME         : Perfo_rmMessage
   DESCRIPTION  : Calls core framework for a message
   INPUTS       : 1) Caller's result buffer
                  2) Message argument expressions
@@ -992,7 +992,7 @@ void CL_DynamicHandlerPutSlot(
                  to be in scope in order to sent a message
                  to an instance of that class.
  *****************************************************/
-static bool PerfoCL_rmMessage(
+static bool Perfo_rmMessage(
   Environment *theEnv,
   UDFValue *returnValue,
   Expression *args,
@@ -1016,10 +1016,10 @@ static bool PerfoCL_rmMessage(
    CL_GCBlockStart(theEnv,&gcb);
 
    oldce = CL_ExecutingConstruct(theEnv);
-   SetCL_ExecutingConstruct(theEnv,true);
+   Set_ExecutingConstruct(theEnv,true);
    oldName = MessageHandlerData(theEnv)->CurrentMessageName;
    MessageHandlerData(theEnv)->CurrentMessageName = mname;
-   CL_EvaluationData(theEnv)->CurrentCL_EvaluationDepth++;
+   CL_EvaluationData(theEnv)->Current_EvaluationDepth++;
 
    CL_PushProcParameters(theEnv,args,CL_CountArguments(args),
                         MessageHandlerData(theEnv)->CurrentMessageName->contents,"message",
@@ -1028,13 +1028,13 @@ static bool PerfoCL_rmMessage(
 
    if (CL_EvaluationData(theEnv)->CL_EvaluationError)
      {
-      CL_EvaluationData(theEnv)->CurrentCL_EvaluationDepth--;
+      CL_EvaluationData(theEnv)->Current_EvaluationDepth--;
       MessageHandlerData(theEnv)->CurrentMessageName = oldName;
 
       CL_GCBlockEndUDF(theEnv,&gcb,returnValue);
       CL_CallPeriodicTasks(theEnv);
 
-      SetCL_ExecutingConstruct(theEnv,oldce);
+      Set_ExecutingConstruct(theEnv,oldce);
       return false;
      }
 
@@ -1044,7 +1044,7 @@ static bool PerfoCL_rmMessage(
       if (ins->garbage == 1)
         {
          CL_StaleInstanceAddress(theEnv,"send",0);
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
         }
       else
         {
@@ -1061,7 +1061,7 @@ static bool PerfoCL_rmMessage(
          CL_WriteString(theEnv,STDERR,"No such instance [");
          CL_WriteString(theEnv,STDERR,ProceduralPrimitiveData(theEnv)->ProcParamArray->lexemeValue->contents);
          CL_WriteString(theEnv,STDERR,"] in function 'send'.\n");
-         SetCL_EvaluationError(theEnv,true);
+         Set_EvaluationError(theEnv,true);
         }
       else
         {
@@ -1078,13 +1078,13 @@ static bool PerfoCL_rmMessage(
    if (CL_EvaluationData(theEnv)->CL_EvaluationError)
      {
       CL_PopProcParameters(theEnv);
-      CL_EvaluationData(theEnv)->CurrentCL_EvaluationDepth--;
+      CL_EvaluationData(theEnv)->Current_EvaluationDepth--;
       MessageHandlerData(theEnv)->CurrentMessageName = oldName;
 
       CL_GCBlockEndUDF(theEnv,&gcb,returnValue);
       CL_CallPeriodicTasks(theEnv);
 
-      SetCL_ExecutingConstruct(theEnv,oldce);
+      Set_ExecutingConstruct(theEnv,oldce);
       return false;
      }
 
@@ -1116,7 +1116,7 @@ static bool PerfoCL_rmMessage(
          if (CL_CheckHandlerArgCount(theEnv))
            {
 #if PROFILING_FUNCTIONS
-            StartCL_Profile(theEnv,&profileFrame,
+            Start_Profile(theEnv,&profileFrame,
                          &MessageHandlerData(theEnv)->CurrentCore->hnd->header.usrData,
                          CL_ProfileFunctionData(theEnv)->CL_ProfileConstructs);
 #endif
@@ -1129,7 +1129,7 @@ static bool PerfoCL_rmMessage(
 
 
 #if PROFILING_FUNCTIONS
-            CL_EndCL_Profile(theEnv,&profileFrame);
+            CL_End_Profile(theEnv,&profileFrame);
 #endif
            }
 
@@ -1174,13 +1174,13 @@ static bool PerfoCL_rmMessage(
       Restore the original calling frame
       ================================== */
    CL_PopProcParameters(theEnv);
-   CL_EvaluationData(theEnv)->CurrentCL_EvaluationDepth--;
+   CL_EvaluationData(theEnv)->Current_EvaluationDepth--;
    MessageHandlerData(theEnv)->CurrentMessageName = oldName;
 
    CL_GCBlockEndUDF(theEnv,&gcb,returnValue);
    CL_CallPeriodicTasks(theEnv);
 
-   SetCL_ExecutingConstruct(theEnv,oldce);
+   Set_ExecutingConstruct(theEnv,oldce);
 
    if (CL_EvaluationData(theEnv)->CL_EvaluationError)
      {
@@ -1193,7 +1193,7 @@ static bool PerfoCL_rmMessage(
 
 /*****************************************************************************
   NAME         : FindApplicableHandlers
-  DESCRIPTION  : Given a message name, this routine foCL_rms the "core frame"
+  DESCRIPTION  : Given a message name, this routine fo_rms the "core frame"
                    for the message : a list of all applicable class handlers.
                    An applicable class handler is one whose name matches
                      the message and whose class matches the instance.
@@ -1275,7 +1275,7 @@ static void CallHandlers(
       if (CL_CheckHandlerArgCount(theEnv))
         {
 #if PROFILING_FUNCTIONS
-         StartCL_Profile(theEnv,&profileFrame,
+         Start_Profile(theEnv,&profileFrame,
                       &MessageHandlerData(theEnv)->CurrentCore->hnd->header.usrData,
                       CL_ProfileFunctionData(theEnv)->CL_ProfileConstructs);
 #endif
@@ -1287,7 +1287,7 @@ static void CallHandlers(
 
 
 #if PROFILING_FUNCTIONS
-         CL_EndCL_Profile(theEnv,&profileFrame);
+         CL_End_Profile(theEnv,&profileFrame);
 #endif
         }
 
@@ -1314,7 +1314,7 @@ static void CallHandlers(
       if (CL_CheckHandlerArgCount(theEnv))
         {
 #if PROFILING_FUNCTIONS
-         StartCL_Profile(theEnv,&profileFrame,
+         Start_Profile(theEnv,&profileFrame,
                       &MessageHandlerData(theEnv)->CurrentCore->hnd->header.usrData,
                       CL_ProfileFunctionData(theEnv)->CL_ProfileConstructs);
 #endif
@@ -1326,7 +1326,7 @@ static void CallHandlers(
                             returnValue,CL_UnboundHandlerErr);
 
 #if PROFILING_FUNCTIONS
-         CL_EndCL_Profile(theEnv,&profileFrame);
+         CL_End_Profile(theEnv,&profileFrame);
 #endif
         }
 
@@ -1365,7 +1365,7 @@ static void CallHandlers(
       if (CL_CheckHandlerArgCount(theEnv))
         {
 #if PROFILING_FUNCTIONS
-         StartCL_Profile(theEnv,&profileFrame,
+         Start_Profile(theEnv,&profileFrame,
                       &MessageHandlerData(theEnv)->CurrentCore->hnd->header.usrData,
                       CL_ProfileFunctionData(theEnv)->CL_ProfileConstructs);
 #endif
@@ -1377,7 +1377,7 @@ static void CallHandlers(
                             &temp,CL_UnboundHandlerErr);
 
 #if PROFILING_FUNCTIONS
-         CL_EndCL_Profile(theEnv,&profileFrame);
+         CL_End_Profile(theEnv,&profileFrame);
 #endif
         }
 

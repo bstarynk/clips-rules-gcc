@@ -34,8 +34,8 @@
 /*                                                           */
 /*            Support for long long integers.                */
 /*                                                           */
-/*      6.40: Added Env prefix to CL_GetCL_HaltExecution and       */
-/*            SetCL_HaltExecution functions.                    */
+/*      6.40: Added Env prefix to CL_Get_HaltExecution and       */
+/*            Set_HaltExecution functions.                    */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -114,8 +114,8 @@ void CL_ProceduralFunctionDefinitions(
    CL_FuncSeqOvlFlags(theEnv,"switch",false,false);
 #endif
 
-   CL_AddCL_ResetFunction(theEnv,"bind",CL_FlushBindList,0,NULL);
-   CL_AddCL_ClearFunction(theEnv,"bind",CL_FlushBindList,0,NULL);
+   CL_Add_ResetFunction(theEnv,"bind",CL_FlushBindList,0,NULL);
+   CL_Add_ClearFunction(theEnv,"bind",CL_FlushBindList,0,NULL);
   }
 
 /*************************************************************/
@@ -381,7 +381,7 @@ void CL_BindFunction(
 #endif
 
    /*===============================================*/
-   /* DeteCL_rmine the name of the variable to be set. */
+   /* Dete_rmine the name of the variable to be set. */
    /*===============================================*/
 
 #if DEFGLOBAL_CONSTRUCT
@@ -395,7 +395,7 @@ void CL_BindFunction(
      }
 
    /*===========================================*/
-   /* DeteCL_rmine the new value for the variable. */
+   /* Dete_rmine the new value for the variable. */
    /*===========================================*/
 
    if (GetFirstArgument()->nextArg == NULL)
@@ -540,7 +540,7 @@ void CL_PrognFunction(
       return;
      }
 
-   while ((argPtr != NULL) && (CL_GetCL_HaltExecution(theEnv) != true))
+   while ((argPtr != NULL) && (CL_Get_HaltExecution(theEnv) != true))
      {
       CL_EvaluateExpression(theEnv,argPtr,returnValue);
 
@@ -549,7 +549,7 @@ void CL_PrognFunction(
       argPtr = argPtr->nextArg;
      }
 
-   if (CL_GetCL_HaltExecution(theEnv) == true)
+   if (CL_Get_HaltExecution(theEnv) == true)
      {
       returnValue->value = FalseSymbol(theEnv);
       return;
@@ -624,7 +624,7 @@ void CL_SwitchFunction(
         return;
       if (switch_val.header->type == case_val.header->type)
         {
-         if ((case_val.header->type == MULTIFIELD_TYPE) ? MultifieldCL_DOsEqual(&switch_val,&case_val) :
+         if ((case_val.header->type == MULTIFIELD_TYPE) ? Multifield_DOsEqual(&switch_val,&case_val) :
              (switch_val.value == case_val.value))
            {
             CL_EvaluateExpression(theEnv,theExp->nextArg,returnValue);

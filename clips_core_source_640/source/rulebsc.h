@@ -78,12 +78,12 @@
    bool                           CL_PPDefrule(Environment *,const char *,const char *);
    void                           CL_ListDefrulesCommand(Environment *,UDFContext *,UDFValue *);
    void                           CL_ListDefrules(Environment *,const char *,Defmodule *);
-   bool                           CL_DefruleGetCL_WatchFirings(Defrule *);
-   bool                           CL_DefruleGetCL_WatchActivations(Defrule *);
-   void                           CL_DefruleSetCL_WatchFirings(Defrule *,bool);
-   void                           CL_DefruleSetCL_WatchActivations(Defrule *,bool);
-   bool                           CL_DefruleCL_WatchAccess(Environment *,int,bool,struct expr *);
-   bool                           CL_DefruleCL_WatchPrint(Environment *,const char *,int,struct expr *);
+   bool                           CL_DefruleGet_WatchFirings(Defrule *);
+   bool                           CL_DefruleGet_WatchActivations(Defrule *);
+   void                           CL_DefruleSet_WatchFirings(Defrule *,bool);
+   void                           CL_DefruleSet_WatchActivations(Defrule *,bool);
+   bool                           CL_Defrule_WatchAccess(Environment *,int,bool,struct expr *);
+   bool                           CL_Defrule_WatchPrint(Environment *,const char *,int,struct expr *);
 #endif
 
 #endif /* _H_rulebsc */

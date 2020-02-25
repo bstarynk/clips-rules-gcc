@@ -79,7 +79,7 @@ typedef enum
    void                           CL_StringFunctionDefinitions(Environment *);
    void                           CL_StrCatFunction(Environment *,UDFContext *,UDFValue *);
    void                           CL_SymCatFunction(Environment *,UDFContext *,UDFValue *);
-   void                           StrCL_LengthFunction(Environment *,UDFContext *,UDFValue *);
+   void                           Str_LengthFunction(Environment *,UDFContext *,UDFValue *);
    void                           CL_UpcaseFunction(Environment *,UDFContext *,UDFValue *);
    void                           CL_LowcaseFunction(Environment *,UDFContext *,UDFValue *);
    void                           CL_StrCompareFunction(Environment *,UDFContext *,UDFValue *);

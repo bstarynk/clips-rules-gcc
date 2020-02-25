@@ -119,14 +119,14 @@ struct deffunctionData
    Deffunction                   *CL_FindDeffunctionInModule(Environment *,const char *);
    void                           CL_GetDeffunctionList(Environment *,CLIPSValue *,Defmodule *);
    const char                    *CL_DeffunctionName(Deffunction *);
-   CLIPSLexeme                   *GetCL_DeffunctionNamePointer(Environment *,Deffunction *);
-   const char                    *CL_DeffunctionPPFoCL_rm(Deffunction *);
+   CLIPSLexeme                   *Get_DeffunctionNamePointer(Environment *,Deffunction *);
+   const char                    *CL_DeffunctionPPFo_rm(Deffunction *);
    Deffunction                   *CL_GetNextDeffunction(Environment *,Deffunction *);
    bool                           CL_DeffunctionIsDeletable(Deffunction *);
-   void                           SetCL_DeffunctionPPFoCL_rm(Environment *,Deffunction *,const char *);
+   void                           SetCL_DeffunctionPPFo_rm(Environment *,Deffunction *,const char *);
    bool                           CL_Undeffunction(Deffunction *,Environment *);
    void                           CL_GetDeffunctionListFunction(Environment *,UDFContext *,UDFValue *);
-   void                           GetCL_DeffunctionModuleCommand(Environment *,UDFContext *,UDFValue *);
+   void                           Get_DeffunctionModuleCommand(Environment *,UDFContext *,UDFValue *);
    Deffunction                   *CL_LookupDeffunctionByMdlOrScope(Environment *,const char *);
    Deffunction                   *CL_LookupDeffunctionInScope(Environment *,const char *);
 #if (! BLOAD_ONLY) && (! RUN_TIME)
@@ -135,15 +135,15 @@ struct deffunctionData
    void                           CL_SetupDeffunctions(Environment *);
    void                           CL_UndeffunctionCommand(Environment *,UDFContext *,UDFValue *);
 #if DEBUGGING_FUNCTIONS
-   bool                           CL_DeffunctionGetCL_Watch(Deffunction *);
+   bool                           CL_DeffunctionGet_Watch(Deffunction *);
    void                           CL_ListDeffunctions(Environment *,const char *,Defmodule *);
-   void                           CL_DeffunctionSetCL_Watch(Deffunction *,bool);
+   void                           CL_DeffunctionSet_Watch(Deffunction *,bool);
    void                           CL_ListDeffunctionsCommand(Environment *,UDFContext *,UDFValue *);
    void                           CL_PPDeffunctionCommand(Environment *,UDFContext *,UDFValue *);
 #endif
 
 #if RUN_TIME
-   void                           DeffunctionCL_RunTimeInitialize(Environment *);
+   void                           Deffunction_RunTimeInitialize(Environment *);
 #endif
 
 #endif /* _H_dffnxfun */

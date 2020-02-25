@@ -85,7 +85,7 @@
 #endif
 
 /********************************************************************/
-/* CL_CheckConstraintParseConflicts: DeteCL_rmines if a constraint record */
+/* CL_CheckConstraintParseConflicts: Dete_rmines if a constraint record */
 /*   has any conflicts in the attribute specifications. Returns     */
 /*   true if no conflicts were detected, otherwise false.           */
 /********************************************************************/
@@ -225,7 +225,7 @@ void CL_AttributeConflictErrorMessage(
 
 /***************************************************************************/
 /* CL_InitializeConstraintParseRecord: Initializes the values of a constraint */
-/*   parse record which is used to deteCL_rmine whether one of the standard   */
+/*   parse record which is used to dete_rmine whether one of the standard   */
 /*   constraint specifications has already been parsed.                    */
 /***************************************************************************/
 void CL_InitializeConstraintParseRecord(
@@ -240,7 +240,7 @@ void CL_InitializeConstraintParseRecord(
    parsedConstraints->allowedFloats = false;
    parsedConstraints->allowedNumbers = false;
    parsedConstraints->allowedValues = false;
-   parsedConstraints->allowedCL_InstanceNames = false;
+   parsedConstraints->allowed_InstanceNames = false;
    parsedConstraints->allowedClasses = false;
    parsedConstraints->cardinality = false;
   }
@@ -271,10 +271,10 @@ bool CL_StandardConstraint(
   }
 
 /***********************************************************************/
-/* CL_ParseCL_StandardConstraint: Parses a standard constraint. Returns true */
+/* CL_Parse_StandardConstraint: Parses a standard constraint. Returns true */
 /*   if the constraint was successfully parsed, otherwise false.       */
 /***********************************************************************/
-bool CL_ParseCL_StandardConstraint(
+bool CL_Parse_StandardConstraint(
   Environment *theEnv,
   const char *readSource,
   const char *constraintName,
@@ -285,7 +285,7 @@ bool CL_ParseCL_StandardConstraint(
    bool rv = false;
 
    /*=====================================================*/
-   /* DeteCL_rmine if the attribute has already been parsed. */
+   /* Dete_rmine if the attribute has already been parsed. */
    /*=====================================================*/
 
    if (GetAttributeParseValue(constraintName,parsedConstraints))
@@ -397,7 +397,7 @@ void CL_OverlayConstraint(
           (pc->allowedIntegers == 0) &&
           (pc->allowedFloats == 0) &&
           (pc->allowedNumbers == 0) &&
-          (pc->allowedCL_InstanceNames == 0))
+          (pc->allowed_InstanceNames == 0))
         {
          cdst->anyRestriction = csrc->anyRestriction;
          cdst->symbolRestriction = csrc->symbolRestriction;
@@ -444,7 +444,7 @@ void CL_OverlayConstraint(
             AddToRestrictionList(theEnv,INTEGER_TYPE,cdst,csrc);
             AddToRestrictionList(theEnv,FLOAT_TYPE,cdst,csrc);
            }
-         if ((pc->allowedCL_InstanceNames == 0) && csrc->instanceNameRestriction)
+         if ((pc->allowed_InstanceNames == 0) && csrc->instanceNameRestriction)
            {
             cdst->instanceNameRestriction = 1;
             AddToRestrictionList(theEnv,INSTANCE_NAME_TYPE,cdst,csrc);
@@ -462,7 +462,7 @@ void CL_OverlayConstraint(
   }
 
 /**********************************************/
-/* CL_OverlayConstraintParseRecord: PerfoCL_rms a   */
+/* CL_OverlayConstraintParseRecord: Perfo_rms a   */
 /*   field-wise "or" of the destination parse */
 /*   record with the source parse record.     */
 /**********************************************/
@@ -479,7 +479,7 @@ void CL_OverlayConstraintParseRecord(
    if (src->allowedFloats) dst->allowedFloats = true;
    if (src->allowedNumbers) dst->allowedNumbers = true;
    if (src->allowedValues) dst->allowedValues = true;
-   if (src->allowedCL_InstanceNames) dst->allowedCL_InstanceNames = true;
+   if (src->allowed_InstanceNames) dst->allowed_InstanceNames = true;
    if (src->allowedClasses) dst->allowedClasses = true;
    if (src->cardinality) dst->cardinality = true;
   }
@@ -537,7 +537,7 @@ static bool ParseAllowedValuesAttribute(
         (parsedConstraints->allowedIntegers) ||
         (parsedConstraints->allowedFloats) ||
         (parsedConstraints->allowedNumbers) ||
-        (parsedConstraints->allowedCL_InstanceNames)))
+        (parsedConstraints->allowed_InstanceNames)))
      {
       if (parsedConstraints->allowedSymbols) tempPtr = "allowed-symbols";
       else if (parsedConstraints->allowedStrings) tempPtr = "allowed-strings";
@@ -545,7 +545,7 @@ static bool ParseAllowedValuesAttribute(
       else if (parsedConstraints->allowedIntegers) tempPtr = "allowed-integers";
       else if (parsedConstraints->allowedFloats) tempPtr = "allowed-floats";
       else if (parsedConstraints->allowedNumbers) tempPtr = "allowed-numbers";
-      else if (parsedConstraints->allowedCL_InstanceNames) tempPtr = "allowed-instance-names";
+      else if (parsedConstraints->allowed_InstanceNames) tempPtr = "allowed-instance-names";
       NoConjunctiveUseError(theEnv,"allowed-values",tempPtr);
       return false;
      }
@@ -670,7 +670,7 @@ static bool ParseAllowedValuesAttribute(
       CL_SavePPBuffer(theEnv," ");
 
       /*=============================================*/
-      /* DeteCL_rmine the type of the token just parsed */
+      /* Dete_rmine the type of the token just parsed */
       /* and if it is an appropriate value.          */
       /*=============================================*/
 
@@ -718,7 +718,7 @@ static bool ParseAllowedValuesAttribute(
 #endif
 
          case SF_VARIABLE_TOKEN:
-           if (strcmp(inputToken.printFoCL_rm,"?VARIABLE") == 0)
+           if (strcmp(inputToken.printFo_rm,"?VARIABLE") == 0)
              {
               variableParsed = true;
               genType = SF_VARIABLE;
@@ -973,7 +973,7 @@ static bool ParseTypeAttribute(
          /* The only variable allowd is ?VARIABLE. */
          /*========================================*/
 
-         if (strcmp(inputToken.printFoCL_rm,"?VARIABLE") != 0)
+         if (strcmp(inputToken.printFo_rm,"?VARIABLE") != 0)
            {
             CL_SyntaxErrorMessage(theEnv,"type attribute");
             return false;
@@ -1051,7 +1051,7 @@ static bool ParseRangeCardinalityAttribute(
    const char *tempPtr = NULL;
 
    /*=================================*/
-   /* DeteCL_rmine if we're parsing the  */
+   /* Dete_rmine if we're parsing the  */
    /* range or cardinality attribute. */
    /*=================================*/
 
@@ -1130,7 +1130,7 @@ static bool ParseRangeCardinalityAttribute(
            { constraints->minFields = CL_GenConstant(theEnv,FLOAT_TYPE,inputToken.value); }
         }
      }
-   else if ((inputToken.tknType == SF_VARIABLE_TOKEN) && (strcmp(inputToken.printFoCL_rm,"?VARIABLE") == 0))
+   else if ((inputToken.tknType == SF_VARIABLE_TOKEN) && (strcmp(inputToken.printFo_rm,"?VARIABLE") == 0))
      { /* Do nothing. */ }
    else
      {
@@ -1165,7 +1165,7 @@ static bool ParseRangeCardinalityAttribute(
            { constraints->maxFields = CL_GenConstant(theEnv,FLOAT_TYPE,inputToken.value); }
         }
      }
-   else if ((inputToken.tknType == SF_VARIABLE_TOKEN) && (strcmp(inputToken.printFoCL_rm,"?VARIABLE") == 0))
+   else if ((inputToken.tknType == SF_VARIABLE_TOKEN) && (strcmp(inputToken.printFo_rm,"?VARIABLE") == 0))
      { /* Do nothing. */ }
    else
      {
@@ -1290,7 +1290,7 @@ static bool GetAttributeParseValue(
    else if (strcmp(constraintName,"allowed-lexemes") == 0)
      { return(parsedConstraints->allowedLexemes); }
    else if (strcmp(constraintName,"allowed-instance-names") == 0)
-     { return(parsedConstraints->allowedCL_InstanceNames); }
+     { return(parsedConstraints->allowed_InstanceNames); }
    else if (strcmp(constraintName,"allowed-classes") == 0)
      { return(parsedConstraints->allowedClasses); }
    else if (strcmp(constraintName,"allowed-integers") == 0)

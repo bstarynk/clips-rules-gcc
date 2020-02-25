@@ -77,7 +77,7 @@
    static void                   *AllocateModule(Environment *);
    static void                    ReturnModule(Environment *,void *);
    static void                    ReturnDeffacts(Environment *,Deffacts *);
-   static void                    InitializeCL_DeffactsModules(Environment *);
+   static void                    Initialize_DeffactsModules(Environment *);
    static void                    DeallocateDeffactsData(Environment *);
 #if ! RUN_TIME
    static void                    DestroyDeffactsAction(Environment *,ConstructHeader *,void *);
@@ -93,14 +93,14 @@ void CL_InitializeDeffacts(
   {
    CL_AllocateEnvironmentData(theEnv,DEFFACTS_DATA,sizeof(struct deffactsData),DeallocateDeffactsData);
 
-   InitializeCL_DeffactsModules(theEnv);
+   Initialize_DeffactsModules(theEnv);
 
    CL_DeffactsBasicCommands(theEnv);
 
    DeffactsData(theEnv)->DeffactsConstruct =
       CL_AddConstruct(theEnv,"deffacts","deffacts",CL_ParseDeffacts,
                    (CL_FindConstructFunction *) CL_FindDeffacts,
-                   CL_GetConstructNamePointer,CL_GetConstructPPFoCL_rm,
+                   CL_GetConstructNamePointer,CL_GetConstructPPFo_rm,
                    CL_GetConstructModuleItem,
                    (GetNextConstructFunction *) CL_GetNextDeffacts,
                    CL_SetNextConstruct,
@@ -197,9 +197,9 @@ static void CL_RuntimeDeffactsAction(
   }
 
 /******************************/
-/* DeffactsCL_RunTimeInitialize: */
+/* Deffacts_RunTimeInitialize: */
 /******************************/
-void DeffactsCL_RunTimeInitialize(
+void Deffacts_RunTimeInitialize(
   Environment *theEnv)
   {
    CL_DoForAllConstructs(theEnv,CL_RuntimeDeffactsAction,DeffactsData(theEnv)->CL_DeffactsModuleIndex,true,NULL);
@@ -208,10 +208,10 @@ void DeffactsCL_RunTimeInitialize(
 #endif
 
 /*******************************************************/
-/* InitializeCL_DeffactsModules: Initializes the deffacts */
+/* Initialize_DeffactsModules: Initializes the deffacts */
 /*   construct for use with the defmodule construct.   */
 /*******************************************************/
-static void InitializeCL_DeffactsModules(
+static void Initialize_DeffactsModules(
   Environment *theEnv)
   {
    DeffactsData(theEnv)->CL_DeffactsModuleIndex =
@@ -219,7 +219,7 @@ static void InitializeCL_DeffactsModules(
                          AllocateModule,
                          ReturnModule,
 #if BLOAD_AND_BSAVE || BLOAD || BLOAD_ONLY
-                         CL_BloadCL_DeffactsModuleReference,
+                         CL_Bload_DeffactsModuleReference,
 #else
                          NULL,
 #endif
@@ -252,10 +252,10 @@ static void ReturnModule(
   }
 
 /*************************************************************/
-/* GetCL_DeffactsModuleItem: Returns a pointer to the defmodule */
+/* Get_DeffactsModuleItem: Returns a pointer to the defmodule */
 /*  item for the specified deffacts or defmodule.            */
 /*************************************************************/
-struct deffactsModule *GetCL_DeffactsModuleItem(
+struct deffactsModule *Get_DeffactsModuleItem(
   Environment *theEnv,
   Defmodule *theModule)
   {
@@ -352,10 +352,10 @@ const char *CL_DeffactsName(
    return CL_GetConstructNameString(&theDeffacts->header);
   }
 
-const char *CL_DeffactsPPFoCL_rm(
+const char *CL_DeffactsPPFo_rm(
   Deffacts *theDeffacts)
   {
-   return CL_GetConstructPPFoCL_rm(&theDeffacts->header);
+   return CL_GetConstructPPFo_rm(&theDeffacts->header);
   }
 
 

@@ -116,10 +116,10 @@ struct defglobalModule
    Defglobal                     *CL_GetNextDefglobal(Environment *,Defglobal *);
    void                           CreateInitialFactDefglobal(void);
    bool                           CL_DefglobalIsDeletable(Defglobal *);
-   struct defglobalModule        *GetCL_DefglobalModuleItem(Environment *,Defmodule *);
+   struct defglobalModule        *Get_DefglobalModuleItem(Environment *,Defmodule *);
    void                           CL_QSetDefglobalValue(Environment *,Defglobal *,UDFValue *,bool);
-   Defglobal                     *QCL_FindDefglobal(Environment *,CLIPSLexeme *);
-   void                           CL_DefglobalValueFoCL_rm(Defglobal *,StringCL_Builder *);
+   Defglobal                     *Q_FindDefglobal(Environment *,CLIPSLexeme *);
+   void                           CL_DefglobalValueFo_rm(Defglobal *,String_Builder *);
    bool                           CL_GetGlobalsChanged(Environment *);
    void                           CL_SetGlobalsChanged(Environment *,bool);
    void                           CL_DefglobalGetValue(Defglobal *,CLIPSValue *);
@@ -128,7 +128,7 @@ struct defglobalModule
    void                           CL_DefglobalSetFloat(Defglobal *,double);
    void                           CL_DefglobalSetSymbol(Defglobal *,const char *);
    void                           CL_DefglobalSetString(Defglobal *,const char *);
-   void                           CL_DefglobalSetCL_InstanceName(Defglobal *,const char *);
+   void                           CL_DefglobalSet_InstanceName(Defglobal *,const char *);
    void                           CL_DefglobalSetCLIPSInteger(Defglobal *,CLIPSInteger *);
    void                           CL_DefglobalSetCLIPSFloat(Defglobal *,CLIPSFloat *);
    void                           CL_DefglobalSetCLIPSLexeme(Defglobal *,CLIPSLexeme *);
@@ -141,9 +141,9 @@ struct defglobalModule
    bool                           CL_QGetDefglobalUDFValue(Environment *,Defglobal *,UDFValue *);
    const char                    *CL_DefglobalModule(Defglobal *);
    const char                    *CL_DefglobalName(Defglobal *);
-   const char                    *CL_DefglobalPPFoCL_rm(Defglobal *);
+   const char                    *CL_DefglobalPPFo_rm(Defglobal *);
 #if RUN_TIME
-   void                           DefglobalCL_RunTimeInitialize(Environment *);
+   void                           Defglobal_RunTimeInitialize(Environment *);
 #endif
 
 #endif /* _H_globldef */

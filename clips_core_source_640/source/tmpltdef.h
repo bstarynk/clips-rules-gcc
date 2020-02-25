@@ -137,17 +137,17 @@ struct deftemplateData
    Deftemplate                   *CL_GetNextDeftemplate(Environment *,Deftemplate *);
    bool                           CL_DeftemplateIsDeletable(Deftemplate *);
    Fact                          *CL_GetNextFactInTemplate(Deftemplate *,Fact *);
-   struct deftemplateModule      *GetCL_DeftemplateModuleItem(Environment *,Defmodule *);
+   struct deftemplateModule      *Get_DeftemplateModuleItem(Environment *,Defmodule *);
    void                           CL_ReturnSlots(Environment *,struct templateSlot *);
    void                           CL_IncrementDeftemplateBusyCount(Environment *,Deftemplate *);
    void                           CL_DecrementDeftemplateBusyCount(Environment *,Deftemplate *);
    void                          *CL_CreateDeftemplateScopeMap(Environment *,Deftemplate *);
 #if RUN_TIME
-   void                           DeftemplateCL_RunTimeInitialize(Environment *);
+   void                           Deftemplate_RunTimeInitialize(Environment *);
 #endif
    const char                    *CL_DeftemplateModule(Deftemplate *);
    const char                    *CL_DeftemplateName(Deftemplate *);
-   const char                    *CL_DeftemplatePPFoCL_rm(Deftemplate *);
+   const char                    *CL_DeftemplatePPFo_rm(Deftemplate *);
 
 #endif /* _H_tmpltdef */
 

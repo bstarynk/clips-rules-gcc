@@ -111,7 +111,7 @@ void CL_GetToken(
 
    theToken->tknType = UNKNOWN_VALUE_TOKEN;
    theToken->value = NULL;
-   theToken->printFoCL_rm = "unknown";
+   theToken->printFo_rm = "unknown";
    ScannerData(theEnv)->GlobalPos = 0;
    ScannerData(theEnv)->GlobalMax = 0;
 
@@ -146,7 +146,7 @@ void CL_GetToken(
       theToken->tknType = SYMBOL_TOKEN;
       CL_UnreadRouter(theEnv,logicalName,inchar);
       theToken->lexemeValue = ScanSymbol(theEnv,logicalName,0,&type);
-      theToken->printFoCL_rm = theToken->lexemeValue->contents;
+      theToken->printFo_rm = theToken->lexemeValue->contents;
      }
 
    /*===============================================*/
@@ -168,7 +168,7 @@ void CL_GetToken(
       case '"':
          theToken->lexemeValue = ScanString(theEnv,logicalName);
          theToken->tknType = STRING_TOKEN;
-         theToken->printFoCL_rm = StringPrintFoCL_rm(theEnv,theToken->lexemeValue->contents);
+         theToken->printFo_rm = StringPrintFo_rm(theEnv,theToken->lexemeValue->contents);
          break;
 
       /*=======================================*/
@@ -206,7 +206,7 @@ void CL_GetToken(
                 size_t count;
 
                 theToken->tknType = GBL_VARIABLE_TOKEN;
-                theToken->printFoCL_rm = CL_AppendStrings(theEnv,"?",theToken->lexemeValue->contents);
+                theToken->printFo_rm = CL_AppendStrings(theEnv,"?",theToken->lexemeValue->contents);
                 count = strlen(ScannerData(theEnv)->GlobalString);
                 ScannerData(theEnv)->GlobalString[count-1] = EOS;
                 theToken->lexemeValue = CL_CreateSymbol(theEnv,ScannerData(theEnv)->GlobalString+1);
@@ -215,14 +215,14 @@ void CL_GetToken(
                }
              else
 #endif
-             theToken->printFoCL_rm = CL_AppendStrings(theEnv,"?",theToken->lexemeValue->contents);
+             theToken->printFo_rm = CL_AppendStrings(theEnv,"?",theToken->lexemeValue->contents);
             }
           else
             {
              theToken->tknType = SF_WILDCARD_TOKEN;
              theToken->lexemeValue = CL_CreateSymbol(theEnv,"?");
              CL_UnreadRouter(theEnv,logicalName,inchar);
-             theToken->printFoCL_rm = "?";
+             theToken->printFo_rm = "?";
             }
           break;
 
@@ -252,7 +252,7 @@ void CL_GetToken(
                 size_t count;
 
                 theToken->tknType = MF_GBL_VARIABLE_TOKEN;
-                theToken->printFoCL_rm = CL_AppendStrings(theEnv,"$?",theToken->lexemeValue->contents);
+                theToken->printFo_rm = CL_AppendStrings(theEnv,"$?",theToken->lexemeValue->contents);
                 count = strlen(ScannerData(theEnv)->GlobalString);
                 ScannerData(theEnv)->GlobalString[count-1] = EOS;
                 theToken->lexemeValue = CL_CreateSymbol(theEnv,ScannerData(theEnv)->GlobalString+1);
@@ -260,13 +260,13 @@ void CL_GetToken(
                }
              else
 #endif
-               theToken->printFoCL_rm = CL_AppendStrings(theEnv,"$?",theToken->lexemeValue->contents);
+               theToken->printFo_rm = CL_AppendStrings(theEnv,"$?",theToken->lexemeValue->contents);
               }
             else
               {
                theToken->tknType = MF_WILDCARD_TOKEN;
                theToken->lexemeValue = CL_CreateSymbol(theEnv,"$?");
-               theToken->printFoCL_rm = "$?";
+               theToken->printFo_rm = "$?";
                CL_UnreadRouter(theEnv,logicalName,inchar);
               }
            }
@@ -276,7 +276,7 @@ void CL_GetToken(
             ScannerData(theEnv)->GlobalString = CL_ExpandStringWithChar(theEnv,'$',ScannerData(theEnv)->GlobalString,&ScannerData(theEnv)->GlobalPos,&ScannerData(theEnv)->GlobalMax,ScannerData(theEnv)->GlobalMax+80);
             CL_UnreadRouter(theEnv,logicalName,inchar);
             theToken->lexemeValue = ScanSymbol(theEnv,logicalName,1,&type);
-            theToken->printFoCL_rm = theToken->lexemeValue->contents;
+            theToken->printFo_rm = theToken->lexemeValue->contents;
            }
          break;
 
@@ -288,7 +288,7 @@ void CL_GetToken(
          theToken->tknType = SYMBOL_TOKEN;
          ScannerData(theEnv)->GlobalString = CL_ExpandStringWithChar(theEnv,'<',ScannerData(theEnv)->GlobalString,&ScannerData(theEnv)->GlobalPos,&ScannerData(theEnv)->GlobalMax,ScannerData(theEnv)->GlobalMax+80);
          theToken->lexemeValue = ScanSymbol(theEnv,logicalName,1,&type);
-         theToken->printFoCL_rm = theToken->lexemeValue->contents;
+         theToken->printFo_rm = theToken->lexemeValue->contents;
          break;
 
       /*=============================================*/
@@ -298,31 +298,31 @@ void CL_GetToken(
       case '(':
          theToken->tknType = LEFT_PARENTHESIS_TOKEN;
          theToken->lexemeValue = CL_CreateString(theEnv,"(");
-         theToken->printFoCL_rm = "(";
+         theToken->printFo_rm = "(";
          break;
 
       case ')':
          theToken->tknType= RIGHT_PARENTHESIS_TOKEN;
          theToken->lexemeValue = CL_CreateString(theEnv,")");
-         theToken->printFoCL_rm = ")";
+         theToken->printFo_rm = ")";
          break;
 
       case '~':
          theToken->tknType = NOT_CONSTRAINT_TOKEN;
          theToken->lexemeValue = CL_CreateString(theEnv,"~");
-         theToken->printFoCL_rm = "~";
+         theToken->printFo_rm = "~";
          break;
 
       case '|':
          theToken->tknType = OR_CONSTRAINT_TOKEN;
          theToken->lexemeValue = CL_CreateString(theEnv,"|");
-         theToken->printFoCL_rm = "|";
+         theToken->printFo_rm = "|";
          break;
 
       case '&':
          theToken->tknType =  AND_CONSTRAINT_TOKEN;
          theToken->lexemeValue = CL_CreateString(theEnv,"&");
-         theToken->printFoCL_rm = "&";
+         theToken->printFo_rm = "&";
          break;
 
       /*============================*/
@@ -334,7 +334,7 @@ void CL_GetToken(
       case 3:
          theToken->tknType = STOP_TOKEN;
          theToken->lexemeValue = CL_CreateSymbol(theEnv,"stop");
-         theToken->printFoCL_rm = "";
+         theToken->printFo_rm = "";
          break;
 
       /*=======================*/
@@ -347,10 +347,10 @@ void CL_GetToken(
             CL_UnreadRouter(theEnv,logicalName,inchar);
             theToken->lexemeValue = ScanSymbol(theEnv,logicalName,0,&type);
             theToken->tknType = type;
-            theToken->printFoCL_rm = theToken->lexemeValue->contents;
+            theToken->printFo_rm = theToken->lexemeValue->contents;
            }
          else
-           { theToken->printFoCL_rm = "<<<unprintable character>>>"; }
+           { theToken->printFo_rm = "<<<unprintable character>>>"; }
          break;
      }
 
@@ -362,11 +362,11 @@ void CL_GetToken(
    if (theToken->tknType == INSTANCE_NAME_TOKEN)
      {
       CL_SavePPBuffer(theEnv,"[");
-      CL_SavePPBuffer(theEnv,theToken->printFoCL_rm);
+      CL_SavePPBuffer(theEnv,theToken->printFo_rm);
       CL_SavePPBuffer(theEnv,"]");
      }
    else
-     { CL_SavePPBuffer(theEnv,theToken->printFoCL_rm); }
+     { CL_SavePPBuffer(theEnv,theToken->printFo_rm); }
 #endif
 
    /*=========================================================*/
@@ -429,7 +429,7 @@ static CLIPSLexeme *ScanSymbol(
    /*====================================================*/
    /* Add the symbol to the symbol table and return the  */
    /* symbol table address of the symbol. Symbols of the */
-   /* foCL_rm [<symbol>] are instance names, so the type    */
+   /* fo_rm [<symbol>] are instance names, so the type    */
    /* returned is INSTANCE_NAME_TYPE rather than SYMBOL_TYPE.      */
    /*====================================================*/
 
@@ -447,7 +447,7 @@ static CLIPSLexeme *ScanSymbol(
          return CL_CreateSymbol(theEnv,ScannerData(theEnv)->GlobalString);
         }
       ScannerData(theEnv)->GlobalString[count-1] = EOS;
-      symbol = CL_CreateCL_InstanceName(theEnv,ScannerData(theEnv)->GlobalString+1);
+      symbol = CL_Create_InstanceName(theEnv,ScannerData(theEnv)->GlobalString+1);
       ScannerData(theEnv)->GlobalString[count-1] = (char) inchar;
       return symbol;
      }
@@ -709,7 +709,7 @@ static void ScanNumber(
      {
       theToken->lexemeValue = ScanSymbol(theEnv,logicalName,count,&type);
       theToken->tknType = type;
-      theToken->printFoCL_rm = theToken->lexemeValue->contents;
+      theToken->printFo_rm = theToken->lexemeValue->contents;
       return;
      }
 
@@ -724,7 +724,7 @@ static void ScanNumber(
      {
       theToken->tknType = SYMBOL_TOKEN;
       theToken->lexemeValue = CL_CreateSymbol(theEnv,ScannerData(theEnv)->GlobalString);
-      theToken->printFoCL_rm = theToken->lexemeValue->contents;
+      theToken->printFo_rm = theToken->lexemeValue->contents;
       return;
      }
 
@@ -733,7 +733,7 @@ static void ScanNumber(
       fvalue = atof(ScannerData(theEnv)->GlobalString);
       theToken->tknType = FLOAT_TOKEN;
       theToken->floatValue = CL_CreateFloat(theEnv,fvalue);
-      theToken->printFoCL_rm = CL_FloatToString(theEnv,theToken->floatValue->contents);
+      theToken->printFo_rm = CL_FloatToString(theEnv,theToken->floatValue->contents);
      }
    else
      {
@@ -750,7 +750,7 @@ static void ScanNumber(
         }
       theToken->tknType = INTEGER_TOKEN;
       theToken->integerValue = CL_CreateInteger(theEnv,lvalue);
-      theToken->printFoCL_rm = CL_LongIntegerToString(theEnv,theToken->integerValue->contents);
+      theToken->printFo_rm = CL_LongIntegerToString(theEnv,theToken->integerValue->contents);
      }
 
    return;
@@ -765,7 +765,7 @@ void CL_CopyToken(
   {
    destination->tknType = source->tknType;
    destination->value = source->value;
-   destination->printFoCL_rm = source->printFoCL_rm;
+   destination->printFo_rm = source->printFo_rm;
   }
 
 /****************************************/

@@ -144,7 +144,7 @@ bool CL_ParseDefmessageHandler(
 #if BLOAD || BLOAD_AND_BSAVE
    if ((CL_Bloaded(theEnv)) && (! ConstructData(theEnv)->CL_CheckSyntaxMode))
      {
-      CannotCL_LoadWithCL_BloadMessage(theEnv,"defmessage-handler");
+      Cannot_LoadWith_BloadMessage(theEnv,"defmessage-handler");
       return true;
      }
 #endif
@@ -184,7 +184,7 @@ bool CL_ParseDefmessageHandler(
    CL_PPBackup(theEnv);
    CL_PPBackup(theEnv);
    CL_SavePPBuffer(theEnv," ");
-   CL_SavePPBuffer(theEnv,DefclassData(theEnv)->ObjectParseToken.printFoCL_rm);
+   CL_SavePPBuffer(theEnv,DefclassData(theEnv)->ObjectParseToken.printFo_rm);
    CL_SavePPBuffer(theEnv," ");
    mname = DefclassData(theEnv)->ObjectParseToken.lexemeValue;
    CL_GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
@@ -218,10 +218,10 @@ bool CL_ParseDefmessageHandler(
    CL_PPBackup(theEnv);
    CL_PPBackup(theEnv);
    CL_PPCRAndIndent(theEnv);
-   CL_SavePPBuffer(theEnv,DefclassData(theEnv)->ObjectParseToken.printFoCL_rm);
+   CL_SavePPBuffer(theEnv,DefclassData(theEnv)->ObjectParseToken.printFo_rm);
 
    hnd = CL_FindHandlerByAddress(cls,mname,mtype);
-   if (CL_GetPrintWhileCL_Loading(theEnv) && CL_GetCompilationsCL_Watch(theEnv))
+   if (CL_GetPrintWhile_Loading(theEnv) && CL_GetCompilations_Watch(theEnv))
      {
       CL_WriteString(theEnv,STDOUT,"   Handler ");
       CL_WriteString(theEnv,STDOUT,mname->contents);
@@ -265,7 +265,7 @@ bool CL_ParseDefmessageHandler(
      }
    CL_PPBackup(theEnv);
    CL_PPBackup(theEnv);
-   CL_SavePPBuffer(theEnv,DefclassData(theEnv)->ObjectParseToken.printFoCL_rm);
+   CL_SavePPBuffer(theEnv,DefclassData(theEnv)->ObjectParseToken.printFo_rm);
    CL_SavePPBuffer(theEnv,"\n");
 
    /* ===================================================
@@ -284,9 +284,9 @@ bool CL_ParseDefmessageHandler(
      {
       CL_ExpressionDeinstall(theEnv,hnd->actions);
       CL_ReturnPackedExpression(theEnv,hnd->actions);
-      if (hnd->header.ppFoCL_rm != NULL)
-        CL_rm(theEnv,(void *) hnd->header.ppFoCL_rm,
-           (sizeof(char) * (strlen(hnd->header.ppFoCL_rm)+1)));
+      if (hnd->header.ppFo_rm != NULL)
+        CL_rm(theEnv,(void *) hnd->header.ppFo_rm,
+           (sizeof(char) * (strlen(hnd->header.ppFo_rm)+1)));
      }
    else
      {
@@ -306,10 +306,10 @@ bool CL_ParseDefmessageHandler(
       Old handler trace status is automatically preserved
       =================================================== */
    if (CL_GetConserveMemory(theEnv) == false)
-     hnd->header.ppFoCL_rm = CL_CopyPPBuffer(theEnv);
+     hnd->header.ppFo_rm = CL_CopyPPBuffer(theEnv);
    else
 #endif
-     hnd->header.ppFoCL_rm = NULL;
+     hnd->header.ppFo_rm = NULL;
    return false;
   }
 
@@ -349,7 +349,7 @@ void CL_CreateGetAndPutHandlers(
    const char *oldString;
    long oldIndex;
 
-   if ((sd->createReadAccessor == 0) && (sd->createCL_WriteAccessor == 0))
+   if ((sd->createReadAccessor == 0) && (sd->create_WriteAccessor == 0))
      return;
    className = sd->cls->header.name->contents;
    slotName = sd->slotName->name->contents;
@@ -357,8 +357,8 @@ void CL_CreateGetAndPutHandlers(
    bufsz = (sizeof(char) * (strlen(className) + (strlen(slotName) * 2) + 80));
    buf = (char *) CL_gm2(theEnv,bufsz);
 
-   oldPWL = CL_GetPrintWhileCL_Loading(theEnv);
-   SetPrintWhileCL_Loading(theEnv,false);
+   oldPWL = CL_GetPrintWhile_Loading(theEnv);
+   SetPrintWhile_Loading(theEnv,false);
    oldCM = CL_SetConserveMemory(theEnv,true);
 
    if (sd->createReadAccessor)
@@ -388,7 +388,7 @@ void CL_CreateGetAndPutHandlers(
       RouterData(theEnv)->FastCharGetString = oldString;
      }
 
-   if (sd->createCL_WriteAccessor)
+   if (sd->create_WriteAccessor)
      {
       CL_gensprintf(buf,"%s put-%s ($?value) (bind ?self:%s ?value))",
                   className,slotName,slotName);
@@ -417,7 +417,7 @@ void CL_CreateGetAndPutHandlers(
       RouterData(theEnv)->FastCharGetString = oldString;
      }
 
-   SetPrintWhileCL_Loading(theEnv,oldPWL);
+   SetPrintWhile_Loading(theEnv,oldPWL);
    CL_SetConserveMemory(theEnv,oldCM);
 
    CL_rm(theEnv,buf,bufsz);
@@ -431,8 +431,8 @@ void CL_CreateGetAndPutHandlers(
 
 /*****************************************************************
   NAME         : IsParameterSlotReference
-  DESCRIPTION  : DeteCL_rmines if a message-handler parameter is of
-                 the foCL_rm ?self:<name>, which is not allowed since
+  DESCRIPTION  : Dete_rmines if a message-handler parameter is of
+                 the fo_rm ?self:<name>, which is not allowed since
                  this is slot reference syntax
   INPUTS       : The paramter name
   RETURNS      : True if the parameter is a slot reference,
@@ -461,7 +461,7 @@ static bool IsParameterSlotReference(
                    at run-time
                  The slot in in the class bound at parse-time is always
                    referenced (early binding).
-                 Slot references of the foCL_rm ?self:<name> directly reference
+                 Slot references of the fo_rm ?self:<name> directly reference
                    ProcParamArray[0] (the message object - ?self) to
                    find the specified slot at run-time
   INPUTS       : 1) Variable expression
@@ -514,7 +514,7 @@ static int SlotReferenceVar(
                  function calls to reference active instance at run-time
                  The slot in in the class bound at parse-time is always
                  referenced (early binding).
-                 Slot references of the foCL_rm ?self:<name> directly reference
+                 Slot references of the fo_rm ?self:<name> directly reference
                    ProcParamArray[0] (the message object - ?self) to
                    find the specified slot at run-time
   INPUTS       : 1) Variable expression
@@ -642,7 +642,7 @@ static SlotDescriptor *CheckSlotReference(
       handler could be called out of the context of
       an init.
       ================================================= */
-   if (sd->noCL_Write && (sd->initializeOnly == 0))
+   if (sd->no_Write && (sd->initializeOnly == 0))
      {
       CL_SlotAccessViolationError(theEnv,((CLIPSLexeme *) theValue)->contents,
                                NULL,theDefclass);

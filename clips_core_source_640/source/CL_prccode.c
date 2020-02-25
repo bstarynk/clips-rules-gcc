@@ -42,8 +42,8 @@
 /*            Added const qualifiers to remove C++            */
 /*            deprecation warnings.                           */
 /*                                                            */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and      */
-/*            SetCL_EvaluationError functions.                   */
+/*      6.40: Added Env prefix to Get_EvaluationError and      */
+/*            Set_EvaluationError functions.                   */
 /*                                                            */
 /*            Pragma once and other inclusion changes.        */
 /*                                                            */
@@ -149,16 +149,16 @@ void CL_InstallProcedurePrimitives(
   Environment *theEnv)
   {
    EntityRecord procParameterInfo = { "PROC_PARAM", PROC_PARAM,0,1,0,NULL,NULL,NULL,
-                                       (EntityCL_EvaluationFunction *) RtnProcParam,
+                                       (Entity_EvaluationFunction *) RtnProcParam,
                                        NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL },
                      procWildInfo =  { "PROC_WILD_PARAM", PROC_WILD_PARAM,0,1,0,NULL,NULL,NULL,
-                                       (EntityCL_EvaluationFunction *) RtnProcWild,
+                                       (Entity_EvaluationFunction *) RtnProcWild,
                                        NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL },
                      procGetInfo =   { "PROC_GET_BIND", PROC_GET_BIND,0,1,0,NULL,NULL,NULL,
-                                       (EntityCL_EvaluationFunction *) GetProcBind,
+                                       (Entity_EvaluationFunction *) GetProcBind,
                                        NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL },
                      procBindInfo =  { "PROC_BIND", PROC_BIND,0,1,0,NULL,NULL,NULL,
-                                       (EntityCL_EvaluationFunction *) PutProcBind,
+                                       (Entity_EvaluationFunction *) PutProcBind,
                                        NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL };
 
 #if ! DEFFUNCTION_CONSTRUCT
@@ -253,7 +253,7 @@ static void DeallocateProceduralPrimitiveData(
                     otherwise.
   RETURNS      : A list of expressions containing the
                    parameter names
-  SIDE EFFECTS : Parameters parsed and expressions foCL_rmed
+  SIDE EFFECTS : Parameters parsed and expressions fo_rmed
   NOTES        : None
  ************************************************************/
 Expression *CL_ParseProcParameters(
@@ -440,10 +440,10 @@ Expression *CL_ParseProcActions(
      }
 
    /* =======================================================================
-      NoCL_rmally, actions are grouped in a progn.  If there is only one action,
+      No_rmally, actions are grouped in a progn.  If there is only one action,
       the progn is unnecessary and can be removed.  Also, the actions are
       packed into a contiguous array to save on memory overhead.  The
-      inteCL_rmediate parsed bind names are freed to avoid tying up memory.
+      inte_rmediate parsed bind names are freed to avoid tying up memory.
       ======================================================================= */
    actions = CompactActions(theEnv,actions);
    pactions = CL_PackExpression(theEnv,actions);
@@ -715,7 +715,7 @@ void CL_PushProcParameters(
       Record ProcParamExpressions and WildcardValue for previous frame
       AFTER evaluating arguments for the new frame, because they could
       have gone from NULL to non-NULL (if they were already non-NULL,
-      they would reCL_main unchanged.)
+      they would re_main unchanged.)
       ================================================================ */
 #if DEFGENERIC_CONSTRUCT
    ptmp->ParamExpressions = ProceduralPrimitiveData(theEnv)->ProcParamExpressions;
@@ -829,7 +829,7 @@ static void CL_ReleaseProcParameters(
 
 /***********************************************************
   NAME         : CL_GetProcParamExpressions
-  DESCRIPTION  : FoCL_rms an array of expressions equivalent to
+  DESCRIPTION  : Fo_rms an array of expressions equivalent to
                  the current procedure paramter array.  Used
                  to conveniently attach these parameters as
                  arguments to a H/L system function call
@@ -927,7 +927,7 @@ void CL_EvaluateProcActions(
      {
       const char *logName;
 
-      if (GetCL_EvaluationError(theEnv))
+      if (Get_EvaluationError(theEnv))
         {
          CL_PrintErrorID(theEnv,"PRCCODE",4,false);
          logName = STDERR;
@@ -1121,7 +1121,7 @@ static void CL_EvaluateProcParameters(
             CL_WriteString(theEnv,STDERR,"Functions without a return value are illegal as ");
             CL_WriteString(theEnv,STDERR,bodytype);
             CL_WriteString(theEnv,STDERR," arguments.\n");
-            SetCL_EvaluationError(theEnv,true);
+            Set_EvaluationError(theEnv,true);
            }
          CL_PrintErrorID(theEnv,"PRCCODE",6,false);
          CL_WriteString(theEnv,STDERR,"This error occurred while evaluating arguments ");
@@ -1208,7 +1208,7 @@ static bool GetProcBind(
    if (pvar->second == 0)
      {
       CL_PrintErrorID(theEnv,"PRCCODE",5,false);
-      SetCL_EvaluationError(theEnv,true);
+      Set_EvaluationError(theEnv,true);
       CL_WriteString(theEnv,STDERR,"Variable ?");
       CL_WriteString(theEnv,STDERR,GetFirstArgument()->lexemeValue->contents);
       if (ProceduralPrimitiveData(theEnv)->ProcUnboundErrFunc != NULL)
@@ -1303,7 +1303,7 @@ static bool RtnProcWild(
 
 /***************************************************
   NAME         : FindProcParameter
-  DESCRIPTION  : DeteCL_rmines the relative position in
+  DESCRIPTION  : Dete_rmines the relative position in
                    an n-element list of a certain
                    parameter.  The index is 1..n.
   INPUTS       : 1) Parameter name
@@ -1469,7 +1469,7 @@ static bool CL_EvaluateBadCall(
    CL_PrintErrorID(theEnv,"PRCCODE",1,false);
    CL_WriteString(theEnv,STDERR,"Attempted to call a deffunction/generic function ");
    CL_WriteString(theEnv,STDERR,"which does not exist.\n");
-   SetCL_EvaluationError(theEnv,true);
+   Set_EvaluationError(theEnv,true);
    returnValue->value = FalseSymbol(theEnv);
    return false;
   }

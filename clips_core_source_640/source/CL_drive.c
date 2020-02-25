@@ -31,12 +31,12 @@
 /*      6.30: Added support for hashed memories.             */
 /*                                                           */
 /*            Added additional developer statistics to help  */
-/*            analyze join network perfoCL_rmance.              */
+/*            analyze join network perfo_rmance.              */
 /*                                                           */
 /*            Removed pseudo-facts used in not CE.           */
 /*                                                           */
-/*      6.40: Added Env prefix to GetCL_EvaluationError and     */
-/*            SetCL_EvaluationError functions.                  */
+/*      6.40: Added Env prefix to Get_EvaluationError and     */
+/*            Set_EvaluationError functions.                  */
 /*                                                           */
 /*            Pragma once and other inclusion changes.       */
 /*                                                           */
@@ -78,21 +78,21 @@
    static void                    JoinNetErrorMessage(Environment *,struct joinNode *);
 
 /************************************************/
-/* NetworkCL_Assert: Primary routine for filtering */
+/* Network_Assert: Primary routine for filtering */
 /*   a partial match through the join network.  */
 /************************************************/
-void NetworkCL_Assert(
+void Network_Assert(
   Environment *theEnv,
   struct partialMatch *binds,
   struct joinNode *join)
   {
    /*=========================================================*/
-   /* If an incremental reset is being perfoCL_rmed and the join */
+   /* If an incremental reset is being perfo_rmed and the join */
    /* is not part of the network to be reset, then return.    */
    /*=========================================================*/
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-   if (EngineData(theEnv)->CL_IncrementalCL_ResetInProgress && (join->initialize == false)) return;
+   if (EngineData(theEnv)->CL_Incremental_ResetInProgress && (join->initialize == false)) return;
 #endif
 
    /*==================================================*/
@@ -109,17 +109,17 @@ void NetworkCL_Assert(
    /* Enter the join from the right. */
    /*================================*/
 
-   NetworkCL_AssertRight(theEnv,binds,join,NETWORK_ASSERT);
+   Network_AssertRight(theEnv,binds,join,NETWORK_ASSERT);
 
    return;
   }
 
 /*****************************************************/
-/* NetworkCL_AssertRight: Primary routine for filtering */
+/* Network_AssertRight: Primary routine for filtering */
 /*   a partial match through the join network from   */
 /*   the RHS of a join.                              */
 /*****************************************************/
-void NetworkCL_AssertRight(
+void Network_AssertRight(
   Environment *theEnv,
   struct partialMatch *rhsBinds,
   struct joinNode *join,
@@ -132,12 +132,12 @@ void NetworkCL_AssertRight(
    struct joinNode *oldJoin = NULL;
 
    /*=========================================================*/
-   /* If an incremental reset is being perfoCL_rmed and the join */
+   /* If an incremental reset is being perfo_rmed and the join */
    /* is not part of the network to be reset, then return.    */
    /*=========================================================*/
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-   if (EngineData(theEnv)->CL_IncrementalCL_ResetInProgress && (join->initialize == false)) return;
+   if (EngineData(theEnv)->CL_Incremental_ResetInProgress && (join->initialize == false)) return;
 #endif
 
    if (join->firstJoin)
@@ -175,7 +175,7 @@ void NetworkCL_AssertRight(
    /*===================================================*/
    /* Compare each set of binds on the opposite side of */
    /* the join with the set of binds that entered this  */
-   /* join. If the binds don't mismatch, then perfoCL_rm   */
+   /* join. If the binds don't mismatch, then perfo_rm   */
    /* the appropriate action for the logic of the join. */
    /*===================================================*/
 
@@ -231,7 +231,7 @@ void NetworkCL_AssertRight(
 
       /*=========================================================*/
       /* If the join has an expression associated with it, then  */
-      /* evaluate the expression to deteCL_rmine if the new partial */
+      /* evaluate the expression to dete_rmine if the new partial */
       /* match derived from the LHS and RHS partial matches is   */
       /* valid (i.e. variable bindings are consistent and        */
       /* predicate expressions evaluate to true).                */
@@ -247,7 +247,7 @@ void NetworkCL_AssertRight(
          if (CL_EvaluationData(theEnv)->CL_EvaluationError)
            {
             if (join->patternIsNegated) exprResult = true;
-            SetCL_EvaluationError(theEnv,false);
+            Set_EvaluationError(theEnv,false);
            }
 
 #if DEVELOPER
@@ -261,13 +261,13 @@ void NetworkCL_AssertRight(
          EngineData(theEnv)->GlobalLHSBinds = lhsBinds;
          exprResult = CL_EvaluateJoinExpression(theEnv,join->secondaryNetworkTest,join);
          if (CL_EvaluationData(theEnv)->CL_EvaluationError)
-           { SetCL_EvaluationError(theEnv,false); }
+           { Set_EvaluationError(theEnv,false); }
         }
 
       /*====================================================*/
       /* If the join expression evaluated to true (i.e.     */
       /* there were no conflicts between variable bindings, */
-      /* all tests were satisfied, etc.), then perfoCL_rm the  */
+      /* all tests were satisfied, etc.), then perfo_rm the  */
       /* appropriate action given the logic of this join.   */
       /*====================================================*/
 
@@ -282,7 +282,7 @@ void NetworkCL_AssertRight(
            {
             CL_AddBlockedLink(lhsBinds,rhsBinds);
             if (lhsBinds->children != NULL)
-              { CL_PosEntryCL_RetractBeta(theEnv,lhsBinds,lhsBinds->children,operation); }
+              { CL_PosEntry_RetractBeta(theEnv,lhsBinds,lhsBinds->children,operation); }
             /*
             if (lhsBinds->dependents != NULL)
               { CL_RemoveLogicalSupport(theEnv,lhsBinds); }
@@ -314,11 +314,11 @@ void NetworkCL_AssertRight(
   }
 
 /****************************************************/
-/* NetworkCL_AssertLeft: Primary routine for filtering */
+/* Network_AssertLeft: Primary routine for filtering */
 /*   a partial match through the join network when  */
 /*   entering through the left side of a join.      */
 /****************************************************/
-void NetworkCL_AssertLeft(
+void Network_AssertLeft(
   Environment *theEnv,
   struct partialMatch *lhsBinds,
   struct joinNode *join,
@@ -335,12 +335,12 @@ void NetworkCL_AssertLeft(
      { return; }
 
    /*=========================================================*/
-   /* If an incremental reset is being perfoCL_rmed and the join */
+   /* If an incremental reset is being perfo_rmed and the join */
    /* is not part of the network to be reset, then return.    */
    /*=========================================================*/
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-   if (EngineData(theEnv)->CL_IncrementalCL_ResetInProgress && (join->initialize == false)) return;
+   if (EngineData(theEnv)->CL_Incremental_ResetInProgress && (join->initialize == false)) return;
 #endif
 
    /*===================================*/
@@ -375,7 +375,7 @@ void NetworkCL_AssertLeft(
 
          exprResult = CL_EvaluateJoinExpression(theEnv,join->networkTest,join);
          if (CL_EvaluationData(theEnv)->CL_EvaluationError)
-           { SetCL_EvaluationError(theEnv,false); }
+           { Set_EvaluationError(theEnv,false); }
 
          EngineData(theEnv)->GlobalLHSBinds = oldLHSBinds;
          EngineData(theEnv)->GlobalRHSBinds = oldRHSBinds;
@@ -421,7 +421,7 @@ void NetworkCL_AssertLeft(
    /*===================================================*/
    /* Compare each set of binds on the opposite side of */
    /* the join with the set of binds that entered this  */
-   /* join. If the binds don't mismatch, then perfoCL_rm   */
+   /* join. If the binds don't mismatch, then perfo_rm   */
    /* the appropriate action for the logic of the join. */
    /*===================================================*/
 
@@ -446,7 +446,7 @@ void NetworkCL_AssertLeft(
 
       /*=========================================================*/
       /* If the join has an expression associated with it, then  */
-      /* evaluate the expression to deteCL_rmine if the new partial */
+      /* evaluate the expression to dete_rmine if the new partial */
       /* match derived from the LHS and RHS partial matches is   */
       /* valid (i.e. variable bindings are consistent and        */
       /* predicate expressions evaluate to true).                */
@@ -463,7 +463,7 @@ void NetworkCL_AssertLeft(
          if (CL_EvaluationData(theEnv)->CL_EvaluationError)
            {
             if (join->patternIsNegated) exprResult = true;
-            SetCL_EvaluationError(theEnv,false);
+            Set_EvaluationError(theEnv,false);
            }
 
 #if DEVELOPER
@@ -479,13 +479,13 @@ void NetworkCL_AssertLeft(
          EngineData(theEnv)->GlobalRHSBinds = rhsBinds;
          exprResult = CL_EvaluateJoinExpression(theEnv,join->secondaryNetworkTest,join);
          if (CL_EvaluationData(theEnv)->CL_EvaluationError)
-           { SetCL_EvaluationError(theEnv,false); }
+           { Set_EvaluationError(theEnv,false); }
         }
 
       /*====================================================*/
       /* If the join expression evaluated to true (i.e.     */
       /* there were no conflicts between variable bindings, */
-      /* all tests were satisfied, etc.), then perfoCL_rm the  */
+      /* all tests were satisfied, etc.), then perfo_rm the  */
       /* appropriate action given the logic of this join.   */
       /*====================================================*/
 
@@ -563,7 +563,7 @@ void NetworkCL_AssertLeft(
 
          exprResult = CL_EvaluateJoinExpression(theEnv,join->secondaryNetworkTest,join);
          if (CL_EvaluationData(theEnv)->CL_EvaluationError)
-           { SetCL_EvaluationError(theEnv,false); }
+           { Set_EvaluationError(theEnv,false); }
 
          if (exprResult)
             { CL_PPDrive(theEnv,lhsBinds,NULL,join,operation); }
@@ -588,7 +588,7 @@ void NetworkCL_AssertLeft(
 
 /*******************************************************/
 /* CL_EvaluateJoinExpression: CL_Evaluates join expressions. */
-/*   PerfoCL_rms a faster evaluation for join expressions */
+/*   Perfo_rms a faster evaluation for join expressions */
 /*   than if CL_EvaluateExpression was used directly.     */
 /*******************************************************/
 bool CL_EvaluateJoinExpression(
@@ -894,7 +894,7 @@ unsigned long CL_BetaMemoryHashValue(
 /* CL_PPDrive: Handles the merging of an alpha memory partial match   */
 /*   with a beta memory partial match for a join that has positive */
 /*   LHS entry and positive RHS entry. The partial matches being   */
-/*   merged have previously been checked to deteCL_rmine that they    */
+/*   merged have previously been checked to dete_rmine that they    */
 /*   satisify the constraints for the join. Once merged, the new   */
 /*   partial match is sent to each child join of the join from     */
 /*   which the merge took place.                                   */
@@ -928,10 +928,10 @@ void CL_PPDrive(
       /* Merge the alpha and beta memory partial matches. */
       /*==================================================*/
 
-      linker = MergePartialCL_Matches(theEnv,lhsBinds,rhsBinds);
+      linker = MergePartial_Matches(theEnv,lhsBinds,rhsBinds);
 
       /*================================================*/
-      /* DeteCL_rmine the hash value of the partial match. */
+      /* Dete_rmine the hash value of the partial match. */
       /*================================================*/
 
       if (listOfJoins->enterDirection == LHS)
@@ -956,9 +956,9 @@ void CL_PPDrive(
       CL_UpdateBetaPMLinks(theEnv,linker,lhsBinds,rhsBinds,listOfJoins->join,hashValue,listOfJoins->enterDirection);
 
       if (listOfJoins->enterDirection == LHS)
-        { NetworkCL_AssertLeft(theEnv,linker,listOfJoins->join,operation); }
+        { Network_AssertLeft(theEnv,linker,listOfJoins->join,operation); }
       else
-        { NetworkCL_AssertRight(theEnv,linker,listOfJoins->join,operation); }
+        { Network_AssertRight(theEnv,linker,listOfJoins->join,operation); }
 
       listOfJoins = listOfJoins->next;
      }
@@ -990,9 +990,9 @@ void CL_EPMDrive(
       CL_UpdateBetaPMLinks(theEnv,linker,parent,NULL,listOfJoins->join,0,listOfJoins->enterDirection);
 
       if (listOfJoins->enterDirection == LHS)
-        { NetworkCL_AssertLeft(theEnv,linker,listOfJoins->join,operation); }
+        { Network_AssertLeft(theEnv,linker,listOfJoins->join,operation); }
       else
-        { NetworkCL_AssertRight(theEnv,linker,listOfJoins->join,operation); }
+        { Network_AssertRight(theEnv,linker,listOfJoins->join,operation); }
 
       listOfJoins = listOfJoins->next;
      }
@@ -1018,7 +1018,7 @@ static void EmptyDrive(
    struct joinNode *oldJoin;
 
    /*======================================================*/
-   /* DeteCL_rmine if the alpha memory partial match satifies */
+   /* Dete_rmine if the alpha memory partial match satifies */
    /* the join expression. If it doesn't then no further   */
    /* action is taken.                                     */
    /*======================================================*/
@@ -1081,7 +1081,7 @@ static void EmptyDrive(
       CL_AddBlockedLink(notParent,rhsBinds);
 
       if (notParent->children != NULL)
-        { CL_PosEntryCL_RetractBeta(theEnv,notParent,notParent->children,operation); }
+        { CL_PosEntry_RetractBeta(theEnv,notParent,notParent->children,operation); }
       /*
       if (notParent->dependents != NULL)
 		{ CL_RemoveLogicalSupport(theEnv,notParent); }
@@ -1136,7 +1136,7 @@ static void EmptyDrive(
         { linker = CL_CopyPartialMatch(theEnv,rhsBinds); }
 
       /*================================================*/
-      /* DeteCL_rmine the hash value of the partial match. */
+      /* Dete_rmine the hash value of the partial match. */
       /*================================================*/
 
       if (listOfJoins->enterDirection == LHS)
@@ -1164,16 +1164,16 @@ static void EmptyDrive(
         { CL_UpdateBetaPMLinks(theEnv,linker,NULL,rhsBinds,listOfJoins->join,hashValue,listOfJoins->enterDirection); }
 
       if (listOfJoins->enterDirection == LHS)
-        { NetworkCL_AssertLeft(theEnv,linker,listOfJoins->join,operation); }
+        { Network_AssertLeft(theEnv,linker,listOfJoins->join,operation); }
       else
-        { NetworkCL_AssertRight(theEnv,linker,listOfJoins->join,operation); }
+        { Network_AssertRight(theEnv,linker,listOfJoins->join,operation); }
 
       listOfJoins = listOfJoins->next;
      }
   }
 
 /********************************************************************/
-/* JoinNetErrorMessage: Prints an infoCL_rmational message indicating  */
+/* JoinNetErrorMessage: Prints an info_rmational message indicating  */
 /*   which join of a rule generated an error when a join expression */
 /*   was being evaluated.                                           */
 /********************************************************************/

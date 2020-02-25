@@ -8,8 +8,8 @@
 
 /*************************************************************/
 /* Purpose: Analyzes LHS patterns to check for semantic      */
-/*   errors and to deteCL_rmine variable comparisons and other  */
-/*   tests which must be perfoCL_rmed either in the pattern or  */
+/*   errors and to dete_rmine variable comparisons and other  */
+/*   tests which must be perfo_rmed either in the pattern or  */
 /*   join networks.                                          */
 /*                                                           */
 /* Principal Programmer(s):                                  */
@@ -44,7 +44,7 @@
 #include "reorder.h"
 
 /*****************************************************/
-/* nandFrame structure: Stores infoCL_rmation about the */
+/* nandFrame structure: Stores info_rmation about the */
 /*   current position in the nesting of not/and CEs  */
 /*   as the patterns of a rule are analyzed.         */
 /*****************************************************/

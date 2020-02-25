@@ -831,7 +831,7 @@ void CL_PrintBitMapReference(
 
 /*********************************************************/
 /* PrintCString: Prints KB strings in the appropriate    */
-/*   foCL_rmat for C (the " and \ characters are preceeded  */
+/*   fo_rmat for C (the " and \ characters are preceeded  */
 /*   by a \ and carriage returns are replaced with \n).  */
 /*********************************************************/
 static void PrintCString(
