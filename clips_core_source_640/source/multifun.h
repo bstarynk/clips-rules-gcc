@@ -63,34 +63,35 @@
 
 #define VALUE_NOT_FOUND SIZE_MAX
 
-   void                    CL_MultifieldFunctionDefinitions(Environment *);
+void CL_MultifieldFunctionDefinitions (Environment *);
 #if MULTIFIELD_FUNCTIONS
-   void                    CL_DeleteFunction(Environment *,UDFContext *,UDFValue *);
-   void                    CL_ReplaceFunction(Environment *,UDFContext *,UDFValue *);
-   void                    CL_Delete_MemberFunction(Environment *,UDFContext *,UDFValue *);
-   void                    Replace_MemberFunction(Environment *,UDFContext *,UDFValue *);
-   void                    CL_InsertFunction(Environment *,UDFContext *,UDFValue *);
-   void                    CL_ExplodeFunction(Environment *,UDFContext *,UDFValue *);
-   void                    CL_ImplodeFunction(Environment *,UDFContext *,UDFValue *);
-   void                    CL_SubseqFunction(Environment *,UDFContext *,UDFValue *);
-   void                    CL_FirstFunction(Environment *,UDFContext *,UDFValue *);
-   void                    CL_RestFunction(Environment *,UDFContext *,UDFValue *);
-   void                    CL_NthFunction(Environment *,UDFContext *,UDFValue *);
-   void                    CL_SubsetpFunction(Environment *,UDFContext *,UDFValue *);
-   void                    CL_MemberFunction(Environment *,UDFContext *,UDFValue *);
-   void                    CL_Multifield_PrognFunction(Environment *,UDFContext *,UDFValue *);
-   void                    CL_ForeachFunction(Environment *,UDFContext *,UDFValue *);
-   void                    CL_GetMvPrognField(Environment *,UDFContext *,UDFValue *);
-   void                    CL_GetMvPrognIndex(Environment *,UDFContext *,UDFValue *);
-   bool                    CL_FindDOsInSegment(UDFValue *,unsigned int,UDFValue *,
-                                            size_t *,size_t *,size_t *,unsigned int);
+void CL_DeleteFunction (Environment *, UDFContext *, UDFValue *);
+void CL_ReplaceFunction (Environment *, UDFContext *, UDFValue *);
+void CL_Delete_MemberFunction (Environment *, UDFContext *, UDFValue *);
+void Replace_MemberFunction (Environment *, UDFContext *, UDFValue *);
+void CL_InsertFunction (Environment *, UDFContext *, UDFValue *);
+void CL_ExplodeFunction (Environment *, UDFContext *, UDFValue *);
+void CL_ImplodeFunction (Environment *, UDFContext *, UDFValue *);
+void CL_SubseqFunction (Environment *, UDFContext *, UDFValue *);
+void CL_FirstFunction (Environment *, UDFContext *, UDFValue *);
+void CL_RestFunction (Environment *, UDFContext *, UDFValue *);
+void CL_NthFunction (Environment *, UDFContext *, UDFValue *);
+void CL_SubsetpFunction (Environment *, UDFContext *, UDFValue *);
+void CL_MemberFunction (Environment *, UDFContext *, UDFValue *);
+void CL_Multifield_PrognFunction (Environment *, UDFContext *, UDFValue *);
+void CL_ForeachFunction (Environment *, UDFContext *, UDFValue *);
+void CL_GetMvPrognField (Environment *, UDFContext *, UDFValue *);
+void CL_GetMvPrognIndex (Environment *, UDFContext *, UDFValue *);
+bool CL_FindDOsInSegment (UDFValue *, unsigned int, UDFValue *,
+			  size_t *, size_t *, size_t *, unsigned int);
 #endif
-   bool                    CL_ReplaceMultiValueFieldSizet(Environment *,UDFValue *,UDFValue *,
-                                                  size_t,size_t,UDFValue *,const char *);
-   bool                    CL_InsertMultiValueField(Environment *,UDFValue *,UDFValue *,
-                                                 size_t,UDFValue *,const char *);
-   void                    CL_MVRangeError(Environment *,long long,long long,size_t,const char *);
-   size_t                  CL_FindValueInMultifield(UDFValue *,UDFValue *);
+bool CL_ReplaceMultiValueFieldSizet (Environment *, UDFValue *, UDFValue *,
+				     size_t, size_t, UDFValue *,
+				     const char *);
+bool CL_InsertMultiValueField (Environment *, UDFValue *, UDFValue *, size_t,
+			       UDFValue *, const char *);
+void CL_MVRangeError (Environment *, long long, long long, size_t,
+		      const char *);
+size_t CL_FindValueInMultifield (UDFValue *, UDFValue *);
 
 #endif /* _H_multifun */
-

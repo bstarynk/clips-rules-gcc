@@ -76,79 +76,78 @@ struct deftemplateModule;
 #include "moduldef.h"
 
 struct deftemplateModule
-  {
-   struct defmoduleItemHeader header;
-  };
+{
+  struct defmoduleItemHeader header;
+};
 
 #include "constrnt.h"
 #include "factbld.h"
 
 struct deftemplate
-  {
-   ConstructHeader header;
-   struct templateSlot *slotList;
-   unsigned int implied       : 1;
-   unsigned int watch         : 1;
-   unsigned int inScope       : 1;
-   unsigned short numberOfSlots;
-   long busyCount;
-   struct factPatternNode *patternNetwork;
-   Fact *factList;
-   Fact *lastFact;
-  };
+{
+  ConstructHeader header;
+  struct templateSlot *slotList;
+  unsigned int implied:1;
+  unsigned int watch:1;
+  unsigned int inScope:1;
+  unsigned short numberOfSlots;
+  long busyCount;
+  struct factPatternNode *patternNetwork;
+  Fact *factList;
+  Fact *lastFact;
+};
 
 struct templateSlot
-  {
-   CLIPSLexeme *slotName;
-   unsigned int multislot : 1;
-   unsigned int noDefault : 1;
-   unsigned int defaultPresent : 1;
-   unsigned int defaultDynamic : 1;
-   CONSTRAINT_RECORD *constraints;
-   Expression *defaultList;
-   Expression *facetList;
-   struct templateSlot *next;
-  };
+{
+  CLIPSLexeme *slotName;
+  unsigned int multislot:1;
+  unsigned int noDefault:1;
+  unsigned int defaultPresent:1;
+  unsigned int defaultDynamic:1;
+  CONSTRAINT_RECORD *constraints;
+  Expression *defaultList;
+  Expression *facetList;
+  struct templateSlot *next;
+};
 
 
 #define DEFTEMPLATE_DATA 5
 
 struct deftemplateData
-  {
-   Construct *DeftemplateConstruct;
-   unsigned int CL_DeftemplateModuleIndex;
-   struct entityRecord DeftemplatePtrRecord;
+{
+  Construct *DeftemplateConstruct;
+  unsigned int CL_DeftemplateModuleIndex;
+  struct entityRecord DeftemplatePtrRecord;
 #if DEBUGGING_FUNCTIONS
-   int DeletedTemplateDebugFlags;
+  int DeletedTemplateDebugFlags;
 #endif
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
-   struct CodeGeneratorItem *DeftemplateCodeItem;
+  struct CodeGeneratorItem *DeftemplateCodeItem;
 #endif
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   bool DeftemplateError;
+  bool DeftemplateError;
 #endif
-  };
+};
 
 #define DeftemplateData(theEnv) ((struct deftemplateData *) GetEnvironmentData(theEnv,DEFTEMPLATE_DATA))
 
-   void                           CL_InitializeDeftemplates(Environment *);
-   Deftemplate                   *CL_FindDeftemplate(Environment *,const char *);
-   Deftemplate                   *CL_FindDeftemplateInModule(Environment *,const char *);
-   Deftemplate                   *CL_GetNextDeftemplate(Environment *,Deftemplate *);
-   bool                           CL_DeftemplateIsDeletable(Deftemplate *);
-   Fact                          *CL_GetNextFactInTemplate(Deftemplate *,Fact *);
-   struct deftemplateModule      *Get_DeftemplateModuleItem(Environment *,Defmodule *);
-   void                           CL_ReturnSlots(Environment *,struct templateSlot *);
-   void                           CL_IncrementDeftemplateBusyCount(Environment *,Deftemplate *);
-   void                           CL_DecrementDeftemplateBusyCount(Environment *,Deftemplate *);
-   void                          *CL_CreateDeftemplateScopeMap(Environment *,Deftemplate *);
+void CL_InitializeDeftemplates (Environment *);
+Deftemplate *CL_FindDeftemplate (Environment *, const char *);
+Deftemplate *CL_FindDeftemplateInModule (Environment *, const char *);
+Deftemplate *CL_GetNextDeftemplate (Environment *, Deftemplate *);
+bool CL_DeftemplateIsDeletable (Deftemplate *);
+Fact *CL_GetNextFactInTemplate (Deftemplate *, Fact *);
+struct deftemplateModule *Get_DeftemplateModuleItem (Environment *,
+						     Defmodule *);
+void CL_ReturnSlots (Environment *, struct templateSlot *);
+void CL_IncrementDeftemplateBusyCount (Environment *, Deftemplate *);
+void CL_DecrementDeftemplateBusyCount (Environment *, Deftemplate *);
+void *CL_CreateDeftemplateScopeMap (Environment *, Deftemplate *);
 #if RUN_TIME
-   void                           Deftemplate_RunTimeInitialize(Environment *);
+void Deftemplate_RunTimeInitialize (Environment *);
 #endif
-   const char                    *CL_DeftemplateModule(Deftemplate *);
-   const char                    *CL_DeftemplateName(Deftemplate *);
-   const char                    *CL_DeftemplatePPFo_rm(Deftemplate *);
+const char *CL_DeftemplateModule (Deftemplate *);
+const char *CL_DeftemplateName (Deftemplate *);
+const char *CL_DeftemplatePPFo_rm (Deftemplate *);
 
 #endif /* _H_tmpltdef */
-
-

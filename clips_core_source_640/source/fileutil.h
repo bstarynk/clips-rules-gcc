@@ -28,23 +28,17 @@
 
 #define _H_fileutil
 
-   bool                           CL_DribbleOn(Environment *,const char *);
-   bool                           CL_DribbleActive(Environment *);
-   bool                           CL_DribbleOff(Environment *);
-   void                           CL_AppendDribble(Environment *,const char *);
-   int                            LLGetc_Batch(Environment *,const char *,bool);
-   bool                           CL_Batch(Environment *,const char *);
-   bool                           Open_Batch(Environment *,const char *,bool);
-   bool                           OpenString_Batch(Environment *,const char *,const char *,bool);
-   bool                           Remove_Batch(Environment *);
-   bool                           CL_BatchActive(Environment *);
-   void                           CloseAll_BatchSources(Environment *);
-   bool                           CL_BatchStar(Environment *,const char *);
+bool CL_DribbleOn (Environment *, const char *);
+bool CL_DribbleActive (Environment *);
+bool CL_DribbleOff (Environment *);
+void CL_AppendDribble (Environment *, const char *);
+int LLGetc_Batch (Environment *, const char *, bool);
+bool CL_Batch (Environment *, const char *);
+bool Open_Batch (Environment *, const char *, bool);
+bool OpenString_Batch (Environment *, const char *, const char *, bool);
+bool Remove_Batch (Environment *);
+bool CL_BatchActive (Environment *);
+void CloseAll_BatchSources (Environment *);
+bool CL_BatchStar (Environment *, const char *);
 
 #endif /* _H_fileutil */
-
-
-
-
-
-

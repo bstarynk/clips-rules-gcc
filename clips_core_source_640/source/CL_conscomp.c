@@ -149,9 +149,11 @@
 #define PRIMARY_CODES   "ADGHJKMNOQRTUVWXYZ"
 #define PRIMARY_LEN     18
 
-const char *SecondaryCodes[] = { "A" , "B", "C", "D", "E" , "F" , "G" , "H", "I", "J" , "K",
-                                 "L" , "M", "N", "O", "P" , "Q" , "R" , "S", "T", "U" , "V",
-                                 "W" , "X", "Y", "Z", "AA", "BB", "CC", "DD", "EE" , "FF" };
+const char *SecondaryCodes[] =
+  { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
+  "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V",
+  "W", "X", "Y", "Z", "AA", "BB", "CC", "DD", "EE", "FF"
+};
 
 #define SECONDARY_LEN   32
 
@@ -159,642 +161,720 @@ const char *SecondaryCodes[] = { "A" , "B", "C", "D", "E" , "F" , "G" , "H", "I"
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   void                               CL_ConstructsToCCommand(Environment *,UDFContext *,UDFValue *);
-   static bool                        ConstructsToC(Environment *,const char *,const char *,char *,long long,long long);
-   static void                        CL_WriteFunctionExternDeclarations(Environment *,FILE *);
-   static bool                        FunctionsToCode(Environment *theEnv,const char *,const char *,char *);
-   static bool                        CL_WriteInitializationFunction(Environment *,const char *,const char *,char *);
-   static void                        DumpExpression(Environment *,struct expr *);
-   static void                        MarkConstruct(Environment *,ConstructHeader *,void *);
-   static void                        HashedExpressionsToCode(Environment *);
-   static void                        DeallocateConstructCompilerData(Environment *);
+void CL_ConstructsToCCommand (Environment *, UDFContext *, UDFValue *);
+static bool ConstructsToC (Environment *, const char *, const char *, char *,
+			   long long, long long);
+static void CL_WriteFunctionExternDeclarations (Environment *, FILE *);
+static bool FunctionsToCode (Environment * theEnv, const char *, const char *,
+			     char *);
+static bool CL_WriteInitializationFunction (Environment *, const char *,
+					    const char *, char *);
+static void DumpExpression (Environment *, struct expr *);
+static void MarkConstruct (Environment *, ConstructHeader *, void *);
+static void HashedExpressionsToCode (Environment *);
+static void DeallocateConstructCompilerData (Environment *);
 
 /**********************************************************/
 /* CL_InitializeConstructCompilerData: Allocates environment */
 /*    data for the constructs-to-c command.               */
 /**********************************************************/
-void CL_InitializeConstructCompilerData(
-  Environment *theEnv)
-  {
-   CL_AllocateEnvironmentData(theEnv,CONSTRUCT_COMPILER_DATA,sizeof(struct constructCompilerData),DeallocateConstructCompilerData);
+void
+CL_InitializeConstructCompilerData (Environment * theEnv)
+{
+  CL_AllocateEnvironmentData (theEnv, CONSTRUCT_COMPILER_DATA,
+			      sizeof (struct constructCompilerData),
+			      DeallocateConstructCompilerData);
 
-   ConstructCompilerData(theEnv)->MaxIndices = 2000;
-   ConstructCompilerData(theEnv)->CodeGeneratorCount = 0;
-  }
+  ConstructCompilerData (theEnv)->MaxIndices = 2000;
+  ConstructCompilerData (theEnv)->CodeGeneratorCount = 0;
+}
 
 /************************************************************/
 /* DeallocateConstructCompilerData: Deallocates environment */
 /*    data for the constructs-to-c command.                 */
 /************************************************************/
-static void DeallocateConstructCompilerData(
-  Environment *theEnv)
-  {
-   struct CodeGeneratorItem *tmpPtr, *nextPtr;
-   unsigned int i;
+static void
+DeallocateConstructCompilerData (Environment * theEnv)
+{
+  struct CodeGeneratorItem *tmpPtr, *nextPtr;
+  unsigned int i;
 
-   tmpPtr = ConstructCompilerData(theEnv)->ListOfCodeGeneratorItems;
-   while (tmpPtr != NULL)
-     {
+  tmpPtr = ConstructCompilerData (theEnv)->ListOfCodeGeneratorItems;
+  while (tmpPtr != NULL)
+    {
       nextPtr = tmpPtr->next;
 
-      for (i = 0; i < tmpPtr->arrayCount ; i++)
-        { CL_rm(theEnv,tmpPtr->arrayNames[i],strlen(tmpPtr->arrayNames[i]) + 1); }
+      for (i = 0; i < tmpPtr->arrayCount; i++)
+	{
+	  CL_rm (theEnv, tmpPtr->arrayNames[i],
+		 strlen (tmpPtr->arrayNames[i]) + 1);
+	}
 
       if (tmpPtr->arrayCount != 0)
-        { CL_rm(theEnv,tmpPtr->arrayNames,sizeof(char *) * tmpPtr->arrayCount); }
+	{
+	  CL_rm (theEnv, tmpPtr->arrayNames,
+		 sizeof (char *) * tmpPtr->arrayCount);
+	}
 
-      rtn_struct(theEnv,CodeGeneratorItem,tmpPtr);
+      rtn_struct (theEnv, CodeGeneratorItem, tmpPtr);
       tmpPtr = nextPtr;
-     }
-  }
+    }
+}
 
 /**********************************************/
 /* CL_ConstructsToCCommand: H/L access routine   */
 /*   for the constructs-to-c command.         */
 /**********************************************/
-void CL_ConstructsToCCommand(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
-   const char *fileName;
-   char *fileNameBuffer;
-   const char *pathName;
-   UDFValue theArg;
-   long long id, max;
-   size_t nameLength, pathLength;
+void
+CL_ConstructsToCCommand (Environment * theEnv,
+			 UDFContext * context, UDFValue * returnValue)
+{
+  const char *fileName;
+  char *fileNameBuffer;
+  const char *pathName;
+  UDFValue theArg;
+  long long id, max;
+  size_t nameLength, pathLength;
 #if WIN_MVC
-   int i;
+  int i;
 #endif
 
    /*====================================================*/
-   /* Get the name of the file in which to place C code. */
+  /* Get the name of the file in which to place C code. */
    /*====================================================*/
 
-   if (! CL_UDFFirstArgument(context,LEXEME_BITS,&theArg))
-     { return; }
+  if (!CL_UDFFirstArgument (context, LEXEME_BITS, &theArg))
+    {
+      return;
+    }
 
-   fileName = theArg.lexemeValue->contents;
-   nameLength = strlen(fileName);
+  fileName = theArg.lexemeValue->contents;
+  nameLength = strlen (fileName);
 
    /*================================*/
-   /* File names for the VAX and IBM */
-   /* PCs can't contain a period.    */
+  /* File names for the VAX and IBM */
+  /* PCs can't contain a period.    */
    /*================================*/
 
 #if WIN_MVC
-   for (i = 0 ; *(fileName+i) ; i++)
-     {
-      if (*(fileName+i) == '.')
-        {
-         CL_PrintErrorID(theEnv,"CONSCOMP",1,false);
-         CL_WriteString(theEnv,STDERR,"Invalid file name ");
-         CL_WriteString(theEnv,STDERR,fileName);
-         CL_WriteString(theEnv,STDERR," contains \'.\'\n");
-         return;
-        }
-      }
+  for (i = 0; *(fileName + i); i++)
+    {
+      if (*(fileName + i) == '.')
+	{
+	  CL_PrintErrorID (theEnv, "CONSCOMP", 1, false);
+	  CL_WriteString (theEnv, STDERR, "Invalid file name ");
+	  CL_WriteString (theEnv, STDERR, fileName);
+	  CL_WriteString (theEnv, STDERR, " contains \'.\'\n");
+	  return;
+	}
+    }
 #endif
 
    /*==========================================================*/
-   /* The maximum file name size that can be passed into fopen */
-   /* is specified by FILENAME_MAX. Assume that the most       */
-   /* characters that will be appended to the file prefix will */
-   /* be 20 and check that the prefix plus the additional      */
-   /* characters is less than the supported maximum.           */
+  /* The maximum file name size that can be passed into fopen */
+  /* is specified by FILENAME_MAX. Assume that the most       */
+  /* characters that will be appended to the file prefix will */
+  /* be 20 and check that the prefix plus the additional      */
+  /* characters is less than the supported maximum.           */
    /*==========================================================*/
 
-   if ((nameLength + EXTRA_FILE_NAME) > FILENAME_MAX)
-     {
-      CL_PrintErrorID(theEnv,"CONSCOMP",2,false);
-      CL_WriteString(theEnv,STDERR,"Aborting because the base file name may cause the fopen maximum of ");
-      CL_WriteInteger(theEnv,STDERR,FILENAME_MAX);
-      CL_WriteString(theEnv,STDERR," to be violated when file names are generated.\n");
+  if ((nameLength + EXTRA_FILE_NAME) > FILENAME_MAX)
+    {
+      CL_PrintErrorID (theEnv, "CONSCOMP", 2, false);
+      CL_WriteString (theEnv, STDERR,
+		      "Aborting because the base file name may cause the fopen maximum of ");
+      CL_WriteInteger (theEnv, STDERR, FILENAME_MAX);
+      CL_WriteString (theEnv, STDERR,
+		      " to be violated when file names are generated.\n");
       return;
-     }
+    }
 
    /*====================================*/
-   /* Get the runtime image ID argument. */
+  /* Get the runtime image ID argument. */
    /*====================================*/
 
-   if (! CL_UDFNextArgument(context,INTEGER_BIT,&theArg))
-     { return; }
-
-   id = theArg.integerValue->contents;
-   if (id < 0)
-     {
-      CL_ExpectedTypeError1(theEnv,"constructs-to-c",2,"'positive integer'");
+  if (!CL_UDFNextArgument (context, INTEGER_BIT, &theArg))
+    {
       return;
-     }
+    }
+
+  id = theArg.integerValue->contents;
+  if (id < 0)
+    {
+      CL_ExpectedTypeError1 (theEnv, "constructs-to-c", 2,
+			     "'positive integer'");
+      return;
+    }
 
    /*==================================================*/
-   /* Get the path name argument if one was specified. */
+  /* Get the path name argument if one was specified. */
    /*==================================================*/
 
-   if (UDFHasNextArgument(context))
-     {
-      if (! CL_UDFNextArgument(context,LEXEME_BITS,&theArg))
-        { return; }
+  if (UDFHasNextArgument (context))
+    {
+      if (!CL_UDFNextArgument (context, LEXEME_BITS, &theArg))
+	{
+	  return;
+	}
 
       pathName = theArg.lexemeValue->contents;
-      pathLength = strlen(pathName);
-     }
-   else
-     {
+      pathLength = strlen (pathName);
+    }
+  else
+    {
       pathName = "";
       pathLength = 0;
-     }
+    }
 
    /*===========================================*/
-   /* Get the maximum number of data structures */
-   /* to store per file argument (if supplied). */
+  /* Get the maximum number of data structures */
+  /* to store per file argument (if supplied). */
    /*===========================================*/
 
-   if (UDFHasNextArgument(context))
-     {
-      if (! CL_UDFNextArgument(context,INTEGER_BIT,&theArg))
-        { return; }
+  if (UDFHasNextArgument (context))
+    {
+      if (!CL_UDFNextArgument (context, INTEGER_BIT, &theArg))
+	{
+	  return;
+	}
 
       max = theArg.integerValue->contents;
 
       if (max < 0)
-        {
-         CL_ExpectedTypeError1(theEnv,"constructs-to-c",4,"'positive integer'");
-         return;
-        }
-     }
-   else
-     { max = 10000; }
+	{
+	  CL_ExpectedTypeError1 (theEnv, "constructs-to-c", 4,
+				 "'positive integer'");
+	  return;
+	}
+    }
+  else
+    {
+      max = 10000;
+    }
 
    /*============================*/
-   /* Call the driver routine to */
-   /* generate the C code.       */
+  /* Call the driver routine to */
+  /* generate the C code.       */
    /*============================*/
 
-   fileNameBuffer = (char *) CL_genalloc(theEnv,nameLength + pathLength + EXTRA_FILE_NAME);
+  fileNameBuffer =
+    (char *) CL_genalloc (theEnv, nameLength + pathLength + EXTRA_FILE_NAME);
 
-   ConstructsToC(theEnv,fileName,pathName,fileNameBuffer,id,max);
+  ConstructsToC (theEnv, fileName, pathName, fileNameBuffer, id, max);
 
-   CL_genfree(theEnv,fileNameBuffer,nameLength + pathLength + EXTRA_FILE_NAME);
-  }
+  CL_genfree (theEnv, fileNameBuffer,
+	      nameLength + pathLength + EXTRA_FILE_NAME);
+}
 
 /***************************************/
 /* ConstructsToC: C access routine for */
 /*   the constructs-to-c command.      */
 /***************************************/
-static bool ConstructsToC(
-  Environment *theEnv,
-  const char *fileName,
-  const char *pathName,
-  char *fileNameBuffer,
-  long long theImageID,
-  long long max)
-  {
-   unsigned fileVersion;
-   struct CodeGeneratorItem *cgPtr;
+static bool
+ConstructsToC (Environment * theEnv,
+	       const char *fileName,
+	       const char *pathName,
+	       char *fileNameBuffer, long long theImageID, long long max)
+{
+  unsigned fileVersion;
+  struct CodeGeneratorItem *cgPtr;
 
    /*===============================================*/
-   /* Set the global MaxIndices variable indicating */
-   /* the maximum number of data structures to save */
-   /* in each file.                                 */
+  /* Set the global MaxIndices variable indicating */
+  /* the maximum number of data structures to save */
+  /* in each file.                                 */
    /*===============================================*/
 
-   ConstructCompilerData(theEnv)->MaxIndices = (unsigned) max; /* TBD */
+  ConstructCompilerData (theEnv)->MaxIndices = (unsigned) max;	/* TBD */
 
    /*=====================================================*/
-   /* Open a header file for dumping general info_rmation. */
+  /* Open a header file for dumping general info_rmation. */
    /*=====================================================*/
 
-   CL_gensprintf(fileNameBuffer,"%s%s.h",pathName,fileName);
-   if ((ConstructCompilerData(theEnv)->HeaderFP = CL_GenOpen(theEnv,fileNameBuffer,"w")) == NULL)
-     {
-      CL_OpenErrorMessage(theEnv,"constructs-to-c",fileNameBuffer);
+  CL_gensprintf (fileNameBuffer, "%s%s.h", pathName, fileName);
+  if ((ConstructCompilerData (theEnv)->HeaderFP =
+       CL_GenOpen (theEnv, fileNameBuffer, "w")) == NULL)
+    {
+      CL_OpenErrorMessage (theEnv, "constructs-to-c", fileNameBuffer);
       return false;
-     }
+    }
 
    /*============================================*/
-   /* Open a file for dumping fixup info_rmation. */
+  /* Open a file for dumping fixup info_rmation. */
    /*============================================*/
 
-   CL_gensprintf(fileNameBuffer,"%s%s_init.c",pathName,fileName);
-   if ((ConstructCompilerData(theEnv)->FixupFP = CL_GenOpen(theEnv,fileNameBuffer,"w")) == NULL)
-     {
-      CL_OpenErrorMessage(theEnv,"constructs-to-c",fileNameBuffer);
+  CL_gensprintf (fileNameBuffer, "%s%s_init.c", pathName, fileName);
+  if ((ConstructCompilerData (theEnv)->FixupFP =
+       CL_GenOpen (theEnv, fileNameBuffer, "w")) == NULL)
+    {
+      CL_OpenErrorMessage (theEnv, "constructs-to-c", fileNameBuffer);
       return false;
-     }
+    }
 
    /*==================================*/
-   /* Call the list of functions to be */
-   /* executed before generating code. */
+  /* Call the list of functions to be */
+  /* executed before generating code. */
    /*==================================*/
 
-   for (cgPtr = ConstructCompilerData(theEnv)->ListOfCodeGeneratorItems;
-        cgPtr != NULL;
-        cgPtr = cgPtr->next)
-     { if (cgPtr->beforeFunction != NULL) (*cgPtr->beforeFunction)(theEnv); }
+  for (cgPtr = ConstructCompilerData (theEnv)->ListOfCodeGeneratorItems;
+       cgPtr != NULL; cgPtr = cgPtr->next)
+    {
+      if (cgPtr->beforeFunction != NULL)
+	(*cgPtr->beforeFunction) (theEnv);
+    }
 
    /*=====================================*/
-   /* Initialize some global info_rmation. */
+  /* Initialize some global info_rmation. */
    /*=====================================*/
 
-   ConstructCompilerData(theEnv)->FilePrefix = fileName;
-   ConstructCompilerData(theEnv)->PathName = pathName;
-   ConstructCompilerData(theEnv)->FileNameBuffer = fileNameBuffer;
-   ConstructCompilerData(theEnv)->ImageID = (unsigned) theImageID; /* TBD */
-   ConstructCompilerData(theEnv)->ExpressionFP = NULL;
-   ConstructCompilerData(theEnv)->ExpressionVersion = 1;
-   ConstructCompilerData(theEnv)->ExpressionHeader = true;
-   ConstructCompilerData(theEnv)->ExpressionCount = 0;
+  ConstructCompilerData (theEnv)->FilePrefix = fileName;
+  ConstructCompilerData (theEnv)->PathName = pathName;
+  ConstructCompilerData (theEnv)->FileNameBuffer = fileNameBuffer;
+  ConstructCompilerData (theEnv)->ImageID = (unsigned) theImageID;	/* TBD */
+  ConstructCompilerData (theEnv)->ExpressionFP = NULL;
+  ConstructCompilerData (theEnv)->ExpressionVersion = 1;
+  ConstructCompilerData (theEnv)->ExpressionHeader = true;
+  ConstructCompilerData (theEnv)->ExpressionCount = 0;
 
-   fprintf(ConstructCompilerData(theEnv)->HeaderFP,"#ifndef _CONSTRUCT_COMPILER_HEADER_\n");
-   fprintf(ConstructCompilerData(theEnv)->HeaderFP,"#define _CONSTRUCT_COMPILER_HEADER_\n\n");
+  fprintf (ConstructCompilerData (theEnv)->HeaderFP,
+	   "#ifndef _CONSTRUCT_COMPILER_HEADER_\n");
+  fprintf (ConstructCompilerData (theEnv)->HeaderFP,
+	   "#define _CONSTRUCT_COMPILER_HEADER_\n\n");
 
-   fprintf(ConstructCompilerData(theEnv)->HeaderFP,"#include <stdio.h>\n");
-   fprintf(ConstructCompilerData(theEnv)->HeaderFP,"#include \"setup.h\"\n");
-   fprintf(ConstructCompilerData(theEnv)->HeaderFP,"#include \"expressn.h\"\n");
-   fprintf(ConstructCompilerData(theEnv)->HeaderFP,"#include \"extnfunc.h\"\n");
-   fprintf(ConstructCompilerData(theEnv)->HeaderFP,"#include \"%s\"\n",API_HEADER);
-   fprintf(ConstructCompilerData(theEnv)->HeaderFP,"\n#define VS (void *)\n");
-   fprintf(ConstructCompilerData(theEnv)->HeaderFP,"\n");
+  fprintf (ConstructCompilerData (theEnv)->HeaderFP, "#include <stdio.h>\n");
+  fprintf (ConstructCompilerData (theEnv)->HeaderFP,
+	   "#include \"setup.h\"\n");
+  fprintf (ConstructCompilerData (theEnv)->HeaderFP,
+	   "#include \"expressn.h\"\n");
+  fprintf (ConstructCompilerData (theEnv)->HeaderFP,
+	   "#include \"extnfunc.h\"\n");
+  fprintf (ConstructCompilerData (theEnv)->HeaderFP, "#include \"%s\"\n",
+	   API_HEADER);
+  fprintf (ConstructCompilerData (theEnv)->HeaderFP,
+	   "\n#define VS (void *)\n");
+  fprintf (ConstructCompilerData (theEnv)->HeaderFP, "\n");
 
    /*=========================================================*/
-   /* Give extern declarations for user and system functions. */
+  /* Give extern declarations for user and system functions. */
    /*=========================================================*/
 
-   CL_WriteFunctionExternDeclarations(theEnv,ConstructCompilerData(theEnv)->HeaderFP);
+  CL_WriteFunctionExternDeclarations (theEnv,
+				      ConstructCompilerData (theEnv)->
+				      HeaderFP);
 
-   fprintf(ConstructCompilerData(theEnv)->HeaderFP,"\n#endif\n\n");
-   fprintf(ConstructCompilerData(theEnv)->HeaderFP,"/****************************/\n");
-   fprintf(ConstructCompilerData(theEnv)->HeaderFP,"/* EXTERN ARRAY DEFINITIONS */\n");
-   fprintf(ConstructCompilerData(theEnv)->HeaderFP,"/****************************/\n\n");
+  fprintf (ConstructCompilerData (theEnv)->HeaderFP, "\n#endif\n\n");
+  fprintf (ConstructCompilerData (theEnv)->HeaderFP,
+	   "/****************************/\n");
+  fprintf (ConstructCompilerData (theEnv)->HeaderFP,
+	   "/* EXTERN ARRAY DEFINITIONS */\n");
+  fprintf (ConstructCompilerData (theEnv)->HeaderFP,
+	   "/****************************/\n\n");
 
    /*================================================*/
-   /* CL_Write out the first portion of the fixup file. */
+  /* CL_Write out the first portion of the fixup file. */
    /*================================================*/
 
-   fprintf(ConstructCompilerData(theEnv)->FixupFP,"#include \"%s.h\"\n",fileName);
-   fprintf(ConstructCompilerData(theEnv)->FixupFP,"\n");
+  fprintf (ConstructCompilerData (theEnv)->FixupFP, "#include \"%s.h\"\n",
+	   fileName);
+  fprintf (ConstructCompilerData (theEnv)->FixupFP, "\n");
 
-   fprintf(ConstructCompilerData(theEnv)->FixupFP,"\n");
-   fprintf(ConstructCompilerData(theEnv)->FixupFP,"/**********************************/\n");
-   fprintf(ConstructCompilerData(theEnv)->FixupFP,"/* CONSTRUCT IMAGE FIXUP FUNCTION */\n");
-   fprintf(ConstructCompilerData(theEnv)->FixupFP,"/**********************************/\n");
+  fprintf (ConstructCompilerData (theEnv)->FixupFP, "\n");
+  fprintf (ConstructCompilerData (theEnv)->FixupFP,
+	   "/**********************************/\n");
+  fprintf (ConstructCompilerData (theEnv)->FixupFP,
+	   "/* CONSTRUCT IMAGE FIXUP FUNCTION */\n");
+  fprintf (ConstructCompilerData (theEnv)->FixupFP,
+	   "/**********************************/\n");
 
-   fprintf(ConstructCompilerData(theEnv)->FixupFP,"\nvoid FixupCImage_%d(\n",ConstructCompilerData(theEnv)->ImageID);
-   fprintf(ConstructCompilerData(theEnv)->FixupFP,"  Environment *theEnv)\n");
-   fprintf(ConstructCompilerData(theEnv)->FixupFP,"  {\n");
+  fprintf (ConstructCompilerData (theEnv)->FixupFP,
+	   "\nvoid FixupCImage_%d(\n",
+	   ConstructCompilerData (theEnv)->ImageID);
+  fprintf (ConstructCompilerData (theEnv)->FixupFP,
+	   "  Environment *theEnv)\n");
+  fprintf (ConstructCompilerData (theEnv)->FixupFP, "  {\n");
 
    /*==================================*/
-   /* Generate code for atomic values, */
-   /* function definitions, hashed     */
-   /* expressions, and constructs.     */
+  /* Generate code for atomic values, */
+  /* function definitions, hashed     */
+  /* expressions, and constructs.     */
    /*==================================*/
 
-   CL_AtomicValuesToCode(theEnv,fileName,pathName,fileNameBuffer);
+  CL_AtomicValuesToCode (theEnv, fileName, pathName, fileNameBuffer);
 
-   FunctionsToCode(theEnv,fileName,pathName,fileNameBuffer);
+  FunctionsToCode (theEnv, fileName, pathName, fileNameBuffer);
 
-   HashedExpressionsToCode(theEnv);
+  HashedExpressionsToCode (theEnv);
 
-   CL_ConstraintsToCode(theEnv,fileName,pathName,fileNameBuffer,4,
-                     ConstructCompilerData(theEnv)->HeaderFP,
-                     ConstructCompilerData(theEnv)->ImageID,
-                     ConstructCompilerData(theEnv)->MaxIndices);
+  CL_ConstraintsToCode (theEnv, fileName, pathName, fileNameBuffer, 4,
+			ConstructCompilerData (theEnv)->HeaderFP,
+			ConstructCompilerData (theEnv)->ImageID,
+			ConstructCompilerData (theEnv)->MaxIndices);
 
    /*===============================*/
-   /* Call each code generator item */
-   /* for the various constructs.   */
+  /* Call each code generator item */
+  /* for the various constructs.   */
    /*===============================*/
 
-   fileVersion = 5;
-   for (cgPtr = ConstructCompilerData(theEnv)->ListOfCodeGeneratorItems;
-        cgPtr != NULL;
-        cgPtr = cgPtr->next)
-     {
+  fileVersion = 5;
+  for (cgPtr = ConstructCompilerData (theEnv)->ListOfCodeGeneratorItems;
+       cgPtr != NULL; cgPtr = cgPtr->next)
+    {
       if (cgPtr->generateFunction != NULL)
-        {
-         (*cgPtr->generateFunction)(theEnv,fileName,pathName,fileNameBuffer,fileVersion,ConstructCompilerData(theEnv)->HeaderFP,ConstructCompilerData(theEnv)->ImageID,ConstructCompilerData(theEnv)->MaxIndices);
-         fileVersion++;
-        }
-     }
+	{
+	  (*cgPtr->generateFunction) (theEnv, fileName, pathName,
+				      fileNameBuffer, fileVersion,
+				      ConstructCompilerData (theEnv)->
+				      HeaderFP,
+				      ConstructCompilerData (theEnv)->ImageID,
+				      ConstructCompilerData (theEnv)->
+				      MaxIndices);
+	  fileVersion++;
+	}
+    }
 
    /*=========================================*/
-   /* Restore the atomic data bucket values   */
-   /* (which were set to an index reference). */
+  /* Restore the atomic data bucket values   */
+  /* (which were set to an index reference). */
    /*=========================================*/
 
-   CL_RestoreAtomicValueBuckets(theEnv);
+  CL_RestoreAtomicValueBuckets (theEnv);
 
    /*============================*/
-   /* Close the expression file. */
+  /* Close the expression file. */
    /*============================*/
 
-   if (ConstructCompilerData(theEnv)->ExpressionFP != NULL)
-     {
-      fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"};\n");
-      CL_GenClose(theEnv,ConstructCompilerData(theEnv)->ExpressionFP);
-     }
+  if (ConstructCompilerData (theEnv)->ExpressionFP != NULL)
+    {
+      fprintf (ConstructCompilerData (theEnv)->ExpressionFP, "};\n");
+      CL_GenClose (theEnv, ConstructCompilerData (theEnv)->ExpressionFP);
+    }
 
    /*=======================*/
-   /* Close the fixup file. */
+  /* Close the fixup file. */
    /*=======================*/
 
-   if (ConstructCompilerData(theEnv)->FixupFP != NULL)
-     {
-      fprintf(ConstructCompilerData(theEnv)->FixupFP,"  }\n");
-      CL_GenClose(theEnv,ConstructCompilerData(theEnv)->FixupFP);
-     }
+  if (ConstructCompilerData (theEnv)->FixupFP != NULL)
+    {
+      fprintf (ConstructCompilerData (theEnv)->FixupFP, "  }\n");
+      CL_GenClose (theEnv, ConstructCompilerData (theEnv)->FixupFP);
+    }
 
    /*====================================*/
-   /* CL_Write the initialization function. */
+  /* CL_Write the initialization function. */
    /*====================================*/
 
-   CL_WriteInitializationFunction(theEnv,fileName,pathName,fileNameBuffer);
+  CL_WriteInitializationFunction (theEnv, fileName, pathName, fileNameBuffer);
 
    /*========================*/
-   /* Close the header file. */
+  /* Close the header file. */
    /*========================*/
 
-   CL_GenClose(theEnv,ConstructCompilerData(theEnv)->HeaderFP);
+  CL_GenClose (theEnv, ConstructCompilerData (theEnv)->HeaderFP);
 
    /*==================================================*/
-   /* Return true to indicate that the constructs-to-c */
-   /* command was successfully executed.               */
+  /* Return true to indicate that the constructs-to-c */
+  /* command was successfully executed.               */
    /*==================================================*/
 
-   return true;
-  }
+  return true;
+}
 
 /*******************************************************/
 /* CL_WriteFunctionExternDeclarations: Loop through the   */
 /*   list of function definitions and generates extern */
 /*   declarations for them in the specified file.      */
 /*******************************************************/
-static void CL_WriteFunctionExternDeclarations(
-  Environment *theEnv,
-  FILE *fp)
-  {
-   struct functionDefinition *theFunction;
+static void
+CL_WriteFunctionExternDeclarations (Environment * theEnv, FILE * fp)
+{
+  struct functionDefinition *theFunction;
 
-   fprintf(fp,"\n");
-   fprintf(fp,"/************************************/\n");
-   fprintf(fp,"/* EXTERNAL FUNCTION DEFINITIONS    */\n");
-   fprintf(fp,"/************************************/\n\n");
+  fprintf (fp, "\n");
+  fprintf (fp, "/************************************/\n");
+  fprintf (fp, "/* EXTERNAL FUNCTION DEFINITIONS    */\n");
+  fprintf (fp, "/************************************/\n\n");
 
-   for (theFunction = CL_GetFunctionList(theEnv);
-        theFunction != NULL;
-        theFunction = theFunction->next)
-     {
-      fprintf(fp,"extern ");
-      fprintf(fp,"void ");
+  for (theFunction = CL_GetFunctionList (theEnv);
+       theFunction != NULL; theFunction = theFunction->next)
+    {
+      fprintf (fp, "extern ");
+      fprintf (fp, "void ");
 
-      fprintf(fp,"%s(",theFunction->actualFunctionName);
+      fprintf (fp, "%s(", theFunction->actualFunctionName);
 
-      fprintf(fp,"Environment *,UDFContext *,UDFValue *");
+      fprintf (fp, "Environment *,UDFContext *,UDFValue *");
 
-      fprintf(fp,");\n");
-     }
-  }
+      fprintf (fp, ");\n");
+    }
+}
 
 /****************************************************/
 /* FunctionsToCode: Generates C code to represent   */
 /*   the function declaration data structures (used */
 /*   to declare system and user defined functions). */
 /****************************************************/
-static bool FunctionsToCode(
-  Environment *theEnv,
-  const char *fileName,
-  const char *pathName,
-  char *fileNameBuffer)
-  {
-   unsigned short i = 0;
-   FILE *fp;
-   unsigned version = 1;
-   bool newHeader = true;
-   struct functionDefinition *fctnPtr;
+static bool
+FunctionsToCode (Environment * theEnv,
+		 const char *fileName,
+		 const char *pathName, char *fileNameBuffer)
+{
+  unsigned short i = 0;
+  FILE *fp;
+  unsigned version = 1;
+  bool newHeader = true;
+  struct functionDefinition *fctnPtr;
 
    /*=============================*/
-   /* Assign a reference index to */
-   /* each of the functions.      */
+  /* Assign a reference index to */
+  /* each of the functions.      */
    /*=============================*/
 
-   for (fctnPtr = CL_GetFunctionList(theEnv);
-        fctnPtr != NULL;
-        fctnPtr = fctnPtr->next)
-     { fctnPtr->bsaveIndex = i++; }
+  for (fctnPtr = CL_GetFunctionList (theEnv);
+       fctnPtr != NULL; fctnPtr = fctnPtr->next)
+    {
+      fctnPtr->bsaveIndex = i++;
+    }
 
    /*=======================================*/
-   /* Create the file in which to store the */
-   /* function definition data structures.  */
+  /* Create the file in which to store the */
+  /* function definition data structures.  */
    /*=======================================*/
 
-   if ((fp = CL_NewCFile(theEnv,fileName,pathName,fileNameBuffer,2,version,false)) == NULL)
-     { return false; }
+  if ((fp =
+       CL_NewCFile (theEnv, fileName, pathName, fileNameBuffer, 2, version,
+		    false)) == NULL)
+    {
+      return false;
+    }
 
    /*===============================================*/
-   /* Construct the definition of the function list */
-   /* from the definitions of the functions.        */
+  /* Construct the definition of the function list */
+  /* from the definitions of the functions.        */
    /*===============================================*/
 
-   fprintf(fp,"\n\n");
-   fprintf(fp,"/************************************/\n");
-   fprintf(fp,"/* FUNCTION LIST DEFINITION         */\n");
-   fprintf(fp,"/************************************/\n\n");
+  fprintf (fp, "\n\n");
+  fprintf (fp, "/************************************/\n");
+  fprintf (fp, "/* FUNCTION LIST DEFINITION         */\n");
+  fprintf (fp, "/************************************/\n\n");
 
-   i = 1;
-   fctnPtr = CL_GetFunctionList(theEnv);
-   while (fctnPtr != NULL)
-     {
+  i = 1;
+  fctnPtr = CL_GetFunctionList (theEnv);
+  while (fctnPtr != NULL)
+    {
       if (newHeader)
-        {
-         fprintf(fp,"struct functionDefinition P%d_%d[] = {\n",ConstructCompilerData(theEnv)->ImageID,version);
-         fprintf(ConstructCompilerData(theEnv)->HeaderFP,"extern struct functionDefinition P%d_%d[];\n",ConstructCompilerData(theEnv)->ImageID,version);
-         newHeader = false;
-        }
+	{
+	  fprintf (fp, "struct functionDefinition P%d_%d[] = {\n",
+		   ConstructCompilerData (theEnv)->ImageID, version);
+	  fprintf (ConstructCompilerData (theEnv)->HeaderFP,
+		   "extern struct functionDefinition P%d_%d[];\n",
+		   ConstructCompilerData (theEnv)->ImageID, version);
+	  newHeader = false;
+	}
 
-      fprintf(fp,"{");
-      CL_PrintSymbolReference(theEnv,fp,fctnPtr->callFunctionName);
-      fprintf(fp,",\"%s\",",fctnPtr->actualFunctionName);
-      fprintf(fp,"%u,",fctnPtr->unknownReturnValueType);
-      fprintf(fp,"%s,",fctnPtr->actualFunctionName);
-      fprintf(fp,"NULL,");
+      fprintf (fp, "{");
+      CL_PrintSymbolReference (theEnv, fp, fctnPtr->callFunctionName);
+      fprintf (fp, ",\"%s\",", fctnPtr->actualFunctionName);
+      fprintf (fp, "%u,", fctnPtr->unknownReturnValueType);
+      fprintf (fp, "%s,", fctnPtr->actualFunctionName);
+      fprintf (fp, "NULL,");
 
-      CL_PrintSymbolReference(theEnv,fp,fctnPtr->restrictions);
+      CL_PrintSymbolReference (theEnv, fp, fctnPtr->restrictions);
 
-      fprintf(fp,",%d,%d,0,0,0,0,",fctnPtr->minArgs,fctnPtr->maxArgs);
+      fprintf (fp, ",%d,%d,0,0,0,0,", fctnPtr->minArgs, fctnPtr->maxArgs);
 
-      CL_PrintFunctionReference(theEnv,fp,fctnPtr->next);
+      CL_PrintFunctionReference (theEnv, fp, fctnPtr->next);
 
       i++;
       fctnPtr = fctnPtr->next;
-      if ((i > ConstructCompilerData(theEnv)->MaxIndices) || (fctnPtr == NULL))
-        {
-         fprintf(fp,"}};\n");
-         CL_GenClose(theEnv,fp);
-         i = 1;
-         version++;
-         if (fctnPtr != NULL)
-           {
-            if ((fp = CL_NewCFile(theEnv,fileName,pathName,fileNameBuffer,2,version,false)) == NULL) return false;
-            newHeader = true;
-           }
-        }
+      if ((i > ConstructCompilerData (theEnv)->MaxIndices)
+	  || (fctnPtr == NULL))
+	{
+	  fprintf (fp, "}};\n");
+	  CL_GenClose (theEnv, fp);
+	  i = 1;
+	  version++;
+	  if (fctnPtr != NULL)
+	    {
+	      if ((fp =
+		   CL_NewCFile (theEnv, fileName, pathName, fileNameBuffer, 2,
+				version, false)) == NULL)
+		return false;
+	      newHeader = true;
+	    }
+	}
       else
-        { fprintf(fp,"},\n"); }
-     }
+	{
+	  fprintf (fp, "},\n");
+	}
+    }
 
-   return true;
-  }
+  return true;
+}
 
 /************************************************************/
 /* CL_PrintFunctionReference: CL_Writes the C code representation */
 /*   of a pointer to a function definition data structure.  */
 /************************************************************/
-void CL_PrintFunctionReference(
-  Environment *theEnv,
-  FILE *fp,
-  struct functionDefinition *funcPtr)
-  {
-   if (funcPtr == NULL) fprintf(fp,"NULL");
-   else
-      fprintf(fp,"&P%d_%lu[%lu]",ConstructCompilerData(theEnv)->ImageID,
-                                  (funcPtr->bsaveIndex / ConstructCompilerData(theEnv)->MaxIndices) + 1,
-                                   funcPtr->bsaveIndex % ConstructCompilerData(theEnv)->MaxIndices);
-  }
+void
+CL_PrintFunctionReference (Environment * theEnv,
+			   FILE * fp, struct functionDefinition *funcPtr)
+{
+  if (funcPtr == NULL)
+    fprintf (fp, "NULL");
+  else
+    fprintf (fp, "&P%d_%lu[%lu]", ConstructCompilerData (theEnv)->ImageID,
+	     (funcPtr->bsaveIndex /
+	      ConstructCompilerData (theEnv)->MaxIndices) + 1,
+	     funcPtr->bsaveIndex %
+	     ConstructCompilerData (theEnv)->MaxIndices);
+}
 
 /******************************************/
 /* CL_WriteInitializationFunction: Generates */
 /*   the C initialization function for    */
 /*   this constructs-to-c module.         */
 /******************************************/
-static bool CL_WriteInitializationFunction(
-  Environment *theEnv,
-  const char *fileName,
-  const char *pathName,
-  char *fileNameBuffer)
-  {
-   FILE *fp;
-   struct CodeGeneratorItem *cgPtr;
+static bool
+CL_WriteInitializationFunction (Environment * theEnv,
+				const char *fileName,
+				const char *pathName, char *fileNameBuffer)
+{
+  FILE *fp;
+  struct CodeGeneratorItem *cgPtr;
 
    /*===============================*/
-   /* Open the initialization file. */
+  /* Open the initialization file. */
    /*===============================*/
 
-   CL_gensprintf(fileNameBuffer,"%s%s.c",pathName,fileName);
-   if ((fp = CL_GenOpen(theEnv,fileNameBuffer,"w")) == NULL)
-     {
-      CL_OpenErrorMessage(theEnv,"constructs-to-c",fileNameBuffer);
+  CL_gensprintf (fileNameBuffer, "%s%s.c", pathName, fileName);
+  if ((fp = CL_GenOpen (theEnv, fileNameBuffer, "w")) == NULL)
+    {
+      CL_OpenErrorMessage (theEnv, "constructs-to-c", fileNameBuffer);
       return false;
-     }
+    }
 
    /*=====================================*/
-   /* CL_Write out #includes and prototypes. */
+  /* CL_Write out #includes and prototypes. */
    /*=====================================*/
 
-   fprintf(fp,"#include \"%s.h\"\n",fileName);
-   fprintf(fp,"\n");
-   fprintf(fp,"#include \"utility.h\"\n");
-   fprintf(fp,"#include \"generate.h\"\n");
-   fprintf(fp,"#include \"envrnmnt.h\"\n");
-   fprintf(fp,"#include \"expressn.h\"\n");
-   fprintf(fp,"#include \"extnfunc.h\"\n");
-   fprintf(fp,"#include \"objrtmch.h\"\n");
-   fprintf(fp,"#include \"rulebld.h\"\n\n");
+  fprintf (fp, "#include \"%s.h\"\n", fileName);
+  fprintf (fp, "\n");
+  fprintf (fp, "#include \"utility.h\"\n");
+  fprintf (fp, "#include \"generate.h\"\n");
+  fprintf (fp, "#include \"envrnmnt.h\"\n");
+  fprintf (fp, "#include \"expressn.h\"\n");
+  fprintf (fp, "#include \"extnfunc.h\"\n");
+  fprintf (fp, "#include \"objrtmch.h\"\n");
+  fprintf (fp, "#include \"rulebld.h\"\n\n");
 
-   fprintf(ConstructCompilerData(theEnv)->HeaderFP,"   Environment *InitCImage_%d(void);\n",ConstructCompilerData(theEnv)->ImageID);
-   fprintf(ConstructCompilerData(theEnv)->HeaderFP,"   void FixupCImage_%d(Environment *);\n",ConstructCompilerData(theEnv)->ImageID);
+  fprintf (ConstructCompilerData (theEnv)->HeaderFP,
+	   "   Environment *InitCImage_%d(void);\n",
+	   ConstructCompilerData (theEnv)->ImageID);
+  fprintf (ConstructCompilerData (theEnv)->HeaderFP,
+	   "   void FixupCImage_%d(Environment *);\n",
+	   ConstructCompilerData (theEnv)->ImageID);
 
    /*============================================*/
-   /* Begin writing the initialization function. */
+  /* Begin writing the initialization function. */
    /*============================================*/
 
-   fprintf(fp,"\n");
-   fprintf(fp,"/*******************************************/\n");
-   fprintf(fp,"/* CONSTRUCT IMAGE INITIALIZATION FUNCTION */\n");
-   fprintf(fp,"/*******************************************/\n");
+  fprintf (fp, "\n");
+  fprintf (fp, "/*******************************************/\n");
+  fprintf (fp, "/* CONSTRUCT IMAGE INITIALIZATION FUNCTION */\n");
+  fprintf (fp, "/*******************************************/\n");
 
-   fprintf(fp,"\nEnvironment *InitCImage_%d()\n",ConstructCompilerData(theEnv)->ImageID);
-   fprintf(fp,"  {\n");
-   fprintf(fp,"   static Environment *theEnv = NULL;\n\n");
-   fprintf(fp,"   if (theEnv != NULL) return NULL;\n\n");
-   fprintf(fp,"   theEnv = CL_Create_RuntimeEnvironment(sht%d,fht%d,iht%d,bmht%d,P%d_1);\n\n",
-           ConstructCompilerData(theEnv)->ImageID,ConstructCompilerData(theEnv)->ImageID,
-           ConstructCompilerData(theEnv)->ImageID,ConstructCompilerData(theEnv)->ImageID,
-           ConstructCompilerData(theEnv)->ImageID);
+  fprintf (fp, "\nEnvironment *InitCImage_%d()\n",
+	   ConstructCompilerData (theEnv)->ImageID);
+  fprintf (fp, "  {\n");
+  fprintf (fp, "   static Environment *theEnv = NULL;\n\n");
+  fprintf (fp, "   if (theEnv != NULL) return NULL;\n\n");
+  fprintf (fp,
+	   "   theEnv = CL_Create_RuntimeEnvironment(sht%d,fht%d,iht%d,bmht%d,P%d_1);\n\n",
+	   ConstructCompilerData (theEnv)->ImageID,
+	   ConstructCompilerData (theEnv)->ImageID,
+	   ConstructCompilerData (theEnv)->ImageID,
+	   ConstructCompilerData (theEnv)->ImageID,
+	   ConstructCompilerData (theEnv)->ImageID);
 
-   fprintf(fp,"   CL_Clear(theEnv);\n");
+  fprintf (fp, "   CL_Clear(theEnv);\n");
 
-   fprintf(fp,"   CL_RefreshSpecialSymbols(theEnv);\n");
-   fprintf(fp,"   CL_InitExpressionPointers(theEnv);\n");
-   fprintf(fp,"   FixupCImage_%d(theEnv);\n\n",ConstructCompilerData(theEnv)->ImageID);
+  fprintf (fp, "   CL_RefreshSpecialSymbols(theEnv);\n");
+  fprintf (fp, "   CL_InitExpressionPointers(theEnv);\n");
+  fprintf (fp, "   FixupCImage_%d(theEnv);\n\n",
+	   ConstructCompilerData (theEnv)->ImageID);
 
    /*==========================================*/
-   /* CL_Write construct specific initialization. */
+  /* CL_Write construct specific initialization. */
    /*==========================================*/
 
-   cgPtr = ConstructCompilerData(theEnv)->ListOfCodeGeneratorItems;
-   while (cgPtr != NULL)
-     {
+  cgPtr = ConstructCompilerData (theEnv)->ListOfCodeGeneratorItems;
+  while (cgPtr != NULL)
+    {
       if (cgPtr->initFunction != NULL)
-        {
-         (*cgPtr->initFunction)(theEnv,fp,ConstructCompilerData(theEnv)->ImageID,ConstructCompilerData(theEnv)->MaxIndices);
-         fprintf(fp,"\n");
-        }
+	{
+	  (*cgPtr->initFunction) (theEnv, fp,
+				  ConstructCompilerData (theEnv)->ImageID,
+				  ConstructCompilerData (theEnv)->MaxIndices);
+	  fprintf (fp, "\n");
+	}
       cgPtr = cgPtr->next;
-     }
+    }
 
    /*================================*/
-   /* Close the initialization file. */
+  /* Close the initialization file. */
    /*================================*/
 
-   fprintf(fp,"   return(theEnv);\n");
-   fprintf(fp,"  }\n");
+  fprintf (fp, "   return(theEnv);\n");
+  fprintf (fp, "  }\n");
 
-   CL_GenClose(theEnv,fp);
+  CL_GenClose (theEnv, fp);
 
    /*========================================*/
-   /* Return true to indicate initialization */
-   /* file was successfully written.         */
+  /* Return true to indicate initialization */
+  /* file was successfully written.         */
    /*========================================*/
 
-   return true;
-  }
+  return true;
+}
 
 /**************************************************/
 /* CL_NewCFile: Opens a new file for writing C code. */
 /**************************************************/
-FILE *CL_NewCFile(
-  Environment *theEnv,
-  const char *fileName,
-  const char *pathName,
-  char *fileNameBuffer,
-  unsigned id,
-  unsigned version,
-  bool reopenOldFile)
-  {
-   FILE *newFP;
+FILE *
+CL_NewCFile (Environment * theEnv,
+	     const char *fileName,
+	     const char *pathName,
+	     char *fileNameBuffer,
+	     unsigned id, unsigned version, bool reopenOldFile)
+{
+  FILE *newFP;
 
-   CL_gensprintf(fileNameBuffer,"%s%s%d_%d.c",pathName,fileName,id,version);
+  CL_gensprintf (fileNameBuffer, "%s%s%d_%d.c", pathName, fileName, id,
+		 version);
 
-   if (reopenOldFile)
-     { newFP = CL_GenOpen(theEnv,fileNameBuffer,"a"); }
-   else
-     { newFP = CL_GenOpen(theEnv,fileNameBuffer,"w"); }
+  if (reopenOldFile)
+    {
+      newFP = CL_GenOpen (theEnv, fileNameBuffer, "a");
+    }
+  else
+    {
+      newFP = CL_GenOpen (theEnv, fileNameBuffer, "w");
+    }
 
-   if (newFP == NULL)
-     {
-      CL_OpenErrorMessage(theEnv,"constructs-to-c",fileNameBuffer);
+  if (newFP == NULL)
+    {
+      CL_OpenErrorMessage (theEnv, "constructs-to-c", fileNameBuffer);
       return NULL;
-     }
+    }
 
-   if (reopenOldFile == false)
-     {
-      fprintf(newFP,"#include \"%s.h\"\n",fileName);
-      fprintf(newFP,"\n");
-     }
+  if (reopenOldFile == false)
+    {
+      fprintf (newFP, "#include \"%s.h\"\n", fileName);
+      fprintf (newFP, "\n");
+    }
 
-   return(newFP);
-  }
+  return (newFP);
+}
 
 /**********************************************************/
 /* HashedExpressionsToCode: Traverses the expression hash */
@@ -802,280 +882,353 @@ FILE *CL_NewCFile(
 /*   code representation to a file of every expression in */
 /*   the table.                                           */
 /**********************************************************/
-static void HashedExpressionsToCode(
-  Environment *theEnv)
-  {
-   unsigned i;
-   EXPRESSION_HN *exphash;
+static void
+HashedExpressionsToCode (Environment * theEnv)
+{
+  unsigned i;
+  EXPRESSION_HN *exphash;
 
-   for (i = 0; i < EXPRESSION_HASH_SIZE; i++)
-     {
-      for (exphash = ExpressionData(theEnv)->ExpressionHashTable[i];
-           exphash != NULL;
-           exphash = exphash->next)
-        {
-         exphash->bsaveID = ConstructCompilerData(theEnv)->ExpressionCount + (ConstructCompilerData(theEnv)->MaxIndices * ConstructCompilerData(theEnv)->ExpressionVersion);
-         CL_ExpressionToCode(theEnv,NULL,exphash->exp);
-        }
-     }
-  }
+  for (i = 0; i < EXPRESSION_HASH_SIZE; i++)
+    {
+      for (exphash = ExpressionData (theEnv)->ExpressionHashTable[i];
+	   exphash != NULL; exphash = exphash->next)
+	{
+	  exphash->bsaveID =
+	    ConstructCompilerData (theEnv)->ExpressionCount +
+	    (ConstructCompilerData (theEnv)->MaxIndices *
+	     ConstructCompilerData (theEnv)->ExpressionVersion);
+	  CL_ExpressionToCode (theEnv, NULL, exphash->exp);
+	}
+    }
+}
 
 /*****************************************************/
 /* CL_PrintHashedExpressionReference: CL_Writes the C code */
 /*   representation of a pointer to an expression    */
 /*   stored in the expression hash table.            */
 /*****************************************************/
-void CL_PrintHashedExpressionReference(
-  Environment *theEnv,
-  FILE *theFile,
-  struct expr *theExpression,
-  unsigned imageID,
-  unsigned maxIndices)
-  {
-   unsigned long theIDValue;
+void
+CL_PrintHashedExpressionReference (Environment * theEnv,
+				   FILE * theFile,
+				   struct expr *theExpression,
+				   unsigned imageID, unsigned maxIndices)
+{
+  unsigned long theIDValue;
 
-   if (theExpression == NULL)
-     { fprintf(theFile,"NULL"); }
-   else
-     {
-      theIDValue = CL_HashedExpressionIndex(theEnv,theExpression);
+  if (theExpression == NULL)
+    {
+      fprintf (theFile, "NULL");
+    }
+  else
+    {
+      theIDValue = CL_HashedExpressionIndex (theEnv, theExpression);
 
-      fprintf(theFile,"&E%d_%ld[%ld]",
-                      imageID,
-                      theIDValue / maxIndices,
-                      theIDValue % maxIndices);
-     }
-  }
+      fprintf (theFile, "&E%d_%ld[%ld]",
+	       imageID, theIDValue / maxIndices, theIDValue % maxIndices);
+    }
+}
 
 /**************************************************************/
 /* CL_ExpressionToCode: CL_Writes the C code reference of a pointer */
 /*   to an expression and then calls DumpExpression to write  */
 /*   the C code for the expression to the expression file.    */
 /**************************************************************/
-int CL_ExpressionToCode(
-  Environment *theEnv,
-  FILE *fp,
-  struct expr *exprPtr)
-  {
+int
+CL_ExpressionToCode (Environment * theEnv, FILE * fp, struct expr *exprPtr)
+{
    /*========================================*/
-   /* Print the reference to the expression. */
+  /* Print the reference to the expression. */
    /*========================================*/
 
-   if (exprPtr == NULL)
-     {
-      if (fp != NULL) fprintf(fp,"NULL");
+  if (exprPtr == NULL)
+    {
+      if (fp != NULL)
+	fprintf (fp, "NULL");
       return 0;
-     }
-   else if (fp != NULL)
-     { fprintf(fp,"&E%d_%d[%ld]",ConstructCompilerData(theEnv)->ImageID,ConstructCompilerData(theEnv)->ExpressionVersion,ConstructCompilerData(theEnv)->ExpressionCount); }
+    }
+  else if (fp != NULL)
+    {
+      fprintf (fp, "&E%d_%d[%ld]", ConstructCompilerData (theEnv)->ImageID,
+	       ConstructCompilerData (theEnv)->ExpressionVersion,
+	       ConstructCompilerData (theEnv)->ExpressionCount);
+    }
 
    /*==================================================*/
-   /* Create a new expression code file, if necessary. */
+  /* Create a new expression code file, if necessary. */
    /*==================================================*/
 
-   if (ConstructCompilerData(theEnv)->ExpressionHeader == true)
-     {
-      if ((ConstructCompilerData(theEnv)->ExpressionFP = CL_NewCFile(theEnv,ConstructCompilerData(theEnv)->FilePrefix,
-                                                                  ConstructCompilerData(theEnv)->PathName,
-                                                                  ConstructCompilerData(theEnv)->FileNameBuffer,
-                                                                  3,ConstructCompilerData(theEnv)->ExpressionVersion,false)) == NULL)
-        { return(-1); }
+  if (ConstructCompilerData (theEnv)->ExpressionHeader == true)
+    {
+      if ((ConstructCompilerData (theEnv)->ExpressionFP =
+	   CL_NewCFile (theEnv, ConstructCompilerData (theEnv)->FilePrefix,
+			ConstructCompilerData (theEnv)->PathName,
+			ConstructCompilerData (theEnv)->FileNameBuffer, 3,
+			ConstructCompilerData (theEnv)->ExpressionVersion,
+			false)) == NULL)
+	{
+	  return (-1);
+	}
 
-      fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"struct expr E%d_%d[] = {\n",ConstructCompilerData(theEnv)->ImageID,ConstructCompilerData(theEnv)->ExpressionVersion);
-      fprintf(ConstructCompilerData(theEnv)->HeaderFP,"extern struct expr E%d_%d[];\n",ConstructCompilerData(theEnv)->ImageID,ConstructCompilerData(theEnv)->ExpressionVersion);
-      ConstructCompilerData(theEnv)->ExpressionHeader = false;
-     }
-   else
-     { fprintf(ConstructCompilerData(theEnv)->ExpressionFP,",\n"); }
+      fprintf (ConstructCompilerData (theEnv)->ExpressionFP,
+	       "struct expr E%d_%d[] = {\n",
+	       ConstructCompilerData (theEnv)->ImageID,
+	       ConstructCompilerData (theEnv)->ExpressionVersion);
+      fprintf (ConstructCompilerData (theEnv)->HeaderFP,
+	       "extern struct expr E%d_%d[];\n",
+	       ConstructCompilerData (theEnv)->ImageID,
+	       ConstructCompilerData (theEnv)->ExpressionVersion);
+      ConstructCompilerData (theEnv)->ExpressionHeader = false;
+    }
+  else
+    {
+      fprintf (ConstructCompilerData (theEnv)->ExpressionFP, ",\n");
+    }
 
    /*===========================*/
-   /* Dump the expression code. */
+  /* Dump the expression code. */
    /*===========================*/
 
-   DumpExpression(theEnv,exprPtr);
+  DumpExpression (theEnv, exprPtr);
 
    /*=========================================*/
-   /* Close the expression file if necessary. */
+  /* Close the expression file if necessary. */
    /*=========================================*/
 
-   if (ConstructCompilerData(theEnv)->ExpressionCount >= ConstructCompilerData(theEnv)->MaxIndices)
-     {
-      ConstructCompilerData(theEnv)->ExpressionCount = 0;
-      ConstructCompilerData(theEnv)->ExpressionVersion++;
-      fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"};\n");
-      CL_GenClose(theEnv,ConstructCompilerData(theEnv)->ExpressionFP);
-      ConstructCompilerData(theEnv)->ExpressionFP = NULL;
-      ConstructCompilerData(theEnv)->ExpressionHeader = true;
-     }
+  if (ConstructCompilerData (theEnv)->ExpressionCount >=
+      ConstructCompilerData (theEnv)->MaxIndices)
+    {
+      ConstructCompilerData (theEnv)->ExpressionCount = 0;
+      ConstructCompilerData (theEnv)->ExpressionVersion++;
+      fprintf (ConstructCompilerData (theEnv)->ExpressionFP, "};\n");
+      CL_GenClose (theEnv, ConstructCompilerData (theEnv)->ExpressionFP);
+      ConstructCompilerData (theEnv)->ExpressionFP = NULL;
+      ConstructCompilerData (theEnv)->ExpressionHeader = true;
+    }
 
    /*==========================================*/
-   /* Return 1 to indicate the expression      */
-   /* reference and expression data structures */
-   /* were succcessfully written to the file.  */
+  /* Return 1 to indicate the expression      */
+  /* reference and expression data structures */
+  /* were succcessfully written to the file.  */
    /*==========================================*/
 
-   return 1;
-  }
+  return 1;
+}
 
 /**********************************************************/
 /* DumpExpression: CL_Writes the C code representation of an */
 /*   expression data structure to the expression file.    */
 /**********************************************************/
-static void DumpExpression(
-  Environment *theEnv,
-  struct expr *exprPtr)
-  {
-   while (exprPtr != NULL)
-     {
-      fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"{");
-      fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"%d,",exprPtr->type);
-      fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"{ ");
+static void
+DumpExpression (Environment * theEnv, struct expr *exprPtr)
+{
+  while (exprPtr != NULL)
+    {
+      fprintf (ConstructCompilerData (theEnv)->ExpressionFP, "{");
+      fprintf (ConstructCompilerData (theEnv)->ExpressionFP, "%d,",
+	       exprPtr->type);
+      fprintf (ConstructCompilerData (theEnv)->ExpressionFP, "{ ");
       switch (exprPtr->type)
-        {
-         case FCALL:
-           CL_PrintFunctionReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,exprPtr->functionValue);
-           break;
+	{
+	case FCALL:
+	  CL_PrintFunctionReference (theEnv,
+				     ConstructCompilerData (theEnv)->
+				     ExpressionFP, exprPtr->functionValue);
+	  break;
 
-         case INTEGER_TYPE:
-           CL_PrintIntegerReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,exprPtr->integerValue);
-           break;
+	case INTEGER_TYPE:
+	  CL_PrintIntegerReference (theEnv,
+				    ConstructCompilerData (theEnv)->
+				    ExpressionFP, exprPtr->integerValue);
+	  break;
 
-         case FLOAT_TYPE:
-           CL_PrintFloatReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,exprPtr->floatValue);
-           break;
+	case FLOAT_TYPE:
+	  CL_PrintFloatReference (theEnv,
+				  ConstructCompilerData (theEnv)->
+				  ExpressionFP, exprPtr->floatValue);
+	  break;
 
-         case PCALL:
+	case PCALL:
 #if DEFFUNCTION_CONSTRUCT
-           CL_PrintDeffunctionReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,(Deffunction *) exprPtr->value,
-                                     ConstructCompilerData(theEnv)->ImageID,ConstructCompilerData(theEnv)->MaxIndices);
+	  CL_PrintDeffunctionReference (theEnv,
+					ConstructCompilerData (theEnv)->
+					ExpressionFP,
+					(Deffunction *) exprPtr->value,
+					ConstructCompilerData (theEnv)->
+					ImageID,
+					ConstructCompilerData (theEnv)->
+					MaxIndices);
 #else
-           fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"NULL");
+	  fprintf (ConstructCompilerData (theEnv)->ExpressionFP, "NULL");
 #endif
-           break;
+	  break;
 
-         case GCALL:
+	case GCALL:
 #if DEFGENERIC_CONSTRUCT
-           CL_PrintGenericFunctionReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,(Defgeneric *) exprPtr->value,
-                                         ConstructCompilerData(theEnv)->ImageID,ConstructCompilerData(theEnv)->MaxIndices);
+	  CL_PrintGenericFunctionReference (theEnv,
+					    ConstructCompilerData (theEnv)->
+					    ExpressionFP,
+					    (Defgeneric *) exprPtr->value,
+					    ConstructCompilerData (theEnv)->
+					    ImageID,
+					    ConstructCompilerData (theEnv)->
+					    MaxIndices);
 #else
-           fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"NULL");
+	  fprintf (ConstructCompilerData (theEnv)->ExpressionFP, "NULL");
 #endif
-           break;
+	  break;
 
-         case DEFTEMPLATE_PTR:
+	case DEFTEMPLATE_PTR:
 #if DEFTEMPLATE_CONSTRUCT
-           CL_DeftemplateCConstructReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,
-                                          (Deftemplate *) exprPtr->value,ConstructCompilerData(theEnv)->ImageID,ConstructCompilerData(theEnv)->MaxIndices);
+	  CL_DeftemplateCConstructReference (theEnv,
+					     ConstructCompilerData (theEnv)->
+					     ExpressionFP,
+					     (Deftemplate *) exprPtr->value,
+					     ConstructCompilerData (theEnv)->
+					     ImageID,
+					     ConstructCompilerData (theEnv)->
+					     MaxIndices);
 #else
-           fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"NULL");
+	  fprintf (ConstructCompilerData (theEnv)->ExpressionFP, "NULL");
 #endif
-           break;
+	  break;
 
-         case DEFGLOBAL_PTR:
+	case DEFGLOBAL_PTR:
 #if DEFGLOBAL_CONSTRUCT
-           CL_DefglobalCConstructReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,
-                                        (Defglobal *) exprPtr->value,ConstructCompilerData(theEnv)->ImageID,ConstructCompilerData(theEnv)->MaxIndices);
+	  CL_DefglobalCConstructReference (theEnv,
+					   ConstructCompilerData (theEnv)->
+					   ExpressionFP,
+					   (Defglobal *) exprPtr->value,
+					   ConstructCompilerData (theEnv)->
+					   ImageID,
+					   ConstructCompilerData (theEnv)->
+					   MaxIndices);
 #else
-           fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"NULL");
+	  fprintf (ConstructCompilerData (theEnv)->ExpressionFP, "NULL");
 #endif
-           break;
+	  break;
 
-         case DEFCLASS_PTR:
+	case DEFCLASS_PTR:
 #if OBJECT_SYSTEM
-           CL_PrintClassReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,
-                               (Defclass *) exprPtr->value,ConstructCompilerData(theEnv)->ImageID,
-                               ConstructCompilerData(theEnv)->MaxIndices);
+	  CL_PrintClassReference (theEnv,
+				  ConstructCompilerData (theEnv)->
+				  ExpressionFP, (Defclass *) exprPtr->value,
+				  ConstructCompilerData (theEnv)->ImageID,
+				  ConstructCompilerData (theEnv)->MaxIndices);
 #else
-           fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"NULL");
+	  fprintf (ConstructCompilerData (theEnv)->ExpressionFP, "NULL");
 #endif
-           break;
+	  break;
 
-          case FACT_ADDRESS_TYPE:
+	case FACT_ADDRESS_TYPE:
 #if DEFTEMPLATE_CONSTRUCT
-           fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"NULL");
-           fprintf(ConstructCompilerData(theEnv)->FixupFP,
-                   "   E%d_%d[%ld].value = &FactData(theEnv)->DummyFact;\n",
-                   ConstructCompilerData(theEnv)->ImageID,
-                   ConstructCompilerData(theEnv)->ExpressionVersion,
-                   ConstructCompilerData(theEnv)->ExpressionCount);
+	  fprintf (ConstructCompilerData (theEnv)->ExpressionFP, "NULL");
+	  fprintf (ConstructCompilerData (theEnv)->FixupFP,
+		   "   E%d_%d[%ld].value = &FactData(theEnv)->DummyFact;\n",
+		   ConstructCompilerData (theEnv)->ImageID,
+		   ConstructCompilerData (theEnv)->ExpressionVersion,
+		   ConstructCompilerData (theEnv)->ExpressionCount);
 #else
-           fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"NULL");
+	  fprintf (ConstructCompilerData (theEnv)->ExpressionFP, "NULL");
 #endif
-           break;
+	  break;
 
-         case INSTANCE_ADDRESS_TYPE:
+	case INSTANCE_ADDRESS_TYPE:
 #if OBJECT_SYSTEM
-           fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"NULL");
-           fprintf(ConstructCompilerData(theEnv)->FixupFP,
-                   "   E%d_%d[%ld].value = &InstanceData(theEnv)->DummyInstance;\n",
-                   ConstructCompilerData(theEnv)->ImageID,
-                   ConstructCompilerData(theEnv)->ExpressionVersion,
-                   ConstructCompilerData(theEnv)->ExpressionCount);
+	  fprintf (ConstructCompilerData (theEnv)->ExpressionFP, "NULL");
+	  fprintf (ConstructCompilerData (theEnv)->FixupFP,
+		   "   E%d_%d[%ld].value = &InstanceData(theEnv)->DummyInstance;\n",
+		   ConstructCompilerData (theEnv)->ImageID,
+		   ConstructCompilerData (theEnv)->ExpressionVersion,
+		   ConstructCompilerData (theEnv)->ExpressionCount);
 #else
-           fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"NULL");
+	  fprintf (ConstructCompilerData (theEnv)->ExpressionFP, "NULL");
 #endif
-           break;
+	  break;
 
-         case STRING_TYPE:
-         case SYMBOL_TYPE:
-         case INSTANCE_NAME_TYPE:
-         case GBL_VARIABLE:
-           CL_PrintSymbolReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,exprPtr->lexemeValue);
-           break;
+	case STRING_TYPE:
+	case SYMBOL_TYPE:
+	case INSTANCE_NAME_TYPE:
+	case GBL_VARIABLE:
+	  CL_PrintSymbolReference (theEnv,
+				   ConstructCompilerData (theEnv)->
+				   ExpressionFP, exprPtr->lexemeValue);
+	  break;
 
-         case VOID_TYPE:
-           fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"NULL");
-           break;
+	case VOID_TYPE:
+	  fprintf (ConstructCompilerData (theEnv)->ExpressionFP, "NULL");
+	  break;
 
-         default:
-           if (CL_EvaluationData(theEnv)->PrimitivesArray[exprPtr->type] == NULL)
-             { fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"NULL"); }
-           else if (CL_EvaluationData(theEnv)->PrimitivesArray[exprPtr->type]->bitMap)
-             { CL_PrintBitMapReference(theEnv,ConstructCompilerData(theEnv)->ExpressionFP,(CLIPSBitMap *) exprPtr->value); }
-           else
-             { fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"NULL"); }
-           break;
-        }
+	default:
+	  if (CL_EvaluationData (theEnv)->PrimitivesArray[exprPtr->type] ==
+	      NULL)
+	    {
+	      fprintf (ConstructCompilerData (theEnv)->ExpressionFP, "NULL");
+	    }
+	  else if (CL_EvaluationData (theEnv)->
+		   PrimitivesArray[exprPtr->type]->bitMap)
+	    {
+	      CL_PrintBitMapReference (theEnv,
+				       ConstructCompilerData (theEnv)->
+				       ExpressionFP,
+				       (CLIPSBitMap *) exprPtr->value);
+	    }
+	  else
+	    {
+	      fprintf (ConstructCompilerData (theEnv)->ExpressionFP, "NULL");
+	    }
+	  break;
+	}
 
-      fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"},");
+      fprintf (ConstructCompilerData (theEnv)->ExpressionFP, "},");
 
-      ConstructCompilerData(theEnv)->ExpressionCount++;
+      ConstructCompilerData (theEnv)->ExpressionCount++;
       if (exprPtr->argList == NULL)
-        { fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"NULL,"); }
+	{
+	  fprintf (ConstructCompilerData (theEnv)->ExpressionFP, "NULL,");
+	}
       else
-        {
-         fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"&E%d_%d[%ld],",ConstructCompilerData(theEnv)->ImageID,ConstructCompilerData(theEnv)->ExpressionVersion,
-                                                       ConstructCompilerData(theEnv)->ExpressionCount);
-        }
+	{
+	  fprintf (ConstructCompilerData (theEnv)->ExpressionFP,
+		   "&E%d_%d[%ld],", ConstructCompilerData (theEnv)->ImageID,
+		   ConstructCompilerData (theEnv)->ExpressionVersion,
+		   ConstructCompilerData (theEnv)->ExpressionCount);
+	}
 
       if (exprPtr->nextArg == NULL)
-        { fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"NULL}"); }
+	{
+	  fprintf (ConstructCompilerData (theEnv)->ExpressionFP, "NULL}");
+	}
       else
-        {
-         fprintf(ConstructCompilerData(theEnv)->ExpressionFP,"&E%d_%d[%ld]}",ConstructCompilerData(theEnv)->ImageID,ConstructCompilerData(theEnv)->ExpressionVersion,
-                              ConstructCompilerData(theEnv)->ExpressionCount + CL_ExpressionSize(exprPtr->argList));
-        }
+	{
+	  fprintf (ConstructCompilerData (theEnv)->ExpressionFP,
+		   "&E%d_%d[%ld]}", ConstructCompilerData (theEnv)->ImageID,
+		   ConstructCompilerData (theEnv)->ExpressionVersion,
+		   ConstructCompilerData (theEnv)->ExpressionCount +
+		   CL_ExpressionSize (exprPtr->argList));
+	}
 
       if (exprPtr->argList != NULL)
-        {
-         fprintf(ConstructCompilerData(theEnv)->ExpressionFP,",\n");
-         DumpExpression(theEnv,exprPtr->argList);
-        }
+	{
+	  fprintf (ConstructCompilerData (theEnv)->ExpressionFP, ",\n");
+	  DumpExpression (theEnv, exprPtr->argList);
+	}
 
       exprPtr = exprPtr->nextArg;
-      if (exprPtr != NULL) fprintf(ConstructCompilerData(theEnv)->ExpressionFP,",\n");
-     }
-  }
+      if (exprPtr != NULL)
+	fprintf (ConstructCompilerData (theEnv)->ExpressionFP, ",\n");
+    }
+}
 
 /***********************************************/
 /* CL_ConstructsToCCommandDefinition: Initializes */
 /*   the constructs-to-c command.              */
 /***********************************************/
-void CL_ConstructsToCCommandDefinition(
-  Environment *theEnv)
-  {
-   CL_AddUDF(theEnv,"constructs-to-c","v",2,4,"*;sy;l;sy;l",CL_ConstructsToCCommand,"CL_ConstructsToCCommand",NULL);
-  }
+void
+CL_ConstructsToCCommandDefinition (Environment * theEnv)
+{
+  CL_AddUDF (theEnv, "constructs-to-c", "v", 2, 4, "*;sy;l;sy;l",
+	     CL_ConstructsToCCommand, "CL_ConstructsToCCommand", NULL);
+}
 
 /*********************************************************/
 /* CL_AddCodeGeneratorItem: Adds another code generator     */
@@ -1083,102 +1236,121 @@ void CL_ConstructsToCCommandDefinition(
 /*   generated bythe constructs-to-c function. Typically */
 /*   each construct has its own code generator item.     */
 /*********************************************************/
-struct CodeGeneratorItem *CL_AddCodeGeneratorItem(
-  Environment *theEnv,
-  const char *name,
-  int priority,
-  void (*beforeFunction)(Environment *),
-  void (*initFunction)(Environment *,FILE *,unsigned,unsigned),
-  bool (*generateFunction)(Environment *,const char *,const char *,char *,
-                           unsigned int,FILE *,unsigned int,unsigned int),
-  unsigned arrayCount)
-  {
-   struct CodeGeneratorItem *newPtr, *currentPtr, *lastPtr = NULL;
-   unsigned int i;
-   char theBuffer[4];
+struct CodeGeneratorItem *
+CL_AddCodeGeneratorItem (Environment * theEnv,
+			 const char *name,
+			 int priority,
+			 void (*beforeFunction) (Environment *),
+			 void (*initFunction) (Environment *, FILE *,
+					       unsigned, unsigned),
+			 bool (*generateFunction) (Environment *,
+						   const char *, const char *,
+						   char *, unsigned int,
+						   FILE *, unsigned int,
+						   unsigned int),
+			 unsigned arrayCount)
+{
+  struct CodeGeneratorItem *newPtr, *currentPtr, *lastPtr = NULL;
+  unsigned int i;
+  char theBuffer[4];
 
    /*======================================*/
-   /* Create the code generator item data  */
-   /* structure and initialize its values. */
+  /* Create the code generator item data  */
+  /* structure and initialize its values. */
    /*======================================*/
 
-   newPtr = get_struct(theEnv,CodeGeneratorItem);
+  newPtr = get_struct (theEnv, CodeGeneratorItem);
 
-   newPtr->name = name;
-   newPtr->beforeFunction = beforeFunction;
-   newPtr->initFunction = initFunction;
-   newPtr->generateFunction = generateFunction;
-   newPtr->priority = priority;
-   newPtr->arrayCount = arrayCount;
+  newPtr->name = name;
+  newPtr->beforeFunction = beforeFunction;
+  newPtr->initFunction = initFunction;
+  newPtr->generateFunction = generateFunction;
+  newPtr->priority = priority;
+  newPtr->arrayCount = arrayCount;
 
    /*================================================*/
-   /* Create the primary and secondary codes used to */
-   /* provide names for the C data structure arrays. */
-   /* (The maximum number of arrays is currently     */
-   /* limited to 47.                                 */
+  /* Create the primary and secondary codes used to */
+  /* provide names for the C data structure arrays. */
+  /* (The maximum number of arrays is currently     */
+  /* limited to 47.                                 */
    /*================================================*/
 
-   if (arrayCount != 0)
-     {
-      if ((arrayCount + ConstructCompilerData(theEnv)->CodeGeneratorCount) > (PRIMARY_LEN + SECONDARY_LEN))
-        {
-         CL_SystemError(theEnv,"CONSCOMP",3);
-         CL_ExitRouter(theEnv,EXIT_FAILURE);
-        }
+  if (arrayCount != 0)
+    {
+      if ((arrayCount + ConstructCompilerData (theEnv)->CodeGeneratorCount) >
+	  (PRIMARY_LEN + SECONDARY_LEN))
+	{
+	  CL_SystemError (theEnv, "CONSCOMP", 3);
+	  CL_ExitRouter (theEnv, EXIT_FAILURE);
+	}
 
-      newPtr->arrayNames = (char **) CL_gm2(theEnv,(sizeof(char *) * arrayCount));
+      newPtr->arrayNames =
+	(char **) CL_gm2 (theEnv, (sizeof (char *) * arrayCount));
 
-      for (i = 0 ; i < arrayCount ; i++)
-        {
-         if (ConstructCompilerData(theEnv)->CodeGeneratorCount < PRIMARY_LEN)
-           { CL_gensprintf(theBuffer,"%c",PRIMARY_CODES[ConstructCompilerData(theEnv)->CodeGeneratorCount]); }
-         else
-           { CL_gensprintf(theBuffer,"%s_",SecondaryCodes[ConstructCompilerData(theEnv)->CodeGeneratorCount - PRIMARY_LEN]); }
-         ConstructCompilerData(theEnv)->CodeGeneratorCount++;
-         newPtr->arrayNames[i] = (char *) CL_gm2(theEnv,(strlen(theBuffer) + 1));
-         CL_genstrcpy(newPtr->arrayNames[i],theBuffer);
-        }
-     }
-   else
-     { newPtr->arrayNames = NULL; }
+      for (i = 0; i < arrayCount; i++)
+	{
+	  if (ConstructCompilerData (theEnv)->CodeGeneratorCount <
+	      PRIMARY_LEN)
+	    {
+	      CL_gensprintf (theBuffer, "%c",
+			     PRIMARY_CODES[ConstructCompilerData (theEnv)->
+					   CodeGeneratorCount]);
+	    }
+	  else
+	    {
+	      CL_gensprintf (theBuffer, "%s_",
+			     SecondaryCodes[ConstructCompilerData (theEnv)->
+					    CodeGeneratorCount -
+					    PRIMARY_LEN]);
+	    }
+	  ConstructCompilerData (theEnv)->CodeGeneratorCount++;
+	  newPtr->arrayNames[i] =
+	    (char *) CL_gm2 (theEnv, (strlen (theBuffer) + 1));
+	  CL_genstrcpy (newPtr->arrayNames[i], theBuffer);
+	}
+    }
+  else
+    {
+      newPtr->arrayNames = NULL;
+    }
 
    /*===========================================*/
-   /* Add the new item in the appropriate place */
-   /* in the code generator item list.          */
+  /* Add the new item in the appropriate place */
+  /* in the code generator item list.          */
    /*===========================================*/
 
-   if (ConstructCompilerData(theEnv)->ListOfCodeGeneratorItems == NULL)
-     {
+  if (ConstructCompilerData (theEnv)->ListOfCodeGeneratorItems == NULL)
+    {
       newPtr->next = NULL;
-      ConstructCompilerData(theEnv)->ListOfCodeGeneratorItems = newPtr;
-      return(newPtr);
-     }
+      ConstructCompilerData (theEnv)->ListOfCodeGeneratorItems = newPtr;
+      return (newPtr);
+    }
 
-   currentPtr = ConstructCompilerData(theEnv)->ListOfCodeGeneratorItems;
-   while ((currentPtr != NULL) ? (priority < currentPtr->priority) : false)
-     {
+  currentPtr = ConstructCompilerData (theEnv)->ListOfCodeGeneratorItems;
+  while ((currentPtr != NULL) ? (priority < currentPtr->priority) : false)
+    {
       lastPtr = currentPtr;
       currentPtr = currentPtr->next;
-     }
+    }
 
-   if (lastPtr == NULL)
-     {
-      newPtr->next = ConstructCompilerData(theEnv)->ListOfCodeGeneratorItems;
-      ConstructCompilerData(theEnv)->ListOfCodeGeneratorItems = newPtr;
-     }
-   else
-     {
+  if (lastPtr == NULL)
+    {
+      newPtr->next = ConstructCompilerData (theEnv)->ListOfCodeGeneratorItems;
+      ConstructCompilerData (theEnv)->ListOfCodeGeneratorItems = newPtr;
+    }
+  else
+    {
       newPtr->next = currentPtr;
       lastPtr->next = newPtr;
-     }
+    }
 
    /*=========================*/
-   /* Return a pointer to the */
-   /* code generator item.    */
+  /* Return a pointer to the */
+  /* code generator item.    */
    /*=========================*/
 
-   return(newPtr);
-  }
+  return (newPtr);
+}
 
 /************************************************************/
 /* CL_CloseFileIfNeeded: Dete_rmines if a C file to which data  */
@@ -1188,94 +1360,97 @@ struct CodeGeneratorItem *CL_AddCodeGeneratorItem(
 /*   number of array entries for a single file has been     */
 /*   exceeded.                                              */
 /************************************************************/
-FILE *CL_CloseFileIfNeeded(
-  Environment *theEnv,
-  FILE *theFile,
-  unsigned int *theCount,
-  unsigned int *arrayVersion,
-  unsigned int maxIndices,
-  bool *canBeReopened,
-  struct CodeGeneratorFile *codeFile)
-  {
+FILE *
+CL_CloseFileIfNeeded (Environment * theEnv,
+		      FILE * theFile,
+		      unsigned int *theCount,
+		      unsigned int *arrayVersion,
+		      unsigned int maxIndices,
+		      bool *canBeReopened, struct CodeGeneratorFile *codeFile)
+{
    /*==========================================*/
-   /* If the maximum number of entries for the */
-   /* file hasn't been exceeded, then...       */
+  /* If the maximum number of entries for the */
+  /* file hasn't been exceeded, then...       */
    /*==========================================*/
 
-   if (*theCount < maxIndices)
-     {
+  if (*theCount < maxIndices)
+    {
       /*====================================*/
       /* If the file can be reopened later, */
       /* close it. Otherwise, keep it open. */
       /*====================================*/
 
       if (canBeReopened != NULL)
-        {
-         *canBeReopened = true;
-         CL_GenClose(theEnv,theFile);
-         return NULL;
-        }
+	{
+	  *canBeReopened = true;
+	  CL_GenClose (theEnv, theFile);
+	  return NULL;
+	}
 
       return theFile;
-     }
+    }
 
    /*===========================================*/
-   /* Otherwise, the number of entries allowed  */
-   /* in a file has been reached. Indicate that */
-   /* the file can't be reopened.               */
+  /* Otherwise, the number of entries allowed  */
+  /* in a file has been reached. Indicate that */
+  /* the file can't be reopened.               */
    /*===========================================*/
 
-   if (canBeReopened != NULL)
-     { *canBeReopened = false; }
+  if (canBeReopened != NULL)
+    {
+      *canBeReopened = false;
+    }
 
    /*===============================================*/
-   /* If the file is closed, then we need to reopen */
-   /* it to print the final closing right brace.    */
+  /* If the file is closed, then we need to reopen */
+  /* it to print the final closing right brace.    */
    /*===============================================*/
 
-   if (theFile == NULL)
-     {
+  if (theFile == NULL)
+    {
       if ((canBeReopened == NULL) || (codeFile == NULL))
-        {
-         CL_SystemError(theEnv,"CONSCOMP",4);
-         CL_ExitRouter(theEnv,EXIT_FAILURE);
-        }
+	{
+	  CL_SystemError (theEnv, "CONSCOMP", 4);
+	  CL_ExitRouter (theEnv, EXIT_FAILURE);
+	}
 
       if (codeFile->filePrefix == NULL)
-        { return NULL; }
+	{
+	  return NULL;
+	}
 
-      theFile = CL_NewCFile(theEnv,codeFile->filePrefix,codeFile->pathName,
-                         codeFile->fileNameBuffer,
-                         codeFile->id,codeFile->version,true);
+      theFile = CL_NewCFile (theEnv, codeFile->filePrefix, codeFile->pathName,
+			     codeFile->fileNameBuffer,
+			     codeFile->id, codeFile->version, true);
       if (theFile == NULL)
-        {
-         CL_SystemError(theEnv,"CONSCOMP",5);
-         CL_ExitRouter(theEnv,EXIT_FAILURE);
-        }
-     }
+	{
+	  CL_SystemError (theEnv, "CONSCOMP", 5);
+	  CL_ExitRouter (theEnv, EXIT_FAILURE);
+	}
+    }
 
    /*================================*/
-   /* Print the final closing brace. */
+  /* Print the final closing brace. */
    /*================================*/
 
-   fprintf(theFile,"};\n");
-   CL_GenClose(theEnv,theFile);
+  fprintf (theFile, "};\n");
+  CL_GenClose (theEnv, theFile);
 
    /*============================================*/
-   /* Update index values for subsequent writing */
-   /* of data structures to files.               */
+  /* Update index values for subsequent writing */
+  /* of data structures to files.               */
    /*============================================*/
 
-   *theCount = 0;
-   (*arrayVersion)++;
+  *theCount = 0;
+  (*arrayVersion)++;
 
    /*=========================*/
-   /* Return NULL to indicate */
-   /* the file is closed.     */
+  /* Return NULL to indicate */
+  /* the file is closed.     */
    /*=========================*/
 
-   return NULL;
-  }
+  return NULL;
+}
 
 /**************************************************************/
 /* CL_OpenFileIfNeeded: Dete_rmines if a C file to which data  */
@@ -1285,306 +1460,318 @@ FILE *CL_CloseFileIfNeeded(
 /*   number of array entries for a single file has been     */
 /*   exceeded.                                              */
 /******************************************************************/
-FILE *CL_OpenFileIfNeeded(
-  Environment *theEnv,
-  FILE *theFile,
-  const char *fileName,
-  const char *pathName,
-  char *fileNameBuffer,
-  unsigned fileID,
-  unsigned int imageID,
-  unsigned *fileCount,
-  unsigned int arrayVersion,
-  FILE *headerFP,
-  const char *structureName,
-  char *structPrefix,
-  bool reopenOldFile,
-  struct CodeGeneratorFile *codeFile)
-  {
-   char arrayName[80];
-   const char *newName;
-   unsigned int newID, newVersion;
+FILE *
+CL_OpenFileIfNeeded (Environment * theEnv,
+		     FILE * theFile,
+		     const char *fileName,
+		     const char *pathName,
+		     char *fileNameBuffer,
+		     unsigned fileID,
+		     unsigned int imageID,
+		     unsigned *fileCount,
+		     unsigned int arrayVersion,
+		     FILE * headerFP,
+		     const char *structureName,
+		     char *structPrefix,
+		     bool reopenOldFile, struct CodeGeneratorFile *codeFile)
+{
+  char arrayName[80];
+  const char *newName;
+  unsigned int newID, newVersion;
 
    /*===========================================*/
-   /* If a file is being reopened, use the same */
-   /* version number, name, and ID as before.   */
+  /* If a file is being reopened, use the same */
+  /* version number, name, and ID as before.   */
    /*===========================================*/
 
-   if (reopenOldFile)
-     {
+  if (reopenOldFile)
+    {
       if (codeFile == NULL)
-        {
-         CL_SystemError(theEnv,"CONSCOMP",6);
-         CL_ExitRouter(theEnv,EXIT_FAILURE);
-        }
+	{
+	  CL_SystemError (theEnv, "CONSCOMP", 6);
+	  CL_ExitRouter (theEnv, EXIT_FAILURE);
+	}
 
       newName = codeFile->filePrefix;
       newID = codeFile->id;
       newVersion = codeFile->version;
-     }
+    }
 
    /*=====================================================*/
-   /* Otherwise, use the specified version number, name,  */
-   /* and ID. If the appropriate argument is supplied,    */
-   /* remember these values for later reopening the file. */
+  /* Otherwise, use the specified version number, name,  */
+  /* and ID. If the appropriate argument is supplied,    */
+  /* remember these values for later reopening the file. */
    /*=====================================================*/
 
-   else
-     {
+  else
+    {
       newName = fileName;
       newVersion = *fileCount;
       newID = fileID;
 
       if (codeFile != NULL)
-        {
-         codeFile->version = newVersion;
-         codeFile->filePrefix = newName;
-         codeFile->id = newID;
-        }
-     }
+	{
+	  codeFile->version = newVersion;
+	  codeFile->filePrefix = newName;
+	  codeFile->id = newID;
+	}
+    }
 
    /*=========================================*/
-   /* If the file is already open, return it. */
+  /* If the file is already open, return it. */
    /*=========================================*/
 
-   if (theFile != NULL)
-     {
-      fprintf(theFile,",\n");
-      return(theFile);
-     }
+  if (theFile != NULL)
+    {
+      fprintf (theFile, ",\n");
+      return (theFile);
+    }
 
    /*================*/
-   /* Open the file. */
+  /* Open the file. */
    /*================*/
 
-   if ((theFile = CL_NewCFile(theEnv,newName,pathName,fileNameBuffer,newID,newVersion,reopenOldFile)) == NULL)
-     { return NULL; }
+  if ((theFile =
+       CL_NewCFile (theEnv, newName, pathName, fileNameBuffer, newID,
+		    newVersion, reopenOldFile)) == NULL)
+    {
+      return NULL;
+    }
 
    /*=========================================*/
-   /* If this is the first time the file has  */
-   /* been opened, write out the beginning of */
-   /* the array variable definition.          */
+  /* If this is the first time the file has  */
+  /* been opened, write out the beginning of */
+  /* the array variable definition.          */
    /*=========================================*/
 
-   if (reopenOldFile == false)
-     {
+  if (reopenOldFile == false)
+    {
       (*fileCount)++;
-      CL_gensprintf(arrayName,"%s%d_%d",structPrefix,imageID,arrayVersion);
-      fprintf(theFile,"%s %s[] = {\n",structureName,arrayName);
-      fprintf(headerFP,"extern %s %s[];\n",structureName,arrayName);
-     }
-   else
-     { fprintf(theFile,",\n"); }
+      CL_gensprintf (arrayName, "%s%d_%d", structPrefix, imageID,
+		     arrayVersion);
+      fprintf (theFile, "%s %s[] = {\n", structureName, arrayName);
+      fprintf (headerFP, "extern %s %s[];\n", structureName, arrayName);
+    }
+  else
+    {
+      fprintf (theFile, ",\n");
+    }
 
    /*==================*/
-   /* Return the file. */
+  /* Return the file. */
    /*==================*/
 
-   return(theFile);
-  }
+  return (theFile);
+}
 
 /*************************************************/
 /* MarkConstruct_BsaveIDs: Mark all occurences of */
 /*  a specific construct with a unique ID.       */
 /*************************************************/
-void MarkConstruct_BsaveIDs(
-  Environment *theEnv,
-  unsigned int constructModuleIndex)
-  {
-   long theCount = 0;
+void
+MarkConstruct_BsaveIDs (Environment * theEnv,
+			unsigned int constructModuleIndex)
+{
+  long theCount = 0;
 
-   CL_DoForAllConstructs(theEnv,MarkConstruct,constructModuleIndex,false,&theCount);
-  }
+  CL_DoForAllConstructs (theEnv, MarkConstruct, constructModuleIndex, false,
+			 &theCount);
+}
 
 /*************************************************************/
 /* MarkConstruct: Sets the bsaveID for a specific construct. */
 /*  Used with the MarkConstruct_BsaveIDs function to mark all */
 /*  occurences of a specific construct with a unique ID.     */
 /*************************************************************/
-static void MarkConstruct(
-  Environment *theEnv,
-  ConstructHeader *theConstruct,
-  void *vTheBuffer)
-  {
-   unsigned long *count = (unsigned long *) vTheBuffer;
+static void
+MarkConstruct (Environment * theEnv,
+	       ConstructHeader * theConstruct, void *vTheBuffer)
+{
+  unsigned long *count = (unsigned long *) vTheBuffer;
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
 
-   theConstruct->bsaveID = (*count)++;
-  }
+  theConstruct->bsaveID = (*count)++;
+}
 
 /***********************************************************/
 /* CL_ConstructHeaderToCode: CL_Writes the C code representation */
 /*   of a single construct header to the specified file.   */
 /***********************************************************/
-void CL_ConstructHeaderToCode(
-  Environment *theEnv,
-  FILE *theFile,
-  ConstructHeader *theConstruct,
-  unsigned int imageID,
-  unsigned int maxIndices,
-  unsigned int moduleCount,
-  const char *constructModulePrefix,
-  const char *constructPrefix)
-  {
+void
+CL_ConstructHeaderToCode (Environment * theEnv,
+			  FILE * theFile,
+			  ConstructHeader * theConstruct,
+			  unsigned int imageID,
+			  unsigned int maxIndices,
+			  unsigned int moduleCount,
+			  const char *constructModulePrefix,
+			  const char *constructPrefix)
+{
    /*================*/
-   /* Construct Name */
+  /* Construct Name */
    /*================*/
 
-   fprintf(theFile,"{");
-   
-   switch (theConstruct->constructType)
-     {
-      case DEFMODULE:
-        fprintf(theFile,"DEFMODULE,");
-        break;
-      case DEFRULE:
-        fprintf(theFile,"DEFRULE,");
-        break;
-      case DEFTEMPLATE:
-        fprintf(theFile,"DEFTEMPLATE,");
-        break;
-      case DEFFACTS:
-        fprintf(theFile,"DEFFACTS,");
-        break;
-      case DEFGLOBAL:
-        fprintf(theFile,"DEFGLOBAL,");
-        break;
-      case DEFFUNCTION:
-        fprintf(theFile,"DEFFUNCTION,");
-        break;
-      case DEFGENERIC:
-        fprintf(theFile,"DEFGENERIC,");
-        break;
-      case DEFMETHOD:
-        fprintf(theFile,"DEFMETHOD,");
-        break;
-      case DEFCLASS:
-        fprintf(theFile,"DEFCLASS,");
-        break;
-      case DEFMESSAGE_HANDLER:
-        fprintf(theFile,"DEFMESSAGE_HANDLER,");
-        break;
-      case DEFINSTANCES:
-        fprintf(theFile,"DEFINSTANCES,");
-        break;
-     }
+  fprintf (theFile, "{");
 
-   CL_PrintSymbolReference(theEnv,theFile,theConstruct->name);
+  switch (theConstruct->constructType)
+    {
+    case DEFMODULE:
+      fprintf (theFile, "DEFMODULE,");
+      break;
+    case DEFRULE:
+      fprintf (theFile, "DEFRULE,");
+      break;
+    case DEFTEMPLATE:
+      fprintf (theFile, "DEFTEMPLATE,");
+      break;
+    case DEFFACTS:
+      fprintf (theFile, "DEFFACTS,");
+      break;
+    case DEFGLOBAL:
+      fprintf (theFile, "DEFGLOBAL,");
+      break;
+    case DEFFUNCTION:
+      fprintf (theFile, "DEFFUNCTION,");
+      break;
+    case DEFGENERIC:
+      fprintf (theFile, "DEFGENERIC,");
+      break;
+    case DEFMETHOD:
+      fprintf (theFile, "DEFMETHOD,");
+      break;
+    case DEFCLASS:
+      fprintf (theFile, "DEFCLASS,");
+      break;
+    case DEFMESSAGE_HANDLER:
+      fprintf (theFile, "DEFMESSAGE_HANDLER,");
+      break;
+    case DEFINSTANCES:
+      fprintf (theFile, "DEFINSTANCES,");
+      break;
+    }
+
+  CL_PrintSymbolReference (theEnv, theFile, theConstruct->name);
 
    /*===================*/
-   /* Pretty Print Fo_rm */
+  /* Pretty Print Fo_rm */
    /*===================*/
 
-   fprintf(theFile,",NULL,");
+  fprintf (theFile, ",NULL,");
 
    /*==================*/
-   /* Construct Module */
+  /* Construct Module */
    /*==================*/
 
-   if (theConstruct->whichModule != NULL)
-     {
-      fprintf(theFile,"MIHS &%s%d_%d[%d],",
-                      constructModulePrefix,
-                      imageID,
-                      (moduleCount / maxIndices) + 1,
-                      moduleCount % maxIndices);
-     }
-   else
-     { fprintf(theFile,"NULL,"); }
+  if (theConstruct->whichModule != NULL)
+    {
+      fprintf (theFile, "MIHS &%s%d_%d[%d],",
+	       constructModulePrefix,
+	       imageID,
+	       (moduleCount / maxIndices) + 1, moduleCount % maxIndices);
+    }
+  else
+    {
+      fprintf (theFile, "NULL,");
+    }
 
    /*==========*/
-   /* CL_Bsave ID */
+  /* CL_Bsave ID */
    /*==========*/
 
-   fprintf(theFile,"0,");
+  fprintf (theFile, "0,");
 
    /*================*/
-   /* Next Construct */
+  /* Next Construct */
    /*================*/
 
-   if (theConstruct->next == NULL)
-     { fprintf(theFile,"NULL}"); }
-   else
-     {
-      fprintf(theFile,"CHS &%s%d_%ld[%ld]}",
-                      constructPrefix,
-                      imageID,
-                      (theConstruct->next->bsaveID / maxIndices) + 1,
-                      theConstruct->next->bsaveID % maxIndices);
-     }
-  }
+  if (theConstruct->next == NULL)
+    {
+      fprintf (theFile, "NULL}");
+    }
+  else
+    {
+      fprintf (theFile, "CHS &%s%d_%ld[%ld]}",
+	       constructPrefix,
+	       imageID,
+	       (theConstruct->next->bsaveID / maxIndices) + 1,
+	       theConstruct->next->bsaveID % maxIndices);
+    }
+}
 
 /***********************************************************/
 /* CL_ConstructModuleToCode: CL_Writes the C code representation */
 /*   of a single construct module to the specified file.   */
 /***********************************************************/
-void CL_ConstructModuleToCode(
-  Environment *theEnv,
-  FILE *theFile,
-  Defmodule *theModule,
-  unsigned int imageID,
-  unsigned int maxIndices,
-  unsigned int constructIndex,
-  const char *constructPrefix)
-  {
-   struct defmoduleItemHeader *theModuleItem;
+void
+CL_ConstructModuleToCode (Environment * theEnv,
+			  FILE * theFile,
+			  Defmodule * theModule,
+			  unsigned int imageID,
+			  unsigned int maxIndices,
+			  unsigned int constructIndex,
+			  const char *constructPrefix)
+{
+  struct defmoduleItemHeader *theModuleItem;
 
    /*======================*/
-   /* Associated Defmodule */
+  /* Associated Defmodule */
    /*======================*/
 
-   fprintf(theFile,"{");
+  fprintf (theFile, "{");
 
-   theModuleItem = (struct defmoduleItemHeader *)
-                   CL_GetModuleItem(theEnv,theModule,constructIndex);
+  theModuleItem = (struct defmoduleItemHeader *)
+    CL_GetModuleItem (theEnv, theModule, constructIndex);
 
-   CL_PrintDefmoduleReference(theEnv,theFile,theModule);
+  CL_PrintDefmoduleReference (theEnv, theFile, theModule);
 
-   fprintf(theFile,",");
+  fprintf (theFile, ",");
 
    /*=============================*/
-   /* First Construct Module Item */
+  /* First Construct Module Item */
    /*=============================*/
 
-   if (theModuleItem->firstItem == NULL) fprintf(theFile,"NULL,");
-   else fprintf(theFile,"CHS &%s%d_%ld[%ld],",
-                        constructPrefix,
-                        imageID,
-                        (theModuleItem->firstItem->bsaveID / maxIndices) + 1,
-                        theModuleItem->firstItem->bsaveID % maxIndices);
+  if (theModuleItem->firstItem == NULL)
+    fprintf (theFile, "NULL,");
+  else
+    fprintf (theFile, "CHS &%s%d_%ld[%ld],",
+	     constructPrefix,
+	     imageID,
+	     (theModuleItem->firstItem->bsaveID / maxIndices) + 1,
+	     theModuleItem->firstItem->bsaveID % maxIndices);
 
    /*============================*/
-   /* Last Construct Module Item */
+  /* Last Construct Module Item */
    /*============================*/
 
-   if (theModuleItem->lastItem == NULL) fprintf(theFile,"NULL");
-   else fprintf(theFile,"CHS &%s%d_%ld[%ld]",
-                        constructPrefix,
-                        imageID,
-                        (theModuleItem->lastItem->bsaveID / maxIndices) + 1,
-                        theModuleItem->lastItem->bsaveID % maxIndices);
+  if (theModuleItem->lastItem == NULL)
+    fprintf (theFile, "NULL");
+  else
+    fprintf (theFile, "CHS &%s%d_%ld[%ld]",
+	     constructPrefix,
+	     imageID,
+	     (theModuleItem->lastItem->bsaveID / maxIndices) + 1,
+	     theModuleItem->lastItem->bsaveID % maxIndices);
 
-   fprintf(theFile,"}");
-  }
+  fprintf (theFile, "}");
+}
 
 #else /* CONSTRUCT_COMPILER && (! RUN_TIME) */
 
-   void                               CL_ConstructsToCCommand(Environment *,UDFContext *,UDFValue *);
+void CL_ConstructsToCCommand (Environment *, UDFContext *, UDFValue *);
 
 /************************************/
 /* CL_ConstructsToCCommand: Definition */
 /*   for rule compiler stub.        */
 /************************************/
-void CL_ConstructsToCCommand(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
+void
+CL_ConstructsToCCommand (Environment * theEnv,
+			 UDFContext * context, UDFValue * returnValue)
+{
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
-  }
+}
 
 #endif /* CONSTRUCT_COMPILER && (! RUN_TIME) */

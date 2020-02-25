@@ -40,13 +40,12 @@
 
 #include "object.h"
 
-   PACKED_CLASS_LINKS            *CL_ParseSuperclasses(Environment *,const char *,CLIPSLexeme *);
-   PACKED_CLASS_LINKS            *CL_FindPrecedenceList(Environment *,Defclass *,PACKED_CLASS_LINKS *);
-   void                           CL_PackClassLinks(Environment *,PACKED_CLASS_LINKS *,CLASS_LINK *);
+PACKED_CLASS_LINKS *CL_ParseSuperclasses (Environment *, const char *,
+					  CLIPSLexeme *);
+PACKED_CLASS_LINKS *CL_FindPrecedenceList (Environment *, Defclass *,
+					   PACKED_CLASS_LINKS *);
+void CL_PackClassLinks (Environment *, PACKED_CLASS_LINKS *, CLASS_LINK *);
 
 #endif /* OBJECT_SYSTEM && (! BLOAD_ONLY) && (! RUN_TIME) */
 
 #endif /* _H_inherpsr */
-
-
-

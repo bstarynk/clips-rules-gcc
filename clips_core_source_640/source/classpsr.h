@@ -57,17 +57,14 @@
 #if OBJECT_SYSTEM
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-   bool                    CL_ParseDefclass(Environment *,const char *);
+bool CL_ParseDefclass (Environment *, const char *);
 
 #endif
 
 #if DEFMODULE_CONSTRUCT
-   void                   *CL_CreateClassScopeMap(Environment *,Defclass *);
+void *CL_CreateClassScopeMap (Environment *, Defclass *);
 #endif
 
 #endif /* OBJECT_SYSTEM */
 
 #endif /* _H_classpsr */
-
-
-

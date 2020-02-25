@@ -42,17 +42,17 @@
 #if (! RUN_TIME)
 
 struct bsaveTemplateSlot
-  {
-   unsigned long slotName;
-   unsigned int multislot : 1;
-   unsigned int noDefault : 1;
-   unsigned int defaultPresent : 1;
-   unsigned int defaultDynamic : 1;
-   unsigned long constraints;
-   unsigned long defaultList;
-   unsigned long facetList;
-   unsigned long next;
-  };
+{
+  unsigned long slotName;
+  unsigned int multislot:1;
+  unsigned int noDefault:1;
+  unsigned int defaultPresent:1;
+  unsigned int defaultDynamic:1;
+  unsigned long constraints;
+  unsigned long defaultList;
+  unsigned long facetList;
+  unsigned long next;
+};
 
 struct bsaveDeftemplate;
 struct bsave_DeftemplateModule;
@@ -60,34 +60,34 @@ struct bsave_DeftemplateModule;
 #include "cstrcbin.h"
 
 struct bsaveDeftemplate
-  {
-   struct bsaveConstructHeader header;
-   unsigned long slotList;
-   unsigned int implied : 1;
-   unsigned int numberOfSlots : 15;
-   unsigned long patternNetwork;
-  };
+{
+  struct bsaveConstructHeader header;
+  unsigned long slotList;
+  unsigned int implied:1;
+  unsigned int numberOfSlots:15;
+  unsigned long patternNetwork;
+};
 
 #include "modulbin.h"
 
 struct bsave_DeftemplateModule
-  {
-   struct bsaveDefmoduleItemHeader header;
-  };
+{
+  struct bsaveDefmoduleItemHeader header;
+};
 
 #define TMPLTBIN_DATA 61
 
 #include "tmpltdef.h"
 
 struct deftemplateBinaryData
-  {
-   Deftemplate *DeftemplateArray;
-   unsigned long NumberOfDeftemplates;
-   unsigned long NumberOfTemplateSlots;
-   unsigned long NumberOfTemplateModules;
-   struct templateSlot *SlotArray;
-   struct deftemplateModule *ModuleArray;
-  };
+{
+  Deftemplate *DeftemplateArray;
+  unsigned long NumberOfDeftemplates;
+  unsigned long NumberOfTemplateSlots;
+  unsigned long NumberOfTemplateModules;
+  struct templateSlot *SlotArray;
+  struct deftemplateModule *ModuleArray;
+};
 
 #define DeftemplateBinaryData(theEnv) ((struct deftemplateBinaryData *) GetEnvironmentData(theEnv,TMPLTBIN_DATA))
 
@@ -97,12 +97,9 @@ struct deftemplateBinaryData
 #include "tmpltdef.h"
 #endif
 
-   void                           CL_DeftemplateBinarySetup(Environment *);
-   void                          *CL_Bload_DeftemplateModuleReference(Environment *,unsigned long);
+void CL_DeftemplateBinarySetup (Environment *);
+void *CL_Bload_DeftemplateModuleReference (Environment *, unsigned long);
 
 #endif /* (! RUN_TIME) */
 
 #endif /* _H_tmpltbin */
-
-
-

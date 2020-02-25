@@ -54,62 +54,58 @@
 #include "object.h"
 
 typedef struct query_class
-  {
-   Defclass *cls;
-   Defmodule *theModule;
-   struct query_class *chain,*nxt;
-  } QUERY_CLASS;
+{
+  Defclass *cls;
+  Defmodule *theModule;
+  struct query_class *chain, *nxt;
+} QUERY_CLASS;
 
 typedef struct query_soln
-  {
-   Instance **soln;
-   struct query_soln *nxt;
-  } QUERY_SOLN;
+{
+  Instance **soln;
+  struct query_soln *nxt;
+} QUERY_SOLN;
 
 typedef struct query_core
-  {
-   Instance **solns;
-   Expression *query,*action;
-   QUERY_SOLN *soln_set,*soln_bottom;
-   unsigned soln_size,soln_cnt;
-   UDFValue *result;
-  } QUERY_CORE;
+{
+  Instance **solns;
+  Expression *query, *action;
+  QUERY_SOLN *soln_set, *soln_bottom;
+  unsigned soln_size, soln_cnt;
+  UDFValue *result;
+} QUERY_CORE;
 
 typedef struct query_stack
-  {
-   QUERY_CORE *core;
-   struct query_stack *nxt;
-  } QUERY_STACK;
+{
+  QUERY_CORE *core;
+  struct query_stack *nxt;
+} QUERY_STACK;
 
 #define INSTANCE_QUERY_DATA 31
 
 struct instanceQueryData
-  {
-   CLIPSLexeme *QUERY_DELIMITER_SYMBOL;
-   QUERY_CORE *QueryCore;
-   QUERY_STACK *QueryCoreStack;
-   bool AbortQuery;
-  };
+{
+  CLIPSLexeme *QUERY_DELIMITER_SYMBOL;
+  QUERY_CORE *QueryCore;
+  QUERY_STACK *QueryCoreStack;
+  bool AbortQuery;
+};
 
 #define InstanceQueryData(theEnv) ((struct instanceQueryData *) GetEnvironmentData(theEnv,INSTANCE_QUERY_DATA))
 
 #define QUERY_DELIMITER_STRING     "(QDS)"
 
-   void                           CL_SetupQuery(Environment *);
-   void                           CL_GetQueryInstance(Environment *,UDFContext *,UDFValue *);
-   void                           CL_GetQueryInstanceSlot(Environment *,UDFContext *,UDFValue *);
-   void                           CL_Any_Instances(Environment *,UDFContext *,UDFValue *);
-   void                           Query_FindInstance(Environment *,UDFContext *,UDFValue *);
-   void                           QueryFindAll_Instances(Environment *,UDFContext *,UDFValue *);
-   void                           CL_QueryDoForInstance(Environment *,UDFContext *,UDFValue *);
-   void                           QueryDoForAll_Instances(Environment *,UDFContext *,UDFValue *);
-   void                           CL_DelayedQueryDoForAll_Instances(Environment *,UDFContext *,UDFValue *);
+void CL_SetupQuery (Environment *);
+void CL_GetQueryInstance (Environment *, UDFContext *, UDFValue *);
+void CL_GetQueryInstanceSlot (Environment *, UDFContext *, UDFValue *);
+void CL_Any_Instances (Environment *, UDFContext *, UDFValue *);
+void Query_FindInstance (Environment *, UDFContext *, UDFValue *);
+void QueryFindAll_Instances (Environment *, UDFContext *, UDFValue *);
+void CL_QueryDoForInstance (Environment *, UDFContext *, UDFValue *);
+void QueryDoForAll_Instances (Environment *, UDFContext *, UDFValue *);
+void CL_DelayedQueryDoForAll_Instances (Environment *, UDFContext *,
+					UDFValue *);
 
 #endif /* INSTANCE_SET_QUERIES */
 
 #endif /* _H_insquery */
-
-
-
-
-

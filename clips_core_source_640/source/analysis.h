@@ -49,13 +49,12 @@
 /*   as the patterns of a rule are analyzed.         */
 /*****************************************************/
 struct nandFrame
-  {
-   int depth;
-   struct lhsParseNode *nandCE;
-   struct nandFrame *next;
-  };
+{
+  int depth;
+  struct lhsParseNode *nandCE;
+  struct nandFrame *next;
+};
 
-   bool                           CL_VariableAnalysis(Environment *,struct lhsParseNode *);
+bool CL_VariableAnalysis (Environment *, struct lhsParseNode *);
 
 #endif
-

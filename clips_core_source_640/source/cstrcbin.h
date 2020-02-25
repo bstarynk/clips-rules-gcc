@@ -34,28 +34,25 @@
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE
 
 struct bsaveConstructHeader
-  {
-   unsigned long name;
-   unsigned long whichModule;
-   unsigned long next;
-  };
+{
+  unsigned long name;
+  unsigned long whichModule;
+  unsigned long next;
+};
 
 #include "constrct.h"
 
 #if BLOAD_AND_BSAVE
-void CL_MarkConstructHeaderNeededItems(ConstructHeader *,unsigned long);
-void CL_Assign_BsaveConstructHeaderVals(struct bsaveConstructHeader *,
-                                    ConstructHeader *);
+void CL_MarkConstructHeaderNeededItems (ConstructHeader *, unsigned long);
+void CL_Assign_BsaveConstructHeaderVals (struct bsaveConstructHeader *,
+					 ConstructHeader *);
 #endif
 
-void CL_UpdateConstructHeader(Environment *,struct bsaveConstructHeader *,
-                           ConstructHeader *,ConstructType,size_t,void *,size_t,void *);
-void CL_UnmarkConstructHeader(Environment *,ConstructHeader *);
+void CL_UpdateConstructHeader (Environment *, struct bsaveConstructHeader *,
+			       ConstructHeader *, ConstructType, size_t,
+			       void *, size_t, void *);
+void CL_UnmarkConstructHeader (Environment *, ConstructHeader *);
 
 #endif
 
 #endif
-
-
-
-

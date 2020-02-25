@@ -42,11 +42,8 @@
 #include "reorder.h"
 #include "scanner.h"
 
-struct lhsParseNode           *CL_ParseRuleLHS(Environment *,const char *,struct token *,const char *,bool *);
-void                           CL_PropagatePatternType(struct lhsParseNode *,struct patternParser *);
+struct lhsParseNode *CL_ParseRuleLHS (Environment *, const char *,
+				      struct token *, const char *, bool *);
+void CL_PropagatePatternType (struct lhsParseNode *, struct patternParser *);
 
 #endif
-
-
-
-

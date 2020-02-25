@@ -53,22 +53,20 @@
 #include "network.h"
 
 struct rdriveinfo
-  {
-   struct partialMatch *link;
-   struct joinNode *jlist;
-   struct rdriveinfo *next;
-  };
+{
+  struct partialMatch *link;
+  struct joinNode *jlist;
+  struct rdriveinfo *next;
+};
 
-void                           CL_Network_Retract(Environment *,struct patternMatch *);
-void                           CL_ReturnPartialMatch(Environment *,struct partialMatch *);
-void                           CL_DestroyPartialMatch(Environment *,struct partialMatch *);
-void                           CL_FlushGarbagePartial_Matches(Environment *);
-void                           CL_DeletePartial_Matches(Environment *,struct partialMatch *);
-void                           CL_PosEntry_RetractBeta(Environment *,struct partialMatch *,struct partialMatch *,int);
-void                           CL_PosEntry_RetractAlpha(Environment *,struct partialMatch *,int);
-bool                           CL_PartialMatchWillBeDeleted(Environment *,struct partialMatch *);
+void CL_Network_Retract (Environment *, struct patternMatch *);
+void CL_ReturnPartialMatch (Environment *, struct partialMatch *);
+void CL_DestroyPartialMatch (Environment *, struct partialMatch *);
+void CL_FlushGarbagePartial_Matches (Environment *);
+void CL_DeletePartial_Matches (Environment *, struct partialMatch *);
+void CL_PosEntry_RetractBeta (Environment *, struct partialMatch *,
+			      struct partialMatch *, int);
+void CL_PosEntry_RetractAlpha (Environment *, struct partialMatch *, int);
+bool CL_PartialMatchWillBeDeleted (Environment *, struct partialMatch *);
 
 #endif /* _H_retract */
-
-
-

@@ -61,21 +61,25 @@
 /***************************************/
 
 #if DEBUGGING_FUNCTIONS
-   static void                       PrintCL_DefglobalValueFo_rm(Environment *,const char *,Defglobal *);
+static void PrintCL_DefglobalValueFo_rm (Environment *, const char *,
+					 Defglobal *);
 #endif
 
 /************************************************************/
 /* CL_DefglobalCommandDefinitions: Defines defglobal commands. */
 /************************************************************/
-void CL_DefglobalCommandDefinitions(
-  Environment *theEnv)
-  {
+void
+CL_DefglobalCommandDefinitions (Environment * theEnv)
+{
 #if ! RUN_TIME
-   CL_AddUDF(theEnv,"set-reset-globals","b",1,1,NULL,Set_ResetGlobalsCommand,"Set_ResetGlobalsCommand",NULL);
-   CL_AddUDF(theEnv,"get-reset-globals","b",0,0,NULL,CL_Get_ResetGlobalsCommand,"CL_Get_ResetGlobalsCommand",NULL);
+  CL_AddUDF (theEnv, "set-reset-globals", "b", 1, 1, NULL,
+	     Set_ResetGlobalsCommand, "Set_ResetGlobalsCommand", NULL);
+  CL_AddUDF (theEnv, "get-reset-globals", "b", 0, 0, NULL,
+	     CL_Get_ResetGlobalsCommand, "CL_Get_ResetGlobalsCommand", NULL);
 
 #if DEBUGGING_FUNCTIONS
-   CL_AddUDF(theEnv,"show-defglobals","v",0,1,"y",CL_ShowDefglobalsCommand,"CL_ShowDefglobalsCommand",NULL);
+  CL_AddUDF (theEnv, "show-defglobals", "v", 0, 1, "y",
+	     CL_ShowDefglobalsCommand, "CL_ShowDefglobalsCommand", NULL);
 #endif
 
 #else
@@ -83,81 +87,85 @@ void CL_DefglobalCommandDefinitions(
 #pragma unused(theEnv)
 #endif
 #endif
-  }
+}
 
 /************************************************/
 /* Set_ResetGlobalsCommand: H/L access routine   */
 /*   for the get-reset-globals command.         */
 /************************************************/
-void Set_ResetGlobalsCommand(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
-   bool oldValue;
-   UDFValue theArg;
+void
+Set_ResetGlobalsCommand (Environment * theEnv,
+			 UDFContext * context, UDFValue * returnValue)
+{
+  bool oldValue;
+  UDFValue theArg;
 
    /*===========================================*/
-   /* Remember the old value of this attribute. */
+  /* Remember the old value of this attribute. */
    /*===========================================*/
 
-   oldValue = CL_Get_ResetGlobals(theEnv);
+  oldValue = CL_Get_ResetGlobals (theEnv);
 
    /*===========================================*/
-   /* Dete_rmine the new value of the attribute. */
+  /* Dete_rmine the new value of the attribute. */
    /*===========================================*/
 
-   if (! CL_UDFFirstArgument(context,ANY_TYPE_BITS,&theArg))
-     { return; }
+  if (!CL_UDFFirstArgument (context, ANY_TYPE_BITS, &theArg))
+    {
+      return;
+    }
 
-   if (theArg.value == FalseSymbol(theEnv))
-     { Set_ResetGlobals(theEnv,false); }
-   else
-     { Set_ResetGlobals(theEnv,true); }
+  if (theArg.value == FalseSymbol (theEnv))
+    {
+      Set_ResetGlobals (theEnv, false);
+    }
+  else
+    {
+      Set_ResetGlobals (theEnv, true);
+    }
 
    /*========================================*/
-   /* Return the old value of the attribute. */
+  /* Return the old value of the attribute. */
    /*========================================*/
 
-   returnValue->lexemeValue = CL_CreateBoolean(theEnv,oldValue);
-  }
+  returnValue->lexemeValue = CL_CreateBoolean (theEnv, oldValue);
+}
 
 /****************************************/
 /* Set_ResetGlobals: C access routine */
 /*   for the set-reset-globals command. */
 /****************************************/
-bool Set_ResetGlobals(
-  Environment *theEnv,
-  bool value)
-  {
-   bool ov;
+bool
+Set_ResetGlobals (Environment * theEnv, bool value)
+{
+  bool ov;
 
-   ov = DefglobalData(theEnv)->CL_ResetGlobals;
-   DefglobalData(theEnv)->CL_ResetGlobals = value;
-   return(ov);
-  }
+  ov = DefglobalData (theEnv)->CL_ResetGlobals;
+  DefglobalData (theEnv)->CL_ResetGlobals = value;
+  return (ov);
+}
 
 /************************************************/
 /* CL_Get_ResetGlobalsCommand: H/L access routine   */
 /*   for the get-reset-globals command.         */
 /************************************************/
-void CL_Get_ResetGlobalsCommand(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
-   returnValue->lexemeValue = CL_CreateBoolean(theEnv,CL_Get_ResetGlobals(theEnv));
-  }
+void
+CL_Get_ResetGlobalsCommand (Environment * theEnv,
+			    UDFContext * context, UDFValue * returnValue)
+{
+  returnValue->lexemeValue =
+    CL_CreateBoolean (theEnv, CL_Get_ResetGlobals (theEnv));
+}
 
 /****************************************/
 /* CL_Get_ResetGlobals: C access routine    */
 /*   for the get-reset-globals command. */
 /****************************************/
-bool CL_Get_ResetGlobals(
-  Environment *theEnv)
-  {
-   return(DefglobalData(theEnv)->CL_ResetGlobals);
-  }
+bool
+CL_Get_ResetGlobals (Environment * theEnv)
+{
+  return (DefglobalData (theEnv)->CL_ResetGlobals);
+}
 
 #if DEBUGGING_FUNCTIONS
 
@@ -165,60 +173,60 @@ bool CL_Get_ResetGlobals(
 /* CL_ShowDefglobalsCommand: H/L access routine   */
 /*   for the show-defglobals command.          */
 /***********************************************/
-void CL_ShowDefglobalsCommand(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
-   Defmodule *theModule;
-   unsigned int numArgs;
-   bool error;
+void
+CL_ShowDefglobalsCommand (Environment * theEnv,
+			  UDFContext * context, UDFValue * returnValue)
+{
+  Defmodule *theModule;
+  unsigned int numArgs;
+  bool error;
 
-   numArgs = CL_UDFArgumentCount(context);
+  numArgs = CL_UDFArgumentCount (context);
 
-   if (numArgs == 1)
-     {
-      theModule = CL_GetModuleName(context,1,&error);
-      if (error) return;
-     }
-   else
-     { theModule = CL_GetCurrentModule(theEnv); }
+  if (numArgs == 1)
+    {
+      theModule = CL_GetModuleName (context, 1, &error);
+      if (error)
+	return;
+    }
+  else
+    {
+      theModule = CL_GetCurrentModule (theEnv);
+    }
 
-   CL_ShowDefglobals(theEnv,STDOUT,theModule);
-  }
+  CL_ShowDefglobals (theEnv, STDOUT, theModule);
+}
 
 /**************************************/
 /* CL_ShowDefglobals: C access routine   */
 /*   for the show-defglobals command. */
 /**************************************/
-void CL_ShowDefglobals(
-  Environment *theEnv,
-  const char *logicalName,
-  Defmodule *theModule)
-  {
-   ConstructHeader *constructPtr;
-   bool allModules = false;
-   struct defmoduleItemHeader *theModuleItem;
+void
+CL_ShowDefglobals (Environment * theEnv,
+		   const char *logicalName, Defmodule * theModule)
+{
+  ConstructHeader *constructPtr;
+  bool allModules = false;
+  struct defmoduleItemHeader *theModuleItem;
 
    /*=======================================*/
-   /* If the module specified is NULL, then */
-   /* list all constructs in all modules.   */
+  /* If the module specified is NULL, then */
+  /* list all constructs in all modules.   */
    /*=======================================*/
 
-   if (theModule == NULL)
-     {
-      theModule = CL_GetNextDefmodule(theEnv,NULL);
+  if (theModule == NULL)
+    {
+      theModule = CL_GetNextDefmodule (theEnv, NULL);
       allModules = true;
-     }
+    }
 
    /*======================================================*/
-   /* Print out the constructs in the specified module(s). */
+  /* Print out the constructs in the specified module(s). */
    /*======================================================*/
 
-   for (;
-        theModule != NULL;
-        theModule = CL_GetNextDefmodule(theEnv,theModule))
-     {
+  for (;
+       theModule != NULL; theModule = CL_GetNextDefmodule (theEnv, theModule))
+    {
       /*===========================================*/
       /* Print the module name before every group  */
       /* of defglobals listed if we're listing the */
@@ -226,55 +234,60 @@ void CL_ShowDefglobals(
       /*===========================================*/
 
       if (allModules)
-        {
-         CL_WriteString(theEnv,logicalName,CL_DefmoduleName(theModule));
-         CL_WriteString(theEnv,logicalName,":\n");
-        }
+	{
+	  CL_WriteString (theEnv, logicalName, CL_DefmoduleName (theModule));
+	  CL_WriteString (theEnv, logicalName, ":\n");
+	}
 
       /*=====================================*/
       /* Print every defglobal in the module */
       /* currently being examined.           */
       /*=====================================*/
 
-      theModuleItem = (struct defmoduleItemHeader *) CL_GetModuleItem(theEnv,theModule,DefglobalData(theEnv)->CL_DefglobalModuleIndex);
+      theModuleItem =
+	(struct defmoduleItemHeader *) CL_GetModuleItem (theEnv, theModule,
+							 DefglobalData
+							 (theEnv)->
+							 CL_DefglobalModuleIndex);
 
       for (constructPtr = theModuleItem->firstItem;
-           constructPtr != NULL;
-           constructPtr = constructPtr->next)
-        {
-         if (CL_EvaluationData(theEnv)->CL_HaltExecution == true) return;
+	   constructPtr != NULL; constructPtr = constructPtr->next)
+	{
+	  if (CL_EvaluationData (theEnv)->CL_HaltExecution == true)
+	    return;
 
-         if (allModules) CL_WriteString(theEnv,logicalName,"   ");
-         PrintCL_DefglobalValueFo_rm(theEnv,logicalName,(Defglobal *) constructPtr);
-         CL_WriteString(theEnv,logicalName,"\n");
-        }
+	  if (allModules)
+	    CL_WriteString (theEnv, logicalName, "   ");
+	  PrintCL_DefglobalValueFo_rm (theEnv, logicalName,
+				       (Defglobal *) constructPtr);
+	  CL_WriteString (theEnv, logicalName, "\n");
+	}
 
       /*===================================*/
       /* If we're only listing the globals */
       /* for one module, then return.      */
       /*===================================*/
 
-      if (! allModules) return;
-     }
-  }
+      if (!allModules)
+	return;
+    }
+}
 
 /*****************************************************/
 /* PrintCL_DefglobalValueFo_rm: Prints the value fo_rm of */
 /*   a defglobal (the current value). For example,   */
 /*   ?*x* = 3                                        */
 /*****************************************************/
-static void PrintCL_DefglobalValueFo_rm(
-  Environment *theEnv,
-  const char *logicalName,
-  Defglobal *theGlobal)
-  {
-   CL_WriteString(theEnv,logicalName,"?*");
-   CL_WriteString(theEnv,logicalName,theGlobal->header.name->contents);
-   CL_WriteString(theEnv,logicalName,"* = ");
-   CL_WriteCLIPSValue(theEnv,logicalName,&theGlobal->current);
-  }
+static void
+PrintCL_DefglobalValueFo_rm (Environment * theEnv,
+			     const char *logicalName, Defglobal * theGlobal)
+{
+  CL_WriteString (theEnv, logicalName, "?*");
+  CL_WriteString (theEnv, logicalName, theGlobal->header.name->contents);
+  CL_WriteString (theEnv, logicalName, "* = ");
+  CL_WriteCLIPSValue (theEnv, logicalName, &theGlobal->current);
+}
 
 #endif /* DEBUGGING_FUNCTIONS */
 
 #endif /* DEFGLOBAL_CONSTRUCT */
-

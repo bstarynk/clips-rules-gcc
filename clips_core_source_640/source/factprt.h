@@ -42,19 +42,17 @@
 
 #define _H_factprt
 
-   void                           Print_FactJNCompVars1(Environment *,const char *,void *);
-   void                           Print_FactJNCompVars2(Environment *,const char *,void *);
-   void                           Print_FactPNCompVars1(Environment *,const char *,void *);
-   void                           Print_FactJNGetVar1(Environment *,const char *,void *);
-   void                           Print_FactJNGetVar2(Environment *,const char *,void *);
-   void                           Print_FactJNGetVar3(Environment *,const char *,void *);
-   void                           Print_FactPNGetVar1(Environment *,const char *,void *);
-   void                           Print_FactPNGetVar2(Environment *,const char *,void *);
-   void                           Print_FactPNGetVar3(Environment *,const char *,void *);
-   void                           Print_FactSlotLength(Environment *,const char *,void *);
-   void                           Print_FactPNConstant1(Environment *,const char *,void *);
-   void                           Print_FactPNConstant2(Environment *,const char *,void *);
+void Print_FactJNCompVars1 (Environment *, const char *, void *);
+void Print_FactJNCompVars2 (Environment *, const char *, void *);
+void Print_FactPNCompVars1 (Environment *, const char *, void *);
+void Print_FactJNGetVar1 (Environment *, const char *, void *);
+void Print_FactJNGetVar2 (Environment *, const char *, void *);
+void Print_FactJNGetVar3 (Environment *, const char *, void *);
+void Print_FactPNGetVar1 (Environment *, const char *, void *);
+void Print_FactPNGetVar2 (Environment *, const char *, void *);
+void Print_FactPNGetVar3 (Environment *, const char *, void *);
+void Print_FactSlotLength (Environment *, const char *, void *);
+void Print_FactPNConstant1 (Environment *, const char *, void *);
+void Print_FactPNConstant2 (Environment *, const char *, void *);
 
 #endif /* _H_factprt */
-
-

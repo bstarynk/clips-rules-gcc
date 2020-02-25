@@ -48,15 +48,12 @@
 
 #include "evaluatn.h"
 
-   void                           CL_SetupInstanceMultifieldCommands(Environment *);
-   void                           CL_MVSlotReplaceCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_MVSlotInsertCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_MVSlotDeleteCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_DirectMVReplaceCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_DirectMVInsertCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_DirectMVDeleteCommand(Environment *,UDFContext *,UDFValue *);
+void CL_SetupInstanceMultifieldCommands (Environment *);
+void CL_MVSlotReplaceCommand (Environment *, UDFContext *, UDFValue *);
+void CL_MVSlotInsertCommand (Environment *, UDFContext *, UDFValue *);
+void CL_MVSlotDeleteCommand (Environment *, UDFContext *, UDFValue *);
+void CL_DirectMVReplaceCommand (Environment *, UDFContext *, UDFValue *);
+void CL_DirectMVInsertCommand (Environment *, UDFContext *, UDFValue *);
+void CL_DirectMVDeleteCommand (Environment *, UDFContext *, UDFValue *);
 
 #endif /* _H_insmult */
-
-
-

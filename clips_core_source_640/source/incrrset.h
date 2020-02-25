@@ -59,15 +59,6 @@
 
 #include "ruledef.h"
 
-   void                           CL_Incremental_Reset(Environment *,Defrule *);
+void CL_Incremental_Reset (Environment *, Defrule *);
 
 #endif /* _H_incrrset */
-
-
-
-
-
-
-
-
-

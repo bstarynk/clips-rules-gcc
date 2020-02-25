@@ -56,24 +56,21 @@
 #include "constrnt.h"
 
 struct BindInfo
-  {
-   CLIPSLexeme *name;
-   CONSTRAINT_RECORD *constraints;
-   struct BindInfo *next;
-  };
+{
+  CLIPSLexeme *name;
+  CONSTRAINT_RECORD *constraints;
+  struct BindInfo *next;
+};
 
-   void                           CL_ProceduralFunctionParsers(Environment *);
-   struct BindInfo               *CL_GetParsedBindNames(Environment *);
-   void                           CL_SetParsedBindNames(Environment *,struct BindInfo *);
-   void                           CL_ClearParsedBindNames(Environment *);
-   bool                           CL_ParsedBindNamesEmpty(Environment *);
-   unsigned short                 CL_SearchParsedBindNames(Environment *,CLIPSLexeme *);
-   unsigned short                 CL_CountParsedBindNames(Environment *);
-   void                           CL_RemoveParsedBindName(Environment *,CLIPSLexeme *);
-   struct constraintRecord       *CL_FindBindConstraints(Environment *,CLIPSLexeme *);
+void CL_ProceduralFunctionParsers (Environment *);
+struct BindInfo *CL_GetParsedBindNames (Environment *);
+void CL_SetParsedBindNames (Environment *, struct BindInfo *);
+void CL_ClearParsedBindNames (Environment *);
+bool CL_ParsedBindNamesEmpty (Environment *);
+unsigned short CL_SearchParsedBindNames (Environment *, CLIPSLexeme *);
+unsigned short CL_CountParsedBindNames (Environment *);
+void CL_RemoveParsedBindName (Environment *, CLIPSLexeme *);
+struct constraintRecord *CL_FindBindConstraints (Environment *,
+						 CLIPSLexeme *);
 
 #endif /* _H_prcdrpsr */
-
-
-
-

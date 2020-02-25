@@ -61,17 +61,12 @@
 #define _H_textpro
 
 #if TEXTPRO_FUNCTIONS
-   void                           CL_FetchCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_PrintRegionCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_GetRegionCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_TossCommand(Environment *,UDFContext *,UDFValue *);
+void CL_FetchCommand (Environment *, UDFContext *, UDFValue *);
+void CL_PrintRegionCommand (Environment *, UDFContext *, UDFValue *);
+void CL_GetRegionCommand (Environment *, UDFContext *, UDFValue *);
+void CL_TossCommand (Environment *, UDFContext *, UDFValue *);
 #endif
 
-   void                           CL_HelpFunctionDefinitions(Environment *);
+void CL_HelpFunctionDefinitions (Environment *);
 
 #endif /* _H_textpro */
-
-
-
-
-

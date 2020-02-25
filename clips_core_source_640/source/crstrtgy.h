@@ -59,27 +59,26 @@
 #define _H_crstrtgy
 
 typedef enum
-  {
-   DEPTH_STRATEGY,
-   BREADTH_STRATEGY,
-   LEX_STRATEGY,
-   MEA_STRATEGY,
-   COMPLEXITY_STRATEGY,
-   SIMPLICITY_STRATEGY,
-   RANDOM_STRATEGY
-  } StrategyType;
+{
+  DEPTH_STRATEGY,
+  BREADTH_STRATEGY,
+  LEX_STRATEGY,
+  MEA_STRATEGY,
+  COMPLEXITY_STRATEGY,
+  SIMPLICITY_STRATEGY,
+  RANDOM_STRATEGY
+} StrategyType;
 
 #include "agenda.h"
 #include "entities.h"
 
 #define DEFAULT_STRATEGY DEPTH_STRATEGY
 
-   void                           CL_PlaceActivation(Environment *,Activation **,Activation *,struct salienceGroup *);
-   StrategyType                   CL_SetStrategy(Environment *,StrategyType);
-   StrategyType                   CL_GetStrategy(Environment *);
-   void                           CL_SetStrategyCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_GetStrategyCommand(Environment *,UDFContext *,UDFValue *);
+void CL_PlaceActivation (Environment *, Activation **, Activation *,
+			 struct salienceGroup *);
+StrategyType CL_SetStrategy (Environment *, StrategyType);
+StrategyType CL_GetStrategy (Environment *);
+void CL_SetStrategyCommand (Environment *, UDFContext *, UDFValue *);
+void CL_GetStrategyCommand (Environment *, UDFContext *, UDFValue *);
 
 #endif /* _H_crstrtgy */
-
-

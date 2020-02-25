@@ -41,18 +41,18 @@
 
 #include "dffnxfun.h"
 
-   void                           CL_SetupDeffunctions_Bload(Environment *);
-   void                          *CL_Bload_DeffunctionModuleReference(Environment *,unsigned long);
+void CL_SetupDeffunctions_Bload (Environment *);
+void *CL_Bload_DeffunctionModuleReference (Environment *, unsigned long);
 
 #define DFFNXBIN_DATA 24
 
 struct deffunctionBinaryData
-  {
-   Deffunction *DeffunctionArray;
-   unsigned long DeffunctionCount;
-   unsigned long ModuleCount;
-   CL_DeffunctionModuleData *ModuleArray;
-  };
+{
+  Deffunction *DeffunctionArray;
+  unsigned long DeffunctionCount;
+  unsigned long ModuleCount;
+  CL_DeffunctionModuleData *ModuleArray;
+};
 
 #define DeffunctionBinaryData(theEnv) ((struct deffunctionBinaryData *) GetEnvironmentData(theEnv,DFFNXBIN_DATA))
 
@@ -61,7 +61,3 @@ struct deffunctionBinaryData
 #endif /* DEFFUNCTION_CONSTRUCT && (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE) */
 
 #endif /* _H_dffnxbin */
-
-
-
-

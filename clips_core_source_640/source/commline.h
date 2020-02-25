@@ -73,59 +73,56 @@
 
 #include <stdlib.h>
 
-typedef void AfterPromptFunction(Environment *);
-typedef bool BeforeCommandExecutionFunction(Environment *);
-typedef void EventFunction(Environment *);
+typedef void AfterPromptFunction (Environment *);
+typedef bool BeforeCommandExecutionFunction (Environment *);
+typedef void EventFunction (Environment *);
 
 struct commandLineData
-  {
-   bool CL_Evaluating_TopLevelCommand;
-   bool CL_Halt_CommandLoop_Batch;
+{
+  bool CL_Evaluating_TopLevelCommand;
+  bool CL_Halt_CommandLoop_Batch;
 #if ! RUN_TIME
-   struct expr *CurrentCommand;
-   char *CommandString;
-   size_t MaximumCharacters;
-   bool Parsing_TopLevelCommand;
-   const char *BannerString;
-   EventFunction *EventCallback;
-   AfterPromptFunction *AfterPromptCallback;
-   BeforeCommandExecutionFunction *BeforeCommandExecutionCallback;
+  struct expr *CurrentCommand;
+  char *CommandString;
+  size_t MaximumCharacters;
+  bool Parsing_TopLevelCommand;
+  const char *BannerString;
+  EventFunction *EventCallback;
+  AfterPromptFunction *AfterPromptCallback;
+  BeforeCommandExecutionFunction *BeforeCommandExecutionCallback;
 #endif
-  };
+};
 
 #define CommandLineData(theEnv) ((struct commandLineData *) GetEnvironmentData(theEnv,COMMANDLINE_DATA))
 
-   void                           CL_InitializeCommandLineData(Environment *);
-   bool                           CL_ExpandCommandString(Environment *,int);
-   void                           CL_FlushCommandString(Environment *);
-   void                           CL_SetCommandString(Environment *,const char *);
-   void                           CL_AppendCommandString(Environment *,const char *);
-   void                           CL_InsertCommandString(Environment *,const char *,unsigned);
-   char                          *CL_GetCommandString(Environment *);
-   int                            CL_CompleteCommand(const char *);
-   void                           CL_CommandLoop(Environment *);
-   void                           CL_CommandLoop_Batch(Environment *);
-   void                           CL_CommandLoop_BatchDriver(Environment *);
-   void                           CL_PrintPrompt(Environment *);
-   void                           CL_PrintBanner(Environment *);
-   void                           CL_SetAfterPromptFunction(Environment *,AfterPromptFunction *);
-   void                           CL_SetBeforeCommandExecutionFunction(Environment *,BeforeCommandExecutionFunction *);
-   bool                           CL_RouteCommand(Environment *,const char *,bool);
-   EventFunction                 *CL_SetEventFunction(Environment *,EventFunction *);
-   bool                           CL_TopLevelCommand(Environment *);
-   void                           CL_AppendNCommandString(Environment *,const char *,unsigned);
-   void                           CL_SetNCommandString(Environment *,const char *,unsigned);
-   const char                    *CL_GetCommandCompletionString(Environment *,const char *,size_t);
-   bool                           CL_ExecuteIfCommandComplete(Environment *);
-   void                           CL_CommandLoopOnceThen_Batch(Environment *);
-   bool                           CL_CommandCompleteAndNotEmpty(Environment *);
-   void                           Set_Halt_CommandLoop_Batch(Environment *,bool);
-   bool                           Get_Halt_CommandLoop_Batch(Environment *);
-   void                           CL_RerouteStdin(Environment *,int,char *[]);
+void CL_InitializeCommandLineData (Environment *);
+bool CL_ExpandCommandString (Environment *, int);
+void CL_FlushCommandString (Environment *);
+void CL_SetCommandString (Environment *, const char *);
+void CL_AppendCommandString (Environment *, const char *);
+void CL_InsertCommandString (Environment *, const char *, unsigned);
+char *CL_GetCommandString (Environment *);
+int CL_CompleteCommand (const char *);
+void CL_CommandLoop (Environment *);
+void CL_CommandLoop_Batch (Environment *);
+void CL_CommandLoop_BatchDriver (Environment *);
+void CL_PrintPrompt (Environment *);
+void CL_PrintBanner (Environment *);
+void CL_SetAfterPromptFunction (Environment *, AfterPromptFunction *);
+void CL_SetBeforeCommandExecutionFunction (Environment *,
+					   BeforeCommandExecutionFunction *);
+bool CL_RouteCommand (Environment *, const char *, bool);
+EventFunction *CL_SetEventFunction (Environment *, EventFunction *);
+bool CL_TopLevelCommand (Environment *);
+void CL_AppendNCommandString (Environment *, const char *, unsigned);
+void CL_SetNCommandString (Environment *, const char *, unsigned);
+const char *CL_GetCommandCompletionString (Environment *, const char *,
+					   size_t);
+bool CL_ExecuteIfCommandComplete (Environment *);
+void CL_CommandLoopOnceThen_Batch (Environment *);
+bool CL_CommandCompleteAndNotEmpty (Environment *);
+void Set_Halt_CommandLoop_Batch (Environment *, bool);
+bool Get_Halt_CommandLoop_Batch (Environment *);
+void CL_RerouteStdin (Environment *, int, char *[]);
 
 #endif
-
-
-
-
-

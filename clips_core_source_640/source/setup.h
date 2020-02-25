@@ -106,33 +106,33 @@
 /*********************************************************************/
 
 #ifndef LINUX
-#define LINUX   1   /* Tested with Ubuntu 16.04, Debian 9.1, */
-#endif              /* Fedora 26, Mint 18, and CentOS 7.     */
+#define LINUX   1		/* Tested with Ubuntu 16.04, Debian 9.1, */
+#endif /* Fedora 26, Mint 18, and CentOS 7.     */
 
 #ifndef DARWIN
-#define DARWIN  0   /* Darwin Mac OS 10.13 with Console */
+#define DARWIN  0		/* Darwin Mac OS 10.13 with Console */
 #endif
 
 #ifndef MAC_XCD
-#define MAC_XCD 0   /* MacOS 10.13 with Xcode 9.4 */
+#define MAC_XCD 0		/* MacOS 10.13 with Xcode 9.4 */
 #endif
 
 #ifndef WIN_MVC
-#define WIN_MVC 0   /* Windows 7 or 10, with Visual Studio 2017 */
+#define WIN_MVC 0		/* Windows 7 or 10, with Visual Studio 2017 */
 #endif
 
 /* The following are untested: */
 
 #ifndef UNIX_V
-#define UNIX_V  0   /* UNIX System V, 4.2bsd, or HP Unix, presumably with gcc */
+#define UNIX_V  0		/* UNIX System V, 4.2bsd, or HP Unix, presumably with gcc */
 #endif
 
 #ifndef UNIX_7
-#define UNIX_7  0   /* UNIX System III Version 7 or Sun Unix, presumably with gcc */
+#define UNIX_7  0		/* UNIX System III Version 7 or Sun Unix, presumably with gcc */
 #endif
 
 #ifndef WIN_GCC
-#define WIN_GCC 0   /* Windows XP, with DJGPP 3.21 */
+#define WIN_GCC 0		/* Windows XP, with DJGPP 3.21 */
 #endif
 
 /* Use GENERIC if nothing else is used. */
@@ -141,9 +141,9 @@
 #if (! UNIX_V) && (! LINUX) && (! UNIX_7) && \
     (! MAC_XCD) && (! DARWIN) && \
     (! WIN_MVC) && (! WIN_GCC)
-#define GENERIC 1   /* Generic (any machine)                   */
+#define GENERIC 1		/* Generic (any machine)                   */
 #else
-#define GENERIC 0   /* Generic (any machine)                   */
+#define GENERIC 0		/* Generic (any machine)                   */
 #endif
 #endif
 
@@ -473,14 +473,4 @@
 
 #include "usrsetup.h"
 
-#endif	/* _H_setup */
-
-
-
-
-
-
-
-
-
-
+#endif /* _H_setup */

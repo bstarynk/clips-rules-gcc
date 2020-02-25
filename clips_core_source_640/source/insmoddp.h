@@ -62,30 +62,23 @@
 #include "evaluatn.h"
 #endif
 
-   void                           CL_SetupInstanceModDupCommands(Environment *);
+void CL_SetupInstanceModDupCommands (Environment *);
 
-   void                           CL_ModifyInstance(Environment *,UDFContext *,UDFValue *);
-   void                           Msg_ModifyInstance(Environment *,UDFContext *,UDFValue *);
-   void                           CL_DuplicateInstance(Environment *,UDFContext *,UDFValue *);
-   void                           Msg_DuplicateInstance(Environment *,UDFContext *,UDFValue *);
+void CL_ModifyInstance (Environment *, UDFContext *, UDFValue *);
+void Msg_ModifyInstance (Environment *, UDFContext *, UDFValue *);
+void CL_DuplicateInstance (Environment *, UDFContext *, UDFValue *);
+void Msg_DuplicateInstance (Environment *, UDFContext *, UDFValue *);
 
 #if DEFRULE_CONSTRUCT && OBJECT_SYSTEM
-   void                           CL_Inactive_ModifyInstance(Environment *,UDFContext *,UDFValue *);
-   void                           CL_InactiveMsg_ModifyInstance(Environment *,UDFContext *,UDFValue *);
-   void                           Inactive_DuplicateInstance(Environment *,UDFContext *,UDFValue *);
-   void                           InactiveMsg_DuplicateInstance(Environment *,UDFContext *,UDFValue *);
+void CL_Inactive_ModifyInstance (Environment *, UDFContext *, UDFValue *);
+void CL_InactiveMsg_ModifyInstance (Environment *, UDFContext *, UDFValue *);
+void Inactive_DuplicateInstance (Environment *, UDFContext *, UDFValue *);
+void InactiveMsg_DuplicateInstance (Environment *, UDFContext *, UDFValue *);
 #endif
 
-   void                           CL_DirectModifyMsgHandler(Environment *,UDFContext *,UDFValue *);
-   void                           CL_MsgModifyMsgHandler(Environment *,UDFContext *,UDFValue *);
-   void                           CL_DirectDuplicateMsgHandler(Environment *,UDFContext *,UDFValue *);
-   void                           CL_MsgDuplicateMsgHandler(Environment *,UDFContext *,UDFValue *);
+void CL_DirectModifyMsgHandler (Environment *, UDFContext *, UDFValue *);
+void CL_MsgModifyMsgHandler (Environment *, UDFContext *, UDFValue *);
+void CL_DirectDuplicateMsgHandler (Environment *, UDFContext *, UDFValue *);
+void CL_MsgDuplicateMsgHandler (Environment *, UDFContext *, UDFValue *);
 
 #endif /* _H_insmoddp */
-
-
-
-
-
-
-

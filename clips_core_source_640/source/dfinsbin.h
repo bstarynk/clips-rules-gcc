@@ -46,21 +46,18 @@
 #define DFINSBIN_DATA 25
 
 struct definstancesBinaryData
-  {
-   Definstances *DefinstancesArray;
-   unsigned long DefinstancesCount;
-   unsigned long ModuleCount;
-   DEFINSTANCES_MODULE *ModuleArray;
-  };
+{
+  Definstances *DefinstancesArray;
+  unsigned long DefinstancesCount;
+  unsigned long ModuleCount;
+  DEFINSTANCES_MODULE *ModuleArray;
+};
 
 #define DefinstancesBinaryData(theEnv) ((struct definstancesBinaryData *) GetEnvironmentData(theEnv,DFINSBIN_DATA))
 
-   void                           CL_SetupDefinstances_Bload(Environment *);
-   void                          *CL_Bload_DefinstancesModuleRef(Environment *,unsigned long);
+void CL_SetupDefinstances_Bload (Environment *);
+void *CL_Bload_DefinstancesModuleRef (Environment *, unsigned long);
 
 #endif /* DEFINSTANCES_CONSTRUCT && (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE) */
 
 #endif /* _H_dfinsbin */
-
-
-

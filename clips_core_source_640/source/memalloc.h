@@ -64,16 +64,16 @@
 
 struct memoryPtr;
 
-typedef bool OutOfMemoryFunction(Environment *,size_t);
+typedef bool OutOfMemoryFunction (Environment *, size_t);
 
 #ifndef MEM_TABLE_SIZE
 #define MEM_TABLE_SIZE 500
 #endif
 
 struct memoryPtr
-  {
-   struct memoryPtr *next;
-  };
+{
+  struct memoryPtr *next;
+};
 
 #if (MEM_TABLE_SIZE > 0)
 /*
@@ -156,42 +156,37 @@ struct memoryPtr
 #define MEMORY_DATA 59
 
 struct memoryData
-  {
-   long long MemoryAmount;
-   long long MemoryCalls;
-   bool ConserveMemory;
-   OutOfMemoryFunction *OutOfMemoryCallback;
-   struct memoryPtr *TempMemoryPtr;
-   struct memoryPtr **MemoryTable;
-   size_t TempSize;
-  };
+{
+  long long MemoryAmount;
+  long long MemoryCalls;
+  bool ConserveMemory;
+  OutOfMemoryFunction *OutOfMemoryCallback;
+  struct memoryPtr *TempMemoryPtr;
+  struct memoryPtr **MemoryTable;
+  size_t TempSize;
+};
 
 #define MemoryData(theEnv) ((struct memoryData *) GetEnvironmentData(theEnv,MEMORY_DATA))
 
-   void                           CL_InitializeMemory(Environment *);
-   void                          *CL_genalloc(Environment *,size_t);
-   bool                           CL_DefaultOutOfMemoryFunction(Environment *,size_t);
-   OutOfMemoryFunction           *CL_SetOutOfMemoryFunction(Environment *,OutOfMemoryFunction *);
-   void                           CL_genfree(Environment *,void *,size_t);
-   void                          *CL_genrealloc(Environment *,void *,size_t,size_t);
-   long long                      CL_MemUsed(Environment *);
-   long long                      CL_MemRequests(Environment *);
-   long long                      CL_UpdateMemoryUsed(Environment *,long long);
-   long long                      CL_UpdateMemoryRequests(Environment *,long long);
-   long long                      CL_ReleaseMem(Environment *,long long);
-   void                          *CL_gm1(Environment *,size_t);
-   void                          *CL_gm2(Environment *,size_t);
-   void                           CL_rm(Environment *,void *,size_t);
-   unsigned long                  CL_PoolSize(Environment *);
-   unsigned long                  CL_Actual_PoolSize(Environment *);
-   bool                           CL_SetConserveMemory(Environment *,bool);
-   bool                           CL_GetConserveMemory(Environment *);
-   void                           CL_genmemcpy(char *,char *,unsigned long);
+void CL_InitializeMemory (Environment *);
+void *CL_genalloc (Environment *, size_t);
+bool CL_DefaultOutOfMemoryFunction (Environment *, size_t);
+OutOfMemoryFunction *CL_SetOutOfMemoryFunction (Environment *,
+						OutOfMemoryFunction *);
+void CL_genfree (Environment *, void *, size_t);
+void *CL_genrealloc (Environment *, void *, size_t, size_t);
+long long CL_MemUsed (Environment *);
+long long CL_MemRequests (Environment *);
+long long CL_UpdateMemoryUsed (Environment *, long long);
+long long CL_UpdateMemoryRequests (Environment *, long long);
+long long CL_ReleaseMem (Environment *, long long);
+void *CL_gm1 (Environment *, size_t);
+void *CL_gm2 (Environment *, size_t);
+void CL_rm (Environment *, void *, size_t);
+unsigned long CL_PoolSize (Environment *);
+unsigned long CL_Actual_PoolSize (Environment *);
+bool CL_SetConserveMemory (Environment *, bool);
+bool CL_GetConserveMemory (Environment *);
+void CL_genmemcpy (char *, char *, unsigned long);
 
 #endif /* _H_memalloc */
-
-
-
-
-
-

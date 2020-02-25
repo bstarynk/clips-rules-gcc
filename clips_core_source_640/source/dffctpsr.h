@@ -43,7 +43,6 @@
 
 #define _H_dffctpsr
 
-   bool                           CL_ParseDeffacts(Environment *,const char *);
+bool CL_ParseDeffacts (Environment *, const char *);
 
 #endif /* _H_dffctpsr */
-

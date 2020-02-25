@@ -47,11 +47,10 @@
 
 #include <stdio.h>
 
-   void                           CL_PrintConstraintReference(Environment *,FILE *,CONSTRAINT_RECORD *,
-                                                           unsigned int,unsigned int);
-   void                           ConstraintRecordToCode(FILE *,CONSTRAINT_RECORD *);
-   void                           CL_ConstraintsToCode(Environment *,const char *,const char *,char *,
-                                                    unsigned int,FILE *,unsigned int,unsigned int);
+void CL_PrintConstraintReference (Environment *, FILE *, CONSTRAINT_RECORD *,
+				  unsigned int, unsigned int);
+void ConstraintRecordToCode (FILE *, CONSTRAINT_RECORD *);
+void CL_ConstraintsToCode (Environment *, const char *, const char *, char *,
+			   unsigned int, FILE *, unsigned int, unsigned int);
 
 #endif /* _H_cstrncmp */
-

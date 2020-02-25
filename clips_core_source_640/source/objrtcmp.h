@@ -52,15 +52,12 @@
 
 #include <stdio.h>
 
-   void                    CL_ObjectPatternsCompilerSetup(Environment *);
-   void                    CL_ObjectPatternNodeReference(Environment *,void *,FILE *,
-                                                      unsigned int,unsigned int);
-   void                    CL_ClassAlphaLinkReference(Environment *,void *,FILE *,
-                                                   unsigned int,unsigned int);
+void CL_ObjectPatternsCompilerSetup (Environment *);
+void CL_ObjectPatternNodeReference (Environment *, void *, FILE *,
+				    unsigned int, unsigned int);
+void CL_ClassAlphaLinkReference (Environment *, void *, FILE *,
+				 unsigned int, unsigned int);
 
 #endif /* DEFRULE_CONSTRUCT && OBJECT_SYSTEM && (! RUN_TIME) && CONSTRUCT_COMPILER */
 
 #endif /* _H_objrtcmp */
-
-
-

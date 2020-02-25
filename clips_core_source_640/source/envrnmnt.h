@@ -68,7 +68,7 @@
 
 typedef struct environmentData Environment;
 
-typedef void EnvironmentCleanupFunction(Environment *);
+typedef void EnvironmentCleanupFunction (Environment *);
 
 #include "entities.h"
 
@@ -76,25 +76,25 @@ typedef void EnvironmentCleanupFunction(Environment *);
 #define MAXIMUM_ENVIRONMENT_POSITIONS 100
 
 struct environmentCleanupFunction
-  {
-   const char *name;
-   void (*func)(Environment *);
-   int priority;
-   struct environmentCleanupFunction *next;
-  };
+{
+  const char *name;
+  void (*func) (Environment *);
+  int priority;
+  struct environmentCleanupFunction *next;
+};
 
 struct environmentData
-  {
-   unsigned int initialized : 1;
-   void *context;
-   CLIPSLexeme *TrueSymbol;
-   CLIPSLexeme *FalseSymbol;
-   CLIPSVoid *VoidConstant;
-   void **theData;
-   void (**cleanupFunctions)(Environment *);
-   struct environmentCleanupFunction *listOfCleanupEnvironmentFunctions;
-   struct environmentData *next;
-  };
+{
+  unsigned int initialized:1;
+  void *context;
+  CLIPSLexeme *TrueSymbol;
+  CLIPSLexeme *FalseSymbol;
+  CLIPSVoid *VoidConstant;
+  void **theData;
+  void (**cleanupFunctions) (Environment *);
+  struct environmentCleanupFunction *listOfCleanupEnvironmentFunctions;
+  struct environmentData *next;
+};
 
 #define VoidConstant(theEnv) (theEnv->VoidConstant)
 #define FalseSymbol(theEnv) (theEnv->FalseSymbol)
@@ -103,10 +103,11 @@ struct environmentData
 #define GetEnvironmentData(theEnv,position) (((struct environmentData *) theEnv)->theData[position])
 #define SetEnvironmentData(theEnv,position,value) (((struct environmentData *) theEnv)->theData[position] = value)
 
-   bool                           CL_AllocateEnvironmentData(Environment *,unsigned,size_t,EnvironmentCleanupFunction *);
-   bool                           CL_AddEnvironmentCleanupFunction(Environment *,const char *,EnvironmentCleanupFunction *,int);
-   void                          *CL_GetEnvironmentContext(Environment *);
-   void                          *CL_SetEnvironmentContext(Environment *,void *);
+bool CL_AllocateEnvironmentData (Environment *, unsigned, size_t,
+				 EnvironmentCleanupFunction *);
+bool CL_AddEnvironmentCleanupFunction (Environment *, const char *,
+				       EnvironmentCleanupFunction *, int);
+void *CL_GetEnvironmentContext (Environment *);
+void *CL_SetEnvironmentContext (Environment *, void *);
 
 #endif /* _H_envrnmnt */
-

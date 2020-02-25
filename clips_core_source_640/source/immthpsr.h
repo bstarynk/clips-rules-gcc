@@ -44,12 +44,8 @@
 
 #include "genrcfun.h"
 
-   void                           CL_AddImplicitMethods(Environment *,Defgeneric *);
+void CL_AddImplicitMethods (Environment *, Defgeneric *);
 
 #endif /* DEFGENERIC_CONSTRUCT && (! BLOAD_ONLY) && (! RUN_TIME) */
 
 #endif /* _H_immthpsr */
-
-
-
-

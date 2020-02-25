@@ -38,11 +38,10 @@
 
 #include <stdio.h>
 
-   void                           CL_SetupDefinstancesCompiler(Environment *);
-   void                           CL_DefinstancesCModuleReference(Environment *,FILE *,unsigned long,unsigned int,unsigned int);
+void CL_SetupDefinstancesCompiler (Environment *);
+void CL_DefinstancesCModuleReference (Environment *, FILE *, unsigned long,
+				      unsigned int, unsigned int);
 
 #endif /* DEFINSTANCES_CONSTRUCT && CONSTRUCT_COMPILER && (! RUN_TIME) */
 
 #endif /* _H_dfinscmp */
-
-

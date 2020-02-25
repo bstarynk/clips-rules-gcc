@@ -80,81 +80,77 @@ typedef struct classAlphaLink CLASS_ALPHA_LINK;
 #include "symbol.h"
 
 typedef struct classBitMap
-  {
-   unsigned short maxid;
-   char map[1];
-  } CLASS_BITMAP;
+{
+  unsigned short maxid;
+  char map[1];
+} CLASS_BITMAP;
 
 #define ClassBitMapSize(bmp) ((sizeof(CLASS_BITMAP) + \
                                      (sizeof(char) * (bmp->maxid / BITS_PER_BYTE))))
 
 typedef struct slotBitMap
-  {
-   unsigned short maxid;
-   char map[1];
-  } SLOT_BITMAP;
+{
+  unsigned short maxid;
+  char map[1];
+} SLOT_BITMAP;
 
 #define SlotBitMapSize(bmp) ((sizeof(SLOT_BITMAP) + \
                                      (sizeof(char) * (bmp->maxid / BITS_PER_BYTE))))
 
 typedef struct objectPatternNode
-  {
-   unsigned blocked        : 1;
-   unsigned multifieldNode : 1;
-   unsigned endSlot        : 1;
-   unsigned selector       : 1;
-   unsigned whichField     : 8;
-   unsigned short leaveFields;
-   unsigned long long matchTimeTag;
-   unsigned short slotNameID;
-   Expression *networkTest;
-   struct objectPatternNode *nextLevel;
-   struct objectPatternNode *lastLevel;
-   struct objectPatternNode *leftNode;
-   struct objectPatternNode *rightNode;
-   OBJECT_ALPHA_NODE *alphaNode;
-   unsigned long bsaveID;
-  } OBJECT_PATTERN_NODE;
+{
+  unsigned blocked:1;
+  unsigned multifieldNode:1;
+  unsigned endSlot:1;
+  unsigned selector:1;
+  unsigned whichField:8;
+  unsigned short leaveFields;
+  unsigned long long matchTimeTag;
+  unsigned short slotNameID;
+  Expression *networkTest;
+  struct objectPatternNode *nextLevel;
+  struct objectPatternNode *lastLevel;
+  struct objectPatternNode *leftNode;
+  struct objectPatternNode *rightNode;
+  OBJECT_ALPHA_NODE *alphaNode;
+  unsigned long bsaveID;
+} OBJECT_PATTERN_NODE;
 
 struct objectAlphaNode
-  {
-   struct patternNodeHeader header;
-   unsigned long long matchTimeTag;
-   CLIPSBitMap *classbmp,*slotbmp;
-   OBJECT_PATTERN_NODE *patternNode;
-   struct objectAlphaNode *nxtInGroup,
-                          *nxtTe_rminal;
-   unsigned long bsaveID;
-  };
+{
+  struct patternNodeHeader header;
+  unsigned long long matchTimeTag;
+  CLIPSBitMap *classbmp, *slotbmp;
+  OBJECT_PATTERN_NODE *patternNode;
+  struct objectAlphaNode *nxtInGroup, *nxtTe_rminal;
+  unsigned long bsaveID;
+};
 
 struct classAlphaLink
-  {
-   OBJECT_ALPHA_NODE *alphaNode;
-   struct classAlphaLink *next;
-   long bsaveID;
-  };
+{
+  OBJECT_ALPHA_NODE *alphaNode;
+  struct classAlphaLink *next;
+  long bsaveID;
+};
 
 typedef struct objectMatchAction
-  {
-   int type;
-   Instance *ins;
-   SLOT_BITMAP *slotNameIDs;
-   struct objectMatchAction *nxt;
-  } OBJECT_MATCH_ACTION;
+{
+  int type;
+  Instance *ins;
+  SLOT_BITMAP *slotNameIDs;
+  struct objectMatchAction *nxt;
+} OBJECT_MATCH_ACTION;
 
-   void                  CL_ObjectMatchDelay(Environment *,UDFContext *,UDFValue *);
-   bool                  CL_SetDelayObjectPatternMatching(Environment *,bool);
-   bool                  CL_GetDelayObjectPatternMatching(Environment *);
-   OBJECT_PATTERN_NODE  *CL_ObjectNetworkPointer(Environment *);
-   OBJECT_ALPHA_NODE    *CL_ObjectNetworkTe_rminalPointer(Environment *);
-   void                  Set_ObjectNetworkPointer(Environment *,OBJECT_PATTERN_NODE *);
-   void                  SetCL_ObjectNetworkTe_rminalPointer(Environment *,OBJECT_ALPHA_NODE *);
-   void                  CL_ObjectNetworkAction(Environment *,int,Instance *,int);
-   void                  CL_ResetObjectMatchTimeTags(Environment *);
+void CL_ObjectMatchDelay (Environment *, UDFContext *, UDFValue *);
+bool CL_SetDelayObjectPatternMatching (Environment *, bool);
+bool CL_GetDelayObjectPatternMatching (Environment *);
+OBJECT_PATTERN_NODE *CL_ObjectNetworkPointer (Environment *);
+OBJECT_ALPHA_NODE *CL_ObjectNetworkTe_rminalPointer (Environment *);
+void Set_ObjectNetworkPointer (Environment *, OBJECT_PATTERN_NODE *);
+void SetCL_ObjectNetworkTe_rminalPointer (Environment *, OBJECT_ALPHA_NODE *);
+void CL_ObjectNetworkAction (Environment *, int, Instance *, int);
+void CL_ResetObjectMatchTimeTags (Environment *);
 
 #endif /* DEFRULE_CONSTRUCT && OBJECT_SYSTEM */
 
 #endif /* _H_objrtmch */
-
-
-

@@ -47,8 +47,10 @@
 #include "scanner.h"
 #include "symbol.h"
 
-   bool                           CL_FactPatternParserFind(CLIPSLexeme *);
-   struct lhsParseNode           *CL_FactPatternParse(Environment *,const char *,struct token *);
-   struct lhsParseNode           *Sequence_RestrictionParse(Environment *,const char *,struct token *);
+bool CL_FactPatternParserFind (CLIPSLexeme *);
+struct lhsParseNode *CL_FactPatternParse (Environment *, const char *,
+					  struct token *);
+struct lhsParseNode *Sequence_RestrictionParse (Environment *, const char *,
+						struct token *);
 
 #endif /* _H_factlhs */

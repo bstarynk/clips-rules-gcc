@@ -55,13 +55,13 @@
   SIDE EFFECTS : Id set and items marked
   NOTES        : None
  ***************************************************/
-void CL_MarkConstructHeaderNeededItems(
-  ConstructHeader *theConstruct,
-  unsigned long the_BsaveID)
-  {
-   theConstruct->name->neededSymbol = true;
-   theConstruct->bsaveID = the_BsaveID;
-  }
+void
+CL_MarkConstructHeaderNeededItems (ConstructHeader * theConstruct,
+				   unsigned long the_BsaveID)
+{
+  theConstruct->name->neededSymbol = true;
+  theConstruct->bsaveID = the_BsaveID;
+}
 
 /******************************************************
   NAME         : CL_Assign_BsaveConstructHeaderVals
@@ -80,26 +80,36 @@ void CL_MarkConstructHeaderNeededItems(
                  used for the whichModule id of
                  this construct.
  ******************************************************/
-void CL_Assign_BsaveConstructHeaderVals(
-  struct bsaveConstructHeader *the_BsaveConstruct,
-  ConstructHeader *theConstruct)
-  {
-   if (theConstruct->name != NULL)
-     { the_BsaveConstruct->name = theConstruct->name->bucket; }
-   else
-     { the_BsaveConstruct->name = ULONG_MAX; }
-   
-   if ((theConstruct->whichModule != NULL) &&
-       (theConstruct->whichModule->theModule != NULL))
-     { the_BsaveConstruct->whichModule = theConstruct->whichModule->theModule->header.bsaveID; }
-   else
-     { the_BsaveConstruct->whichModule = ULONG_MAX; }
-     
-   if (theConstruct->next != NULL)
-     the_BsaveConstruct->next = theConstruct->next->bsaveID;
-   else
-     the_BsaveConstruct->next = ULONG_MAX;
-  }
+void
+CL_Assign_BsaveConstructHeaderVals (struct bsaveConstructHeader
+				    *the_BsaveConstruct,
+				    ConstructHeader * theConstruct)
+{
+  if (theConstruct->name != NULL)
+    {
+      the_BsaveConstruct->name = theConstruct->name->bucket;
+    }
+  else
+    {
+      the_BsaveConstruct->name = ULONG_MAX;
+    }
+
+  if ((theConstruct->whichModule != NULL) &&
+      (theConstruct->whichModule->theModule != NULL))
+    {
+      the_BsaveConstruct->whichModule =
+	theConstruct->whichModule->theModule->header.bsaveID;
+    }
+  else
+    {
+      the_BsaveConstruct->whichModule = ULONG_MAX;
+    }
+
+  if (theConstruct->next != NULL)
+    the_BsaveConstruct->next = theConstruct->next->bsaveID;
+  else
+    the_BsaveConstruct->next = ULONG_MAX;
+}
 
 #endif /* BLOAD_AND_BSAVE */
 
@@ -121,49 +131,56 @@ void CL_Assign_BsaveConstructHeaderVals(
   SIDE EFFECTS : Header values set
   NOTES        : None
  ***************************************************/
-void CL_UpdateConstructHeader(
-  Environment *theEnv,
-  struct bsaveConstructHeader *the_BsaveConstruct,
-  ConstructHeader *theConstruct,
-  ConstructType theType,
-  size_t itemModuleSize,
-  void *itemModuleArray,
-  size_t itemSize,
-  void *itemArray)
-  {
-   size_t moduleOffset, itemOffset;
+void
+CL_UpdateConstructHeader (Environment * theEnv,
+			  struct bsaveConstructHeader *the_BsaveConstruct,
+			  ConstructHeader * theConstruct,
+			  ConstructType theType,
+			  size_t itemModuleSize,
+			  void *itemModuleArray,
+			  size_t itemSize, void *itemArray)
+{
+  size_t moduleOffset, itemOffset;
 
-   if (the_BsaveConstruct->whichModule != ULONG_MAX)
-     {
+  if (the_BsaveConstruct->whichModule != ULONG_MAX)
+    {
       moduleOffset = itemModuleSize * the_BsaveConstruct->whichModule;
       theConstruct->whichModule =
-        (struct defmoduleItemHeader *) &((char *) itemModuleArray)[moduleOffset];
-     }
-   else
-     { theConstruct->whichModule = NULL; }
-     
-   if (the_BsaveConstruct->name != ULONG_MAX)
-     {
-      theConstruct->name = SymbolPointer(the_BsaveConstruct->name);
-      IncrementLexemeCount(theConstruct->name);
-     }
-   else
-     { theConstruct->name = NULL; }
-     
-   if (the_BsaveConstruct->next != ULONG_MAX)
-     {
-      itemOffset = itemSize * the_BsaveConstruct->next;
-      theConstruct->next = (ConstructHeader *) &((char *) itemArray)[itemOffset];
-     }
-   else
-     { theConstruct->next = NULL; }
+	(struct defmoduleItemHeader *) &((char *)
+					 itemModuleArray)[moduleOffset];
+    }
+  else
+    {
+      theConstruct->whichModule = NULL;
+    }
 
-   theConstruct->constructType = theType;
-   theConstruct->env = theEnv;
-   theConstruct->ppFo_rm = NULL;
-   theConstruct->bsaveID = 0L;
-   theConstruct->usrData = NULL;
-  }
+  if (the_BsaveConstruct->name != ULONG_MAX)
+    {
+      theConstruct->name = SymbolPointer (the_BsaveConstruct->name);
+      IncrementLexemeCount (theConstruct->name);
+    }
+  else
+    {
+      theConstruct->name = NULL;
+    }
+
+  if (the_BsaveConstruct->next != ULONG_MAX)
+    {
+      itemOffset = itemSize * the_BsaveConstruct->next;
+      theConstruct->next =
+	(ConstructHeader *) & ((char *) itemArray)[itemOffset];
+    }
+  else
+    {
+      theConstruct->next = NULL;
+    }
+
+  theConstruct->constructType = theType;
+  theConstruct->env = theEnv;
+  theConstruct->ppFo_rm = NULL;
+  theConstruct->bsaveID = 0L;
+  theConstruct->usrData = NULL;
+}
 
 /*******************************************************
   NAME         : CL_UnmarkConstructHeader
@@ -174,12 +191,11 @@ void CL_UpdateConstructHeader(
   SIDE EFFECTS : Busy counts fo ephemerals decremented
   NOTES        : None
  *******************************************************/
-void CL_UnmarkConstructHeader(
-  Environment *theEnv,
-  ConstructHeader *theConstruct)
-  {
-   CL_ReleaseLexeme(theEnv,theConstruct->name);
-  }
+void
+CL_UnmarkConstructHeader (Environment * theEnv,
+			  ConstructHeader * theConstruct)
+{
+  CL_ReleaseLexeme (theEnv, theConstruct->name);
+}
 
 #endif /* BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE */
-

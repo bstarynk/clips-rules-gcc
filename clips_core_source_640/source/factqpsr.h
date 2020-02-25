@@ -53,8 +53,10 @@
 
 #include "expressn.h"
 
-   Expression                    *CL_Fact_ParseQueryNoAction(Environment *,Expression *,const char *);
-   Expression                    *CL_Fact_ParseQueryAction(Environment *,Expression *,const char *);
+Expression *CL_Fact_ParseQueryNoAction (Environment *, Expression *,
+					const char *);
+Expression *CL_Fact_ParseQueryAction (Environment *, Expression *,
+				      const char *);
 
 #endif /* FACT_SET_QUERIES */
 

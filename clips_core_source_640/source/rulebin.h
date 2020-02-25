@@ -52,81 +52,81 @@
 #include "network.h"
 
 struct bsaveDefrule
-  {
-   struct bsaveConstructHeader header;
-   int salience;
-   unsigned short localVarCnt;
-   unsigned int complexity      : 12;
-   unsigned int auto_Focus       :  1;
-   unsigned long dynamicSalience;
-   unsigned long actions;
-   unsigned long logicalJoin;
-   unsigned long lastJoin;
-   unsigned long disjunct;
-  };
+{
+  struct bsaveConstructHeader header;
+  int salience;
+  unsigned short localVarCnt;
+  unsigned int complexity:12;
+  unsigned int auto_Focus:1;
+  unsigned long dynamicSalience;
+  unsigned long actions;
+  unsigned long logicalJoin;
+  unsigned long lastJoin;
+  unsigned long disjunct;
+};
 
 struct bsavePatternNodeHeader
-  {
-   unsigned long entryJoin;
-   unsigned long rightHash;
-   unsigned int singlefieldNode : 1;
-   unsigned int multifieldNode : 1;
-   unsigned int stopNode : 1;
-   unsigned int blocked : 1;
-   unsigned int initialize : 1;
-   unsigned int marked : 1;
-   unsigned int beginSlot : 1;
-   unsigned int endSlot : 1;
-   unsigned int selector : 1;
-  };
+{
+  unsigned long entryJoin;
+  unsigned long rightHash;
+  unsigned int singlefieldNode:1;
+  unsigned int multifieldNode:1;
+  unsigned int stopNode:1;
+  unsigned int blocked:1;
+  unsigned int initialize:1;
+  unsigned int marked:1;
+  unsigned int beginSlot:1;
+  unsigned int endSlot:1;
+  unsigned int selector:1;
+};
 
 struct bsave_DefruleModule
-  {
-   struct bsaveDefmoduleItemHeader header;
-  };
+{
+  struct bsaveDefmoduleItemHeader header;
+};
 
 struct bsaveJoinLink
-  {
-   char enterDirection;
-   unsigned long join;
-   unsigned long next;
-  };
+{
+  char enterDirection;
+  unsigned long join;
+  unsigned long next;
+};
 
 struct bsaveJoinNode
-  {
-   unsigned int firstJoin : 1;
-   unsigned int logicalJoin : 1;
-   unsigned int joinFromTheRight : 1;
-   unsigned int patternIsNegated : 1;
-   unsigned int patternIsExists : 1;
-   unsigned int rhsType : 3;
-   unsigned int depth : 7;
-   unsigned long networkTest;
-   unsigned long secondaryNetworkTest;
-   unsigned long leftHash;
-   unsigned long rightHash;
-   unsigned long rightSideEntryStructure;
-   unsigned long nextLinks;
-   unsigned long lastLevel;
-   unsigned long rightMatchNode;
-   unsigned long ruleToActivate;
-  };
+{
+  unsigned int firstJoin:1;
+  unsigned int logicalJoin:1;
+  unsigned int joinFromTheRight:1;
+  unsigned int patternIsNegated:1;
+  unsigned int patternIsExists:1;
+  unsigned int rhsType:3;
+  unsigned int depth:7;
+  unsigned long networkTest;
+  unsigned long secondaryNetworkTest;
+  unsigned long leftHash;
+  unsigned long rightHash;
+  unsigned long rightSideEntryStructure;
+  unsigned long nextLinks;
+  unsigned long lastLevel;
+  unsigned long rightMatchNode;
+  unsigned long ruleToActivate;
+};
 
 #define RULEBIN_DATA 20
 
 struct defruleBinaryData
-  {
-   unsigned long NumberOf_DefruleModules;
-   unsigned long NumberOfDefrules;
-   unsigned long NumberOfJoins;
-   unsigned long NumberOfLinks;
-   unsigned long RightPrimeIndex;
-   unsigned long LeftPrimeIndex;
-   struct defruleModule *ModuleArray;
-   Defrule *DefruleArray;
-   struct joinNode *JoinArray;
-   struct joinLink *LinkArray;
-  };
+{
+  unsigned long NumberOf_DefruleModules;
+  unsigned long NumberOfDefrules;
+  unsigned long NumberOfJoins;
+  unsigned long NumberOfLinks;
+  unsigned long RightPrimeIndex;
+  unsigned long LeftPrimeIndex;
+  struct defruleModule *ModuleArray;
+  Defrule *DefruleArray;
+  struct joinNode *JoinArray;
+  struct joinLink *LinkArray;
+};
 
 #define DefruleBinaryData(theEnv) ((struct defruleBinaryData *) GetEnvironmentData(theEnv,RULEBIN_DATA))
 
@@ -136,18 +136,14 @@ struct defruleBinaryData
 #define CL_BsaveJoinLinkIndex(linkPtr) ((linkPtr == NULL) ? ULONG_MAX :  ((struct joinLink *) linkPtr)->bsaveID)
 #define CL_BloadJoinLinkPointer(i) ((struct joinLink *) ((i == ULONG_MAX) ? NULL : &DefruleBinaryData(theEnv)->LinkArray[i]))
 
-   void                           CL_DefruleBinarySetup(Environment *);
-   void                           CL_UpdatePatternNodeHeader(Environment *,struct patternNodeHeader *,
-                                                                 struct bsavePatternNodeHeader *);
-   void                           CL_Assign_BsavePatternHeaderValues(Environment *,struct bsavePatternNodeHeader *,
-                                                                        struct patternNodeHeader *);
-   void                          *CL_Bload_DefruleModuleReference(Environment *,unsigned long);
+void CL_DefruleBinarySetup (Environment *);
+void CL_UpdatePatternNodeHeader (Environment *, struct patternNodeHeader *,
+				 struct bsavePatternNodeHeader *);
+void CL_Assign_BsavePatternHeaderValues (Environment *,
+					 struct bsavePatternNodeHeader *,
+					 struct patternNodeHeader *);
+void *CL_Bload_DefruleModuleReference (Environment *, unsigned long);
 
 #endif /* (! RUN_TIME) */
 
 #endif /* _H_rulebin */
-
-
-
-
-

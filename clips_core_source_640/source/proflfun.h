@@ -59,60 +59,60 @@
 #include "userdata.h"
 
 struct construct_ProfileInfo
-  {
-   struct userData usrData;
-   long numberOfEntries;
-   unsigned int childCall : 1;
-   double startTime;
-   double totalSelfTime;
-   double totalWithChildrenTime;
-  };
+{
+  struct userData usrData;
+  long numberOfEntries;
+  unsigned int childCall:1;
+  double startTime;
+  double totalSelfTime;
+  double totalWithChildrenTime;
+};
 
 struct profileFrameInfo
-  {
-   unsigned int parentCall : 1;
-   unsigned int profileOnExit : 1;
-   double parentStartTime;
-   struct construct_ProfileInfo *old_ProfileFrame;
-  };
+{
+  unsigned int parentCall:1;
+  unsigned int profileOnExit:1;
+  double parentStartTime;
+  struct construct_ProfileInfo *old_ProfileFrame;
+};
 
 #define PROFLFUN_DATA 15
 
 struct profileFunctionData
-  {
-   double CL_ProfileStartTime;
-   double CL_ProfileEndTime;
-   double CL_ProfileTotalTime;
-   int Last_ProfileInfo;
-   double PercentThreshold;
-   struct userDataRecord CL_ProfileDataInfo;
-   unsigned char CL_ProfileDataID;
-   bool CL_Profile_UserFunctions;
-   bool CL_ProfileConstructs;
-   struct construct_ProfileInfo *Active_ProfileFrame;
-   const char *OutputString;
-  };
+{
+  double CL_ProfileStartTime;
+  double CL_ProfileEndTime;
+  double CL_ProfileTotalTime;
+  int Last_ProfileInfo;
+  double PercentThreshold;
+  struct userDataRecord CL_ProfileDataInfo;
+  unsigned char CL_ProfileDataID;
+  bool CL_Profile_UserFunctions;
+  bool CL_ProfileConstructs;
+  struct construct_ProfileInfo *Active_ProfileFrame;
+  const char *OutputString;
+};
 
 #define CL_ProfileFunctionData(theEnv) ((struct profileFunctionData *) GetEnvironmentData(theEnv,PROFLFUN_DATA))
 
-   void                           CL_ConstructProfilingFunctionDefinitions(Environment *);
-   void                           CL_ProfileCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_ProfileInfoCommand(Environment *,UDFContext *,UDFValue *);
-   void                           Start_Profile(Environment *,struct profileFrameInfo *,
-                                               struct userData **,bool);
-   void                           CL_End_Profile(Environment *,struct profileFrameInfo *);
-   void                           CL_Profile_ResetCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_Reset_ProfileInfo(struct construct_ProfileInfo *);
+void CL_ConstructProfilingFunctionDefinitions (Environment *);
+void CL_ProfileCommand (Environment *, UDFContext *, UDFValue *);
+void CL_ProfileInfoCommand (Environment *, UDFContext *, UDFValue *);
+void Start_Profile (Environment *, struct profileFrameInfo *,
+		    struct userData **, bool);
+void CL_End_Profile (Environment *, struct profileFrameInfo *);
+void CL_Profile_ResetCommand (Environment *, UDFContext *, UDFValue *);
+void CL_Reset_ProfileInfo (struct construct_ProfileInfo *);
 
-   void                           Set_ProfilePercentThresholdCommand(Environment *,UDFContext *,UDFValue *);
-   double                         Set_ProfilePercentThreshold(Environment *,double);
-   void                           CL_Get_ProfilePercentThresholdCommand(Environment *,UDFContext *,UDFValue *);
-   double                         CL_Get_ProfilePercentThreshold(Environment *);
-   bool                           CL_Profile(Environment *,const char *);
-   void                           CL_Delete_ProfileData(Environment *,void *);
-   void                          *CL_Create_ProfileData(Environment *);
-   const char                    *Set_ProfileOutputString(Environment *,const char *);
+void Set_ProfilePercentThresholdCommand (Environment *, UDFContext *,
+					 UDFValue *);
+double Set_ProfilePercentThreshold (Environment *, double);
+void CL_Get_ProfilePercentThresholdCommand (Environment *, UDFContext *,
+					    UDFValue *);
+double CL_Get_ProfilePercentThreshold (Environment *);
+bool CL_Profile (Environment *, const char *);
+void CL_Delete_ProfileData (Environment *, void *);
+void *CL_Create_ProfileData (Environment *);
+const char *Set_ProfileOutputString (Environment *, const char *);
 
 #endif /* _H_proflfun */
-
-

@@ -71,60 +71,68 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static struct joinNode        *FindShareableJoin(struct joinLink *,struct joinNode *,bool,void *,bool,bool,
-                                                    bool,bool,struct expr *,struct expr *,
-                                                    struct expr *,struct expr *);
-   static bool                    TestJoinForReuse(struct joinNode *,bool,bool,
-                                                   bool,bool,struct expr *,struct expr *,
-                                                   struct expr *,struct expr *);
-   static struct joinNode        *CreateNewJoin(Environment *,struct expr *,struct expr *,struct joinNode *,void *,
-                                                bool,bool,bool,struct expr *,struct expr *);
+static struct joinNode *FindShareableJoin (struct joinLink *,
+					   struct joinNode *, bool, void *,
+					   bool, bool, bool, bool,
+					   struct expr *, struct expr *,
+					   struct expr *, struct expr *);
+static bool TestJoinForReuse (struct joinNode *, bool, bool, bool, bool,
+			      struct expr *, struct expr *, struct expr *,
+			      struct expr *);
+static struct joinNode *CreateNewJoin (Environment *, struct expr *,
+				       struct expr *, struct joinNode *,
+				       void *, bool, bool, bool,
+				       struct expr *, struct expr *);
 
 /****************************************************************/
 /* CL_ConstructJoins: Integrates a set of pattern and join tests   */
 /*   associated with a rule into the pattern and join networks. */
 /****************************************************************/
-struct joinNode *CL_ConstructJoins(
-  Environment *theEnv,
-  int logicalJoin,
-  struct lhsParseNode *theLHS,
-  int startDepth,
-  struct joinNode *lastJoin,
-  bool tryToReuse,
-  bool firstJoin)
-  {
-   struct patternNodeHeader *lastPattern;
-   struct joinNode *listOfJoins = NULL;
-   struct joinNode *oldJoin;
-   int joinNumber = 1;
-   bool isLogical, isExists;
-   struct joinNode *lastRightJoin;
-   bool lastIteration = false;
-   unsigned short rhsType;
-   struct expr *leftHash, *rightHash;
-   void *rhsStruct;
-   struct lhsParseNode *nextLHS;
-   struct expr *networkTest, *secondaryNetworkTest, *secondaryExternalTest;
-   bool joinFromTheRight;
-   struct joinLink *theLinks;
-   bool useLinks;
+struct joinNode *
+CL_ConstructJoins (Environment * theEnv,
+		   int logicalJoin,
+		   struct lhsParseNode *theLHS,
+		   int startDepth,
+		   struct joinNode *lastJoin, bool tryToReuse, bool firstJoin)
+{
+  struct patternNodeHeader *lastPattern;
+  struct joinNode *listOfJoins = NULL;
+  struct joinNode *oldJoin;
+  int joinNumber = 1;
+  bool isLogical, isExists;
+  struct joinNode *lastRightJoin;
+  bool lastIteration = false;
+  unsigned short rhsType;
+  struct expr *leftHash, *rightHash;
+  void *rhsStruct;
+  struct lhsParseNode *nextLHS;
+  struct expr *networkTest, *secondaryNetworkTest, *secondaryExternalTest;
+  bool joinFromTheRight;
+  struct joinLink *theLinks;
+  bool useLinks;
 
-   if (theLHS == NULL)
-     {
-      lastJoin = FindShareableJoin(DefruleData(theEnv)->RightPrimeJoins,NULL,true,NULL,true,
-                                   false,false,false,NULL,NULL,NULL,NULL);
+  if (theLHS == NULL)
+    {
+      lastJoin =
+	FindShareableJoin (DefruleData (theEnv)->RightPrimeJoins, NULL, true,
+			   NULL, true, false, false, false, NULL, NULL, NULL,
+			   NULL);
 
       if (lastJoin == NULL)
-        { lastJoin = CreateNewJoin(theEnv,NULL,NULL,NULL,NULL,false,false,false,NULL,NULL); }
-     }
+	{
+	  lastJoin =
+	    CreateNewJoin (theEnv, NULL, NULL, NULL, NULL, false, false,
+			   false, NULL, NULL);
+	}
+    }
 
    /*=====================================================*/
-   /* Process each pattern CE in the rule. At this point, */
-   /* there should be no and/or/not CEs in the LHS.       */
+  /* Process each pattern CE in the rule. At this point, */
+  /* there should be no and/or/not CEs in the LHS.       */
    /*=====================================================*/
 
-   while (theLHS != NULL)
-     {
+  while (theLHS != NULL)
+    {
       /*======================================================*/
       /* Find the beginning of the next group of patterns. If */
       /* the current pattern is not the beginning of a "join  */
@@ -137,54 +145,65 @@ struct joinNode *CL_ConstructJoins(
       secondaryExternalTest = NULL;
 
       if (theLHS->endNandDepth > startDepth)
-        {
-         while ((nextLHS != NULL) &&
-                (nextLHS->endNandDepth > startDepth))
-           { nextLHS = nextLHS->bottom; }
+	{
+	  while ((nextLHS != NULL) && (nextLHS->endNandDepth > startDepth))
+	    {
+	      nextLHS = nextLHS->bottom;
+	    }
 
-         /*====================================================*/
-         /* Variable nextLHS is now pointing to the end of the */
-         /* not/and group beginning with variable theLHS. If   */
-         /* the end depth of the group is less than the depth  */
-         /* of the current enclosing not/and group, then this  */
-         /* is the last iteration for the enclosing group.     */
-         /*====================================================*/
+	 /*====================================================*/
+	  /* Variable nextLHS is now pointing to the end of the */
+	  /* not/and group beginning with variable theLHS. If   */
+	  /* the end depth of the group is less than the depth  */
+	  /* of the current enclosing not/and group, then this  */
+	  /* is the last iteration for the enclosing group.     */
+	 /*====================================================*/
 
-         if (nextLHS != NULL)
-           {
-            if (nextLHS->endNandDepth < startDepth)
-              { lastIteration = true; }
-           }
+	  if (nextLHS != NULL)
+	    {
+	      if (nextLHS->endNandDepth < startDepth)
+		{
+		  lastIteration = true;
+		}
+	    }
 
-         if (! lastIteration)
-           {
-            if (nextLHS != NULL)
-              { nextLHS = nextLHS->bottom; }
+	  if (!lastIteration)
+	    {
+	      if (nextLHS != NULL)
+		{
+		  nextLHS = nextLHS->bottom;
+		}
 
-            if ((nextLHS != NULL) &&
-                (nextLHS->pnType == TEST_CE_NODE) &&
-                (nextLHS->beginNandDepth >= startDepth))
-              {
-               if (nextLHS->endNandDepth < startDepth)
-                 { lastIteration = true; }
+	      if ((nextLHS != NULL) &&
+		  (nextLHS->pnType == TEST_CE_NODE) &&
+		  (nextLHS->beginNandDepth >= startDepth))
+		{
+		  if (nextLHS->endNandDepth < startDepth)
+		    {
+		      lastIteration = true;
+		    }
 
-               secondaryExternalTest = nextLHS->networkTest;
-               nextLHS = nextLHS->bottom;
-              }
-           }
-        }
+		  secondaryExternalTest = nextLHS->networkTest;
+		  nextLHS = nextLHS->bottom;
+		}
+	    }
+	}
       else if (theLHS->endNandDepth == startDepth)
-        {
-         if (nextLHS == NULL)
-           { lastIteration = true; }
-         else if ((nextLHS->pnType == TEST_CE_NODE) &&
-                  (nextLHS->endNandDepth < startDepth))
-           { lastIteration = true; }
-        }
-      else // theLHS->endNandDepth < startDepth
-        {
-         lastIteration = true;
-        }
+	{
+	  if (nextLHS == NULL)
+	    {
+	      lastIteration = true;
+	    }
+	  else if ((nextLHS->pnType == TEST_CE_NODE) &&
+		   (nextLHS->endNandDepth < startDepth))
+	    {
+	      lastIteration = true;
+	    }
+	}
+      else			// theLHS->endNandDepth < startDepth
+	{
+	  lastIteration = true;
+	}
 
       /*===============================================*/
       /* If the pattern is a join from the right, then */
@@ -193,20 +212,22 @@ struct joinNode *CL_ConstructJoins(
       /*===============================================*/
 
       if (theLHS->beginNandDepth > startDepth)
-        {
-         joinFromTheRight = true;
-         isExists = theLHS->existsNand;
+	{
+	  joinFromTheRight = true;
+	  isExists = theLHS->existsNand;
 
-         lastRightJoin = CL_ConstructJoins(theEnv,logicalJoin,theLHS,startDepth+1,lastJoin,tryToReuse,firstJoin);
+	  lastRightJoin =
+	    CL_ConstructJoins (theEnv, logicalJoin, theLHS, startDepth + 1,
+			       lastJoin, tryToReuse, firstJoin);
 
-         rhsStruct = lastRightJoin;
-         rhsType = 0;
-         lastPattern = NULL;
-         networkTest = theLHS->externalNetworkTest;
-         secondaryNetworkTest = secondaryExternalTest;
-         leftHash = theLHS->externalLeftHash;
-         rightHash = theLHS->externalRightHash;
-        }
+	  rhsStruct = lastRightJoin;
+	  rhsType = 0;
+	  lastPattern = NULL;
+	  networkTest = theLHS->externalNetworkTest;
+	  secondaryNetworkTest = secondaryExternalTest;
+	  leftHash = theLHS->externalLeftHash;
+	  rightHash = theLHS->externalRightHash;
+	}
 
       /*=======================================================*/
       /* Otherwise, add the pattern to the appropriate pattern */
@@ -215,38 +236,41 @@ struct joinNode *CL_ConstructJoins(
       /*=======================================================*/
 
       else if (theLHS->right == NULL)
-        {
-         joinFromTheRight = false;
-         rhsType = 0;
-         lastPattern = NULL;
-         rhsStruct = NULL;
-         lastRightJoin = NULL;
-         isExists = theLHS->exists;
-         networkTest = theLHS->networkTest;
-         secondaryNetworkTest = theLHS->secondaryNetworkTest;
-         leftHash = NULL;
-         rightHash = NULL;
-        }
+	{
+	  joinFromTheRight = false;
+	  rhsType = 0;
+	  lastPattern = NULL;
+	  rhsStruct = NULL;
+	  lastRightJoin = NULL;
+	  isExists = theLHS->exists;
+	  networkTest = theLHS->networkTest;
+	  secondaryNetworkTest = theLHS->secondaryNetworkTest;
+	  leftHash = NULL;
+	  rightHash = NULL;
+	}
       else
-        {
-         joinFromTheRight = false;
-         rhsType = theLHS->patternType->positionInArray;
-         lastPattern = (*theLHS->patternType->addPatternFunction)(theEnv,theLHS);
-         rhsStruct = lastPattern;
-         lastRightJoin = NULL;
-         isExists = theLHS->exists;
-         networkTest = theLHS->networkTest;
-         secondaryNetworkTest = theLHS->secondaryNetworkTest;
-         leftHash = theLHS->leftHash;
-         rightHash = theLHS->rightHash;
-        }
+	{
+	  joinFromTheRight = false;
+	  rhsType = theLHS->patternType->positionInArray;
+	  lastPattern =
+	    (*theLHS->patternType->addPatternFunction) (theEnv, theLHS);
+	  rhsStruct = lastPattern;
+	  lastRightJoin = NULL;
+	  isExists = theLHS->exists;
+	  networkTest = theLHS->networkTest;
+	  secondaryNetworkTest = theLHS->secondaryNetworkTest;
+	  leftHash = theLHS->leftHash;
+	  rightHash = theLHS->rightHash;
+	}
 
       /*======================================================*/
       /* Dete_rmine if the join being added is a logical join. */
       /*======================================================*/
 
-      if ((startDepth == 1) && (joinNumber == logicalJoin)) isLogical = true;
-      else isLogical = false;
+      if ((startDepth == 1) && (joinNumber == logicalJoin))
+	isLogical = true;
+      else
+	isLogical = false;
 
       /*===============================================*/
       /* Get the list of joins which could potentially */
@@ -255,52 +279,64 @@ struct joinNode *CL_ConstructJoins(
 
       useLinks = true;
       if (lastJoin != NULL)
-        { theLinks = lastJoin->nextLinks; }
+	{
+	  theLinks = lastJoin->nextLinks;
+	}
       else if (theLHS->right == NULL)
-        { theLinks = DefruleData(theEnv)->RightPrimeJoins; }
+	{
+	  theLinks = DefruleData (theEnv)->RightPrimeJoins;
+	}
       else if (lastPattern != NULL)
-        {
-         listOfJoins = lastPattern->entryJoin;
-         theLinks = NULL;
-         useLinks = false;
-        }
+	{
+	  listOfJoins = lastPattern->entryJoin;
+	  theLinks = NULL;
+	  useLinks = false;
+	}
       else
-        { theLinks = lastRightJoin->nextLinks; }
+	{
+	  theLinks = lastRightJoin->nextLinks;
+	}
 
       /*=======================================================*/
       /* Dete_rmine if the next join to be added can be shared. */
       /*=======================================================*/
 
       if ((tryToReuse == true) &&
-          ((oldJoin = FindShareableJoin(theLinks,listOfJoins,useLinks,rhsStruct,firstJoin,
-                                        theLHS->negated,isExists,isLogical,
-                                        networkTest,secondaryNetworkTest,
-                                        leftHash,rightHash)) != NULL) )
-        {
+	  ((oldJoin =
+	    FindShareableJoin (theLinks, listOfJoins, useLinks, rhsStruct,
+			       firstJoin, theLHS->negated, isExists,
+			       isLogical, networkTest, secondaryNetworkTest,
+			       leftHash, rightHash)) != NULL))
+	{
 #if DEBUGGING_FUNCTIONS
-         if ((CL_Get_WatchItem(theEnv,"compilations") == 1) && CL_GetPrintWhile_Loading(theEnv))
-           { CL_WriteString(theEnv,STDOUT,"=j"); }
+	  if ((CL_Get_WatchItem (theEnv, "compilations") == 1)
+	      && CL_GetPrintWhile_Loading (theEnv))
+	    {
+	      CL_WriteString (theEnv, STDOUT, "=j");
+	    }
 #endif
-         lastJoin = oldJoin;
-        }
+	  lastJoin = oldJoin;
+	}
       else
-        {
-         tryToReuse = false;
-         if (! joinFromTheRight)
-           {
-            lastJoin = CreateNewJoin(theEnv,networkTest,secondaryNetworkTest,lastJoin,
-                                     lastPattern,false,theLHS->negated, isExists,
-                                     leftHash,rightHash);
-            lastJoin->rhsType = rhsType;
-           }
-         else
-           {
-            lastJoin = CreateNewJoin(theEnv,networkTest,secondaryNetworkTest,lastJoin,
-                                     lastRightJoin,true,theLHS->negated, isExists,
-                                     leftHash,rightHash);
-            lastJoin->rhsType = rhsType;
-           }
-        }
+	{
+	  tryToReuse = false;
+	  if (!joinFromTheRight)
+	    {
+	      lastJoin =
+		CreateNewJoin (theEnv, networkTest, secondaryNetworkTest,
+			       lastJoin, lastPattern, false, theLHS->negated,
+			       isExists, leftHash, rightHash);
+	      lastJoin->rhsType = rhsType;
+	    }
+	  else
+	    {
+	      lastJoin =
+		CreateNewJoin (theEnv, networkTest, secondaryNetworkTest,
+			       lastJoin, lastRightJoin, true, theLHS->negated,
+			       isExists, leftHash, rightHash);
+	      lastJoin->rhsType = rhsType;
+	    }
+	}
 
       /*============================================*/
       /* If we've reached the end of the subgroup,  */
@@ -308,7 +344,9 @@ struct joinNode *CL_ConstructJoins(
       /*============================================*/
 
       if (lastIteration)
-        { break; }
+	{
+	  break;
+	}
 
       /*=======================================*/
       /* Move on to the next join to be added. */
@@ -317,61 +355,64 @@ struct joinNode *CL_ConstructJoins(
       theLHS = nextLHS;
       joinNumber++;
       firstJoin = false;
-     }
+    }
 
    /*=================================================*/
-   /* Add the final join which stores the activations */
-   /* of the rule. This join is never shared.         */
+  /* Add the final join which stores the activations */
+  /* of the rule. This join is never shared.         */
    /*=================================================*/
 
-   if (startDepth == 1)
-     {
-      lastJoin = CreateNewJoin(theEnv,NULL,NULL,lastJoin,NULL,
-                               false,false,false,NULL,NULL);
-     }
+  if (startDepth == 1)
+    {
+      lastJoin = CreateNewJoin (theEnv, NULL, NULL, lastJoin, NULL,
+				false, false, false, NULL, NULL);
+    }
 
    /*===================================================*/
-   /* If compilations are being watched, put a carriage */
-   /* return after all of the =j's and +j's             */
+  /* If compilations are being watched, put a carriage */
+  /* return after all of the =j's and +j's             */
    /*===================================================*/
 
 #if DEBUGGING_FUNCTIONS
-   if ((startDepth == 1) &&
-       (CL_Get_WatchItem(theEnv,"compilations") == 1) &&
-       CL_GetPrintWhile_Loading(theEnv))
-     { CL_WriteString(theEnv,STDOUT,"\n"); }
+  if ((startDepth == 1) &&
+      (CL_Get_WatchItem (theEnv, "compilations") == 1) &&
+      CL_GetPrintWhile_Loading (theEnv))
+    {
+      CL_WriteString (theEnv, STDOUT, "\n");
+    }
 #endif
 
    /*=============================*/
-   /* Return the last join added. */
+  /* Return the last join added. */
    /*=============================*/
 
-   return(lastJoin);
-  }
+  return (lastJoin);
+}
 
 /****************************************************************/
 /* CL_AttachTestCEsToPatternCEs: Attaches the expressions found in */
 /*   test CEs to the closest preceeding pattern CE that is not  */
 /*   negated and is at the same not/and depth.                  */
 /****************************************************************/
-void CL_AttachTestCEsToPatternCEs(
-  Environment *theEnv,
-  struct lhsParseNode *theLHS)
-  {
-   struct lhsParseNode *lastNode, *tempNode, *lastLastNode;
+void
+CL_AttachTestCEsToPatternCEs (Environment * theEnv,
+			      struct lhsParseNode *theLHS)
+{
+  struct lhsParseNode *lastNode, *tempNode, *lastLastNode;
 
-   if (theLHS == NULL) return;
+  if (theLHS == NULL)
+    return;
 
    /*=============================================================*/
-   /* Attach test CEs that can be attached directly to a pattern. */
+  /* Attach test CEs that can be attached directly to a pattern. */
    /*=============================================================*/
 
-   lastLastNode = NULL;
-   lastNode = theLHS;
-   theLHS = lastNode->bottom;
+  lastLastNode = NULL;
+  lastNode = theLHS;
+  theLHS = lastNode->bottom;
 
-   while (theLHS != NULL)
-     {
+  while (theLHS != NULL)
+    {
       /*================================================================*/
       /* Skip over any CE that's not a TEST CE as we're only interested */
       /* in attaching a TEST CE to a preceding pattern CE. Update the   */
@@ -379,12 +420,12 @@ void CL_AttachTestCEsToPatternCEs(
       /*================================================================*/
 
       if (theLHS->pnType != TEST_CE_NODE)
-        {
-         lastLastNode = lastNode;
-         lastNode = theLHS;
-         theLHS = theLHS->bottom;
-         continue;
-        }
+	{
+	  lastLastNode = lastNode;
+	  lastNode = theLHS;
+	  theLHS = theLHS->bottom;
+	  continue;
+	}
 
       /*=====================================================*/
       /* If this is the beginning of a new NOT/AND CE group, */
@@ -430,12 +471,12 @@ void CL_AttachTestCEsToPatternCEs(
       /*================================================*/
 
       if (theLHS->beginNandDepth > lastNode->endNandDepth)
-        {
-         lastLastNode = lastNode;
-         lastNode = theLHS;
-         theLHS = theLHS->bottom;
-         continue;
-        }
+	{
+	  lastLastNode = lastNode;
+	  lastNode = theLHS;
+	  theLHS = theLHS->bottom;
+	  continue;
+	}
 
       /*==============================================================*/
       /* If the preceding pattern was the end of a NOT/AND CE group,  */
@@ -446,12 +487,12 @@ void CL_AttachTestCEsToPatternCEs(
       /*==============================================================*/
 
       if (lastNode->beginNandDepth > lastNode->endNandDepth)
-        {
-         lastLastNode = lastNode;
-         lastNode = theLHS;
-         theLHS = theLHS->bottom;
-         continue;
-        }
+	{
+	  lastLastNode = lastNode;
+	  lastNode = theLHS;
+	  theLHS = theLHS->bottom;
+	  continue;
+	}
 
       /*===================================================*/
       /* If the TEST CE does not close the preceding CE... */
@@ -476,24 +517,26 @@ void CL_AttachTestCEsToPatternCEs(
       /*===================================================*/
 
       if (theLHS->beginNandDepth == theLHS->endNandDepth)
-        {
-         /*==============================================================*/
-         /* If the preceding pattern was a NOT or EXISTS CE containing   */
-         /* a single pattern, then attached the TEST CE to the secondary */
-         /* test, otherwise combine it with the primary network test.    */
-         /*==============================================================*/
+	{
+	 /*==============================================================*/
+	  /* If the preceding pattern was a NOT or EXISTS CE containing   */
+	  /* a single pattern, then attached the TEST CE to the secondary */
+	  /* test, otherwise combine it with the primary network test.    */
+	 /*==============================================================*/
 
-         if (lastNode->negated)
-           {
-            lastNode->secondaryNetworkTest =
-               CL_CombineExpressions(theEnv,lastNode->secondaryNetworkTest,theLHS->networkTest);
-           }
-         else
-           {
-            lastNode->networkTest =
-               CL_CombineExpressions(theEnv,lastNode->networkTest,theLHS->networkTest);
-           }
-        }
+	  if (lastNode->negated)
+	    {
+	      lastNode->secondaryNetworkTest =
+		CL_CombineExpressions (theEnv, lastNode->secondaryNetworkTest,
+				       theLHS->networkTest);
+	    }
+	  else
+	    {
+	      lastNode->networkTest =
+		CL_CombineExpressions (theEnv, lastNode->networkTest,
+				       theLHS->networkTest);
+	    }
+	}
 
       /*=================================================================*/
       /* Otherwise the TEST CE closes a prior NOT/AND  or EXISTS/AND CE. */
@@ -508,166 +551,174 @@ void CL_AttachTestCEsToPatternCEs(
       /*=========*/
 
       else if (lastLastNode == NULL)
-        {
-         /*=========================================================*/
-         /* The prior pattern is a single pattern within a not/and. */
-         /*                                                         */
-         /*    (defrule example                                     */
-         /*       (not (and (b)                                     */
-         /*                 (test (= 1 1))))                        */
-         /*       =>)                                               */
-         /*                                                         */
-         /* Collapse the nand pattern.                              */
-         /*=========================================================*/
+	{
+	 /*=========================================================*/
+	  /* The prior pattern is a single pattern within a not/and. */
+	  /*                                                         */
+	  /*    (defrule example                                     */
+	  /*       (not (and (b)                                     */
+	  /*                 (test (= 1 1))))                        */
+	  /*       =>)                                               */
+	  /*                                                         */
+	  /* Collapse the nand pattern.                              */
+	 /*=========================================================*/
 
-         if ((lastNode->negated == false) &&
-             (lastNode->existsNand == false))
-           {
-            lastNode->beginNandDepth = theLHS->endNandDepth;
+	  if ((lastNode->negated == false) && (lastNode->existsNand == false))
+	    {
+	      lastNode->beginNandDepth = theLHS->endNandDepth;
 
-            lastNode->negated = true;
+	      lastNode->negated = true;
 
-            lastNode->networkTest =
-               CL_CombineExpressions(theEnv,lastNode->networkTest,lastNode->externalNetworkTest);
-            lastNode->networkTest =
-               CL_CombineExpressions(theEnv,lastNode->networkTest,theLHS->networkTest);
-            lastNode->externalNetworkTest = NULL;
-           }
+	      lastNode->networkTest =
+		CL_CombineExpressions (theEnv, lastNode->networkTest,
+				       lastNode->externalNetworkTest);
+	      lastNode->networkTest =
+		CL_CombineExpressions (theEnv, lastNode->networkTest,
+				       theLHS->networkTest);
+	      lastNode->externalNetworkTest = NULL;
+	    }
 
-         /*=================================================================*/
-         /* The prior pattern is a single negated pattern within a not/and. */
-         /*                                                                 */
-         /*    (defrule example                                             */
-         /*       (not (and (not (b))                                       */
-         /*                 (test (= 1 1))))                                */
-         /*       =>)                                                       */
-         /*                                                                 */
-         /*=================================================================*/
+	 /*=================================================================*/
+	  /* The prior pattern is a single negated pattern within a not/and. */
+	  /*                                                                 */
+	  /*    (defrule example                                             */
+	  /*       (not (and (not (b))                                       */
+	  /*                 (test (= 1 1))))                                */
+	  /*       =>)                                                       */
+	  /*                                                                 */
+	 /*=================================================================*/
 
-         else if ((lastNode->negated == true) &&
-                  (lastNode->exists == false) &&
-                  (lastNode->existsNand == false))
-           {
-            lastNode->secondaryNetworkTest =
-               CL_CombineExpressions(theEnv,lastNode->secondaryNetworkTest,theLHS->networkTest);
-           }
+	  else if ((lastNode->negated == true) &&
+		   (lastNode->exists == false) &&
+		   (lastNode->existsNand == false))
+	    {
+	      lastNode->secondaryNetworkTest =
+		CL_CombineExpressions (theEnv, lastNode->secondaryNetworkTest,
+				       theLHS->networkTest);
+	    }
 
-         /*================================================================*/
-         /* The prior pattern is a single exists pattern within a not/and. */
-         /*                                                                */
-         /*    (defrule example                                            */
-         /*       (not (and (exists (b))                                   */
-         /*                 (test (= 1 1))))                               */
-         /*       =>)                                                      */
-         /*                                                                */
-         /*================================================================*/
+	 /*================================================================*/
+	  /* The prior pattern is a single exists pattern within a not/and. */
+	  /*                                                                */
+	  /*    (defrule example                                            */
+	  /*       (not (and (exists (b))                                   */
+	  /*                 (test (= 1 1))))                               */
+	  /*       =>)                                                      */
+	  /*                                                                */
+	 /*================================================================*/
 
-         else if ((lastNode->negated == true) &&
-                  (lastNode->exists == true) &&
-                  (lastNode->existsNand == false))
-           {
-            lastNode->secondaryNetworkTest =
-               CL_CombineExpressions(theEnv,lastNode->secondaryNetworkTest,theLHS->networkTest);
-           }
+	  else if ((lastNode->negated == true) &&
+		   (lastNode->exists == true) &&
+		   (lastNode->existsNand == false))
+	    {
+	      lastNode->secondaryNetworkTest =
+		CL_CombineExpressions (theEnv, lastNode->secondaryNetworkTest,
+				       theLHS->networkTest);
+	    }
 
-         /*=============================================================*/
-         /* The prior pattern is a single pattern within an exists/and. */
-         /*                                                             */
-         /*    (defrule example                                         */
-         /*       (exists (and (b)                                      */
-         /*                    (test (= 1 1))))                         */
-         /*       =>)                                                   */
-         /*                                                             */
-         /* Collapse the exists pattern.                                */
-         /*=============================================================*/
+	 /*=============================================================*/
+	  /* The prior pattern is a single pattern within an exists/and. */
+	  /*                                                             */
+	  /*    (defrule example                                         */
+	  /*       (exists (and (b)                                      */
+	  /*                    (test (= 1 1))))                         */
+	  /*       =>)                                                   */
+	  /*                                                             */
+	  /* Collapse the exists pattern.                                */
+	 /*=============================================================*/
 
-         else if ((lastNode->negated == false) &&
-                  (lastNode->exists == false) &&
-                  (lastNode->existsNand == true))
-           {
-            lastNode->beginNandDepth = theLHS->endNandDepth;
+	  else if ((lastNode->negated == false) &&
+		   (lastNode->exists == false) &&
+		   (lastNode->existsNand == true))
+	    {
+	      lastNode->beginNandDepth = theLHS->endNandDepth;
 
-            lastNode->existsNand = false;
-            lastNode->exists = true;
-            lastNode->negated = true;
+	      lastNode->existsNand = false;
+	      lastNode->exists = true;
+	      lastNode->negated = true;
 
-            /*===================================================*/
-            /* For the first two patterns, there shouldn't be an */
-            /* externalNetwork test, but this code is included   */
-            /* to match the other cases where patterns are       */
-            /* collapsed.                                        */
-            /*===================================================*/
+	    /*===================================================*/
+	      /* For the first two patterns, there shouldn't be an */
+	      /* externalNetwork test, but this code is included   */
+	      /* to match the other cases where patterns are       */
+	      /* collapsed.                                        */
+	    /*===================================================*/
 
-            lastNode->networkTest =
-               CL_CombineExpressions(theEnv,lastNode->networkTest,lastNode->externalNetworkTest);
-            lastNode->networkTest =
-               CL_CombineExpressions(theEnv,lastNode->networkTest,theLHS->networkTest);
-            lastNode->externalNetworkTest = NULL;
-           }
+	      lastNode->networkTest =
+		CL_CombineExpressions (theEnv, lastNode->networkTest,
+				       lastNode->externalNetworkTest);
+	      lastNode->networkTest =
+		CL_CombineExpressions (theEnv, lastNode->networkTest,
+				       theLHS->networkTest);
+	      lastNode->externalNetworkTest = NULL;
+	    }
 
-         /*=======================================*/
-         /* The prior pattern is a single negated */
-         /* pattern within an exists/and.         */
-         /*                                       */
-         /*    (defrule example                   */
-         /*       (exists (and (not (b))          */
-         /*                    (test (= 1 1))))   */
-         /*       =>)                             */
-         /*                                       */
-         /*=======================================*/
+	 /*=======================================*/
+	  /* The prior pattern is a single negated */
+	  /* pattern within an exists/and.         */
+	  /*                                       */
+	  /*    (defrule example                   */
+	  /*       (exists (and (not (b))          */
+	  /*                    (test (= 1 1))))   */
+	  /*       =>)                             */
+	  /*                                       */
+	 /*=======================================*/
 
-         else if ((lastNode->negated == true) &&
-                  (lastNode->exists == false) &&
-                  (lastNode->existsNand == true))
-           {
-            lastNode->secondaryNetworkTest =
-               CL_CombineExpressions(theEnv,lastNode->secondaryNetworkTest,theLHS->networkTest);
-           }
+	  else if ((lastNode->negated == true) &&
+		   (lastNode->exists == false) &&
+		   (lastNode->existsNand == true))
+	    {
+	      lastNode->secondaryNetworkTest =
+		CL_CombineExpressions (theEnv, lastNode->secondaryNetworkTest,
+				       theLHS->networkTest);
+	    }
 
-         /*======================================*/
-         /* The prior pattern is a single exists */
-         /* pattern within an exists/and.        */
-         /*                                      */
-         /*    (defrule example                  */
-         /*       (exists (and (exists (b))      */
-         /*                    (test (= 1 1))))  */
-         /*       =>)                            */
-         /*                                      */
-         /* Collapse the exists pattern.         */
-         /*======================================*/
+	 /*======================================*/
+	  /* The prior pattern is a single exists */
+	  /* pattern within an exists/and.        */
+	  /*                                      */
+	  /*    (defrule example                  */
+	  /*       (exists (and (exists (b))      */
+	  /*                    (test (= 1 1))))  */
+	  /*       =>)                            */
+	  /*                                      */
+	  /* Collapse the exists pattern.         */
+	 /*======================================*/
 
-         else if ((lastNode->negated == true) &&
-                  (lastNode->exists == true) &&
-                  (lastNode->existsNand == true))
-           {
-            lastNode->beginNandDepth = theLHS->endNandDepth;
+	  else if ((lastNode->negated == true) &&
+		   (lastNode->exists == true) &&
+		   (lastNode->existsNand == true))
+	    {
+	      lastNode->beginNandDepth = theLHS->endNandDepth;
 
-            lastNode->existsNand = false;
+	      lastNode->existsNand = false;
 
-            /*===================================================*/
-            /* For the first two patterns, there shouldn't be an */
-            /* externalNetwork test, but this code is included   */
-            /* to match the other cases where patterns are       */
-            /* collapsed.                                        */
-            /*===================================================*/
+	    /*===================================================*/
+	      /* For the first two patterns, there shouldn't be an */
+	      /* externalNetwork test, but this code is included   */
+	      /* to match the other cases where patterns are       */
+	      /* collapsed.                                        */
+	    /*===================================================*/
 
-            lastNode->secondaryNetworkTest =
-               CL_CombineExpressions(theEnv,lastNode->secondaryNetworkTest,lastNode->externalNetworkTest);
-            lastNode->secondaryNetworkTest =
-               CL_CombineExpressions(theEnv,lastNode->secondaryNetworkTest,theLHS->networkTest);
-            lastNode->externalNetworkTest = NULL;
-           }
+	      lastNode->secondaryNetworkTest =
+		CL_CombineExpressions (theEnv, lastNode->secondaryNetworkTest,
+				       lastNode->externalNetworkTest);
+	      lastNode->secondaryNetworkTest =
+		CL_CombineExpressions (theEnv, lastNode->secondaryNetworkTest,
+				       theLHS->networkTest);
+	      lastNode->externalNetworkTest = NULL;
+	    }
 
-         /*==============================================*/
-         /* Unhandled case which should not be possible. */
-         /*==============================================*/
+	 /*==============================================*/
+	  /* Unhandled case which should not be possible. */
+	 /*==============================================*/
 
-         else
-           {
-            CL_SystemError(theEnv,"RULEBLD",1);
-            CL_ExitRouter(theEnv,EXIT_FAILURE);
-           }
-        }
+	  else
+	    {
+	      CL_SystemError (theEnv, "RULEBLD", 1);
+	      CL_ExitRouter (theEnv, EXIT_FAILURE);
+	    }
+	}
 
       /*==============================================*/
       /* Otherwise, there are two preceding patterns. */
@@ -687,24 +738,26 @@ void CL_AttachTestCEsToPatternCEs(
       /*====================================*/
 
       else if (lastLastNode->endNandDepth == theLHS->beginNandDepth)
-        {
-         /*==============================================================*/
-         /* If the preceding pattern was a NOT or EXISTS CE containing   */
-         /* a single pattern, then attached the TEST CE to the secondary */
-         /* test, otherwise combine it with the primary network test.    */
-         /*==============================================================*/
+	{
+	 /*==============================================================*/
+	  /* If the preceding pattern was a NOT or EXISTS CE containing   */
+	  /* a single pattern, then attached the TEST CE to the secondary */
+	  /* test, otherwise combine it with the primary network test.    */
+	 /*==============================================================*/
 
-         if (lastNode->negated)
-           {
-            lastNode->secondaryNetworkTest =
-               CL_CombineExpressions(theEnv,lastNode->secondaryNetworkTest,theLHS->networkTest);
-           }
-         else
-           {
-            lastNode->networkTest =
-               CL_CombineExpressions(theEnv,lastNode->networkTest,theLHS->networkTest);
-           }
-        }
+	  if (lastNode->negated)
+	    {
+	      lastNode->secondaryNetworkTest =
+		CL_CombineExpressions (theEnv, lastNode->secondaryNetworkTest,
+				       theLHS->networkTest);
+	    }
+	  else
+	    {
+	      lastNode->networkTest =
+		CL_CombineExpressions (theEnv, lastNode->networkTest,
+				       theLHS->networkTest);
+	    }
+	}
 
       /*====================================*/
       /* Case #5                            */
@@ -720,172 +773,187 @@ void CL_AttachTestCEsToPatternCEs(
       /*====================================*/
 
       else if (lastLastNode->endNandDepth < theLHS->beginNandDepth)
-        {
-         /*=========================================================*/
-         /* The prior pattern is a single pattern within a not/and: */
-         /*                                                         */
-         /*    (defrule example                                     */
-         /*       (a)                                               */
-         /*       (not (and (b)                                     */
-         /*                 (test (= 1 1))))                        */
-         /*       =>)                                               */
-         /*                                                         */
-         /* The test expression can be directly attached to the     */
-         /* network expression for the pattern and the pattern      */
-         /* group can be collapsed into a single negated pattern.   */
-         /*=========================================================*/
+	{
+	 /*=========================================================*/
+	  /* The prior pattern is a single pattern within a not/and: */
+	  /*                                                         */
+	  /*    (defrule example                                     */
+	  /*       (a)                                               */
+	  /*       (not (and (b)                                     */
+	  /*                 (test (= 1 1))))                        */
+	  /*       =>)                                               */
+	  /*                                                         */
+	  /* The test expression can be directly attached to the     */
+	  /* network expression for the pattern and the pattern      */
+	  /* group can be collapsed into a single negated pattern.   */
+	 /*=========================================================*/
 
-         if ((lastNode->negated == false) &&
-             (lastNode->existsNand == false))
-           {
-            /*====================*/
-            /* Use max of R and M */
-            /*====================*/
+	  if ((lastNode->negated == false) && (lastNode->existsNand == false))
+	    {
+	    /*====================*/
+	      /* Use max of R and M */
+	    /*====================*/
 
-            if (lastLastNode->endNandDepth > theLHS->endNandDepth)
-              { lastNode->beginNandDepth =  lastLastNode->endNandDepth; }
-             else
-              { lastNode->beginNandDepth =  theLHS->endNandDepth; }
+	      if (lastLastNode->endNandDepth > theLHS->endNandDepth)
+		{
+		  lastNode->beginNandDepth = lastLastNode->endNandDepth;
+		}
+	      else
+		{
+		  lastNode->beginNandDepth = theLHS->endNandDepth;
+		}
 
-            lastNode->negated = true;
+	      lastNode->negated = true;
 
-            lastNode->networkTest =
-               CL_CombineExpressions(theEnv,lastNode->networkTest,lastNode->externalNetworkTest);
-            lastNode->networkTest =
-               CL_CombineExpressions(theEnv,lastNode->networkTest,theLHS->networkTest);
-            lastNode->externalNetworkTest = NULL;
-           }
+	      lastNode->networkTest =
+		CL_CombineExpressions (theEnv, lastNode->networkTest,
+				       lastNode->externalNetworkTest);
+	      lastNode->networkTest =
+		CL_CombineExpressions (theEnv, lastNode->networkTest,
+				       theLHS->networkTest);
+	      lastNode->externalNetworkTest = NULL;
+	    }
 
-         /*=================================================================*/
-         /* The prior pattern is a single negated pattern within a not/and. */
-         /*                                                                 */
-         /*    (defrule example                                             */
-         /*       (a)                                                       */
-         /*       (not (and (not (b))                                       */
-         /*                 (test (= 1 1))))                                */
-         /*       =>)                                                       */
-         /*=================================================================*/
+	 /*=================================================================*/
+	  /* The prior pattern is a single negated pattern within a not/and. */
+	  /*                                                                 */
+	  /*    (defrule example                                             */
+	  /*       (a)                                                       */
+	  /*       (not (and (not (b))                                       */
+	  /*                 (test (= 1 1))))                                */
+	  /*       =>)                                                       */
+	 /*=================================================================*/
 
-         else if ((lastNode->negated == true) &&
-                  (lastNode->exists == false) &&
-                  (lastNode->existsNand == false))
-           {
-            lastNode->secondaryNetworkTest =
-               CL_CombineExpressions(theEnv,lastNode->secondaryNetworkTest,theLHS->networkTest);
-           }
+	  else if ((lastNode->negated == true) &&
+		   (lastNode->exists == false) &&
+		   (lastNode->existsNand == false))
+	    {
+	      lastNode->secondaryNetworkTest =
+		CL_CombineExpressions (theEnv, lastNode->secondaryNetworkTest,
+				       theLHS->networkTest);
+	    }
 
-         /*================================================================*/
-         /* The prior pattern is a single exists pattern within a not/and. */
-         /*                                                                */
-         /*    (defrule example                                            */
-         /*       (a)                                                      */
-         /*       (not (and (exists (b))                                   */
-         /*                 (test (= 1 1))))                               */
-         /*       =>)                                                      */
-         /*================================================================*/
+	 /*================================================================*/
+	  /* The prior pattern is a single exists pattern within a not/and. */
+	  /*                                                                */
+	  /*    (defrule example                                            */
+	  /*       (a)                                                      */
+	  /*       (not (and (exists (b))                                   */
+	  /*                 (test (= 1 1))))                               */
+	  /*       =>)                                                      */
+	 /*================================================================*/
 
-         else if ((lastNode->negated == true) &&
-                  (lastNode->exists == true) &&
-                  (lastNode->existsNand == false))
-           {
-            lastNode->secondaryNetworkTest =
-               CL_CombineExpressions(theEnv,lastNode->secondaryNetworkTest,theLHS->networkTest);
-           }
+	  else if ((lastNode->negated == true) &&
+		   (lastNode->exists == true) &&
+		   (lastNode->existsNand == false))
+	    {
+	      lastNode->secondaryNetworkTest =
+		CL_CombineExpressions (theEnv, lastNode->secondaryNetworkTest,
+				       theLHS->networkTest);
+	    }
 
-         /*=============================================================*/
-         /* The prior pattern is a single pattern within an exists/and. */
-         /*                                                             */
-         /*    (defrule example                                         */
-         /*       (a)                                                   */
-         /*       (exists (and (b)                                      */
-         /*                    (test (= 1 1))))                         */
-         /*       =>)                                                   */
-         /*                                                             */
-         /* The test expression can be directly attached to the         */
-         /* network expression for the pattern and the pattern          */
-         /* group can be collapsed into a single exists pattern.        */
-         /*=============================================================*/
+	 /*=============================================================*/
+	  /* The prior pattern is a single pattern within an exists/and. */
+	  /*                                                             */
+	  /*    (defrule example                                         */
+	  /*       (a)                                                   */
+	  /*       (exists (and (b)                                      */
+	  /*                    (test (= 1 1))))                         */
+	  /*       =>)                                                   */
+	  /*                                                             */
+	  /* The test expression can be directly attached to the         */
+	  /* network expression for the pattern and the pattern          */
+	  /* group can be collapsed into a single exists pattern.        */
+	 /*=============================================================*/
 
-         else if ((lastNode->negated == false) &&
-                  (lastNode->exists == false) &&
-                  (lastNode->existsNand == true))
-           {
-            if (lastLastNode->endNandDepth > theLHS->endNandDepth)
-              { lastNode->beginNandDepth =  lastLastNode->endNandDepth; }
-             else
-              { lastNode->beginNandDepth =  theLHS->endNandDepth; }
+	  else if ((lastNode->negated == false) &&
+		   (lastNode->exists == false) &&
+		   (lastNode->existsNand == true))
+	    {
+	      if (lastLastNode->endNandDepth > theLHS->endNandDepth)
+		{
+		  lastNode->beginNandDepth = lastLastNode->endNandDepth;
+		}
+	      else
+		{
+		  lastNode->beginNandDepth = theLHS->endNandDepth;
+		}
 
-            lastNode->existsNand = false;
-            lastNode->exists = true;
-            lastNode->negated = true;
+	      lastNode->existsNand = false;
+	      lastNode->exists = true;
+	      lastNode->negated = true;
 
-            lastNode->networkTest =
-               CL_CombineExpressions(theEnv,lastNode->networkTest,lastNode->externalNetworkTest);
-            lastNode->networkTest =
-               CL_CombineExpressions(theEnv,lastNode->networkTest,theLHS->networkTest);
-            lastNode->externalNetworkTest = NULL;
-           }
+	      lastNode->networkTest =
+		CL_CombineExpressions (theEnv, lastNode->networkTest,
+				       lastNode->externalNetworkTest);
+	      lastNode->networkTest =
+		CL_CombineExpressions (theEnv, lastNode->networkTest,
+				       theLHS->networkTest);
+	      lastNode->externalNetworkTest = NULL;
+	    }
 
-         /*=======================================*/
-         /* The prior pattern is a single negated */
-         /* pattern within an exists/and.         */
-         /*                                       */
-         /*    (defrule example                   */
-         /*       (a)                             */
-         /*       (exists (and (not (b))          */
-         /*                    (test (= 1 1))))   */
-         /*       =>)                             */
-         /*                                       */
-         /*=======================================*/
+	 /*=======================================*/
+	  /* The prior pattern is a single negated */
+	  /* pattern within an exists/and.         */
+	  /*                                       */
+	  /*    (defrule example                   */
+	  /*       (a)                             */
+	  /*       (exists (and (not (b))          */
+	  /*                    (test (= 1 1))))   */
+	  /*       =>)                             */
+	  /*                                       */
+	 /*=======================================*/
 
-         else if ((lastNode->negated == true) &&
-                  (lastNode->exists == false) &&
-                  (lastNode->existsNand == true))
-           {
-            lastNode->secondaryNetworkTest =
-               CL_CombineExpressions(theEnv,lastNode->secondaryNetworkTest,theLHS->networkTest);
-           }
+	  else if ((lastNode->negated == true) &&
+		   (lastNode->exists == false) &&
+		   (lastNode->existsNand == true))
+	    {
+	      lastNode->secondaryNetworkTest =
+		CL_CombineExpressions (theEnv, lastNode->secondaryNetworkTest,
+				       theLHS->networkTest);
+	    }
 
-         /*======================================*/
-         /* The prior pattern is a single exists */
-         /* pattern within an exists/and.        */
-         /*                                      */
-         /*    (defrule example                  */
-         /*       (a)                            */
-         /*       (exists (and (exists (b))      */
-         /*                    (test (= 1 1))))  */
-         /*       =>)                            */
-         /*                                      */
-         /*======================================*/
+	 /*======================================*/
+	  /* The prior pattern is a single exists */
+	  /* pattern within an exists/and.        */
+	  /*                                      */
+	  /*    (defrule example                  */
+	  /*       (a)                            */
+	  /*       (exists (and (exists (b))      */
+	  /*                    (test (= 1 1))))  */
+	  /*       =>)                            */
+	  /*                                      */
+	 /*======================================*/
 
-         else if ((lastNode->negated == true) &&
-                  (lastNode->exists == true) &&
-                  (lastNode->existsNand == true))
-           {
-            lastNode->secondaryNetworkTest =
-               CL_CombineExpressions(theEnv,lastNode->secondaryNetworkTest,theLHS->networkTest);
-           }
+	  else if ((lastNode->negated == true) &&
+		   (lastNode->exists == true) &&
+		   (lastNode->existsNand == true))
+	    {
+	      lastNode->secondaryNetworkTest =
+		CL_CombineExpressions (theEnv, lastNode->secondaryNetworkTest,
+				       theLHS->networkTest);
+	    }
 
-         /*==============================================*/
-         /* Unhandled case which should not be possible. */
-         /*==============================================*/
+	 /*==============================================*/
+	  /* Unhandled case which should not be possible. */
+	 /*==============================================*/
 
-         else
-           {
-            CL_SystemError(theEnv,"RULEBLD",2);
-            CL_ExitRouter(theEnv,EXIT_FAILURE);
-           }
-        }
+	  else
+	    {
+	      CL_SystemError (theEnv, "RULEBLD", 2);
+	      CL_ExitRouter (theEnv, EXIT_FAILURE);
+	    }
+	}
 
       /*==============================================*/
       /* Unhandled case which should not be possible. */
       /*==============================================*/
 
       else
-        {
-         CL_SystemError(theEnv,"RULEBLD",3);
-         CL_ExitRouter(theEnv,EXIT_FAILURE);
-        }
+	{
+	  CL_SystemError (theEnv, "RULEBLD", 3);
+	  CL_ExitRouter (theEnv, EXIT_FAILURE);
+	}
 
       /*=================================================*/
       /* Remove the TEST CE and continue to the next CE. */
@@ -896,10 +964,10 @@ void CL_AttachTestCEsToPatternCEs(
       theLHS->bottom = NULL;
       lastNode->bottom = tempNode;
       lastNode->endNandDepth = theLHS->endNandDepth;
-      CL_ReturnLHSParseNodes(theEnv,theLHS);
+      CL_ReturnLHSParseNodes (theEnv, theLHS);
       theLHS = tempNode;
-     }
-  }
+    }
+}
 
 /********************************************************************/
 /* FindShareableJoin: Dete_rmines whether a join exists that can be  */
@@ -907,35 +975,38 @@ void CL_AttachTestCEsToPatternCEs(
 /*   Returns a pointer to the join to be shared if one if found,    */
 /*   otherwise returns a NULL pointer.                              */
 /********************************************************************/
-static struct joinNode *FindShareableJoin(
-  struct joinLink *theLinks,
-  struct joinNode *listOfJoins,
-  bool useLinks,
-  void *rhsStruct,
-  bool firstJoin,
-  bool negatedRHS,
-  bool existsRHS,
-  bool isLogical,
-  struct expr *joinTest,
-  struct expr *secondaryJoinTest,
-  struct expr *leftHash,
-  struct expr *rightHash)
-  {
+static struct joinNode *
+FindShareableJoin (struct joinLink *theLinks,
+		   struct joinNode *listOfJoins,
+		   bool useLinks,
+		   void *rhsStruct,
+		   bool firstJoin,
+		   bool negatedRHS,
+		   bool existsRHS,
+		   bool isLogical,
+		   struct expr *joinTest,
+		   struct expr *secondaryJoinTest,
+		   struct expr *leftHash, struct expr *rightHash)
+{
    /*========================================*/
-   /* Loop through all of the joins in the   */
-   /* list of potential candiates for reuse. */
+  /* Loop through all of the joins in the   */
+  /* list of potential candiates for reuse. */
    /*========================================*/
 
-   if (useLinks)
-     {
+  if (useLinks)
+    {
       if (theLinks != NULL)
-        { listOfJoins = theLinks->join; }
+	{
+	  listOfJoins = theLinks->join;
+	}
       else
-        { listOfJoins = NULL; }
-     }
+	{
+	  listOfJoins = NULL;
+	}
+    }
 
-   while (listOfJoins != NULL)
-     {
+  while (listOfJoins != NULL)
+    {
       /*=========================================================*/
       /* If the join being tested for reuse is connected on the  */
       /* RHS to the end node of the pattern node associated with */
@@ -944,12 +1015,14 @@ static struct joinNode *FindShareableJoin(
       /*=========================================================*/
 
       if (listOfJoins->rightSideEntryStructure == rhsStruct)
-        {
-         if (TestJoinForReuse(listOfJoins,firstJoin,negatedRHS,existsRHS,
-                              isLogical,joinTest,secondaryJoinTest,
-                              leftHash,rightHash))
-           { return(listOfJoins); }
-        }
+	{
+	  if (TestJoinForReuse (listOfJoins, firstJoin, negatedRHS, existsRHS,
+				isLogical, joinTest, secondaryJoinTest,
+				leftHash, rightHash))
+	    {
+	      return (listOfJoins);
+	    }
+	}
 
       /*====================================================*/
       /* Move on to the next potential candidate. Note that */
@@ -961,165 +1034,194 @@ static struct joinNode *FindShareableJoin(
       /*====================================================*/
 
       if (useLinks)
-        {
-         theLinks = theLinks->next;
-         if (theLinks != NULL)
-           { listOfJoins = theLinks->join; }
-         else
-           { listOfJoins = NULL; }
-        }
+	{
+	  theLinks = theLinks->next;
+	  if (theLinks != NULL)
+	    {
+	      listOfJoins = theLinks->join;
+	    }
+	  else
+	    {
+	      listOfJoins = NULL;
+	    }
+	}
       else
-        { listOfJoins = listOfJoins->rightMatchNode; }
-     }
+	{
+	  listOfJoins = listOfJoins->rightMatchNode;
+	}
+    }
 
    /*================================*/
-   /* Return a NULL pointer, since a */
-   /* reusable join was not found.   */
+  /* Return a NULL pointer, since a */
+  /* reusable join was not found.   */
    /*================================*/
 
-   return NULL;
-  }
+  return NULL;
+}
 
 /**************************************************************/
 /* TestJoinForReuse: Dete_rmines if the specified join can be  */
 /*   shared with a join being added for a rule being defined. */
 /*   Returns true if the join can be shared, otherwise false. */
 /**************************************************************/
-static bool TestJoinForReuse(
-  struct joinNode *testJoin,
-  bool firstJoin,
-  bool negatedRHS,
-  bool existsRHS,
-  bool isLogical,
-  struct expr *joinTest,
-  struct expr *secondaryJoinTest,
-  struct expr *leftHash,
-  struct expr *rightHash)
-  {
+static bool
+TestJoinForReuse (struct joinNode *testJoin,
+		  bool firstJoin,
+		  bool negatedRHS,
+		  bool existsRHS,
+		  bool isLogical,
+		  struct expr *joinTest,
+		  struct expr *secondaryJoinTest,
+		  struct expr *leftHash, struct expr *rightHash)
+{
    /*==================================================*/
-   /* The first join of a rule may only be shared with */
-   /* a join that has its firstJoin field set to true. */
+  /* The first join of a rule may only be shared with */
+  /* a join that has its firstJoin field set to true. */
    /*==================================================*/
 
-   if (testJoin->firstJoin != firstJoin) return false;
+  if (testJoin->firstJoin != firstJoin)
+    return false;
 
    /*========================================================*/
-   /* A join connected to a not CE may only be shared with a */
-   /* join that has its patternIsNegated field set to true.  */
+  /* A join connected to a not CE may only be shared with a */
+  /* join that has its patternIsNegated field set to true.  */
    /*========================================================*/
 
-   if ((testJoin->patternIsNegated != negatedRHS) && (! existsRHS)) return false;
+  if ((testJoin->patternIsNegated != negatedRHS) && (!existsRHS))
+    return false;
 
    /*==========================================================*/
-   /* A join connected to an exists CE may only be shared with */
-   /* a join that has its patternIsExists field set to true.   */
+  /* A join connected to an exists CE may only be shared with */
+  /* a join that has its patternIsExists field set to true.   */
    /*==========================================================*/
 
-   if (testJoin->patternIsExists != existsRHS) return false;
+  if (testJoin->patternIsExists != existsRHS)
+    return false;
 
    /*==========================================================*/
-   /* If the join added is associated with a logical CE, then  */
-   /* either the join to be shared must be associated with a   */
-   /* logical CE or the beta memory must be empty (since       */
-   /* joins associate an extra field with each partial match). */
+  /* If the join added is associated with a logical CE, then  */
+  /* either the join to be shared must be associated with a   */
+  /* logical CE or the beta memory must be empty (since       */
+  /* joins associate an extra field with each partial match). */
    /*==========================================================*/
 
-   if ((isLogical == true) &&
-       (testJoin->logicalJoin == false) &&
-       CL_BetaMemoryNotEmpty(testJoin))
-     { return false; }
+  if ((isLogical == true) &&
+      (testJoin->logicalJoin == false) && CL_BetaMemoryNotEmpty (testJoin))
+    {
+      return false;
+    }
 
    /*===============================================================*/
-   /* The expression associated with the join must be identical to  */
-   /* the networkTest expression stored with the join to be shared. */
+  /* The expression associated with the join must be identical to  */
+  /* the networkTest expression stored with the join to be shared. */
    /*===============================================================*/
 
-   if (CL_IdenticalExpression(testJoin->networkTest,joinTest) != true)
-     { return false; }
+  if (CL_IdenticalExpression (testJoin->networkTest, joinTest) != true)
+    {
+      return false;
+    }
 
-   if (CL_IdenticalExpression(testJoin->secondaryNetworkTest,secondaryJoinTest) != true)
-     { return false; }
+  if (CL_IdenticalExpression
+      (testJoin->secondaryNetworkTest, secondaryJoinTest) != true)
+    {
+      return false;
+    }
 
    /*====================================================================*/
-   /* The alpha memory hashing values associated with the join must be   */
-   /* identical to the hashing values stored with the join to be shared. */
+  /* The alpha memory hashing values associated with the join must be   */
+  /* identical to the hashing values stored with the join to be shared. */
    /*====================================================================*/
 
-   if (CL_IdenticalExpression(testJoin->leftHash,leftHash) != true)
-     { return false; }
+  if (CL_IdenticalExpression (testJoin->leftHash, leftHash) != true)
+    {
+      return false;
+    }
 
-   if (CL_IdenticalExpression(testJoin->rightHash,rightHash) != true)
-     { return false; }
+  if (CL_IdenticalExpression (testJoin->rightHash, rightHash) != true)
+    {
+      return false;
+    }
 
    /*=============================================*/
-   /* The join can be shared since all conditions */
-   /* for sharing have been satisfied.            */
+  /* The join can be shared since all conditions */
+  /* for sharing have been satisfied.            */
    /*=============================================*/
 
-   return true;
-  }
+  return true;
+}
 
 /*************************************************************************/
 /* CreateNewJoin: Creates a new join and links it into the join network. */
 /*************************************************************************/
-static struct joinNode *CreateNewJoin(
-  Environment *theEnv,
-  struct expr *joinTest,
-  struct expr *secondaryJoinTest,
-  struct joinNode *lhsEntryStruct,
-  void *rhsEntryStruct,
-  bool joinFromTheRight,
-  bool negatedRHSPattern,
-  bool existsRHSPattern,
-  struct expr *leftHash,
-  struct expr *rightHash)
-  {
-   struct joinNode *newJoin;
-   struct joinLink *theLink;
+static struct joinNode *
+CreateNewJoin (Environment * theEnv,
+	       struct expr *joinTest,
+	       struct expr *secondaryJoinTest,
+	       struct joinNode *lhsEntryStruct,
+	       void *rhsEntryStruct,
+	       bool joinFromTheRight,
+	       bool negatedRHSPattern,
+	       bool existsRHSPattern,
+	       struct expr *leftHash, struct expr *rightHash)
+{
+  struct joinNode *newJoin;
+  struct joinLink *theLink;
 
    /*===============================================*/
-   /* If compilations are being watch, print +j to  */
-   /* indicate that a new join has been created for */
-   /* this pattern of the rule (i.e. a join could   */
-   /* not be shared with another rule.              */
+  /* If compilations are being watch, print +j to  */
+  /* indicate that a new join has been created for */
+  /* this pattern of the rule (i.e. a join could   */
+  /* not be shared with another rule.              */
    /*===============================================*/
 
 #if DEBUGGING_FUNCTIONS
-   if ((CL_Get_WatchItem(theEnv,"compilations") == 1) && CL_GetPrintWhile_Loading(theEnv))
-     { CL_WriteString(theEnv,STDOUT,"+j"); }
+  if ((CL_Get_WatchItem (theEnv, "compilations") == 1)
+      && CL_GetPrintWhile_Loading (theEnv))
+    {
+      CL_WriteString (theEnv, STDOUT, "+j");
+    }
 #endif
 
    /*======================*/
-   /* Create the new join. */
+  /* Create the new join. */
    /*======================*/
 
-   newJoin = get_struct(theEnv,joinNode);
+  newJoin = get_struct (theEnv, joinNode);
 
    /*======================================================*/
-   /* The first join of a rule does not have a beta memory */
-   /* unless the RHS pattern is an exists or not CE.       */
+  /* The first join of a rule does not have a beta memory */
+  /* unless the RHS pattern is an exists or not CE.       */
    /*======================================================*/
 
-   if ((lhsEntryStruct != NULL) || existsRHSPattern || negatedRHSPattern || joinFromTheRight)
-     {
+  if ((lhsEntryStruct != NULL) || existsRHSPattern || negatedRHSPattern
+      || joinFromTheRight)
+    {
       if (leftHash == NULL)
-        {
-         newJoin->leftMemory = get_struct(theEnv,betaMemory);
-         newJoin->leftMemory->beta = (struct partialMatch **) CL_genalloc(theEnv,sizeof(struct partialMatch *));
-         newJoin->leftMemory->beta[0] = NULL;
-         newJoin->leftMemory->last = NULL;
-         newJoin->leftMemory->size = 1;
-         newJoin->leftMemory->count = 0;
-         }
+	{
+	  newJoin->leftMemory = get_struct (theEnv, betaMemory);
+	  newJoin->leftMemory->beta =
+	    (struct partialMatch **) CL_genalloc (theEnv,
+						  sizeof (struct partialMatch
+							  *));
+	  newJoin->leftMemory->beta[0] = NULL;
+	  newJoin->leftMemory->last = NULL;
+	  newJoin->leftMemory->size = 1;
+	  newJoin->leftMemory->count = 0;
+	}
       else
-        {
-         newJoin->leftMemory = get_struct(theEnv,betaMemory);
-         newJoin->leftMemory->beta = (struct partialMatch **) CL_genalloc(theEnv,sizeof(struct partialMatch *) * INITIAL_BETA_HASH_SIZE);
-         memset(newJoin->leftMemory->beta,0,sizeof(struct partialMatch *) * INITIAL_BETA_HASH_SIZE);
-         newJoin->leftMemory->last = NULL;
-         newJoin->leftMemory->size = INITIAL_BETA_HASH_SIZE;
-         newJoin->leftMemory->count = 0;
-        }
+	{
+	  newJoin->leftMemory = get_struct (theEnv, betaMemory);
+	  newJoin->leftMemory->beta =
+	    (struct partialMatch **) CL_genalloc (theEnv,
+						  sizeof (struct partialMatch
+							  *) *
+						  INITIAL_BETA_HASH_SIZE);
+	  memset (newJoin->leftMemory->beta, 0,
+		  sizeof (struct partialMatch *) * INITIAL_BETA_HASH_SIZE);
+	  newJoin->leftMemory->last = NULL;
+	  newJoin->leftMemory->size = INITIAL_BETA_HASH_SIZE;
+	  newJoin->leftMemory->count = 0;
+	}
 
       /*===========================================================*/
       /* If the first join of a rule connects to an exists or not  */
@@ -1128,109 +1230,139 @@ static struct joinNode *CreateNewJoin(
       /* current right memory partial match satisfying the CE.     */
       /*===========================================================*/
 
-      if ((lhsEntryStruct == NULL) && (existsRHSPattern || negatedRHSPattern || joinFromTheRight))
-        {
-         newJoin->leftMemory->beta[0] = CL_CreateEmptyPartialMatch(theEnv);
-         newJoin->leftMemory->beta[0]->owner = newJoin;
-         newJoin->leftMemory->count = 1;
-        }
-     }
-   else
-     { newJoin->leftMemory = NULL; }
+      if ((lhsEntryStruct == NULL)
+	  && (existsRHSPattern || negatedRHSPattern || joinFromTheRight))
+	{
+	  newJoin->leftMemory->beta[0] = CL_CreateEmptyPartialMatch (theEnv);
+	  newJoin->leftMemory->beta[0]->owner = newJoin;
+	  newJoin->leftMemory->count = 1;
+	}
+    }
+  else
+    {
+      newJoin->leftMemory = NULL;
+    }
 
-   if (joinFromTheRight)
-     {
+  if (joinFromTheRight)
+    {
       if (leftHash == NULL)
-        {
-         newJoin->rightMemory = get_struct(theEnv,betaMemory);
-         newJoin->rightMemory->beta = (struct partialMatch **) CL_genalloc(theEnv,sizeof(struct partialMatch *));
-         newJoin->rightMemory->last = (struct partialMatch **) CL_genalloc(theEnv,sizeof(struct partialMatch *));
-         newJoin->rightMemory->beta[0] = NULL;
-         newJoin->rightMemory->last[0] = NULL;
-         newJoin->rightMemory->size = 1;
-         newJoin->rightMemory->count = 0;
-         }
+	{
+	  newJoin->rightMemory = get_struct (theEnv, betaMemory);
+	  newJoin->rightMemory->beta =
+	    (struct partialMatch **) CL_genalloc (theEnv,
+						  sizeof (struct partialMatch
+							  *));
+	  newJoin->rightMemory->last =
+	    (struct partialMatch **) CL_genalloc (theEnv,
+						  sizeof (struct partialMatch
+							  *));
+	  newJoin->rightMemory->beta[0] = NULL;
+	  newJoin->rightMemory->last[0] = NULL;
+	  newJoin->rightMemory->size = 1;
+	  newJoin->rightMemory->count = 0;
+	}
       else
-        {
-         newJoin->rightMemory = get_struct(theEnv,betaMemory);
-         newJoin->rightMemory->beta = (struct partialMatch **) CL_genalloc(theEnv,sizeof(struct partialMatch *) * INITIAL_BETA_HASH_SIZE);
-         newJoin->rightMemory->last = (struct partialMatch **) CL_genalloc(theEnv,sizeof(struct partialMatch *) * INITIAL_BETA_HASH_SIZE);
-         memset(newJoin->rightMemory->beta,0,sizeof(struct partialMatch *) * INITIAL_BETA_HASH_SIZE);
-         memset(newJoin->rightMemory->last,0,sizeof(struct partialMatch *) * INITIAL_BETA_HASH_SIZE);
-         newJoin->rightMemory->size = INITIAL_BETA_HASH_SIZE;
-         newJoin->rightMemory->count = 0;
-        }
-     }
-   else if (rhsEntryStruct == NULL)
-     {
-      newJoin->rightMemory = get_struct(theEnv,betaMemory);
-      newJoin->rightMemory->beta = (struct partialMatch **) CL_genalloc(theEnv,sizeof(struct partialMatch *));
-      newJoin->rightMemory->last = (struct partialMatch **) CL_genalloc(theEnv,sizeof(struct partialMatch *));
-      newJoin->rightMemory->beta[0] = CL_CreateEmptyPartialMatch(theEnv);
+	{
+	  newJoin->rightMemory = get_struct (theEnv, betaMemory);
+	  newJoin->rightMemory->beta =
+	    (struct partialMatch **) CL_genalloc (theEnv,
+						  sizeof (struct partialMatch
+							  *) *
+						  INITIAL_BETA_HASH_SIZE);
+	  newJoin->rightMemory->last =
+	    (struct partialMatch **) CL_genalloc (theEnv,
+						  sizeof (struct partialMatch
+							  *) *
+						  INITIAL_BETA_HASH_SIZE);
+	  memset (newJoin->rightMemory->beta, 0,
+		  sizeof (struct partialMatch *) * INITIAL_BETA_HASH_SIZE);
+	  memset (newJoin->rightMemory->last, 0,
+		  sizeof (struct partialMatch *) * INITIAL_BETA_HASH_SIZE);
+	  newJoin->rightMemory->size = INITIAL_BETA_HASH_SIZE;
+	  newJoin->rightMemory->count = 0;
+	}
+    }
+  else if (rhsEntryStruct == NULL)
+    {
+      newJoin->rightMemory = get_struct (theEnv, betaMemory);
+      newJoin->rightMemory->beta =
+	(struct partialMatch **) CL_genalloc (theEnv,
+					      sizeof (struct partialMatch *));
+      newJoin->rightMemory->last =
+	(struct partialMatch **) CL_genalloc (theEnv,
+					      sizeof (struct partialMatch *));
+      newJoin->rightMemory->beta[0] = CL_CreateEmptyPartialMatch (theEnv);
       newJoin->rightMemory->beta[0]->owner = newJoin;
       newJoin->rightMemory->beta[0]->rhsMemory = true;
       newJoin->rightMemory->last[0] = newJoin->rightMemory->beta[0];
       newJoin->rightMemory->size = 1;
       newJoin->rightMemory->count = 1;
-     }
-   else
-     { newJoin->rightMemory = NULL; }
+    }
+  else
+    {
+      newJoin->rightMemory = NULL;
+    }
 
-   newJoin->nextLinks = NULL;
-   newJoin->joinFromTheRight = joinFromTheRight;
+  newJoin->nextLinks = NULL;
+  newJoin->joinFromTheRight = joinFromTheRight;
 
-   if (existsRHSPattern)
-     { newJoin->patternIsNegated = false; }
-   else
-     { newJoin->patternIsNegated = negatedRHSPattern; }
-   newJoin->patternIsExists = existsRHSPattern;
+  if (existsRHSPattern)
+    {
+      newJoin->patternIsNegated = false;
+    }
+  else
+    {
+      newJoin->patternIsNegated = negatedRHSPattern;
+    }
+  newJoin->patternIsExists = existsRHSPattern;
 
-   newJoin->marked = false;
-   newJoin->initialize = true;
-   newJoin->logicalJoin = false;
-   newJoin->ruleToActivate = NULL;
-   newJoin->memoryLeftAdds = 0;
-   newJoin->memoryRightAdds = 0;
-   newJoin->memoryLeftDeletes = 0;
-   newJoin->memoryRightDeletes = 0;
-   newJoin->memoryCompares = 0;
+  newJoin->marked = false;
+  newJoin->initialize = true;
+  newJoin->logicalJoin = false;
+  newJoin->ruleToActivate = NULL;
+  newJoin->memoryLeftAdds = 0;
+  newJoin->memoryRightAdds = 0;
+  newJoin->memoryLeftDeletes = 0;
+  newJoin->memoryRightDeletes = 0;
+  newJoin->memoryCompares = 0;
 
    /*==============================================*/
-   /* Install the expressions used to dete_rmine    */
-   /* if a partial match satisfies the constraints */
-   /* associated with this join.                   */
+  /* Install the expressions used to dete_rmine    */
+  /* if a partial match satisfies the constraints */
+  /* associated with this join.                   */
    /*==============================================*/
 
-   newJoin->networkTest = CL_AddHashedExpression(theEnv,joinTest);
-   newJoin->secondaryNetworkTest = CL_AddHashedExpression(theEnv,secondaryJoinTest);
+  newJoin->networkTest = CL_AddHashedExpression (theEnv, joinTest);
+  newJoin->secondaryNetworkTest =
+    CL_AddHashedExpression (theEnv, secondaryJoinTest);
 
    /*=====================================================*/
-   /* Install the expression used to hash the beta memory */
-   /* partial match to dete_rmine the location to search   */
-   /* in the alpha memory.                                */
+  /* Install the expression used to hash the beta memory */
+  /* partial match to dete_rmine the location to search   */
+  /* in the alpha memory.                                */
    /*=====================================================*/
 
-   newJoin->leftHash = CL_AddHashedExpression(theEnv,leftHash);
-   newJoin->rightHash = CL_AddHashedExpression(theEnv,rightHash);
+  newJoin->leftHash = CL_AddHashedExpression (theEnv, leftHash);
+  newJoin->rightHash = CL_AddHashedExpression (theEnv, rightHash);
 
    /*============================================================*/
-   /* Initialize the values associated with the LHS of the join. */
+  /* Initialize the values associated with the LHS of the join. */
    /*============================================================*/
 
-   newJoin->lastLevel = lhsEntryStruct;
+  newJoin->lastLevel = lhsEntryStruct;
 
-   if (lhsEntryStruct == NULL)
-     {
+  if (lhsEntryStruct == NULL)
+    {
       newJoin->firstJoin = true;
       newJoin->depth = 1;
-     }
-   else
-     {
+    }
+  else
+    {
       newJoin->firstJoin = false;
       newJoin->depth = lhsEntryStruct->depth;
-      newJoin->depth++; /* To work around Sparcworks C compiler bug */
+      newJoin->depth++;		/* To work around Sparcworks C compiler bug */
 
-      theLink = get_struct(theEnv,joinLink);
+      theLink = get_struct (theEnv, joinLink);
       theLink->join = newJoin;
       theLink->enterDirection = LHS;
 
@@ -1248,81 +1380,81 @@ static struct joinNode *CreateNewJoin(
       /*==============================================================*/
 
       if ((joinFromTheRight) && (lhsEntryStruct->nextLinks != NULL))
-        {
-         theLink->next = lhsEntryStruct->nextLinks->next;
-         lhsEntryStruct->nextLinks->next = theLink;
-        }
+	{
+	  theLink->next = lhsEntryStruct->nextLinks->next;
+	  lhsEntryStruct->nextLinks->next = theLink;
+	}
       else
-        {
-         theLink->next = lhsEntryStruct->nextLinks;
-         lhsEntryStruct->nextLinks = theLink;
-        }
-     }
+	{
+	  theLink->next = lhsEntryStruct->nextLinks;
+	  lhsEntryStruct->nextLinks = theLink;
+	}
+    }
 
    /*=======================================================*/
-   /* Initialize the pointer values associated with the RHS */
-   /* of the join (both for the new join and the join or    */
-   /* pattern which enters this join from the right.        */
+  /* Initialize the pointer values associated with the RHS */
+  /* of the join (both for the new join and the join or    */
+  /* pattern which enters this join from the right.        */
    /*=======================================================*/
 
-   newJoin->rightSideEntryStructure = rhsEntryStruct;
+  newJoin->rightSideEntryStructure = rhsEntryStruct;
 
-   if (rhsEntryStruct == NULL)
-     {
+  if (rhsEntryStruct == NULL)
+    {
       if (newJoin->firstJoin)
-        {
-         theLink = get_struct(theEnv,joinLink);
-         theLink->join = newJoin;
-         theLink->enterDirection = RHS;
-         theLink->next = DefruleData(theEnv)->RightPrimeJoins;
-         DefruleData(theEnv)->RightPrimeJoins = theLink;
-        }
+	{
+	  theLink = get_struct (theEnv, joinLink);
+	  theLink->join = newJoin;
+	  theLink->enterDirection = RHS;
+	  theLink->next = DefruleData (theEnv)->RightPrimeJoins;
+	  DefruleData (theEnv)->RightPrimeJoins = theLink;
+	}
 
       newJoin->rightMatchNode = NULL;
 
-      return(newJoin);
-     }
+      return (newJoin);
+    }
 
    /*===========================================================*/
-   /* If the first join of a rule is a not CE, then it needs to */
-   /* be "primed" under certain circumstances. This used to be  */
-   /* handled by adding the (initial-fact) pattern to a rule    */
-   /* with the not CE as its first pattern, but this alternate  */
-   /* mechanism is now used so patterns don't have to be added. */
+  /* If the first join of a rule is a not CE, then it needs to */
+  /* be "primed" under certain circumstances. This used to be  */
+  /* handled by adding the (initial-fact) pattern to a rule    */
+  /* with the not CE as its first pattern, but this alternate  */
+  /* mechanism is now used so patterns don't have to be added. */
    /*===========================================================*/
 
-   if (newJoin->firstJoin && (newJoin->patternIsNegated || newJoin->joinFromTheRight) && (! newJoin->patternIsExists))
-     {
-      theLink = get_struct(theEnv,joinLink);
+  if (newJoin->firstJoin
+      && (newJoin->patternIsNegated || newJoin->joinFromTheRight)
+      && (!newJoin->patternIsExists))
+    {
+      theLink = get_struct (theEnv, joinLink);
       theLink->join = newJoin;
       theLink->enterDirection = LHS;
-      theLink->next = DefruleData(theEnv)->LeftPrimeJoins;
-      DefruleData(theEnv)->LeftPrimeJoins = theLink;
-     }
+      theLink->next = DefruleData (theEnv)->LeftPrimeJoins;
+      DefruleData (theEnv)->LeftPrimeJoins = theLink;
+    }
 
-   if (joinFromTheRight)
-     {
-      theLink = get_struct(theEnv,joinLink);
+  if (joinFromTheRight)
+    {
+      theLink = get_struct (theEnv, joinLink);
       theLink->join = newJoin;
       theLink->enterDirection = RHS;
       theLink->next = ((struct joinNode *) rhsEntryStruct)->nextLinks;
       ((struct joinNode *) rhsEntryStruct)->nextLinks = theLink;
       newJoin->rightMatchNode = NULL;
-     }
-   else
-     {
-      newJoin->rightMatchNode = ((struct patternNodeHeader *) rhsEntryStruct)->entryJoin;
+    }
+  else
+    {
+      newJoin->rightMatchNode =
+	((struct patternNodeHeader *) rhsEntryStruct)->entryJoin;
       ((struct patternNodeHeader *) rhsEntryStruct)->entryJoin = newJoin;
-     }
+    }
 
    /*================================*/
-   /* Return the newly created join. */
+  /* Return the newly created join. */
    /*================================*/
 
-   return(newJoin);
-  }
+  return (newJoin);
+}
 
 #endif
-
-
-

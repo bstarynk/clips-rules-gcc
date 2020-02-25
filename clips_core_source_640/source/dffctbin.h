@@ -42,35 +42,31 @@
 #include "modulbin.h"
 
 struct bsaveDeffacts
-  {
-   struct bsaveConstructHeader header;
-   unsigned long assertList;
-  };
+{
+  struct bsaveConstructHeader header;
+  unsigned long assertList;
+};
 
 struct bsave_DeffactsModule
-  {
-   struct bsaveDefmoduleItemHeader header;
-  };
+{
+  struct bsaveDefmoduleItemHeader header;
+};
 
 #define DFFCTBIN_DATA 26
 
 struct deffactsBinaryData
-  {
-   Deffacts *DeffactsArray;
-   unsigned long NumberOfDeffacts;
-   struct deffactsModule *ModuleArray;
-   unsigned long NumberOf_DeffactsModules;
-  };
+{
+  Deffacts *DeffactsArray;
+  unsigned long NumberOfDeffacts;
+  struct deffactsModule *ModuleArray;
+  unsigned long NumberOf_DeffactsModules;
+};
 
 #define DeffactsBinaryData(theEnv) ((struct deffactsBinaryData *) GetEnvironmentData(theEnv,DFFCTBIN_DATA))
 
-   void                           CL_DeffactsBinarySetup(Environment *);
-   void                          *CL_Bload_DeffactsModuleReference(Environment *,unsigned long);
+void CL_DeffactsBinarySetup (Environment *);
+void *CL_Bload_DeffactsModuleReference (Environment *, unsigned long);
 
 #endif /* (! RUN_TIME) */
 
 #endif /* _H_dffctbin */
-
-
-
-

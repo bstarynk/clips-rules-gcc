@@ -55,17 +55,18 @@
 #define OBJECT_COMPILER_DATA 36
 
 struct objectCompilerData
-  {
+{
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
-   struct CodeGeneratorItem *ObjectCodeItem;
+  struct CodeGeneratorItem *ObjectCodeItem;
 #endif
-  };
+};
 
 #define ObjectCompilerData(theEnv) ((struct objectCompilerData *) GetEnvironmentData(theEnv,OBJECT_COMPILER_DATA))
 
-   void                    CL_SetupObjectsCompiler(Environment *);
-   void                    CL_PrintClassReference(Environment *,FILE *,Defclass *,unsigned,unsigned);
-   void                    CL_DefclassCModuleReference(Environment *,FILE *,unsigned long,unsigned int,unsigned int);
+void CL_SetupObjectsCompiler (Environment *);
+void CL_PrintClassReference (Environment *, FILE *, Defclass *, unsigned,
+			     unsigned);
+void CL_DefclassCModuleReference (Environment *, FILE *, unsigned long,
+				  unsigned int, unsigned int);
 
 #endif /* _H_objcmp */
-

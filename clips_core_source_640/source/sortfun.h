@@ -44,12 +44,9 @@
 
 #define _H_sortfun
 
-   void                           CL_SortFunctionDefinitions(Environment *);
-   void                           CL_MergeSort(Environment *,size_t,UDFValue *,
-                                            bool (*)(Environment *,UDFValue *,UDFValue *));
-   void                           CL_SortFunction(Environment *,UDFContext *,UDFValue *);
+void CL_SortFunctionDefinitions (Environment *);
+void CL_MergeSort (Environment *, size_t, UDFValue *,
+		   bool (*)(Environment *, UDFValue *, UDFValue *));
+void CL_SortFunction (Environment *, UDFContext *, UDFValue *);
 
 #endif /* _H_sortfun */
-
-
-

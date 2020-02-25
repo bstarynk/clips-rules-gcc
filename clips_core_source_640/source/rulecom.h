@@ -71,46 +71,51 @@
 #include "evaluatn.h"
 
 struct joinInfo_rmation
-  {
-   unsigned short whichCE;
-   struct joinNode *theJoin;
-   int patternBegin;
-   int patternEnd;
-   int marked;
-   struct betaMemory *theMemory;
-   struct joinNode *nextJoin;
-  };
+{
+  unsigned short whichCE;
+  struct joinNode *theJoin;
+  int patternBegin;
+  int patternEnd;
+  int marked;
+  struct betaMemory *theMemory;
+  struct joinNode *nextJoin;
+};
 
 typedef enum
-  {
-   VERBOSE,
-   SUCCINCT,
-   TERSE
-  } Verbosity;
+{
+  VERBOSE,
+  SUCCINCT,
+  TERSE
+} Verbosity;
 
-   bool                           CL_GetBetaMemoryResizing(Environment *);
-   bool                           CL_SetBetaMemoryResizing(Environment *,bool);
-   void                           CL_GetBetaMemoryResizingCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_SetBetaMemoryResizingCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_Matches(Defrule *,Verbosity,CLIPSValue *);
-   void                           CL_JoinActivity(Environment *,Defrule *,int,UDFValue *);
-   void                           CL_DefruleCommands(Environment *);
-   void                           CL_MatchesCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_JoinActivityCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_TimetagFunction(Environment *,UDFContext *,UDFValue *);
-   unsigned short                 CL_AlphaJoinCount(Environment *,Defrule *);
-   unsigned short                 CL_BetaJoinCount(Environment *,Defrule *);
-   struct joinInfo_rmation        *CL_CreateJoinArray(Environment *,unsigned short);
-   void                           CL_FreeJoinArray(Environment *,struct joinInfo_rmation *,unsigned short);
-   void                           CL_AlphaJoins(Environment *,Defrule *,unsigned short,struct joinInfo_rmation *);
-   void                           CL_BetaJoins(Environment *,Defrule *,unsigned short,struct joinInfo_rmation *);
-   void                           CL_JoinActivity_ResetCommand(Environment *,UDFContext *,UDFValue *);
-   void                           Get_FocusFunction(Environment *,UDFContext *,UDFValue *);
-   Defmodule                     *Get_Focus(Environment *);
+bool CL_GetBetaMemoryResizing (Environment *);
+bool CL_SetBetaMemoryResizing (Environment *, bool);
+void CL_GetBetaMemoryResizingCommand (Environment *, UDFContext *,
+				      UDFValue *);
+void CL_SetBetaMemoryResizingCommand (Environment *, UDFContext *,
+				      UDFValue *);
+void CL_Matches (Defrule *, Verbosity, CLIPSValue *);
+void CL_JoinActivity (Environment *, Defrule *, int, UDFValue *);
+void CL_DefruleCommands (Environment *);
+void CL_MatchesCommand (Environment *, UDFContext *, UDFValue *);
+void CL_JoinActivityCommand (Environment *, UDFContext *, UDFValue *);
+void CL_TimetagFunction (Environment *, UDFContext *, UDFValue *);
+unsigned short CL_AlphaJoinCount (Environment *, Defrule *);
+unsigned short CL_BetaJoinCount (Environment *, Defrule *);
+struct joinInfo_rmation *CL_CreateJoinArray (Environment *, unsigned short);
+void CL_FreeJoinArray (Environment *, struct joinInfo_rmation *,
+		       unsigned short);
+void CL_AlphaJoins (Environment *, Defrule *, unsigned short,
+		    struct joinInfo_rmation *);
+void CL_BetaJoins (Environment *, Defrule *, unsigned short,
+		   struct joinInfo_rmation *);
+void CL_JoinActivity_ResetCommand (Environment *, UDFContext *, UDFValue *);
+void Get_FocusFunction (Environment *, UDFContext *, UDFValue *);
+Defmodule *Get_Focus (Environment *);
 #if DEVELOPER
-   void                           ShowJoinsCommand(Environment *,UDFContext *,UDFValue *);
-   void                           RuleComplexityCommand(Environment *,UDFContext *,UDFValue *);
-   void                           ShowAlphaHashTable(Environment *,UDFContext *,UDFValue *);
+void ShowJoinsCommand (Environment *, UDFContext *, UDFValue *);
+void RuleComplexityCommand (Environment *, UDFContext *, UDFValue *);
+void ShowAlphaHashTable (Environment *, UDFContext *, UDFValue *);
 #endif
 
 #endif /* _H_rulecom */

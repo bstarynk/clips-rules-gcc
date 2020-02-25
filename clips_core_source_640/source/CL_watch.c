@@ -74,36 +74,38 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static CL_WatchItemRecord        *Valid_WatchItem(Environment *,const char *,bool *);
-   static void                    Deallocate_WatchData(Environment *);
+static CL_WatchItemRecord *Valid_WatchItem (Environment *, const char *,
+					    bool *);
+static void Deallocate_WatchData (Environment *);
 
 /**********************************************/
 /* CL_Initialize_WatchData: Allocates environment */
 /*    data for watch items.                   */
 /**********************************************/
-void CL_Initialize_WatchData(
-  Environment *theEnv)
-  {
-   CL_AllocateEnvironmentData(theEnv,WATCH_DATA,sizeof(struct watchData),Deallocate_WatchData);
-  }
+void
+CL_Initialize_WatchData (Environment * theEnv)
+{
+  CL_AllocateEnvironmentData (theEnv, WATCH_DATA, sizeof (struct watchData),
+			      Deallocate_WatchData);
+}
 
 /************************************************/
 /* Deallocate_WatchData: Deallocates environment */
 /*    data for watch items.                     */
 /************************************************/
-static void Deallocate_WatchData(
-  Environment *theEnv)
-  {
-   CL_WatchItemRecord *tmpPtr, *nextPtr;
+static void
+Deallocate_WatchData (Environment * theEnv)
+{
+  CL_WatchItemRecord *tmpPtr, *nextPtr;
 
-   tmpPtr = CL_WatchData(theEnv)->ListOf_WatchItems;
-   while (tmpPtr != NULL)
-     {
+  tmpPtr = CL_WatchData (theEnv)->ListOf_WatchItems;
+  while (tmpPtr != NULL)
+    {
       nextPtr = tmpPtr->next;
-      rtn_struct(theEnv,watchItemRecord,tmpPtr);
+      rtn_struct (theEnv, watchItemRecord, tmpPtr);
       tmpPtr = nextPtr;
-     }
-  }
+    }
+}
 
 /*************************************************************/
 /* CL_Add_WatchItem: Adds an item to the list of watchable items */
@@ -111,440 +113,440 @@ static void Deallocate_WatchData(
 /*   Returns false if the item is already in the list,       */
 /*   otherwise returns true.                                 */
 /*************************************************************/
-bool CL_Add_WatchItem(
-  Environment *theEnv,
-  const char *name,
-  int code,
-  bool *flag,
-  int priority,
-  bool (*accessFunc)(Environment *,int,bool,struct expr *),
-  bool (*printFunc)(Environment *,const char *,int,struct expr *))
-  {
-   CL_WatchItemRecord *newPtr, *currentPtr, *lastPtr;
+bool
+CL_Add_WatchItem (Environment * theEnv,
+		  const char *name,
+		  int code,
+		  bool *flag,
+		  int priority,
+		  bool (*accessFunc) (Environment *, int, bool,
+				      struct expr *),
+		  bool (*printFunc) (Environment *, const char *, int,
+				     struct expr *))
+{
+  CL_WatchItemRecord *newPtr, *currentPtr, *lastPtr;
 
    /*================================================================*/
-   /* Find the insertion point in the watchable items list to place  */
-   /* the new item. If the item is already in the list return false. */
+  /* Find the insertion point in the watchable items list to place  */
+  /* the new item. If the item is already in the list return false. */
    /*================================================================*/
 
-   for (currentPtr = CL_WatchData(theEnv)->ListOf_WatchItems, lastPtr = NULL;
-        currentPtr != NULL;
-        currentPtr = currentPtr->next)
-     {
-      if (strcmp(currentPtr->name,name) == 0) return false;
-      if (priority < currentPtr->priority) lastPtr = currentPtr;
-     }
+  for (currentPtr = CL_WatchData (theEnv)->ListOf_WatchItems, lastPtr = NULL;
+       currentPtr != NULL; currentPtr = currentPtr->next)
+    {
+      if (strcmp (currentPtr->name, name) == 0)
+	return false;
+      if (priority < currentPtr->priority)
+	lastPtr = currentPtr;
+    }
 
    /*============================*/
-   /* Create the new watch item. */
+  /* Create the new watch item. */
    /*============================*/
 
-   newPtr = get_struct(theEnv,watchItemRecord);
-   newPtr->name = name;
-   newPtr->flag = flag;
-   newPtr->code = code;
-   newPtr->priority = priority;
-   newPtr->accessFunc = accessFunc;
-   newPtr->printFunc = printFunc;
+  newPtr = get_struct (theEnv, watchItemRecord);
+  newPtr->name = name;
+  newPtr->flag = flag;
+  newPtr->code = code;
+  newPtr->priority = priority;
+  newPtr->accessFunc = accessFunc;
+  newPtr->printFunc = printFunc;
 
    /*=================================================*/
-   /* Insert the new item in the list of watch items. */
+  /* Insert the new item in the list of watch items. */
    /*=================================================*/
 
-   if (lastPtr == NULL)
-     {
-      newPtr->next = CL_WatchData(theEnv)->ListOf_WatchItems;
-      CL_WatchData(theEnv)->ListOf_WatchItems = newPtr;
-     }
-   else
-     {
+  if (lastPtr == NULL)
+    {
+      newPtr->next = CL_WatchData (theEnv)->ListOf_WatchItems;
+      CL_WatchData (theEnv)->ListOf_WatchItems = newPtr;
+    }
+  else
+    {
       newPtr->next = lastPtr->next;
       lastPtr->next = newPtr;
-     }
+    }
 
    /*==================================================*/
-   /* Return true to indicate the item has been added. */
+  /* Return true to indicate the item has been added. */
    /*==================================================*/
 
-   return true;
-  }
+  return true;
+}
 
 /**************************************************/
 /* CL_Watch: C access routine for the watch command. */
 /**************************************************/
-void CL_Watch(
-  Environment *theEnv,
-  CL_WatchItem item)
-  {
-   switch (item)
-     {
-      case ALL:
-        CL_Set_WatchItem(theEnv,"all",true,NULL);
-        break;
+void
+CL_Watch (Environment * theEnv, CL_WatchItem item)
+{
+  switch (item)
+    {
+    case ALL:
+      CL_Set_WatchItem (theEnv, "all", true, NULL);
+      break;
 
-      case FACTS:
-        CL_Set_WatchItem(theEnv,"facts",true,NULL);
-        break;
-        
-      case INSTANCES:
-        CL_Set_WatchItem(theEnv,"instances",true,NULL);
-        break;
-        
-      case SLOTS:
-        CL_Set_WatchItem(theEnv,"slots",true,NULL);
-        break;
-        
-      case RULES:
-        CL_Set_WatchItem(theEnv,"rules",true,NULL);
-        break;
-        
-      case ACTIVATIONS:
-        CL_Set_WatchItem(theEnv,"activations",true,NULL);
-        break;
-        
-      case MESSAGES:
-        CL_Set_WatchItem(theEnv,"messages",true,NULL);
-        break;
-        
-      case MESSAGE_HANDLERS:
-        CL_Set_WatchItem(theEnv,"message-handlers",true,NULL);
-        break;
-        
-      case GENERIC_FUNCTIONS:
-        CL_Set_WatchItem(theEnv,"generic-functions",true,NULL);
-        break;
-        
-      case METHODS:
-        CL_Set_WatchItem(theEnv,"methods",true,NULL);
-        break;
-        
-      case DEFFUNCTIONS:
-        CL_Set_WatchItem(theEnv,"deffunctions",true,NULL);
-        break;
-        
-      case COMPILATIONS:
-        CL_Set_WatchItem(theEnv,"compilations",true,NULL);
-        break;
-        
-      case STATISTICS:
-        CL_Set_WatchItem(theEnv,"statistics",true,NULL);
-        break;
-        
-      case GLOBALS:
-        CL_Set_WatchItem(theEnv,"globals",true,NULL);
-        break;
-        
-      case FOCUS:
-        CL_Set_WatchItem(theEnv,"focus",true,NULL);
-        break;
-     }
-  }
+    case FACTS:
+      CL_Set_WatchItem (theEnv, "facts", true, NULL);
+      break;
+
+    case INSTANCES:
+      CL_Set_WatchItem (theEnv, "instances", true, NULL);
+      break;
+
+    case SLOTS:
+      CL_Set_WatchItem (theEnv, "slots", true, NULL);
+      break;
+
+    case RULES:
+      CL_Set_WatchItem (theEnv, "rules", true, NULL);
+      break;
+
+    case ACTIVATIONS:
+      CL_Set_WatchItem (theEnv, "activations", true, NULL);
+      break;
+
+    case MESSAGES:
+      CL_Set_WatchItem (theEnv, "messages", true, NULL);
+      break;
+
+    case MESSAGE_HANDLERS:
+      CL_Set_WatchItem (theEnv, "message-handlers", true, NULL);
+      break;
+
+    case GENERIC_FUNCTIONS:
+      CL_Set_WatchItem (theEnv, "generic-functions", true, NULL);
+      break;
+
+    case METHODS:
+      CL_Set_WatchItem (theEnv, "methods", true, NULL);
+      break;
+
+    case DEFFUNCTIONS:
+      CL_Set_WatchItem (theEnv, "deffunctions", true, NULL);
+      break;
+
+    case COMPILATIONS:
+      CL_Set_WatchItem (theEnv, "compilations", true, NULL);
+      break;
+
+    case STATISTICS:
+      CL_Set_WatchItem (theEnv, "statistics", true, NULL);
+      break;
+
+    case GLOBALS:
+      CL_Set_WatchItem (theEnv, "globals", true, NULL);
+      break;
+
+    case FOCUS:
+      CL_Set_WatchItem (theEnv, "focus", true, NULL);
+      break;
+    }
+}
 
 /****************************************************/
 /* CL_Unwatch: C access routine for the watch command. */
 /****************************************************/
-void CL_Unwatch(
-  Environment *theEnv,
-  CL_WatchItem item)
-  {
-   switch (item)
-     {
-      case ALL:
-        CL_Set_WatchItem(theEnv,"all",false,NULL);
-        break;
+void
+CL_Unwatch (Environment * theEnv, CL_WatchItem item)
+{
+  switch (item)
+    {
+    case ALL:
+      CL_Set_WatchItem (theEnv, "all", false, NULL);
+      break;
 
-      case FACTS:
-        CL_Set_WatchItem(theEnv,"facts",false,NULL);
-        break;
-        
-      case INSTANCES:
-        CL_Set_WatchItem(theEnv,"instances",false,NULL);
-        break;
-        
-      case SLOTS:
-        CL_Set_WatchItem(theEnv,"slots",false,NULL);
-        break;
-        
-      case RULES:
-        CL_Set_WatchItem(theEnv,"rules",false,NULL);
-        break;
-        
-      case ACTIVATIONS:
-        CL_Set_WatchItem(theEnv,"activations",false,NULL);
-        break;
-        
-      case MESSAGES:
-        CL_Set_WatchItem(theEnv,"messages",false,NULL);
-        break;
-        
-      case MESSAGE_HANDLERS:
-        CL_Set_WatchItem(theEnv,"message-handlers",false,NULL);
-        break;
-        
-      case GENERIC_FUNCTIONS:
-        CL_Set_WatchItem(theEnv,"generic-functions",false,NULL);
-        break;
-        
-      case METHODS:
-        CL_Set_WatchItem(theEnv,"methods",false,NULL);
-        break;
-        
-      case DEFFUNCTIONS:
-        CL_Set_WatchItem(theEnv,"deffunctions",false,NULL);
-        break;
-        
-      case COMPILATIONS:
-        CL_Set_WatchItem(theEnv,"compilations",false,NULL);
-        break;
-        
-      case STATISTICS:
-        CL_Set_WatchItem(theEnv,"statistics",false,NULL);
-        break;
-        
-      case GLOBALS:
-        CL_Set_WatchItem(theEnv,"globals",false,NULL);
-        break;
-        
-      case FOCUS:
-        CL_Set_WatchItem(theEnv,"focus",false,NULL);
-        break;
-     }
-  }
+    case FACTS:
+      CL_Set_WatchItem (theEnv, "facts", false, NULL);
+      break;
+
+    case INSTANCES:
+      CL_Set_WatchItem (theEnv, "instances", false, NULL);
+      break;
+
+    case SLOTS:
+      CL_Set_WatchItem (theEnv, "slots", false, NULL);
+      break;
+
+    case RULES:
+      CL_Set_WatchItem (theEnv, "rules", false, NULL);
+      break;
+
+    case ACTIVATIONS:
+      CL_Set_WatchItem (theEnv, "activations", false, NULL);
+      break;
+
+    case MESSAGES:
+      CL_Set_WatchItem (theEnv, "messages", false, NULL);
+      break;
+
+    case MESSAGE_HANDLERS:
+      CL_Set_WatchItem (theEnv, "message-handlers", false, NULL);
+      break;
+
+    case GENERIC_FUNCTIONS:
+      CL_Set_WatchItem (theEnv, "generic-functions", false, NULL);
+      break;
+
+    case METHODS:
+      CL_Set_WatchItem (theEnv, "methods", false, NULL);
+      break;
+
+    case DEFFUNCTIONS:
+      CL_Set_WatchItem (theEnv, "deffunctions", false, NULL);
+      break;
+
+    case COMPILATIONS:
+      CL_Set_WatchItem (theEnv, "compilations", false, NULL);
+      break;
+
+    case STATISTICS:
+      CL_Set_WatchItem (theEnv, "statistics", false, NULL);
+      break;
+
+    case GLOBALS:
+      CL_Set_WatchItem (theEnv, "globals", false, NULL);
+      break;
+
+    case FOCUS:
+      CL_Set_WatchItem (theEnv, "focus", false, NULL);
+      break;
+    }
+}
 
 /******************************************/
 /* CL_Get_WatchState: Returns the watch state */
 /*   for the specified watch item.        */
 /******************************************/
-bool CL_Get_WatchState(
-  Environment *theEnv,
-  CL_WatchItem item)
-  {
-   switch (item)
-     {
-      case ALL:
-        return false;
+bool
+CL_Get_WatchState (Environment * theEnv, CL_WatchItem item)
+{
+  switch (item)
+    {
+    case ALL:
+      return false;
 
-      case FACTS:
-        return (CL_Get_WatchItem(theEnv,"facts") == 1);
-        
-      case INSTANCES:
-        return (CL_Get_WatchItem(theEnv,"instances") == 1);
-        
-      case SLOTS:
-        return (CL_Get_WatchItem(theEnv,"slots") == 1);
-        
-      case RULES:
-        return (CL_Get_WatchItem(theEnv,"rules") == 1);
-        
-      case ACTIVATIONS:
-        return (CL_Get_WatchItem(theEnv,"activations") == 1);
-        
-      case MESSAGES:
-        return (CL_Get_WatchItem(theEnv,"messages") == 1);
-        
-      case MESSAGE_HANDLERS:
-        return (CL_Get_WatchItem(theEnv,"message-handlers") == 1);
-        
-      case GENERIC_FUNCTIONS:
-        return (CL_Get_WatchItem(theEnv,"generic-functions") == 1);
-        
-      case METHODS:
-        return (CL_Get_WatchItem(theEnv,"methods") == 1);
-        
-      case DEFFUNCTIONS:
-        return (CL_Get_WatchItem(theEnv,"deffunctions") == 1);
-        
-      case COMPILATIONS:
-        return (CL_Get_WatchItem(theEnv,"compilations") == 1);
-        
-      case STATISTICS:
-        return (CL_Get_WatchItem(theEnv,"statistics") == 1);
-        
-      case GLOBALS:
-        return (CL_Get_WatchItem(theEnv,"globals") == 1);
-        
-      case FOCUS:
-        return (CL_Get_WatchItem(theEnv,"focus") == 1);
-     }
-     
-   return false;
-  }
+    case FACTS:
+      return (CL_Get_WatchItem (theEnv, "facts") == 1);
+
+    case INSTANCES:
+      return (CL_Get_WatchItem (theEnv, "instances") == 1);
+
+    case SLOTS:
+      return (CL_Get_WatchItem (theEnv, "slots") == 1);
+
+    case RULES:
+      return (CL_Get_WatchItem (theEnv, "rules") == 1);
+
+    case ACTIVATIONS:
+      return (CL_Get_WatchItem (theEnv, "activations") == 1);
+
+    case MESSAGES:
+      return (CL_Get_WatchItem (theEnv, "messages") == 1);
+
+    case MESSAGE_HANDLERS:
+      return (CL_Get_WatchItem (theEnv, "message-handlers") == 1);
+
+    case GENERIC_FUNCTIONS:
+      return (CL_Get_WatchItem (theEnv, "generic-functions") == 1);
+
+    case METHODS:
+      return (CL_Get_WatchItem (theEnv, "methods") == 1);
+
+    case DEFFUNCTIONS:
+      return (CL_Get_WatchItem (theEnv, "deffunctions") == 1);
+
+    case COMPILATIONS:
+      return (CL_Get_WatchItem (theEnv, "compilations") == 1);
+
+    case STATISTICS:
+      return (CL_Get_WatchItem (theEnv, "statistics") == 1);
+
+    case GLOBALS:
+      return (CL_Get_WatchItem (theEnv, "globals") == 1);
+
+    case FOCUS:
+      return (CL_Get_WatchItem (theEnv, "focus") == 1);
+    }
+
+  return false;
+}
 
 /******************************************/
 /* CL_Set_WatchState: Returns the watch state */
 /*   for the specified watch item.        */
 /******************************************/
-void CL_Set_WatchState(
-  Environment *theEnv,
-  CL_WatchItem item,
-  bool newState)
-  {
-   switch (item)
-     {
-      case ALL:
-        CL_Set_WatchItem(theEnv,"all",newState,NULL);
-        return;
+void
+CL_Set_WatchState (Environment * theEnv, CL_WatchItem item, bool newState)
+{
+  switch (item)
+    {
+    case ALL:
+      CL_Set_WatchItem (theEnv, "all", newState, NULL);
+      return;
 
-      case FACTS:
-        CL_Set_WatchItem(theEnv,"facts",newState,NULL);
-        return;
-        
-      case INSTANCES:
-        CL_Set_WatchItem(theEnv,"instances",newState,NULL);
-        return;
-        
-      case SLOTS:
-        CL_Set_WatchItem(theEnv,"slots",newState,NULL);
-        return;
-        
-      case RULES:
-        CL_Set_WatchItem(theEnv,"rules",newState,NULL);
-        return;
-        
-      case ACTIVATIONS:
-        CL_Set_WatchItem(theEnv,"activations",newState,NULL);
-        return;
-        
-      case MESSAGES:
-        CL_Set_WatchItem(theEnv,"messages",newState,NULL);
-        return;
-        
-      case MESSAGE_HANDLERS:
-        CL_Set_WatchItem(theEnv,"message-handlers",newState,NULL);
-        return;
-        
-      case GENERIC_FUNCTIONS:
-        CL_Set_WatchItem(theEnv,"generic-functions",newState,NULL);
-        return;
-        
-      case METHODS:
-        CL_Set_WatchItem(theEnv,"methods",newState,NULL);
-        return;
-        
-      case DEFFUNCTIONS:
-        CL_Set_WatchItem(theEnv,"deffunctions",newState,NULL);
-        return;
-        
-      case COMPILATIONS:
-        CL_Set_WatchItem(theEnv,"compilations",newState,NULL);
-        return;
-        
-      case STATISTICS:
-        CL_Set_WatchItem(theEnv,"statistics",newState,NULL);
-        return;
-        
-      case GLOBALS:
-        CL_Set_WatchItem(theEnv,"globals",newState,NULL);
-        return;
-        
-      case FOCUS:
-        CL_Set_WatchItem(theEnv,"focus",newState,NULL);
-        return;
-     }
-  }
+    case FACTS:
+      CL_Set_WatchItem (theEnv, "facts", newState, NULL);
+      return;
+
+    case INSTANCES:
+      CL_Set_WatchItem (theEnv, "instances", newState, NULL);
+      return;
+
+    case SLOTS:
+      CL_Set_WatchItem (theEnv, "slots", newState, NULL);
+      return;
+
+    case RULES:
+      CL_Set_WatchItem (theEnv, "rules", newState, NULL);
+      return;
+
+    case ACTIVATIONS:
+      CL_Set_WatchItem (theEnv, "activations", newState, NULL);
+      return;
+
+    case MESSAGES:
+      CL_Set_WatchItem (theEnv, "messages", newState, NULL);
+      return;
+
+    case MESSAGE_HANDLERS:
+      CL_Set_WatchItem (theEnv, "message-handlers", newState, NULL);
+      return;
+
+    case GENERIC_FUNCTIONS:
+      CL_Set_WatchItem (theEnv, "generic-functions", newState, NULL);
+      return;
+
+    case METHODS:
+      CL_Set_WatchItem (theEnv, "methods", newState, NULL);
+      return;
+
+    case DEFFUNCTIONS:
+      CL_Set_WatchItem (theEnv, "deffunctions", newState, NULL);
+      return;
+
+    case COMPILATIONS:
+      CL_Set_WatchItem (theEnv, "compilations", newState, NULL);
+      return;
+
+    case STATISTICS:
+      CL_Set_WatchItem (theEnv, "statistics", newState, NULL);
+      return;
+
+    case GLOBALS:
+      CL_Set_WatchItem (theEnv, "globals", newState, NULL);
+      return;
+
+    case FOCUS:
+      CL_Set_WatchItem (theEnv, "focus", newState, NULL);
+      return;
+    }
+}
 
 /********************************************************/
 /* CL_WatchString: C access routine for the watch command. */
 /********************************************************/
-bool CL_WatchString(
-  Environment *theEnv,
-  const char *itemName)
-  {
-   return CL_Set_WatchItem(theEnv,itemName,true,NULL);
-  }
+bool
+CL_WatchString (Environment * theEnv, const char *itemName)
+{
+  return CL_Set_WatchItem (theEnv, itemName, true, NULL);
+}
 
 /************************************************************/
 /* CL_UnwatchString: C access routine for the unwatch command. */
 /************************************************************/
-bool CL_UnwatchString(
-  Environment *theEnv,
-  const char *itemName)
-  {
-   return CL_Set_WatchItem(theEnv,itemName,false,NULL);
-  }
+bool
+CL_UnwatchString (Environment * theEnv, const char *itemName)
+{
+  return CL_Set_WatchItem (theEnv, itemName, false, NULL);
+}
 
 /********************************************************************/
 /* CL_Set_WatchItem: Sets the state of a specified watch item to either */
 /*   on or off. Returns true if the item was set, otherwise false.  */
 /********************************************************************/
-bool CL_Set_WatchItem(
-  Environment *theEnv,
-  const char *itemName,
-  bool newState,
-  struct expr *argExprs)
-  {
-   CL_WatchItemRecord *wPtr;
+bool
+CL_Set_WatchItem (Environment * theEnv,
+		  const char *itemName, bool newState, struct expr *argExprs)
+{
+  CL_WatchItemRecord *wPtr;
 
    /*===================================================*/
-   /* If the name of the watch item to set is all, then */
-   /* all watch items are set to the new state and true */
-   /* is returned.                                      */
+  /* If the name of the watch item to set is all, then */
+  /* all watch items are set to the new state and true */
+  /* is returned.                                      */
    /*===================================================*/
 
-   if (strcmp(itemName,"all") == 0)
-     {
-      for (wPtr = CL_WatchData(theEnv)->ListOf_WatchItems; wPtr != NULL; wPtr = wPtr->next)
-        {
-         /*==============================================*/
-         /* If no specific arguments are specified, then */
-         /* set the global flag for the watch item.      */
-         /*==============================================*/
+  if (strcmp (itemName, "all") == 0)
+    {
+      for (wPtr = CL_WatchData (theEnv)->ListOf_WatchItems; wPtr != NULL;
+	   wPtr = wPtr->next)
+	{
+	 /*==============================================*/
+	  /* If no specific arguments are specified, then */
+	  /* set the global flag for the watch item.      */
+	 /*==============================================*/
 
-         if (argExprs == NULL) *(wPtr->flag) = newState;
+	  if (argExprs == NULL)
+	    *(wPtr->flag) = newState;
 
-         /*=======================================*/
-         /* Set flags for individual watch items. */
-         /*=======================================*/
+	 /*=======================================*/
+	  /* Set flags for individual watch items. */
+	 /*=======================================*/
 
-         if ((wPtr->accessFunc == NULL) ? false :
-             ((*wPtr->accessFunc)(theEnv,wPtr->code,newState,argExprs) == false))
-           {
-            Set_EvaluationError(theEnv,true);
-            return false;
-           }
-        }
+	  if ((wPtr->accessFunc == NULL) ? false :
+	      ((*wPtr->accessFunc) (theEnv, wPtr->code, newState,
+				    argExprs) == false))
+	    {
+	      Set_EvaluationError (theEnv, true);
+	      return false;
+	    }
+	}
       return true;
-     }
+    }
 
    /*=================================================*/
-   /* Search for the watch item to be set in the list */
-   /* of watch items. If found, set the watch item to */
-   /* its new state and return true.                  */
+  /* Search for the watch item to be set in the list */
+  /* of watch items. If found, set the watch item to */
+  /* its new state and return true.                  */
    /*=================================================*/
 
-   for (wPtr = CL_WatchData(theEnv)->ListOf_WatchItems; wPtr != NULL; wPtr = wPtr->next)
-     {
-      if (strcmp(itemName,wPtr->name) == 0)
-        {
-         /*==============================================*/
-         /* If no specific arguments are specified, then */
-         /* set the global flag for the watch item.      */
-         /*==============================================*/
+  for (wPtr = CL_WatchData (theEnv)->ListOf_WatchItems; wPtr != NULL;
+       wPtr = wPtr->next)
+    {
+      if (strcmp (itemName, wPtr->name) == 0)
+	{
+	 /*==============================================*/
+	  /* If no specific arguments are specified, then */
+	  /* set the global flag for the watch item.      */
+	 /*==============================================*/
 
-         if (argExprs == NULL) *(wPtr->flag) = newState;
+	  if (argExprs == NULL)
+	    *(wPtr->flag) = newState;
 
-         /*=======================================*/
-         /* Set flags for individual watch items. */
-         /*=======================================*/
+	 /*=======================================*/
+	  /* Set flags for individual watch items. */
+	 /*=======================================*/
 
-         if ((wPtr->accessFunc == NULL) ? false :
-             ((*wPtr->accessFunc)(theEnv,wPtr->code,newState,argExprs) == false))
-           {
-            Set_EvaluationError(theEnv,true);
-            return false;
-           }
+	  if ((wPtr->accessFunc == NULL) ? false :
+	      ((*wPtr->accessFunc) (theEnv, wPtr->code, newState,
+				    argExprs) == false))
+	    {
+	      Set_EvaluationError (theEnv, true);
+	      return false;
+	    }
 
-         return true;
-        }
-     }
+	  return true;
+	}
+    }
 
    /*=================================================*/
-   /* If the specified item was not found in the list */
-   /* of watchable items then return false.           */
+  /* If the specified item was not found in the list */
+  /* of watchable items then return false.           */
    /*=================================================*/
 
-   return false;
-  }
+  return false;
+}
 
 /****************************************************************/
 /* CL_Get_WatchItem: Gets the current state of the specified watch  */
@@ -552,314 +554,342 @@ bool CL_Set_WatchItem(
 /*   for on) if the watch item is found in the list of watch    */
 /*   items, otherwise -1 is returned.                           */
 /****************************************************************/
-int CL_Get_WatchItem(
-  Environment *theEnv,
-  const char *itemName)
-  {
-   CL_WatchItemRecord *wPtr;
+int
+CL_Get_WatchItem (Environment * theEnv, const char *itemName)
+{
+  CL_WatchItemRecord *wPtr;
 
-   for (wPtr = CL_WatchData(theEnv)->ListOf_WatchItems; wPtr != NULL; wPtr = wPtr->next)
-     {
-      if (strcmp(itemName,wPtr->name) == 0)
-        {
-         if (*(wPtr->flag))
-           { return 1; }
-         else
-           { return 0; }
-        }
-     }
+  for (wPtr = CL_WatchData (theEnv)->ListOf_WatchItems; wPtr != NULL;
+       wPtr = wPtr->next)
+    {
+      if (strcmp (itemName, wPtr->name) == 0)
+	{
+	  if (*(wPtr->flag))
+	    {
+	      return 1;
+	    }
+	  else
+	    {
+	      return 0;
+	    }
+	}
+    }
 
-   return -1;
-  }
+  return -1;
+}
 
 /***************************************************************/
 /* Valid_WatchItem: Returns true if the specified name is found */
 /*   in the list of watch items, otherwise returns false.      */
 /***************************************************************/
-static CL_WatchItemRecord *Valid_WatchItem(
-  Environment *theEnv,
-  const char *itemName,
-  bool *recognized)
-  {
-   CL_WatchItemRecord *wPtr;
+static CL_WatchItemRecord *
+Valid_WatchItem (Environment * theEnv, const char *itemName, bool *recognized)
+{
+  CL_WatchItemRecord *wPtr;
 
-   *recognized = true;
-   if (strcmp(itemName,"all") == 0)
-     return NULL;
+  *recognized = true;
+  if (strcmp (itemName, "all") == 0)
+    return NULL;
 
-   for (wPtr = CL_WatchData(theEnv)->ListOf_WatchItems; wPtr != NULL; wPtr = wPtr->next)
-     { if (strcmp(itemName,wPtr->name) == 0) return(wPtr); }
+  for (wPtr = CL_WatchData (theEnv)->ListOf_WatchItems; wPtr != NULL;
+       wPtr = wPtr->next)
+    {
+      if (strcmp (itemName, wPtr->name) == 0)
+	return (wPtr);
+    }
 
-   *recognized = false;
-   return NULL;
-  }
+  *recognized = false;
+  return NULL;
+}
 
 /*************************************************************/
 /* CL_GetNth_WatchName: Returns the name associated with the nth */
 /*   item in the list of watchable items. If the nth item    */
 /*   does not exist, then NULL is returned.                  */
 /*************************************************************/
-const char *CL_GetNth_WatchName(
-  Environment *theEnv,
-  int whichItem)
-  {
-   int i;
-   CL_WatchItemRecord *wPtr;
+const char *
+CL_GetNth_WatchName (Environment * theEnv, int whichItem)
+{
+  int i;
+  CL_WatchItemRecord *wPtr;
 
-   for (wPtr = CL_WatchData(theEnv)->ListOf_WatchItems, i = 1;
-        wPtr != NULL;
-        wPtr = wPtr->next, i++)
-     { if (i == whichItem) return(wPtr->name); }
+  for (wPtr = CL_WatchData (theEnv)->ListOf_WatchItems, i = 1;
+       wPtr != NULL; wPtr = wPtr->next, i++)
+    {
+      if (i == whichItem)
+	return (wPtr->name);
+    }
 
-   return NULL;
-  }
+  return NULL;
+}
 
 /***************************************************************/
 /* CL_GetNth_WatchValue: Returns the current state associated with */
 /*   the nth item in the list of watchable items. If the nth   */
 /*   item does not exist, then -1 is returned.                 */
 /***************************************************************/
-int CL_GetNth_WatchValue(
-  Environment *theEnv,
-  int whichItem)
-  {
-   int i;
-   CL_WatchItemRecord *wPtr;
+int
+CL_GetNth_WatchValue (Environment * theEnv, int whichItem)
+{
+  int i;
+  CL_WatchItemRecord *wPtr;
 
-   for (wPtr = CL_WatchData(theEnv)->ListOf_WatchItems, i = 1;
-        wPtr != NULL;
-        wPtr = wPtr->next, i++)
-     { if (i == whichItem) return((int) *(wPtr->flag)); }
+  for (wPtr = CL_WatchData (theEnv)->ListOf_WatchItems, i = 1;
+       wPtr != NULL; wPtr = wPtr->next, i++)
+    {
+      if (i == whichItem)
+	return ((int) *(wPtr->flag));
+    }
 
-   return(-1);
-  }
+  return (-1);
+}
 
 /**************************************/
 /* CL_WatchCommand: H/L access routine   */
 /*   for the watch command.           */
 /**************************************/
-void CL_WatchCommand(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
-   UDFValue theValue;
-   const char *argument;
-   bool recognized;
-   CL_WatchItemRecord *wPtr;
+void
+CL_WatchCommand (Environment * theEnv,
+		 UDFContext * context, UDFValue * returnValue)
+{
+  UDFValue theValue;
+  const char *argument;
+  bool recognized;
+  CL_WatchItemRecord *wPtr;
 
    /*========================================*/
-   /* Dete_rmine which item is to be watched. */
+  /* Dete_rmine which item is to be watched. */
    /*========================================*/
 
-   if (! CL_UDFFirstArgument(context,SYMBOL_BIT,&theValue)) return;
+  if (!CL_UDFFirstArgument (context, SYMBOL_BIT, &theValue))
+    return;
 
-   argument = theValue.lexemeValue->contents;
-   wPtr = Valid_WatchItem(theEnv,argument,&recognized);
-   if (recognized == false)
-     {
-      Set_EvaluationError(theEnv,true);
-      CL_UDFInvalidArgumentMessage(context,"watchable symbol");
+  argument = theValue.lexemeValue->contents;
+  wPtr = Valid_WatchItem (theEnv, argument, &recognized);
+  if (recognized == false)
+    {
+      Set_EvaluationError (theEnv, true);
+      CL_UDFInvalidArgumentMessage (context, "watchable symbol");
       return;
-     }
+    }
 
    /*=================================================*/
-   /* Check to make sure extra arguments are allowed. */
+  /* Check to make sure extra arguments are allowed. */
    /*=================================================*/
 
-   if (GetNextArgument(GetFirstArgument()) != NULL)
-     {
+  if (GetNextArgument (GetFirstArgument ()) != NULL)
+    {
       if ((wPtr == NULL) ? true : (wPtr->accessFunc == NULL))
-        {
-         Set_EvaluationError(theEnv,true);
-         CL_ExpectedCountError(theEnv,"watch",EXACTLY,1);
-         return;
-        }
-     }
+	{
+	  Set_EvaluationError (theEnv, true);
+	  CL_ExpectedCountError (theEnv, "watch", EXACTLY, 1);
+	  return;
+	}
+    }
 
    /*=====================*/
-   /* Set the watch item. */
+  /* Set the watch item. */
    /*=====================*/
 
-   CL_Set_WatchItem(theEnv,argument,true,GetNextArgument(GetFirstArgument()));
-  }
+  CL_Set_WatchItem (theEnv, argument, true,
+		    GetNextArgument (GetFirstArgument ()));
+}
 
 /****************************************/
 /* CL_UnwatchCommand: H/L access routine   */
 /*   for the unwatch command.           */
 /****************************************/
-void CL_UnwatchCommand(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
-   UDFValue theValue;
-   const char *argument;
-   bool recognized;
-   CL_WatchItemRecord *wPtr;
+void
+CL_UnwatchCommand (Environment * theEnv,
+		   UDFContext * context, UDFValue * returnValue)
+{
+  UDFValue theValue;
+  const char *argument;
+  bool recognized;
+  CL_WatchItemRecord *wPtr;
 
    /*==========================================*/
-   /* Dete_rmine which item is to be unwatched. */
+  /* Dete_rmine which item is to be unwatched. */
    /*==========================================*/
 
-   if (! CL_UDFFirstArgument(context,SYMBOL_BIT,&theValue)) return;
+  if (!CL_UDFFirstArgument (context, SYMBOL_BIT, &theValue))
+    return;
 
-   argument = theValue.lexemeValue->contents;
-   wPtr = Valid_WatchItem(theEnv,argument,&recognized);
-   if (recognized == false)
-     {
-      Set_EvaluationError(theEnv,true);
-      CL_UDFInvalidArgumentMessage(context,"watchable symbol");
+  argument = theValue.lexemeValue->contents;
+  wPtr = Valid_WatchItem (theEnv, argument, &recognized);
+  if (recognized == false)
+    {
+      Set_EvaluationError (theEnv, true);
+      CL_UDFInvalidArgumentMessage (context, "watchable symbol");
       return;
-     }
+    }
 
    /*=================================================*/
-   /* Check to make sure extra arguments are allowed. */
+  /* Check to make sure extra arguments are allowed. */
    /*=================================================*/
 
-   if (GetNextArgument(GetFirstArgument()) != NULL)
-     {
+  if (GetNextArgument (GetFirstArgument ()) != NULL)
+    {
       if ((wPtr == NULL) ? true : (wPtr->accessFunc == NULL))
-        {
-         Set_EvaluationError(theEnv,true);
-         CL_ExpectedCountError(theEnv,"unwatch",EXACTLY,1);
-         return;
-        }
-     }
+	{
+	  Set_EvaluationError (theEnv, true);
+	  CL_ExpectedCountError (theEnv, "unwatch", EXACTLY, 1);
+	  return;
+	}
+    }
 
    /*=====================*/
-   /* Set the watch item. */
+  /* Set the watch item. */
    /*=====================*/
 
-   CL_Set_WatchItem(theEnv,argument,false,GetNextArgument(GetFirstArgument()));
-  }
+  CL_Set_WatchItem (theEnv, argument, false,
+		    GetNextArgument (GetFirstArgument ()));
+}
 
 /************************************************/
 /* CL_List_WatchItemsCommand: H/L access routines   */
 /*   for the list-watch-items command.          */
 /************************************************/
-void CL_List_WatchItemsCommand(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
-   CL_WatchItemRecord *wPtr;
-   UDFValue theValue;
-   bool recognized;
+void
+CL_List_WatchItemsCommand (Environment * theEnv,
+			   UDFContext * context, UDFValue * returnValue)
+{
+  CL_WatchItemRecord *wPtr;
+  UDFValue theValue;
+  bool recognized;
 
    /*=======================*/
-   /* List the watch items. */
+  /* List the watch items. */
    /*=======================*/
 
-   if (GetFirstArgument() == NULL)
-     {
-      for (wPtr = CL_WatchData(theEnv)->ListOf_WatchItems; wPtr != NULL; wPtr = wPtr->next)
-        {
-         CL_WriteString(theEnv,STDOUT,wPtr->name);
-         if (*(wPtr->flag)) CL_WriteString(theEnv,STDOUT," = on\n");
-         else CL_WriteString(theEnv,STDOUT," = off\n");
-        }
+  if (GetFirstArgument () == NULL)
+    {
+      for (wPtr = CL_WatchData (theEnv)->ListOf_WatchItems; wPtr != NULL;
+	   wPtr = wPtr->next)
+	{
+	  CL_WriteString (theEnv, STDOUT, wPtr->name);
+	  if (*(wPtr->flag))
+	    CL_WriteString (theEnv, STDOUT, " = on\n");
+	  else
+	    CL_WriteString (theEnv, STDOUT, " = off\n");
+	}
       return;
-     }
+    }
 
    /*=======================================*/
-   /* Dete_rmine which item is to be listed. */
+  /* Dete_rmine which item is to be listed. */
    /*=======================================*/
 
-   if (! CL_UDFFirstArgument(context,SYMBOL_BIT,&theValue)) return;
-   wPtr = Valid_WatchItem(theEnv,theValue.lexemeValue->contents,&recognized);
-   if ((recognized == false) || (wPtr == NULL))
-     {
-      Set_EvaluationError(theEnv,true);
-      CL_ExpectedTypeError1(theEnv,"list-watch-items",1,"'watchable symbol'");
+  if (!CL_UDFFirstArgument (context, SYMBOL_BIT, &theValue))
+    return;
+  wPtr =
+    Valid_WatchItem (theEnv, theValue.lexemeValue->contents, &recognized);
+  if ((recognized == false) || (wPtr == NULL))
+    {
+      Set_EvaluationError (theEnv, true);
+      CL_ExpectedTypeError1 (theEnv, "list-watch-items", 1,
+			     "'watchable symbol'");
       return;
-     }
+    }
 
    /*=================================================*/
-   /* Check to make sure extra arguments are allowed. */
+  /* Check to make sure extra arguments are allowed. */
    /*=================================================*/
 
-   if ((wPtr->printFunc == NULL) &&
-       (GetNextArgument(GetFirstArgument()) != NULL))
-     {
-      Set_EvaluationError(theEnv,true);
-      CL_ExpectedCountError(theEnv,"list-watch-items",EXACTLY,1);
+  if ((wPtr->printFunc == NULL) &&
+      (GetNextArgument (GetFirstArgument ()) != NULL))
+    {
+      Set_EvaluationError (theEnv, true);
+      CL_ExpectedCountError (theEnv, "list-watch-items", EXACTLY, 1);
       return;
-     }
+    }
 
    /*====================================*/
-   /* List the status of the watch item. */
+  /* List the status of the watch item. */
    /*====================================*/
 
-   CL_WriteString(theEnv,STDOUT,wPtr->name);
-   if (*(wPtr->flag)) CL_WriteString(theEnv,STDOUT," = on\n");
-   else CL_WriteString(theEnv,STDOUT," = off\n");
+  CL_WriteString (theEnv, STDOUT, wPtr->name);
+  if (*(wPtr->flag))
+    CL_WriteString (theEnv, STDOUT, " = on\n");
+  else
+    CL_WriteString (theEnv, STDOUT, " = off\n");
 
    /*============================================*/
-   /* List the status of individual watch items. */
+  /* List the status of individual watch items. */
    /*============================================*/
 
-   if (wPtr->printFunc != NULL)
-     {
-      if ((*wPtr->printFunc)(theEnv,STDOUT,wPtr->code,
-                             GetNextArgument(GetFirstArgument())) == false)
-        { Set_EvaluationError(theEnv,true); }
-     }
-  }
+  if (wPtr->printFunc != NULL)
+    {
+      if ((*wPtr->printFunc) (theEnv, STDOUT, wPtr->code,
+			      GetNextArgument (GetFirstArgument ())) == false)
+	{
+	  Set_EvaluationError (theEnv, true);
+	}
+    }
+}
 
 /*******************************************/
 /* CL_Get_WatchItemCommand: H/L access routine */
 /*   for the get-watch-item command.       */
 /*******************************************/
-void CL_Get_WatchItemCommand(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
-   UDFValue theValue;
-   const char *argument;
-   bool recognized;
+void
+CL_Get_WatchItemCommand (Environment * theEnv,
+			 UDFContext * context, UDFValue * returnValue)
+{
+  UDFValue theValue;
+  const char *argument;
+  bool recognized;
 
    /*========================================*/
-   /* Dete_rmine which item is to be watched. */
+  /* Dete_rmine which item is to be watched. */
    /*========================================*/
 
-   if (! CL_UDFFirstArgument(context,SYMBOL_BIT,&theValue))
-     { return; }
-
-   argument = theValue.lexemeValue->contents;
-   Valid_WatchItem(theEnv,argument,&recognized);
-   if (recognized == false)
-     {
-      Set_EvaluationError(theEnv,true);
-      CL_ExpectedTypeError1(theEnv,"get-watch-item",1,"'watchable symbol'");
-      returnValue->lexemeValue = FalseSymbol(theEnv);
+  if (!CL_UDFFirstArgument (context, SYMBOL_BIT, &theValue))
+    {
       return;
-     }
+    }
+
+  argument = theValue.lexemeValue->contents;
+  Valid_WatchItem (theEnv, argument, &recognized);
+  if (recognized == false)
+    {
+      Set_EvaluationError (theEnv, true);
+      CL_ExpectedTypeError1 (theEnv, "get-watch-item", 1,
+			     "'watchable symbol'");
+      returnValue->lexemeValue = FalseSymbol (theEnv);
+      return;
+    }
 
    /*===========================*/
-   /* Get the watch item value. */
+  /* Get the watch item value. */
    /*===========================*/
 
-   if (CL_Get_WatchItem(theEnv,argument) == 1)
-     { returnValue->lexemeValue = TrueSymbol(theEnv); }
-   else
-     { returnValue->lexemeValue = FalseSymbol(theEnv); }
-  }
+  if (CL_Get_WatchItem (theEnv, argument) == 1)
+    {
+      returnValue->lexemeValue = TrueSymbol (theEnv);
+    }
+  else
+    {
+      returnValue->lexemeValue = FalseSymbol (theEnv);
+    }
+}
 
 /*************************************************************/
 /* CL_WatchFunctionDefinitions: Initializes the watch commands. */
 /*************************************************************/
-void CL_WatchFunctionDefinitions(
-  Environment *theEnv)
-  {
+void
+CL_WatchFunctionDefinitions (Environment * theEnv)
+{
 #if ! RUN_TIME
-   CL_AddUDF(theEnv,"watch","v",1,UNBOUNDED,"*;y",CL_WatchCommand,"CL_WatchCommand",NULL);
-   CL_AddUDF(theEnv,"unwatch","v",1,UNBOUNDED,"*;y",CL_UnwatchCommand,"CL_UnwatchCommand",NULL);
-   CL_AddUDF(theEnv,"get-watch-item","b",1,1,"y",CL_Get_WatchItemCommand,"CL_Get_WatchItemCommand",NULL);
-   CL_AddUDF(theEnv,"list-watch-items","v",0,UNBOUNDED,"*;y",CL_List_WatchItemsCommand,"CL_List_WatchItemsCommand",NULL);
+  CL_AddUDF (theEnv, "watch", "v", 1, UNBOUNDED, "*;y", CL_WatchCommand,
+	     "CL_WatchCommand", NULL);
+  CL_AddUDF (theEnv, "unwatch", "v", 1, UNBOUNDED, "*;y", CL_UnwatchCommand,
+	     "CL_UnwatchCommand", NULL);
+  CL_AddUDF (theEnv, "get-watch-item", "b", 1, 1, "y",
+	     CL_Get_WatchItemCommand, "CL_Get_WatchItemCommand", NULL);
+  CL_AddUDF (theEnv, "list-watch-items", "v", 0, UNBOUNDED, "*;y",
+	     CL_List_WatchItemsCommand, "CL_List_WatchItemsCommand", NULL);
 #endif
-  }
+}
 
 #endif /* DEBUGGING_FUNCTIONS */
-

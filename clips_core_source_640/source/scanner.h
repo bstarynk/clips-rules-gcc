@@ -48,65 +48,61 @@
 typedef struct token Token;
 
 typedef enum
-  {
-   SYMBOL_TOKEN = 1025,
-   STRING_TOKEN,
-   INSTANCE_NAME_TOKEN,
-   FLOAT_TOKEN,
-   INTEGER_TOKEN,
-   LEFT_PARENTHESIS_TOKEN,
-   RIGHT_PARENTHESIS_TOKEN,
-   SF_VARIABLE_TOKEN,
-   MF_VARIABLE_TOKEN,
-   GBL_VARIABLE_TOKEN,
-   SF_WILDCARD_TOKEN,
-   MF_WILDCARD_TOKEN,
-   MF_GBL_VARIABLE_TOKEN,
-   NOT_CONSTRAINT_TOKEN,
-   AND_CONSTRAINT_TOKEN,
-   OR_CONSTRAINT_TOKEN,
-   STOP_TOKEN,
-   UNKNOWN_VALUE_TOKEN,
-  } TokenType;
+{
+  SYMBOL_TOKEN = 1025,
+  STRING_TOKEN,
+  INSTANCE_NAME_TOKEN,
+  FLOAT_TOKEN,
+  INTEGER_TOKEN,
+  LEFT_PARENTHESIS_TOKEN,
+  RIGHT_PARENTHESIS_TOKEN,
+  SF_VARIABLE_TOKEN,
+  MF_VARIABLE_TOKEN,
+  GBL_VARIABLE_TOKEN,
+  SF_WILDCARD_TOKEN,
+  MF_WILDCARD_TOKEN,
+  MF_GBL_VARIABLE_TOKEN,
+  NOT_CONSTRAINT_TOKEN,
+  AND_CONSTRAINT_TOKEN,
+  OR_CONSTRAINT_TOKEN,
+  STOP_TOKEN,
+  UNKNOWN_VALUE_TOKEN,
+} TokenType;
 
 struct token
+{
+  TokenType tknType;
+  union
   {
-   TokenType tknType;
-   union
-     {
-      void *value;
-      CLIPSLexeme *lexemeValue;
-      CLIPSFloat *floatValue;
-      CLIPSInteger *integerValue;
-     };
-   const char *printFo_rm;
+    void *value;
+    CLIPSLexeme *lexemeValue;
+    CLIPSFloat *floatValue;
+    CLIPSInteger *integerValue;
   };
+  const char *printFo_rm;
+};
 
 #define SCANNER_DATA 57
 
 struct scannerData
-  {
-   char *GlobalString;
-   size_t GlobalMax;
-   size_t GlobalPos;
-   long LineCount;
-   bool IgnoreCompletionErrors;
-  };
+{
+  char *GlobalString;
+  size_t GlobalMax;
+  size_t GlobalPos;
+  long LineCount;
+  bool IgnoreCompletionErrors;
+};
 
 #define ScannerData(theEnv) ((struct scannerData *) GetEnvironmentData(theEnv,SCANNER_DATA))
 
-   void                           CL_InitializeScannerData(Environment *);
-   void                           CL_GetToken(Environment *,const char *,struct token *);
-   void                           CL_CopyToken(struct token *,struct token *);
-   void                           CL_ResetLineCount(Environment *);
-   long                           CL_GetLineCount(Environment *);
-   long                           CL_SetLineCount(Environment *,long);
-   void                           CL_IncrementLineCount(Environment *);
-   void                           CL_DecrementLineCount(Environment *);
-   unsigned short                 CL_TokenTypeToType(TokenType);
+void CL_InitializeScannerData (Environment *);
+void CL_GetToken (Environment *, const char *, struct token *);
+void CL_CopyToken (struct token *, struct token *);
+void CL_ResetLineCount (Environment *);
+long CL_GetLineCount (Environment *);
+long CL_SetLineCount (Environment *, long);
+void CL_IncrementLineCount (Environment *);
+void CL_DecrementLineCount (Environment *);
+unsigned short CL_TokenTypeToType (TokenType);
 
 #endif /* _H_scanner */
-
-
-
-

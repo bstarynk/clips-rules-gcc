@@ -105,29 +105,29 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    RemoveHashNode(Environment *,GENERIC_HN *,GENERIC_HN **,int,int);
-   static void                    AddEphemeralHashNode(Environment *,GENERIC_HN *,struct ephemeron **,
-                                                       int,int,bool);
-   static void                    RemoveEphemeralHashNodes(Environment *,struct ephemeron **,
-                                                           GENERIC_HN **,
-                                                           int,int,int);
-   static const char             *StringWithinString(const char *,const char *);
-   static size_t                  CommonPrefixLength(const char *,const char *);
-   static void                    DeallocateSymbolData(Environment *);
+static void RemoveHashNode (Environment *, GENERIC_HN *, GENERIC_HN **, int,
+			    int);
+static void AddEphemeralHashNode (Environment *, GENERIC_HN *,
+				  struct ephemeron **, int, int, bool);
+static void RemoveEphemeralHashNodes (Environment *, struct ephemeron **,
+				      GENERIC_HN **, int, int, int);
+static const char *StringWithinString (const char *, const char *);
+static size_t CommonPrefixLength (const char *, const char *);
+static void DeallocateSymbolData (Environment *);
 
 /*******************************************************/
 /* CL_InitializeAtomTables: Initializes the SymbolTable,  */
 /*   IntegerTable, and FloatTable. It also initializes */
 /*   the TrueSymbol and FalseSymbol.                   */
 /*******************************************************/
-void CL_InitializeAtomTables(
-  Environment *theEnv,
-  CLIPSLexeme **symbolTable,
-  CLIPSFloat **floatTable,
-  CLIPSInteger **integerTable,
-  CLIPSBitMap **bitmapTable,
-  CLIPSExternalAddress **externalAddressTable)
-  {
+void
+CL_InitializeAtomTables (Environment * theEnv,
+			 CLIPSLexeme ** symbolTable,
+			 CLIPSFloat ** floatTable,
+			 CLIPSInteger ** integerTable,
+			 CLIPSBitMap ** bitmapTable,
+			 CLIPSExternalAddress ** externalAddressTable)
+{
 #if MAC_XCD
 #pragma unused(symbolTable)
 #pragma unused(floatTable)
@@ -135,243 +135,270 @@ void CL_InitializeAtomTables(
 #pragma unused(bitmapTable)
 #pragma unused(externalAddressTable)
 #endif
-   unsigned long i;
+  unsigned long i;
 
-   CL_AllocateEnvironmentData(theEnv,SYMBOL_DATA,sizeof(struct symbolData),DeallocateSymbolData);
+  CL_AllocateEnvironmentData (theEnv, SYMBOL_DATA, sizeof (struct symbolData),
+			      DeallocateSymbolData);
 
 #if ! RUN_TIME
    /*=========================*/
-   /* Create the hash tables. */
+  /* Create the hash tables. */
    /*=========================*/
 
-   SymbolData(theEnv)->SymbolTable = (CLIPSLexeme **)
-                  CL_gm2(theEnv,sizeof (CLIPSLexeme *) * SYMBOL_HASH_SIZE);
+  SymbolData (theEnv)->SymbolTable = (CLIPSLexeme **)
+    CL_gm2 (theEnv, sizeof (CLIPSLexeme *) * SYMBOL_HASH_SIZE);
 
-   SymbolData(theEnv)->FloatTable = (CLIPSFloat **)
-                  CL_gm2(theEnv,sizeof (CLIPSFloat *) * FLOAT_HASH_SIZE);
+  SymbolData (theEnv)->FloatTable = (CLIPSFloat **)
+    CL_gm2 (theEnv, sizeof (CLIPSFloat *) * FLOAT_HASH_SIZE);
 
-   SymbolData(theEnv)->IntegerTable = (CLIPSInteger **)
-                   CL_gm2(theEnv,sizeof (CLIPSInteger *) * INTEGER_HASH_SIZE);
+  SymbolData (theEnv)->IntegerTable = (CLIPSInteger **)
+    CL_gm2 (theEnv, sizeof (CLIPSInteger *) * INTEGER_HASH_SIZE);
 
-   SymbolData(theEnv)->BitMapTable = (CLIPSBitMap **)
-                   CL_gm2(theEnv,sizeof (CLIPSBitMap *) * BITMAP_HASH_SIZE);
+  SymbolData (theEnv)->BitMapTable = (CLIPSBitMap **)
+    CL_gm2 (theEnv, sizeof (CLIPSBitMap *) * BITMAP_HASH_SIZE);
 
-   SymbolData(theEnv)->ExternalAddressTable = (CLIPSExternalAddress **)
-                   CL_gm2(theEnv,sizeof (CLIPSExternalAddress *) * EXTERNAL_ADDRESS_HASH_SIZE);
+  SymbolData (theEnv)->ExternalAddressTable = (CLIPSExternalAddress **)
+    CL_gm2 (theEnv,
+	    sizeof (CLIPSExternalAddress *) * EXTERNAL_ADDRESS_HASH_SIZE);
 
    /*===================================================*/
-   /* Initialize all of the hash table entries to NULL. */
+  /* Initialize all of the hash table entries to NULL. */
    /*===================================================*/
 
-   for (i = 0; i < SYMBOL_HASH_SIZE; i++) SymbolData(theEnv)->SymbolTable[i] = NULL;
-   for (i = 0; i < FLOAT_HASH_SIZE; i++) SymbolData(theEnv)->FloatTable[i] = NULL;
-   for (i = 0; i < INTEGER_HASH_SIZE; i++) SymbolData(theEnv)->IntegerTable[i] = NULL;
-   for (i = 0; i < BITMAP_HASH_SIZE; i++) SymbolData(theEnv)->BitMapTable[i] = NULL;
-   for (i = 0; i < EXTERNAL_ADDRESS_HASH_SIZE; i++) SymbolData(theEnv)->ExternalAddressTable[i] = NULL;
+  for (i = 0; i < SYMBOL_HASH_SIZE; i++)
+    SymbolData (theEnv)->SymbolTable[i] = NULL;
+  for (i = 0; i < FLOAT_HASH_SIZE; i++)
+    SymbolData (theEnv)->FloatTable[i] = NULL;
+  for (i = 0; i < INTEGER_HASH_SIZE; i++)
+    SymbolData (theEnv)->IntegerTable[i] = NULL;
+  for (i = 0; i < BITMAP_HASH_SIZE; i++)
+    SymbolData (theEnv)->BitMapTable[i] = NULL;
+  for (i = 0; i < EXTERNAL_ADDRESS_HASH_SIZE; i++)
+    SymbolData (theEnv)->ExternalAddressTable[i] = NULL;
 
    /*========================*/
-   /* Predefine some values. */
+  /* Predefine some values. */
    /*========================*/
 
-   theEnv->TrueSymbol = CL_AddSymbol(theEnv,TRUE_STRING,SYMBOL_TYPE);
-   IncrementLexemeCount(TrueSymbol(theEnv));
-   theEnv->FalseSymbol = CL_AddSymbol(theEnv,FALSE_STRING,SYMBOL_TYPE);
-   IncrementLexemeCount(FalseSymbol(theEnv));
-   SymbolData(theEnv)->PositiveInfinity = CL_AddSymbol(theEnv,POSITIVE_INFINITY_STRING,SYMBOL_TYPE);
-   IncrementLexemeCount(SymbolData(theEnv)->PositiveInfinity);
-   SymbolData(theEnv)->NegativeInfinity = CL_AddSymbol(theEnv,NEGATIVE_INFINITY_STRING,SYMBOL_TYPE);
-   IncrementLexemeCount(SymbolData(theEnv)->NegativeInfinity);
-   SymbolData(theEnv)->Zero = CL_CreateInteger(theEnv,0LL);
-   IncrementIntegerCount(SymbolData(theEnv)->Zero);
+  theEnv->TrueSymbol = CL_AddSymbol (theEnv, TRUE_STRING, SYMBOL_TYPE);
+  IncrementLexemeCount (TrueSymbol (theEnv));
+  theEnv->FalseSymbol = CL_AddSymbol (theEnv, FALSE_STRING, SYMBOL_TYPE);
+  IncrementLexemeCount (FalseSymbol (theEnv));
+  SymbolData (theEnv)->PositiveInfinity =
+    CL_AddSymbol (theEnv, POSITIVE_INFINITY_STRING, SYMBOL_TYPE);
+  IncrementLexemeCount (SymbolData (theEnv)->PositiveInfinity);
+  SymbolData (theEnv)->NegativeInfinity =
+    CL_AddSymbol (theEnv, NEGATIVE_INFINITY_STRING, SYMBOL_TYPE);
+  IncrementLexemeCount (SymbolData (theEnv)->NegativeInfinity);
+  SymbolData (theEnv)->Zero = CL_CreateInteger (theEnv, 0LL);
+  IncrementIntegerCount (SymbolData (theEnv)->Zero);
 #else
-   CL_SetSymbolTable(theEnv,symbolTable);
-   CL_SetFloatTable(theEnv,floatTable);
-   CL_SetIntegerTable(theEnv,integerTable);
-   CL_SetBitMapTable(theEnv,bitmapTable);
+  CL_SetSymbolTable (theEnv, symbolTable);
+  CL_SetFloatTable (theEnv, floatTable);
+  CL_SetIntegerTable (theEnv, integerTable);
+  CL_SetBitMapTable (theEnv, bitmapTable);
 
-   SymbolData(theEnv)->ExternalAddressTable = (CLIPSExternalAddress **)
-                CL_gm2(theEnv,sizeof (CLIPSExternalAddress *) * EXTERNAL_ADDRESS_HASH_SIZE);
+  SymbolData (theEnv)->ExternalAddressTable = (CLIPSExternalAddress **)
+    CL_gm2 (theEnv,
+	    sizeof (CLIPSExternalAddress *) * EXTERNAL_ADDRESS_HASH_SIZE);
 
-   for (i = 0; i < EXTERNAL_ADDRESS_HASH_SIZE; i++) SymbolData(theEnv)->ExternalAddressTable[i] = NULL;
-   
-   theEnv->TrueSymbol = CL_FindSymbolHN(theEnv,TRUE_STRING,SYMBOL_BIT);
-   theEnv->FalseSymbol = CL_FindSymbolHN(theEnv,FALSE_STRING,SYMBOL_BIT);
+  for (i = 0; i < EXTERNAL_ADDRESS_HASH_SIZE; i++)
+    SymbolData (theEnv)->ExternalAddressTable[i] = NULL;
+
+  theEnv->TrueSymbol = CL_FindSymbolHN (theEnv, TRUE_STRING, SYMBOL_BIT);
+  theEnv->FalseSymbol = CL_FindSymbolHN (theEnv, FALSE_STRING, SYMBOL_BIT);
 #endif
 
-   theEnv->VoidConstant = get_struct(theEnv,clipsVoid);
-   theEnv->VoidConstant->header.type = VOID_TYPE;
-  }
+  theEnv->VoidConstant = get_struct (theEnv, clipsVoid);
+  theEnv->VoidConstant->header.type = VOID_TYPE;
+}
 
 /*************************************************/
 /* DeallocateSymbolData: Deallocates environment */
 /*    data for symbols.                          */
 /*************************************************/
-static void DeallocateSymbolData(
-  Environment *theEnv)
-  {
-   int i;
-   CLIPSLexeme *shPtr, *nextSHPtr;
-   CLIPSInteger *ihPtr, *nextIHPtr;
-   CLIPSFloat *fhPtr, *nextFHPtr;
-   CLIPSBitMap *bmhPtr, *nextBMHPtr;
-   CLIPSExternalAddress *eahPtr, *nextEAHPtr;
+static void
+DeallocateSymbolData (Environment * theEnv)
+{
+  int i;
+  CLIPSLexeme *shPtr, *nextSHPtr;
+  CLIPSInteger *ihPtr, *nextIHPtr;
+  CLIPSFloat *fhPtr, *nextFHPtr;
+  CLIPSBitMap *bmhPtr, *nextBMHPtr;
+  CLIPSExternalAddress *eahPtr, *nextEAHPtr;
 
-   if ((SymbolData(theEnv)->SymbolTable == NULL) ||
-       (SymbolData(theEnv)->FloatTable == NULL) ||
-       (SymbolData(theEnv)->IntegerTable == NULL) ||
-       (SymbolData(theEnv)->BitMapTable == NULL) ||
-       (SymbolData(theEnv)->ExternalAddressTable == NULL))
-     { return; }
-     
-   CL_genfree(theEnv,theEnv->VoidConstant,sizeof(TypeHeader));
-   
-   for (i = 0; i < SYMBOL_HASH_SIZE; i++)
-     {
-      shPtr = SymbolData(theEnv)->SymbolTable[i];
+  if ((SymbolData (theEnv)->SymbolTable == NULL) ||
+      (SymbolData (theEnv)->FloatTable == NULL) ||
+      (SymbolData (theEnv)->IntegerTable == NULL) ||
+      (SymbolData (theEnv)->BitMapTable == NULL) ||
+      (SymbolData (theEnv)->ExternalAddressTable == NULL))
+    {
+      return;
+    }
+
+  CL_genfree (theEnv, theEnv->VoidConstant, sizeof (TypeHeader));
+
+  for (i = 0; i < SYMBOL_HASH_SIZE; i++)
+    {
+      shPtr = SymbolData (theEnv)->SymbolTable[i];
 
       while (shPtr != NULL)
-        {
-         nextSHPtr = shPtr->next;
-         if (! shPtr->pe_rmanent)
-           {
-            CL_rm(theEnv,(void *) shPtr->contents,strlen(shPtr->contents)+1);
-            rtn_struct(theEnv,clipsLexeme,shPtr);
-           }
-         shPtr = nextSHPtr;
-        }
-     }
+	{
+	  nextSHPtr = shPtr->next;
+	  if (!shPtr->pe_rmanent)
+	    {
+	      CL_rm (theEnv, (void *) shPtr->contents,
+		     strlen (shPtr->contents) + 1);
+	      rtn_struct (theEnv, clipsLexeme, shPtr);
+	    }
+	  shPtr = nextSHPtr;
+	}
+    }
 
-   for (i = 0; i < FLOAT_HASH_SIZE; i++)
-     {
-      fhPtr = SymbolData(theEnv)->FloatTable[i];
+  for (i = 0; i < FLOAT_HASH_SIZE; i++)
+    {
+      fhPtr = SymbolData (theEnv)->FloatTable[i];
 
       while (fhPtr != NULL)
-        {
-         nextFHPtr = fhPtr->next;
-         if (! fhPtr->pe_rmanent)
-           { rtn_struct(theEnv,clipsFloat,fhPtr); }
-         fhPtr = nextFHPtr;
-        }
-     }
+	{
+	  nextFHPtr = fhPtr->next;
+	  if (!fhPtr->pe_rmanent)
+	    {
+	      rtn_struct (theEnv, clipsFloat, fhPtr);
+	    }
+	  fhPtr = nextFHPtr;
+	}
+    }
 
-   for (i = 0; i < INTEGER_HASH_SIZE; i++)
-     {
-      ihPtr = SymbolData(theEnv)->IntegerTable[i];
+  for (i = 0; i < INTEGER_HASH_SIZE; i++)
+    {
+      ihPtr = SymbolData (theEnv)->IntegerTable[i];
 
       while (ihPtr != NULL)
-        {
-         nextIHPtr = ihPtr->next;
-         if (! ihPtr->pe_rmanent)
-           { rtn_struct(theEnv,clipsInteger,ihPtr); }
-         ihPtr = nextIHPtr;
-        }
-     }
+	{
+	  nextIHPtr = ihPtr->next;
+	  if (!ihPtr->pe_rmanent)
+	    {
+	      rtn_struct (theEnv, clipsInteger, ihPtr);
+	    }
+	  ihPtr = nextIHPtr;
+	}
+    }
 
-   for (i = 0; i < BITMAP_HASH_SIZE; i++)
-     {
-      bmhPtr = SymbolData(theEnv)->BitMapTable[i];
+  for (i = 0; i < BITMAP_HASH_SIZE; i++)
+    {
+      bmhPtr = SymbolData (theEnv)->BitMapTable[i];
 
       while (bmhPtr != NULL)
-        {
-         nextBMHPtr = bmhPtr->next;
-         if (! bmhPtr->pe_rmanent)
-           {
-            CL_rm(theEnv,(void *) bmhPtr->contents,bmhPtr->size);
-            rtn_struct(theEnv,clipsBitMap,bmhPtr);
-           }
-         bmhPtr = nextBMHPtr;
-        }
-     }
+	{
+	  nextBMHPtr = bmhPtr->next;
+	  if (!bmhPtr->pe_rmanent)
+	    {
+	      CL_rm (theEnv, (void *) bmhPtr->contents, bmhPtr->size);
+	      rtn_struct (theEnv, clipsBitMap, bmhPtr);
+	    }
+	  bmhPtr = nextBMHPtr;
+	}
+    }
 
-   for (i = 0; i < EXTERNAL_ADDRESS_HASH_SIZE; i++)
-     {
-      eahPtr = SymbolData(theEnv)->ExternalAddressTable[i];
+  for (i = 0; i < EXTERNAL_ADDRESS_HASH_SIZE; i++)
+    {
+      eahPtr = SymbolData (theEnv)->ExternalAddressTable[i];
 
       while (eahPtr != NULL)
-        {
-         nextEAHPtr = eahPtr->next;
-         if (! eahPtr->pe_rmanent)
-           {
-            rtn_struct(theEnv,clipsExternalAddress,eahPtr);
-           }
-         eahPtr = nextEAHPtr;
-        }
-     }
+	{
+	  nextEAHPtr = eahPtr->next;
+	  if (!eahPtr->pe_rmanent)
+	    {
+	      rtn_struct (theEnv, clipsExternalAddress, eahPtr);
+	    }
+	  eahPtr = nextEAHPtr;
+	}
+    }
 
    /*================================*/
-   /* Remove the symbol hash tables. */
+  /* Remove the symbol hash tables. */
    /*================================*/
 
- #if ! RUN_TIME
-   CL_rm(theEnv,SymbolData(theEnv)->SymbolTable,sizeof (CLIPSLexeme *) * SYMBOL_HASH_SIZE);
+#if ! RUN_TIME
+  CL_rm (theEnv, SymbolData (theEnv)->SymbolTable,
+	 sizeof (CLIPSLexeme *) * SYMBOL_HASH_SIZE);
 
-   CL_genfree(theEnv,SymbolData(theEnv)->FloatTable,sizeof (CLIPSFloat *) * FLOAT_HASH_SIZE);
+  CL_genfree (theEnv, SymbolData (theEnv)->FloatTable,
+	      sizeof (CLIPSFloat *) * FLOAT_HASH_SIZE);
 
-   CL_genfree(theEnv,SymbolData(theEnv)->IntegerTable,sizeof (CLIPSInteger *) * INTEGER_HASH_SIZE);
+  CL_genfree (theEnv, SymbolData (theEnv)->IntegerTable,
+	      sizeof (CLIPSInteger *) * INTEGER_HASH_SIZE);
 
-   CL_genfree(theEnv,SymbolData(theEnv)->BitMapTable,sizeof (CLIPSBitMap *) * BITMAP_HASH_SIZE);
+  CL_genfree (theEnv, SymbolData (theEnv)->BitMapTable,
+	      sizeof (CLIPSBitMap *) * BITMAP_HASH_SIZE);
 #endif
 
-   CL_genfree(theEnv,SymbolData(theEnv)->ExternalAddressTable,sizeof (CLIPSExternalAddress *) * EXTERNAL_ADDRESS_HASH_SIZE);
+  CL_genfree (theEnv, SymbolData (theEnv)->ExternalAddressTable,
+	      sizeof (CLIPSExternalAddress *) * EXTERNAL_ADDRESS_HASH_SIZE);
 
    /*==============================*/
-   /* Remove binary symbol tables. */
+  /* Remove binary symbol tables. */
    /*==============================*/
 
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE || BLOAD_INSTANCES || BSAVE_INSTANCES
-   if (SymbolData(theEnv)->SymbolArray != NULL)
-     CL_rm(theEnv,SymbolData(theEnv)->SymbolArray,sizeof(CLIPSLexeme *) * SymbolData(theEnv)->NumberOfSymbols);
-   if (SymbolData(theEnv)->FloatArray != NULL)
-     CL_rm(theEnv,SymbolData(theEnv)->FloatArray,sizeof(CLIPSFloat *) * SymbolData(theEnv)->NumberOfFloats);
-   if (SymbolData(theEnv)->IntegerArray != NULL)
-     CL_rm(theEnv,SymbolData(theEnv)->IntegerArray,sizeof(CLIPSInteger *) * SymbolData(theEnv)->NumberOfIntegers);
-   if (SymbolData(theEnv)->BitMapArray != NULL)
-     CL_rm(theEnv,SymbolData(theEnv)->BitMapArray,sizeof(CLIPSBitMap *) * SymbolData(theEnv)->NumberOfBitMaps);
+  if (SymbolData (theEnv)->SymbolArray != NULL)
+    CL_rm (theEnv, SymbolData (theEnv)->SymbolArray,
+	   sizeof (CLIPSLexeme *) * SymbolData (theEnv)->NumberOfSymbols);
+  if (SymbolData (theEnv)->FloatArray != NULL)
+    CL_rm (theEnv, SymbolData (theEnv)->FloatArray,
+	   sizeof (CLIPSFloat *) * SymbolData (theEnv)->NumberOfFloats);
+  if (SymbolData (theEnv)->IntegerArray != NULL)
+    CL_rm (theEnv, SymbolData (theEnv)->IntegerArray,
+	   sizeof (CLIPSInteger *) * SymbolData (theEnv)->NumberOfIntegers);
+  if (SymbolData (theEnv)->BitMapArray != NULL)
+    CL_rm (theEnv, SymbolData (theEnv)->BitMapArray,
+	   sizeof (CLIPSBitMap *) * SymbolData (theEnv)->NumberOfBitMaps);
 #endif
-  }
+}
 
 /*****************/
 /* CL_CreateBoolean */
 /*****************/
-CLIPSLexeme *CL_CreateBoolean(
-  Environment *theEnv,
-  bool theValue)
-  {
-   if (theValue)
-     { return TrueSymbol(theEnv); }
-   else
-     { return FalseSymbol(theEnv); }
-  }
+CLIPSLexeme *
+CL_CreateBoolean (Environment * theEnv, bool theValue)
+{
+  if (theValue)
+    {
+      return TrueSymbol (theEnv);
+    }
+  else
+    {
+      return FalseSymbol (theEnv);
+    }
+}
 
 /****************/
 /* CL_CreateSymbol */
 /****************/
-CLIPSLexeme *CL_CreateSymbol(
-  Environment *theEnv,
-  const char *str)
-  {
-   return CL_AddSymbol(theEnv,str,SYMBOL_TYPE);
-  }
+CLIPSLexeme *
+CL_CreateSymbol (Environment * theEnv, const char *str)
+{
+  return CL_AddSymbol (theEnv, str, SYMBOL_TYPE);
+}
 
 /****************/
 /* CL_CreateString */
 /****************/
-CLIPSLexeme *CL_CreateString(
-  Environment *theEnv,
-  const char *str)
-  {
-   return CL_AddSymbol(theEnv,str,STRING_TYPE);
-  }
+CLIPSLexeme *
+CL_CreateString (Environment * theEnv, const char *str)
+{
+  return CL_AddSymbol (theEnv, str, STRING_TYPE);
+}
 
 /**********************/
 /* CL_Create_InstanceName */
 /**********************/
-CLIPSLexeme *CL_Create_InstanceName(
-  Environment *theEnv,
-  const char *str)
-  {
-   return CL_AddSymbol(theEnv,str,INSTANCE_NAME_TYPE);
-  }
+CLIPSLexeme *
+CL_Create_InstanceName (Environment * theEnv, const char *str)
+{
+  return CL_AddSymbol (theEnv, str, INSTANCE_NAME_TYPE);
+}
 
 /********************************************************************/
 /* CL_AddSymbol: Searches for the string in the symbol table. If the   */
@@ -380,104 +407,108 @@ CLIPSLexeme *CL_Create_InstanceName(
 /*   the string is added to the symbol table and then the address   */
 /*   of the string's location in the symbol table is returned.      */
 /********************************************************************/
-CLIPSLexeme *CL_AddSymbol(
-  Environment *theEnv,
-  const char *str,
-  unsigned short theType)
-  {
-   size_t tally;
-   size_t length;
-   CLIPSLexeme *past = NULL, *peek;
-   char *buffer;
+CLIPSLexeme *
+CL_AddSymbol (Environment * theEnv, const char *str, unsigned short theType)
+{
+  size_t tally;
+  size_t length;
+  CLIPSLexeme *past = NULL, *peek;
+  char *buffer;
 
     /*====================================*/
-    /* Get the hash value for the string. */
+  /* Get the hash value for the string. */
     /*====================================*/
 
-    if (str == NULL)
-      {
-       CL_SystemError(theEnv,"SYMBOL",1);
-       CL_ExitRouter(theEnv,EXIT_FAILURE);
-      }
+  if (str == NULL)
+    {
+      CL_SystemError (theEnv, "SYMBOL", 1);
+      CL_ExitRouter (theEnv, EXIT_FAILURE);
+    }
 
-    tally = CL_HashSymbol(str,SYMBOL_HASH_SIZE);
-    peek = SymbolData(theEnv)->SymbolTable[tally];
-
-    /*==================================================*/
-    /* Search for the string in the list of entries for */
-    /* this symbol table location.  If the string is    */
-    /* found, then return the address of the string.    */
-    /*==================================================*/
-
-    while (peek != NULL)
-      {
-       if ((peek->header.type == theType) &&
-           (strcmp(str,peek->contents) == 0))
-         { return peek; }
-       past = peek;
-       peek = peek->next;
-      }
+  tally = CL_HashSymbol (str, SYMBOL_HASH_SIZE);
+  peek = SymbolData (theEnv)->SymbolTable[tally];
 
     /*==================================================*/
-    /* Add the string at the end of the list of entries */
-    /* for this symbol table location.                  */
+  /* Search for the string in the list of entries for */
+  /* this symbol table location.  If the string is    */
+  /* found, then return the address of the string.    */
     /*==================================================*/
 
-    peek = get_struct(theEnv,clipsLexeme);
+  while (peek != NULL)
+    {
+      if ((peek->header.type == theType) &&
+	  (strcmp (str, peek->contents) == 0))
+	{
+	  return peek;
+	}
+      past = peek;
+      peek = peek->next;
+    }
 
-    if (past == NULL) SymbolData(theEnv)->SymbolTable[tally] = peek;
-    else past->next = peek;
+    /*==================================================*/
+  /* Add the string at the end of the list of entries */
+  /* for this symbol table location.                  */
+    /*==================================================*/
 
-    length = strlen(str) + 1;
-    buffer = (char *) CL_gm2(theEnv,length);
-    CL_genstrcpy(buffer,str);
-    peek->contents = buffer;
-    peek->next = NULL;
-    peek->bucket = (unsigned int) tally;
-    peek->count = 0;
-    peek->pe_rmanent = false;
-    peek->header.type = theType;
+  peek = get_struct (theEnv, clipsLexeme);
+
+  if (past == NULL)
+    SymbolData (theEnv)->SymbolTable[tally] = peek;
+  else
+    past->next = peek;
+
+  length = strlen (str) + 1;
+  buffer = (char *) CL_gm2 (theEnv, length);
+  CL_genstrcpy (buffer, str);
+  peek->contents = buffer;
+  peek->next = NULL;
+  peek->bucket = (unsigned int) tally;
+  peek->count = 0;
+  peek->pe_rmanent = false;
+  peek->header.type = theType;
 
     /*================================================*/
-    /* Add the string to the list of ephemeral items. */
+  /* Add the string to the list of ephemeral items. */
     /*================================================*/
 
-    AddEphemeralHashNode(theEnv,(GENERIC_HN *) peek,&UtilityData(theEnv)->CurrentGarbageFrame->ephemeralSymbolList,
-                         sizeof(CLIPSLexeme),AVERAGE_STRING_SIZE,true);
-    UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
+  AddEphemeralHashNode (theEnv, (GENERIC_HN *) peek,
+			&UtilityData (theEnv)->CurrentGarbageFrame->
+			ephemeralSymbolList, sizeof (CLIPSLexeme),
+			AVERAGE_STRING_SIZE, true);
+  UtilityData (theEnv)->CurrentGarbageFrame->dirty = true;
 
     /*===================================*/
-    /* Return the address of the symbol. */
+  /* Return the address of the symbol. */
     /*===================================*/
 
-    return peek;
-   }
+  return peek;
+}
 
 /*****************************************************************/
 /* CL_FindSymbolHN: Searches for the string in the symbol table and */
 /*   returns a pointer to it if found, otherwise returns NULL.   */
 /*****************************************************************/
-CLIPSLexeme *CL_FindSymbolHN(
-  Environment *theEnv,
-  const char *str,
-  unsigned short expectedType)
-  {
-   size_t tally;
-   CLIPSLexeme *peek;
+CLIPSLexeme *
+CL_FindSymbolHN (Environment * theEnv,
+		 const char *str, unsigned short expectedType)
+{
+  size_t tally;
+  CLIPSLexeme *peek;
 
-    tally = CL_HashSymbol(str,SYMBOL_HASH_SIZE);
+  tally = CL_HashSymbol (str, SYMBOL_HASH_SIZE);
 
-    for (peek = SymbolData(theEnv)->SymbolTable[tally];
-         peek != NULL;
-         peek = peek->next)
-      {
-       if (((1 << peek->header.type) & expectedType) &&
-           (strcmp(str,peek->contents) == 0))
-         { return peek; }
-      }
+  for (peek = SymbolData (theEnv)->SymbolTable[tally];
+       peek != NULL; peek = peek->next)
+    {
+      if (((1 << peek->header.type) & expectedType) &&
+	  (strcmp (str, peek->contents) == 0))
+	{
+	  return peek;
+	}
+    }
 
-    return NULL;
-   }
+  return NULL;
+}
 
 /******************************************************************/
 /* CL_CreateFloat: Searches for the double in the hash table. If the */
@@ -485,65 +516,69 @@ CLIPSLexeme *CL_FindSymbolHN(
 /*   double is returned. Otherwise, the double is hashed into the */
 /*   table and the address of the double is also returned.        */
 /******************************************************************/
-CLIPSFloat *CL_CreateFloat(
-  Environment *theEnv,
-  double number)
-  {
-   size_t tally;
-   CLIPSFloat *past = NULL, *peek;
+CLIPSFloat *
+CL_CreateFloat (Environment * theEnv, double number)
+{
+  size_t tally;
+  CLIPSFloat *past = NULL, *peek;
 
     /*====================================*/
-    /* Get the hash value for the double. */
+  /* Get the hash value for the double. */
     /*====================================*/
 
-    tally = CL_HashFloat(number,FLOAT_HASH_SIZE);
-    peek = SymbolData(theEnv)->FloatTable[tally];
+  tally = CL_HashFloat (number, FLOAT_HASH_SIZE);
+  peek = SymbolData (theEnv)->FloatTable[tally];
 
     /*==================================================*/
-    /* Search for the double in the list of entries for */
-    /* this hash location.  If the double is found,     */
-    /* then return the address of the double.           */
+  /* Search for the double in the list of entries for */
+  /* this hash location.  If the double is found,     */
+  /* then return the address of the double.           */
     /*==================================================*/
 
-    while (peek != NULL)
-      {
-       if (number == peek->contents)
-         { return peek; }
-       past = peek;
-       peek = peek->next;
-      }
+  while (peek != NULL)
+    {
+      if (number == peek->contents)
+	{
+	  return peek;
+	}
+      past = peek;
+      peek = peek->next;
+    }
 
     /*=================================================*/
-    /* Add the float at the end of the list of entries */
-    /* for this hash location.                         */
+  /* Add the float at the end of the list of entries */
+  /* for this hash location.                         */
     /*=================================================*/
 
-    peek = get_struct(theEnv,clipsFloat);
+  peek = get_struct (theEnv, clipsFloat);
 
-    if (past == NULL) SymbolData(theEnv)->FloatTable[tally] = peek;
-    else past->next = peek;
+  if (past == NULL)
+    SymbolData (theEnv)->FloatTable[tally] = peek;
+  else
+    past->next = peek;
 
-    peek->contents = number;
-    peek->next = NULL;
-    peek->bucket = (unsigned int) tally;
-    peek->count = 0;
-    peek->pe_rmanent = false;
-    peek->header.type = FLOAT_TYPE;
+  peek->contents = number;
+  peek->next = NULL;
+  peek->bucket = (unsigned int) tally;
+  peek->count = 0;
+  peek->pe_rmanent = false;
+  peek->header.type = FLOAT_TYPE;
 
     /*===============================================*/
-    /* Add the float to the list of ephemeral items. */
+  /* Add the float to the list of ephemeral items. */
     /*===============================================*/
 
-    AddEphemeralHashNode(theEnv,(GENERIC_HN *) peek,&UtilityData(theEnv)->CurrentGarbageFrame->ephemeralFloatList,
-                         sizeof(CLIPSFloat),0,true);
-    UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
+  AddEphemeralHashNode (theEnv, (GENERIC_HN *) peek,
+			&UtilityData (theEnv)->CurrentGarbageFrame->
+			ephemeralFloatList, sizeof (CLIPSFloat), 0, true);
+  UtilityData (theEnv)->CurrentGarbageFrame->dirty = true;
 
     /*==================================*/
-    /* Return the address of the float. */
+  /* Return the address of the float. */
     /*==================================*/
 
-    return peek;
-   }
+  return peek;
+}
 
 /****************************************************************/
 /* CL_CreateInteger: Searches for the long in the hash table. If   */
@@ -551,85 +586,90 @@ CLIPSFloat *CL_CreateFloat(
 /*   the long is returned. Otherwise, the long is hashed into   */
 /*   the table and the address of the long is also returned.    */
 /****************************************************************/
-CLIPSInteger *CL_CreateInteger(
-  Environment *theEnv,
-  long long number)
-  {
-   size_t tally;
-   CLIPSInteger *past = NULL, *peek;
+CLIPSInteger *
+CL_CreateInteger (Environment * theEnv, long long number)
+{
+  size_t tally;
+  CLIPSInteger *past = NULL, *peek;
 
     /*==================================*/
-    /* Get the hash value for the long. */
+  /* Get the hash value for the long. */
     /*==================================*/
 
-    tally = CL_HashInteger(number,INTEGER_HASH_SIZE);
-    peek = SymbolData(theEnv)->IntegerTable[tally];
+  tally = CL_HashInteger (number, INTEGER_HASH_SIZE);
+  peek = SymbolData (theEnv)->IntegerTable[tally];
 
     /*================================================*/
-    /* Search for the long in the list of entries for */
-    /* this hash location. If the long is found, then */
-    /* return the address of the long.                */
+  /* Search for the long in the list of entries for */
+  /* this hash location. If the long is found, then */
+  /* return the address of the long.                */
     /*================================================*/
 
-    while (peek != NULL)
-      {
-       if (number == peek->contents)
-         { return peek; }
-       past = peek;
-       peek = peek->next;
-      }
+  while (peek != NULL)
+    {
+      if (number == peek->contents)
+	{
+	  return peek;
+	}
+      past = peek;
+      peek = peek->next;
+    }
 
     /*================================================*/
-    /* Add the long at the end of the list of entries */
-    /* for this hash location.                        */
+  /* Add the long at the end of the list of entries */
+  /* for this hash location.                        */
     /*================================================*/
 
-    peek = get_struct(theEnv,clipsInteger);
-    if (past == NULL) SymbolData(theEnv)->IntegerTable[tally] = peek;
-    else past->next = peek;
+  peek = get_struct (theEnv, clipsInteger);
+  if (past == NULL)
+    SymbolData (theEnv)->IntegerTable[tally] = peek;
+  else
+    past->next = peek;
 
-    peek->contents = number;
-    peek->next = NULL;
-    peek->bucket = (unsigned int) tally;
-    peek->count = 0;
-    peek->pe_rmanent = false;
-    peek->header.type = INTEGER_TYPE;
+  peek->contents = number;
+  peek->next = NULL;
+  peek->bucket = (unsigned int) tally;
+  peek->count = 0;
+  peek->pe_rmanent = false;
+  peek->header.type = INTEGER_TYPE;
 
     /*=================================================*/
-    /* Add the integer to the list of ephemeral items. */
+  /* Add the integer to the list of ephemeral items. */
     /*=================================================*/
 
-    AddEphemeralHashNode(theEnv,(GENERIC_HN *) peek,&UtilityData(theEnv)->CurrentGarbageFrame->ephemeralIntegerList,
-                         sizeof(CLIPSInteger),0,true);
-    UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
+  AddEphemeralHashNode (theEnv, (GENERIC_HN *) peek,
+			&UtilityData (theEnv)->CurrentGarbageFrame->
+			ephemeralIntegerList, sizeof (CLIPSInteger), 0, true);
+  UtilityData (theEnv)->CurrentGarbageFrame->dirty = true;
 
     /*====================================*/
-    /* Return the address of the integer. */
+  /* Return the address of the integer. */
     /*====================================*/
 
-    return peek;
-   }
+  return peek;
+}
 
 /*****************************************************************/
 /* CL_FindLongHN: Searches for the integer in the integer table and */
 /*   returns a pointer to it if found, otherwise returns NULL.   */
 /*****************************************************************/
-CLIPSInteger *CL_FindLongHN(
-  Environment *theEnv,
-  long long theLong)
-  {
-   size_t tally;
-   CLIPSInteger *peek;
+CLIPSInteger *
+CL_FindLongHN (Environment * theEnv, long long theLong)
+{
+  size_t tally;
+  CLIPSInteger *peek;
 
-   tally = CL_HashInteger(theLong,INTEGER_HASH_SIZE);
+  tally = CL_HashInteger (theLong, INTEGER_HASH_SIZE);
 
-   for (peek = SymbolData(theEnv)->IntegerTable[tally];
-        peek != NULL;
-        peek = peek->next)
-     { if (peek->contents == theLong) return(peek); }
+  for (peek = SymbolData (theEnv)->IntegerTable[tally];
+       peek != NULL; peek = peek->next)
+    {
+      if (peek->contents == theLong)
+	return (peek);
+    }
 
-   return NULL;
-  }
+  return NULL;
+}
 
 /******************************************************************/
 /* CL_AddBitMap: Searches for the bitmap in the hash table. If the   */
@@ -637,94 +677,101 @@ CLIPSInteger *CL_FindLongHN(
 /*   bitmap is returned. Otherwise, the bitmap is hashed into the */
 /*   table and the address of the bitmap is also returned.        */
 /******************************************************************/
-void *CL_AddBitMap(
-  Environment *theEnv,
-  void *vTheBitMap,
-  unsigned short size)
-  {
-   char *theBitMap = (char *) vTheBitMap;
-   size_t tally;
-   unsigned short i;
-   CLIPSBitMap *past = NULL, *peek;
-   char *buffer;
+void *
+CL_AddBitMap (Environment * theEnv, void *vTheBitMap, unsigned short size)
+{
+  char *theBitMap = (char *) vTheBitMap;
+  size_t tally;
+  unsigned short i;
+  CLIPSBitMap *past = NULL, *peek;
+  char *buffer;
 
     /*====================================*/
-    /* Get the hash value for the bitmap. */
+  /* Get the hash value for the bitmap. */
     /*====================================*/
 
-    if (theBitMap == NULL)
-      {
-       CL_SystemError(theEnv,"SYMBOL",2);
-       CL_ExitRouter(theEnv,EXIT_FAILURE);
-      }
+  if (theBitMap == NULL)
+    {
+      CL_SystemError (theEnv, "SYMBOL", 2);
+      CL_ExitRouter (theEnv, EXIT_FAILURE);
+    }
 
-    tally = CL_HashBitMap(theBitMap,BITMAP_HASH_SIZE,size);
-    peek = SymbolData(theEnv)->BitMapTable[tally];
-
-    /*==================================================*/
-    /* Search for the bitmap in the list of entries for */
-    /* this hash table location.  If the bitmap is      */
-    /* found, then return the address of the bitmap.    */
-    /*==================================================*/
-
-    while (peek != NULL)
-      {
-	   if (peek->size == size)
-         {
-          for (i = 0; i < size ; i++)
-            { if (peek->contents[i] != theBitMap[i]) break; }
-
-          if (i == size) return((void *) peek);
-         }
-
-       past = peek;
-       peek = peek->next;
-      }
+  tally = CL_HashBitMap (theBitMap, BITMAP_HASH_SIZE, size);
+  peek = SymbolData (theEnv)->BitMapTable[tally];
 
     /*==================================================*/
-    /* Add the bitmap at the end of the list of entries */
-    /* for this hash table location.  Return the        */
+  /* Search for the bitmap in the list of entries for */
+  /* this hash table location.  If the bitmap is      */
+  /* found, then return the address of the bitmap.    */
     /*==================================================*/
 
-    peek = get_struct(theEnv,clipsBitMap);
-    if (past == NULL) SymbolData(theEnv)->BitMapTable[tally] = peek;
-    else past->next = peek;
+  while (peek != NULL)
+    {
+      if (peek->size == size)
+	{
+	  for (i = 0; i < size; i++)
+	    {
+	      if (peek->contents[i] != theBitMap[i])
+		break;
+	    }
 
-    buffer = (char *) CL_gm2(theEnv,size);
-    for (i = 0; i < size ; i++) buffer[i] = theBitMap[i];
-    peek->contents = buffer;
-    peek->next = NULL;
-    peek->bucket = (unsigned int) tally;
-    peek->count = 0;
-    peek->pe_rmanent = false;
-    peek->size = size;
-    peek->header.type = BITMAP_TYPE;
+	  if (i == size)
+	    return ((void *) peek);
+	}
+
+      past = peek;
+      peek = peek->next;
+    }
+
+    /*==================================================*/
+  /* Add the bitmap at the end of the list of entries */
+  /* for this hash table location.  Return the        */
+    /*==================================================*/
+
+  peek = get_struct (theEnv, clipsBitMap);
+  if (past == NULL)
+    SymbolData (theEnv)->BitMapTable[tally] = peek;
+  else
+    past->next = peek;
+
+  buffer = (char *) CL_gm2 (theEnv, size);
+  for (i = 0; i < size; i++)
+    buffer[i] = theBitMap[i];
+  peek->contents = buffer;
+  peek->next = NULL;
+  peek->bucket = (unsigned int) tally;
+  peek->count = 0;
+  peek->pe_rmanent = false;
+  peek->size = size;
+  peek->header.type = BITMAP_TYPE;
 
     /*================================================*/
-    /* Add the bitmap to the list of ephemeral items. */
+  /* Add the bitmap to the list of ephemeral items. */
     /*================================================*/
 
-    AddEphemeralHashNode(theEnv,(GENERIC_HN *) peek,&UtilityData(theEnv)->CurrentGarbageFrame->ephemeralBitMapList,
-                         sizeof(CLIPSBitMap),sizeof(long),true);
-    UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
+  AddEphemeralHashNode (theEnv, (GENERIC_HN *) peek,
+			&UtilityData (theEnv)->CurrentGarbageFrame->
+			ephemeralBitMapList, sizeof (CLIPSBitMap),
+			sizeof (long), true);
+  UtilityData (theEnv)->CurrentGarbageFrame->dirty = true;
 
     /*===================================*/
-    /* Return the address of the bitmap. */
+  /* Return the address of the bitmap. */
     /*===================================*/
 
-    return((void *) peek);
-   }
+  return ((void *) peek);
+}
 
 /***********************************************/
 /* CL_CreateCExternalAddress: Creates an external */
 /*    address for a C pointer.                 */
 /***********************************************/
-CLIPSExternalAddress *CL_CreateCExternalAddress(
-  Environment *theEnv,
-  void *theExternalAddress)
-  {
-   return CL_CreateExternalAddress(theEnv,theExternalAddress,C_POINTER_EXTERNAL_ADDRESS);
-  }
+CLIPSExternalAddress *
+CL_CreateCExternalAddress (Environment * theEnv, void *theExternalAddress)
+{
+  return CL_CreateExternalAddress (theEnv, theExternalAddress,
+				   C_POINTER_EXTERNAL_ADDRESS);
+}
 
 /*******************************************************************/
 /* CL_CreateExternalAddress: Searches for the external address in the */
@@ -733,503 +780,538 @@ CLIPSExternalAddress *CL_CreateCExternalAddress(
 /*   Otherwise, the external address is hashed into the table and  */
 /*   the address of the external address is also returned.         */
 /*******************************************************************/
-CLIPSExternalAddress *CL_CreateExternalAddress(
-  Environment *theEnv,
-  void *theExternalAddress,
-  unsigned short theType)
-  {
-   size_t tally;
-   CLIPSExternalAddress *past = NULL, *peek;
+CLIPSExternalAddress *
+CL_CreateExternalAddress (Environment * theEnv,
+			  void *theExternalAddress, unsigned short theType)
+{
+  size_t tally;
+  CLIPSExternalAddress *past = NULL, *peek;
 
     /*====================================*/
-    /* Get the hash value for the bitmap. */
+  /* Get the hash value for the bitmap. */
     /*====================================*/
 
-    tally = CL_HashExternalAddress(theExternalAddress,EXTERNAL_ADDRESS_HASH_SIZE);
+  tally =
+    CL_HashExternalAddress (theExternalAddress, EXTERNAL_ADDRESS_HASH_SIZE);
 
-    peek = SymbolData(theEnv)->ExternalAddressTable[tally];
+  peek = SymbolData (theEnv)->ExternalAddressTable[tally];
 
     /*=============================================================*/
-    /* Search for the external address in the list of entries for  */
-    /* this hash table location.  If the external addressis found, */
-    /* then return the address of the external address.            */
+  /* Search for the external address in the list of entries for  */
+  /* this hash table location.  If the external addressis found, */
+  /* then return the address of the external address.            */
     /*=============================================================*/
 
-    while (peek != NULL)
-      {
-       if ((peek->type == theType) &&
-           (peek->contents == theExternalAddress))
-         { return peek; }
+  while (peek != NULL)
+    {
+      if ((peek->type == theType) && (peek->contents == theExternalAddress))
+	{
+	  return peek;
+	}
 
-       past = peek;
-       peek = peek->next;
-      }
+      past = peek;
+      peek = peek->next;
+    }
 
     /*=================================================*/
-    /* Add the external address at the end of the list */
-    /* of entries for this hash table location.        */
+  /* Add the external address at the end of the list */
+  /* of entries for this hash table location.        */
     /*=================================================*/
 
-    peek = get_struct(theEnv,clipsExternalAddress);
-    if (past == NULL) SymbolData(theEnv)->ExternalAddressTable[tally] = peek;
-    else past->next = peek;
+  peek = get_struct (theEnv, clipsExternalAddress);
+  if (past == NULL)
+    SymbolData (theEnv)->ExternalAddressTable[tally] = peek;
+  else
+    past->next = peek;
 
-    peek->contents = theExternalAddress;
-    peek->type = theType;
-    peek->next = NULL;
-    peek->bucket = (unsigned int) tally;
-    peek->count = 0;
-    peek->pe_rmanent = false;
-    peek->header.type = EXTERNAL_ADDRESS_TYPE;
+  peek->contents = theExternalAddress;
+  peek->type = theType;
+  peek->next = NULL;
+  peek->bucket = (unsigned int) tally;
+  peek->count = 0;
+  peek->pe_rmanent = false;
+  peek->header.type = EXTERNAL_ADDRESS_TYPE;
 
     /*================================================*/
-    /* Add the bitmap to the list of ephemeral items. */
+  /* Add the bitmap to the list of ephemeral items. */
     /*================================================*/
 
-    AddEphemeralHashNode(theEnv,(GENERIC_HN *) peek,&UtilityData(theEnv)->CurrentGarbageFrame->ephemeralExternalAddressList,
-                         sizeof(CLIPSExternalAddress),sizeof(long),true);
-    UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
+  AddEphemeralHashNode (theEnv, (GENERIC_HN *) peek,
+			&UtilityData (theEnv)->CurrentGarbageFrame->
+			ephemeralExternalAddressList,
+			sizeof (CLIPSExternalAddress), sizeof (long), true);
+  UtilityData (theEnv)->CurrentGarbageFrame->dirty = true;
 
     /*=============================================*/
-    /* Return the address of the external address. */
+  /* Return the address of the external address. */
     /*=============================================*/
 
-    return peek;
-   }
+  return peek;
+}
 
 /***************************************************/
 /* CL_HashSymbol: Computes a hash value for a symbol. */
 /***************************************************/
-size_t CL_HashSymbol(
-  const char *word,
-  size_t range)
-  {
-   size_t i;
-   size_t tally = 0;
+size_t
+CL_HashSymbol (const char *word, size_t range)
+{
+  size_t i;
+  size_t tally = 0;
 
-   for (i = 0; word[i]; i++)
-     { tally = tally * 127 + (size_t) word[i]; }
+  for (i = 0; word[i]; i++)
+    {
+      tally = tally * 127 + (size_t) word[i];
+    }
 
-   if (range == 0)
-     { return tally; }
+  if (range == 0)
+    {
+      return tally;
+    }
 
-   return tally % range;
-  }
+  return tally % range;
+}
 
 /*************************************************/
 /* CL_HashFloat: Computes a hash value for a float. */
 /*************************************************/
-size_t CL_HashFloat(
-  double number,
-  size_t range)
-  {
-   size_t tally = 0;
-   char *word;
-   size_t i;
+size_t
+CL_HashFloat (double number, size_t range)
+{
+  size_t tally = 0;
+  char *word;
+  size_t i;
 
-   word = (char *) &number;
+  word = (char *) &number;
 
-   for (i = 0; i < sizeof(double); i++)
-     { tally = tally * 127 + (size_t) word[i]; }
+  for (i = 0; i < sizeof (double); i++)
+    {
+      tally = tally * 127 + (size_t) word[i];
+    }
 
-   if (range == 0)
-     { return tally; }
+  if (range == 0)
+    {
+      return tally;
+    }
 
-   return tally % range;
-  }
+  return tally % range;
+}
 
 /******************************************************/
 /* CL_HashInteger: Computes a hash value for an integer. */
 /******************************************************/
-size_t CL_HashInteger(
-  long long number,
-  size_t range)
-  {
-   size_t tally;
+size_t
+CL_HashInteger (long long number, size_t range)
+{
+  size_t tally;
 
 #if WIN_MVC
-   if (number < 0)
-     { number = - number; }
-   tally = (((size_t) number) % range);
+  if (number < 0)
+    {
+      number = -number;
+    }
+  tally = (((size_t) number) % range);
 #else
-   tally = (((size_t) llabs(number)) % range);
+  tally = (((size_t) llabs (number)) % range);
 #endif
 
-   if (range == 0)
-     { return tally; }
+  if (range == 0)
+    {
+      return tally;
+    }
 
-   return tally;
-  }
+  return tally;
+}
 
 /****************************************/
 /* CL_HashExternalAddress: Computes a hash */
 /*   value for an external address.     */
 /****************************************/
-size_t CL_HashExternalAddress(
-  void *theExternalAddress,
-  size_t range)
+size_t
+CL_HashExternalAddress (void *theExternalAddress, size_t range)
+{
+  size_t tally;
+  union
   {
-   size_t tally;
-   union
-     {
-      void *vv;
-      unsigned uv;
-     } fis;
+    void *vv;
+    unsigned uv;
+  } fis;
 
-   fis.uv = 0;
-   fis.vv = theExternalAddress;
-   tally = (fis.uv / 256);
+  fis.uv = 0;
+  fis.vv = theExternalAddress;
+  tally = (fis.uv / 256);
 
-   if (range == 0)
-     { return tally; }
+  if (range == 0)
+    {
+      return tally;
+    }
 
-   return(tally % range);
-  }
+  return (tally % range);
+}
 
 /***************************************************/
 /* CL_HashBitMap: Computes a hash value for a bitmap. */
 /***************************************************/
-size_t CL_HashBitMap(
-  const char *word,
-  size_t range,
-  unsigned length)
-  {
-   unsigned k,j,i;
-   size_t tally;
-   unsigned longLength;
-   unsigned long count = 0L,tmpLong;
-   char *tmpPtr;
+size_t
+CL_HashBitMap (const char *word, size_t range, unsigned length)
+{
+  unsigned k, j, i;
+  size_t tally;
+  unsigned longLength;
+  unsigned long count = 0L, tmpLong;
+  char *tmpPtr;
 
-   tmpPtr = (char *) &tmpLong;
+  tmpPtr = (char *) &tmpLong;
 
    /*============================================================*/
-   /* Add up the first part of the word as unsigned long values. */
+  /* Add up the first part of the word as unsigned long values. */
    /*============================================================*/
 
-   longLength = length / sizeof(unsigned long);
-   for (i = 0 , j = 0 ; i < longLength; i++)
-     {
-      for (k = 0 ; k < sizeof(unsigned long) ; k++ , j++)
-        tmpPtr[k] = word[j];
+  longLength = length / sizeof (unsigned long);
+  for (i = 0, j = 0; i < longLength; i++)
+    {
+      for (k = 0; k < sizeof (unsigned long); k++, j++)
+	tmpPtr[k] = word[j];
       count += tmpLong;
-     }
+    }
 
    /*============================================*/
-   /* Add the re_maining characters to the count. */
+  /* Add the re_maining characters to the count. */
    /*============================================*/
 
-   for (; j < length; j++) count += (size_t) word[j];
+  for (; j < length; j++)
+    count += (size_t) word[j];
 
    /*========================*/
-   /* Return the hash value. */
+  /* Return the hash value. */
    /*========================*/
 
-   if (range == 0)
-     { return count; }
+  if (range == 0)
+    {
+      return count;
+    }
 
-   tally = (count % range);
+  tally = (count % range);
 
-   return tally;
-  }
+  return tally;
+}
 
 /****************************************************/
 /* CL_RetainLexeme: Increments the count value for a   */
 /*   SymbolTable entry. Adds the symbol to the      */
 /*   EphemeralSymbolList if the count becomes zero. */
 /****************************************************/
-void CL_RetainLexeme(
-  Environment *theEnv,
-  CLIPSLexeme *theValue)
-  {
-   theValue->count++;
-  }
+void
+CL_RetainLexeme (Environment * theEnv, CLIPSLexeme * theValue)
+{
+  theValue->count++;
+}
 
 /****************************************************/
 /* CL_ReleaseLexeme: Decrements the count value for a  */
 /*   SymbolTable entry. Adds the symbol to the      */
 /*   EphemeralSymbolList if the count becomes zero. */
 /****************************************************/
-void CL_ReleaseLexeme(
-  Environment *theEnv,
-  CLIPSLexeme *theValue)
-  {
-   if (theValue->count < 0)
-     {
-      CL_SystemError(theEnv,"SYMBOL",3);
-      CL_ExitRouter(theEnv,EXIT_FAILURE);
-     }
+void
+CL_ReleaseLexeme (Environment * theEnv, CLIPSLexeme * theValue)
+{
+  if (theValue->count < 0)
+    {
+      CL_SystemError (theEnv, "SYMBOL", 3);
+      CL_ExitRouter (theEnv, EXIT_FAILURE);
+    }
 
-   if (theValue->count == 0)
-     {
-      CL_SystemError(theEnv,"SYMBOL",4);
-      CL_ExitRouter(theEnv,EXIT_FAILURE);
-     }
+  if (theValue->count == 0)
+    {
+      CL_SystemError (theEnv, "SYMBOL", 4);
+      CL_ExitRouter (theEnv, EXIT_FAILURE);
+    }
 
-   theValue->count--;
+  theValue->count--;
 
-   if (theValue->count != 0) return;
+  if (theValue->count != 0)
+    return;
 
-   if (theValue->markedEphemeral == false)
-     {
-      AddEphemeralHashNode(theEnv,(GENERIC_HN *) theValue,&UtilityData(theEnv)->CurrentGarbageFrame->ephemeralSymbolList,
-                           sizeof(CLIPSLexeme),AVERAGE_STRING_SIZE,true);
-      UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
-     }
+  if (theValue->markedEphemeral == false)
+    {
+      AddEphemeralHashNode (theEnv, (GENERIC_HN *) theValue,
+			    &UtilityData (theEnv)->CurrentGarbageFrame->
+			    ephemeralSymbolList, sizeof (CLIPSLexeme),
+			    AVERAGE_STRING_SIZE, true);
+      UtilityData (theEnv)->CurrentGarbageFrame->dirty = true;
+    }
 
-   return;
-  }
+  return;
+}
 
 /***************************************************/
 /* CL_RetainFloat: Increments the count value for a   */
 /*   FloatTable entry. Adds the float to the       */
 /*   EphemeralFloatList if the count becomes zero. */
 /***************************************************/
-void CL_RetainFloat(
-  Environment *theEnv,
-  CLIPSFloat *theValue)
-  {
-   theValue->count++;
-  }
+void
+CL_RetainFloat (Environment * theEnv, CLIPSFloat * theValue)
+{
+  theValue->count++;
+}
 
 /***************************************************/
 /* CL_ReleaseFloat: Decrements the count value for a  */
 /*   FloatTable entry. Adds the float to the       */
 /*   EphemeralFloatList if the count becomes zero. */
 /***************************************************/
-void CL_ReleaseFloat(
-  Environment *theEnv,
-  CLIPSFloat *theValue)
-  {
-   if (theValue->count <= 0)
-     {
-      CL_SystemError(theEnv,"SYMBOL",5);
-      CL_ExitRouter(theEnv,EXIT_FAILURE);
-     }
+void
+CL_ReleaseFloat (Environment * theEnv, CLIPSFloat * theValue)
+{
+  if (theValue->count <= 0)
+    {
+      CL_SystemError (theEnv, "SYMBOL", 5);
+      CL_ExitRouter (theEnv, EXIT_FAILURE);
+    }
 
-   theValue->count--;
+  theValue->count--;
 
-   if (theValue->count != 0) return;
+  if (theValue->count != 0)
+    return;
 
-   if (theValue->markedEphemeral == false)
-     {
-      AddEphemeralHashNode(theEnv,(GENERIC_HN *) theValue,&UtilityData(theEnv)->CurrentGarbageFrame->ephemeralFloatList,
-                           sizeof(CLIPSFloat),0,true);
-      UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
-     }
+  if (theValue->markedEphemeral == false)
+    {
+      AddEphemeralHashNode (theEnv, (GENERIC_HN *) theValue,
+			    &UtilityData (theEnv)->CurrentGarbageFrame->
+			    ephemeralFloatList, sizeof (CLIPSFloat), 0, true);
+      UtilityData (theEnv)->CurrentGarbageFrame->dirty = true;
+    }
 
-   return;
-  }
+  return;
+}
 
 /*****************************************************/
 /* CL_RetainInteger: Increments the count value for an  */
 /*   IntegerTable entry. Adds the integer to the     */
 /*   EphemeralIntegerList if the count becomes zero. */
 /*****************************************************/
-void CL_RetainInteger(
-  Environment *theEnv,
-  CLIPSInteger *theValue)
-  {
-   theValue->count++;
-  }
+void
+CL_RetainInteger (Environment * theEnv, CLIPSInteger * theValue)
+{
+  theValue->count++;
+}
 
 /*****************************************************/
 /* CL_ReleaseInteger: Decrements the count value for    */
 /*   an IntegerTable entry. Adds the integer to the  */
 /*   EphemeralIntegerList if the count becomes zero. */
 /*****************************************************/
-void CL_ReleaseInteger(
-  Environment *theEnv,
-  CLIPSInteger *theValue)
-  {
-   if (theValue->count <= 0)
-     {
-      CL_SystemError(theEnv,"SYMBOL",6);
-      CL_ExitRouter(theEnv,EXIT_FAILURE);
-     }
+void
+CL_ReleaseInteger (Environment * theEnv, CLIPSInteger * theValue)
+{
+  if (theValue->count <= 0)
+    {
+      CL_SystemError (theEnv, "SYMBOL", 6);
+      CL_ExitRouter (theEnv, EXIT_FAILURE);
+    }
 
-   theValue->count--;
+  theValue->count--;
 
-   if (theValue->count != 0) return;
+  if (theValue->count != 0)
+    return;
 
-   if (theValue->markedEphemeral == false)
-     {
-      AddEphemeralHashNode(theEnv,(GENERIC_HN *) theValue,&UtilityData(theEnv)->CurrentGarbageFrame->ephemeralIntegerList,
-                           sizeof(CLIPSInteger),0,true);
-      UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
-     }
+  if (theValue->markedEphemeral == false)
+    {
+      AddEphemeralHashNode (theEnv, (GENERIC_HN *) theValue,
+			    &UtilityData (theEnv)->CurrentGarbageFrame->
+			    ephemeralIntegerList, sizeof (CLIPSInteger), 0,
+			    true);
+      UtilityData (theEnv)->CurrentGarbageFrame->dirty = true;
+    }
 
-   return;
-  }
+  return;
+}
 
 /**************************************************************/
 /* CL_IncrementBitMapReferenceCount: Increments the count value  */
 /*   for a BitmapTable entry. Adds the bitmap to the          */
 /*   EphemeralBitMapList if the count becomes zero.           */
 /**************************************************************/
-void CL_IncrementBitMapReferenceCount(
-  Environment *theEnv,
-  CLIPSBitMap *theValue)
-  {
-   theValue->count++;
-  }
+void
+CL_IncrementBitMapReferenceCount (Environment * theEnv,
+				  CLIPSBitMap * theValue)
+{
+  theValue->count++;
+}
 
 /**************************************************************/
 /* CL_DecrementBitMapReferenceCount: Decrements the count value  */
 /*   for a BitmapTable entry. Adds the bitmap to the          */
 /*   EphemeralBitMapList if the count becomes zero.           */
 /**************************************************************/
-void CL_DecrementBitMapReferenceCount(
-  Environment *theEnv,
-  CLIPSBitMap *theValue)
-  {
-   if (theValue->count < 0)
-     {
-      CL_SystemError(theEnv,"SYMBOL",7);
-      CL_ExitRouter(theEnv,EXIT_FAILURE);
-     }
+void
+CL_DecrementBitMapReferenceCount (Environment * theEnv,
+				  CLIPSBitMap * theValue)
+{
+  if (theValue->count < 0)
+    {
+      CL_SystemError (theEnv, "SYMBOL", 7);
+      CL_ExitRouter (theEnv, EXIT_FAILURE);
+    }
 
-   if (theValue->count == 0)
-     {
-      CL_SystemError(theEnv,"SYMBOL",8);
-      CL_ExitRouter(theEnv,EXIT_FAILURE);
-     }
+  if (theValue->count == 0)
+    {
+      CL_SystemError (theEnv, "SYMBOL", 8);
+      CL_ExitRouter (theEnv, EXIT_FAILURE);
+    }
 
-   theValue->count--;
+  theValue->count--;
 
-   if (theValue->count != 0) return;
+  if (theValue->count != 0)
+    return;
 
-   if (theValue->markedEphemeral == false)
-     {
-      AddEphemeralHashNode(theEnv,(GENERIC_HN *) theValue,&UtilityData(theEnv)->CurrentGarbageFrame->ephemeralBitMapList,
-                           sizeof(CLIPSBitMap),sizeof(long),true);
-      UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
-     }
+  if (theValue->markedEphemeral == false)
+    {
+      AddEphemeralHashNode (theEnv, (GENERIC_HN *) theValue,
+			    &UtilityData (theEnv)->CurrentGarbageFrame->
+			    ephemeralBitMapList, sizeof (CLIPSBitMap),
+			    sizeof (long), true);
+      UtilityData (theEnv)->CurrentGarbageFrame->dirty = true;
+    }
 
-   return;
-  }
+  return;
+}
 
 /*************************************************************/
 /* CL_RetainExternalAddress: Decrements the count value for an  */
 /*   ExternAddressTable entry. Adds the bitmap to the        */
 /*   EphemeralExternalAddressList if the count becomes zero. */
 /*************************************************************/
-void CL_RetainExternalAddress(
-  Environment *theEnv,
-  CLIPSExternalAddress *theValue)
-  {
-   theValue->count++;
-  }
+void
+CL_RetainExternalAddress (Environment * theEnv,
+			  CLIPSExternalAddress * theValue)
+{
+  theValue->count++;
+}
 
 /*************************************************************/
 /* CL_ReleaseExternalAddress: Decrements the count value for    */
 /*   an ExternAddressTable entry. Adds the bitmap to the     */
 /*   EphemeralExternalAddressList if the count becomes zero. */
 /*************************************************************/
-void CL_ReleaseExternalAddress(
-  Environment *theEnv,
-  CLIPSExternalAddress *theValue)
-  {
-   if (theValue->count < 0)
-     {
-      CL_SystemError(theEnv,"SYMBOL",9);
-      CL_ExitRouter(theEnv,EXIT_FAILURE);
-     }
+void
+CL_ReleaseExternalAddress (Environment * theEnv,
+			   CLIPSExternalAddress * theValue)
+{
+  if (theValue->count < 0)
+    {
+      CL_SystemError (theEnv, "SYMBOL", 9);
+      CL_ExitRouter (theEnv, EXIT_FAILURE);
+    }
 
-   if (theValue->count == 0)
-     {
-      CL_SystemError(theEnv,"SYMBOL",10);
-      CL_ExitRouter(theEnv,EXIT_FAILURE);
-     }
+  if (theValue->count == 0)
+    {
+      CL_SystemError (theEnv, "SYMBOL", 10);
+      CL_ExitRouter (theEnv, EXIT_FAILURE);
+    }
 
-   theValue->count--;
+  theValue->count--;
 
-   if (theValue->count != 0) return;
+  if (theValue->count != 0)
+    return;
 
-   if (theValue->markedEphemeral == false)
-     {
-      AddEphemeralHashNode(theEnv,(GENERIC_HN *) theValue,&UtilityData(theEnv)->CurrentGarbageFrame->ephemeralExternalAddressList,
-                           sizeof(CLIPSExternalAddress),sizeof(long),true);
-      UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
-     }
+  if (theValue->markedEphemeral == false)
+    {
+      AddEphemeralHashNode (theEnv, (GENERIC_HN *) theValue,
+			    &UtilityData (theEnv)->CurrentGarbageFrame->
+			    ephemeralExternalAddressList,
+			    sizeof (CLIPSExternalAddress), sizeof (long),
+			    true);
+      UtilityData (theEnv)->CurrentGarbageFrame->dirty = true;
+    }
 
-   return;
-  }
+  return;
+}
 
 /************************************************/
 /* RemoveHashNode: Removes a hash node from the */
 /*   SymbolTable, FloatTable, IntegerTable,     */
 /*   BitMapTable, or ExternalAddressTable.      */
 /************************************************/
-static void RemoveHashNode(
-  Environment *theEnv,
-  GENERIC_HN *theValue,
-  GENERIC_HN **theTable,
-  int size,
-  int type)
-  {
-   GENERIC_HN *previousNode, *currentNode;
-   CLIPSExternalAddress *theAddress;
+static void
+RemoveHashNode (Environment * theEnv,
+		GENERIC_HN * theValue,
+		GENERIC_HN ** theTable, int size, int type)
+{
+  GENERIC_HN *previousNode, *currentNode;
+  CLIPSExternalAddress *theAddress;
 
    /*=============================================*/
-   /* Find the entry in the specified hash table. */
+  /* Find the entry in the specified hash table. */
    /*=============================================*/
 
-   previousNode = NULL;
-   currentNode = theTable[theValue->bucket];
+  previousNode = NULL;
+  currentNode = theTable[theValue->bucket];
 
-   while (currentNode != theValue)
-     {
+  while (currentNode != theValue)
+    {
       previousNode = currentNode;
       currentNode = currentNode->next;
 
       if (currentNode == NULL)
-        {
-         CL_SystemError(theEnv,"SYMBOL",11);
-         CL_ExitRouter(theEnv,EXIT_FAILURE);
-        }
-     }
+	{
+	  CL_SystemError (theEnv, "SYMBOL", 11);
+	  CL_ExitRouter (theEnv, EXIT_FAILURE);
+	}
+    }
 
    /*===========================================*/
-   /* Remove the entry from the list of entries */
-   /* stored in the hash table bucket.          */
+  /* Remove the entry from the list of entries */
+  /* stored in the hash table bucket.          */
    /*===========================================*/
 
-   if (previousNode == NULL)
-     { theTable[theValue->bucket] = theValue->next; }
-   else
-     { previousNode->next = currentNode->next; }
+  if (previousNode == NULL)
+    {
+      theTable[theValue->bucket] = theValue->next;
+    }
+  else
+    {
+      previousNode->next = currentNode->next;
+    }
 
    /*=================================================*/
-   /* Symbol and bit map nodes have additional memory */
-   /* use to store the character or bitmap string.    */
+  /* Symbol and bit map nodes have additional memory */
+  /* use to store the character or bitmap string.    */
    /*=================================================*/
 
-   if (type == SYMBOL_TYPE)
-     {
-      CL_rm(theEnv,(void *) ((CLIPSLexeme *) theValue)->contents,
-         strlen(((CLIPSLexeme *) theValue)->contents) + 1);
-     }
-   else if (type == BITMAPARRAY)
-     {
-      CL_rm(theEnv,(void *) ((CLIPSBitMap *) theValue)->contents,
-         ((CLIPSBitMap *) theValue)->size);
-     }
-   else if (type == EXTERNAL_ADDRESS_TYPE)
-     {
+  if (type == SYMBOL_TYPE)
+    {
+      CL_rm (theEnv, (void *) ((CLIPSLexeme *) theValue)->contents,
+	     strlen (((CLIPSLexeme *) theValue)->contents) + 1);
+    }
+  else if (type == BITMAPARRAY)
+    {
+      CL_rm (theEnv, (void *) ((CLIPSBitMap *) theValue)->contents,
+	     ((CLIPSBitMap *) theValue)->size);
+    }
+  else if (type == EXTERNAL_ADDRESS_TYPE)
+    {
       theAddress = (CLIPSExternalAddress *) theValue;
 
-      if ((CL_EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type] != NULL) &&
-          (CL_EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type]->discardFunction != NULL))
-        { (*CL_EvaluationData(theEnv)->ExternalAddressTypes[theAddress->type]->discardFunction)(theEnv,theAddress->contents); }
-     }
+      if ((CL_EvaluationData (theEnv)->
+	   ExternalAddressTypes[theAddress->type] != NULL)
+	  && (CL_EvaluationData (theEnv)->
+	      ExternalAddressTypes[theAddress->type]->discardFunction !=
+	      NULL))
+	{
+	  (*CL_EvaluationData (theEnv)->
+	   ExternalAddressTypes[theAddress->type]->discardFunction) (theEnv,
+								     theAddress->
+								     contents);
+	}
+    }
 
    /*===========================*/
-   /* Return the table entry to */
-   /* the pool of free memory.  */
+  /* Return the table entry to */
+  /* the pool of free memory.  */
    /*===========================*/
 
-   rtn_sized_struct(theEnv,size,theValue);
-  }
+  rtn_sized_struct (theEnv, size, theValue);
+}
 
 /***********************************************************/
 /* AddEphemeralHashNode: Adds a symbol, integer, float, or */
@@ -1237,43 +1319,42 @@ static void RemoveHashNode(
 /*   values. These entries have a zero count indicating    */
 /*   that no structure is using the data value.            */
 /***********************************************************/
-static void AddEphemeralHashNode(
-  Environment *theEnv,
-  GENERIC_HN *theHashNode,
-  struct ephemeron **theEphemeralList,
-  int hashNodeSize,
-  int averageContentsSize,
-  bool checkCount)
-  {
-   struct ephemeron *temp;
+static void
+AddEphemeralHashNode (Environment * theEnv,
+		      GENERIC_HN * theHashNode,
+		      struct ephemeron **theEphemeralList,
+		      int hashNodeSize,
+		      int averageContentsSize, bool checkCount)
+{
+  struct ephemeron *temp;
 
    /*===========================================*/
-   /* If the count isn't zero then this routine */
-   /* should never have been called.            */
+  /* If the count isn't zero then this routine */
+  /* should never have been called.            */
    /*===========================================*/
 
-   if (checkCount && (theHashNode->count != 0))
-     {
-      CL_SystemError(theEnv,"SYMBOL",12);
-      CL_ExitRouter(theEnv,EXIT_FAILURE);
-     }
+  if (checkCount && (theHashNode->count != 0))
+    {
+      CL_SystemError (theEnv, "SYMBOL", 12);
+      CL_ExitRouter (theEnv, EXIT_FAILURE);
+    }
 
    /*=====================================*/
-   /* Mark the atomic value as ephemeral. */
+  /* Mark the atomic value as ephemeral. */
    /*=====================================*/
 
-   theHashNode->markedEphemeral = true;
+  theHashNode->markedEphemeral = true;
 
    /*=============================*/
-   /* Add the atomic value to the */
-   /* list of ephemeral values.   */
+  /* Add the atomic value to the */
+  /* list of ephemeral values.   */
    /*=============================*/
 
-   temp = get_struct(theEnv,ephemeron);
-   temp->associatedValue = theHashNode;
-   temp->next = *theEphemeralList;
-   *theEphemeralList = temp;
-  }
+  temp = get_struct (theEnv, ephemeron);
+  temp->associatedValue = theHashNode;
+  temp->next = *theEphemeralList;
+  *theEphemeralList = temp;
+}
 
 /***************************************************/
 /* CL_RemoveEphemeralAtoms: Causes the removal of all */
@@ -1281,87 +1362,106 @@ static void AddEphemeralHashNode(
 /*   maps that still have a count value of zero,   */
 /*   from their respective storage tables.         */
 /***************************************************/
-void CL_RemoveEphemeralAtoms(
-  Environment *theEnv)
-  {
-   struct garbageFrame *theGarbageFrame;
+void
+CL_RemoveEphemeralAtoms (Environment * theEnv)
+{
+  struct garbageFrame *theGarbageFrame;
 
-   theGarbageFrame = UtilityData(theEnv)->CurrentGarbageFrame;
-   if (! theGarbageFrame->dirty) return;
+  theGarbageFrame = UtilityData (theEnv)->CurrentGarbageFrame;
+  if (!theGarbageFrame->dirty)
+    return;
 
-   RemoveEphemeralHashNodes(theEnv,&theGarbageFrame->ephemeralSymbolList,(GENERIC_HN **) SymbolData(theEnv)->SymbolTable,
-                            sizeof(CLIPSLexeme),SYMBOL_TYPE,AVERAGE_STRING_SIZE);
-   RemoveEphemeralHashNodes(theEnv,&theGarbageFrame->ephemeralFloatList,(GENERIC_HN **) SymbolData(theEnv)->FloatTable,
-                            sizeof(CLIPSFloat),FLOAT_TYPE,0);
-   RemoveEphemeralHashNodes(theEnv,&theGarbageFrame->ephemeralIntegerList,(GENERIC_HN **) SymbolData(theEnv)->IntegerTable,
-                            sizeof(CLIPSInteger),INTEGER_TYPE,0);
-   RemoveEphemeralHashNodes(theEnv,&theGarbageFrame->ephemeralBitMapList,(GENERIC_HN **) SymbolData(theEnv)->BitMapTable,
-                            sizeof(CLIPSBitMap),BITMAPARRAY,AVERAGE_BITMAP_SIZE);
-   RemoveEphemeralHashNodes(theEnv,&theGarbageFrame->ephemeralExternalAddressList,(GENERIC_HN **) SymbolData(theEnv)->ExternalAddressTable,
-                            sizeof(CLIPSExternalAddress),EXTERNAL_ADDRESS_TYPE,0);
-  }
+  RemoveEphemeralHashNodes (theEnv, &theGarbageFrame->ephemeralSymbolList,
+			    (GENERIC_HN **) SymbolData (theEnv)->SymbolTable,
+			    sizeof (CLIPSLexeme), SYMBOL_TYPE,
+			    AVERAGE_STRING_SIZE);
+  RemoveEphemeralHashNodes (theEnv, &theGarbageFrame->ephemeralFloatList,
+			    (GENERIC_HN **) SymbolData (theEnv)->FloatTable,
+			    sizeof (CLIPSFloat), FLOAT_TYPE, 0);
+  RemoveEphemeralHashNodes (theEnv, &theGarbageFrame->ephemeralIntegerList,
+			    (GENERIC_HN **) SymbolData (theEnv)->IntegerTable,
+			    sizeof (CLIPSInteger), INTEGER_TYPE, 0);
+  RemoveEphemeralHashNodes (theEnv, &theGarbageFrame->ephemeralBitMapList,
+			    (GENERIC_HN **) SymbolData (theEnv)->BitMapTable,
+			    sizeof (CLIPSBitMap), BITMAPARRAY,
+			    AVERAGE_BITMAP_SIZE);
+  RemoveEphemeralHashNodes (theEnv,
+			    &theGarbageFrame->ephemeralExternalAddressList,
+			    (GENERIC_HN **) SymbolData (theEnv)->
+			    ExternalAddressTable,
+			    sizeof (CLIPSExternalAddress),
+			    EXTERNAL_ADDRESS_TYPE, 0);
+}
 
 /***********************************************/
 /* CL_EphemerateValue: Marks a value as ephemeral */
 /*   if it is not already marked.              */
 /***********************************************/
-void CL_EphemerateValue(
-   Environment *theEnv,
-   void *theValue)
-   {
-    CLIPSLexeme *theSymbol;
-    CLIPSFloat *theFloat;
-    CLIPSInteger *theInteger;
-    CLIPSExternalAddress *theExternalAddress;
+void
+CL_EphemerateValue (Environment * theEnv, void *theValue)
+{
+  CLIPSLexeme *theSymbol;
+  CLIPSFloat *theFloat;
+  CLIPSInteger *theInteger;
+  CLIPSExternalAddress *theExternalAddress;
 
-    switch (((TypeHeader *) theValue)->type)
-      {
-      case SYMBOL_TYPE:
-      case STRING_TYPE:
+  switch (((TypeHeader *) theValue)->type)
+    {
+    case SYMBOL_TYPE:
+    case STRING_TYPE:
 #if OBJECT_SYSTEM
-      case INSTANCE_NAME_TYPE:
+    case INSTANCE_NAME_TYPE:
 #endif
-        theSymbol = (CLIPSLexeme *) theValue;
-        if (theSymbol->markedEphemeral) return;
-        AddEphemeralHashNode(theEnv,(GENERIC_HN *) theValue,
-                             &UtilityData(theEnv)->CurrentGarbageFrame->ephemeralSymbolList,
-                             sizeof(CLIPSLexeme),AVERAGE_STRING_SIZE,false);
-        UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
-        break;
+      theSymbol = (CLIPSLexeme *) theValue;
+      if (theSymbol->markedEphemeral)
+	return;
+      AddEphemeralHashNode (theEnv, (GENERIC_HN *) theValue,
+			    &UtilityData (theEnv)->CurrentGarbageFrame->
+			    ephemeralSymbolList, sizeof (CLIPSLexeme),
+			    AVERAGE_STRING_SIZE, false);
+      UtilityData (theEnv)->CurrentGarbageFrame->dirty = true;
+      break;
 
-      case FLOAT_TYPE:
-        theFloat = (CLIPSFloat *) theValue;
-        if (theFloat->markedEphemeral) return;
-        AddEphemeralHashNode(theEnv,(GENERIC_HN *) theValue,
-                             &UtilityData(theEnv)->CurrentGarbageFrame->ephemeralFloatList,
-                             sizeof(CLIPSFloat),0,false);
-        UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
-        break;
+    case FLOAT_TYPE:
+      theFloat = (CLIPSFloat *) theValue;
+      if (theFloat->markedEphemeral)
+	return;
+      AddEphemeralHashNode (theEnv, (GENERIC_HN *) theValue,
+			    &UtilityData (theEnv)->CurrentGarbageFrame->
+			    ephemeralFloatList, sizeof (CLIPSFloat), 0,
+			    false);
+      UtilityData (theEnv)->CurrentGarbageFrame->dirty = true;
+      break;
 
-      case INTEGER_TYPE:
-        theInteger = (CLIPSInteger *) theValue;
-        if (theInteger->markedEphemeral) return;
-        AddEphemeralHashNode(theEnv,(GENERIC_HN *) theValue,
-                             &UtilityData(theEnv)->CurrentGarbageFrame->ephemeralIntegerList,
-                             sizeof(CLIPSInteger),0,false);
-        UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
-        break;
+    case INTEGER_TYPE:
+      theInteger = (CLIPSInteger *) theValue;
+      if (theInteger->markedEphemeral)
+	return;
+      AddEphemeralHashNode (theEnv, (GENERIC_HN *) theValue,
+			    &UtilityData (theEnv)->CurrentGarbageFrame->
+			    ephemeralIntegerList, sizeof (CLIPSInteger), 0,
+			    false);
+      UtilityData (theEnv)->CurrentGarbageFrame->dirty = true;
+      break;
 
-      case EXTERNAL_ADDRESS_TYPE:
-        theExternalAddress = (CLIPSExternalAddress *) theValue;
-        if (theExternalAddress->markedEphemeral) return;
-        AddEphemeralHashNode(theEnv,(GENERIC_HN *) theValue,
-                             &UtilityData(theEnv)->CurrentGarbageFrame->ephemeralExternalAddressList,
-                             sizeof(CLIPSExternalAddress),sizeof(long),false);
-        UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
-        break;
+    case EXTERNAL_ADDRESS_TYPE:
+      theExternalAddress = (CLIPSExternalAddress *) theValue;
+      if (theExternalAddress->markedEphemeral)
+	return;
+      AddEphemeralHashNode (theEnv, (GENERIC_HN *) theValue,
+			    &UtilityData (theEnv)->CurrentGarbageFrame->
+			    ephemeralExternalAddressList,
+			    sizeof (CLIPSExternalAddress), sizeof (long),
+			    false);
+      UtilityData (theEnv)->CurrentGarbageFrame->dirty = true;
+      break;
 
-      case MULTIFIELD_TYPE:
-        CL_EphemerateMultifield(theEnv,(Multifield *) theValue);
-        break;
+    case MULTIFIELD_TYPE:
+      CL_EphemerateMultifield (theEnv, (Multifield *) theValue);
+      break;
 
-      }
-   }
+    }
+}
 
 /****************************************************************/
 /* RemoveEphemeralHashNodes: Removes symbols from the ephemeral */
@@ -1374,20 +1474,19 @@ void CL_EphemerateValue(
 /*   this routine needs to check through both the previous and  */
 /*   current evaluation depth.                                  */
 /****************************************************************/
-static void RemoveEphemeralHashNodes(
-  Environment *theEnv,
-  struct ephemeron **theEphemeralList,
-  GENERIC_HN **theTable,
-  int hashNodeSize,
-  int hashNodeType,
-  int averageContentsSize)
-  {
-   struct ephemeron *edPtr, *lastPtr = NULL, *nextPtr;
+static void
+RemoveEphemeralHashNodes (Environment * theEnv,
+			  struct ephemeron **theEphemeralList,
+			  GENERIC_HN ** theTable,
+			  int hashNodeSize,
+			  int hashNodeType, int averageContentsSize)
+{
+  struct ephemeron *edPtr, *lastPtr = NULL, *nextPtr;
 
-   edPtr = *theEphemeralList;
+  edPtr = *theEphemeralList;
 
-   while (edPtr != NULL)
-     {
+  while (edPtr != NULL)
+    {
       /*======================================================*/
       /* Check through previous and current evaluation depth  */
       /* because these symbols can be interspersed, otherwise */
@@ -1403,12 +1502,15 @@ static void RemoveEphemeralHashNodes(
       /*==================================================*/
 
       if (edPtr->associatedValue->count == 0)
-        {
-         RemoveHashNode(theEnv,edPtr->associatedValue,theTable,hashNodeSize,hashNodeType);
-         rtn_struct(theEnv,ephemeron,edPtr);
-         if (lastPtr == NULL) *theEphemeralList = nextPtr;
-         else lastPtr->next = nextPtr;
-        }
+	{
+	  RemoveHashNode (theEnv, edPtr->associatedValue, theTable,
+			  hashNodeSize, hashNodeType);
+	  rtn_struct (theEnv, ephemeron, edPtr);
+	  if (lastPtr == NULL)
+	    *theEphemeralList = nextPtr;
+	  else
+	    lastPtr->next = nextPtr;
+	}
 
       /*=======================================*/
       /* Remove ephemeral status of any symbol */
@@ -1416,133 +1518,135 @@ static void RemoveEphemeralHashNodes(
       /*=======================================*/
 
       else if (edPtr->associatedValue->count > 0)
-        {
-         edPtr->associatedValue->markedEphemeral = false;
+	{
+	  edPtr->associatedValue->markedEphemeral = false;
 
-         rtn_struct(theEnv,ephemeron,edPtr);
+	  rtn_struct (theEnv, ephemeron, edPtr);
 
-         if (lastPtr == NULL) *theEphemeralList = nextPtr;
-         else lastPtr->next = nextPtr;
-        }
+	  if (lastPtr == NULL)
+	    *theEphemeralList = nextPtr;
+	  else
+	    lastPtr->next = nextPtr;
+	}
 
       /*==================================================*/
       /* Otherwise keep the symbol in the ephemeral list. */
       /*==================================================*/
 
       else
-        { lastPtr = edPtr; }
+	{
+	  lastPtr = edPtr;
+	}
 
       edPtr = nextPtr;
-     }
-  }
+    }
+}
 
 /*********************************************************/
 /* CL_GetSymbolTable: Returns a pointer to the SymbolTable. */
 /*********************************************************/
-CLIPSLexeme **CL_GetSymbolTable(
-  Environment *theEnv)
-  {
-   return(SymbolData(theEnv)->SymbolTable);
-  }
+CLIPSLexeme **
+CL_GetSymbolTable (Environment * theEnv)
+{
+  return (SymbolData (theEnv)->SymbolTable);
+}
 
 /******************************************************/
 /* CL_SetSymbolTable: Sets the value of the SymbolTable. */
 /******************************************************/
-void CL_SetSymbolTable(
-  Environment *theEnv,
-  CLIPSLexeme **value)
-  {
-   SymbolData(theEnv)->SymbolTable = value;
-  }
+void
+CL_SetSymbolTable (Environment * theEnv, CLIPSLexeme ** value)
+{
+  SymbolData (theEnv)->SymbolTable = value;
+}
 
 /*******************************************************/
 /* CL_GetFloatTable: Returns a pointer to the FloatTable. */
 /*******************************************************/
-CLIPSFloat **CL_GetFloatTable(
-  Environment *theEnv)
-  {
-   return(SymbolData(theEnv)->FloatTable);
-  }
+CLIPSFloat **
+CL_GetFloatTable (Environment * theEnv)
+{
+  return (SymbolData (theEnv)->FloatTable);
+}
 
 /****************************************************/
 /* CL_SetFloatTable: Sets the value of the FloatTable. */
 /****************************************************/
-void CL_SetFloatTable(
-  Environment *theEnv,
-  CLIPSFloat **value)
-  {
-   SymbolData(theEnv)->FloatTable = value;
-  }
+void
+CL_SetFloatTable (Environment * theEnv, CLIPSFloat ** value)
+{
+  SymbolData (theEnv)->FloatTable = value;
+}
 
 /***********************************************************/
 /* CL_GetIntegerTable: Returns a pointer to the IntegerTable. */
 /***********************************************************/
-CLIPSInteger **CL_GetIntegerTable(
-  Environment *theEnv)
-  {
-   return(SymbolData(theEnv)->IntegerTable);
-  }
+CLIPSInteger **
+CL_GetIntegerTable (Environment * theEnv)
+{
+  return (SymbolData (theEnv)->IntegerTable);
+}
 
 /********************************************************/
 /* CL_SetIntegerTable: Sets the value of the IntegerTable. */
 /********************************************************/
-void CL_SetIntegerTable(
-  Environment *theEnv,
-  CLIPSInteger **value)
-  {
-   SymbolData(theEnv)->IntegerTable = value;
-  }
+void
+CL_SetIntegerTable (Environment * theEnv, CLIPSInteger ** value)
+{
+  SymbolData (theEnv)->IntegerTable = value;
+}
 
 /*********************************************************/
 /* CL_GetBitMapTable: Returns a pointer to the BitMapTable. */
 /*********************************************************/
-CLIPSBitMap **CL_GetBitMapTable(
-  Environment *theEnv)
-  {
-   return(SymbolData(theEnv)->BitMapTable);
-  }
+CLIPSBitMap **
+CL_GetBitMapTable (Environment * theEnv)
+{
+  return (SymbolData (theEnv)->BitMapTable);
+}
 
 /******************************************************/
 /* CL_SetBitMapTable: Sets the value of the BitMapTable. */
 /******************************************************/
-void CL_SetBitMapTable(
-  Environment *theEnv,
-  CLIPSBitMap **value)
-  {
-   SymbolData(theEnv)->BitMapTable = value;
-  }
+void
+CL_SetBitMapTable (Environment * theEnv, CLIPSBitMap ** value)
+{
+  SymbolData (theEnv)->BitMapTable = value;
+}
 
 /***************************************************************************/
 /* CL_GetExternalAddressTable: Returns a pointer to the ExternalAddressTable. */
 /***************************************************************************/
-CLIPSExternalAddress **CL_GetExternalAddressTable(
-  Environment *theEnv)
-  {
-   return(SymbolData(theEnv)->ExternalAddressTable);
-  }
+CLIPSExternalAddress **
+CL_GetExternalAddressTable (Environment * theEnv)
+{
+  return (SymbolData (theEnv)->ExternalAddressTable);
+}
 
 /************************************************************************/
 /* CL_SetExternalAddressTable: Sets the value of the ExternalAddressTable. */
 /************************************************************************/
-void CL_SetExternalAddressTable(
-  Environment *theEnv,
-  CLIPSExternalAddress **value)
-  {
-   SymbolData(theEnv)->ExternalAddressTable = value;
-  }
+void
+CL_SetExternalAddressTable (Environment * theEnv,
+			    CLIPSExternalAddress ** value)
+{
+  SymbolData (theEnv)->ExternalAddressTable = value;
+}
 
 /******************************************************/
 /* CL_RefreshSpecialSymbols: CL_Resets the values of the    */
 /*   TrueSymbol, FalseSymbol, Zero, PositiveInfinity, */
 /*   and NegativeInfinity symbols.                    */
 /******************************************************/
-void CL_RefreshSpecialSymbols(
-  Environment *theEnv)
-  {
-   SymbolData(theEnv)->PositiveInfinity = CL_FindSymbolHN(theEnv,POSITIVE_INFINITY_STRING,SYMBOL_BIT);
-   SymbolData(theEnv)->NegativeInfinity = CL_FindSymbolHN(theEnv,NEGATIVE_INFINITY_STRING,SYMBOL_BIT);
-   SymbolData(theEnv)->Zero = CL_FindLongHN(theEnv,0L);
-  }
+void
+CL_RefreshSpecialSymbols (Environment * theEnv)
+{
+  SymbolData (theEnv)->PositiveInfinity =
+    CL_FindSymbolHN (theEnv, POSITIVE_INFINITY_STRING, SYMBOL_BIT);
+  SymbolData (theEnv)->NegativeInfinity =
+    CL_FindSymbolHN (theEnv, NEGATIVE_INFINITY_STRING, SYMBOL_BIT);
+  SymbolData (theEnv)->Zero = CL_FindLongHN (theEnv, 0L);
+}
 
 /***********************************************************/
 /* CL_FindSymbol_Matches: Finds all symbols in the SymbolTable */
@@ -1550,78 +1654,80 @@ void CL_RefreshSpecialSymbols(
 /*   used to implement the command completion feature      */
 /*   found in some of the machine specific interfaces.     */
 /***********************************************************/
-struct symbolMatch *CL_FindSymbol_Matches(
-  Environment *theEnv,
-  const char *searchString,
-  unsigned *numberOf_Matches,
-  size_t *commonPrefixLength)
-  {
-   struct symbolMatch *reply = NULL, *temp;
-   CLIPSLexeme *hashPtr = NULL;
-   size_t searchLength;
+struct symbolMatch *
+CL_FindSymbol_Matches (Environment * theEnv,
+		       const char *searchString,
+		       unsigned *numberOf_Matches, size_t *commonPrefixLength)
+{
+  struct symbolMatch *reply = NULL, *temp;
+  CLIPSLexeme *hashPtr = NULL;
+  size_t searchLength;
 
-   searchLength = strlen(searchString);
-   *numberOf_Matches = 0;
+  searchLength = strlen (searchString);
+  *numberOf_Matches = 0;
 
-   while ((hashPtr = CL_GetNextSymbolMatch(theEnv,searchString,searchLength,hashPtr,
-                                        false,commonPrefixLength)) != NULL)
-     {
+  while ((hashPtr =
+	  CL_GetNextSymbolMatch (theEnv, searchString, searchLength, hashPtr,
+				 false, commonPrefixLength)) != NULL)
+    {
       *numberOf_Matches = *numberOf_Matches + 1;
-      temp = get_struct(theEnv,symbolMatch);
+      temp = get_struct (theEnv, symbolMatch);
       temp->match = hashPtr;
       temp->next = reply;
       reply = temp;
-     }
+    }
 
-   return(reply);
-  }
+  return (reply);
+}
 
 /*********************************************************/
 /* ReturnSymbol_Matches: Returns a set of symbol matches. */
 /*********************************************************/
-void ReturnSymbol_Matches(
-  Environment *theEnv,
-  struct symbolMatch *listOf_Matches)
-  {
-   struct symbolMatch *temp;
+void
+ReturnSymbol_Matches (Environment * theEnv,
+		      struct symbolMatch *listOf_Matches)
+{
+  struct symbolMatch *temp;
 
-   while (listOf_Matches != NULL)
-     {
+  while (listOf_Matches != NULL)
+    {
       temp = listOf_Matches->next;
-      rtn_struct(theEnv,symbolMatch,listOf_Matches);
+      rtn_struct (theEnv, symbolMatch, listOf_Matches);
       listOf_Matches = temp;
-     }
-  }
+    }
+}
 
 /***************************************************************/
 /* CL_ClearBitString: Initializes the values of a bitmap to zero. */
 /***************************************************************/
-void CL_ClearBitString(
-  void *vTheBitMap,
-  size_t length)
-  {
-   char *theBitMap = (char *) vTheBitMap;
-   size_t i;
+void
+CL_ClearBitString (void *vTheBitMap, size_t length)
+{
+  char *theBitMap = (char *) vTheBitMap;
+  size_t i;
 
-   for (i = 0; i < length; i++) theBitMap[i] = '\0';
-  }
-  
+  for (i = 0; i < length; i++)
+    theBitMap[i] = '\0';
+}
+
 /****************************************/
 /* CL_BitStringHasBitsSet: Returns true if */
 /*   the bit string has any bits set.   */
 /****************************************/
-bool CL_BitStringHasBitsSet(
-  void *vTheBitMap,
-  unsigned length)
-  {
-   char *theBitMap = (char *) vTheBitMap;
-   unsigned i;
+bool
+CL_BitStringHasBitsSet (void *vTheBitMap, unsigned length)
+{
+  char *theBitMap = (char *) vTheBitMap;
+  unsigned i;
 
-   for (i = 0; i < length; i++)
-     { if (theBitMap[i] != '\0') return true; }
-   
-   return false;
-  }
+  for (i = 0; i < length; i++)
+    {
+      if (theBitMap[i] != '\0')
+	return true;
+    }
+
+  return false;
+}
 
 /*****************************************************************/
 /* CL_GetNextSymbolMatch: Finds the next symbol in the SymbolTable  */
@@ -1629,171 +1735,177 @@ bool CL_BitStringHasBitsSet(
 /*   to implement the command completion feature found in some   */
 /*   of the machine specific interfaces.                         */
 /*****************************************************************/
-CLIPSLexeme *CL_GetNextSymbolMatch(
-  Environment *theEnv,
-  const char *searchString,
-  size_t searchLength,
-  CLIPSLexeme *prevSymbol,
-  bool anywhere,
-  size_t *commonPrefixLength)
-  {
-   unsigned long i;
-   CLIPSLexeme *hashPtr;
-   bool flag = true;
-   size_t prefixLength;
+CLIPSLexeme *
+CL_GetNextSymbolMatch (Environment * theEnv,
+		       const char *searchString,
+		       size_t searchLength,
+		       CLIPSLexeme * prevSymbol,
+		       bool anywhere, size_t *commonPrefixLength)
+{
+  unsigned long i;
+  CLIPSLexeme *hashPtr;
+  bool flag = true;
+  size_t prefixLength;
 
    /*==========================================*/
-   /* If we're looking anywhere in the string, */
-   /* then there's no common prefix length.    */
+  /* If we're looking anywhere in the string, */
+  /* then there's no common prefix length.    */
    /*==========================================*/
 
-   if (anywhere && (commonPrefixLength != NULL))
-     *commonPrefixLength = 0;
+  if (anywhere && (commonPrefixLength != NULL))
+    *commonPrefixLength = 0;
 
    /*========================================================*/
-   /* If we're starting the search from the beginning of the */
-   /* symbol table, the previous symbol argument is NULL.    */
+  /* If we're starting the search from the beginning of the */
+  /* symbol table, the previous symbol argument is NULL.    */
    /*========================================================*/
 
-   if (prevSymbol == NULL)
-     {
+  if (prevSymbol == NULL)
+    {
       i = 0;
-      hashPtr = SymbolData(theEnv)->SymbolTable[0];
-     }
+      hashPtr = SymbolData (theEnv)->SymbolTable[0];
+    }
 
    /*==========================================*/
-   /* Otherwise start the search at the symbol */
-   /* after the last symbol found.             */
+  /* Otherwise start the search at the symbol */
+  /* after the last symbol found.             */
    /*==========================================*/
 
-   else
-     {
+  else
+    {
       i = prevSymbol->bucket;
       hashPtr = prevSymbol->next;
-     }
+    }
 
    /*==============================================*/
-   /* Search through all the symbol table buckets. */
+  /* Search through all the symbol table buckets. */
    /*==============================================*/
 
-   while (flag)
-     {
+  while (flag)
+    {
       /*===================================*/
       /* Search through all of the entries */
       /* in the bucket being examined.     */
       /*===================================*/
 
       for (; hashPtr != NULL; hashPtr = hashPtr->next)
-        {
-         /*================================================*/
-         /* Skip symbols that being with ( since these are */
-         /* typically symbols for internal use. Also skip  */
-         /* any symbols that are marked ephemeral since    */
-         /* these aren't in use.                           */
-         /*================================================*/
+	{
+	 /*================================================*/
+	  /* Skip symbols that being with ( since these are */
+	  /* typically symbols for internal use. Also skip  */
+	  /* any symbols that are marked ephemeral since    */
+	  /* these aren't in use.                           */
+	 /*================================================*/
 
-         if ((hashPtr->contents[0] == '(') ||
-             (hashPtr->markedEphemeral))
-           { continue; }
+	  if ((hashPtr->contents[0] == '(') || (hashPtr->markedEphemeral))
+	    {
+	      continue;
+	    }
 
-         /*==================================================*/
-         /* Two types of matching can be perfo_rmed: the type */
-         /* comparing just to the beginning of the string    */
-         /* and the type which looks for the substring       */
-         /* anywhere within the string being examined.       */
-         /*==================================================*/
+	 /*==================================================*/
+	  /* Two types of matching can be perfo_rmed: the type */
+	  /* comparing just to the beginning of the string    */
+	  /* and the type which looks for the substring       */
+	  /* anywhere within the string being examined.       */
+	 /*==================================================*/
 
-         if (! anywhere)
-           {
-            /*=============================================*/
-            /* Dete_rmine the common prefix length between  */
-            /* the previously found match (if available or */
-            /* the search string if not) and the symbol    */
-            /* table entry.                                */
-            /*=============================================*/
+	  if (!anywhere)
+	    {
+	    /*=============================================*/
+	      /* Dete_rmine the common prefix length between  */
+	      /* the previously found match (if available or */
+	      /* the search string if not) and the symbol    */
+	      /* table entry.                                */
+	    /*=============================================*/
 
-            if (prevSymbol != NULL)
-              prefixLength = CommonPrefixLength(prevSymbol->contents,hashPtr->contents);
-            else
-              prefixLength = CommonPrefixLength(searchString,hashPtr->contents);
+	      if (prevSymbol != NULL)
+		prefixLength =
+		  CommonPrefixLength (prevSymbol->contents,
+				      hashPtr->contents);
+	      else
+		prefixLength =
+		  CommonPrefixLength (searchString, hashPtr->contents);
 
-            /*===================================================*/
-            /* If the prefix length is greater than or equal to  */
-            /* the length of the search string, then we've found */
-            /* a match. If this is the first match, the common   */
-            /* prefix length is set to the length of the first   */
-            /* match, otherwise the common prefix length is the  */
-            /* smallest prefix length found among all matches.   */
-            /*===================================================*/
+	    /*===================================================*/
+	      /* If the prefix length is greater than or equal to  */
+	      /* the length of the search string, then we've found */
+	      /* a match. If this is the first match, the common   */
+	      /* prefix length is set to the length of the first   */
+	      /* match, otherwise the common prefix length is the  */
+	      /* smallest prefix length found among all matches.   */
+	    /*===================================================*/
 
-            if (prefixLength >= searchLength)
-              {
-               if (commonPrefixLength != NULL)
-                 {
-                  if (prevSymbol == NULL)
-                    *commonPrefixLength = strlen(hashPtr->contents);
-                  else if (prefixLength < *commonPrefixLength)
-                    *commonPrefixLength = prefixLength;
-                 }
-               return(hashPtr);
-              }
-           }
-         else
-           {
-            if (StringWithinString(hashPtr->contents,searchString) != NULL)
-              { return(hashPtr); }
-           }
-        }
+	      if (prefixLength >= searchLength)
+		{
+		  if (commonPrefixLength != NULL)
+		    {
+		      if (prevSymbol == NULL)
+			*commonPrefixLength = strlen (hashPtr->contents);
+		      else if (prefixLength < *commonPrefixLength)
+			*commonPrefixLength = prefixLength;
+		    }
+		  return (hashPtr);
+		}
+	    }
+	  else
+	    {
+	      if (StringWithinString (hashPtr->contents, searchString) !=
+		  NULL)
+		{
+		  return (hashPtr);
+		}
+	    }
+	}
 
       /*=================================================*/
       /* Move on to the next bucket in the symbol table. */
       /*=================================================*/
 
-      if (++i >= SYMBOL_HASH_SIZE) flag = false;
-      else hashPtr = SymbolData(theEnv)->SymbolTable[i];
-     }
+      if (++i >= SYMBOL_HASH_SIZE)
+	flag = false;
+      else
+	hashPtr = SymbolData (theEnv)->SymbolTable[i];
+    }
 
    /*=====================================*/
-   /* There are no more matching symbols. */
+  /* There are no more matching symbols. */
    /*=====================================*/
 
-   return NULL;
-  }
+  return NULL;
+}
 
 /**********************************************/
 /* StringWithinString: Dete_rmines if a string */
 /*   is contained within another string.      */
 /**********************************************/
-static const char *StringWithinString(
-  const char *cs,
-  const char *ct)
-  {
-   unsigned i,j,k;
+static const char *
+StringWithinString (const char *cs, const char *ct)
+{
+  unsigned i, j, k;
 
-   for (i = 0 ; cs[i] != '\0' ; i++)
-     {
-      for (j = i , k = 0 ; ct[k] != '\0' && cs[j] == ct[k] ; j++, k++) ;
+  for (i = 0; cs[i] != '\0'; i++)
+    {
+      for (j = i, k = 0; ct[k] != '\0' && cs[j] == ct[k]; j++, k++);
       if ((ct[k] == '\0') && (k != 0))
-        return(cs + i);
-     }
-   return NULL;
-  }
+	return (cs + i);
+    }
+  return NULL;
+}
 
 /************************************************/
 /* CommonPrefixLength: Dete_rmines the length of */
 /*    the maximumcommon prefix of two strings   */
 /************************************************/
-static size_t CommonPrefixLength(
-  const char *cs,
-  const char *ct)
-  {
-   unsigned i;
+static size_t
+CommonPrefixLength (const char *cs, const char *ct)
+{
+  unsigned i;
 
-   for (i = 0 ; (cs[i] != '\0') && (ct[i] != '\0') ; i++)
-     if (cs[i] != ct[i])
-       break;
-   return(i);
-  }
+  for (i = 0; (cs[i] != '\0') && (ct[i] != '\0'); i++)
+    if (cs[i] != ct[i])
+      break;
+  return (i);
+}
 
 #if BLOAD_AND_BSAVE || CONSTRUCT_COMPILER || BSAVE_INSTANCES
 
@@ -1803,159 +1915,166 @@ static size_t CommonPrefixLength(
 /*   the hash table in a hash table traversal (e.g. this is the */
 /*   fifth entry in the  hash table.                            */
 /****************************************************************/
-void CL_SetAtomicValueIndices(
-  Environment *theEnv,
-  bool setAll)
-  {
-   unsigned int count;
-   unsigned int i;
-   CLIPSLexeme *symbolPtr, **symbolArray;
-   CLIPSFloat *floatPtr, **floatArray;
-   CLIPSInteger *integerPtr, **integerArray;
-   CLIPSBitMap *bitMapPtr, **bitMapArray;
+void
+CL_SetAtomicValueIndices (Environment * theEnv, bool setAll)
+{
+  unsigned int count;
+  unsigned int i;
+  CLIPSLexeme *symbolPtr, **symbolArray;
+  CLIPSFloat *floatPtr, **floatArray;
+  CLIPSInteger *integerPtr, **integerArray;
+  CLIPSBitMap *bitMapPtr, **bitMapArray;
 
    /*===================================*/
-   /* Set indices for the symbol table. */
+  /* Set indices for the symbol table. */
    /*===================================*/
 
-   count = 0;
-   symbolArray = CL_GetSymbolTable(theEnv);
+  count = 0;
+  symbolArray = CL_GetSymbolTable (theEnv);
 
-   for (i = 0; i < SYMBOL_HASH_SIZE; i++)
-     {
+  for (i = 0; i < SYMBOL_HASH_SIZE; i++)
+    {
       for (symbolPtr = symbolArray[i];
-           symbolPtr != NULL;
-           symbolPtr = symbolPtr->next)
-        {
-         if ((symbolPtr->neededSymbol == true) || setAll)
-           { symbolPtr->bucket = count++; }
-        }
-     }
+	   symbolPtr != NULL; symbolPtr = symbolPtr->next)
+	{
+	  if ((symbolPtr->neededSymbol == true) || setAll)
+	    {
+	      symbolPtr->bucket = count++;
+	    }
+	}
+    }
 
    /*==================================*/
-   /* Set indices for the float table. */
+  /* Set indices for the float table. */
    /*==================================*/
 
-   count = 0;
-   floatArray = CL_GetFloatTable(theEnv);
+  count = 0;
+  floatArray = CL_GetFloatTable (theEnv);
 
-   for (i = 0; i < FLOAT_HASH_SIZE; i++)
-     {
+  for (i = 0; i < FLOAT_HASH_SIZE; i++)
+    {
       for (floatPtr = floatArray[i];
-           floatPtr != NULL;
-           floatPtr = floatPtr->next)
-        {
-         if ((floatPtr->neededFloat == true) || setAll)
-           { floatPtr->bucket = count++; }
-        }
-     }
+	   floatPtr != NULL; floatPtr = floatPtr->next)
+	{
+	  if ((floatPtr->neededFloat == true) || setAll)
+	    {
+	      floatPtr->bucket = count++;
+	    }
+	}
+    }
 
    /*====================================*/
-   /* Set indices for the integer table. */
+  /* Set indices for the integer table. */
    /*====================================*/
 
-   count = 0;
-   integerArray = CL_GetIntegerTable(theEnv);
+  count = 0;
+  integerArray = CL_GetIntegerTable (theEnv);
 
-   for (i = 0; i < INTEGER_HASH_SIZE; i++)
-     {
+  for (i = 0; i < INTEGER_HASH_SIZE; i++)
+    {
       for (integerPtr = integerArray[i];
-           integerPtr != NULL;
-           integerPtr = integerPtr->next)
-        {
-         if ((integerPtr->neededInteger == true) || setAll)
-           { integerPtr->bucket = count++; }
-        }
-     }
+	   integerPtr != NULL; integerPtr = integerPtr->next)
+	{
+	  if ((integerPtr->neededInteger == true) || setAll)
+	    {
+	      integerPtr->bucket = count++;
+	    }
+	}
+    }
 
    /*===================================*/
-   /* Set indices for the bitmap table. */
+  /* Set indices for the bitmap table. */
    /*===================================*/
 
-   count = 0;
-   bitMapArray = CL_GetBitMapTable(theEnv);
+  count = 0;
+  bitMapArray = CL_GetBitMapTable (theEnv);
 
-   for (i = 0; i < BITMAP_HASH_SIZE; i++)
-     {
+  for (i = 0; i < BITMAP_HASH_SIZE; i++)
+    {
       for (bitMapPtr = bitMapArray[i];
-           bitMapPtr != NULL;
-           bitMapPtr = bitMapPtr->next)
-        {
-         if ((bitMapPtr->neededBitMap == true) || setAll)
-           { bitMapPtr->bucket = count++; }
-        }
-     }
-  }
+	   bitMapPtr != NULL; bitMapPtr = bitMapPtr->next)
+	{
+	  if ((bitMapPtr->neededBitMap == true) || setAll)
+	    {
+	      bitMapPtr->bucket = count++;
+	    }
+	}
+    }
+}
 
 /***********************************************************************/
 /* CL_RestoreAtomicValueBuckets: Restores the bucket values of hash table */
 /*   entries to the appropriate values. No_rmally called to undo the    */
 /*   effects of a call to the CL_SetAtomicValueIndices function.          */
 /***********************************************************************/
-void CL_RestoreAtomicValueBuckets(
-  Environment *theEnv)
-  {
-   unsigned int i;
-   CLIPSLexeme *symbolPtr, **symbolArray;
-   CLIPSFloat *floatPtr, **floatArray;
-   CLIPSInteger *integerPtr, **integerArray;
-   CLIPSBitMap *bitMapPtr, **bitMapArray;
+void
+CL_RestoreAtomicValueBuckets (Environment * theEnv)
+{
+  unsigned int i;
+  CLIPSLexeme *symbolPtr, **symbolArray;
+  CLIPSFloat *floatPtr, **floatArray;
+  CLIPSInteger *integerPtr, **integerArray;
+  CLIPSBitMap *bitMapPtr, **bitMapArray;
 
    /*================================================*/
-   /* Restore the bucket values in the symbol table. */
+  /* Restore the bucket values in the symbol table. */
    /*================================================*/
 
-   symbolArray = CL_GetSymbolTable(theEnv);
+  symbolArray = CL_GetSymbolTable (theEnv);
 
-   for (i = 0; i < SYMBOL_HASH_SIZE; i++)
-     {
+  for (i = 0; i < SYMBOL_HASH_SIZE; i++)
+    {
       for (symbolPtr = symbolArray[i];
-           symbolPtr != NULL;
-           symbolPtr = symbolPtr->next)
-        { symbolPtr->bucket = i; }
-     }
+	   symbolPtr != NULL; symbolPtr = symbolPtr->next)
+	{
+	  symbolPtr->bucket = i;
+	}
+    }
 
    /*===============================================*/
-   /* Restore the bucket values in the float table. */
+  /* Restore the bucket values in the float table. */
    /*===============================================*/
 
-   floatArray = CL_GetFloatTable(theEnv);
+  floatArray = CL_GetFloatTable (theEnv);
 
-   for (i = 0; i < FLOAT_HASH_SIZE; i++)
-     {
+  for (i = 0; i < FLOAT_HASH_SIZE; i++)
+    {
       for (floatPtr = floatArray[i];
-           floatPtr != NULL;
-           floatPtr = floatPtr->next)
-        { floatPtr->bucket = i; }
-     }
+	   floatPtr != NULL; floatPtr = floatPtr->next)
+	{
+	  floatPtr->bucket = i;
+	}
+    }
 
    /*=================================================*/
-   /* Restore the bucket values in the integer table. */
+  /* Restore the bucket values in the integer table. */
    /*=================================================*/
 
-   integerArray = CL_GetIntegerTable(theEnv);
+  integerArray = CL_GetIntegerTable (theEnv);
 
-   for (i = 0; i < INTEGER_HASH_SIZE; i++)
-     {
+  for (i = 0; i < INTEGER_HASH_SIZE; i++)
+    {
       for (integerPtr = integerArray[i];
-           integerPtr != NULL;
-           integerPtr = integerPtr->next)
-        { integerPtr->bucket = i; }
-     }
+	   integerPtr != NULL; integerPtr = integerPtr->next)
+	{
+	  integerPtr->bucket = i;
+	}
+    }
 
    /*================================================*/
-   /* Restore the bucket values in the bitmap table. */
+  /* Restore the bucket values in the bitmap table. */
    /*================================================*/
 
-   bitMapArray = CL_GetBitMapTable(theEnv);
+  bitMapArray = CL_GetBitMapTable (theEnv);
 
-   for (i = 0; i < BITMAP_HASH_SIZE; i++)
-     {
+  for (i = 0; i < BITMAP_HASH_SIZE; i++)
+    {
       for (bitMapPtr = bitMapArray[i];
-           bitMapPtr != NULL;
-           bitMapPtr = bitMapPtr->next)
-        { bitMapPtr->bucket = i; }
-     }
-  }
+	   bitMapPtr != NULL; bitMapPtr = bitMapPtr->next)
+	{
+	  bitMapPtr->bucket = i;
+	}
+    }
+}
 
 #endif /* BLOAD_AND_BSAVE || CONSTRUCT_COMPILER || BSAVE_INSTANCES */

@@ -81,291 +81,306 @@
 /***************************************/
 
 #if (! RUN_TIME)
-   static void                       ReturnDefmodule(Environment *,Defmodule *,bool);
+static void ReturnDefmodule (Environment *, Defmodule *, bool);
 #endif
-   static void                       DeallocateDefmoduleData(Environment *);
+static void DeallocateDefmoduleData (Environment *);
 
 /************************************************/
 /* CL_AllocateDefmoduleGlobals: Initializes global */
 /*   variables used by the defmodule construct. */
 /************************************************/
-void CL_AllocateDefmoduleGlobals(
-  Environment *theEnv)
-  {
-   CL_AllocateEnvironmentData(theEnv,DEFMODULE_DATA,sizeof(struct defmoduleData),NULL);
-   CL_AddEnvironmentCleanupFunction(theEnv,"defmodules",DeallocateDefmoduleData,-1000);
-   DefmoduleData(theEnv)->CallModuleChangeFunctions = true;
-   DefmoduleData(theEnv)->MainModuleRedefinable = true;
-  }
+void
+CL_AllocateDefmoduleGlobals (Environment * theEnv)
+{
+  CL_AllocateEnvironmentData (theEnv, DEFMODULE_DATA,
+			      sizeof (struct defmoduleData), NULL);
+  CL_AddEnvironmentCleanupFunction (theEnv, "defmodules",
+				    DeallocateDefmoduleData, -1000);
+  DefmoduleData (theEnv)->CallModuleChangeFunctions = true;
+  DefmoduleData (theEnv)->MainModuleRedefinable = true;
+}
 
 /****************************************************/
 /* DeallocateDefmoduleData: Deallocates environment */
 /*    data for the defmodule construct.             */
 /****************************************************/
-static void DeallocateDefmoduleData(
-  Environment *theEnv)
-  {
-   struct moduleStackItem *tmpMSPtr, *nextMSPtr;
-   struct moduleItem *tmpMIPtr, *nextMIPtr;
+static void
+DeallocateDefmoduleData (Environment * theEnv)
+{
+  struct moduleStackItem *tmpMSPtr, *nextMSPtr;
+  struct moduleItem *tmpMIPtr, *nextMIPtr;
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   Defmodule *tmpDMPtr, *nextDMPtr;
-   struct portConstructItem *tmpPCPtr, *nextPCPtr;
+  Defmodule *tmpDMPtr, *nextDMPtr;
+  struct portConstructItem *tmpPCPtr, *nextPCPtr;
 #endif
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE) && (! RUN_TIME)
-   unsigned int i;
-   size_t space;
+  unsigned int i;
+  size_t space;
 #endif
 
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE) && (! RUN_TIME)
-   for (i = 0; i < DefmoduleData(theEnv)->BNumberOfDefmodules; i++)
-     {
-      if (DefmoduleData(theEnv)->DefmoduleArray[i].itemsArray != NULL)
-        {
-         CL_rm(theEnv,DefmoduleData(theEnv)->DefmoduleArray[i].itemsArray,
-            sizeof(void *) * CL_GetNumberOfModuleItems(theEnv));
-        }
-     }
+  for (i = 0; i < DefmoduleData (theEnv)->BNumberOfDefmodules; i++)
+    {
+      if (DefmoduleData (theEnv)->DefmoduleArray[i].itemsArray != NULL)
+	{
+	  CL_rm (theEnv, DefmoduleData (theEnv)->DefmoduleArray[i].itemsArray,
+		 sizeof (void *) * CL_GetNumberOfModuleItems (theEnv));
+	}
+    }
 
-   space = DefmoduleData(theEnv)->BNumberOfDefmodules * sizeof(Defmodule);
-   if (space != 0)
-     {
-      CL_genfree(theEnv,DefmoduleData(theEnv)->DefmoduleArray,space);
-      DefmoduleData(theEnv)->ListOfDefmodules = NULL;
-     }
+  space = DefmoduleData (theEnv)->BNumberOfDefmodules * sizeof (Defmodule);
+  if (space != 0)
+    {
+      CL_genfree (theEnv, DefmoduleData (theEnv)->DefmoduleArray, space);
+      DefmoduleData (theEnv)->ListOfDefmodules = NULL;
+    }
 
-   space = DefmoduleData(theEnv)->NumberOfPortItems * sizeof(struct portItem);
-   if (space != 0) CL_genfree(theEnv,DefmoduleData(theEnv)->PortItemArray,space);
+  space =
+    DefmoduleData (theEnv)->NumberOfPortItems * sizeof (struct portItem);
+  if (space != 0)
+    CL_genfree (theEnv, DefmoduleData (theEnv)->PortItemArray, space);
 #endif
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   tmpDMPtr = DefmoduleData(theEnv)->ListOfDefmodules;
-   while (tmpDMPtr != NULL)
-     {
+  tmpDMPtr = DefmoduleData (theEnv)->ListOfDefmodules;
+  while (tmpDMPtr != NULL)
+    {
       nextDMPtr = (Defmodule *) tmpDMPtr->header.next;
-      ReturnDefmodule(theEnv,tmpDMPtr,true);
+      ReturnDefmodule (theEnv, tmpDMPtr, true);
       tmpDMPtr = nextDMPtr;
-     }
+    }
 
-   tmpPCPtr = DefmoduleData(theEnv)->ListOfPortConstructItems;
-   while (tmpPCPtr != NULL)
-     {
+  tmpPCPtr = DefmoduleData (theEnv)->ListOfPortConstructItems;
+  while (tmpPCPtr != NULL)
+    {
       nextPCPtr = tmpPCPtr->next;
-      rtn_struct(theEnv,portConstructItem,tmpPCPtr);
+      rtn_struct (theEnv, portConstructItem, tmpPCPtr);
       tmpPCPtr = nextPCPtr;
-     }
+    }
 #endif
 
-   tmpMSPtr = DefmoduleData(theEnv)->ModuleStack;
-   while (tmpMSPtr != NULL)
-     {
+  tmpMSPtr = DefmoduleData (theEnv)->ModuleStack;
+  while (tmpMSPtr != NULL)
+    {
       nextMSPtr = tmpMSPtr->next;
-      rtn_struct(theEnv,moduleStackItem,tmpMSPtr);
+      rtn_struct (theEnv, moduleStackItem, tmpMSPtr);
       tmpMSPtr = nextMSPtr;
-     }
+    }
 
-   tmpMIPtr = DefmoduleData(theEnv)->ListOfModuleItems;
-   while (tmpMIPtr != NULL)
-     {
+  tmpMIPtr = DefmoduleData (theEnv)->ListOfModuleItems;
+  while (tmpMIPtr != NULL)
+    {
       nextMIPtr = tmpMIPtr->next;
-      rtn_struct(theEnv,moduleItem,tmpMIPtr);
+      rtn_struct (theEnv, moduleItem, tmpMIPtr);
       tmpMIPtr = nextMIPtr;
-     }
+    }
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   CL_DeallocateVoidCallList(theEnv,DefmoduleData(theEnv)->AfterModuleDefinedFunctions);
+  CL_DeallocateVoidCallList (theEnv,
+			     DefmoduleData (theEnv)->
+			     AfterModuleDefinedFunctions);
 #endif
-   CL_DeallocateVoidCallList(theEnv,DefmoduleData(theEnv)->AfterModuleChangeFunctions);
-  }
+  CL_DeallocateVoidCallList (theEnv,
+			     DefmoduleData (theEnv)->
+			     AfterModuleChangeFunctions);
+}
 
 /**************************************************************/
 /* CL_InitializeDefmodules: Initializes the defmodule construct. */
 /**************************************************************/
-void CL_InitializeDefmodules(
-  Environment *theEnv)
-  {
-   CL_DefmoduleBasicCommands(theEnv);
+void
+CL_InitializeDefmodules (Environment * theEnv)
+{
+  CL_DefmoduleBasicCommands (theEnv);
 
 #if (! RUN_TIME)
-   CL_CreateMainModule(theEnv,NULL);
+  CL_CreateMainModule (theEnv, NULL);
 #endif
 
 #if DEFMODULE_CONSTRUCT && (! RUN_TIME) && (! BLOAD_ONLY)
-   CL_AddConstruct(theEnv,"defmodule","defmodules",CL_ParseDefmodule,NULL,NULL,NULL,NULL,
-                                                        NULL,NULL,NULL,NULL,NULL);
+  CL_AddConstruct (theEnv, "defmodule", "defmodules", CL_ParseDefmodule, NULL,
+		   NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 #endif
 
 #if (! RUN_TIME) && DEFMODULE_CONSTRUCT
-   CL_AddUDF(theEnv,"get-current-module","y",0,0,NULL,CL_GetCurrentModuleCommand,"CL_GetCurrentModuleCommand",NULL);
+  CL_AddUDF (theEnv, "get-current-module", "y", 0, 0, NULL,
+	     CL_GetCurrentModuleCommand, "CL_GetCurrentModuleCommand", NULL);
 
-   CL_AddUDF(theEnv,"set-current-module","y",1,1,"y",CL_SetCurrentModuleCommand,"CL_SetCurrentModuleCommand",NULL);
+  CL_AddUDF (theEnv, "set-current-module", "y", 1, 1, "y",
+	     CL_SetCurrentModuleCommand, "CL_SetCurrentModuleCommand", NULL);
 #endif
-  }
+}
 
 /******************************************************/
 /* CL_RegisterModuleItem: Called to register a construct */
 /*   which can be placed within a module.             */
 /******************************************************/
-unsigned CL_RegisterModuleItem(
-  Environment *theEnv,
-  const char *theItem,
-  AllocateModuleFunction *allocateFunction,
-  FreeModuleFunction *freeFunction,
-  void *(*bloadModuleReference)(Environment *,unsigned long),
-  void  (*constructsToCModuleReference)(Environment *,FILE *,unsigned long,unsigned int,unsigned int),
-  CL_FindConstructFunction *findFunction)
-  {
-   struct moduleItem *newModuleItem;
+unsigned
+CL_RegisterModuleItem (Environment * theEnv,
+		       const char *theItem,
+		       AllocateModuleFunction * allocateFunction,
+		       FreeModuleFunction * freeFunction,
+		       void *(*bloadModuleReference) (Environment *,
+						      unsigned long),
+		       void (*constructsToCModuleReference) (Environment *,
+							     FILE *,
+							     unsigned long,
+							     unsigned int,
+							     unsigned int),
+		       CL_FindConstructFunction * findFunction)
+{
+  struct moduleItem *newModuleItem;
 
-   newModuleItem = get_struct(theEnv,moduleItem);
-   newModuleItem->name = theItem;
-   newModuleItem->allocateFunction = allocateFunction;
-   newModuleItem->freeFunction = freeFunction;
-   newModuleItem->bloadModuleReference = bloadModuleReference;
-   newModuleItem->constructsToCModuleReference = constructsToCModuleReference;
-   newModuleItem->findFunction = findFunction;
-   newModuleItem->moduleIndex = DefmoduleData(theEnv)->NumberOfModuleItems++;
-   newModuleItem->next = NULL;
+  newModuleItem = get_struct (theEnv, moduleItem);
+  newModuleItem->name = theItem;
+  newModuleItem->allocateFunction = allocateFunction;
+  newModuleItem->freeFunction = freeFunction;
+  newModuleItem->bloadModuleReference = bloadModuleReference;
+  newModuleItem->constructsToCModuleReference = constructsToCModuleReference;
+  newModuleItem->findFunction = findFunction;
+  newModuleItem->moduleIndex = DefmoduleData (theEnv)->NumberOfModuleItems++;
+  newModuleItem->next = NULL;
 
-   if (DefmoduleData(theEnv)->LastModuleItem == NULL)
-     {
-      DefmoduleData(theEnv)->ListOfModuleItems = newModuleItem;
-      DefmoduleData(theEnv)->LastModuleItem = newModuleItem;
-     }
-   else
-     {
-      DefmoduleData(theEnv)->LastModuleItem->next = newModuleItem;
-      DefmoduleData(theEnv)->LastModuleItem = newModuleItem;
-     }
+  if (DefmoduleData (theEnv)->LastModuleItem == NULL)
+    {
+      DefmoduleData (theEnv)->ListOfModuleItems = newModuleItem;
+      DefmoduleData (theEnv)->LastModuleItem = newModuleItem;
+    }
+  else
+    {
+      DefmoduleData (theEnv)->LastModuleItem->next = newModuleItem;
+      DefmoduleData (theEnv)->LastModuleItem = newModuleItem;
+    }
 
-   return newModuleItem->moduleIndex;
-  }
+  return newModuleItem->moduleIndex;
+}
 
 /***********************************************************/
 /* CL_GetListOfModuleItems: Returns the list of module items. */
 /***********************************************************/
-struct moduleItem *CL_GetListOfModuleItems(
-  Environment *theEnv)
-  {
-   return (DefmoduleData(theEnv)->ListOfModuleItems);
-  }
+struct moduleItem *
+CL_GetListOfModuleItems (Environment * theEnv)
+{
+  return (DefmoduleData (theEnv)->ListOfModuleItems);
+}
 
 /***************************************************************/
 /* CL_GetNumberOfModuleItems: Returns the number of module items. */
 /***************************************************************/
-unsigned CL_GetNumberOfModuleItems(
-  Environment *theEnv)
-  {
-   return DefmoduleData(theEnv)->NumberOfModuleItems;
-  }
+unsigned
+CL_GetNumberOfModuleItems (Environment * theEnv)
+{
+  return DefmoduleData (theEnv)->NumberOfModuleItems;
+}
 
 /********************************************************/
 /* CL_FindModuleItem: Finds the module item data structure */
 /*   corresponding to the specified name.               */
 /********************************************************/
-struct moduleItem *CL_FindModuleItem(
-  Environment *theEnv,
-  const char *theName)
-  {
-   struct moduleItem *theModuleItem;
+struct moduleItem *
+CL_FindModuleItem (Environment * theEnv, const char *theName)
+{
+  struct moduleItem *theModuleItem;
 
-   for (theModuleItem = DefmoduleData(theEnv)->ListOfModuleItems;
-        theModuleItem != NULL;
-        theModuleItem = theModuleItem->next)
-     { if (strcmp(theModuleItem->name,theName) == 0) return(theModuleItem); }
+  for (theModuleItem = DefmoduleData (theEnv)->ListOfModuleItems;
+       theModuleItem != NULL; theModuleItem = theModuleItem->next)
+    {
+      if (strcmp (theModuleItem->name, theName) == 0)
+	return (theModuleItem);
+    }
 
-   return NULL;
-  }
+  return NULL;
+}
 
 /***************************************/
 /* CL_GetCurrentModule: Returns a pointer */
 /*   to the current module.            */
 /***************************************/
-Defmodule *CL_GetCurrentModule(
-  Environment *theEnv)
-  {
-   return DefmoduleData(theEnv)->CurrentModule;
-  }
+Defmodule *
+CL_GetCurrentModule (Environment * theEnv)
+{
+  return DefmoduleData (theEnv)->CurrentModule;
+}
 
 /***********************************************************/
 /* CL_SetCurrentModule: Sets the value of the current module. */
 /***********************************************************/
-Defmodule *CL_SetCurrentModule(
-  Environment *theEnv,
-  Defmodule *newModule)
-  {
-   struct void_CallFunctionItem *changeFunctions;
-   Defmodule *oldModule;
+Defmodule *
+CL_SetCurrentModule (Environment * theEnv, Defmodule * newModule)
+{
+  struct void_CallFunctionItem *changeFunctions;
+  Defmodule *oldModule;
 
    /*=============================================*/
-   /* Change the current module to the specified  */
-   /* module and save the previous current module */
-   /* for the return value.                       */
+  /* Change the current module to the specified  */
+  /* module and save the previous current module */
+  /* for the return value.                       */
    /*=============================================*/
 
-   oldModule = DefmoduleData(theEnv)->CurrentModule;
-   DefmoduleData(theEnv)->CurrentModule = newModule;
+  oldModule = DefmoduleData (theEnv)->CurrentModule;
+  DefmoduleData (theEnv)->CurrentModule = newModule;
 
    /*==========================================================*/
-   /* Call the list of registered functions that need to know  */
-   /* when the module has changed. The module change functions */
-   /* should only be called if this is a "real" module change. */
-   /* Many routines temporarily change the module to look for  */
-   /* constructs, etc. The CL_SaveCurrentModule function will     */
-   /* disable the change functions from being called.          */
+  /* Call the list of registered functions that need to know  */
+  /* when the module has changed. The module change functions */
+  /* should only be called if this is a "real" module change. */
+  /* Many routines temporarily change the module to look for  */
+  /* constructs, etc. The CL_SaveCurrentModule function will     */
+  /* disable the change functions from being called.          */
    /*==========================================================*/
 
-   if (DefmoduleData(theEnv)->CallModuleChangeFunctions)
-     {
-      DefmoduleData(theEnv)->ModuleChangeIndex++;
-      changeFunctions = DefmoduleData(theEnv)->AfterModuleChangeFunctions;
+  if (DefmoduleData (theEnv)->CallModuleChangeFunctions)
+    {
+      DefmoduleData (theEnv)->ModuleChangeIndex++;
+      changeFunctions = DefmoduleData (theEnv)->AfterModuleChangeFunctions;
       while (changeFunctions != NULL)
-        {
-         (*changeFunctions->func)(theEnv,changeFunctions->context);
-         changeFunctions = changeFunctions->next;
-        }
-     }
+	{
+	  (*changeFunctions->func) (theEnv, changeFunctions->context);
+	  changeFunctions = changeFunctions->next;
+	}
+    }
 
    /*=====================================*/
-   /* Return the previous current module. */
+  /* Return the previous current module. */
    /*=====================================*/
 
-   return oldModule;
-  }
+  return oldModule;
+}
 
 /********************************************************/
 /* CL_SaveCurrentModule: CL_Saves current module on stack and */
 /*   prevents CL_SetCurrentModule() from calling change    */
 /*   functions                                          */
 /********************************************************/
-void CL_SaveCurrentModule(
-  Environment *theEnv)
-  {
-   ModuleStackItem *tmp;
+void
+CL_SaveCurrentModule (Environment * theEnv)
+{
+  ModuleStackItem *tmp;
 
-   tmp = get_struct(theEnv,moduleStackItem);
-   tmp->changeFlag = DefmoduleData(theEnv)->CallModuleChangeFunctions;
-   DefmoduleData(theEnv)->CallModuleChangeFunctions = false;
-   tmp->theModule = DefmoduleData(theEnv)->CurrentModule;
-   tmp->next = DefmoduleData(theEnv)->ModuleStack;
-   DefmoduleData(theEnv)->ModuleStack = tmp;
-  }
+  tmp = get_struct (theEnv, moduleStackItem);
+  tmp->changeFlag = DefmoduleData (theEnv)->CallModuleChangeFunctions;
+  DefmoduleData (theEnv)->CallModuleChangeFunctions = false;
+  tmp->theModule = DefmoduleData (theEnv)->CurrentModule;
+  tmp->next = DefmoduleData (theEnv)->ModuleStack;
+  DefmoduleData (theEnv)->ModuleStack = tmp;
+}
 
 /**********************************************************/
 /* CL_RestoreCurrentModule: Restores saved module and resets */
 /*   ability of CL_SetCurrentModule() to call changed        */
 /*   functions to previous state                          */
 /**********************************************************/
-void CL_RestoreCurrentModule(
-  Environment *theEnv)
-  {
-   ModuleStackItem *tmp;
+void
+CL_RestoreCurrentModule (Environment * theEnv)
+{
+  ModuleStackItem *tmp;
 
-   tmp = DefmoduleData(theEnv)->ModuleStack;
-   DefmoduleData(theEnv)->ModuleStack = tmp->next;
-   DefmoduleData(theEnv)->CallModuleChangeFunctions = tmp->changeFlag;
-   DefmoduleData(theEnv)->CurrentModule = tmp->theModule;
-   rtn_struct(theEnv,moduleStackItem,tmp);
-  }
+  tmp = DefmoduleData (theEnv)->ModuleStack;
+  DefmoduleData (theEnv)->ModuleStack = tmp->next;
+  DefmoduleData (theEnv)->CallModuleChangeFunctions = tmp->changeFlag;
+  DefmoduleData (theEnv)->CurrentModule = tmp->theModule;
+  rtn_struct (theEnv, moduleStackItem, tmp);
+}
 
 /*************************************************************/
 /* CL_GetModuleItem: Returns the data pointer for the specified */
@@ -373,21 +388,22 @@ void CL_RestoreCurrentModule(
 /*   indicated, then the module item for the current module  */
 /*   is returned.                                            */
 /*************************************************************/
-void *CL_GetModuleItem(
-  Environment *theEnv,
-  Defmodule *theModule,
-  unsigned moduleItemIndex)
-  {
-   if (theModule == NULL)
-     {
-      if (DefmoduleData(theEnv)->CurrentModule == NULL) return NULL;
-      theModule = DefmoduleData(theEnv)->CurrentModule;
-     }
+void *
+CL_GetModuleItem (Environment * theEnv,
+		  Defmodule * theModule, unsigned moduleItemIndex)
+{
+  if (theModule == NULL)
+    {
+      if (DefmoduleData (theEnv)->CurrentModule == NULL)
+	return NULL;
+      theModule = DefmoduleData (theEnv)->CurrentModule;
+    }
 
-   if (theModule->itemsArray == NULL) return (NULL);
+  if (theModule->itemsArray == NULL)
+    return (NULL);
 
-   return ((void *) theModule->itemsArray[moduleItemIndex]);
-  }
+  return ((void *) theModule->itemsArray[moduleItemIndex]);
+}
 
 /************************************************************/
 /* CL_SetModuleItem: Sets the data pointer for the specified   */
@@ -395,150 +411,162 @@ void *CL_GetModuleItem(
 /*   indicated, then the module item for the current module */
 /*   is returned.                                           */
 /************************************************************/
-void CL_SetModuleItem(
-  Environment *theEnv,
-  Defmodule *theModule,
-  unsigned moduleItemIndex,
-  void *newValue)
-  {
-   if (theModule == NULL)
-     {
-      if (DefmoduleData(theEnv)->CurrentModule == NULL) return;
-      theModule = DefmoduleData(theEnv)->CurrentModule;
-     }
+void
+CL_SetModuleItem (Environment * theEnv,
+		  Defmodule * theModule,
+		  unsigned moduleItemIndex, void *newValue)
+{
+  if (theModule == NULL)
+    {
+      if (DefmoduleData (theEnv)->CurrentModule == NULL)
+	return;
+      theModule = DefmoduleData (theEnv)->CurrentModule;
+    }
 
-   if (theModule->itemsArray == NULL) return;
-   theModule->itemsArray[moduleItemIndex] = (struct defmoduleItemHeader *) newValue;
-  }
+  if (theModule->itemsArray == NULL)
+    return;
+  theModule->itemsArray[moduleItemIndex] =
+    (struct defmoduleItemHeader *) newValue;
+}
 
 /******************************************************/
 /* CL_CreateMainModule: Creates the default MAIN module. */
 /******************************************************/
-void CL_CreateMainModule(
-  Environment *theEnv,
-  void *context)
-  {
-   Defmodule *newDefmodule;
-   struct moduleItem *theItem;
-   unsigned int i;
-   struct defmoduleItemHeader *theHeader;
+void
+CL_CreateMainModule (Environment * theEnv, void *context)
+{
+  Defmodule *newDefmodule;
+  struct moduleItem *theItem;
+  unsigned int i;
+  struct defmoduleItemHeader *theHeader;
 
    /*=======================================*/
-   /* Allocate the defmodule data structure */
-   /* and name it the MAIN module.          */
+  /* Allocate the defmodule data structure */
+  /* and name it the MAIN module.          */
    /*=======================================*/
 
-   newDefmodule = get_struct(theEnv,defmodule);
-   newDefmodule->header.name = CL_CreateSymbol(theEnv,"MAIN");
-   IncrementLexemeCount(newDefmodule->header.name);
-   newDefmodule->header.whichModule = NULL;
-   newDefmodule->header.next = NULL;
-   newDefmodule->header.ppFo_rm = NULL;
-   newDefmodule->importList = NULL;
-   newDefmodule->exportList = NULL;
-   newDefmodule->header.bsaveID = 0L;
-   newDefmodule->header.usrData = NULL;
-   newDefmodule->header.constructType = DEFMODULE;
-   newDefmodule->header.env = theEnv;
+  newDefmodule = get_struct (theEnv, defmodule);
+  newDefmodule->header.name = CL_CreateSymbol (theEnv, "MAIN");
+  IncrementLexemeCount (newDefmodule->header.name);
+  newDefmodule->header.whichModule = NULL;
+  newDefmodule->header.next = NULL;
+  newDefmodule->header.ppFo_rm = NULL;
+  newDefmodule->importList = NULL;
+  newDefmodule->exportList = NULL;
+  newDefmodule->header.bsaveID = 0L;
+  newDefmodule->header.usrData = NULL;
+  newDefmodule->header.constructType = DEFMODULE;
+  newDefmodule->header.env = theEnv;
 
    /*==================================*/
-   /* Initialize the array for storing */
-   /* the module's construct lists.    */
+  /* Initialize the array for storing */
+  /* the module's construct lists.    */
    /*==================================*/
 
-   if (DefmoduleData(theEnv)->NumberOfModuleItems == 0) newDefmodule->itemsArray = NULL;
-   else
-     {
+  if (DefmoduleData (theEnv)->NumberOfModuleItems == 0)
+    newDefmodule->itemsArray = NULL;
+  else
+    {
       newDefmodule->itemsArray = (struct defmoduleItemHeader **)
-                                 CL_gm2(theEnv,sizeof(void *) * DefmoduleData(theEnv)->NumberOfModuleItems);
-      for (i = 0, theItem = DefmoduleData(theEnv)->ListOfModuleItems;
-           (i < DefmoduleData(theEnv)->NumberOfModuleItems) && (theItem != NULL);
-           i++, theItem = theItem->next)
-        {
-         if (theItem->allocateFunction == NULL)
-           { newDefmodule->itemsArray[i] = NULL; }
-         else
-           {
-            newDefmodule->itemsArray[i] = (struct defmoduleItemHeader *)
-                                          (*theItem->allocateFunction)(theEnv);
-            theHeader = (struct defmoduleItemHeader *) newDefmodule->itemsArray[i];
-            theHeader->theModule = newDefmodule;
-            theHeader->firstItem = NULL;
-            theHeader->lastItem = NULL;
-           }
-        }
-     }
+	CL_gm2 (theEnv,
+		sizeof (void *) *
+		DefmoduleData (theEnv)->NumberOfModuleItems);
+      for (i = 0, theItem = DefmoduleData (theEnv)->ListOfModuleItems;
+	   (i < DefmoduleData (theEnv)->NumberOfModuleItems)
+	   && (theItem != NULL); i++, theItem = theItem->next)
+	{
+	  if (theItem->allocateFunction == NULL)
+	    {
+	      newDefmodule->itemsArray[i] = NULL;
+	    }
+	  else
+	    {
+	      newDefmodule->itemsArray[i] = (struct defmoduleItemHeader *)
+		(*theItem->allocateFunction) (theEnv);
+	      theHeader =
+		(struct defmoduleItemHeader *) newDefmodule->itemsArray[i];
+	      theHeader->theModule = newDefmodule;
+	      theHeader->firstItem = NULL;
+	      theHeader->lastItem = NULL;
+	    }
+	}
+    }
 
    /*=======================================*/
-   /* Add the module to the list of modules */
-   /* and make it the current module.       */
+  /* Add the module to the list of modules */
+  /* and make it the current module.       */
    /*=======================================*/
 
 #if (! BLOAD_ONLY) && (! RUN_TIME) && DEFMODULE_CONSTRUCT
-   CL_SetNumberOfDefmodules(theEnv,1);
+  CL_SetNumberOfDefmodules (theEnv, 1);
 #endif
 
-   DefmoduleData(theEnv)->LastDefmodule = newDefmodule;
-   DefmoduleData(theEnv)->ListOfDefmodules = newDefmodule;
-   CL_SetCurrentModule(theEnv,newDefmodule);
-  }
+  DefmoduleData (theEnv)->LastDefmodule = newDefmodule;
+  DefmoduleData (theEnv)->ListOfDefmodules = newDefmodule;
+  CL_SetCurrentModule (theEnv, newDefmodule);
+}
 
 /*********************************************************************/
 /* CL_SetListOfDefmodules: Sets the list of defmodules to the specified */
 /*   value. No_rmally used when initializing a run-time module or     */
 /*   when bloading a binary file to install the list of defmodules.  */
 /*********************************************************************/
-void CL_SetListOfDefmodules(
-  Environment *theEnv,
-  Defmodule *defmodulePtr)
-  {
-   DefmoduleData(theEnv)->ListOfDefmodules = defmodulePtr;
-   DefmoduleData(theEnv)->LastDefmodule = DefmoduleData(theEnv)->ListOfDefmodules;
+void
+CL_SetListOfDefmodules (Environment * theEnv, Defmodule * defmodulePtr)
+{
+  DefmoduleData (theEnv)->ListOfDefmodules = defmodulePtr;
+  DefmoduleData (theEnv)->LastDefmodule =
+    DefmoduleData (theEnv)->ListOfDefmodules;
 
-   if (DefmoduleData(theEnv)->LastDefmodule == NULL) return;
-   DefmoduleData(theEnv)->LastDefmodule->header.env = theEnv;
+  if (DefmoduleData (theEnv)->LastDefmodule == NULL)
+    return;
+  DefmoduleData (theEnv)->LastDefmodule->header.env = theEnv;
 
-   while (DefmoduleData(theEnv)->LastDefmodule->header.next != NULL)
-     {
-      DefmoduleData(theEnv)->LastDefmodule = (Defmodule *) DefmoduleData(theEnv)->LastDefmodule->header.next;
-      DefmoduleData(theEnv)->LastDefmodule->header.env = theEnv;
-     }
-  }
+  while (DefmoduleData (theEnv)->LastDefmodule->header.next != NULL)
+    {
+      DefmoduleData (theEnv)->LastDefmodule =
+	(Defmodule *) DefmoduleData (theEnv)->LastDefmodule->header.next;
+      DefmoduleData (theEnv)->LastDefmodule->header.env = theEnv;
+    }
+}
 
 /*******************************************************************/
 /* CL_GetNextDefmodule: If passed a NULL pointer, returns the first   */
 /*   defmodule in the ListOfDefmodules. Otherwise returns the next */
 /*   defmodule following the defmodule passed as an argument.      */
 /*******************************************************************/
-Defmodule *CL_GetNextDefmodule(
-  Environment *theEnv,
-  Defmodule *defmodulePtr)
-  {
-   if (defmodulePtr == NULL)
-     { return DefmoduleData(theEnv)->ListOfDefmodules; }
-   else
-     { return (Defmodule *) defmodulePtr->header.next; }
-  }
+Defmodule *
+CL_GetNextDefmodule (Environment * theEnv, Defmodule * defmodulePtr)
+{
+  if (defmodulePtr == NULL)
+    {
+      return DefmoduleData (theEnv)->ListOfDefmodules;
+    }
+  else
+    {
+      return (Defmodule *) defmodulePtr->header.next;
+    }
+}
 
 /***********************************/
 /* CL_DefmoduleName: Returns the name */
 /*   of the specified defmodule.   */
 /***********************************/
-const char *CL_DefmoduleName(
-  Defmodule *defmodulePtr)
-  {
-   return defmodulePtr->header.name->contents;
-  }
+const char *
+CL_DefmoduleName (Defmodule * defmodulePtr)
+{
+  return defmodulePtr->header.name->contents;
+}
 
 /************************************************/
 /* CL_DefmodulePPFo_rm: Returns the pretty print    */
 /*   representation of the specified defmodule. */
 /************************************************/
-const char *CL_DefmodulePPFo_rm(
-  Defmodule *defmodulePtr)
-  {
-   return defmodulePtr->header.ppFo_rm;
-  }
+const char *
+CL_DefmodulePPFo_rm (Defmodule * defmodulePtr)
+{
+  return defmodulePtr->header.ppFo_rm;
+}
 
 #if (! RUN_TIME)
 
@@ -546,131 +574,146 @@ const char *CL_DefmodulePPFo_rm(
 /* CL_RemoveAllDefmodules: Removes all defmodules */
 /*   from the current environment.             */
 /***********************************************/
-void CL_RemoveAllDefmodules(
-  Environment *theEnv,
-  void *context)
-  {
-   Defmodule *nextDefmodule;
+void
+CL_RemoveAllDefmodules (Environment * theEnv, void *context)
+{
+  Defmodule *nextDefmodule;
 
-   while (DefmoduleData(theEnv)->ListOfDefmodules != NULL)
-     {
-      nextDefmodule = (Defmodule *) DefmoduleData(theEnv)->ListOfDefmodules->header.next;
-      ReturnDefmodule(theEnv,DefmoduleData(theEnv)->ListOfDefmodules,false);
-      DefmoduleData(theEnv)->ListOfDefmodules = nextDefmodule;
-     }
+  while (DefmoduleData (theEnv)->ListOfDefmodules != NULL)
+    {
+      nextDefmodule =
+	(Defmodule *) DefmoduleData (theEnv)->ListOfDefmodules->header.next;
+      ReturnDefmodule (theEnv, DefmoduleData (theEnv)->ListOfDefmodules,
+		       false);
+      DefmoduleData (theEnv)->ListOfDefmodules = nextDefmodule;
+    }
 
-   DefmoduleData(theEnv)->CurrentModule = NULL;
-   DefmoduleData(theEnv)->LastDefmodule = NULL;
-  }
+  DefmoduleData (theEnv)->CurrentModule = NULL;
+  DefmoduleData (theEnv)->LastDefmodule = NULL;
+}
 
 /************************************************************/
 /* ReturnDefmodule: Returns the data structures associated  */
 /*   with a defmodule construct to the pool of free memory. */
 /************************************************************/
-static void ReturnDefmodule(
-  Environment *theEnv,
-  Defmodule *theDefmodule,
-  bool environment_Clear)
-  {
-   unsigned int i;
-   struct moduleItem *theItem;
-   struct portItem *theSpec, *nextSpec;
+static void
+ReturnDefmodule (Environment * theEnv,
+		 Defmodule * theDefmodule, bool environment_Clear)
+{
+  unsigned int i;
+  struct moduleItem *theItem;
+  struct portItem *theSpec, *nextSpec;
 
    /*=====================================================*/
-   /* Set the current module to the module being deleted. */
+  /* Set the current module to the module being deleted. */
    /*=====================================================*/
 
-   if (theDefmodule == NULL) return;
+  if (theDefmodule == NULL)
+    return;
 
-   if (! environment_Clear)
-     { CL_SetCurrentModule(theEnv,theDefmodule); }
+  if (!environment_Clear)
+    {
+      CL_SetCurrentModule (theEnv, theDefmodule);
+    }
 
    /*============================================*/
-   /* Call the free functions for the constructs */
-   /* belonging to this module.                  */
+  /* Call the free functions for the constructs */
+  /* belonging to this module.                  */
    /*============================================*/
 
-   if (theDefmodule->itemsArray != NULL)
-     {
-      if (! environment_Clear)
-        {
-         for (i = 0, theItem = DefmoduleData(theEnv)->ListOfModuleItems;
-              (i < DefmoduleData(theEnv)->NumberOfModuleItems) && (theItem != NULL);
-              i++, theItem = theItem->next)
-           {
-            if (theItem->freeFunction != NULL)
-              { (*theItem->freeFunction)(theEnv,theDefmodule->itemsArray[i]); }
-           }
-        }
+  if (theDefmodule->itemsArray != NULL)
+    {
+      if (!environment_Clear)
+	{
+	  for (i = 0, theItem = DefmoduleData (theEnv)->ListOfModuleItems;
+	       (i < DefmoduleData (theEnv)->NumberOfModuleItems)
+	       && (theItem != NULL); i++, theItem = theItem->next)
+	    {
+	      if (theItem->freeFunction != NULL)
+		{
+		  (*theItem->freeFunction) (theEnv,
+					    theDefmodule->itemsArray[i]);
+		}
+	    }
+	}
 
-      CL_rm(theEnv,theDefmodule->itemsArray,sizeof(void *) * DefmoduleData(theEnv)->NumberOfModuleItems);
+      CL_rm (theEnv, theDefmodule->itemsArray,
+	     sizeof (void *) * DefmoduleData (theEnv)->NumberOfModuleItems);
     }
 
    /*======================================================*/
-   /* Decrement the symbol count for the defmodule's name. */
+  /* Decrement the symbol count for the defmodule's name. */
    /*======================================================*/
 
-   if (! environment_Clear)
-     { CL_ReleaseLexeme(theEnv,theDefmodule->header.name); }
+  if (!environment_Clear)
+    {
+      CL_ReleaseLexeme (theEnv, theDefmodule->header.name);
+    }
 
    /*====================================*/
-   /* Free the items in the import list. */
+  /* Free the items in the import list. */
    /*====================================*/
 
-   theSpec = theDefmodule->importList;
-   while (theSpec != NULL)
-     {
+  theSpec = theDefmodule->importList;
+  while (theSpec != NULL)
+    {
       nextSpec = theSpec->next;
-      if (! environment_Clear)
-        {
-         if (theSpec->moduleName != NULL) CL_ReleaseLexeme(theEnv,theSpec->moduleName);
-         if (theSpec->constructType != NULL) CL_ReleaseLexeme(theEnv,theSpec->constructType);
-         if (theSpec->constructName != NULL) CL_ReleaseLexeme(theEnv,theSpec->constructName);
-        }
-      rtn_struct(theEnv,portItem,theSpec);
+      if (!environment_Clear)
+	{
+	  if (theSpec->moduleName != NULL)
+	    CL_ReleaseLexeme (theEnv, theSpec->moduleName);
+	  if (theSpec->constructType != NULL)
+	    CL_ReleaseLexeme (theEnv, theSpec->constructType);
+	  if (theSpec->constructName != NULL)
+	    CL_ReleaseLexeme (theEnv, theSpec->constructName);
+	}
+      rtn_struct (theEnv, portItem, theSpec);
       theSpec = nextSpec;
-     }
+    }
 
    /*====================================*/
-   /* Free the items in the export list. */
+  /* Free the items in the export list. */
    /*====================================*/
 
-   theSpec = theDefmodule->exportList;
-   while (theSpec != NULL)
-     {
+  theSpec = theDefmodule->exportList;
+  while (theSpec != NULL)
+    {
       nextSpec = theSpec->next;
-      if (! environment_Clear)
-        {
-         if (theSpec->moduleName != NULL) CL_ReleaseLexeme(theEnv,theSpec->moduleName);
-         if (theSpec->constructType != NULL) CL_ReleaseLexeme(theEnv,theSpec->constructType);
-         if (theSpec->constructName != NULL) CL_ReleaseLexeme(theEnv,theSpec->constructName);
-        }
-      rtn_struct(theEnv,portItem,theSpec);
+      if (!environment_Clear)
+	{
+	  if (theSpec->moduleName != NULL)
+	    CL_ReleaseLexeme (theEnv, theSpec->moduleName);
+	  if (theSpec->constructType != NULL)
+	    CL_ReleaseLexeme (theEnv, theSpec->constructType);
+	  if (theSpec->constructName != NULL)
+	    CL_ReleaseLexeme (theEnv, theSpec->constructName);
+	}
+      rtn_struct (theEnv, portItem, theSpec);
       theSpec = nextSpec;
-     }
+    }
 
    /*=========================================*/
-   /* Free the defmodule pretty print string. */
+  /* Free the defmodule pretty print string. */
    /*=========================================*/
 
-   if (theDefmodule->header.ppFo_rm != NULL)
-     {
-      CL_rm(theEnv,(void *) theDefmodule->header.ppFo_rm,
-         sizeof(char) * (strlen(theDefmodule->header.ppFo_rm) + 1));
-     }
+  if (theDefmodule->header.ppFo_rm != NULL)
+    {
+      CL_rm (theEnv, (void *) theDefmodule->header.ppFo_rm,
+	     sizeof (char) * (strlen (theDefmodule->header.ppFo_rm) + 1));
+    }
 
    /*=======================*/
-   /* Return the user data. */
+  /* Return the user data. */
    /*=======================*/
 
-   CL_ClearUserDataList(theEnv,theDefmodule->header.usrData);
+  CL_ClearUserDataList (theEnv, theDefmodule->header.usrData);
 
    /*======================================*/
-   /* Return the defmodule data structure. */
+  /* Return the defmodule data structure. */
    /*======================================*/
 
-   rtn_struct(theEnv,defmodule,theDefmodule);
-  }
+  rtn_struct (theEnv, defmodule, theDefmodule);
+}
 
 #endif /* (! RUN_TIME) */
 
@@ -679,139 +722,142 @@ static void ReturnDefmodule(
 /*   the list of defmodules. Returns a pointer  */
 /*   to the defmodule if found, otherwise NULL. */
 /************************************************/
-Defmodule *CL_FindDefmodule(
-  Environment *theEnv,
-  const char *defmoduleName)
-  {
-   Defmodule *defmodulePtr;
-   CLIPSLexeme *findValue;
+Defmodule *
+CL_FindDefmodule (Environment * theEnv, const char *defmoduleName)
+{
+  Defmodule *defmodulePtr;
+  CLIPSLexeme *findValue;
 
-   if ((findValue = CL_FindSymbolHN(theEnv,defmoduleName,SYMBOL_BIT)) == NULL) return NULL;
+  if ((findValue =
+       CL_FindSymbolHN (theEnv, defmoduleName, SYMBOL_BIT)) == NULL)
+    return NULL;
 
-   defmodulePtr = DefmoduleData(theEnv)->ListOfDefmodules;
-   while (defmodulePtr != NULL)
-     {
+  defmodulePtr = DefmoduleData (theEnv)->ListOfDefmodules;
+  while (defmodulePtr != NULL)
+    {
       if (defmodulePtr->header.name == findValue)
-        { return defmodulePtr; }
+	{
+	  return defmodulePtr;
+	}
 
       defmodulePtr = (Defmodule *) defmodulePtr->header.next;
-     }
+    }
 
-   return NULL;
-  }
+  return NULL;
+}
 
 /*************************************************/
 /* CL_GetCurrentModuleCommand: H/L access routine   */
 /*   for the get-current-module command.         */
 /*************************************************/
-void CL_GetCurrentModuleCommand(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
-   Defmodule *theModule;
+void
+CL_GetCurrentModuleCommand (Environment * theEnv,
+			    UDFContext * context, UDFValue * returnValue)
+{
+  Defmodule *theModule;
 
-   theModule = CL_GetCurrentModule(theEnv);
+  theModule = CL_GetCurrentModule (theEnv);
 
-   if (theModule == NULL)
-     {
-      returnValue->lexemeValue = FalseSymbol(theEnv);
+  if (theModule == NULL)
+    {
+      returnValue->lexemeValue = FalseSymbol (theEnv);
       return;
-     }
+    }
 
-   returnValue->value = theModule->header.name;
-  }
+  returnValue->value = theModule->header.name;
+}
 
 /*************************************************/
 /* CL_SetCurrentModuleCommand: H/L access routine   */
 /*   for the set-current-module command.         */
 /*************************************************/
-void CL_SetCurrentModuleCommand(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
-   UDFValue theArg;
-   const char *argument;
-   Defmodule *theModule;
-   CLIPSLexeme *oldModuleName;
+void
+CL_SetCurrentModuleCommand (Environment * theEnv,
+			    UDFContext * context, UDFValue * returnValue)
+{
+  UDFValue theArg;
+  const char *argument;
+  Defmodule *theModule;
+  CLIPSLexeme *oldModuleName;
 
    /*=======================*/
-   /* Set the return value. */
+  /* Set the return value. */
    /*=======================*/
 
-   theModule = CL_GetCurrentModule(theEnv);
-   if (theModule == NULL)
-     {
-      returnValue->lexemeValue = FalseSymbol(theEnv);
+  theModule = CL_GetCurrentModule (theEnv);
+  if (theModule == NULL)
+    {
+      returnValue->lexemeValue = FalseSymbol (theEnv);
       return;
-     }
+    }
 
-   oldModuleName = theModule->header.name;
-   returnValue->value = oldModuleName;
+  oldModuleName = theModule->header.name;
+  returnValue->value = oldModuleName;
 
    /*=====================================================*/
-   /* Check for the correct number and type of arguments. */
+  /* Check for the correct number and type of arguments. */
    /*=====================================================*/
 
-   if (! CL_UDFFirstArgument(context,SYMBOL_BIT,&theArg))
-     { return; }
-
-   argument = theArg.lexemeValue->contents;
-
-   /*================================================*/
-   /* Set the current module to the specified value. */
-   /*================================================*/
-
-   theModule = CL_FindDefmodule(theEnv,argument);
-
-   if (theModule == NULL)
-     {
-      CL_CantFindItemErrorMessage(theEnv,"defmodule",argument,true);
+  if (!CL_UDFFirstArgument (context, SYMBOL_BIT, &theArg))
+    {
       return;
-     }
+    }
 
-   CL_SetCurrentModule(theEnv,theModule);
-  }
+  argument = theArg.lexemeValue->contents;
+
+   /*================================================*/
+  /* Set the current module to the specified value. */
+   /*================================================*/
+
+  theModule = CL_FindDefmodule (theEnv, argument);
+
+  if (theModule == NULL)
+    {
+      CL_CantFindItemErrorMessage (theEnv, "defmodule", argument, true);
+      return;
+    }
+
+  CL_SetCurrentModule (theEnv, theModule);
+}
 
 /*************************************************/
 /* CL_AddAfterModuleChangeFunction: Adds a function */
 /*   to the list of functions to be called after */
 /*   a module change occurs.                     */
 /*************************************************/
-void CL_AddAfterModuleChangeFunction(
-  Environment *theEnv,
-  const char *name,
-  Void_CallFunction *func,
-  int priority,
-  void *context)
-  {
-   DefmoduleData(theEnv)->AfterModuleChangeFunctions =
-     CL_Add_VoidFunctionToCallList(theEnv,name,priority,func,DefmoduleData(theEnv)->AfterModuleChangeFunctions,context);
-  }
+void
+CL_AddAfterModuleChangeFunction (Environment * theEnv,
+				 const char *name,
+				 Void_CallFunction * func,
+				 int priority, void *context)
+{
+  DefmoduleData (theEnv)->AfterModuleChangeFunctions =
+    CL_Add_VoidFunctionToCallList (theEnv, name, priority, func,
+				   DefmoduleData (theEnv)->
+				   AfterModuleChangeFunctions, context);
+}
 
 /************************************************/
 /* CL_IllegalModuleSpecifierMessage: Error message */
 /*   for the illegal use of a module specifier. */
 /************************************************/
-void CL_IllegalModuleSpecifierMessage(
-  Environment *theEnv)
-  {
-   CL_PrintErrorID(theEnv,"MODULDEF",1,true);
-   CL_WriteString(theEnv,STDERR,"Illegal use of the module specifier.\n");
-  }
+void
+CL_IllegalModuleSpecifierMessage (Environment * theEnv)
+{
+  CL_PrintErrorID (theEnv, "MODULDEF", 1, true);
+  CL_WriteString (theEnv, STDERR, "Illegal use of the module specifier.\n");
+}
 
 /*********************************************/
 /* CL_GetNumberOfDefmodules: Returns the number */
 /*   of defmodules currently defined.        */
 /*********************************************/
-unsigned short CL_GetNumberOfDefmodules(
-  Environment *theEnv)
-  {
+unsigned short
+CL_GetNumberOfDefmodules (Environment * theEnv)
+{
 #if DEFMODULE_CONSTRUCT && (! RUN_TIME) && (! BLOAD_ONLY)
-   return DefmoduleData(theEnv)->NumberOfDefmodules;
+  return DefmoduleData (theEnv)->NumberOfDefmodules;
 #else
-   return 1;
+  return 1;
 #endif
-  }
-
+}

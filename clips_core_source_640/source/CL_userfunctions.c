@@ -50,7 +50,7 @@
 
 #include "clips.h"
 
-void CL_UserFunctions(Environment *);
+void CL_UserFunctions (Environment *);
 
 /*********************************************************/
 /* CL_UserFunctions: Info_rms the expert system environment  */
@@ -61,10 +61,10 @@ void CL_UserFunctions(Environment *);
 /*   this function can be deleted from this file and     */
 /*   included in another file.                           */
 /*********************************************************/
-void CL_UserFunctions(
-  Environment *env)
-  {
+void
+CL_UserFunctions (Environment * env)
+{
 #if MAC_XCD
 #pragma unused(env)
 #endif
-  }
+}

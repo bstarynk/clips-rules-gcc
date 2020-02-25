@@ -46,30 +46,25 @@
 #define _H_lgcldpnd
 
 struct dependency
-  {
-   void *dPtr;
-   struct dependency *next;
-  };
+{
+  void *dPtr;
+  struct dependency *next;
+};
 
 #include "entities.h"
 #include "match.h"
 
-   bool                           CL_AddLogical_Dependencies(Environment *,PatternEntity *,bool);
-   void                           RemoveEntity_Dependencies(Environment *,PatternEntity *);
-   void                           RemovePM_Dependencies(Environment *,PartialMatch *);
-   void                           DestroyPM_Dependencies(Environment *,PartialMatch *);
-   void                           CL_RemoveLogicalSupport(Environment *,PartialMatch *);
-   void                           CL_ForceLogical_Retractions(Environment *);
-   void                           CL_Dependencies(Environment *,PatternEntity *);
-   void                           CL_Dependents(Environment *,PatternEntity *);
-   void                           CL_DependenciesCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_DependentsCommand(Environment *,UDFContext *,UDFValue *);
-   void                           ReturnEntity_Dependencies(Environment *,PatternEntity *);
-   PartialMatch                  *CL_FindLogicalBind(struct joinNode *,PartialMatch *);
+bool CL_AddLogical_Dependencies (Environment *, PatternEntity *, bool);
+void RemoveEntity_Dependencies (Environment *, PatternEntity *);
+void RemovePM_Dependencies (Environment *, PartialMatch *);
+void DestroyPM_Dependencies (Environment *, PartialMatch *);
+void CL_RemoveLogicalSupport (Environment *, PartialMatch *);
+void CL_ForceLogical_Retractions (Environment *);
+void CL_Dependencies (Environment *, PatternEntity *);
+void CL_Dependents (Environment *, PatternEntity *);
+void CL_DependenciesCommand (Environment *, UDFContext *, UDFValue *);
+void CL_DependentsCommand (Environment *, UDFContext *, UDFValue *);
+void ReturnEntity_Dependencies (Environment *, PatternEntity *);
+PartialMatch *CL_FindLogicalBind (struct joinNode *, PartialMatch *);
 
 #endif /* _H_lgcldpnd */
-
-
-
-
-

@@ -46,12 +46,8 @@
 
 #if DEFFUNCTION_CONSTRUCT && (! BLOAD_ONLY) && (! RUN_TIME)
 
-   bool                           CL_ParseDeffunction(Environment *,const char *);
+bool CL_ParseDeffunction (Environment *, const char *);
 
 #endif /* DEFFUNCTION_CONSTRUCT && (! BLOAD_ONLY) && (! RUN_TIME) */
 
 #endif /* _H_dffnxpsr */
-
-
-
-

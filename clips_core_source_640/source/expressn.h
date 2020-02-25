@@ -59,40 +59,40 @@ typedef struct savedContexts CL_SavedContexts;
 /******************************/
 
 struct expr
-   {
-    unsigned short type;
-    union
-      {
-       void *value;
-       CLIPSLexeme *lexemeValue;
-       CLIPSFloat *floatValue;
-       CLIPSInteger *integerValue;
-       CLIPSBitMap *bitMapValue;
-       ConstructHeader *constructValue;
-       FunctionDefinition *functionValue;
-      };
-    Expression *argList;
-    Expression *nextArg;
-   };
+{
+  unsigned short type;
+  union
+  {
+    void *value;
+    CLIPSLexeme *lexemeValue;
+    CLIPSFloat *floatValue;
+    CLIPSInteger *integerValue;
+    CLIPSBitMap *bitMapValue;
+    ConstructHeader *constructValue;
+    FunctionDefinition *functionValue;
+  };
+  Expression *argList;
+  Expression *nextArg;
+};
 
 #define arg_list argList
 #define next_arg nextArg
 
 typedef struct exprHashNode
-  {
-   unsigned hashval;
-   unsigned count;
-   Expression *exp;
-   struct exprHashNode *next;
-   unsigned long bsaveID;
-  } EXPRESSION_HN;
+{
+  unsigned hashval;
+  unsigned count;
+  Expression *exp;
+  struct exprHashNode *next;
+  unsigned long bsaveID;
+} EXPRESSION_HN;
 
 struct savedContexts
-  {
-   bool rtn;
-   bool brk;
-   struct savedContexts *nxt;
-  };
+{
+  bool rtn;
+  bool brk;
+  struct savedContexts *nxt;
+};
 
 #define EXPRESSION_HASH_SIZE 503
 
@@ -103,23 +103,23 @@ struct savedContexts
 #define EXPRESSION_DATA 45
 
 struct expressionData
-  {
-   FunctionDefinition *PTR_AND;
-   FunctionDefinition *PTR_OR;
-   FunctionDefinition *PTR_EQ;
-   FunctionDefinition *PTR_NEQ;
-   FunctionDefinition *PTR_NOT;
-   EXPRESSION_HN **ExpressionHashTable;
+{
+  FunctionDefinition *PTR_AND;
+  FunctionDefinition *PTR_OR;
+  FunctionDefinition *PTR_EQ;
+  FunctionDefinition *PTR_NEQ;
+  FunctionDefinition *PTR_NOT;
+  EXPRESSION_HN **ExpressionHashTable;
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE)
-   unsigned long NumberOfExpressions;
-   Expression *ExpressionArray;
-   unsigned long ExpressionCount;
+  unsigned long NumberOfExpressions;
+  Expression *ExpressionArray;
+  unsigned long ExpressionCount;
 #endif
-   CL_SavedContexts *svContexts;
-   bool ReturnContext;
-   bool BreakContext;
-   bool SequenceOpMode;
-  };
+  CL_SavedContexts *svContexts;
+  bool ReturnContext;
+  bool BreakContext;
+  bool SequenceOpMode;
+};
 
 #define ExpressionData(theEnv) ((struct expressionData *) GetEnvironmentData(theEnv,EXPRESSION_DATA))
 
@@ -127,25 +127,21 @@ struct expressionData
 /* Global Functions */
 /********************/
 
-   void                           CL_ReturnExpression(Environment *,Expression *);
-   void                           CL_ExpressionInstall(Environment *,Expression *);
-   void                           CL_ExpressionDeinstall(Environment *,Expression *);
-   Expression                    *CL_PackExpression(Environment *,Expression *);
-   void                           CL_ReturnPackedExpression(Environment *,Expression *);
-   void                           CL_InitExpressionData(Environment *);
-   void                           CL_InitExpressionPointers(Environment *);
-   bool                           CL_SetSequenceOperatorRecognition(Environment *,bool);
-   bool                           CL_GetSequenceOperatorRecognition(Environment *);
+void CL_ReturnExpression (Environment *, Expression *);
+void CL_ExpressionInstall (Environment *, Expression *);
+void CL_ExpressionDeinstall (Environment *, Expression *);
+Expression *CL_PackExpression (Environment *, Expression *);
+void CL_ReturnPackedExpression (Environment *, Expression *);
+void CL_InitExpressionData (Environment *);
+void CL_InitExpressionPointers (Environment *);
+bool CL_SetSequenceOperatorRecognition (Environment *, bool);
+bool CL_GetSequenceOperatorRecognition (Environment *);
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-   Expression                    *CL_AddHashedExpression(Environment *,Expression *);
+Expression *CL_AddHashedExpression (Environment *, Expression *);
 #endif
-   void                           CL_RemoveHashedExpression(Environment *,Expression *);
+void CL_RemoveHashedExpression (Environment *, Expression *);
 #if BLOAD_AND_BSAVE || BLOAD_ONLY || BLOAD || CONSTRUCT_COMPILER
-   unsigned long                  CL_HashedExpressionIndex(Environment *,Expression *);
+unsigned long CL_HashedExpressionIndex (Environment *, Expression *);
 #endif
 
 #endif
-
-
-
-

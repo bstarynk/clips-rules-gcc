@@ -63,22 +63,22 @@
 
 #include "evaluatn.h"
 
-   void                           CL_FactCommandDefinitions(Environment *);
-   void                           CL_AssertCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_RetractCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_AssertStringFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_FactsCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_Facts(Environment *,const char *,Defmodule *,long long,long long,long long);
-   void                           CL_SetFactDuplicationCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_GetFactDuplicationCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_Save_FactsCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_Load_FactsCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           CL_Save_Facts(Environment *,const char *,CL_SaveScope);
-   bool                           CL_Save_FactsDriver(Environment *,const char *,CL_SaveScope,struct expr *);
-   bool                           CL_Load_Facts(Environment *,const char *);
-   bool                           CL_Load_FactsFromString(Environment *,const char *,size_t);
-   void                           CL_FactIndexFunction(Environment *,UDFContext *,UDFValue *);
+void CL_FactCommandDefinitions (Environment *);
+void CL_AssertCommand (Environment *, UDFContext *, UDFValue *);
+void CL_RetractCommand (Environment *, UDFContext *, UDFValue *);
+void CL_AssertStringFunction (Environment *, UDFContext *, UDFValue *);
+void CL_FactsCommand (Environment *, UDFContext *, UDFValue *);
+void CL_Facts (Environment *, const char *, Defmodule *, long long, long long,
+	       long long);
+void CL_SetFactDuplicationCommand (Environment *, UDFContext *, UDFValue *);
+void CL_GetFactDuplicationCommand (Environment *, UDFContext *, UDFValue *);
+void CL_Save_FactsCommand (Environment *, UDFContext *, UDFValue *);
+void CL_Load_FactsCommand (Environment *, UDFContext *, UDFValue *);
+bool CL_Save_Facts (Environment *, const char *, CL_SaveScope);
+bool CL_Save_FactsDriver (Environment *, const char *, CL_SaveScope,
+			  struct expr *);
+bool CL_Load_Facts (Environment *, const char *);
+bool CL_Load_FactsFromString (Environment *, const char *, size_t);
+void CL_FactIndexFunction (Environment *, UDFContext *, UDFValue *);
 
 #endif /* _H_factcom */
-
-

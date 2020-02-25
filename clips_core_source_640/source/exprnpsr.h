@@ -57,42 +57,44 @@
 #define _H_exprnpsr
 
 typedef enum
-  {
-   FAE_NO_ERROR = 0,
-   FAE_COUNT_ERROR,
-   FAE_TYPE_ERROR
-  } FunctionArgumentsError;
+{
+  FAE_NO_ERROR = 0,
+  FAE_COUNT_ERROR,
+  FAE_TYPE_ERROR
+} FunctionArgumentsError;
 
 #include "extnfunc.h"
 #include "scanner.h"
 
-   struct expr                   *CL_Function0Parse(Environment *,const char *);
-   struct expr                   *CL_Function1Parse(Environment *,const char *);
-   struct expr                   *CL_Function2Parse(Environment *,const char *,const char *);
-   void                           CL_PushRtnBrkContexts(Environment *);
-   void                           CL_PopRtnBrkContexts(Environment *);
-   bool                           CL_ReplaceSequenceExpansionOps(Environment *,struct expr *,struct expr *,
-                                                                     void *,void *);
-   struct expr                   *CL_CollectArguments(Environment *,struct expr *,const char *);
-   struct expr                   *CL_ArgumentParse(Environment *,const char *,bool *);
-   struct expr                   *CL_ParseAtomOrExpression(Environment *,const char *,struct token *);
-   Expression                    *CL_ParseConstantArguments(Environment *,const char *,bool *);
-   struct expr                   *CL_GroupActions(Environment *,const char *,struct token *,
-                                                      bool,const char *,bool);
-   struct expr                   *CL_RemoveUnneededProgn(Environment *,struct expr *);
-   void                           CL_PopulateRestriction(Environment *,unsigned *,unsigned,const char *,unsigned int);
+struct expr *CL_Function0Parse (Environment *, const char *);
+struct expr *CL_Function1Parse (Environment *, const char *);
+struct expr *CL_Function2Parse (Environment *, const char *, const char *);
+void CL_PushRtnBrkContexts (Environment *);
+void CL_PopRtnBrkContexts (Environment *);
+bool CL_ReplaceSequenceExpansionOps (Environment *, struct expr *,
+				     struct expr *, void *, void *);
+struct expr *CL_CollectArguments (Environment *, struct expr *, const char *);
+struct expr *CL_ArgumentParse (Environment *, const char *, bool *);
+struct expr *CL_ParseAtomOrExpression (Environment *, const char *,
+				       struct token *);
+Expression *CL_ParseConstantArguments (Environment *, const char *, bool *);
+struct expr *CL_GroupActions (Environment *, const char *, struct token *,
+			      bool, const char *, bool);
+struct expr *CL_RemoveUnneededProgn (Environment *, struct expr *);
+void CL_PopulateRestriction (Environment *, unsigned *, unsigned,
+			     const char *, unsigned int);
 
 
-   FunctionArgumentsError         CL_CheckExpressionAgainstRestrictions(Environment *,struct expr *,
-                                                                     struct functionDefinition *,const char *);
+FunctionArgumentsError CL_CheckExpressionAgainstRestrictions (Environment *,
+							      struct expr *,
+							      struct
+							      functionDefinition
+							      *,
+							      const char *);
 
 #if (! RUN_TIME)
-   bool                           CL_RestrictionExists(const char *,int);
+bool CL_RestrictionExists (const char *, int);
 
 #endif
 
 #endif /* _H_exprnpsr */
-
-
-
-

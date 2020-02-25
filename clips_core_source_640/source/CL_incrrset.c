@@ -79,76 +79,80 @@
 /***************************************/
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   static void                    MarkNetworkForCL_Incremental_Reset(Environment *,Defrule *,bool);
-   static void                    MarkJoinsForCL_Incremental_Reset(Environment *,struct joinNode *,bool);
-   static void                    CheckForPrimableJoins(Environment *,Defrule *,struct joinNode *);
-   static void                    PrimeJoinFromLeftMemory(Environment *,struct joinNode *);
-   static void                    PrimeJoinFromRightMemory(Environment *,struct joinNode *);
-   static void                    MarkPatternForCL_Incremental_Reset(Environment *,unsigned short,
-                                                                 struct patternNodeHeader *,bool);
+static void MarkNetworkForCL_Incremental_Reset (Environment *, Defrule *,
+						bool);
+static void MarkJoinsForCL_Incremental_Reset (Environment *,
+					      struct joinNode *, bool);
+static void CheckForPrimableJoins (Environment *, Defrule *,
+				   struct joinNode *);
+static void PrimeJoinFromLeftMemory (Environment *, struct joinNode *);
+static void PrimeJoinFromRightMemory (Environment *, struct joinNode *);
+static void MarkPatternForCL_Incremental_Reset (Environment *, unsigned short,
+						struct patternNodeHeader *,
+						bool);
 #endif
 
 /**************************************************************/
 /* CL_Incremental_Reset: Incrementally resets the specified rule. */
 /**************************************************************/
-void CL_Incremental_Reset(
-  Environment *theEnv,
-  Defrule *tempRule)
-  {
+void
+CL_Incremental_Reset (Environment * theEnv, Defrule * tempRule)
+{
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   Defrule *tempPtr;
-   struct patternParser *theParser;
+  Defrule *tempPtr;
+  struct patternParser *theParser;
 
    /*=====================================================*/
-   /* Mark the pattern and join network data structures   */
-   /* associated with the rule being incrementally reset. */
+  /* Mark the pattern and join network data structures   */
+  /* associated with the rule being incrementally reset. */
    /*=====================================================*/
 
-   MarkNetworkForCL_Incremental_Reset(theEnv,tempRule,true);
+  MarkNetworkForCL_Incremental_Reset (theEnv, tempRule, true);
 
    /*==========================*/
-   /* Begin incremental reset. */
+  /* Begin incremental reset. */
    /*==========================*/
 
-   EngineData(theEnv)->CL_Incremental_ResetInProgress = true;
+  EngineData (theEnv)->CL_Incremental_ResetInProgress = true;
 
    /*============================================================*/
-   /* If the new rule shares patterns or joins with other rules, */
-   /* then it is necessary to update its join network based on   */
-   /* existing partial matches it shares with other rules.       */
+  /* If the new rule shares patterns or joins with other rules, */
+  /* then it is necessary to update its join network based on   */
+  /* existing partial matches it shares with other rules.       */
    /*============================================================*/
 
-   for (tempPtr = tempRule;
-        tempPtr != NULL;
-        tempPtr = tempPtr->disjunct)
-     { CheckForPrimableJoins(theEnv,tempPtr,tempPtr->lastJoin); }
+  for (tempPtr = tempRule; tempPtr != NULL; tempPtr = tempPtr->disjunct)
+    {
+      CheckForPrimableJoins (theEnv, tempPtr, tempPtr->lastJoin);
+    }
 
    /*===============================================*/
-   /* Filter existing data entities through the new */
-   /* portions of the pattern and join networks.    */
+  /* Filter existing data entities through the new */
+  /* portions of the pattern and join networks.    */
    /*===============================================*/
 
-   for (theParser = PatternData(theEnv)->ListOfPatternParsers;
-        theParser != NULL;
-        theParser = theParser->next)
-     {
+  for (theParser = PatternData (theEnv)->ListOfPatternParsers;
+       theParser != NULL; theParser = theParser->next)
+    {
       if (theParser->incremental_ResetFunction != NULL)
-        { (*theParser->incremental_ResetFunction)(theEnv); }
-     }
+	{
+	  (*theParser->incremental_ResetFunction) (theEnv);
+	}
+    }
 
    /*========================*/
-   /* End incremental reset. */
+  /* End incremental reset. */
    /*========================*/
 
-   EngineData(theEnv)->CL_Incremental_ResetInProgress = false;
+  EngineData (theEnv)->CL_Incremental_ResetInProgress = false;
 
    /*====================================================*/
-   /* Remove the marks in the pattern and join networks. */
+  /* Remove the marks in the pattern and join networks. */
    /*====================================================*/
 
-   MarkNetworkForCL_Incremental_Reset(theEnv,tempRule,false);
+  MarkNetworkForCL_Incremental_Reset (theEnv, tempRule, false);
 #endif
-  }
+}
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
 
@@ -157,43 +161,39 @@ void CL_Incremental_Reset(
 /*   flags in the pattern and join networks both before and after an  */
 /*   incremental reset.                                               */
 /**********************************************************************/
-static void MarkNetworkForCL_Incremental_Reset(
-  Environment *theEnv,
-  Defrule *tempRule,
-  bool value)
-  {
+static void
+MarkNetworkForCL_Incremental_Reset (Environment * theEnv,
+				    Defrule * tempRule, bool value)
+{
    /*============================================*/
-   /* Loop through each of the rule's disjuncts. */
+  /* Loop through each of the rule's disjuncts. */
    /*============================================*/
 
-   for (;
-        tempRule != NULL;
-        tempRule = tempRule->disjunct)
-     { MarkJoinsForCL_Incremental_Reset(theEnv,tempRule->lastJoin,value); }
-  }
+  for (; tempRule != NULL; tempRule = tempRule->disjunct)
+    {
+      MarkJoinsForCL_Incremental_Reset (theEnv, tempRule->lastJoin, value);
+    }
+}
 
 /**********************************************************************/
 /* MarkJoinsForCL_Incremental_Reset: Coordinates marking the initialize */
 /*   flags in the pattern and join networks both before and after an  */
 /*   incremental reset.                                               */
 /**********************************************************************/
-static void MarkJoinsForCL_Incremental_Reset(
-  Environment *theEnv,
-  struct joinNode *joinPtr,
-  bool value)
-  {
-   struct patternNodeHeader *patternPtr;
+static void
+MarkJoinsForCL_Incremental_Reset (Environment * theEnv,
+				  struct joinNode *joinPtr, bool value)
+{
+  struct patternNodeHeader *patternPtr;
 
-   for (;
-        joinPtr != NULL;
-        joinPtr = GetPreviousJoin(joinPtr))
-     {
+  for (; joinPtr != NULL; joinPtr = GetPreviousJoin (joinPtr))
+    {
       if (joinPtr->ruleToActivate != NULL)
-        {
-         joinPtr->marked = false;
-         joinPtr->initialize = value;
-         continue;
-        }
+	{
+	  joinPtr->marked = false;
+	  joinPtr->initialize = value;
+	  continue;
+	}
 
       //if (joinPtr->joinFromTheRight)
       //  { MarkJoinsForCL_Incremental_Reset(theEnv,(struct joinNode *) joinPtr->rightSideEntryStructure,value); }
@@ -202,20 +202,25 @@ static void MarkJoinsForCL_Incremental_Reset(
       /* Mark the join. */
       /*================*/
 
-      joinPtr->marked = false; /* GDR 6.05 */
+      joinPtr->marked = false;	/* GDR 6.05 */
 
       if (joinPtr->initialize)
-        {
-         joinPtr->initialize = value;
-         if (joinPtr->joinFromTheRight == false)
-           {
-            patternPtr = (struct patternNodeHeader *) GetPatternForJoin(joinPtr);
-            if (patternPtr != NULL)
-              { MarkPatternForCL_Incremental_Reset(theEnv,joinPtr->rhsType,patternPtr,value); }
-           }
-        }
-     }
-  }
+	{
+	  joinPtr->initialize = value;
+	  if (joinPtr->joinFromTheRight == false)
+	    {
+	      patternPtr =
+		(struct patternNodeHeader *) GetPatternForJoin (joinPtr);
+	      if (patternPtr != NULL)
+		{
+		  MarkPatternForCL_Incremental_Reset (theEnv,
+						      joinPtr->rhsType,
+						      patternPtr, value);
+		}
+	    }
+	}
+    }
+}
 
 /*******************************************************************************/
 /* CheckForPrimableJoins: Updates the joins of a rule for an incremental reset */
@@ -225,60 +230,59 @@ static void MarkJoinsForCL_Incremental_Reset(
 /*   entry pattern node has not been marked for initialization. The function   */
 /*   PrimeJoin is used to update joins which meet these criteria.              */
 /*******************************************************************************/
-static void CheckForPrimableJoins(
-  Environment *theEnv,
-  Defrule *tempRule,
-  struct joinNode *joinPtr)
-  {
+static void
+CheckForPrimableJoins (Environment * theEnv,
+		       Defrule * tempRule, struct joinNode *joinPtr)
+{
    /*========================================*/
-   /* Loop through each of the rule's joins. */
+  /* Loop through each of the rule's joins. */
    /*========================================*/
 
-   for (;
-        joinPtr != NULL;
-        joinPtr = GetPreviousJoin(joinPtr))
-     {
+  for (; joinPtr != NULL; joinPtr = GetPreviousJoin (joinPtr))
+    {
       /*===============================*/
       /* Update the join if necessary. */
       /*===============================*/
 
-      if ((joinPtr->initialize) && (! joinPtr->marked))
-        {
-         if (joinPtr->firstJoin == true)
-           {
-			if (joinPtr->joinFromTheRight == false)
-              {
-               if ((joinPtr->rightSideEntryStructure == NULL) ||
-                   (joinPtr->patternIsNegated) ||
-                   (((struct patternNodeHeader *) joinPtr->rightSideEntryStructure)->initialize == false))
-                 {
-                  PrimeJoinFromLeftMemory(theEnv,joinPtr);
-                  joinPtr->marked = true;
-                 }
-              }
-            else
-              {
-               PrimeJoinFromRightMemory(theEnv,joinPtr);
-               joinPtr->marked = true;
-              }
-           }
-         else if (joinPtr->lastLevel->initialize == false)
-           {
-            PrimeJoinFromLeftMemory(theEnv,joinPtr);
-            joinPtr->marked = true;
-           }
-         else if ((joinPtr->joinFromTheRight) &&
-                (((struct joinNode *) joinPtr->rightSideEntryStructure)->initialize == false))
-           {
-            PrimeJoinFromRightMemory(theEnv,joinPtr);
-            joinPtr->marked = true;
-           }
-        }
+      if ((joinPtr->initialize) && (!joinPtr->marked))
+	{
+	  if (joinPtr->firstJoin == true)
+	    {
+	      if (joinPtr->joinFromTheRight == false)
+		{
+		  if ((joinPtr->rightSideEntryStructure == NULL) ||
+		      (joinPtr->patternIsNegated) ||
+		      (((struct patternNodeHeader *) joinPtr->
+			rightSideEntryStructure)->initialize == false))
+		    {
+		      PrimeJoinFromLeftMemory (theEnv, joinPtr);
+		      joinPtr->marked = true;
+		    }
+		}
+	      else
+		{
+		  PrimeJoinFromRightMemory (theEnv, joinPtr);
+		  joinPtr->marked = true;
+		}
+	    }
+	  else if (joinPtr->lastLevel->initialize == false)
+	    {
+	      PrimeJoinFromLeftMemory (theEnv, joinPtr);
+	      joinPtr->marked = true;
+	    }
+	  else if ((joinPtr->joinFromTheRight) &&
+		   (((struct joinNode *) joinPtr->rightSideEntryStructure)->
+		    initialize == false))
+	    {
+	      PrimeJoinFromRightMemory (theEnv, joinPtr);
+	      joinPtr->marked = true;
+	    }
+	}
 
       //if (joinPtr->joinFromTheRight)
       //  { CheckForPrimableJoins(theEnv,tempRule,(struct joinNode *) joinPtr->rightSideEntryStructure); }
-     }
-  }
+    }
+}
 
 /****************************************************************************/
 /* PrimeJoinFromLeftMemory: Updates a join in a rule for an incremental     */
@@ -288,114 +292,135 @@ static void CheckForPrimableJoins(
 /*   marked for initialization and either its parent join or its associated */
 /*   entry pattern node has not been marked for initialization.             */
 /****************************************************************************/
-static void PrimeJoinFromLeftMemory(
-  Environment *theEnv,
-  struct joinNode *joinPtr)
-  {
-   struct partialMatch *theList, *linker;
-   struct alphaMemoryHash *listOfHashNodes;
-   unsigned long b;
-   unsigned long hashValue;
-   struct betaMemory *theMemory;
-   struct partialMatch *notParent;
-   struct joinLink *tempLink;
+static void
+PrimeJoinFromLeftMemory (Environment * theEnv, struct joinNode *joinPtr)
+{
+  struct partialMatch *theList, *linker;
+  struct alphaMemoryHash *listOfHashNodes;
+  unsigned long b;
+  unsigned long hashValue;
+  struct betaMemory *theMemory;
+  struct partialMatch *notParent;
+  struct joinLink *tempLink;
 
    /*===========================================================*/
-   /* If the join is the first join of a rule, then send all of */
-   /* the partial matches from the alpha memory of the pattern  */
-   /* associated with this join to the join for processing and  */
-   /* the priming process is then complete.                     */
+  /* If the join is the first join of a rule, then send all of */
+  /* the partial matches from the alpha memory of the pattern  */
+  /* associated with this join to the join for processing and  */
+  /* the priming process is then complete.                     */
    /*===========================================================*/
 
-   if (joinPtr->firstJoin == true)
-     {
+  if (joinPtr->firstJoin == true)
+    {
       if (joinPtr->rightSideEntryStructure == NULL)
-        { Network_Assert(theEnv,joinPtr->rightMemory->beta[0],joinPtr); }
+	{
+	  Network_Assert (theEnv, joinPtr->rightMemory->beta[0], joinPtr);
+	}
       else if (joinPtr->patternIsNegated)
-        {
-         notParent = joinPtr->leftMemory->beta[0];
+	{
+	  notParent = joinPtr->leftMemory->beta[0];
 
-         if (joinPtr->secondaryNetworkTest != NULL)
-           {
-            if (CL_EvaluateSecondaryNetworkTest(theEnv,notParent,joinPtr) == false)
-              { return; }
-           }
+	  if (joinPtr->secondaryNetworkTest != NULL)
+	    {
+	      if (CL_EvaluateSecondaryNetworkTest (theEnv, notParent, joinPtr)
+		  == false)
+		{
+		  return;
+		}
+	    }
 
-         for (listOfHashNodes = ((struct patternNodeHeader *) joinPtr->rightSideEntryStructure)->firstHash;
-              listOfHashNodes != NULL;
-              listOfHashNodes = listOfHashNodes->nextHash)
-           {
-            if (listOfHashNodes->alphaMemory != NULL)
-              {
-               CL_AddBlockedLink(notParent,listOfHashNodes->alphaMemory);
-               return;
-              }
-           }
+	  for (listOfHashNodes =
+	       ((struct patternNodeHeader *) joinPtr->
+		rightSideEntryStructure)->firstHash; listOfHashNodes != NULL;
+	       listOfHashNodes = listOfHashNodes->nextHash)
+	    {
+	      if (listOfHashNodes->alphaMemory != NULL)
+		{
+		  CL_AddBlockedLink (notParent, listOfHashNodes->alphaMemory);
+		  return;
+		}
+	    }
 
-         CL_EPMDrive(theEnv,notParent,joinPtr,NETWORK_ASSERT);
-        }
+	  CL_EPMDrive (theEnv, notParent, joinPtr, NETWORK_ASSERT);
+	}
       else
-        {
-         for (listOfHashNodes = ((struct patternNodeHeader *) joinPtr->rightSideEntryStructure)->firstHash;
-              listOfHashNodes != NULL;
-              listOfHashNodes = listOfHashNodes->nextHash)
-           {
-            for (theList = listOfHashNodes->alphaMemory;
-                 theList != NULL;
-                 theList = theList->nextInMemory)
-              { Network_Assert(theEnv,theList,joinPtr); }
-           }
-        }
+	{
+	  for (listOfHashNodes =
+	       ((struct patternNodeHeader *) joinPtr->
+		rightSideEntryStructure)->firstHash; listOfHashNodes != NULL;
+	       listOfHashNodes = listOfHashNodes->nextHash)
+	    {
+	      for (theList = listOfHashNodes->alphaMemory;
+		   theList != NULL; theList = theList->nextInMemory)
+		{
+		  Network_Assert (theEnv, theList, joinPtr);
+		}
+	    }
+	}
       return;
-     }
+    }
 
    /*========================================*/
-   /* Find another beta memory from which we */
-   /* can retrieve the partial matches.      */
+  /* Find another beta memory from which we */
+  /* can retrieve the partial matches.      */
    /*========================================*/
 
-   tempLink = joinPtr->lastLevel->nextLinks;
+  tempLink = joinPtr->lastLevel->nextLinks;
 
-   while (tempLink != NULL)
-     {
+  while (tempLink != NULL)
+    {
       if ((tempLink->join != joinPtr) &&
-          (tempLink->join->initialize == false))
-        { break; }
+	  (tempLink->join->initialize == false))
+	{
+	  break;
+	}
 
       tempLink = tempLink->next;
-     }
+    }
 
-   if (tempLink == NULL) return;
+  if (tempLink == NULL)
+    return;
 
-   if (tempLink->enterDirection == LHS)
-     { theMemory = tempLink->join->leftMemory; }
-   else
-     { theMemory = tempLink->join->rightMemory; }
+  if (tempLink->enterDirection == LHS)
+    {
+      theMemory = tempLink->join->leftMemory;
+    }
+  else
+    {
+      theMemory = tempLink->join->rightMemory;
+    }
 
    /*============================================*/
-   /* CL_Send all partial matches from the selected */
-   /* beta memory to the new join.               */
+  /* CL_Send all partial matches from the selected */
+  /* beta memory to the new join.               */
    /*============================================*/
 
-   for (b = 0; b < theMemory->size; b++)
-     {
+  for (b = 0; b < theMemory->size; b++)
+    {
       for (theList = theMemory->beta[b];
-           theList != NULL;
-           theList = theList->nextInMemory)
-        {
-         linker = CL_CopyPartialMatch(theEnv,theList);
+	   theList != NULL; theList = theList->nextInMemory)
+	{
+	  linker = CL_CopyPartialMatch (theEnv, theList);
 
-         if (joinPtr->leftHash != NULL)
-           { hashValue = CL_BetaMemoryHashValue(theEnv,joinPtr->leftHash,linker,NULL,joinPtr); }
-         else
-           { hashValue = 0; }
+	  if (joinPtr->leftHash != NULL)
+	    {
+	      hashValue =
+		CL_BetaMemoryHashValue (theEnv, joinPtr->leftHash, linker,
+					NULL, joinPtr);
+	    }
+	  else
+	    {
+	      hashValue = 0;
+	    }
 
-         CL_UpdateBetaPMLinks(theEnv,linker,theList->leftParent,theList->rightParent,joinPtr,hashValue,LHS);
+	  CL_UpdateBetaPMLinks (theEnv, linker, theList->leftParent,
+				theList->rightParent, joinPtr, hashValue,
+				LHS);
 
-         Network_AssertLeft(theEnv,linker,joinPtr,NETWORK_ASSERT);
-        }
-     }
-  }
+	  Network_AssertLeft (theEnv, linker, joinPtr, NETWORK_ASSERT);
+	}
+    }
+}
 
 /****************************************************************************/
 /* PrimeJoinFromRightMemory: Updates a join in a rule for an incremental    */
@@ -405,102 +430,122 @@ static void PrimeJoinFromLeftMemory(
 /*   marked for initialization and either its parent join or its associated */
 /*   entry pattern node has not been marked for initialization.             */
 /****************************************************************************/
-static void PrimeJoinFromRightMemory(
-  Environment *theEnv,
-  struct joinNode *joinPtr)
-  {
-   struct partialMatch *theList, *linker;
-   unsigned long b;
-   struct betaMemory *theMemory;
-   unsigned long hashValue;
-   struct joinLink *tempLink;
-   struct partialMatch *notParent;
+static void
+PrimeJoinFromRightMemory (Environment * theEnv, struct joinNode *joinPtr)
+{
+  struct partialMatch *theList, *linker;
+  unsigned long b;
+  struct betaMemory *theMemory;
+  unsigned long hashValue;
+  struct joinLink *tempLink;
+  struct partialMatch *notParent;
 
    /*=======================================*/
-   /* This should be a join from the right. */
+  /* This should be a join from the right. */
    /*=======================================*/
 
-   if (joinPtr->joinFromTheRight == false)
-     { return; }
+  if (joinPtr->joinFromTheRight == false)
+    {
+      return;
+    }
 
    /*========================================*/
-   /* Find another beta memory from which we */
-   /* can retrieve the partial matches.      */
+  /* Find another beta memory from which we */
+  /* can retrieve the partial matches.      */
    /*========================================*/
 
-   tempLink = ((struct joinNode *) joinPtr->rightSideEntryStructure)->nextLinks;
-   while (tempLink != NULL)
-     {
+  tempLink =
+    ((struct joinNode *) joinPtr->rightSideEntryStructure)->nextLinks;
+  while (tempLink != NULL)
+    {
       if ((tempLink->join != joinPtr) &&
-          (tempLink->join->initialize == false))
-        { break; }
+	  (tempLink->join->initialize == false))
+	{
+	  break;
+	}
 
       tempLink = tempLink->next;
-     }
+    }
 
-   if (tempLink == NULL)
-     {
+  if (tempLink == NULL)
+    {
       if (joinPtr->firstJoin &&
-          (joinPtr->rightMemory->beta[0] == NULL) &&
-          (! joinPtr->patternIsExists))
-        {
-         notParent = joinPtr->leftMemory->beta[0];
+	  (joinPtr->rightMemory->beta[0] == NULL) &&
+	  (!joinPtr->patternIsExists))
+	{
+	  notParent = joinPtr->leftMemory->beta[0];
 
-         if (joinPtr->secondaryNetworkTest != NULL)
-           {
-            if (CL_EvaluateSecondaryNetworkTest(theEnv,notParent,joinPtr) == false)
-              { return; }
-           }
+	  if (joinPtr->secondaryNetworkTest != NULL)
+	    {
+	      if (CL_EvaluateSecondaryNetworkTest (theEnv, notParent, joinPtr)
+		  == false)
+		{
+		  return;
+		}
+	    }
 
-         CL_EPMDrive(theEnv,notParent,joinPtr,NETWORK_ASSERT);
-        }
+	  CL_EPMDrive (theEnv, notParent, joinPtr, NETWORK_ASSERT);
+	}
 
       return;
-     }
+    }
 
-   if (tempLink->enterDirection == LHS)
-     { theMemory = tempLink->join->leftMemory; }
-   else
-     { theMemory = tempLink->join->rightMemory; }
+  if (tempLink->enterDirection == LHS)
+    {
+      theMemory = tempLink->join->leftMemory;
+    }
+  else
+    {
+      theMemory = tempLink->join->rightMemory;
+    }
 
    /*============================================*/
-   /* CL_Send all partial matches from the selected */
-   /* beta memory to the new join.               */
+  /* CL_Send all partial matches from the selected */
+  /* beta memory to the new join.               */
    /*============================================*/
 
-   for (b = 0; b < theMemory->size; b++)
-     {
+  for (b = 0; b < theMemory->size; b++)
+    {
       for (theList = theMemory->beta[b];
-           theList != NULL;
-           theList = theList->nextInMemory)
-        {
-         linker = CL_CopyPartialMatch(theEnv,theList);
+	   theList != NULL; theList = theList->nextInMemory)
+	{
+	  linker = CL_CopyPartialMatch (theEnv, theList);
 
-         if (joinPtr->rightHash != NULL)
-           { hashValue = CL_BetaMemoryHashValue(theEnv,joinPtr->rightHash,linker,NULL,joinPtr); }
-         else
-           { hashValue = 0; }
+	  if (joinPtr->rightHash != NULL)
+	    {
+	      hashValue =
+		CL_BetaMemoryHashValue (theEnv, joinPtr->rightHash, linker,
+					NULL, joinPtr);
+	    }
+	  else
+	    {
+	      hashValue = 0;
+	    }
 
-         CL_UpdateBetaPMLinks(theEnv,linker,theList->leftParent,theList->rightParent,joinPtr,hashValue,RHS);
-         Network_Assert(theEnv,linker,joinPtr);
-        }
-     }
+	  CL_UpdateBetaPMLinks (theEnv, linker, theList->leftParent,
+				theList->rightParent, joinPtr, hashValue,
+				RHS);
+	  Network_Assert (theEnv, linker, joinPtr);
+	}
+    }
 
-   if (joinPtr->firstJoin &&
-       (joinPtr->rightMemory->beta[0] == NULL) &&
-       (! joinPtr->patternIsExists))
-     {
+  if (joinPtr->firstJoin &&
+      (joinPtr->rightMemory->beta[0] == NULL) && (!joinPtr->patternIsExists))
+    {
       notParent = joinPtr->leftMemory->beta[0];
 
       if (joinPtr->secondaryNetworkTest != NULL)
-        {
-         if (CL_EvaluateSecondaryNetworkTest(theEnv,notParent,joinPtr) == false)
-           { return; }
-        }
+	{
+	  if (CL_EvaluateSecondaryNetworkTest (theEnv, notParent, joinPtr) ==
+	      false)
+	    {
+	      return;
+	    }
+	}
 
-      CL_EPMDrive(theEnv,notParent,joinPtr,NETWORK_ASSERT);
-     }
-  }
+      CL_EPMDrive (theEnv, notParent, joinPtr, NETWORK_ASSERT);
+    }
+}
 
 /*********************************************************************/
 /* MarkPatternForCL_Incremental_Reset: Given a pattern node and its type */
@@ -508,22 +553,24 @@ static void PrimeJoinFromRightMemory(
 /*   the pattern for an incremental reset. Used to mark the pattern  */
 /*   nodes both before and after an incremental reset.               */
 /*********************************************************************/
-static void MarkPatternForCL_Incremental_Reset(
-  Environment *theEnv,
-  unsigned short rhsType,
-  struct patternNodeHeader *theHeader,
-  bool value)
-  {
-   struct patternParser *tempParser;
+static void
+MarkPatternForCL_Incremental_Reset (Environment * theEnv,
+				    unsigned short rhsType,
+				    struct patternNodeHeader *theHeader,
+				    bool value)
+{
+  struct patternParser *tempParser;
 
-   tempParser = CL_GetPatternParser(theEnv,rhsType);
+  tempParser = CL_GetPatternParser (theEnv, rhsType);
 
-   if (tempParser != NULL)
-     {
+  if (tempParser != NULL)
+    {
       if (tempParser->markIRPatternFunction != NULL)
-        { (*tempParser->markIRPatternFunction)(theEnv,theHeader,value); }
-     }
-  }
+	{
+	  (*tempParser->markIRPatternFunction) (theEnv, theHeader, value);
+	}
+    }
+}
 
 #endif
 

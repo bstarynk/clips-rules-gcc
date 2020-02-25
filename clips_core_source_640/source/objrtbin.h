@@ -56,24 +56,21 @@
 #endif
 
 struct objectReteBinaryData
-  {
-   unsigned long AlphaNodeCount;
-   unsigned long PatternNodeCount;
-   unsigned long AlphaLinkCount;
-   OBJECT_ALPHA_NODE *AlphaArray;
-   OBJECT_PATTERN_NODE *PatternArray;
-   CLASS_ALPHA_LINK *AlphaLinkArray;
-  };
+{
+  unsigned long AlphaNodeCount;
+  unsigned long PatternNodeCount;
+  unsigned long AlphaLinkCount;
+  OBJECT_ALPHA_NODE *AlphaArray;
+  OBJECT_PATTERN_NODE *PatternArray;
+  CLASS_ALPHA_LINK *AlphaLinkArray;
+};
 
 #define ObjectReteBinaryData(theEnv) ((struct objectReteBinaryData *) GetEnvironmentData(theEnv,OBJECTRETEBIN_DATA))
 
 #define ClassAlphaPointer(i)   ((i == ULONG_MAX) ? NULL : (CLASS_ALPHA_LINK *) &ObjectReteBinaryData(theEnv)->AlphaLinkArray[i])
 
-   void                    SetupObjectPatterns_Bload(Environment *);
+void SetupObjectPatterns_Bload (Environment *);
 
 #endif /* DEFRULE_CONSTRUCT && OBJECT_SYSTEM */
 
 #endif /* _H_objrtbin */
-
-
-

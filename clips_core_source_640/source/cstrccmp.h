@@ -34,10 +34,6 @@
 
 #include <stdio.h>
 
-   void                           MarkConstructHeaders(int);
+void MarkConstructHeaders (int);
 
 #endif /* _H_cstrccmp */
-
-
-
-

@@ -60,35 +60,29 @@
 #define FILE_ROUTER_DATA 47
 
 struct fileRouter
-  {
-   const char *logicalName;
-   FILE *stream;
-   struct fileRouter *next;
-  };
+{
+  const char *logicalName;
+  FILE *stream;
+  struct fileRouter *next;
+};
 
 struct fileRouterData
-  {
-   struct fileRouter *ListOfFileRouters;
-  };
+{
+  struct fileRouter *ListOfFileRouters;
+};
 
 #define FileRouterData(theEnv) ((struct fileRouterData *) GetEnvironmentData(theEnv,FILE_ROUTER_DATA))
 
-   void                           CL_InitializeFileRouter(Environment *);
-   FILE                          *CL_FindFptr(Environment *,const char *);
-   bool                           CL_OpenAFile(Environment *,const char *,const char *,const char *);
-   bool                           CL_CloseAllFiles(Environment *);
-   bool                           CL_CloseFile(Environment *,const char *);
-   bool                           CL_FindFile(Environment *,const char *,void *);
-   bool                           CL_FlushAllFiles(Environment *);
-   bool                           CL_FlushFile(Environment *,const char *);
-   bool                           CL_RewindFile(Environment *,const char *);
-   long long                      CL_TellFile(Environment *,const char *);
-   bool                           CL_SeekFile(Environment *,const char *,long,int);
+void CL_InitializeFileRouter (Environment *);
+FILE *CL_FindFptr (Environment *, const char *);
+bool CL_OpenAFile (Environment *, const char *, const char *, const char *);
+bool CL_CloseAllFiles (Environment *);
+bool CL_CloseFile (Environment *, const char *);
+bool CL_FindFile (Environment *, const char *, void *);
+bool CL_FlushAllFiles (Environment *);
+bool CL_FlushFile (Environment *, const char *);
+bool CL_RewindFile (Environment *, const char *);
+long long CL_TellFile (Environment *, const char *);
+bool CL_SeekFile (Environment *, const char *, long, int);
 
 #endif /* _H_filertr */
-
-
-
-
-
-

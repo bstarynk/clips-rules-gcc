@@ -55,61 +55,61 @@
 #define _H_classcom
 
 typedef enum
-  {
-   CONVENIENCE_MODE,
-   CONSERVATION_MODE
-  } ClassDefaultsMode;
+{
+  CONVENIENCE_MODE,
+  CONSERVATION_MODE
+} ClassDefaultsMode;
 
 #include "cstrccom.h"
 #include "moduldef.h"
 #include "object.h"
 #include "symbol.h"
 
-   const char             *CL_DefclassName(Defclass *);
-   const char             *CL_DefclassPPFo_rm(Defclass *);
-   struct defmoduleItemHeader
-                          *Get_DefclassModule(Environment *,Defclass *);
-   const char             *CL_DefclassModule(Defclass *);
-   CLIPSLexeme            *Get_DefclassNamePointer(Defclass *);
-   void                    CL_SetNextDefclass(Defclass *,Defclass *);
-   void                    SetCL_DefclassPPFo_rm(Environment *,Defclass *,char *);
+const char *CL_DefclassName (Defclass *);
+const char *CL_DefclassPPFo_rm (Defclass *);
+struct defmoduleItemHeader *Get_DefclassModule (Environment *, Defclass *);
+const char *CL_DefclassModule (Defclass *);
+CLIPSLexeme *Get_DefclassNamePointer (Defclass *);
+void CL_SetNextDefclass (Defclass *, Defclass *);
+void SetCL_DefclassPPFo_rm (Environment *, Defclass *, char *);
 
-   Defclass               *CL_FindDefclass(Environment *,const char *);
-   Defclass               *CL_FindDefclassInModule(Environment *,const char *);
-   Defclass               *CL_LookupDefclassByMdlOrScope(Environment *,const char *);
-   Defclass               *Lookup_DefclassInScope(Environment *,const char *);
-   Defclass               *CL_LookupDefclassAnywhere(Environment *,Defmodule *,const char *);
-   bool                    CL_DefclassInScope(Environment *,Defclass *,Defmodule *);
-   Defclass               *CL_GetNextDefclass(Environment *,Defclass *);
-   bool                    CL_DefclassIsDeletable(Defclass *);
+Defclass *CL_FindDefclass (Environment *, const char *);
+Defclass *CL_FindDefclassInModule (Environment *, const char *);
+Defclass *CL_LookupDefclassByMdlOrScope (Environment *, const char *);
+Defclass *Lookup_DefclassInScope (Environment *, const char *);
+Defclass *CL_LookupDefclassAnywhere (Environment *, Defmodule *,
+				     const char *);
+bool CL_DefclassInScope (Environment *, Defclass *, Defmodule *);
+Defclass *CL_GetNextDefclass (Environment *, Defclass *);
+bool CL_DefclassIsDeletable (Defclass *);
 
-   void                    CL_UndefclassCommand(Environment *,UDFContext *,UDFValue *);
-   ClassDefaultsMode       CL_SetClassDefaultsMode(Environment *,ClassDefaultsMode);
-   ClassDefaultsMode       CL_GetClassDefaultsMode(Environment *);
-   void                    CL_GetClassDefaultsModeCommand(Environment *,UDFContext *,UDFValue *);
-   void                    CL_SetClassDefaultsModeCommand(Environment *,UDFContext *,UDFValue *);
+void CL_UndefclassCommand (Environment *, UDFContext *, UDFValue *);
+ClassDefaultsMode CL_SetClassDefaultsMode (Environment *, ClassDefaultsMode);
+ClassDefaultsMode CL_GetClassDefaultsMode (Environment *);
+void CL_GetClassDefaultsModeCommand (Environment *, UDFContext *, UDFValue *);
+void CL_SetClassDefaultsModeCommand (Environment *, UDFContext *, UDFValue *);
 
 #if DEBUGGING_FUNCTIONS
-   void                    CL_PPDefclassCommand(Environment *,UDFContext *,UDFValue *);
-   void                    CL_ListDefclassesCommand(Environment *,UDFContext *,UDFValue *);
-   void                    CL_ListDefclasses(Environment *,const char *,Defmodule *);
-   bool                    CL_DefclassGet_Watch_Instances(Defclass *);
-   void                    CL_DefclassSet_Watch_Instances(Defclass *,bool);
-   bool                    CL_DefclassGet_WatchSlots(Defclass *);
-   void                    CL_DefclassSet_WatchSlots(Defclass *,bool);
-   bool                    CL_Defclass_WatchAccess(Environment *,int,bool,Expression *);
-   bool                    CL_Defclass_WatchPrint(Environment *,const char *,int,Expression *);
+void CL_PPDefclassCommand (Environment *, UDFContext *, UDFValue *);
+void CL_ListDefclassesCommand (Environment *, UDFContext *, UDFValue *);
+void CL_ListDefclasses (Environment *, const char *, Defmodule *);
+bool CL_DefclassGet_Watch_Instances (Defclass *);
+void CL_DefclassSet_Watch_Instances (Defclass *, bool);
+bool CL_DefclassGet_WatchSlots (Defclass *);
+void CL_DefclassSet_WatchSlots (Defclass *, bool);
+bool CL_Defclass_WatchAccess (Environment *, int, bool, Expression *);
+bool CL_Defclass_WatchPrint (Environment *, const char *, int, Expression *);
 #endif
 
-   void                    CL_GetDefclassListFunction(Environment *,UDFContext *,UDFValue *);
-   void                    CL_GetDefclassList(Environment *,CLIPSValue *,Defmodule *);
-   bool                    CL_Undefclass(Defclass *,Environment *);
-   bool                    CL_HasSuperclass(Defclass *,Defclass *);
+void CL_GetDefclassListFunction (Environment *, UDFContext *, UDFValue *);
+void CL_GetDefclassList (Environment *, CLIPSValue *, Defmodule *);
+bool CL_Undefclass (Defclass *, Environment *);
+bool CL_HasSuperclass (Defclass *, Defclass *);
 
-   CLIPSLexeme            *CL_CheckClassAndSlot(UDFContext *,const char *,Defclass **);
+CLIPSLexeme *CL_CheckClassAndSlot (UDFContext *, const char *, Defclass **);
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-   void                    CL_SaveDefclasses(Environment *,Defmodule *,const char *,void *);
+void CL_SaveDefclasses (Environment *, Defmodule *, const char *, void *);
 #endif
 
 #endif /* _H_classcom */

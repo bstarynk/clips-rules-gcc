@@ -63,18 +63,17 @@
 
 #include "genrcfun.h"
 
-   bool                           CL_ParseDefgeneric(Environment *,const char *);
-   bool                           CL_ParseDefmethod(Environment *,const char *);
-   Defmethod                     *CL_AddMethod(Environment *,Defgeneric *,Defmethod *,int,unsigned short,Expression *,
-                                            unsigned short,unsigned short,CLIPSLexeme *,Expression *,char *,bool);
-   void                           CL_PackRestrictionTypes(Environment *,RESTRICTION *,Expression *);
-   void                           CL_DeleteTempRestricts(Environment *,Expression *);
-   Defmethod                     *CL_FindMethodByRestrictions(Defgeneric *,Expression *,int,
-                                                           CLIPSLexeme *,int *);
+bool CL_ParseDefgeneric (Environment *, const char *);
+bool CL_ParseDefmethod (Environment *, const char *);
+Defmethod *CL_AddMethod (Environment *, Defgeneric *, Defmethod *, int,
+			 unsigned short, Expression *, unsigned short,
+			 unsigned short, CLIPSLexeme *, Expression *, char *,
+			 bool);
+void CL_PackRestrictionTypes (Environment *, RESTRICTION *, Expression *);
+void CL_DeleteTempRestricts (Environment *, Expression *);
+Defmethod *CL_FindMethodByRestrictions (Defgeneric *, Expression *, int,
+					CLIPSLexeme *, int *);
 
 #endif /* DEFGENERIC_CONSTRUCT && (! BLOAD_ONLY) && (! RUN_TIME) */
 
 #endif /* _H_genrcpsr */
-
-
-

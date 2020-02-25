@@ -55,21 +55,20 @@
 
 #include "factmngr.h"
 
-   void                           CL_FactFunctionDefinitions(Environment *);
-   void                           CL_FactRelationFunction(Environment *,UDFContext *,UDFValue *);
-   CLIPSLexeme                   *CL_FactRelation(Fact *);
-   Deftemplate                   *CL_FactDeftemplate(Fact *);
-   void                           CL_FactExistpFunction(Environment *,UDFContext *,UDFValue *);
-   bool                           CL_FactExistp(Fact *);
-   void                           CL_FactSlotValueFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_FactSlotValue(Environment *,Fact *,const char *,CLIPSValue *);
-   void                           CL_FactSlotNamesFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_FactSlotNames(Fact *,CLIPSValue *);
-   void                           CL_GetFactListFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_GetFactList(Environment *,CLIPSValue *,Defmodule *);
-   void                           CL_PPFactFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_PPFact(Fact *,const char *,bool);
-   Fact                          *CL_GetFactAddressOrIndexArgument(UDFContext *,bool);
+void CL_FactFunctionDefinitions (Environment *);
+void CL_FactRelationFunction (Environment *, UDFContext *, UDFValue *);
+CLIPSLexeme *CL_FactRelation (Fact *);
+Deftemplate *CL_FactDeftemplate (Fact *);
+void CL_FactExistpFunction (Environment *, UDFContext *, UDFValue *);
+bool CL_FactExistp (Fact *);
+void CL_FactSlotValueFunction (Environment *, UDFContext *, UDFValue *);
+void CL_FactSlotValue (Environment *, Fact *, const char *, CLIPSValue *);
+void CL_FactSlotNamesFunction (Environment *, UDFContext *, UDFValue *);
+void CL_FactSlotNames (Fact *, CLIPSValue *);
+void CL_GetFactListFunction (Environment *, UDFContext *, UDFValue *);
+void CL_GetFactList (Environment *, CLIPSValue *, Defmodule *);
+void CL_PPFactFunction (Environment *, UDFContext *, UDFValue *);
+void CL_PPFact (Fact *, const char *, bool);
+Fact *CL_GetFactAddressOrIndexArgument (UDFContext *, bool);
 
 #endif /* _H_factfun */
-

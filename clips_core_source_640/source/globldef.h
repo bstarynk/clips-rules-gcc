@@ -76,76 +76,75 @@ typedef struct defglobal Defglobal;
 #define DEFGLOBAL_DATA 1
 
 struct defglobalData
-  {
-   Construct *DefglobalConstruct;
-   unsigned CL_DefglobalModuleIndex;
-   bool ChangeToGlobals;
+{
+  Construct *DefglobalConstruct;
+  unsigned CL_DefglobalModuleIndex;
+  bool ChangeToGlobals;
 #if DEBUGGING_FUNCTIONS
-   bool CL_WatchGlobals;
+  bool CL_WatchGlobals;
 #endif
-   bool CL_ResetGlobals;
-   struct entityRecord GlobalInfo;
-   struct entityRecord DefglobalPtrRecord;
-   long LastModuleIndex;
-   Defmodule *TheDefmodule;
+  bool CL_ResetGlobals;
+  struct entityRecord GlobalInfo;
+  struct entityRecord DefglobalPtrRecord;
+  long LastModuleIndex;
+  Defmodule *TheDefmodule;
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
-   struct CodeGeneratorItem *DefglobalCodeItem;
+  struct CodeGeneratorItem *DefglobalCodeItem;
 #endif
-  };
+};
 
 struct defglobal
-  {
-   ConstructHeader header;
-   unsigned int watch   : 1;
-   unsigned int inScope : 1;
-   long busyCount;
-   CLIPSValue current;
-   struct expr *initial;
-  };
+{
+  ConstructHeader header;
+  unsigned int watch:1;
+  unsigned int inScope:1;
+  long busyCount;
+  CLIPSValue current;
+  struct expr *initial;
+};
 
 struct defglobalModule
-  {
-   struct defmoduleItemHeader header;
-  };
+{
+  struct defmoduleItemHeader header;
+};
 
 #define DefglobalData(theEnv) ((struct defglobalData *) GetEnvironmentData(theEnv,DEFGLOBAL_DATA))
 
-   void                           CL_InitializeDefglobals(Environment *);
-   Defglobal                     *CL_FindDefglobal(Environment *,const char *);
-   Defglobal                     *CL_FindDefglobalInModule(Environment *,const char *);
-   Defglobal                     *CL_GetNextDefglobal(Environment *,Defglobal *);
-   void                           CreateInitialFactDefglobal(void);
-   bool                           CL_DefglobalIsDeletable(Defglobal *);
-   struct defglobalModule        *Get_DefglobalModuleItem(Environment *,Defmodule *);
-   void                           CL_QSetDefglobalValue(Environment *,Defglobal *,UDFValue *,bool);
-   Defglobal                     *Q_FindDefglobal(Environment *,CLIPSLexeme *);
-   void                           CL_DefglobalValueFo_rm(Defglobal *,String_Builder *);
-   bool                           CL_GetGlobalsChanged(Environment *);
-   void                           CL_SetGlobalsChanged(Environment *,bool);
-   void                           CL_DefglobalGetValue(Defglobal *,CLIPSValue *);
-   void                           CL_DefglobalSetValue(Defglobal *,CLIPSValue *);
-   void                           CL_DefglobalSetInteger(Defglobal *,long long);
-   void                           CL_DefglobalSetFloat(Defglobal *,double);
-   void                           CL_DefglobalSetSymbol(Defglobal *,const char *);
-   void                           CL_DefglobalSetString(Defglobal *,const char *);
-   void                           CL_DefglobalSet_InstanceName(Defglobal *,const char *);
-   void                           CL_DefglobalSetCLIPSInteger(Defglobal *,CLIPSInteger *);
-   void                           CL_DefglobalSetCLIPSFloat(Defglobal *,CLIPSFloat *);
-   void                           CL_DefglobalSetCLIPSLexeme(Defglobal *,CLIPSLexeme *);
-   void                           CL_DefglobalSetFact(Defglobal *,Fact *);
-   void                           CL_DefglobalSetInstance(Defglobal *,Instance *);
-   void                           CL_DefglobalSetMultifield(Defglobal *,Multifield *);
-   void                           CL_DefglobalSetCLIPSExternalAddress(Defglobal *,CLIPSExternalAddress *);
-   void                           CL_UpdateDefglobalScope(Environment *);
-   Defglobal                     *CL_GetNextDefglobalInScope(Environment *,Defglobal *);
-   bool                           CL_QGetDefglobalUDFValue(Environment *,Defglobal *,UDFValue *);
-   const char                    *CL_DefglobalModule(Defglobal *);
-   const char                    *CL_DefglobalName(Defglobal *);
-   const char                    *CL_DefglobalPPFo_rm(Defglobal *);
+void CL_InitializeDefglobals (Environment *);
+Defglobal *CL_FindDefglobal (Environment *, const char *);
+Defglobal *CL_FindDefglobalInModule (Environment *, const char *);
+Defglobal *CL_GetNextDefglobal (Environment *, Defglobal *);
+void CreateInitialFactDefglobal (void);
+bool CL_DefglobalIsDeletable (Defglobal *);
+struct defglobalModule *Get_DefglobalModuleItem (Environment *, Defmodule *);
+void CL_QSetDefglobalValue (Environment *, Defglobal *, UDFValue *, bool);
+Defglobal *Q_FindDefglobal (Environment *, CLIPSLexeme *);
+void CL_DefglobalValueFo_rm (Defglobal *, String_Builder *);
+bool CL_GetGlobalsChanged (Environment *);
+void CL_SetGlobalsChanged (Environment *, bool);
+void CL_DefglobalGetValue (Defglobal *, CLIPSValue *);
+void CL_DefglobalSetValue (Defglobal *, CLIPSValue *);
+void CL_DefglobalSetInteger (Defglobal *, long long);
+void CL_DefglobalSetFloat (Defglobal *, double);
+void CL_DefglobalSetSymbol (Defglobal *, const char *);
+void CL_DefglobalSetString (Defglobal *, const char *);
+void CL_DefglobalSet_InstanceName (Defglobal *, const char *);
+void CL_DefglobalSetCLIPSInteger (Defglobal *, CLIPSInteger *);
+void CL_DefglobalSetCLIPSFloat (Defglobal *, CLIPSFloat *);
+void CL_DefglobalSetCLIPSLexeme (Defglobal *, CLIPSLexeme *);
+void CL_DefglobalSetFact (Defglobal *, Fact *);
+void CL_DefglobalSetInstance (Defglobal *, Instance *);
+void CL_DefglobalSetMultifield (Defglobal *, Multifield *);
+void CL_DefglobalSetCLIPSExternalAddress (Defglobal *,
+					  CLIPSExternalAddress *);
+void CL_UpdateDefglobalScope (Environment *);
+Defglobal *CL_GetNextDefglobalInScope (Environment *, Defglobal *);
+bool CL_QGetDefglobalUDFValue (Environment *, Defglobal *, UDFValue *);
+const char *CL_DefglobalModule (Defglobal *);
+const char *CL_DefglobalName (Defglobal *);
+const char *CL_DefglobalPPFo_rm (Defglobal *);
 #if RUN_TIME
-   void                           Defglobal_RunTimeInitialize(Environment *);
+void Defglobal_RunTimeInitialize (Environment *);
 #endif
 
 #endif /* _H_globldef */
-
-

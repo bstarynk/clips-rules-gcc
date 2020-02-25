@@ -65,33 +65,33 @@
 
 #if DEBUGGING_FUNCTIONS
 
-   void                           CL_BrowseClassesCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_BrowseClasses(Defclass *,const char *);
-   void                           Describe_ClassCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_DescribeClass(Defclass *,const char *);
+void CL_BrowseClassesCommand (Environment *, UDFContext *, UDFValue *);
+void CL_BrowseClasses (Defclass *, const char *);
+void Describe_ClassCommand (Environment *, UDFContext *, UDFValue *);
+void CL_DescribeClass (Defclass *, const char *);
 
 #endif /* DEBUGGING_FUNCTIONS */
 
-   const char                    *CL_GetCreateAccessorString(SlotDescriptor *);
-   void                           Get_DefclassModuleCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_SuperclassPCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           CL_SuperclassP(Defclass *,Defclass *);
-   void                           CL_SubclassPCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           CL_SubclassP(Defclass *,Defclass *);
-   void                           CL_SlotExistPCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           CL_SlotExistP(Defclass *,const char *,bool);
-   void                           CL_MessageHandlerExistPCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_SlotWritablePCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           CL_SlotWritableP(Defclass *,const char *);
-   void                           CL_SlotInitablePCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           CL_SlotInitableP(Defclass *,const char *);
-   void                           CL_SlotPublicPCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           CL_SlotPublicP(Defclass *,const char *);
-   void                           CL_SlotDirectAccessPCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           CL_SlotDirectAccessP(Defclass *,const char *);
-   void                           CL_SlotDefaultValueCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           CL_SlotDefaultValue(Defclass *,const char *,CLIPSValue *);
-   void                           CL_ClassExistPCommand(Environment *,UDFContext *,UDFValue *);
-   int                            CL_SlotDefaultP(Environment *,Defclass *,const char *);
+const char *CL_GetCreateAccessorString (SlotDescriptor *);
+void Get_DefclassModuleCommand (Environment *, UDFContext *, UDFValue *);
+void CL_SuperclassPCommand (Environment *, UDFContext *, UDFValue *);
+bool CL_SuperclassP (Defclass *, Defclass *);
+void CL_SubclassPCommand (Environment *, UDFContext *, UDFValue *);
+bool CL_SubclassP (Defclass *, Defclass *);
+void CL_SlotExistPCommand (Environment *, UDFContext *, UDFValue *);
+bool CL_SlotExistP (Defclass *, const char *, bool);
+void CL_MessageHandlerExistPCommand (Environment *, UDFContext *, UDFValue *);
+void CL_SlotWritablePCommand (Environment *, UDFContext *, UDFValue *);
+bool CL_SlotWritableP (Defclass *, const char *);
+void CL_SlotInitablePCommand (Environment *, UDFContext *, UDFValue *);
+bool CL_SlotInitableP (Defclass *, const char *);
+void CL_SlotPublicPCommand (Environment *, UDFContext *, UDFValue *);
+bool CL_SlotPublicP (Defclass *, const char *);
+void CL_SlotDirectAccessPCommand (Environment *, UDFContext *, UDFValue *);
+bool CL_SlotDirectAccessP (Defclass *, const char *);
+void CL_SlotDefaultValueCommand (Environment *, UDFContext *, UDFValue *);
+bool CL_SlotDefaultValue (Defclass *, const char *, CLIPSValue *);
+void CL_ClassExistPCommand (Environment *, UDFContext *, UDFValue *);
+int CL_SlotDefaultP (Environment *, Defclass *, const char *);
 
 #endif /* _H_classexm */

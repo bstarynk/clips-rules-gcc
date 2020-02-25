@@ -82,35 +82,29 @@
 
 #define _H_iofun
 
-   void                           CL_IOFunctionDefinitions(Environment *);
+void CL_IOFunctionDefinitions (Environment *);
 #if IO_FUNCTIONS
-   bool                           CL_SetFullCRLF(Environment *,bool);
-   void                           CL_PrintoutFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_PrintFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_PrintlnFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_ReadFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_OpenFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_CloseFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_FlushFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_RewindFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_TellFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_SeekFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_GetCharFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_UngetCharFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_PutCharFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_ReadlineFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_Fo_rmatFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_RemoveFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_ChdirFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_RenameFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_SetLocaleFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_ReadNumberFunction(Environment *,UDFContext *,UDFValue *);
+bool CL_SetFullCRLF (Environment *, bool);
+void CL_PrintoutFunction (Environment *, UDFContext *, UDFValue *);
+void CL_PrintFunction (Environment *, UDFContext *, UDFValue *);
+void CL_PrintlnFunction (Environment *, UDFContext *, UDFValue *);
+void CL_ReadFunction (Environment *, UDFContext *, UDFValue *);
+void CL_OpenFunction (Environment *, UDFContext *, UDFValue *);
+void CL_CloseFunction (Environment *, UDFContext *, UDFValue *);
+void CL_FlushFunction (Environment *, UDFContext *, UDFValue *);
+void CL_RewindFunction (Environment *, UDFContext *, UDFValue *);
+void CL_TellFunction (Environment *, UDFContext *, UDFValue *);
+void CL_SeekFunction (Environment *, UDFContext *, UDFValue *);
+void CL_GetCharFunction (Environment *, UDFContext *, UDFValue *);
+void CL_UngetCharFunction (Environment *, UDFContext *, UDFValue *);
+void CL_PutCharFunction (Environment *, UDFContext *, UDFValue *);
+void CL_ReadlineFunction (Environment *, UDFContext *, UDFValue *);
+void CL_Fo_rmatFunction (Environment *, UDFContext *, UDFValue *);
+void CL_RemoveFunction (Environment *, UDFContext *, UDFValue *);
+void CL_ChdirFunction (Environment *, UDFContext *, UDFValue *);
+void CL_RenameFunction (Environment *, UDFContext *, UDFValue *);
+void CL_SetLocaleFunction (Environment *, UDFContext *, UDFValue *);
+void CL_ReadNumberFunction (Environment *, UDFContext *, UDFValue *);
 #endif
 
 #endif /* _H_iofun */
-
-
-
-
-
-

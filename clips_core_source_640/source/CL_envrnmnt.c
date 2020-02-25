@@ -129,129 +129,138 @@
 /* CL_AllocateEnvironmentData: Allocates environment data */
 /*    for the specified environment data record.       */
 /*******************************************************/
-bool CL_AllocateEnvironmentData(
-  Environment *theEnvironment,
-  unsigned position,
-  size_t size,
-  EnvironmentCleanupFunction *cleanupFunction)
-  {
+bool
+CL_AllocateEnvironmentData (Environment * theEnvironment,
+			    unsigned position,
+			    size_t size,
+			    EnvironmentCleanupFunction * cleanupFunction)
+{
    /*================================================================*/
-   /* Check to see if the data position exceeds the maximum allowed. */
+  /* Check to see if the data position exceeds the maximum allowed. */
    /*================================================================*/
 
-   if (position >= MAXIMUM_ENVIRONMENT_POSITIONS)
-     {
-      printf("\n[ENVRNMNT2] Environment data position %d exceeds the maximum allowed.\n",position);
+  if (position >= MAXIMUM_ENVIRONMENT_POSITIONS)
+    {
+      printf
+	("\n[ENVRNMNT2] Environment data position %d exceeds the maximum allowed.\n",
+	 position);
       return false;
-     }
+    }
 
    /*============================================================*/
-   /* Check if the environment data has already been registered. */
+  /* Check if the environment data has already been registered. */
    /*============================================================*/
 
-   if (theEnvironment->theData[position] != NULL)
-     {
-      printf("\n[ENVRNMNT3] Environment data position %d already allocated.\n",position);
+  if (theEnvironment->theData[position] != NULL)
+    {
+      printf
+	("\n[ENVRNMNT3] Environment data position %d already allocated.\n",
+	 position);
       return false;
-     }
+    }
 
    /*====================*/
-   /* Allocate the data. */
+  /* Allocate the data. */
    /*====================*/
 
-   theEnvironment->theData[position] = malloc(size);
-   if (theEnvironment->theData[position] == NULL)
-     {
-      printf("\n[ENVRNMNT4] Environment data position %d could not be allocated.\n",position);
+  theEnvironment->theData[position] = malloc (size);
+  if (theEnvironment->theData[position] == NULL)
+    {
+      printf
+	("\n[ENVRNMNT4] Environment data position %d could not be allocated.\n",
+	 position);
       return false;
-     }
+    }
 
-   memset(theEnvironment->theData[position],0,size);
+  memset (theEnvironment->theData[position], 0, size);
 
    /*=============================*/
-   /* Store the cleanup function. */
+  /* Store the cleanup function. */
    /*=============================*/
 
-   theEnvironment->cleanupFunctions[position] = cleanupFunction;
+  theEnvironment->cleanupFunctions[position] = cleanupFunction;
 
    /*===============================*/
-   /* Data successfully registered. */
+  /* Data successfully registered. */
    /*===============================*/
 
-   return true;
-  }
+  return true;
+}
 
 /**********************************************/
 /* CL_GetEnvironmentContext: Returns the context */
 /*   of the specified environment.            */
 /**********************************************/
-void *CL_GetEnvironmentContext(
-  Environment *theEnvironment)
-  {
-   return theEnvironment->context;
-  }
+void *
+CL_GetEnvironmentContext (Environment * theEnvironment)
+{
+  return theEnvironment->context;
+}
 
 /*******************************************/
 /* CL_SetEnvironmentContext: Sets the context */
 /*   of the specified environment.         */
 /*******************************************/
-void *CL_SetEnvironmentContext(
-  Environment *theEnvironment,
-  void *theContext)
-  {
-   void *oldContext;
+void *
+CL_SetEnvironmentContext (Environment * theEnvironment, void *theContext)
+{
+  void *oldContext;
 
-   oldContext = theEnvironment->context;
+  oldContext = theEnvironment->context;
 
-   theEnvironment->context = theContext;
+  theEnvironment->context = theContext;
 
-   return oldContext;
-  }
+  return oldContext;
+}
 
 /**************************************************/
 /* CL_AddEnvironmentCleanupFunction: Adds a function */
 /*   to the ListOfCleanupEnvironmentFunctions.    */
 /**************************************************/
-bool CL_AddEnvironmentCleanupFunction(
-  Environment *theEnv,
-  const char *name,
-  EnvironmentCleanupFunction *functionPtr,
-  int priority)
-  {
-   struct environmentCleanupFunction *newPtr, *currentPtr, *lastPtr = NULL;
+bool
+CL_AddEnvironmentCleanupFunction (Environment * theEnv,
+				  const char *name,
+				  EnvironmentCleanupFunction * functionPtr,
+				  int priority)
+{
+  struct environmentCleanupFunction *newPtr, *currentPtr, *lastPtr = NULL;
 
-   newPtr = (struct environmentCleanupFunction *) malloc(sizeof(struct environmentCleanupFunction));
-   if (newPtr == NULL)
-     { return false; }
+  newPtr =
+    (struct environmentCleanupFunction *)
+    malloc (sizeof (struct environmentCleanupFunction));
+  if (newPtr == NULL)
+    {
+      return false;
+    }
 
-   newPtr->name = name;
-   newPtr->func = functionPtr;
-   newPtr->priority = priority;
+  newPtr->name = name;
+  newPtr->func = functionPtr;
+  newPtr->priority = priority;
 
-   if (theEnv->listOfCleanupEnvironmentFunctions == NULL)
-     {
+  if (theEnv->listOfCleanupEnvironmentFunctions == NULL)
+    {
       newPtr->next = NULL;
       theEnv->listOfCleanupEnvironmentFunctions = newPtr;
       return true;
-     }
+    }
 
-   currentPtr = theEnv->listOfCleanupEnvironmentFunctions;
-   while ((currentPtr != NULL) ? (priority < currentPtr->priority) : false)
-     {
+  currentPtr = theEnv->listOfCleanupEnvironmentFunctions;
+  while ((currentPtr != NULL) ? (priority < currentPtr->priority) : false)
+    {
       lastPtr = currentPtr;
       currentPtr = currentPtr->next;
-     }
+    }
 
-   if (lastPtr == NULL)
-     {
+  if (lastPtr == NULL)
+    {
       newPtr->next = theEnv->listOfCleanupEnvironmentFunctions;
       theEnv->listOfCleanupEnvironmentFunctions = newPtr;
-     }
-   else
-     {
+    }
+  else
+    {
       newPtr->next = currentPtr;
       lastPtr->next = newPtr;
-     }
+    }
 
-   return true;
-  }
+  return true;
+}

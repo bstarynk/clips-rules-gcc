@@ -49,9 +49,10 @@
 
 #include "tmpltdef.h"
 
-   void                           CL_DeftemplateCompilerSetup(Environment *);
-   void                           CL_DeftemplateCModuleReference(Environment *,FILE *,unsigned long,unsigned int,unsigned int);
-   void                           CL_DeftemplateCConstructReference(Environment *,FILE *,Deftemplate *,
-                                                                 unsigned int,unsigned int);
+void CL_DeftemplateCompilerSetup (Environment *);
+void CL_DeftemplateCModuleReference (Environment *, FILE *, unsigned long,
+				     unsigned int, unsigned int);
+void CL_DeftemplateCConstructReference (Environment *, FILE *, Deftemplate *,
+					unsigned int, unsigned int);
 
 #endif /* _H_tmpltcmp */

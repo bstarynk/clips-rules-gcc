@@ -47,12 +47,9 @@
 #include "entities.h"
 #include "dffnxfun.h"
 
-   void                           CL_CallDeffunction(Environment *,Deffunction *,Expression *,UDFValue *);
+void CL_CallDeffunction (Environment *, Deffunction *, Expression *,
+			 UDFValue *);
 
 #endif /* DEFFUNCTION_CONSTRUCT */
 
 #endif /* _H_dffnxexe */
-
-
-
-

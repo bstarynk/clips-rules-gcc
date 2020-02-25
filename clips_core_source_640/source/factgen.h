@@ -46,12 +46,12 @@
 /*   retrieving a variable from the fact pattern network. */
 /**********************************************************/
 struct factGetVarPN1Call
-  {
-   unsigned int factAddress : 1;
-   unsigned int allFields : 1;
-   unsigned short whichField;
-   unsigned short whichSlot;
-  };
+{
+  unsigned int factAddress:1;
+  unsigned int allFields:1;
+  unsigned short whichField;
+  unsigned short whichSlot;
+};
 
 /***********************************************************/
 /* factGetVarPN2Call: This structure is used to store the  */
@@ -62,21 +62,21 @@ struct factGetVarPN1Call
 /*   directly to retrieve the value from the fact array).  */
 /***********************************************************/
 struct factGetVarPN2Call
-  {
-   unsigned short whichSlot;
-  };
+{
+  unsigned short whichSlot;
+};
 
 /**********************************************************/
 /* factGetVarPN3Call:  */
 /**********************************************************/
 struct factGetVarPN3Call
-  {
-   unsigned int fromBeginning : 1;
-   unsigned int fromEnd : 1;
-   unsigned short beginOffset;
-   unsigned short endOffset;
-   unsigned short whichSlot;
-  };
+{
+  unsigned int fromBeginning:1;
+  unsigned int fromEnd:1;
+  unsigned short beginOffset;
+  unsigned short endOffset;
+  unsigned short whichSlot;
+};
 
 /**************************************************************/
 /* factConstantPN1Call: Used for testing for a constant value */
@@ -84,10 +84,10 @@ struct factGetVarPN3Call
 /*   single field slot to a constant.                         */
 /**************************************************************/
 struct factConstantPN1Call
-  {
-   unsigned int testForEquality : 1;
-   unsigned short whichSlot;
-  };
+{
+  unsigned int testForEquality:1;
+  unsigned short whichSlot;
+};
 
 /******************************************************************/
 /* factConstantPN2Call: Used for testing for a constant value in  */
@@ -97,12 +97,12 @@ struct factConstantPN1Call
 /*   multifield before and none after).                           */
 /******************************************************************/
 struct factConstantPN2Call
-  {
-   unsigned int testForEquality : 1;
-   unsigned int fromBeginning : 1;
-   unsigned short offset;
-   unsigned short whichSlot;
-  };
+{
+  unsigned int testForEquality:1;
+  unsigned int fromBeginning:1;
+  unsigned short offset;
+  unsigned short whichSlot;
+};
 
 /**********************************************************/
 /* factGetVarJN1Call: This structure is used to store the */
@@ -110,90 +110,90 @@ struct factConstantPN2Call
 /*   retrieving a fact variable from the join network.    */
 /**********************************************************/
 struct factGetVarJN1Call
-  {
-   unsigned int factAddress : 1;
-   unsigned int allFields : 1;
-   unsigned int lhs : 1;
-   unsigned int rhs : 1;
-   unsigned short whichPattern;
-   unsigned short whichSlot;
-   unsigned short whichField;
-  };
+{
+  unsigned int factAddress:1;
+  unsigned int allFields:1;
+  unsigned int lhs:1;
+  unsigned int rhs:1;
+  unsigned short whichPattern;
+  unsigned short whichSlot;
+  unsigned short whichField;
+};
 
 /**********************************************************/
 /* factGetVarJN2Call:  */
 /**********************************************************/
 struct factGetVarJN2Call
-  {
-   unsigned int lhs : 1;
-   unsigned int rhs : 1;
-   unsigned short whichPattern;
-   unsigned short whichSlot;
-  };
+{
+  unsigned int lhs:1;
+  unsigned int rhs:1;
+  unsigned short whichPattern;
+  unsigned short whichSlot;
+};
 
 /**********************************************************/
 /* factGetVarJN3Call:  */
 /**********************************************************/
 struct factGetVarJN3Call
-  {
-   unsigned int fromBeginning : 1;
-   unsigned int fromEnd : 1;
-   unsigned int lhs : 1;
-   unsigned int rhs : 1;
-   unsigned short beginOffset;
-   unsigned short endOffset;
-   unsigned short whichPattern;
-   unsigned short whichSlot;
-  };
+{
+  unsigned int fromBeginning:1;
+  unsigned int fromEnd:1;
+  unsigned int lhs:1;
+  unsigned int rhs:1;
+  unsigned short beginOffset;
+  unsigned short endOffset;
+  unsigned short whichPattern;
+  unsigned short whichSlot;
+};
 
 /**********************************************************/
 /* factCompVarsPN1Call:  */
 /**********************************************************/
 struct factCompVarsPN1Call
-  {
-   unsigned int pass : 1;
-   unsigned int fail : 1;
-   unsigned short field1;
-   unsigned short field2;
-  };
+{
+  unsigned int pass:1;
+  unsigned int fail:1;
+  unsigned short field1;
+  unsigned short field2;
+};
 
 /**********************************************************/
 /* factCompVarsJN1Call:  */
 /**********************************************************/
 struct factCompVarsJN1Call
-  {
-   unsigned int pass : 1;
-   unsigned int fail : 1;
-   unsigned int p1lhs: 1;
-   unsigned int p1rhs: 1;
-   unsigned int p2lhs: 1;
-   unsigned int p2rhs: 1;
-   unsigned short pattern1;
-   unsigned short pattern2;
-   unsigned short slot1;
-   unsigned short slot2;
-  };
+{
+  unsigned int pass:1;
+  unsigned int fail:1;
+  unsigned int p1lhs:1;
+  unsigned int p1rhs:1;
+  unsigned int p2lhs:1;
+  unsigned int p2rhs:1;
+  unsigned short pattern1;
+  unsigned short pattern2;
+  unsigned short slot1;
+  unsigned short slot2;
+};
 
 /**********************************************************/
 /* factCompVarsJN2Call:  */
 /**********************************************************/
 struct factCompVarsJN2Call
-  {
-   unsigned int pass : 1;
-   unsigned int fail : 1;
-   unsigned int p1lhs: 1;
-   unsigned int p1rhs: 1;
-   unsigned int p2lhs: 1;
-   unsigned int p2rhs: 1;
-   unsigned int fromBeginning1 : 1;
-   unsigned int fromBeginning2 : 1;
-   unsigned short offset1;
-   unsigned short offset2;
-   unsigned short pattern1;
-   unsigned short pattern2;
-   unsigned short slot1;
-   unsigned short slot2;
-  };
+{
+  unsigned int pass:1;
+  unsigned int fail:1;
+  unsigned int p1lhs:1;
+  unsigned int p1rhs:1;
+  unsigned int p2lhs:1;
+  unsigned int p2rhs:1;
+  unsigned int fromBeginning1:1;
+  unsigned int fromBeginning2:1;
+  unsigned short offset1;
+  unsigned short offset2;
+  unsigned short pattern1;
+  unsigned short pattern2;
+  unsigned short slot1;
+  unsigned short slot2;
+};
 
 /**********************************************************/
 /* factCheckLengthPNCall: This structure is used to store */
@@ -203,27 +203,31 @@ struct factCompVarsJN2Call
 /**********************************************************/
 
 struct factCheckLengthPNCall
-  {
-    unsigned int exactly : 1;
-    unsigned short minLength;
-    unsigned short whichSlot;
-  };
+{
+  unsigned int exactly:1;
+  unsigned short minLength;
+  unsigned short whichSlot;
+};
 
 /****************************************/
 /* GLOBAL EXTERNAL FUNCTION DEFINITIONS */
 /****************************************/
 
-   void                       CL_InitializeFactReteFunctions(Environment *);
-   struct expr               *CL_FactPNVariableComparison(Environment *,struct lhsParseNode *,
-                                                              struct lhsParseNode *);
-   struct expr               *CL_FactJNVariableComparison(Environment *,struct lhsParseNode *,
-                                                              struct lhsParseNode *,bool);
-   void                       CL_FactReplaceGetvar(Environment *,struct expr *,struct lhsParseNode *,int);
-   void                       CL_FactReplaceGetfield(Environment *,struct expr *,struct lhsParseNode *);
-   struct expr               *CL_FactGenPNConstant(Environment *,struct lhsParseNode *);
-   struct expr               *CL_FactGenGetfield(Environment *,struct lhsParseNode *);
-   struct expr               *CL_FactGenGetvar(Environment *,struct lhsParseNode *,int);
-   struct expr               *CL_FactGenCheckLength(Environment *,struct lhsParseNode *);
-   struct expr               *CL_FactGenCheckZeroLength(Environment *,unsigned short);
+void CL_InitializeFactReteFunctions (Environment *);
+struct expr *CL_FactPNVariableComparison (Environment *,
+					  struct lhsParseNode *,
+					  struct lhsParseNode *);
+struct expr *CL_FactJNVariableComparison (Environment *,
+					  struct lhsParseNode *,
+					  struct lhsParseNode *, bool);
+void CL_FactReplaceGetvar (Environment *, struct expr *,
+			   struct lhsParseNode *, int);
+void CL_FactReplaceGetfield (Environment *, struct expr *,
+			     struct lhsParseNode *);
+struct expr *CL_FactGenPNConstant (Environment *, struct lhsParseNode *);
+struct expr *CL_FactGenGetfield (Environment *, struct lhsParseNode *);
+struct expr *CL_FactGenGetvar (Environment *, struct lhsParseNode *, int);
+struct expr *CL_FactGenCheckLength (Environment *, struct lhsParseNode *);
+struct expr *CL_FactGenCheckZeroLength (Environment *, unsigned short);
 
 #endif /* _H_factgen */

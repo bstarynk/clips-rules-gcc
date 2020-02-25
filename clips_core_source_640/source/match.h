@@ -50,63 +50,63 @@ typedef struct multifieldMarker MultifieldMarker;
 /* patternMatch */
 /****************/
 struct patternMatch
-  {
-   PatternMatch *next;
-   PartialMatch *theMatch;
-   PatternNodeHeader *matchingPattern;
-  };
+{
+  PatternMatch *next;
+  PartialMatch *theMatch;
+  PatternNodeHeader *matchingPattern;
+};
 
 /****************/
 /* genericMatch */
 /****************/
 struct genericMatch
+{
+  union
   {
-   union
-     {
-      void *theValue;
-      AlphaMatch *theMatch;
-     } gm;
-  };
+    void *theValue;
+    AlphaMatch *theMatch;
+  } gm;
+};
 
 /****************/
 /* partialMatch */
 /****************/
 struct partialMatch
-  {
-   unsigned int betaMemory  :  1;
-   unsigned int busy        :  1;
-   unsigned int rhsMemory   :  1;
-   unsigned int deleting    :  1;
-   unsigned short bcount;
-   unsigned long hashValue;
-   void *owner;
-   void *marker;
-   void *dependents;
-   PartialMatch *nextInMemory;
-   PartialMatch *prevInMemory;
-   PartialMatch *children;
-   PartialMatch *rightParent;
-   PartialMatch *nextRightChild;
-   PartialMatch *prevRightChild;
-   PartialMatch *leftParent;
-   PartialMatch *nextLeftChild;
-   PartialMatch *prevLeftChild;
-   PartialMatch *blockList;
-   PartialMatch *nextBlocked;
-   PartialMatch *prevBlocked;
-   GenericMatch binds[1];
-  };
+{
+  unsigned int betaMemory:1;
+  unsigned int busy:1;
+  unsigned int rhsMemory:1;
+  unsigned int deleting:1;
+  unsigned short bcount;
+  unsigned long hashValue;
+  void *owner;
+  void *marker;
+  void *dependents;
+  PartialMatch *nextInMemory;
+  PartialMatch *prevInMemory;
+  PartialMatch *children;
+  PartialMatch *rightParent;
+  PartialMatch *nextRightChild;
+  PartialMatch *prevRightChild;
+  PartialMatch *leftParent;
+  PartialMatch *nextLeftChild;
+  PartialMatch *prevLeftChild;
+  PartialMatch *blockList;
+  PartialMatch *nextBlocked;
+  PartialMatch *prevBlocked;
+  GenericMatch binds[1];
+};
 
 /**************/
 /* alphaMatch */
 /**************/
 struct alphaMatch
-  {
-   PatternEntity *matchingItem;
-   MultifieldMarker *markers;
-   AlphaMatch *next;
-   unsigned long bucket;
-  };
+{
+  PatternEntity *matchingItem;
+  MultifieldMarker *markers;
+  AlphaMatch *next;
+  unsigned long bucket;
+};
 
 /******************************************************/
 /* multifieldMarker: Used in the pattern matching     */
@@ -115,17 +115,17 @@ struct alphaMatch
 /*    restriction may span zero or more fields.       */
 /******************************************************/
 struct multifieldMarker
+{
+  unsigned short whichField;
+  union
   {
-   unsigned short whichField;
-   union
-     {
-      void *whichSlot;
-      unsigned short whichSlotNumber;
-     } where;
-    size_t startPosition;
-    size_t range;
-    MultifieldMarker *next;
-   };
+    void *whichSlot;
+    unsigned short whichSlotNumber;
+  } where;
+  size_t startPosition;
+  size_t range;
+  MultifieldMarker *next;
+};
 
 #define get_nth_pm_value(thePM,thePos) (thePM->binds[thePos].gm.theValue)
 #define get_nth_pm_match(thePM,thePos) (thePM->binds[thePos].gm.theMatch)
@@ -134,9 +134,3 @@ struct multifieldMarker
 #define set_nth_pm_match(thePM,thePos,theVal) (thePM->binds[thePos].gm.theMatch = theVal)
 
 #endif /* _H_match */
-
-
-
-
-
-

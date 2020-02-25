@@ -72,15 +72,15 @@ typedef struct batchEntry CL_BatchEntry;
 /***************/
 
 struct batchEntry
-  {
-   int batchType;
-   FILE *fileSource;
-   const char *logicalSource;
-   const char *theString;
-   const char *fileName;
-   long lineNumber;
-   CL_BatchEntry *next;
-  };
+{
+  int batchType;
+  FILE *fileSource;
+  const char *logicalSource;
+  const char *theString;
+  const char *fileName;
+  long lineNumber;
+  CL_BatchEntry *next;
+};
 
 /***************/
 /* DEFINITIONS */
@@ -94,40 +94,34 @@ struct batchEntry
 #define FILECOM_DATA 14
 
 struct fileCommandData
-  {
+{
 #if DEBUGGING_FUNCTIONS
-   FILE *DribbleFP;
-   char *DribbleBuffer;
-   size_t DribbleCurrentPosition;
-   size_t DribbleMaximumPosition;
-   int (*DribbleStatusFunction)(Environment *,bool);
+  FILE *DribbleFP;
+  char *DribbleBuffer;
+  size_t DribbleCurrentPosition;
+  size_t DribbleMaximumPosition;
+  int (*DribbleStatusFunction) (Environment *, bool);
 #endif
-   int CL_BatchType;
-   FILE *CL_BatchFileSource;
-   const char *CL_BatchLogicalSource;
-   char *CL_BatchBuffer;
-   size_t CL_BatchCurrentPosition;
-   size_t CL_BatchMaximumPosition;
-   CL_BatchEntry *TopOf_BatchList;
-   CL_BatchEntry *BottomOf_BatchList;
-   char *batchPriorParsingFile;
-  };
+  int CL_BatchType;
+  FILE *CL_BatchFileSource;
+  const char *CL_BatchLogicalSource;
+  char *CL_BatchBuffer;
+  size_t CL_BatchCurrentPosition;
+  size_t CL_BatchMaximumPosition;
+  CL_BatchEntry *TopOf_BatchList;
+  CL_BatchEntry *BottomOf_BatchList;
+  char *batchPriorParsingFile;
+};
 
 #define FileCommandData(theEnv) ((struct fileCommandData *) GetEnvironmentData(theEnv,FILECOM_DATA))
 
-   void                           CL_FileCommandDefinitions(Environment *);
-   void                           CL_BatchCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_BatchStarCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_LoadCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_LoadStarCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_SaveCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_DribbleOnCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_DribbleOffCommand(Environment *,UDFContext *,UDFValue *);
+void CL_FileCommandDefinitions (Environment *);
+void CL_BatchCommand (Environment *, UDFContext *, UDFValue *);
+void CL_BatchStarCommand (Environment *, UDFContext *, UDFValue *);
+void CL_LoadCommand (Environment *, UDFContext *, UDFValue *);
+void CL_LoadStarCommand (Environment *, UDFContext *, UDFValue *);
+void CL_SaveCommand (Environment *, UDFContext *, UDFValue *);
+void CL_DribbleOnCommand (Environment *, UDFContext *, UDFValue *);
+void CL_DribbleOffCommand (Environment *, UDFContext *, UDFValue *);
 
 #endif /* _H_filecom */
-
-
-
-
-
-

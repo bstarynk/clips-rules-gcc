@@ -52,17 +52,13 @@
 #include "factbld.h"
 #include "factmngr.h"
 
-   void                           CL_FactPatternMatch(Environment *,Fact *,
-                                                   struct factPatternNode *,size_t,size_t,
-                                                   struct multifieldMarker *,
-                                                   struct multifieldMarker *);
-   void                           MarkFactPatternForCL_Incremental_Reset(Environment *,struct patternNodeHeader *,bool);
-   void                           CL_FactsCL_Incremental_Reset(Environment *);
+void CL_FactPatternMatch (Environment *, Fact *,
+			  struct factPatternNode *, size_t, size_t,
+			  struct multifieldMarker *,
+			  struct multifieldMarker *);
+void MarkFactPatternForCL_Incremental_Reset (Environment *,
+					     struct patternNodeHeader *,
+					     bool);
+void CL_FactsCL_Incremental_Reset (Environment *);
 
 #endif /* _H_factmch */
-
-
-
-
-
-

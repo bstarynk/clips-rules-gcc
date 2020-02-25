@@ -57,16 +57,15 @@
 #include "dffctdef.h"
 #include "evaluatn.h"
 
-   void                           CL_DeffactsBasicCommands(Environment *);
-   void                           CL_UndeffactsCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           CL_Undeffacts(Deffacts *,Environment *);
-   void                           CL_GetDeffactsListFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_GetDeffactsList(Environment *,CLIPSValue *,Defmodule *);
-   void                           CL_DeffactsModuleFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_PPDeffactsCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           CL_PPDeffacts(Environment *,const char *,const char *);
-   void                           CL_ListDeffactsCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_ListDeffacts(Environment *,const char *,Defmodule *);
+void CL_DeffactsBasicCommands (Environment *);
+void CL_UndeffactsCommand (Environment *, UDFContext *, UDFValue *);
+bool CL_Undeffacts (Deffacts *, Environment *);
+void CL_GetDeffactsListFunction (Environment *, UDFContext *, UDFValue *);
+void CL_GetDeffactsList (Environment *, CLIPSValue *, Defmodule *);
+void CL_DeffactsModuleFunction (Environment *, UDFContext *, UDFValue *);
+void CL_PPDeffactsCommand (Environment *, UDFContext *, UDFValue *);
+bool CL_PPDeffacts (Environment *, const char *, const char *);
+void CL_ListDeffactsCommand (Environment *, UDFContext *, UDFValue *);
+void CL_ListDeffacts (Environment *, const char *, Defmodule *);
 
 #endif /* _H_dffctbsc */
-

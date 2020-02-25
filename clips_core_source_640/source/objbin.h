@@ -45,35 +45,32 @@
 #define OBJECTBIN_DATA 33
 
 struct objectBinaryData
-  {
-   Defclass *DefclassArray;
-   unsigned long ModuleCount;
-   unsigned long ClassCount;
-   unsigned long LinkCount;
-   unsigned long SlotCount;
-   unsigned long SlotNameCount;
-   unsigned long TemplateSlotCount;
-   unsigned long SlotNameMapCount;
-   unsigned long HandlerCount;
-   DEFCLASS_MODULE *ModuleArray;
-   Defclass **LinkArray;
-   SlotDescriptor *SlotArray;
-   SlotDescriptor **TmpslotArray;
-   SLOT_NAME *SlotNameArray;
-   unsigned *MapslotArray;
-   DefmessageHandler *HandlerArray;
-   unsigned *MaphandlerArray;
-  };
+{
+  Defclass *DefclassArray;
+  unsigned long ModuleCount;
+  unsigned long ClassCount;
+  unsigned long LinkCount;
+  unsigned long SlotCount;
+  unsigned long SlotNameCount;
+  unsigned long TemplateSlotCount;
+  unsigned long SlotNameMapCount;
+  unsigned long HandlerCount;
+  DEFCLASS_MODULE *ModuleArray;
+  Defclass **LinkArray;
+  SlotDescriptor *SlotArray;
+  SlotDescriptor **TmpslotArray;
+  SLOT_NAME *SlotNameArray;
+  unsigned *MapslotArray;
+  DefmessageHandler *HandlerArray;
+  unsigned *MaphandlerArray;
+};
 
 #define ObjectBinaryData(theEnv) ((struct objectBinaryData *) GetEnvironmentData(theEnv,OBJECTBIN_DATA))
 
 #define DefclassPointer(i) (((i) == ULONG_MAX) ? NULL : &ObjectBinaryData(theEnv)->DefclassArray[i])
 #define DefclassIndex(cls) (((cls) == NULL) ? ULONG_MAX : ((ConstructHeader *) cls)->bsaveID)
 
-   void                    SetupObjects_Bload(Environment *);
-   void                   *CL_Bload_DefclassModuleReference(Environment *,unsigned long);
+void SetupObjects_Bload (Environment *);
+void *CL_Bload_DefclassModuleReference (Environment *, unsigned long);
 
 #endif /* _H_objbin */
-
-
-

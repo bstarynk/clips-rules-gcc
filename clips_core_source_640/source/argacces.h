@@ -55,23 +55,19 @@
 #include "evaluatn.h"
 #include "moduldef.h"
 
-   const char                    *CL_GetLogicalName(UDFContext *,const char *);
-   const char                    *CL_GetFileName(UDFContext *);
-   const char                    *CL_GetConstructName(UDFContext *,const char *,const char *);
-   void                           CL_ExpectedCountError(Environment *,const char *,int,unsigned int);
-   void                           CL_OpenErrorMessage(Environment *,const char *,const char *);
-   bool                           CL_CheckFunctionArgCount(Environment *,struct functionDefinition *,int);
-   void                           CL_ExpectedTypeError0(Environment *,const char *,unsigned int);
-   void                           CL_ExpectedTypeError1(Environment *,const char *,unsigned int,const char *);
-   void                           CL_ExpectedTypeError2(Environment *,const char *,unsigned int);
-   Defmodule                     *CL_GetModuleName(UDFContext *,unsigned int,bool *);
-   void                          *CL_GetFactOrInstanceArgument(UDFContext *,unsigned int,UDFValue *);
-   void                           CL_IllegalLogicalNameMessage(Environment *,const char *);
+const char *CL_GetLogicalName (UDFContext *, const char *);
+const char *CL_GetFileName (UDFContext *);
+const char *CL_GetConstructName (UDFContext *, const char *, const char *);
+void CL_ExpectedCountError (Environment *, const char *, int, unsigned int);
+void CL_OpenErrorMessage (Environment *, const char *, const char *);
+bool CL_CheckFunctionArgCount (Environment *, struct functionDefinition *,
+			       int);
+void CL_ExpectedTypeError0 (Environment *, const char *, unsigned int);
+void CL_ExpectedTypeError1 (Environment *, const char *, unsigned int,
+			    const char *);
+void CL_ExpectedTypeError2 (Environment *, const char *, unsigned int);
+Defmodule *CL_GetModuleName (UDFContext *, unsigned int, bool *);
+void *CL_GetFactOrInstanceArgument (UDFContext *, unsigned int, UDFValue *);
+void CL_IllegalLogicalNameMessage (Environment *, const char *);
 
 #endif
-
-
-
-
-
-

@@ -41,44 +41,40 @@
 #if (! RUN_TIME)
 
 struct bsaveDefmodule
-  {
-   struct bsaveConstructHeader header;
-   unsigned long importList;
-   unsigned long exportList;
-   unsigned long bsaveID;
-  };
+{
+  struct bsaveConstructHeader header;
+  unsigned long importList;
+  unsigned long exportList;
+  unsigned long bsaveID;
+};
 
 struct bsaveDefmoduleItemHeader
-  {
-   unsigned long theModule;
-   unsigned long firstItem;
-   unsigned long lastItem;
-  };
+{
+  unsigned long theModule;
+  unsigned long firstItem;
+  unsigned long lastItem;
+};
 
 struct bsavePortItem
-  {
-   unsigned long moduleName;
-   unsigned long constructType;
-   unsigned long constructName;
-   unsigned long next;
-  };
+{
+  unsigned long moduleName;
+  unsigned long constructType;
+  unsigned long constructName;
+  unsigned long next;
+};
 
 #define ModulePointer(i) ((Defmodule *) (&DefmoduleData(theEnv)->DefmoduleArray[i]))
 
-   void                           CL_DefmoduleBinarySetup(Environment *);
-   void                           CL_UpdateDefmoduleItemHeader
-                                                 (Environment *,struct bsaveDefmoduleItemHeader *,
-                                                  struct defmoduleItemHeader *,size_t,void *);
+void CL_DefmoduleBinarySetup (Environment *);
+void CL_UpdateDefmoduleItemHeader
+  (Environment *, struct bsaveDefmoduleItemHeader *,
+   struct defmoduleItemHeader *, size_t, void *);
 
 #if BLOAD_AND_BSAVE
-   void                           CL_Assign_BsaveDefmdlItemHdrVals
-                                                 (struct bsaveDefmoduleItemHeader *,
-                                                  struct defmoduleItemHeader *);
+void CL_Assign_BsaveDefmdlItemHdrVals
+  (struct bsaveDefmoduleItemHeader *, struct defmoduleItemHeader *);
 #endif
 
 #endif /* RUN_TIME */
 
 #endif /* _H_modulbin */
-
-
-

@@ -54,19 +54,15 @@
 #include "object.h"
 
 typedef struct tempSlotLink
-  {
-   SlotDescriptor *desc;
-   struct tempSlotLink *nxt;
-  } TEMP_SLOT_LINK;
+{
+  SlotDescriptor *desc;
+  struct tempSlotLink *nxt;
+} TEMP_SLOT_LINK;
 
-   TEMP_SLOT_LINK                *CL_ParseSlot(Environment *,const char *,const char *,TEMP_SLOT_LINK *,PACKED_CLASS_LINKS *,bool);
-   void                           CL_DeleteSlots(Environment *,TEMP_SLOT_LINK *);
+TEMP_SLOT_LINK *CL_ParseSlot (Environment *, const char *, const char *,
+			      TEMP_SLOT_LINK *, PACKED_CLASS_LINKS *, bool);
+void CL_DeleteSlots (Environment *, TEMP_SLOT_LINK *);
 
 #endif
 
 #endif
-
-
-
-
-

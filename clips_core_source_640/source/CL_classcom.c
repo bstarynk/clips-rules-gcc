@@ -87,9 +87,9 @@
 /***************************************/
 
 #if (! BLOAD_ONLY) && (! RUN_TIME) && DEBUGGING_FUNCTIONS
-   static void                    CL_SaveDefclass(Environment *,ConstructHeader *,void *);
+static void CL_SaveDefclass (Environment *, ConstructHeader *, void *);
 #endif
-   static const char             *CL_GetClassDefaultsModeName(unsigned short);
+static const char *CL_GetClassDefaultsModeName (unsigned short);
 
 /* =========================================
    *****************************************
@@ -106,42 +106,51 @@
   SIDE EFFECTS : None
   NOTES        : None
  ******************************************************************/
-Defclass *CL_FindDefclass( // TBD Needs to look in imported
-  Environment *theEnv,
-  const char *classAndModuleName)
-  {
-   CLIPSLexeme *classSymbol = NULL;
-   Defclass *cls;
-   Defmodule *theModule = NULL;
-   const char *className;
+Defclass *
+CL_FindDefclass (		// TBD Needs to look in imported
+		  Environment * theEnv, const char *classAndModuleName)
+{
+  CLIPSLexeme *classSymbol = NULL;
+  Defclass *cls;
+  Defmodule *theModule = NULL;
+  const char *className;
 
-   CL_SaveCurrentModule(theEnv);
+  CL_SaveCurrentModule (theEnv);
 
-   className = CL_ExtractModuleAndConstructName(theEnv,classAndModuleName);
-   if (className != NULL)
-     {
-      classSymbol = CL_FindSymbolHN(theEnv,CL_ExtractModuleAndConstructName(theEnv,classAndModuleName),SYMBOL_BIT);
-      theModule = CL_GetCurrentModule(theEnv);
-     }
+  className = CL_ExtractModuleAndConstructName (theEnv, classAndModuleName);
+  if (className != NULL)
+    {
+      classSymbol =
+	CL_FindSymbolHN (theEnv,
+			 CL_ExtractModuleAndConstructName (theEnv,
+							   classAndModuleName),
+			 SYMBOL_BIT);
+      theModule = CL_GetCurrentModule (theEnv);
+    }
 
-   CL_RestoreCurrentModule(theEnv);
+  CL_RestoreCurrentModule (theEnv);
 
-   if (classSymbol == NULL)
-     { return NULL; }
+  if (classSymbol == NULL)
+    {
+      return NULL;
+    }
 
-   cls = DefclassData(theEnv)->ClassTable[CL_HashClass(classSymbol)];
-   while (cls != NULL)
-     {
+  cls = DefclassData (theEnv)->ClassTable[CL_HashClass (classSymbol)];
+  while (cls != NULL)
+    {
       if (cls->header.name == classSymbol)
-        {
-         if (cls->system || (cls->header.whichModule->theModule == theModule))
-           { return cls->installed ? cls : NULL; }
-        }
+	{
+	  if (cls->system
+	      || (cls->header.whichModule->theModule == theModule))
+	    {
+	      return cls->installed ? cls : NULL;
+	    }
+	}
       cls = cls->nxtHash;
-     }
+    }
 
-   return NULL;
-  }
+  return NULL;
+}
 
 /*******************************************************************
   NAME         : CL_FindDefclassInModule
@@ -152,40 +161,48 @@ Defclass *CL_FindDefclass( // TBD Needs to look in imported
   SIDE EFFECTS : None
   NOTES        : None
  ******************************************************************/
-Defclass *CL_FindDefclassInModule(
-  Environment *theEnv,
-  const char *classAndModuleName)
-  {
-   CLIPSLexeme *classSymbol = NULL;
-   Defclass *cls;
-   Defmodule *theModule = NULL;
-   const char *className;
+Defclass *
+CL_FindDefclassInModule (Environment * theEnv, const char *classAndModuleName)
+{
+  CLIPSLexeme *classSymbol = NULL;
+  Defclass *cls;
+  Defmodule *theModule = NULL;
+  const char *className;
 
-   CL_SaveCurrentModule(theEnv);
-   className = CL_ExtractModuleAndConstructName(theEnv,classAndModuleName);
-   if (className != NULL)
-     {
-      classSymbol = CL_FindSymbolHN(theEnv,CL_ExtractModuleAndConstructName(theEnv,classAndModuleName),SYMBOL_BIT);
-      theModule = CL_GetCurrentModule(theEnv);
-     }
-   CL_RestoreCurrentModule(theEnv);
+  CL_SaveCurrentModule (theEnv);
+  className = CL_ExtractModuleAndConstructName (theEnv, classAndModuleName);
+  if (className != NULL)
+    {
+      classSymbol =
+	CL_FindSymbolHN (theEnv,
+			 CL_ExtractModuleAndConstructName (theEnv,
+							   classAndModuleName),
+			 SYMBOL_BIT);
+      theModule = CL_GetCurrentModule (theEnv);
+    }
+  CL_RestoreCurrentModule (theEnv);
 
-   if (classSymbol == NULL)
-     { return NULL; }
+  if (classSymbol == NULL)
+    {
+      return NULL;
+    }
 
-   cls = DefclassData(theEnv)->ClassTable[CL_HashClass(classSymbol)];
-   while (cls != NULL)
-     {
+  cls = DefclassData (theEnv)->ClassTable[CL_HashClass (classSymbol)];
+  while (cls != NULL)
+    {
       if (cls->header.name == classSymbol)
-        {
-         if (cls->system || (cls->header.whichModule->theModule == theModule))
-           { return cls->installed ? cls : NULL; }
-        }
+	{
+	  if (cls->system
+	      || (cls->header.whichModule->theModule == theModule))
+	    {
+	      return cls->installed ? cls : NULL;
+	    }
+	}
       cls = cls->nxtHash;
-     }
+    }
 
-   return NULL;
-  }
+  return NULL;
+}
 
 /***************************************************
   NAME         : CL_LookupDefclassByMdlOrScope
@@ -199,40 +216,46 @@ Defclass *CL_FindDefclassInModule(
   NOTES        : Assumes no two classes of the same
                  name are ever in the same scope
  ***************************************************/
-Defclass *CL_LookupDefclassByMdlOrScope(
-  Environment *theEnv,
-  const char *classAndModuleName)
-  {
-   Defclass *cls;
-   const char *className;
-   CLIPSLexeme *classSymbol;
-   Defmodule *theModule;
+Defclass *
+CL_LookupDefclassByMdlOrScope (Environment * theEnv,
+			       const char *classAndModuleName)
+{
+  Defclass *cls;
+  const char *className;
+  CLIPSLexeme *classSymbol;
+  Defmodule *theModule;
 
-   if (CL_FindModuleSeparator(classAndModuleName) == 0)
-     { return Lookup_DefclassInScope(theEnv,classAndModuleName); }
+  if (CL_FindModuleSeparator (classAndModuleName) == 0)
+    {
+      return Lookup_DefclassInScope (theEnv, classAndModuleName);
+    }
 
-   CL_SaveCurrentModule(theEnv);
-   className = CL_ExtractModuleAndConstructName(theEnv,classAndModuleName);
-   theModule = CL_GetCurrentModule(theEnv);
-   CL_RestoreCurrentModule(theEnv);
+  CL_SaveCurrentModule (theEnv);
+  className = CL_ExtractModuleAndConstructName (theEnv, classAndModuleName);
+  theModule = CL_GetCurrentModule (theEnv);
+  CL_RestoreCurrentModule (theEnv);
 
-   if (className == NULL)
-     { return NULL; }
+  if (className == NULL)
+    {
+      return NULL;
+    }
 
-   if ((classSymbol = CL_FindSymbolHN(theEnv,className,SYMBOL_BIT)) == NULL)
-     { return NULL; }
+  if ((classSymbol = CL_FindSymbolHN (theEnv, className, SYMBOL_BIT)) == NULL)
+    {
+      return NULL;
+    }
 
-   cls = DefclassData(theEnv)->ClassTable[CL_HashClass(classSymbol)];
-   while (cls != NULL)
-     {
+  cls = DefclassData (theEnv)->ClassTable[CL_HashClass (classSymbol)];
+  while (cls != NULL)
+    {
       if ((cls->header.name == classSymbol) &&
-          (cls->header.whichModule->theModule == theModule))
-        return(cls->installed ? cls : NULL);
+	  (cls->header.whichModule->theModule == theModule))
+	return (cls->installed ? cls : NULL);
       cls = cls->nxtHash;
-     }
+    }
 
-   return NULL;
-  }
+  return NULL;
+}
 
 /****************************************************
   NAME         : Lookup_DefclassInScope
@@ -246,26 +269,28 @@ Defclass *CL_LookupDefclassByMdlOrScope(
   NOTES        : Assumes no two classes of the same
                  name are ever in the same scope
  ****************************************************/
-Defclass *Lookup_DefclassInScope(
-  Environment *theEnv,
-  const char *className)
-  {
-   Defclass *cls;
-   CLIPSLexeme *classSymbol;
+Defclass *
+Lookup_DefclassInScope (Environment * theEnv, const char *className)
+{
+  Defclass *cls;
+  CLIPSLexeme *classSymbol;
 
-   if ((classSymbol = CL_FindSymbolHN(theEnv,className,SYMBOL_BIT)) == NULL)
-     { return NULL; }
+  if ((classSymbol = CL_FindSymbolHN (theEnv, className, SYMBOL_BIT)) == NULL)
+    {
+      return NULL;
+    }
 
-   cls = DefclassData(theEnv)->ClassTable[CL_HashClass(classSymbol)];
-   while (cls != NULL)
-     {
-      if ((cls->header.name == classSymbol) && CL_DefclassInScope(theEnv,cls,NULL))
-        return cls->installed ? cls : NULL;
+  cls = DefclassData (theEnv)->ClassTable[CL_HashClass (classSymbol)];
+  while (cls != NULL)
+    {
+      if ((cls->header.name == classSymbol)
+	  && CL_DefclassInScope (theEnv, cls, NULL))
+	return cls->installed ? cls : NULL;
       cls = cls->nxtHash;
-     }
+    }
 
-   return NULL;
-  }
+  return NULL;
+}
 
 /******************************************************
   NAME         : CL_LookupDefclassAnywhere
@@ -280,29 +305,32 @@ Defclass *Lookup_DefclassInScope(
                  multiple classes of the same name
                  exist as do the other lookup functions
  ******************************************************/
-Defclass *CL_LookupDefclassAnywhere(
-  Environment *theEnv,
-  Defmodule *theModule,
-  const char *className)
-  {
-   Defclass *cls;
-   CLIPSLexeme *classSymbol;
+Defclass *
+CL_LookupDefclassAnywhere (Environment * theEnv,
+			   Defmodule * theModule, const char *className)
+{
+  Defclass *cls;
+  CLIPSLexeme *classSymbol;
 
-   if ((classSymbol = CL_FindSymbolHN(theEnv,className,SYMBOL_BIT)) == NULL)
-     { return NULL; }
+  if ((classSymbol = CL_FindSymbolHN (theEnv, className, SYMBOL_BIT)) == NULL)
+    {
+      return NULL;
+    }
 
-   cls = DefclassData(theEnv)->ClassTable[CL_HashClass(classSymbol)];
-   while (cls != NULL)
-     {
+  cls = DefclassData (theEnv)->ClassTable[CL_HashClass (classSymbol)];
+  while (cls != NULL)
+    {
       if ((cls->header.name == classSymbol) &&
-          ((theModule == NULL) ||
-           (cls->header.whichModule->theModule == theModule)))
-        { return cls->installed ? cls : NULL; }
+	  ((theModule == NULL) ||
+	   (cls->header.whichModule->theModule == theModule)))
+	{
+	  return cls->installed ? cls : NULL;
+	}
       cls = cls->nxtHash;
-     }
+    }
 
-   return NULL;
-  }
+  return NULL;
+}
 
 /***************************************************
   NAME         : CL_DefclassInScope
@@ -316,28 +344,29 @@ Defclass *CL_LookupDefclassAnywhere(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-bool CL_DefclassInScope(
-  Environment *theEnv,
-  Defclass *theDefclass,
-  Defmodule *theModule)
-  {
+bool
+CL_DefclassInScope (Environment * theEnv,
+		    Defclass * theDefclass, Defmodule * theModule)
+{
 #if DEFMODULE_CONSTRUCT
-   unsigned long moduleID;
-   char *scopeMap;
+  unsigned long moduleID;
+  char *scopeMap;
 
-   scopeMap = (char *) theDefclass->scopeMap->contents;
-   if (theModule == NULL)
-     { theModule = CL_GetCurrentModule(theEnv); }
-   moduleID = theModule->header.bsaveID;
+  scopeMap = (char *) theDefclass->scopeMap->contents;
+  if (theModule == NULL)
+    {
+      theModule = CL_GetCurrentModule (theEnv);
+    }
+  moduleID = theModule->header.bsaveID;
 
-   return TestBitMap(scopeMap,moduleID);
+  return TestBitMap (scopeMap, moduleID);
 #else
 #if MAC_XCD
 #pragma unused(theEnv,theDefclass,theModule)
 #endif
-   return true;
+  return true;
 #endif
-  }
+}
 
 /***********************************************************
   NAME         : CL_GetNextDefclass
@@ -349,13 +378,13 @@ bool CL_DefclassInScope(
   NOTES        : If ptr == NULL, the first defclass
                     is returned.
  ***********************************************************/
-Defclass *CL_GetNextDefclass(
-  Environment *theEnv,
-  Defclass *theDefclass)
-  {
-   return (Defclass *) CL_GetNextConstructItem(theEnv,&theDefclass->header,
-                                            DefclassData(theEnv)->CL_DefclassModuleIndex);
-  }
+Defclass *
+CL_GetNextDefclass (Environment * theEnv, Defclass * theDefclass)
+{
+  return (Defclass *) CL_GetNextConstructItem (theEnv, &theDefclass->header,
+					       DefclassData (theEnv)->
+					       CL_DefclassModuleIndex);
+}
 
 /***************************************************
   NAME         : CL_DefclassIsDeletable
@@ -367,23 +396,27 @@ Defclass *CL_GetNextDefclass(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-bool CL_DefclassIsDeletable(
-  Defclass *theDefclass)
-  {
+bool
+CL_DefclassIsDeletable (Defclass * theDefclass)
+{
   Environment *theEnv = theDefclass->header.env;
-  
-  if (! CL_ConstructsDeletable(theEnv))
-     { return false; }
 
-   if (theDefclass->system == 1)
-     { return false; }
+  if (!CL_ConstructsDeletable (theEnv))
+    {
+      return false;
+    }
+
+  if (theDefclass->system == 1)
+    {
+      return false;
+    }
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-   return (CL_IsClassBeingUsed(theDefclass) == false) ? true : false;
+  return (CL_IsClassBeingUsed (theDefclass) == false) ? true : false;
 #else
-   return false;
+  return false;
 #endif
-  }
+}
 
 /*************************************************************
   NAME         : CL_UndefclassCommand
@@ -394,13 +427,13 @@ bool CL_DefclassIsDeletable(
   SIDE EFFECTS : None
   NOTES        : Syntax : (undefclass <class-name> | *)
  *************************************************************/
-void CL_UndefclassCommand(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
-   CL_UndefconstructCommand(context,"undefclass",DefclassData(theEnv)->DefclassConstruct);
-  }
+void
+CL_UndefclassCommand (Environment * theEnv,
+		      UDFContext * context, UDFValue * returnValue)
+{
+  CL_UndefconstructCommand (context, "undefclass",
+			    DefclassData (theEnv)->DefclassConstruct);
+}
 
 /********************************************************
   NAME         : CL_Undefclass
@@ -410,40 +443,43 @@ void CL_UndefclassCommand(
   SIDE EFFECTS : Defclass and handlers removed
   NOTES        : Interface for CL_AddConstruct()
  ********************************************************/
-bool CL_Undefclass(
-  Defclass *theDefclass,
-  Environment *allEnv)
-  {   
+bool
+CL_Undefclass (Defclass * theDefclass, Environment * allEnv)
+{
 #if RUN_TIME || BLOAD_ONLY
-   return false;
+  return false;
 #else
-   Environment *theEnv;
-   bool success;
-   GCBlock gcb;
-   
-   if (theDefclass == NULL)
-     { theEnv = allEnv; }
-   else
-     { theEnv = theDefclass->header.env; }
+  Environment *theEnv;
+  bool success;
+  GCBlock gcb;
+
+  if (theDefclass == NULL)
+    {
+      theEnv = allEnv;
+    }
+  else
+    {
+      theEnv = theDefclass->header.env;
+    }
 
 #if BLOAD || BLOAD_AND_BSAVE
-   if (CL_Bloaded(theEnv))
-     return false;
+  if (CL_Bloaded (theEnv))
+    return false;
 #endif
 
-   CL_GCBlockStart(theEnv,&gcb);
-   if (theDefclass == NULL)
-     {
-      success = CL_RemoveAllUserClasses(theEnv);
-      CL_GCBlockEnd(theEnv,&gcb);
+  CL_GCBlockStart (theEnv, &gcb);
+  if (theDefclass == NULL)
+    {
+      success = CL_RemoveAllUserClasses (theEnv);
+      CL_GCBlockEnd (theEnv, &gcb);
       return success;
-     }
+    }
 
-   success = CL_DeleteClassUAG(theEnv,theDefclass);
-   CL_GCBlockEnd(theEnv,&gcb);
-   return success;
+  success = CL_DeleteClassUAG (theEnv, theDefclass);
+  CL_GCBlockEnd (theEnv, &gcb);
+  return success;
 #endif
-  }
+}
 
 
 #if DEBUGGING_FUNCTIONS
@@ -457,13 +493,14 @@ bool CL_Undefclass(
   SIDE EFFECTS : None
   NOTES        : Syntax : (ppdefclass <class-name>)
  *********************************************************/
-void CL_PPDefclassCommand(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
-   CL_PPConstructCommand(context,"ppdefclass",DefclassData(theEnv)->DefclassConstruct,returnValue);
-  }
+void
+CL_PPDefclassCommand (Environment * theEnv,
+		      UDFContext * context, UDFValue * returnValue)
+{
+  CL_PPConstructCommand (context, "ppdefclass",
+			 DefclassData (theEnv)->DefclassConstruct,
+			 returnValue);
+}
 
 /***************************************************
   NAME         : CL_ListDefclassesCommand
@@ -473,13 +510,12 @@ void CL_PPDefclassCommand(
   SIDE EFFECTS : Defclass names printed
   NOTES        : H/L Interface
  ***************************************************/
-void CL_ListDefclassesCommand(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
-   CL_ListConstructCommand(context,DefclassData(theEnv)->DefclassConstruct);
-  }
+void
+CL_ListDefclassesCommand (Environment * theEnv,
+			  UDFContext * context, UDFValue * returnValue)
+{
+  CL_ListConstructCommand (context, DefclassData (theEnv)->DefclassConstruct);
+}
 
 /***************************************************
   NAME         : CL_ListDefclasses
@@ -490,13 +526,13 @@ void CL_ListDefclassesCommand(
   SIDE EFFECTS : Defclass names printed
   NOTES        : C Interface
  ***************************************************/
-void CL_ListDefclasses(
-  Environment *theEnv,
-  const char *logicalName,
-  Defmodule *theModule)
-  {
-   CL_ListConstruct(theEnv,DefclassData(theEnv)->DefclassConstruct,logicalName,theModule);
-  }
+void
+CL_ListDefclasses (Environment * theEnv,
+		   const char *logicalName, Defmodule * theModule)
+{
+  CL_ListConstruct (theEnv, DefclassData (theEnv)->DefclassConstruct,
+		    logicalName, theModule);
+}
 
 /*********************************************************
   NAME         : CL_DefclassGet_Watch_Instances
@@ -509,11 +545,11 @@ void CL_ListDefclasses(
   SIDE EFFECTS : None
   NOTES        : None
  *********************************************************/
-bool CL_DefclassGet_Watch_Instances(
-  Defclass *theDefclass)
-  {
-   return theDefclass->trace_Instances;
-  }
+bool
+CL_DefclassGet_Watch_Instances (Defclass * theDefclass)
+{
+  return theDefclass->trace_Instances;
+}
 
 /*********************************************************
   NAME         : CL_DefclassSet_Watch_Instances
@@ -527,15 +563,16 @@ bool CL_DefclassGet_Watch_Instances(
   SIDE EFFECTS : CL_Watch flag for the class set
   NOTES        : None
  *********************************************************/
-void CL_DefclassSet_Watch_Instances(
-  Defclass *theDefclass,
-  bool newState)
-  {
-   if (theDefclass->abstract)
-     { return; }
+void
+CL_DefclassSet_Watch_Instances (Defclass * theDefclass, bool newState)
+{
+  if (theDefclass->abstract)
+    {
+      return;
+    }
 
-   theDefclass->trace_Instances = newState;
-  }
+  theDefclass->trace_Instances = newState;
+}
 
 /*********************************************************
   NAME         : CL_DefclassGet_WatchSlots
@@ -548,11 +585,11 @@ void CL_DefclassSet_Watch_Instances(
   SIDE EFFECTS : None
   NOTES        : None
  *********************************************************/
-bool CL_DefclassGet_WatchSlots(
-  Defclass *theDefclass)
-  {
-   return theDefclass->traceSlots;
-  }
+bool
+CL_DefclassGet_WatchSlots (Defclass * theDefclass)
+{
+  return theDefclass->traceSlots;
+}
 
 /**********************************************************
   NAME         : SetDefclass_WatchSlots
@@ -565,12 +602,11 @@ bool CL_DefclassGet_WatchSlots(
   SIDE EFFECTS : CL_Watch flag for the class set
   NOTES        : None
  **********************************************************/
-void CL_DefclassSet_WatchSlots(
-  Defclass *theDefclass,
-  bool newState)
-  {
-   theDefclass->traceSlots = newState;
-  }
+void
+CL_DefclassSet_WatchSlots (Defclass * theDefclass, bool newState)
+{
+  theDefclass->traceSlots = newState;
+}
 
 /******************************************************************
   NAME         : CL_Defclass_WatchAccess
@@ -586,21 +622,23 @@ void CL_DefclassSet_WatchSlots(
   SIDE EFFECTS : CL_Watch flags set in specified classes
   NOTES        : Accessory function for CL_Add_WatchItem()
  ******************************************************************/
-bool CL_Defclass_WatchAccess(
-  Environment *theEnv,
-  int code,
-  bool newState,
-  Expression *argExprs)
-  {
-   if (code)
-     return(CL_ConstructSet_WatchAccess(theEnv,DefclassData(theEnv)->DefclassConstruct,newState,argExprs,
-                                    (ConstructGet_WatchFunction *) CL_DefclassGet_WatchSlots,
-                                    (ConstructSet_WatchFunction *) CL_DefclassSet_WatchSlots));
-   else
-     return(CL_ConstructSet_WatchAccess(theEnv,DefclassData(theEnv)->DefclassConstruct,newState,argExprs,
-                                    (ConstructGet_WatchFunction *) CL_DefclassGet_Watch_Instances,
-                                    (ConstructSet_WatchFunction *) CL_DefclassSet_Watch_Instances));
-  }
+bool
+CL_Defclass_WatchAccess (Environment * theEnv,
+			 int code, bool newState, Expression * argExprs)
+{
+  if (code)
+    return (CL_ConstructSet_WatchAccess
+	    (theEnv, DefclassData (theEnv)->DefclassConstruct, newState,
+	     argExprs,
+	     (ConstructGet_WatchFunction *) CL_DefclassGet_WatchSlots,
+	     (ConstructSet_WatchFunction *) CL_DefclassSet_WatchSlots));
+  else
+    return (CL_ConstructSet_WatchAccess
+	    (theEnv, DefclassData (theEnv)->DefclassConstruct, newState,
+	     argExprs,
+	     (ConstructGet_WatchFunction *) CL_DefclassGet_Watch_Instances,
+	     (ConstructSet_WatchFunction *) CL_DefclassSet_Watch_Instances));
+}
 
 /***********************************************************************
   NAME         : CL_Defclass_WatchPrint
@@ -616,21 +654,23 @@ bool CL_Defclass_WatchAccess(
   SIDE EFFECTS : CL_Watch flags displayed for specified classes
   NOTES        : Accessory function for CL_Add_WatchItem()
  ***********************************************************************/
-bool CL_Defclass_WatchPrint(
-  Environment *theEnv,
-  const char *logName,
-  int code,
-  Expression *argExprs)
-  {
-   if (code)
-     return(CL_ConstructPrint_WatchAccess(theEnv,DefclassData(theEnv)->DefclassConstruct,logName,argExprs,
-                                      (ConstructGet_WatchFunction *) CL_DefclassGet_WatchSlots,
-                                      (ConstructSet_WatchFunction *) CL_DefclassSet_WatchSlots));
-   else
-     return(CL_ConstructPrint_WatchAccess(theEnv,DefclassData(theEnv)->DefclassConstruct,logName,argExprs,
-                                      (ConstructGet_WatchFunction *) CL_DefclassGet_Watch_Instances,
-                                      (ConstructSet_WatchFunction *) CL_DefclassSet_Watch_Instances));
-  }
+bool
+CL_Defclass_WatchPrint (Environment * theEnv,
+			const char *logName, int code, Expression * argExprs)
+{
+  if (code)
+    return (CL_ConstructPrint_WatchAccess
+	    (theEnv, DefclassData (theEnv)->DefclassConstruct, logName,
+	     argExprs,
+	     (ConstructGet_WatchFunction *) CL_DefclassGet_WatchSlots,
+	     (ConstructSet_WatchFunction *) CL_DefclassSet_WatchSlots));
+  else
+    return (CL_ConstructPrint_WatchAccess
+	    (theEnv, DefclassData (theEnv)->DefclassConstruct, logName,
+	     argExprs,
+	     (ConstructGet_WatchFunction *) CL_DefclassGet_Watch_Instances,
+	     (ConstructSet_WatchFunction *) CL_DefclassSet_Watch_Instances));
+}
 
 #endif /* DEBUGGING_FUNCTIONS */
 
@@ -643,13 +683,13 @@ bool CL_Defclass_WatchPrint(
   SIDE EFFECTS : Multifield set to list of classes
   NOTES        : None
  *********************************************************/
-void CL_GetDefclassListFunction(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
-   CL_GetConstructListFunction(context,returnValue,DefclassData(theEnv)->DefclassConstruct);
-  }
+void
+CL_GetDefclassListFunction (Environment * theEnv,
+			    UDFContext * context, UDFValue * returnValue)
+{
+  CL_GetConstructListFunction (context, returnValue,
+			       DefclassData (theEnv)->DefclassConstruct);
+}
 
 /***************************************************************
   NAME         : CL_GetDefclassList
@@ -662,17 +702,17 @@ void CL_GetDefclassListFunction(
   SIDE EFFECTS : Multifield allocated and filled
   NOTES        : External C access
  ***************************************************************/
-void CL_GetDefclassList(
-  Environment *theEnv,
-  CLIPSValue *returnValue,
-  Defmodule *theModule)
-  {
-   UDFValue result;
-   
-   CL_GetConstructList(theEnv,&result,DefclassData(theEnv)->DefclassConstruct,theModule);
-   CL_No_rmalizeMultifield(theEnv,&result);
-   returnValue->value = result.value;
-  }
+void
+CL_GetDefclassList (Environment * theEnv,
+		    CLIPSValue * returnValue, Defmodule * theModule)
+{
+  UDFValue result;
+
+  CL_GetConstructList (theEnv, &result,
+		       DefclassData (theEnv)->DefclassConstruct, theModule);
+  CL_No_rmalizeMultifield (theEnv, &result);
+  returnValue->value = result.value;
+}
 
 /*****************************************************
   NAME         : CL_HasSuperclass
@@ -685,17 +725,16 @@ void CL_GetDefclassList(
   SIDE EFFECTS : None
   NOTES        : None
  *****************************************************/
-bool CL_HasSuperclass(
-  Defclass *c1,
-  Defclass *c2)
-  {
-   unsigned long i;
+bool
+CL_HasSuperclass (Defclass * c1, Defclass * c2)
+{
+  unsigned long i;
 
-   for (i = 1 ; i < c1->allSuperclasses.classCount ; i++)
-     if (c1->allSuperclasses.classArray[i] == c2)
-       return true;
-   return false;
-  }
+  for (i = 1; i < c1->allSuperclasses.classCount; i++)
+    if (c1->allSuperclasses.classArray[i] == c2)
+      return true;
+  return false;
+}
 
 /********************************************************************
   NAME         : CL_CheckClassAndSlot
@@ -706,29 +745,27 @@ bool CL_HasSuperclass(
   SIDE EFFECTS : None
   NOTES        : None
  ********************************************************************/
-CLIPSLexeme *CL_CheckClassAndSlot(
-   UDFContext *context,
-   const char *func,
-   Defclass **cls)
-  {
-   UDFValue theArg;
-   Environment *theEnv = context->environment;
+CLIPSLexeme *
+CL_CheckClassAndSlot (UDFContext * context, const char *func, Defclass ** cls)
+{
+  UDFValue theArg;
+  Environment *theEnv = context->environment;
 
-   if (! CL_UDFFirstArgument(context,SYMBOL_BIT,&theArg))
-     return NULL;
+  if (!CL_UDFFirstArgument (context, SYMBOL_BIT, &theArg))
+    return NULL;
 
-   *cls = CL_LookupDefclassByMdlOrScope(theEnv,theArg.lexemeValue->contents);
-   if (*cls == NULL)
-     {
-      CL_ClassExistError(theEnv,func,theArg.lexemeValue->contents);
+  *cls = CL_LookupDefclassByMdlOrScope (theEnv, theArg.lexemeValue->contents);
+  if (*cls == NULL)
+    {
+      CL_ClassExistError (theEnv, func, theArg.lexemeValue->contents);
       return NULL;
-     }
+    }
 
-   if (! CL_UDFNextArgument(context,SYMBOL_BIT,&theArg))
-     return NULL;
+  if (!CL_UDFNextArgument (context, SYMBOL_BIT, &theArg))
+    return NULL;
 
-   return theArg.lexemeValue;
-  }
+  return theArg.lexemeValue;
+}
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
 
@@ -741,22 +778,21 @@ CLIPSLexeme *CL_CheckClassAndSlot(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-void CL_SaveDefclasses(
-  Environment *theEnv,
-  Defmodule *theModule,
-  const char *logName,
-  void *context)
-  {
+void
+CL_SaveDefclasses (Environment * theEnv,
+		   Defmodule * theModule, const char *logName, void *context)
+{
 #if DEBUGGING_FUNCTIONS
-   CL_DoForAllConstructsInModule(theEnv,theModule,CL_SaveDefclass,
-                              DefclassData(theEnv)->CL_DefclassModuleIndex,
-                              false,(void *) logName);
+  CL_DoForAllConstructsInModule (theEnv, theModule, CL_SaveDefclass,
+				 DefclassData (theEnv)->
+				 CL_DefclassModuleIndex, false,
+				 (void *) logName);
 #else
 #if MAC_XCD
 #pragma unused(theEnv,theModule,logName)
 #endif
 #endif
-  }
+}
 
 #endif
 
@@ -778,34 +814,33 @@ void CL_SaveDefclasses(
   SIDE EFFECTS : Class and handlers written
   NOTES        : None
  ***************************************************/
-static void CL_SaveDefclass(
-  Environment *theEnv,
-  ConstructHeader *theConstruct,
-  void *userBuffer)
-  {
-   const char *logName = (const char *) userBuffer;
-   Defclass *theDefclass = (Defclass *) theConstruct;
-   unsigned hnd;
-   const char *ppFo_rm;
+static void
+CL_SaveDefclass (Environment * theEnv,
+		 ConstructHeader * theConstruct, void *userBuffer)
+{
+  const char *logName = (const char *) userBuffer;
+  Defclass *theDefclass = (Defclass *) theConstruct;
+  unsigned hnd;
+  const char *ppFo_rm;
 
-   ppFo_rm = CL_DefclassPPFo_rm(theDefclass);
-   if (ppFo_rm != NULL)
-     {
-      CL_WriteString(theEnv,logName,ppFo_rm);
-      CL_WriteString(theEnv,logName,"\n");
-      hnd = CL_GetNextDefmessageHandler(theDefclass,0);
+  ppFo_rm = CL_DefclassPPFo_rm (theDefclass);
+  if (ppFo_rm != NULL)
+    {
+      CL_WriteString (theEnv, logName, ppFo_rm);
+      CL_WriteString (theEnv, logName, "\n");
+      hnd = CL_GetNextDefmessageHandler (theDefclass, 0);
       while (hnd != 0)
-        {
-         ppFo_rm = CL_DefmessageHandlerPPFo_rm(theDefclass,hnd);
-         if (ppFo_rm != NULL)
-           {
-            CL_WriteString(theEnv,logName,ppFo_rm);
-            CL_WriteString(theEnv,logName,"\n");
-           }
-         hnd = CL_GetNextDefmessageHandler(theDefclass,hnd);
-        }
-     }
-  }
+	{
+	  ppFo_rm = CL_DefmessageHandlerPPFo_rm (theDefclass, hnd);
+	  if (ppFo_rm != NULL)
+	    {
+	      CL_WriteString (theEnv, logName, ppFo_rm);
+	      CL_WriteString (theEnv, logName, "\n");
+	    }
+	  hnd = CL_GetNextDefmessageHandler (theDefclass, hnd);
+	}
+    }
+}
 
 #endif
 
@@ -813,164 +848,171 @@ static void CL_SaveDefclass(
 /* CL_SetClassDefaultsMode: Allows the setting */
 /*    of the class defaults mode.           */
 /********************************************/
-ClassDefaultsMode CL_SetClassDefaultsMode(
-  Environment *theEnv,
-  ClassDefaultsMode value)
-  {
-   ClassDefaultsMode ov;
+ClassDefaultsMode
+CL_SetClassDefaultsMode (Environment * theEnv, ClassDefaultsMode value)
+{
+  ClassDefaultsMode ov;
 
-   ov = DefclassData(theEnv)->ClassDefaultsModeValue;
-   DefclassData(theEnv)->ClassDefaultsModeValue = value;
-   return ov;
-  }
+  ov = DefclassData (theEnv)->ClassDefaultsModeValue;
+  DefclassData (theEnv)->ClassDefaultsModeValue = value;
+  return ov;
+}
 
 /****************************************/
 /* CL_GetClassDefaultsMode: Returns the    */
 /*    value of the class defaults mode. */
 /****************************************/
-ClassDefaultsMode CL_GetClassDefaultsMode(
-  Environment *theEnv)
-  {
-   return DefclassData(theEnv)->ClassDefaultsModeValue;
-  }
+ClassDefaultsMode
+CL_GetClassDefaultsMode (Environment * theEnv)
+{
+  return DefclassData (theEnv)->ClassDefaultsModeValue;
+}
 
 /***************************************************/
 /* CL_GetClassDefaultsModeCommand: H/L access routine */
 /*   for the get-class-defaults-mode command.      */
 /***************************************************/
-void CL_GetClassDefaultsModeCommand(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
-   returnValue->lexemeValue = CL_CreateSymbol(theEnv,CL_GetClassDefaultsModeName(CL_GetClassDefaultsMode(theEnv)));
-  }
+void
+CL_GetClassDefaultsModeCommand (Environment * theEnv,
+				UDFContext * context, UDFValue * returnValue)
+{
+  returnValue->lexemeValue =
+    CL_CreateSymbol (theEnv,
+		     CL_GetClassDefaultsModeName (CL_GetClassDefaultsMode
+						  (theEnv)));
+}
 
 /***************************************************/
 /* CL_SetClassDefaultsModeCommand: H/L access routine */
 /*   for the set-class-defaults-mode command.      */
 /***************************************************/
-void CL_SetClassDefaultsModeCommand(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
-   UDFValue theArg;
-   const char *argument;
-   unsigned short oldMode;
+void
+CL_SetClassDefaultsModeCommand (Environment * theEnv,
+				UDFContext * context, UDFValue * returnValue)
+{
+  UDFValue theArg;
+  const char *argument;
+  unsigned short oldMode;
 
-   oldMode = DefclassData(theEnv)->ClassDefaultsModeValue;
+  oldMode = DefclassData (theEnv)->ClassDefaultsModeValue;
 
    /*=====================================================*/
-   /* Check for the correct number and type of arguments. */
+  /* Check for the correct number and type of arguments. */
    /*=====================================================*/
 
-   if (! CL_UDFFirstArgument(context,SYMBOL_BIT,&theArg))
-     { return; }
-
-   argument = theArg.lexemeValue->contents;
-
-   /*=============================================*/
-   /* Set the strategy to the specified strategy. */
-   /*=============================================*/
-
-   if (strcmp(argument,"conservation") == 0)
-     { CL_SetClassDefaultsMode(theEnv,CONSERVATION_MODE); }
-   else if (strcmp(argument,"convenience") == 0)
-     { CL_SetClassDefaultsMode(theEnv,CONVENIENCE_MODE); }
-   else
-     {
-      CL_UDFInvalidArgumentMessage(context,"symbol with value conservation or convenience");
-      returnValue->lexemeValue = CL_CreateSymbol(theEnv,CL_GetClassDefaultsModeName(CL_GetClassDefaultsMode(theEnv)));
+  if (!CL_UDFFirstArgument (context, SYMBOL_BIT, &theArg))
+    {
       return;
-     }
+    }
+
+  argument = theArg.lexemeValue->contents;
+
+   /*=============================================*/
+  /* Set the strategy to the specified strategy. */
+   /*=============================================*/
+
+  if (strcmp (argument, "conservation") == 0)
+    {
+      CL_SetClassDefaultsMode (theEnv, CONSERVATION_MODE);
+    }
+  else if (strcmp (argument, "convenience") == 0)
+    {
+      CL_SetClassDefaultsMode (theEnv, CONVENIENCE_MODE);
+    }
+  else
+    {
+      CL_UDFInvalidArgumentMessage (context,
+				    "symbol with value conservation or convenience");
+      returnValue->lexemeValue =
+	CL_CreateSymbol (theEnv,
+			 CL_GetClassDefaultsModeName (CL_GetClassDefaultsMode
+						      (theEnv)));
+      return;
+    }
 
    /*===================================*/
-   /* Return the old value of the mode. */
+  /* Return the old value of the mode. */
    /*===================================*/
 
-   returnValue->lexemeValue = CL_CreateSymbol(theEnv,CL_GetClassDefaultsModeName(oldMode));
-  }
+  returnValue->lexemeValue =
+    CL_CreateSymbol (theEnv, CL_GetClassDefaultsModeName (oldMode));
+}
 
 /*******************************************************************/
 /* CL_GetClassDefaultsModeName: Given the integer value corresponding */
 /*   to a specified class defaults mode, return a character string */
 /*   of the class defaults mode's name.                            */
 /*******************************************************************/
-static const char *CL_GetClassDefaultsModeName(
-  unsigned short mode)
-  {
-   const char *sname;
+static const char *
+CL_GetClassDefaultsModeName (unsigned short mode)
+{
+  const char *sname;
 
-   switch (mode)
-     {
-      case CONSERVATION_MODE:
-        sname = "conservation";
-        break;
-      case CONVENIENCE_MODE:
-        sname = "convenience";
-        break;
-      default:
-        sname = "unknown";
-        break;
-     }
+  switch (mode)
+    {
+    case CONSERVATION_MODE:
+      sname = "conservation";
+      break;
+    case CONVENIENCE_MODE:
+      sname = "convenience";
+      break;
+    default:
+      sname = "unknown";
+      break;
+    }
 
-   return(sname);
-  }
+  return (sname);
+}
 
 /*#############################*/
 /* Additional Access Functions */
 /*#############################*/
 
-CLIPSLexeme *Get_DefclassNamePointer(
-  Defclass *theClass)
-  {
-   return CL_GetConstructNamePointer(&theClass->header);
-  }
+CLIPSLexeme *
+Get_DefclassNamePointer (Defclass * theClass)
+{
+  return CL_GetConstructNamePointer (&theClass->header);
+}
 
-void CL_SetNextDefclass(
-  Defclass *theClass,
-  Defclass *targetClass)
-  {
-   CL_SetNextConstruct(&theClass->header,
-                    &targetClass->header);
-  }
+void
+CL_SetNextDefclass (Defclass * theClass, Defclass * targetClass)
+{
+  CL_SetNextConstruct (&theClass->header, &targetClass->header);
+}
 
 /*##################################*/
 /* Additional Environment Functions */
 /*##################################*/
 
-const char *CL_DefclassName(
-  Defclass *theClass)
-  {
-   return CL_GetConstructNameString(&theClass->header);
-  }
+const char *
+CL_DefclassName (Defclass * theClass)
+{
+  return CL_GetConstructNameString (&theClass->header);
+}
 
-const char *CL_DefclassPPFo_rm(
-  Defclass *theClass)
-  {
-   return CL_GetConstructPPFo_rm(&theClass->header);
-  }
+const char *
+CL_DefclassPPFo_rm (Defclass * theClass)
+{
+  return CL_GetConstructPPFo_rm (&theClass->header);
+}
 
-struct defmoduleItemHeader *Get_DefclassModule(
-  Environment *theEnv,
-  Defclass *theClass)
-  {
-   return CL_GetConstructModuleItem(&theClass->header);
-  }
+struct defmoduleItemHeader *
+Get_DefclassModule (Environment * theEnv, Defclass * theClass)
+{
+  return CL_GetConstructModuleItem (&theClass->header);
+}
 
-const char *CL_DefclassModule(
-  Defclass *theClass)
-  {
-   return CL_GetConstructModuleName(&theClass->header);
-  }
+const char *
+CL_DefclassModule (Defclass * theClass)
+{
+  return CL_GetConstructModuleName (&theClass->header);
+}
 
-void SetCL_DefclassPPFo_rm(
-  Environment *theEnv,
-  Defclass *theClass,
-  char *thePPFo_rm)
-  {
-   SetConstructPPFo_rm(theEnv,&theClass->header,thePPFo_rm);
-  }
+void
+SetCL_DefclassPPFo_rm (Environment * theEnv,
+		       Defclass * theClass, char *thePPFo_rm)
+{
+  SetConstructPPFo_rm (theEnv, &theClass->header, thePPFo_rm);
+}
 
 #endif /* OBJECT_SYSTEM */

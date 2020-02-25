@@ -75,21 +75,32 @@
 /* LOCAL INTERNAL FUNCTION DEFINITIONS */
 /***************************************/
 
-   static void                    BeforeObjectPatternsToCode(Environment *);
-   static OBJECT_PATTERN_NODE    *GetNextObjectPatternNode(OBJECT_PATTERN_NODE *);
-   static void                    InitObjectPatternsCode(Environment *,FILE *,unsigned int,unsigned int);
-   static bool                    ObjectPatternsToCode(Environment *,const char *,const char *,char *,
-                                                       unsigned int,FILE *,unsigned int,unsigned int);
-   static void                    Inte_rmediatePatternNodeReference(Environment *,OBJECT_PATTERN_NODE *,FILE *,
-                                                                   unsigned int,unsigned int);
-   static unsigned                Inte_rmediatePatternNodesToCode(Environment *,const char *,const char *,
-                                                                 char *,unsigned int,FILE *,unsigned int,
-                                                                 unsigned int,unsigned int);
-   static unsigned                AlphaPatternNodesToCode(Environment *,const char *,const char *,char *,
-                                                          unsigned int,FILE *,unsigned int,unsigned int,unsigned int);
-   static unsigned                ClassAlphaLinksToCode(Environment *,const char *,const char *,char *,
-                                                        unsigned int,FILE *,unsigned int,unsigned int,unsigned int);
-   static CLASS_ALPHA_LINK       *GetNextAlphaLink(Environment *,struct defmodule **,Defclass **theClass,CLASS_ALPHA_LINK *);
+static void BeforeObjectPatternsToCode (Environment *);
+static OBJECT_PATTERN_NODE *GetNextObjectPatternNode (OBJECT_PATTERN_NODE *);
+static void InitObjectPatternsCode (Environment *, FILE *, unsigned int,
+				    unsigned int);
+static bool ObjectPatternsToCode (Environment *, const char *, const char *,
+				  char *, unsigned int, FILE *, unsigned int,
+				  unsigned int);
+static void Inte_rmediatePatternNodeReference (Environment *,
+					       OBJECT_PATTERN_NODE *, FILE *,
+					       unsigned int, unsigned int);
+static unsigned Inte_rmediatePatternNodesToCode (Environment *, const char *,
+						 const char *, char *,
+						 unsigned int, FILE *,
+						 unsigned int, unsigned int,
+						 unsigned int);
+static unsigned AlphaPatternNodesToCode (Environment *, const char *,
+					 const char *, char *, unsigned int,
+					 FILE *, unsigned int, unsigned int,
+					 unsigned int);
+static unsigned ClassAlphaLinksToCode (Environment *, const char *,
+				       const char *, char *, unsigned int,
+				       FILE *, unsigned int, unsigned int,
+				       unsigned int);
+static CLASS_ALPHA_LINK *GetNextAlphaLink (Environment *, struct defmodule **,
+					   Defclass ** theClass,
+					   CLASS_ALPHA_LINK *);
 
 /* =========================================
    *****************************************
@@ -106,13 +117,14 @@
   SIDE EFFECTS : Code generator item added
   NOTES        : None
  ***************************************************/
-void CL_ObjectPatternsCompilerSetup(
-  Environment *theEnv)
-  {
-   ObjectReteData(theEnv)->ObjectPatternCodeItem =
-         CL_AddCodeGeneratorItem(theEnv,"object-patterns",0,BeforeObjectPatternsToCode,
-                              InitObjectPatternsCode,ObjectPatternsToCode,3);
-  }
+void
+CL_ObjectPatternsCompilerSetup (Environment * theEnv)
+{
+  ObjectReteData (theEnv)->ObjectPatternCodeItem =
+    CL_AddCodeGeneratorItem (theEnv, "object-patterns", 0,
+			     BeforeObjectPatternsToCode,
+			     InitObjectPatternsCode, ObjectPatternsToCode, 3);
+}
 
 /***************************************************
   NAME         : CL_ObjectPatternNodeReference
@@ -132,26 +144,25 @@ void CL_ObjectPatternsCompilerSetup(
                  memory printed
   NOTES        : None
  ***************************************************/
-void CL_ObjectPatternNodeReference(
-  Environment *theEnv,
-  void *theVPattern,
-  FILE *theFile,
-  unsigned int imageID,
-  unsigned int maxIndices)
-  {
-   OBJECT_ALPHA_NODE *thePattern;
+void
+CL_ObjectPatternNodeReference (Environment * theEnv,
+			       void *theVPattern,
+			       FILE * theFile,
+			       unsigned int imageID, unsigned int maxIndices)
+{
+  OBJECT_ALPHA_NODE *thePattern;
 
-   if (theVPattern == NULL)
-     fprintf(theFile,"NULL");
-   else
-     {
+  if (theVPattern == NULL)
+    fprintf (theFile, "NULL");
+  else
+    {
       thePattern = (OBJECT_ALPHA_NODE *) theVPattern;
-      fprintf(theFile,"&%s%u_%lu[%lu]",
-                      ObjectANPrefix(),imageID,
-                      ((thePattern->bsaveID) / maxIndices) + 1,
-                      (thePattern->bsaveID) % maxIndices);
-     }
-  }
+      fprintf (theFile, "&%s%u_%lu[%lu]",
+	       ObjectANPrefix (), imageID,
+	       ((thePattern->bsaveID) / maxIndices) + 1,
+	       (thePattern->bsaveID) % maxIndices);
+    }
+}
 
 /***************************************************
   NAME         : CL_ClassAlphaLinkReference
@@ -169,26 +180,25 @@ void CL_ObjectPatternNodeReference(
   SIDE EFFECTS : Reference to the class alpha link printed
   NOTES        : None
  ***************************************************/
-void CL_ClassAlphaLinkReference(
-  Environment *theEnv,
-  void *theVLink,
-  FILE *theFile,
-  unsigned int imageID,
-  unsigned int maxIndices)
-  {
-   CLASS_ALPHA_LINK *theLink;
+void
+CL_ClassAlphaLinkReference (Environment * theEnv,
+			    void *theVLink,
+			    FILE * theFile,
+			    unsigned int imageID, unsigned int maxIndices)
+{
+  CLASS_ALPHA_LINK *theLink;
 
-   if (theVLink == NULL)
-     fprintf(theFile,"NULL");
-   else
-     {
+  if (theVLink == NULL)
+    fprintf (theFile, "NULL");
+  else
+    {
       theLink = (CLASS_ALPHA_LINK *) theVLink;
-      fprintf(theFile,"&%s%u_%lu[%lu]",
-                      ObjectALPrefix(),imageID,
-                      ((theLink->bsaveID) / maxIndices) + 1,
-                      (theLink->bsaveID) % maxIndices);
-     }
-  }
+      fprintf (theFile, "&%s%u_%lu[%lu]",
+	       ObjectALPrefix (), imageID,
+	       ((theLink->bsaveID) / maxIndices) + 1,
+	       (theLink->bsaveID) % maxIndices);
+    }
+}
 
 /* =========================================
    *****************************************
@@ -207,49 +217,49 @@ void CL_ClassAlphaLinkReference(
   SIDE EFFECTS : bsaveIDs of nodes set
   NOTES        : None
  *****************************************************/
-static void BeforeObjectPatternsToCode(
-  Environment *theEnv)
-  {
-   unsigned long whichPattern;
-   OBJECT_PATTERN_NODE *inte_rmediateNode;
-   OBJECT_ALPHA_NODE *alphaNode;
-   Defmodule *theModule;
-   Defclass *theDefclass;
-   CLASS_ALPHA_LINK *theLink;
+static void
+BeforeObjectPatternsToCode (Environment * theEnv)
+{
+  unsigned long whichPattern;
+  OBJECT_PATTERN_NODE *inte_rmediateNode;
+  OBJECT_ALPHA_NODE *alphaNode;
+  Defmodule *theModule;
+  Defclass *theDefclass;
+  CLASS_ALPHA_LINK *theLink;
 
-   whichPattern = 0L;
-   inte_rmediateNode = CL_ObjectNetworkPointer(theEnv);
-   while (inte_rmediateNode != NULL)
-     {
+  whichPattern = 0L;
+  inte_rmediateNode = CL_ObjectNetworkPointer (theEnv);
+  while (inte_rmediateNode != NULL)
+    {
       inte_rmediateNode->bsaveID = whichPattern++;
-      inte_rmediateNode = GetNextObjectPatternNode(inte_rmediateNode);
-     }
+      inte_rmediateNode = GetNextObjectPatternNode (inte_rmediateNode);
+    }
 
-   whichPattern = 0L;
-   alphaNode = CL_ObjectNetworkTe_rminalPointer(theEnv);
-   while (alphaNode != NULL)
-     {
+  whichPattern = 0L;
+  alphaNode = CL_ObjectNetworkTe_rminalPointer (theEnv);
+  while (alphaNode != NULL)
+    {
       alphaNode->bsaveID = whichPattern++;
       alphaNode = alphaNode->nxtTe_rminal;
-     }
-     
-   whichPattern = 0L;
-   for (theModule = CL_GetNextDefmodule(theEnv,NULL);
-        theModule != NULL;
-        theModule = CL_GetNextDefmodule(theEnv,theModule))
-     {
-      CL_SetCurrentModule(theEnv,theModule);
-      for (theDefclass = CL_GetNextDefclass(theEnv,NULL) ;
-           theDefclass != NULL ;
-           theDefclass = CL_GetNextDefclass(theEnv,theDefclass))
-        {
-         for (theLink = theDefclass->relevant_te_rminal_alpha_nodes;
-              theLink != NULL;
-              theLink = theLink->next)
-           { theLink->bsaveID = whichPattern++; }
-        }
-     }
-  }
+    }
+
+  whichPattern = 0L;
+  for (theModule = CL_GetNextDefmodule (theEnv, NULL);
+       theModule != NULL; theModule = CL_GetNextDefmodule (theEnv, theModule))
+    {
+      CL_SetCurrentModule (theEnv, theModule);
+      for (theDefclass = CL_GetNextDefclass (theEnv, NULL);
+	   theDefclass != NULL;
+	   theDefclass = CL_GetNextDefclass (theEnv, theDefclass))
+	{
+	  for (theLink = theDefclass->relevant_te_rminal_alpha_nodes;
+	       theLink != NULL; theLink = theLink->next)
+	    {
+	      theLink->bsaveID = whichPattern++;
+	    }
+	}
+    }
+}
 
 /***************************************************
   NAME         : GetNextObjectPatternNode
@@ -261,19 +271,19 @@ static void BeforeObjectPatternsToCode(
   SIDE EFFECTS : None
   NOTES        : Alpha meory nodes are ignored
  ***************************************************/
-static OBJECT_PATTERN_NODE *GetNextObjectPatternNode(
-  OBJECT_PATTERN_NODE *thePattern)
-  {
-   if (thePattern->nextLevel != NULL)
-     return thePattern->nextLevel;
-   while (thePattern->rightNode == NULL)
-     {
+static OBJECT_PATTERN_NODE *
+GetNextObjectPatternNode (OBJECT_PATTERN_NODE * thePattern)
+{
+  if (thePattern->nextLevel != NULL)
+    return thePattern->nextLevel;
+  while (thePattern->rightNode == NULL)
+    {
       thePattern = thePattern->lastLevel;
       if (thePattern == NULL)
-        return NULL;
-     }
-   return thePattern->rightNode;
-  }
+	return NULL;
+    }
+  return thePattern->rightNode;
+}
 
 /***************************************************
   NAME         : InitObjectPatternsCode
@@ -288,33 +298,35 @@ static OBJECT_PATTERN_NODE *GetNextObjectPatternNode(
   SIDE EFFECTS : Initialization code written
   NOTES        : None
  ***************************************************/
-static void InitObjectPatternsCode(
-  Environment *theEnv,
-  FILE *initFP,
-  unsigned int imageID,
-  unsigned int maxIndices)
-  {
-   unsigned long firstInte_rmediateNode, firstAlphaNode;
+static void
+InitObjectPatternsCode (Environment * theEnv,
+			FILE * initFP,
+			unsigned int imageID, unsigned int maxIndices)
+{
+  unsigned long firstInte_rmediateNode, firstAlphaNode;
 
-   if (CL_ObjectNetworkPointer(theEnv) != NULL)
-     {
-      firstInte_rmediateNode = CL_ObjectNetworkPointer(theEnv)->bsaveID;
-      firstAlphaNode = CL_ObjectNetworkTe_rminalPointer(theEnv)->bsaveID;
-      fprintf(initFP,"   Set_ObjectNetworkPointer(theEnv,&%s%u_%lu[%lu]);\n",
-                       ObjectPNPrefix(),imageID,
-                       ((firstInte_rmediateNode / maxIndices) + 1),
-                       (firstInte_rmediateNode % maxIndices));
-      fprintf(initFP,"   SetCL_ObjectNetworkTe_rminalPointer(theEnv,&%s%u_%lu[%lu]);\n",
-                       ObjectANPrefix(),imageID,
-                       ((firstAlphaNode / maxIndices) + 1),
-                       (firstAlphaNode % maxIndices));
-     }
-   else
-     {
-      fprintf(initFP,"   Set_ObjectNetworkPointer(theEnv,NULL);\n");
-      fprintf(initFP,"   SetCL_ObjectNetworkTe_rminalPointer(theEnv,NULL);\n");
-     }
-  }
+  if (CL_ObjectNetworkPointer (theEnv) != NULL)
+    {
+      firstInte_rmediateNode = CL_ObjectNetworkPointer (theEnv)->bsaveID;
+      firstAlphaNode = CL_ObjectNetworkTe_rminalPointer (theEnv)->bsaveID;
+      fprintf (initFP,
+	       "   Set_ObjectNetworkPointer(theEnv,&%s%u_%lu[%lu]);\n",
+	       ObjectPNPrefix (), imageID,
+	       ((firstInte_rmediateNode / maxIndices) + 1),
+	       (firstInte_rmediateNode % maxIndices));
+      fprintf (initFP,
+	       "   SetCL_ObjectNetworkTe_rminalPointer(theEnv,&%s%u_%lu[%lu]);\n",
+	       ObjectANPrefix (), imageID,
+	       ((firstAlphaNode / maxIndices) + 1),
+	       (firstAlphaNode % maxIndices));
+    }
+  else
+    {
+      fprintf (initFP, "   Set_ObjectNetworkPointer(theEnv,NULL);\n");
+      fprintf (initFP,
+	       "   SetCL_ObjectNetworkTe_rminalPointer(theEnv,NULL);\n");
+    }
+}
 
 /***********************************************************
   NAME         : ObjectPatternsToCode
@@ -331,32 +343,34 @@ static void InitObjectPatternsCode(
   SIDE EFFECTS : Object patterns code written to files
   NOTES        : None
  ***********************************************************/
-static bool ObjectPatternsToCode(
-  Environment *theEnv,
-  const char *fileName,
-  const char *pathName,
-  char *fileNameBuffer,
-  unsigned int fileID,
-  FILE *headerFP,
-  unsigned int imageID,
-  unsigned int maxIndices)
-  {
-   unsigned int version;
-   
-   version = ClassAlphaLinksToCode(theEnv,fileName,pathName,fileNameBuffer,
-                                   fileID,headerFP,imageID,maxIndices,1);
-   if (version == 0)
-     return(0);
+static bool
+ObjectPatternsToCode (Environment * theEnv,
+		      const char *fileName,
+		      const char *pathName,
+		      char *fileNameBuffer,
+		      unsigned int fileID,
+		      FILE * headerFP,
+		      unsigned int imageID, unsigned int maxIndices)
+{
+  unsigned int version;
 
-   version = Inte_rmediatePatternNodesToCode(theEnv,fileName,pathName,fileNameBuffer,
-                                            fileID,headerFP,imageID,maxIndices,version);
-   if (version == 0)
-     return false;
-   if (! AlphaPatternNodesToCode(theEnv,fileName,pathName,fileNameBuffer,
-                                 fileID,headerFP,imageID,maxIndices,version))
-     return false;
-   return true;
-  }
+  version = ClassAlphaLinksToCode (theEnv, fileName, pathName, fileNameBuffer,
+				   fileID, headerFP, imageID, maxIndices, 1);
+  if (version == 0)
+    return (0);
+
+  version =
+    Inte_rmediatePatternNodesToCode (theEnv, fileName, pathName,
+				     fileNameBuffer, fileID, headerFP,
+				     imageID, maxIndices, version);
+  if (version == 0)
+    return false;
+  if (!AlphaPatternNodesToCode (theEnv, fileName, pathName, fileNameBuffer,
+				fileID, headerFP, imageID, maxIndices,
+				version))
+    return false;
+  return true;
+}
 
 /***************************************************
   NAME         : Inte_rmediatePatternNodeReference
@@ -374,23 +388,23 @@ static bool ObjectPatternsToCode(
                  memory printed
   NOTES        : None
  ***************************************************/
-static void Inte_rmediatePatternNodeReference(
-  Environment *theEnv,
-  OBJECT_PATTERN_NODE *thePattern,
-  FILE *theFile,
-  unsigned int imageID,
-  unsigned int maxIndices)
-  {
-   if (thePattern == NULL)
-     fprintf(theFile,"NULL");
-   else
-     {
-      fprintf(theFile,"&%s%u_%lu[%lu]",
-                    ObjectPNPrefix(),imageID,
-                    ((thePattern->bsaveID) / maxIndices) + 1,
-                    thePattern->bsaveID % maxIndices);
-     }
-  }
+static void
+Inte_rmediatePatternNodeReference (Environment * theEnv,
+				   OBJECT_PATTERN_NODE * thePattern,
+				   FILE * theFile,
+				   unsigned int imageID,
+				   unsigned int maxIndices)
+{
+  if (thePattern == NULL)
+    fprintf (theFile, "NULL");
+  else
+    {
+      fprintf (theFile, "&%s%u_%lu[%lu]",
+	       ObjectPNPrefix (), imageID,
+	       ((thePattern->bsaveID) / maxIndices) + 1,
+	       thePattern->bsaveID % maxIndices);
+    }
+}
 
 /*************************************************************
   NAME         : Inte_rmediatePatternNodesToCode
@@ -407,95 +421,112 @@ static void Inte_rmediatePatternNodeReference(
   SIDE EFFECTS : Object patterns code written to files
   NOTES        : None
  *************************************************************/
-static unsigned Inte_rmediatePatternNodesToCode(
-  Environment *theEnv,
-  const char *fileName,
-  const char *pathName,
-  char *fileNameBuffer,
-  unsigned int fileID,
-  FILE *headerFP,
-  unsigned int imageID,
-  unsigned int maxIndices,
-  unsigned int version)
-  {
-   FILE *fp;
-   int arrayVersion;
-   bool newHeader;
-   unsigned int i;
-   OBJECT_PATTERN_NODE *thePattern;
+static unsigned
+Inte_rmediatePatternNodesToCode (Environment * theEnv,
+				 const char *fileName,
+				 const char *pathName,
+				 char *fileNameBuffer,
+				 unsigned int fileID,
+				 FILE * headerFP,
+				 unsigned int imageID,
+				 unsigned int maxIndices,
+				 unsigned int version)
+{
+  FILE *fp;
+  int arrayVersion;
+  bool newHeader;
+  unsigned int i;
+  OBJECT_PATTERN_NODE *thePattern;
 
-   /* ================
-      Create the file.
-      ================ */
-   if (CL_ObjectNetworkPointer(theEnv) == NULL)
-     { return 1; }
+  /* ================
+     Create the file.
+     ================ */
+  if (CL_ObjectNetworkPointer (theEnv) == NULL)
+    {
+      return 1;
+    }
 
-   fprintf(headerFP,"#include \"objrtmch.h\"\n");
+  fprintf (headerFP, "#include \"objrtmch.h\"\n");
 
-   /* =================================
-      Dump the pattern node structures.
-      ================================= */
-   if ((fp = CL_NewCFile(theEnv,fileName,pathName,fileNameBuffer,fileID,version,false)) == NULL)
-     { return 0; }
-   newHeader = true;
+  /* =================================
+     Dump the pattern node structures.
+     ================================= */
+  if ((fp =
+       CL_NewCFile (theEnv, fileName, pathName, fileNameBuffer, fileID,
+		    version, false)) == NULL)
+    {
+      return 0;
+    }
+  newHeader = true;
 
-   arrayVersion = 1;
-   i = 1;
+  arrayVersion = 1;
+  i = 1;
 
-   thePattern = CL_ObjectNetworkPointer(theEnv);
-   while (thePattern != NULL)
-     {
+  thePattern = CL_ObjectNetworkPointer (theEnv);
+  while (thePattern != NULL)
+    {
       if (newHeader)
-        {
-         fprintf(fp,"OBJECT_PATTERN_NODE %s%u_%u[] = {\n",
-                     ObjectPNPrefix(),imageID,arrayVersion);
-         fprintf(headerFP,"extern OBJECT_PATTERN_NODE %s%u_%u[];\n",
-                     ObjectPNPrefix(),imageID,arrayVersion);
-         newHeader = false;
-        }
-      fprintf(fp,"{0,%u,%u,%u,%u,%u,0L,%u,",thePattern->multifieldNode,
-                                        thePattern->endSlot,
-                                        thePattern->selector,
-                                        thePattern->whichField,
-                                        thePattern->leaveFields,
-                                        thePattern->slotNameID);
+	{
+	  fprintf (fp, "OBJECT_PATTERN_NODE %s%u_%u[] = {\n",
+		   ObjectPNPrefix (), imageID, arrayVersion);
+	  fprintf (headerFP, "extern OBJECT_PATTERN_NODE %s%u_%u[];\n",
+		   ObjectPNPrefix (), imageID, arrayVersion);
+	  newHeader = false;
+	}
+      fprintf (fp, "{0,%u,%u,%u,%u,%u,0L,%u,", thePattern->multifieldNode,
+	       thePattern->endSlot,
+	       thePattern->selector,
+	       thePattern->whichField,
+	       thePattern->leaveFields, thePattern->slotNameID);
 
-      CL_PrintHashedExpressionReference(theEnv,fp,thePattern->networkTest,imageID,maxIndices);
-      fprintf(fp,",");
-      Inte_rmediatePatternNodeReference(theEnv,thePattern->nextLevel,fp,imageID,maxIndices);
-      fprintf(fp,",");
-      Inte_rmediatePatternNodeReference(theEnv,thePattern->lastLevel,fp,imageID,maxIndices);
-      fprintf(fp,",");
-      Inte_rmediatePatternNodeReference(theEnv,thePattern->leftNode,fp,imageID,maxIndices);
-      fprintf(fp,",");
-      Inte_rmediatePatternNodeReference(theEnv,thePattern->rightNode,fp,imageID,maxIndices);
-      fprintf(fp,",");
-      CL_ObjectPatternNodeReference(theEnv,thePattern->alphaNode,fp,imageID,maxIndices);
-      fprintf(fp,",0L}");
+      CL_PrintHashedExpressionReference (theEnv, fp, thePattern->networkTest,
+					 imageID, maxIndices);
+      fprintf (fp, ",");
+      Inte_rmediatePatternNodeReference (theEnv, thePattern->nextLevel, fp,
+					 imageID, maxIndices);
+      fprintf (fp, ",");
+      Inte_rmediatePatternNodeReference (theEnv, thePattern->lastLevel, fp,
+					 imageID, maxIndices);
+      fprintf (fp, ",");
+      Inte_rmediatePatternNodeReference (theEnv, thePattern->leftNode, fp,
+					 imageID, maxIndices);
+      fprintf (fp, ",");
+      Inte_rmediatePatternNodeReference (theEnv, thePattern->rightNode, fp,
+					 imageID, maxIndices);
+      fprintf (fp, ",");
+      CL_ObjectPatternNodeReference (theEnv, thePattern->alphaNode, fp,
+				     imageID, maxIndices);
+      fprintf (fp, ",0L}");
 
       i++;
-      thePattern = GetNextObjectPatternNode(thePattern);
+      thePattern = GetNextObjectPatternNode (thePattern);
 
       if ((i > maxIndices) || (thePattern == NULL))
-        {
-         fprintf(fp,"};\n");
-         CL_GenClose(theEnv,fp);
-         i = 1;
-         version++;
-         arrayVersion++;
-         if (thePattern != NULL)
-           {
-            if ((fp = CL_NewCFile(theEnv,fileName,pathName,fileNameBuffer,fileID,version,false)) == NULL)
-              { return 0; }
-            newHeader = true;
-           }
-        }
+	{
+	  fprintf (fp, "};\n");
+	  CL_GenClose (theEnv, fp);
+	  i = 1;
+	  version++;
+	  arrayVersion++;
+	  if (thePattern != NULL)
+	    {
+	      if ((fp =
+		   CL_NewCFile (theEnv, fileName, pathName, fileNameBuffer,
+				fileID, version, false)) == NULL)
+		{
+		  return 0;
+		}
+	      newHeader = true;
+	    }
+	}
       else if (thePattern != NULL)
-        { fprintf(fp,",\n"); }
-     }
+	{
+	  fprintf (fp, ",\n");
+	}
+    }
 
-   return version;
-  }
+  return version;
+}
 
 /***********************************************************
   NAME         : AlphaPatternNodesToCode
@@ -512,90 +543,105 @@ static unsigned Inte_rmediatePatternNodesToCode(
   SIDE EFFECTS : Object patterns code written to files
   NOTES        : None
  ***********************************************************/
-static unsigned AlphaPatternNodesToCode(
-  Environment *theEnv,
-  const char *fileName,
-  const char *pathName,
-  char *fileNameBuffer,
-  unsigned int fileID,
-  FILE *headerFP,
-  unsigned int imageID,
-  unsigned int maxIndices,
-  unsigned int version)
-  {
-   FILE *fp;
-   unsigned int arrayVersion;
-   bool newHeader;
-   unsigned int i;
-   OBJECT_ALPHA_NODE *thePattern;
+static unsigned
+AlphaPatternNodesToCode (Environment * theEnv,
+			 const char *fileName,
+			 const char *pathName,
+			 char *fileNameBuffer,
+			 unsigned int fileID,
+			 FILE * headerFP,
+			 unsigned int imageID,
+			 unsigned int maxIndices, unsigned int version)
+{
+  FILE *fp;
+  unsigned int arrayVersion;
+  bool newHeader;
+  unsigned int i;
+  OBJECT_ALPHA_NODE *thePattern;
 
-   /* ================
-      Create the file.
-      ================ */
-   if (CL_ObjectNetworkTe_rminalPointer(theEnv) == NULL)
-     { return version; }
+  /* ================
+     Create the file.
+     ================ */
+  if (CL_ObjectNetworkTe_rminalPointer (theEnv) == NULL)
+    {
+      return version;
+    }
 
-   /* =================================
-      Dump the pattern node structures.
-      ================================= */
-   if ((fp = CL_NewCFile(theEnv,fileName,pathName,fileNameBuffer,fileID,version,false)) == NULL)
-     { return 0; }
-   newHeader = true;
+  /* =================================
+     Dump the pattern node structures.
+     ================================= */
+  if ((fp =
+       CL_NewCFile (theEnv, fileName, pathName, fileNameBuffer, fileID,
+		    version, false)) == NULL)
+    {
+      return 0;
+    }
+  newHeader = true;
 
-   arrayVersion = 1;
-   i = 1;
+  arrayVersion = 1;
+  i = 1;
 
-   thePattern = CL_ObjectNetworkTe_rminalPointer(theEnv);
-   while (thePattern != NULL)
-     {
+  thePattern = CL_ObjectNetworkTe_rminalPointer (theEnv);
+  while (thePattern != NULL)
+    {
       if (newHeader)
-        {
-         fprintf(fp,"OBJECT_ALPHA_NODE %s%u_%u[] = {\n",
-                    ObjectANPrefix(),imageID,arrayVersion);
-         fprintf(headerFP,"extern OBJECT_ALPHA_NODE %s%u_%u[];\n",
-                          ObjectANPrefix(),imageID,arrayVersion);
-         newHeader = false;
-        }
+	{
+	  fprintf (fp, "OBJECT_ALPHA_NODE %s%u_%u[] = {\n",
+		   ObjectANPrefix (), imageID, arrayVersion);
+	  fprintf (headerFP, "extern OBJECT_ALPHA_NODE %s%u_%u[];\n",
+		   ObjectANPrefix (), imageID, arrayVersion);
+	  newHeader = false;
+	}
 
-      fprintf(fp,"{");
+      fprintf (fp, "{");
 
-      CL_PatternNodeHeaderToCode(theEnv,fp,&thePattern->header,imageID,maxIndices);
+      CL_PatternNodeHeaderToCode (theEnv, fp, &thePattern->header, imageID,
+				  maxIndices);
 
-      fprintf(fp,",0L,");
-      CL_PrintBitMapReference(theEnv,fp,thePattern->classbmp);
-      fprintf(fp,",");
-      CL_PrintBitMapReference(theEnv,fp,thePattern->slotbmp);
-      fprintf(fp,",");
-      Inte_rmediatePatternNodeReference(theEnv,thePattern->patternNode,fp,imageID,maxIndices);
-      fprintf(fp,",");
-      CL_ObjectPatternNodeReference(theEnv,thePattern->nxtInGroup,fp,imageID,maxIndices);
-      fprintf(fp,",");
-      CL_ObjectPatternNodeReference(theEnv,thePattern->nxtTe_rminal,fp,imageID,maxIndices);
-      fprintf(fp,",0L}");
+      fprintf (fp, ",0L,");
+      CL_PrintBitMapReference (theEnv, fp, thePattern->classbmp);
+      fprintf (fp, ",");
+      CL_PrintBitMapReference (theEnv, fp, thePattern->slotbmp);
+      fprintf (fp, ",");
+      Inte_rmediatePatternNodeReference (theEnv, thePattern->patternNode, fp,
+					 imageID, maxIndices);
+      fprintf (fp, ",");
+      CL_ObjectPatternNodeReference (theEnv, thePattern->nxtInGroup, fp,
+				     imageID, maxIndices);
+      fprintf (fp, ",");
+      CL_ObjectPatternNodeReference (theEnv, thePattern->nxtTe_rminal, fp,
+				     imageID, maxIndices);
+      fprintf (fp, ",0L}");
 
       i++;
       thePattern = thePattern->nxtTe_rminal;
 
       if ((i > maxIndices) || (thePattern == NULL))
-        {
-         fprintf(fp,"};\n");
-         CL_GenClose(theEnv,fp);
-         i = 1;
-         version++;
-         arrayVersion++;
-         if (thePattern != NULL)
-           {
-            if ((fp = CL_NewCFile(theEnv,fileName,pathName,fileNameBuffer,fileID,version,false)) == NULL)
-              { return 0; }
-            newHeader = true;
-           }
-        }
+	{
+	  fprintf (fp, "};\n");
+	  CL_GenClose (theEnv, fp);
+	  i = 1;
+	  version++;
+	  arrayVersion++;
+	  if (thePattern != NULL)
+	    {
+	      if ((fp =
+		   CL_NewCFile (theEnv, fileName, pathName, fileNameBuffer,
+				fileID, version, false)) == NULL)
+		{
+		  return 0;
+		}
+	      newHeader = true;
+	    }
+	}
       else if (thePattern != NULL)
-        { fprintf(fp,",\n"); }
-     }
+	{
+	  fprintf (fp, ",\n");
+	}
+    }
 
-   return version;
-  }
+  return version;
+}
 
 /***********************************************************
   NAME         : ClassAlphaLinksToCode
@@ -612,123 +658,139 @@ static unsigned AlphaPatternNodesToCode(
   SIDE EFFECTS : Class alpha links code written to files
   NOTES        : None
  ***********************************************************/
-static unsigned ClassAlphaLinksToCode(
-  Environment *theEnv,
-  const char *fileName,
-  const char *pathName,
-  char *fileNameBuffer,
-  unsigned int fileID,
-  FILE *headerFP,
-  unsigned int imageID,
-  unsigned int maxIndices,
-  unsigned int version)
-  {
-   FILE *fp;
-   unsigned int arrayVersion;
-   bool newHeader;
-   unsigned int i;
-   Defmodule *theModule = NULL;
-   Defclass *theDefclass = NULL;
-   CLASS_ALPHA_LINK *theLink = NULL;
+static unsigned
+ClassAlphaLinksToCode (Environment * theEnv,
+		       const char *fileName,
+		       const char *pathName,
+		       char *fileNameBuffer,
+		       unsigned int fileID,
+		       FILE * headerFP,
+		       unsigned int imageID,
+		       unsigned int maxIndices, unsigned int version)
+{
+  FILE *fp;
+  unsigned int arrayVersion;
+  bool newHeader;
+  unsigned int i;
+  Defmodule *theModule = NULL;
+  Defclass *theDefclass = NULL;
+  CLASS_ALPHA_LINK *theLink = NULL;
 
-   /* =================================
-      Dump the alpha link structures.
-      ================================= */
-   if ((fp = CL_NewCFile(theEnv,fileName,pathName,fileNameBuffer,fileID,version,false)) == NULL)
-     return(0);
-   newHeader = true;
+  /* =================================
+     Dump the alpha link structures.
+     ================================= */
+  if ((fp =
+       CL_NewCFile (theEnv, fileName, pathName, fileNameBuffer, fileID,
+		    version, false)) == NULL)
+    return (0);
+  newHeader = true;
 
-   arrayVersion = 1;
-   i = 1;
- 
-   theLink = GetNextAlphaLink(theEnv,&theModule,&theDefclass,theLink);
-   while (theLink != NULL)
-     {
+  arrayVersion = 1;
+  i = 1;
+
+  theLink = GetNextAlphaLink (theEnv, &theModule, &theDefclass, theLink);
+  while (theLink != NULL)
+    {
       if (newHeader)
-        {
-         fprintf(fp,"CLASS_ALPHA_LINK %s%u_%u[] = {\n",
-                    ObjectALPrefix(),imageID,arrayVersion);
-         fprintf(headerFP,"extern CLASS_ALPHA_LINK %s%u_%u[];\n",
-                          ObjectALPrefix(),imageID,arrayVersion);
-         newHeader = false;
-        }
+	{
+	  fprintf (fp, "CLASS_ALPHA_LINK %s%u_%u[] = {\n",
+		   ObjectALPrefix (), imageID, arrayVersion);
+	  fprintf (headerFP, "extern CLASS_ALPHA_LINK %s%u_%u[];\n",
+		   ObjectALPrefix (), imageID, arrayVersion);
+	  newHeader = false;
+	}
 
-      fprintf(fp,"{");
-      
-      CL_ObjectPatternNodeReference(theEnv,theLink->alphaNode,fp,imageID,maxIndices);
+      fprintf (fp, "{");
 
-      fprintf(fp,",");
-         
-      CL_ClassAlphaLinkReference(theEnv,theLink->next,fp,imageID,maxIndices);
+      CL_ObjectPatternNodeReference (theEnv, theLink->alphaNode, fp, imageID,
+				     maxIndices);
 
-      fprintf(fp,"}");
-      
-      theLink = GetNextAlphaLink(theEnv,&theModule,&theDefclass,theLink);
-      
+      fprintf (fp, ",");
+
+      CL_ClassAlphaLinkReference (theEnv, theLink->next, fp, imageID,
+				  maxIndices);
+
+      fprintf (fp, "}");
+
+      theLink = GetNextAlphaLink (theEnv, &theModule, &theDefclass, theLink);
+
       if ((i > maxIndices) || (theLink == NULL))
-        {
-         fprintf(fp,"};\n");
-         CL_GenClose(theEnv,fp);
-         i = 1;
-         version++;
-         arrayVersion++;
-         if (theLink != NULL)
-           {
-            if ((fp = CL_NewCFile(theEnv,fileName,pathName,fileNameBuffer,fileID,version,false)) == NULL)
-              return(0);
-            newHeader = true;
-           }
-        }
+	{
+	  fprintf (fp, "};\n");
+	  CL_GenClose (theEnv, fp);
+	  i = 1;
+	  version++;
+	  arrayVersion++;
+	  if (theLink != NULL)
+	    {
+	      if ((fp =
+		   CL_NewCFile (theEnv, fileName, pathName, fileNameBuffer,
+				fileID, version, false)) == NULL)
+		return (0);
+	      newHeader = true;
+	    }
+	}
       else if (theLink != NULL)
-        { fprintf(fp,",\n"); }
-     }
+	{
+	  fprintf (fp, ",\n");
+	}
+    }
 
-   return(version);
-  }
+  return (version);
+}
 
 /********************/
 /* GetNextAlphaLink */
 /********************/
-static CLASS_ALPHA_LINK *GetNextAlphaLink(
-  Environment *theEnv,
-  Defmodule **theModule,
-  Defclass **theClass,
-  CLASS_ALPHA_LINK *theLink)
-  {
-   while (true)
-     {
+static CLASS_ALPHA_LINK *
+GetNextAlphaLink (Environment * theEnv,
+		  Defmodule ** theModule,
+		  Defclass ** theClass, CLASS_ALPHA_LINK * theLink)
+{
+  while (true)
+    {
       if (theLink != NULL)
-        {
-         theLink = theLink->next;
-         
-         if (theLink != NULL)
-           { return theLink; }
-        }
+	{
+	  theLink = theLink->next;
+
+	  if (theLink != NULL)
+	    {
+	      return theLink;
+	    }
+	}
       else if (*theClass != NULL)
-        {
-         *theClass = CL_GetNextDefclass(theEnv,*theClass);
-         if (*theClass != NULL)
-           { theLink = (*theClass)->relevant_te_rminal_alpha_nodes; }
-         if (theLink != NULL)
-           { return theLink; }
-        }
+	{
+	  *theClass = CL_GetNextDefclass (theEnv, *theClass);
+	  if (*theClass != NULL)
+	    {
+	      theLink = (*theClass)->relevant_te_rminal_alpha_nodes;
+	    }
+	  if (theLink != NULL)
+	    {
+	      return theLink;
+	    }
+	}
       else
-        {
-         *theModule = CL_GetNextDefmodule(theEnv,*theModule);
-         if (*theModule == NULL)
-           { return NULL; }
-         CL_SetCurrentModule(theEnv,*theModule);
-         *theClass = CL_GetNextDefclass(theEnv,*theClass);
-         if (*theClass != NULL)
-           {
-            theLink = (*theClass)->relevant_te_rminal_alpha_nodes;
-            if (theLink != NULL)
-              { return theLink; }
-           }
-        }
-     }
-     
-   return NULL;
-  }
+	{
+	  *theModule = CL_GetNextDefmodule (theEnv, *theModule);
+	  if (*theModule == NULL)
+	    {
+	      return NULL;
+	    }
+	  CL_SetCurrentModule (theEnv, *theModule);
+	  *theClass = CL_GetNextDefclass (theEnv, *theClass);
+	  if (*theClass != NULL)
+	    {
+	      theLink = (*theClass)->relevant_te_rminal_alpha_nodes;
+	      if (theLink != NULL)
+		{
+		  return theLink;
+		}
+	    }
+	}
+    }
+
+  return NULL;
+}
 
 #endif

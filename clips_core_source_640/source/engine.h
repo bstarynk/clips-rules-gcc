@@ -89,115 +89,114 @@ typedef struct focalModule FocalModule;
 #include "retract.h"
 
 struct focalModule
-  {
-   Defmodule *theModule;
-   struct defruleModule *the_DefruleModule;
-   FocalModule *next;
-  };
+{
+  Defmodule *theModule;
+  struct defruleModule *the_DefruleModule;
+  FocalModule *next;
+};
 
 typedef struct ruleFiredFunctionItem RuleFiredFunctionItem;
-typedef void RuleFiredFunction(Environment *,Activation *,void *);
+typedef void RuleFiredFunction (Environment *, Activation *, void *);
 
 struct ruleFiredFunctionItem
-  {
-   const char *name;
-   RuleFiredFunction *func;
-   int priority;
-   RuleFiredFunctionItem *next;
-   void *context;
-  };
+{
+  const char *name;
+  RuleFiredFunction *func;
+  int priority;
+  RuleFiredFunctionItem *next;
+  void *context;
+};
 
 #define ENGINE_DATA 18
 
 struct engineData
-  {
-   Defrule *ExecutingRule;
-   bool CL_HaltRules;
-   struct joinNode *TheLogicalJoin;
-   struct partialMatch *TheLogicalBind;
-   struct dependency *UnsupportedDataEntities;
-   bool alreadyEntered;
-   RuleFiredFunctionItem *ListOfAfterRuleFiresFunctions;
-   RuleFiredFunctionItem *ListOfBeforeRuleFiresFunctions;
-   FocalModule *Current_Focus;
-   bool CL_FocusChanged;
+{
+  Defrule *ExecutingRule;
+  bool CL_HaltRules;
+  struct joinNode *TheLogicalJoin;
+  struct partialMatch *TheLogicalBind;
+  struct dependency *UnsupportedDataEntities;
+  bool alreadyEntered;
+  RuleFiredFunctionItem *ListOfAfterRuleFiresFunctions;
+  RuleFiredFunctionItem *ListOfBeforeRuleFiresFunctions;
+  FocalModule *Current_Focus;
+  bool CL_FocusChanged;
 #if DEBUGGING_FUNCTIONS
-   bool CL_WatchStatistics;
-   bool CL_Watch_Focus;
+  bool CL_WatchStatistics;
+  bool CL_Watch_Focus;
 #endif
-   bool CL_Incremental_ResetInProgress;
-   bool JoinOperationInProgress;
-   struct partialMatch *GlobalLHSBinds;
-   struct partialMatch *GlobalRHSBinds;
-   struct joinNode *GlobalJoin;
-   struct partialMatch *GarbagePartial_Matches;
-   struct alphaMatch *GarbageAlpha_Matches;
-   bool Already_Running;
+  bool CL_Incremental_ResetInProgress;
+  bool JoinOperationInProgress;
+  struct partialMatch *GlobalLHSBinds;
+  struct partialMatch *GlobalRHSBinds;
+  struct joinNode *GlobalJoin;
+  struct partialMatch *GarbagePartial_Matches;
+  struct alphaMatch *GarbageAlpha_Matches;
+  bool Already_Running;
 #if DEVELOPER
-   long leftToRightComparisons;
-   long rightToLeftComparisons;
-   long leftToRightSucceeds;
-   long rightToLeftSucceeds;
-   long leftToRightLoops;
-   long rightToLeftLoops;
-   long findNextConflictingComparisons;
-   long betaHashHTSkips;
-   long betaHashListSkips;
-   long unneededMarkerCompare;
+  long leftToRightComparisons;
+  long rightToLeftComparisons;
+  long leftToRightSucceeds;
+  long rightToLeftSucceeds;
+  long leftToRightLoops;
+  long rightToLeftLoops;
+  long findNextConflictingComparisons;
+  long betaHashHTSkips;
+  long betaHashListSkips;
+  long unneededMarkerCompare;
 #endif
-  };
+};
 
 #define EngineData(theEnv) ((struct engineData *) GetEnvironmentData(theEnv,ENGINE_DATA))
 
 #define MAX_PATTERNS_CHECKED 64
 
-   long long               CL_Run(Environment *,long long);
-   bool                    CL_AddAfterRuleFiresFunction(Environment *,const char *,
-                                                     RuleFiredFunction *,int,void *);
-   bool                    CL_RemoveAfterRuleFiresFunction(Environment *,const char *);
-   bool                    CL_AddBeforeRuleFiresFunction(Environment *,const char *,
-                                                      RuleFiredFunction *,int,void *);
-   bool                    CL_RemoveBeforeRuleFiresFunction(Environment *,const char *);
-   RuleFiredFunctionItem  *CL_AddRuleFiredFunctionToCallList(Environment *,const char *,int,RuleFiredFunction *,
-                                                          RuleFiredFunctionItem *,void *);
-   RuleFiredFunctionItem  *CL_RemoveRuleFiredFunctionFromCallList(Environment *,const char *,
-                                                               RuleFiredFunctionItem *,bool *);
-   void                    CL_DeallocateRuleFiredCallList(Environment *,RuleFiredFunctionItem *);
-   void                    CL_InitializeEngine(Environment *);
-   void                    CL_SetBreak(Defrule *);
-   void                    CL_Halt(Environment *);
-   bool                    CL_RemoveBreak(Defrule *);
-   void                    CL_RemoveAllBreakpoints(Environment *);
-   void                    CL_ShowBreaks(Environment *,const char *,Defmodule *);
-   bool                    CL_DefruleHasBreakpoint(Defrule *);
-   void                    CL_RunCommand(Environment *,UDFContext *,UDFValue *);
-   void                    CL_SetBreakCommand(Environment *,UDFContext *,UDFValue *);
-   void                    CL_RemoveBreakCommand(Environment *,UDFContext *,UDFValue *);
-   void                    CL_ShowBreaksCommand(Environment *,UDFContext *,UDFValue *);
-   void                    CL_HaltCommand(Environment *,UDFContext *,UDFValue *);
-   void                    CL_FocusCommand(Environment *,UDFContext *,UDFValue *);
-   void                    CL_Clear_FocusStackCommand(Environment *,UDFContext *,UDFValue *);
-   void                    CL_Clear_FocusStack(Environment *);
-   FocalModule            *GetNext_Focus(Environment *,FocalModule *);
-   const char             *CL_FocalModuleName(FocalModule *);
-   Defmodule              *CL_FocalModuleModule(FocalModule *);
-   void                    CL_Focus(Defmodule *);
-   bool                    Get_FocusChanged(Environment *);
-   void                    Set_FocusChanged(Environment *,bool);
-   void                    List_FocusStackCommand(Environment *,UDFContext *,UDFValue *);
-   void                    List_FocusStack(Environment *,const char *);
-   void                    Get_FocusStackFunction(Environment *,UDFContext *,UDFValue *);
-   void                    Get_FocusStack(Environment *,CLIPSValue *);
-   void                    Pop_FocusFunction(Environment *,UDFContext *,UDFValue *);
-   Defmodule              *Pop_Focus(Environment *);
-   bool                    CL_Get_HaltRules(Environment *);
-   void                    Set_HaltRules(Environment *,bool);
-   Activation             *CL_NextActivationToFire(Environment *);
+long long CL_Run (Environment *, long long);
+bool CL_AddAfterRuleFiresFunction (Environment *, const char *,
+				   RuleFiredFunction *, int, void *);
+bool CL_RemoveAfterRuleFiresFunction (Environment *, const char *);
+bool CL_AddBeforeRuleFiresFunction (Environment *, const char *,
+				    RuleFiredFunction *, int, void *);
+bool CL_RemoveBeforeRuleFiresFunction (Environment *, const char *);
+RuleFiredFunctionItem *CL_AddRuleFiredFunctionToCallList (Environment *,
+							  const char *, int,
+							  RuleFiredFunction *,
+							  RuleFiredFunctionItem
+							  *, void *);
+RuleFiredFunctionItem *CL_RemoveRuleFiredFunctionFromCallList (Environment *,
+							       const char *,
+							       RuleFiredFunctionItem
+							       *, bool *);
+void CL_DeallocateRuleFiredCallList (Environment *, RuleFiredFunctionItem *);
+void CL_InitializeEngine (Environment *);
+void CL_SetBreak (Defrule *);
+void CL_Halt (Environment *);
+bool CL_RemoveBreak (Defrule *);
+void CL_RemoveAllBreakpoints (Environment *);
+void CL_ShowBreaks (Environment *, const char *, Defmodule *);
+bool CL_DefruleHasBreakpoint (Defrule *);
+void CL_RunCommand (Environment *, UDFContext *, UDFValue *);
+void CL_SetBreakCommand (Environment *, UDFContext *, UDFValue *);
+void CL_RemoveBreakCommand (Environment *, UDFContext *, UDFValue *);
+void CL_ShowBreaksCommand (Environment *, UDFContext *, UDFValue *);
+void CL_HaltCommand (Environment *, UDFContext *, UDFValue *);
+void CL_FocusCommand (Environment *, UDFContext *, UDFValue *);
+void CL_Clear_FocusStackCommand (Environment *, UDFContext *, UDFValue *);
+void CL_Clear_FocusStack (Environment *);
+FocalModule *GetNext_Focus (Environment *, FocalModule *);
+const char *CL_FocalModuleName (FocalModule *);
+Defmodule *CL_FocalModuleModule (FocalModule *);
+void CL_Focus (Defmodule *);
+bool Get_FocusChanged (Environment *);
+void Set_FocusChanged (Environment *, bool);
+void List_FocusStackCommand (Environment *, UDFContext *, UDFValue *);
+void List_FocusStack (Environment *, const char *);
+void Get_FocusStackFunction (Environment *, UDFContext *, UDFValue *);
+void Get_FocusStack (Environment *, CLIPSValue *);
+void Pop_FocusFunction (Environment *, UDFContext *, UDFValue *);
+Defmodule *Pop_Focus (Environment *);
+bool CL_Get_HaltRules (Environment *);
+void Set_HaltRules (Environment *, bool);
+Activation *CL_NextActivationToFire (Environment *);
 
 #endif /* _H_engine */
-
-
-
-
-
-

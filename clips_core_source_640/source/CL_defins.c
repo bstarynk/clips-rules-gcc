@@ -121,25 +121,30 @@
    ***************************************** */
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-   static bool                    ParseDefinstances(Environment *,const char *);
-   static CLIPSLexeme            *Parse_DefinstancesName(Environment *,const char *,bool *);
-   static void                    RemoveDefinstances(Environment *,Definstances *);
-   static void                    CL_SaveDefinstances(Environment *,Defmodule *,const char *,void *);
+static bool ParseDefinstances (Environment *, const char *);
+static CLIPSLexeme *Parse_DefinstancesName (Environment *, const char *,
+					    bool *);
+static void RemoveDefinstances (Environment *, Definstances *);
+static void CL_SaveDefinstances (Environment *, Defmodule *, const char *,
+				 void *);
 #endif
 
 #if ! RUN_TIME
-   static void                   *AllocateModule(Environment *);
-   static void                    ReturnModule(Environment *,void *);
-   static bool                    CL_ClearDefinstancesReady(Environment *,void *);
-   static void                    CheckDefinstancesBusy(Environment *,ConstructHeader *,void *);
-   static void                    DestroyDefinstancesAction(Environment *,ConstructHeader *,void *);
+static void *AllocateModule (Environment *);
+static void ReturnModule (Environment *, void *);
+static bool CL_ClearDefinstancesReady (Environment *, void *);
+static void CheckDefinstancesBusy (Environment *, ConstructHeader *, void *);
+static void DestroyDefinstancesAction (Environment *, ConstructHeader *,
+				       void *);
 #else
-   static void                    CL_RuntimeDefinstancesAction(Environment *,ConstructHeader *,void *);
+static void CL_RuntimeDefinstancesAction (Environment *, ConstructHeader *,
+					  void *);
 #endif
 
-   static void                    CL_ResetDefinstances(Environment *,void *);
-   static void                    CL_ResetDefinstancesAction(Environment *,ConstructHeader *,void *);
-   static void                    DeallocateDefinstancesData(Environment *);
+static void CL_ResetDefinstances (Environment *, void *);
+static void CL_ResetDefinstancesAction (Environment *, ConstructHeader *,
+					void *);
+static void DeallocateDefinstancesData (Environment *);
 
 /* =========================================
    *****************************************
@@ -156,142 +161,157 @@
   SIDE EFFECTS : Appropriate function lists modified
   NOTES        : None
  ***************************************************/
-void CL_SetupDefinstances(
-  Environment *theEnv)
-  {
-   CL_AllocateEnvironmentData(theEnv,DEFINSTANCES_DATA,sizeof(struct definstancesData),DeallocateDefinstancesData);
+void
+CL_SetupDefinstances (Environment * theEnv)
+{
+  CL_AllocateEnvironmentData (theEnv, DEFINSTANCES_DATA,
+			      sizeof (struct definstancesData),
+			      DeallocateDefinstancesData);
 
-   DefinstancesData(theEnv)->CL_DefinstancesModuleIndex =
-                CL_RegisterModuleItem(theEnv,"definstances",
+  DefinstancesData (theEnv)->CL_DefinstancesModuleIndex =
+    CL_RegisterModuleItem (theEnv, "definstances",
 #if (! RUN_TIME)
-                                    AllocateModule,
-                                    ReturnModule,
+			   AllocateModule, ReturnModule,
 #else
-                                    NULL,NULL,
+			   NULL, NULL,
 #endif
 #if BLOAD_AND_BSAVE || BLOAD || BLOAD_ONLY
-                                    CL_Bload_DefinstancesModuleRef,
+			   CL_Bload_DefinstancesModuleRef,
 #else
-                                    NULL,
+			   NULL,
 #endif
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
-                                    CL_DefinstancesCModuleReference,
+			   CL_DefinstancesCModuleReference,
 #else
-                                    NULL,
+			   NULL,
 #endif
-                                    (CL_FindConstructFunction *) CL_FindDefinstancesInModule);
+			   (CL_FindConstructFunction *)
+			   CL_FindDefinstancesInModule);
 
-   DefinstancesData(theEnv)->DefinstancesConstruct =
-      CL_AddConstruct(theEnv,"definstances","definstances",
+  DefinstancesData (theEnv)->DefinstancesConstruct =
+    CL_AddConstruct (theEnv, "definstances", "definstances",
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-                   ParseDefinstances,
+		     ParseDefinstances,
 #else
-                   NULL,
+		     NULL,
 #endif
-                   (CL_FindConstructFunction *) CL_FindDefinstances,
-                   CL_GetConstructNamePointer,CL_GetConstructPPFo_rm,
-                   CL_GetConstructModuleItem,
-                   (GetNextConstructFunction *) CL_GetNextDefinstances,
-                   CL_SetNextConstruct,
-                   (IsConstructDeletableFunction *) CL_DefinstancesIsDeletable,
-                   (DeleteConstructFunction *) CL_Undefinstances,
+		     (CL_FindConstructFunction *) CL_FindDefinstances,
+		     CL_GetConstructNamePointer, CL_GetConstructPPFo_rm,
+		     CL_GetConstructModuleItem,
+		     (GetNextConstructFunction *) CL_GetNextDefinstances,
+		     CL_SetNextConstruct,
+		     (IsConstructDeletableFunction *)
+		     CL_DefinstancesIsDeletable,
+		     (DeleteConstructFunction *) CL_Undefinstances,
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-                   (FreeConstructFunction *) RemoveDefinstances
+		     (FreeConstructFunction *) RemoveDefinstances
 #else
-                   NULL
+		     NULL
 #endif
-                   );
+    );
 
 #if ! RUN_TIME
-   CL_Add_ClearReadyFunction(theEnv,"definstances",CL_ClearDefinstancesReady,0,NULL);
+  CL_Add_ClearReadyFunction (theEnv, "definstances",
+			     CL_ClearDefinstancesReady, 0, NULL);
 
 #if ! BLOAD_ONLY
-   CL_AddUDF(theEnv,"undefinstances","v",1,1,"y",CL_UndefinstancesCommand,"CL_UndefinstancesCommand",NULL);
-   CL_Add_SaveFunction(theEnv,"definstances",CL_SaveDefinstances,0,NULL);
+  CL_AddUDF (theEnv, "undefinstances", "v", 1, 1, "y",
+	     CL_UndefinstancesCommand, "CL_UndefinstancesCommand", NULL);
+  CL_Add_SaveFunction (theEnv, "definstances", CL_SaveDefinstances, 0, NULL);
 #endif
 
 #if DEBUGGING_FUNCTIONS
-   CL_AddUDF(theEnv,"ppdefinstances","vs",1,2,";y;ldsyn",CL_PPDefinstancesCommand,"CL_PPDefinstancesCommand",NULL);
-   CL_AddUDF(theEnv,"list-definstances","v",0,1,"y",CL_ListDefinstancesCommand,"CL_ListDefinstancesCommand",NULL);
+  CL_AddUDF (theEnv, "ppdefinstances", "vs", 1, 2, ";y;ldsyn",
+	     CL_PPDefinstancesCommand, "CL_PPDefinstancesCommand", NULL);
+  CL_AddUDF (theEnv, "list-definstances", "v", 0, 1, "y",
+	     CL_ListDefinstancesCommand, "CL_ListDefinstancesCommand", NULL);
 #endif
 
-   CL_AddUDF(theEnv,"get-definstances-list","m",0,1,"y",CL_GetDefinstancesListFunction,"CL_GetDefinstancesListFunction",NULL);
-   CL_AddUDF(theEnv,"definstances-module","y",1,1,"y",Get_DefinstancesModuleCommand,"Get_DefinstancesModuleCommand",NULL);
+  CL_AddUDF (theEnv, "get-definstances-list", "m", 0, 1, "y",
+	     CL_GetDefinstancesListFunction, "CL_GetDefinstancesListFunction",
+	     NULL);
+  CL_AddUDF (theEnv, "definstances-module", "y", 1, 1, "y",
+	     Get_DefinstancesModuleCommand, "Get_DefinstancesModuleCommand",
+	     NULL);
 
 #endif
-   CL_Add_ResetFunction(theEnv,"definstances",CL_ResetDefinstances,0,NULL);
+  CL_Add_ResetFunction (theEnv, "definstances", CL_ResetDefinstances, 0,
+			NULL);
 
 #if BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE
-   CL_SetupDefinstances_Bload(theEnv);
+  CL_SetupDefinstances_Bload (theEnv);
 #endif
 
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
-   CL_SetupDefinstancesCompiler(theEnv);
+  CL_SetupDefinstancesCompiler (theEnv);
 #endif
-  }
+}
 
 /*******************************************************/
 /* DeallocateDefinstancesData: Deallocates environment */
 /*    data for the definstances construct.             */
 /*******************************************************/
-static void DeallocateDefinstancesData(
-  Environment *theEnv)
-  {
+static void
+DeallocateDefinstancesData (Environment * theEnv)
+{
 #if ! RUN_TIME
-   struct definstancesModule *theModuleItem;
-   Defmodule *theModule;
+  struct definstancesModule *theModuleItem;
+  Defmodule *theModule;
 
 #if BLOAD || BLOAD_AND_BSAVE
-   if (CL_Bloaded(theEnv)) return;
+  if (CL_Bloaded (theEnv))
+    return;
 #endif
 
-   CL_DoForAllConstructs(theEnv,DestroyDefinstancesAction,DefinstancesData(theEnv)->CL_DefinstancesModuleIndex,false,NULL);
+  CL_DoForAllConstructs (theEnv, DestroyDefinstancesAction,
+			 DefinstancesData (theEnv)->
+			 CL_DefinstancesModuleIndex, false, NULL);
 
-   for (theModule = CL_GetNextDefmodule(theEnv,NULL);
-        theModule != NULL;
-        theModule = CL_GetNextDefmodule(theEnv,theModule))
-     {
+  for (theModule = CL_GetNextDefmodule (theEnv, NULL);
+       theModule != NULL; theModule = CL_GetNextDefmodule (theEnv, theModule))
+    {
       theModuleItem = (struct definstancesModule *)
-                      CL_GetModuleItem(theEnv,theModule,
-                                    DefinstancesData(theEnv)->CL_DefinstancesModuleIndex);
-      rtn_struct(theEnv,definstancesModule,theModuleItem);
-     }
+	CL_GetModuleItem (theEnv, theModule,
+			  DefinstancesData (theEnv)->
+			  CL_DefinstancesModuleIndex);
+      rtn_struct (theEnv, definstancesModule, theModuleItem);
+    }
 #else
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
 #endif
-  }
+}
 
 #if ! RUN_TIME
 /*****************************************************/
 /* DestroyDefinstancesAction: Action used to remove  */
 /*   definstances as a result of CL_DestroyEnvironment. */
 /*****************************************************/
-static void DestroyDefinstancesAction(
-  Environment *theEnv,
-  ConstructHeader *theConstruct,
-  void *buffer)
-  {
+static void
+DestroyDefinstancesAction (Environment * theEnv,
+			   ConstructHeader * theConstruct, void *buffer)
+{
 #if MAC_XCD
 #pragma unused(buffer)
 #endif
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-   struct definstances *theDefinstances = (struct definstances *) theConstruct;
+  struct definstances *theDefinstances = (struct definstances *) theConstruct;
 
-   if (theDefinstances == NULL) return;
+  if (theDefinstances == NULL)
+    return;
 
-   CL_ReturnPackedExpression(theEnv,theDefinstances->mkinstance);
+  CL_ReturnPackedExpression (theEnv, theDefinstances->mkinstance);
 
-   CL_DestroyConstructHeader(theEnv,&theDefinstances->header);
+  CL_DestroyConstructHeader (theEnv, &theDefinstances->header);
 
-   rtn_struct(theEnv,definstances,theDefinstances);
+  rtn_struct (theEnv, definstances, theDefinstances);
 #else
 #if MAC_XCD
 #pragma unused(theConstruct,theEnv)
 #endif
 #endif
-  }
+}
 #endif
 
 #if RUN_TIME
@@ -301,27 +321,28 @@ static void DestroyDefinstancesAction(
 /*   to each definstances construct when a runtime */
 /*   initialization occurs.                        */
 /***************************************************/
-static void CL_RuntimeDefinstancesAction(
-  Environment *theEnv,
-  ConstructHeader *theConstruct,
-  void *buffer)
-  {
+static void
+CL_RuntimeDefinstancesAction (Environment * theEnv,
+			      ConstructHeader * theConstruct, void *buffer)
+{
 #if MAC_XCD
 #pragma unused(buffer)
 #endif
-   Definstances *theDefinstances = (Definstances *) theConstruct;
-   
-   theDefinstances->header.env = theEnv;
-  }
+  Definstances *theDefinstances = (Definstances *) theConstruct;
+
+  theDefinstances->header.env = theEnv;
+}
 
 /**********************************/
 /* Definstances_RunTimeInitialize: */
 /**********************************/
-void Definstances_RunTimeInitialize(
-  Environment *theEnv)
-  {
-   CL_DoForAllConstructs(theEnv,CL_RuntimeDefinstancesAction,DefinstancesData(theEnv)->CL_DefinstancesModuleIndex,true,NULL);
-  }
+void
+Definstances_RunTimeInitialize (Environment * theEnv)
+{
+  CL_DoForAllConstructs (theEnv, CL_RuntimeDefinstancesAction,
+			 DefinstancesData (theEnv)->
+			 CL_DefinstancesModuleIndex, true, NULL);
+}
 
 #endif
 
@@ -335,13 +356,14 @@ void Definstances_RunTimeInitialize(
   NOTES        : If ptr == NULL, the first definstances
                     is returned.
  ***********************************************************/
-Definstances *CL_GetNextDefinstances(
-  Environment *theEnv,
-  Definstances *theDefinstances)
-  {
-   return (Definstances *) CL_GetNextConstructItem(theEnv,&theDefinstances->header,
-                                                DefinstancesData(theEnv)->CL_DefinstancesModuleIndex);
-  }
+Definstances *
+CL_GetNextDefinstances (Environment * theEnv, Definstances * theDefinstances)
+{
+  return (Definstances *) CL_GetNextConstructItem (theEnv,
+						   &theDefinstances->header,
+						   DefinstancesData (theEnv)->
+						   CL_DefinstancesModuleIndex);
+}
 
 /***************************************************
   NAME         : CL_FindDefinstances
@@ -353,12 +375,15 @@ Definstances *CL_GetNextDefinstances(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-Definstances *CL_FindDefinstances(
-  Environment *theEnv,
-  const char *name)
-  {
-   return (Definstances *) CL_FindNamedConstructInModuleOrImports(theEnv,name,DefinstancesData(theEnv)->DefinstancesConstruct);
-  }
+Definstances *
+CL_FindDefinstances (Environment * theEnv, const char *name)
+{
+  return (Definstances *) CL_FindNamedConstructInModuleOrImports (theEnv,
+								  name,
+								  DefinstancesData
+								  (theEnv)->
+								  DefinstancesConstruct);
+}
 
 /***************************************************
   NAME         : CL_FindDefinstancesInModule
@@ -370,12 +395,14 @@ Definstances *CL_FindDefinstances(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-Definstances *CL_FindDefinstancesInModule(
-  Environment *theEnv,
-  const char *name)
-  {
-   return (Definstances *) CL_FindNamedConstructInModule(theEnv,name,DefinstancesData(theEnv)->DefinstancesConstruct);
-  }
+Definstances *
+CL_FindDefinstancesInModule (Environment * theEnv, const char *name)
+{
+  return (Definstances *) CL_FindNamedConstructInModule (theEnv, name,
+							 DefinstancesData
+							 (theEnv)->
+							 DefinstancesConstruct);
+}
 
 /***************************************************
   NAME         : CL_DefinstancesIsDeletable
@@ -386,16 +413,18 @@ Definstances *CL_FindDefinstancesInModule(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-bool CL_DefinstancesIsDeletable(
-  Definstances *theDefinstances)
-  {
-   Environment *theEnv = theDefinstances->header.env;
-   
-   if (! CL_ConstructsDeletable(theEnv))
-     { return false; }
+bool
+CL_DefinstancesIsDeletable (Definstances * theDefinstances)
+{
+  Environment *theEnv = theDefinstances->header.env;
 
-   return (theDefinstances->busy == 0) ? true : false;
-  }
+  if (!CL_ConstructsDeletable (theEnv))
+    {
+      return false;
+    }
+
+  return (theDefinstances->busy == 0) ? true : false;
+}
 
 /***********************************************************
   NAME         : CL_UndefinstancesCommand
@@ -405,13 +434,13 @@ bool CL_DefinstancesIsDeletable(
   SIDE EFFECTS : Definstance deallocated
   NOTES        : H/L Syntax : (undefinstances <name> | *)
  ***********************************************************/
-void CL_UndefinstancesCommand(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
-   CL_UndefconstructCommand(context,"undefinstances",DefinstancesData(theEnv)->DefinstancesConstruct);
-  }
+void
+CL_UndefinstancesCommand (Environment * theEnv,
+			  UDFContext * context, UDFValue * returnValue)
+{
+  CL_UndefconstructCommand (context, "undefinstances",
+			    DefinstancesData (theEnv)->DefinstancesConstruct);
+}
 
 /*****************************************************************
   NAME         : Get_DefinstancesModuleCommand
@@ -421,13 +450,15 @@ void CL_UndefinstancesCommand(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax: (definstances-module <defins-name>)
  *****************************************************************/
-void Get_DefinstancesModuleCommand(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
-   returnValue->value = CL_GetConstructModuleCommand(context,"definstances-module",DefinstancesData(theEnv)->DefinstancesConstruct);
-  }
+void
+Get_DefinstancesModuleCommand (Environment * theEnv,
+			       UDFContext * context, UDFValue * returnValue)
+{
+  returnValue->value =
+    CL_GetConstructModuleCommand (context, "definstances-module",
+				  DefinstancesData (theEnv)->
+				  DefinstancesConstruct);
+}
 
 /***********************************************************
   NAME         : CL_Undefinstances
@@ -438,23 +469,26 @@ void Get_DefinstancesModuleCommand(
   SIDE EFFECTS : Definstance deallocated
   NOTES        : None
  ***********************************************************/
-bool CL_Undefinstances(
-  Definstances *theDefinstances,
-  Environment *allEnv)
-  {
-   Environment *theEnv;
-   
-   if (theDefinstances == NULL)
-     {
+bool
+CL_Undefinstances (Definstances * theDefinstances, Environment * allEnv)
+{
+  Environment *theEnv;
+
+  if (theDefinstances == NULL)
+    {
       theEnv = allEnv;
-      return CL_Undefconstruct(theEnv,NULL,DefinstancesData(theEnv)->DefinstancesConstruct);
-     }
-   else
-     {
+      return CL_Undefconstruct (theEnv, NULL,
+				DefinstancesData (theEnv)->
+				DefinstancesConstruct);
+    }
+  else
+    {
       theEnv = theDefinstances->header.env;
-      return CL_Undefconstruct(theEnv,&theDefinstances->header,DefinstancesData(theEnv)->DefinstancesConstruct);
-     }
-  }
+      return CL_Undefconstruct (theEnv, &theDefinstances->header,
+				DefinstancesData (theEnv)->
+				DefinstancesConstruct);
+    }
+}
 
 #if DEBUGGING_FUNCTIONS
 
@@ -466,13 +500,14 @@ bool CL_Undefinstances(
   SIDE EFFECTS : None
   NOTES        : H/L Syntax : (ppdefinstances <name>)
  ***************************************************************/
-void CL_PPDefinstancesCommand(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
-   CL_PPConstructCommand(context,"ppdefinstances",DefinstancesData(theEnv)->DefinstancesConstruct,returnValue);
-  }
+void
+CL_PPDefinstancesCommand (Environment * theEnv,
+			  UDFContext * context, UDFValue * returnValue)
+{
+  CL_PPConstructCommand (context, "ppdefinstances",
+			 DefinstancesData (theEnv)->DefinstancesConstruct,
+			 returnValue);
+}
 
 /***************************************************
   NAME         : CL_ListDefinstancesCommand
@@ -482,13 +517,13 @@ void CL_PPDefinstancesCommand(
   SIDE EFFECTS : Definstances name sprinted
   NOTES        : H/L Interface
  ***************************************************/
-void CL_ListDefinstancesCommand(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
-   CL_ListConstructCommand(context,DefinstancesData(theEnv)->DefinstancesConstruct);
-  }
+void
+CL_ListDefinstancesCommand (Environment * theEnv,
+			    UDFContext * context, UDFValue * returnValue)
+{
+  CL_ListConstructCommand (context,
+			   DefinstancesData (theEnv)->DefinstancesConstruct);
+}
 
 /***************************************************
   NAME         : CL_ListDefinstances
@@ -499,13 +534,13 @@ void CL_ListDefinstancesCommand(
   SIDE EFFECTS : Definstances names printed
   NOTES        : C Interface
  ***************************************************/
-void CL_ListDefinstances(
-  Environment *theEnv,
-  const char *logicalName,
-  Defmodule *theModule)
-  {
-   CL_ListConstruct(theEnv,DefinstancesData(theEnv)->DefinstancesConstruct,logicalName,theModule);
-  }
+void
+CL_ListDefinstances (Environment * theEnv,
+		     const char *logicalName, Defmodule * theModule)
+{
+  CL_ListConstruct (theEnv, DefinstancesData (theEnv)->DefinstancesConstruct,
+		    logicalName, theModule);
+}
 
 #endif
 
@@ -519,13 +554,14 @@ void CL_ListDefinstances(
   SIDE EFFECTS : Multifield allocated and filled
   NOTES        : H/L Syntax: (get-definstances-list [<module>])
  ****************************************************************/
-void CL_GetDefinstancesListFunction(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
-   CL_GetConstructListFunction(context,returnValue,DefinstancesData(theEnv)->DefinstancesConstruct);
-  }
+void
+CL_GetDefinstancesListFunction (Environment * theEnv,
+				UDFContext * context, UDFValue * returnValue)
+{
+  CL_GetConstructListFunction (context, returnValue,
+			       DefinstancesData (theEnv)->
+			       DefinstancesConstruct);
+}
 
 /***************************************************************
   NAME         : CL_GetDefinstancesList
@@ -538,17 +574,18 @@ void CL_GetDefinstancesListFunction(
   SIDE EFFECTS : Multifield allocated and filled
   NOTES        : External C access
  ***************************************************************/
-void CL_GetDefinstancesList(
-  Environment *theEnv,
-  CLIPSValue *returnValue,
-  Defmodule *theModule)
-  {
-   UDFValue result;
-   
-   CL_GetConstructList(theEnv,&result,DefinstancesData(theEnv)->DefinstancesConstruct,theModule);
-   CL_No_rmalizeMultifield(theEnv,&result);
-   returnValue->value = result.value;
-  }
+void
+CL_GetDefinstancesList (Environment * theEnv,
+			CLIPSValue * returnValue, Defmodule * theModule)
+{
+  UDFValue result;
+
+  CL_GetConstructList (theEnv, &result,
+		       DefinstancesData (theEnv)->DefinstancesConstruct,
+		       theModule);
+  CL_No_rmalizeMultifield (theEnv, &result);
+  returnValue->value = result.value;
+}
 
 /* =========================================
    *****************************************
@@ -574,108 +611,113 @@ void CL_GetDefinstancesList(
 
                  <slot-override> ::= (<slot-name> <value-expression>*)
  *********************************************************************/
-static bool ParseDefinstances(
-  Environment *theEnv,
-  const char *readSource)
-  {
-   CLIPSLexeme *dname;
-   struct functionDefinition *mkinsfcall;
-   Expression *mkinstance,*mkbot = NULL;
-   Definstances *dobj;
-   bool active;
+static bool
+ParseDefinstances (Environment * theEnv, const char *readSource)
+{
+  CLIPSLexeme *dname;
+  struct functionDefinition *mkinsfcall;
+  Expression *mkinstance, *mkbot = NULL;
+  Definstances *dobj;
+  bool active;
 
-   CL_SetPPBufferStatus(theEnv,true);
-   CL_FlushPPBuffer(theEnv);
-   CL_SetIndentDepth(theEnv,3);
-   CL_SavePPBuffer(theEnv,"(definstances ");
+  CL_SetPPBufferStatus (theEnv, true);
+  CL_FlushPPBuffer (theEnv);
+  CL_SetIndentDepth (theEnv, 3);
+  CL_SavePPBuffer (theEnv, "(definstances ");
 
 #if BLOAD || BLOAD_AND_BSAVE
-   if ((CL_Bloaded(theEnv)) && (! ConstructData(theEnv)->CL_CheckSyntaxMode))
-     {
-      Cannot_LoadWith_BloadMessage(theEnv,"definstances");
+  if ((CL_Bloaded (theEnv)) && (!ConstructData (theEnv)->CL_CheckSyntaxMode))
+    {
+      Cannot_LoadWith_BloadMessage (theEnv, "definstances");
       return true;
-     }
+    }
 #endif
-   dname = Parse_DefinstancesName(theEnv,readSource,&active);
-   if (dname == NULL)
-     return true;
+  dname = Parse_DefinstancesName (theEnv, readSource, &active);
+  if (dname == NULL)
+    return true;
 
-   dobj = get_struct(theEnv,definstances);
-   CL_InitializeConstructHeader(theEnv,"definstances",DEFINSTANCES,&dobj->header,dname);
-   dobj->busy = 0;
-   dobj->mkinstance = NULL;
+  dobj = get_struct (theEnv, definstances);
+  CL_InitializeConstructHeader (theEnv, "definstances", DEFINSTANCES,
+				&dobj->header, dname);
+  dobj->busy = 0;
+  dobj->mkinstance = NULL;
 #if DEFRULE_CONSTRUCT
-   if (active)
-     mkinsfcall = CL_FindFunction(theEnv,"active-make-instance");
-   else
-     mkinsfcall = CL_FindFunction(theEnv,"make-instance");
+  if (active)
+    mkinsfcall = CL_FindFunction (theEnv, "active-make-instance");
+  else
+    mkinsfcall = CL_FindFunction (theEnv, "make-instance");
 #else
-   mkinsfcall = CL_FindFunction(theEnv,"make-instance");
+  mkinsfcall = CL_FindFunction (theEnv, "make-instance");
 #endif
-   while (DefclassData(theEnv)->ObjectParseToken.tknType == LEFT_PARENTHESIS_TOKEN)
-     {
-      mkinstance = CL_GenConstant(theEnv,UNKNOWN_VALUE,mkinsfcall);
-      mkinstance = CL_ParseInitializeInstance(theEnv,mkinstance,readSource);
+  while (DefclassData (theEnv)->ObjectParseToken.tknType ==
+	 LEFT_PARENTHESIS_TOKEN)
+    {
+      mkinstance = CL_GenConstant (theEnv, UNKNOWN_VALUE, mkinsfcall);
+      mkinstance =
+	CL_ParseInitializeInstance (theEnv, mkinstance, readSource);
       if (mkinstance == NULL)
-        {
-         CL_ReturnExpression(theEnv,dobj->mkinstance);
-         rtn_struct(theEnv,definstances,dobj);
-         return true;
-        }
-      if (CL_ExpressionContainsVariables(mkinstance,false) == true)
-        {
-         CL_LocalVariableErrorMessage(theEnv,"definstances");
-         CL_ReturnExpression(theEnv,mkinstance);
-         CL_ReturnExpression(theEnv,dobj->mkinstance);
-         rtn_struct(theEnv,definstances,dobj);
-         return true;
-        }
+	{
+	  CL_ReturnExpression (theEnv, dobj->mkinstance);
+	  rtn_struct (theEnv, definstances, dobj);
+	  return true;
+	}
+      if (CL_ExpressionContainsVariables (mkinstance, false) == true)
+	{
+	  CL_LocalVariableErrorMessage (theEnv, "definstances");
+	  CL_ReturnExpression (theEnv, mkinstance);
+	  CL_ReturnExpression (theEnv, dobj->mkinstance);
+	  rtn_struct (theEnv, definstances, dobj);
+	  return true;
+	}
       if (mkbot == NULL)
-        dobj->mkinstance = mkinstance;
+	dobj->mkinstance = mkinstance;
       else
-        GetNextArgument(mkbot) = mkinstance;
+	GetNextArgument (mkbot) = mkinstance;
       mkbot = mkinstance;
-      CL_GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
-      CL_PPBackup(theEnv);
-      CL_PPCRAndIndent(theEnv);
-      CL_SavePPBuffer(theEnv,DefclassData(theEnv)->ObjectParseToken.printFo_rm);
-     }
+      CL_GetToken (theEnv, readSource,
+		   &DefclassData (theEnv)->ObjectParseToken);
+      CL_PPBackup (theEnv);
+      CL_PPCRAndIndent (theEnv);
+      CL_SavePPBuffer (theEnv,
+		       DefclassData (theEnv)->ObjectParseToken.printFo_rm);
+    }
 
-   if (DefclassData(theEnv)->ObjectParseToken.tknType != RIGHT_PARENTHESIS_TOKEN)
-     {
-      CL_ReturnExpression(theEnv,dobj->mkinstance);
-      rtn_struct(theEnv,definstances,dobj);
-      CL_SyntaxErrorMessage(theEnv,"definstances");
+  if (DefclassData (theEnv)->ObjectParseToken.tknType !=
+      RIGHT_PARENTHESIS_TOKEN)
+    {
+      CL_ReturnExpression (theEnv, dobj->mkinstance);
+      rtn_struct (theEnv, definstances, dobj);
+      CL_SyntaxErrorMessage (theEnv, "definstances");
       return true;
-     }
-   else
-     {
-      if (ConstructData(theEnv)->CL_CheckSyntaxMode)
-        {
-         CL_ReturnExpression(theEnv,dobj->mkinstance);
-         rtn_struct(theEnv,definstances,dobj);
-         return false;
-        }
+    }
+  else
+    {
+      if (ConstructData (theEnv)->CL_CheckSyntaxMode)
+	{
+	  CL_ReturnExpression (theEnv, dobj->mkinstance);
+	  rtn_struct (theEnv, definstances, dobj);
+	  return false;
+	}
 #if DEBUGGING_FUNCTIONS
-      if (CL_GetConserveMemory(theEnv) == false)
-        {
-         if (dobj->mkinstance != NULL)
-           CL_PPBackup(theEnv);
-         CL_PPBackup(theEnv);
-         CL_SavePPBuffer(theEnv,")\n");
-         SetCL_DefinstancesPPFo_rm(theEnv,dobj,CL_CopyPPBuffer(theEnv));
-        }
+      if (CL_GetConserveMemory (theEnv) == false)
+	{
+	  if (dobj->mkinstance != NULL)
+	    CL_PPBackup (theEnv);
+	  CL_PPBackup (theEnv);
+	  CL_SavePPBuffer (theEnv, ")\n");
+	  SetCL_DefinstancesPPFo_rm (theEnv, dobj, CL_CopyPPBuffer (theEnv));
+	}
 #endif
       mkinstance = dobj->mkinstance;
-      dobj->mkinstance = CL_PackExpression(theEnv,mkinstance);
-      CL_ReturnExpression(theEnv,mkinstance);
-      IncrementLexemeCount(Get_DefinstancesNamePointer(theEnv,dobj));
-      CL_ExpressionInstall(theEnv,dobj->mkinstance);
-     }
+      dobj->mkinstance = CL_PackExpression (theEnv, mkinstance);
+      CL_ReturnExpression (theEnv, mkinstance);
+      IncrementLexemeCount (Get_DefinstancesNamePointer (theEnv, dobj));
+      CL_ExpressionInstall (theEnv, dobj->mkinstance);
+    }
 
-   CL_AddConstructToModule(&dobj->header);
-   return false;
-  }
+  CL_AddConstructToModule (&dobj->header);
+  return false;
+}
 
 /*************************************************************
   NAME         : Parse_DefinstancesName
@@ -691,45 +733,55 @@ static bool ParseDefinstances(
   NOTES        : Assumes "(definstances" has already
                    been scanned.
  *************************************************************/
-static CLIPSLexeme *Parse_DefinstancesName(
-  Environment *theEnv,
-  const char *readSource,
-  bool *active)
-  {
-   CLIPSLexeme *dname;
+static CLIPSLexeme *
+Parse_DefinstancesName (Environment * theEnv,
+			const char *readSource, bool *active)
+{
+  CLIPSLexeme *dname;
 
-   *active = false;
-   dname = CL_GetConstructNameAndComment(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken,"definstances",
-                                      (CL_FindConstructFunction *) CL_FindDefinstancesInModule,
-                                      (DeleteConstructFunction *) CL_Undefinstances,"@",
-                                      true,false,true,false);
-   if (dname == NULL)
-     return NULL;
+  *active = false;
+  dname =
+    CL_GetConstructNameAndComment (theEnv, readSource,
+				   &DefclassData (theEnv)->ObjectParseToken,
+				   "definstances",
+				   (CL_FindConstructFunction *)
+				   CL_FindDefinstancesInModule,
+				   (DeleteConstructFunction *)
+				   CL_Undefinstances, "@", true, false, true,
+				   false);
+  if (dname == NULL)
+    return NULL;
 
 #if DEFRULE_CONSTRUCT
-   if ((DefclassData(theEnv)->ObjectParseToken.tknType != SYMBOL_TOKEN) ? false :
-       (strcmp(DefclassData(theEnv)->ObjectParseToken.lexemeValue->contents,ACTIVE_RLN) == 0))
-     {
-      CL_PPBackup(theEnv);
-      CL_PPBackup(theEnv);
-      CL_SavePPBuffer(theEnv," ");
-      CL_SavePPBuffer(theEnv,DefclassData(theEnv)->ObjectParseToken.printFo_rm);
-      CL_PPCRAndIndent(theEnv);
-      CL_GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
+  if ((DefclassData (theEnv)->ObjectParseToken.tknType !=
+       SYMBOL_TOKEN) ? false : (strcmp (DefclassData (theEnv)->
+					ObjectParseToken.lexemeValue->
+					contents, ACTIVE_RLN) == 0))
+    {
+      CL_PPBackup (theEnv);
+      CL_PPBackup (theEnv);
+      CL_SavePPBuffer (theEnv, " ");
+      CL_SavePPBuffer (theEnv,
+		       DefclassData (theEnv)->ObjectParseToken.printFo_rm);
+      CL_PPCRAndIndent (theEnv);
+      CL_GetToken (theEnv, readSource,
+		   &DefclassData (theEnv)->ObjectParseToken);
       *active = true;
-     }
+    }
 #endif
-   if (DefclassData(theEnv)->ObjectParseToken.tknType == STRING_TOKEN)
-     {
-      CL_PPBackup(theEnv);
-      CL_PPBackup(theEnv);
-      CL_SavePPBuffer(theEnv," ");
-      CL_SavePPBuffer(theEnv,DefclassData(theEnv)->ObjectParseToken.printFo_rm);
-      CL_PPCRAndIndent(theEnv);
-      CL_GetToken(theEnv,readSource,&DefclassData(theEnv)->ObjectParseToken);
-     }
-   return(dname);
-  }
+  if (DefclassData (theEnv)->ObjectParseToken.tknType == STRING_TOKEN)
+    {
+      CL_PPBackup (theEnv);
+      CL_PPBackup (theEnv);
+      CL_SavePPBuffer (theEnv, " ");
+      CL_SavePPBuffer (theEnv,
+		       DefclassData (theEnv)->ObjectParseToken.printFo_rm);
+      CL_PPCRAndIndent (theEnv);
+      CL_GetToken (theEnv, readSource,
+		   &DefclassData (theEnv)->ObjectParseToken);
+    }
+  return (dname);
+}
 
 /**************************************************************
   NAME         : RemoveDefinstances
@@ -739,17 +791,16 @@ static CLIPSLexeme *Parse_DefinstancesName(
   SIDE EFFECTS : Existing definstance construct deleted
   NOTES        : Assumes busy count of definstance is 0
  **************************************************************/
-static void RemoveDefinstances(
-  Environment *theEnv,
-  Definstances *theDefinstances)
-  {
-   CL_ReleaseLexeme(theEnv,theDefinstances->header.name);
-   CL_ExpressionDeinstall(theEnv,theDefinstances->mkinstance);
-   CL_ReturnPackedExpression(theEnv,theDefinstances->mkinstance);
-   SetCL_DefinstancesPPFo_rm(theEnv,theDefinstances,NULL);
-   CL_ClearUserDataList(theEnv,theDefinstances->header.usrData);
-   rtn_struct(theEnv,definstances,theDefinstances);
-  }
+static void
+RemoveDefinstances (Environment * theEnv, Definstances * theDefinstances)
+{
+  CL_ReleaseLexeme (theEnv, theDefinstances->header.name);
+  CL_ExpressionDeinstall (theEnv, theDefinstances->mkinstance);
+  CL_ReturnPackedExpression (theEnv, theDefinstances->mkinstance);
+  SetCL_DefinstancesPPFo_rm (theEnv, theDefinstances, NULL);
+  CL_ClearUserDataList (theEnv, theDefinstances->header.usrData);
+  rtn_struct (theEnv, definstances, theDefinstances);
+}
 
 /***************************************************
   NAME         : CL_SaveDefinstances
@@ -760,14 +811,14 @@ static void RemoveDefinstances(
   SIDE EFFECTS : None
   NOTES        : None
  ***************************************************/
-static void CL_SaveDefinstances(
-  Environment *theEnv,
-  Defmodule *theModule,
-  const char *logName,
-  void *context)
-  {
-   CL_SaveConstruct(theEnv,theModule,logName,DefinstancesData(theEnv)->DefinstancesConstruct);
-  }
+static void
+CL_SaveDefinstances (Environment * theEnv,
+		     Defmodule * theModule,
+		     const char *logName, void *context)
+{
+  CL_SaveConstruct (theEnv, theModule, logName,
+		    DefinstancesData (theEnv)->DefinstancesConstruct);
+}
 
 #endif
 
@@ -782,11 +833,11 @@ static void CL_SaveDefinstances(
   SIDE EFFECTS : Definstances module created
   NOTES        : None
  *****************************************************/
-static void *AllocateModule(
-  Environment *theEnv)
-  {
-   return (void *) get_struct(theEnv,definstancesModule);
-  }
+static void *
+AllocateModule (Environment * theEnv)
+{
+  return (void *) get_struct (theEnv, definstancesModule);
+}
 
 /***************************************************
   NAME         : ReturnModule
@@ -797,15 +848,17 @@ static void *AllocateModule(
   SIDE EFFECTS : Module and definstances deleted
   NOTES        : None
  ***************************************************/
-static void ReturnModule(
-  Environment *theEnv,
-  void *theItem)
-  {
+static void
+ReturnModule (Environment * theEnv, void *theItem)
+{
 #if (! BLOAD_ONLY)
-   CL_FreeConstructHeaderModule(theEnv,(struct defmoduleItemHeader *) theItem,DefinstancesData(theEnv)->DefinstancesConstruct);
+  CL_FreeConstructHeaderModule (theEnv,
+				(struct defmoduleItemHeader *) theItem,
+				DefinstancesData (theEnv)->
+				DefinstancesConstruct);
 #endif
-   rtn_struct(theEnv,definstancesModule,theItem);
-  }
+  rtn_struct (theEnv, definstancesModule, theItem);
+}
 
 /***************************************************
   NAME         : CL_ClearDefinstancesReady
@@ -819,16 +872,16 @@ static void ReturnModule(
   SIDE EFFECTS : None
   NOTES        : Used by (clear) and (bload)
  ***************************************************/
-static bool CL_ClearDefinstancesReady(
-  Environment *theEnv,
-  void *context)
-  {
-   bool flagBuffer = true;
+static bool
+CL_ClearDefinstancesReady (Environment * theEnv, void *context)
+{
+  bool flagBuffer = true;
 
-   CL_DoForAllConstructs(theEnv,CheckDefinstancesBusy,DefinstancesData(theEnv)->CL_DefinstancesModuleIndex,
-                      false,&flagBuffer);
-   return(flagBuffer);
-  }
+  CL_DoForAllConstructs (theEnv, CheckDefinstancesBusy,
+			 DefinstancesData (theEnv)->
+			 CL_DefinstancesModuleIndex, false, &flagBuffer);
+  return (flagBuffer);
+}
 
 /***************************************************
   NAME         : CheckDefinstancesBusy
@@ -844,18 +897,19 @@ static bool CL_ClearDefinstancesReady(
                  if definstances is not busy
                  (assumed to be initialized to 1)
  ***************************************************/
-static void CheckDefinstancesBusy(
-  Environment *theEnv,
-  ConstructHeader *theDefinstances,
-  void *userBuffer)
-  {
+static void
+CheckDefinstancesBusy (Environment * theEnv,
+		       ConstructHeader * theDefinstances, void *userBuffer)
+{
 #if MAC_XCD
 #pragma unused(theEnv)
 #endif
 
-   if (((Definstances *) theDefinstances)->busy > 0)
-     { *((bool *) userBuffer) = false; }
-  }
+  if (((Definstances *) theDefinstances)->busy > 0)
+    {
+      *((bool *) userBuffer) = false;
+    }
+}
 
 #endif
 
@@ -873,12 +927,13 @@ static void CheckDefinstancesBusy(
                  are deleted first.
   NOTES        : None
  ***************************************************/
-static void CL_ResetDefinstances(
-  Environment *theEnv,
-  void *context)
-  {
-   CL_DoForAllConstructs(theEnv,CL_ResetDefinstancesAction,DefinstancesData(theEnv)->CL_DefinstancesModuleIndex,true,NULL);
-  }
+static void
+CL_ResetDefinstances (Environment * theEnv, void *context)
+{
+  CL_DoForAllConstructs (theEnv, CL_ResetDefinstancesAction,
+			 DefinstancesData (theEnv)->
+			 CL_DefinstancesModuleIndex, true, NULL);
+}
 
 /***************************************************
   NAME         : CL_ResetDefinstancesAction
@@ -890,82 +945,78 @@ static void CL_ResetDefinstances(
   SIDE EFFECTS : CL_Instances created
   NOTES        : None
  ***************************************************/
-static void CL_ResetDefinstancesAction(
-  Environment *theEnv,
-  ConstructHeader *vDefinstances,
-  void *userBuffer)
-  {
+static void
+CL_ResetDefinstancesAction (Environment * theEnv,
+			    ConstructHeader * vDefinstances, void *userBuffer)
+{
 #if MAC_XCD
 #pragma unused(userBuffer)
 #endif
-   Definstances *theDefinstances = (Definstances *) vDefinstances;
-   Expression *theExp;
-   UDFValue temp;
+  Definstances *theDefinstances = (Definstances *) vDefinstances;
+  Expression *theExp;
+  UDFValue temp;
 
-   CL_SaveCurrentModule(theEnv);
-   CL_SetCurrentModule(theEnv,vDefinstances->whichModule->theModule);
-   theDefinstances->busy++;
-   for (theExp = theDefinstances->mkinstance ;
-        theExp != NULL ;
-        theExp = GetNextArgument(theExp))
-     {
-      CL_EvaluateExpression(theEnv,theExp,&temp);
-      if (CL_EvaluationData(theEnv)->CL_HaltExecution ||
-          (temp.value == FalseSymbol(theEnv)))
-        {
-         CL_RestoreCurrentModule(theEnv);
-         theDefinstances->busy--;
-         return;
-        }
-     }
-   theDefinstances->busy--;
-   CL_RestoreCurrentModule(theEnv);
-  }
+  CL_SaveCurrentModule (theEnv);
+  CL_SetCurrentModule (theEnv, vDefinstances->whichModule->theModule);
+  theDefinstances->busy++;
+  for (theExp = theDefinstances->mkinstance;
+       theExp != NULL; theExp = GetNextArgument (theExp))
+    {
+      CL_EvaluateExpression (theEnv, theExp, &temp);
+      if (CL_EvaluationData (theEnv)->CL_HaltExecution ||
+	  (temp.value == FalseSymbol (theEnv)))
+	{
+	  CL_RestoreCurrentModule (theEnv);
+	  theDefinstances->busy--;
+	  return;
+	}
+    }
+  theDefinstances->busy--;
+  CL_RestoreCurrentModule (theEnv);
+}
 
 /*##################################*/
 /* Additional Environment Functions */
 /*##################################*/
 
-const char *CL_DefinstancesName(
-  Definstances *theDefinstances)
-  {
-   return CL_GetConstructNameString(&theDefinstances->header);
-  }
+const char *
+CL_DefinstancesName (Definstances * theDefinstances)
+{
+  return CL_GetConstructNameString (&theDefinstances->header);
+}
 
-const char *CL_DefinstancesPPFo_rm(
-  Definstances *theDefinstances)
-  {
-   return CL_GetConstructPPFo_rm(&theDefinstances->header);
-  }
+const char *
+CL_DefinstancesPPFo_rm (Definstances * theDefinstances)
+{
+  return CL_GetConstructPPFo_rm (&theDefinstances->header);
+}
 
-void SetCL_DefinstancesPPFo_rm(
-  Environment *theEnv,
-  Definstances *theDefinstances,
-  const char *thePPFo_rm)
-  {
-   SetConstructPPFo_rm(theEnv,&theDefinstances->header,thePPFo_rm);
-  }
+void
+SetCL_DefinstancesPPFo_rm (Environment * theEnv,
+			   Definstances * theDefinstances,
+			   const char *thePPFo_rm)
+{
+  SetConstructPPFo_rm (theEnv, &theDefinstances->header, thePPFo_rm);
+}
 
-const char *CL_DefinstancesModule(
-  Definstances *theDefinstances)
-  {
-   return CL_GetConstructModuleName(&theDefinstances->header);
-  }
+const char *
+CL_DefinstancesModule (Definstances * theDefinstances)
+{
+  return CL_GetConstructModuleName (&theDefinstances->header);
+}
 
-CLIPSLexeme *Get_DefinstancesNamePointer(
-  Environment *theEnv,
-  Definstances *theDefinstances)
-  {
-   return CL_GetConstructNamePointer(&theDefinstances->header);
-  }
+CLIPSLexeme *
+Get_DefinstancesNamePointer (Environment * theEnv,
+			     Definstances * theDefinstances)
+{
+  return CL_GetConstructNamePointer (&theDefinstances->header);
+}
 
-const char *CL_DefinstancesModuleName(
-  Environment *theEnv,
-  Definstances *theDefinstances)
-  {
-   return CL_GetConstructModuleName(&theDefinstances->header);
-  }
+const char *
+CL_DefinstancesModuleName (Environment * theEnv,
+			   Definstances * theDefinstances)
+{
+  return CL_GetConstructModuleName (&theDefinstances->header);
+}
 
 #endif
-
-

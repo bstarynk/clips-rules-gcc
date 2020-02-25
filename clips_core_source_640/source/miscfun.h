@@ -84,49 +84,43 @@
 
 #define _H_miscfun
 
-   void                           CL_MiscFunctionDefinitions(Environment *);
-   void                           CL_ExitCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_CreateFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_SetgenFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_GensymFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_GensymStarFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_RandomFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_SeedFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_LengthFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_ConserveMemCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_ReleaseMemCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_MemUsedCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_MemRequestsCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_OptionsCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_OperatingSystemFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_ExpandFuncCall(Environment *,UDFContext *,UDFValue *);
-   void                           CL_DummyExpandFuncMultifield(Environment *,UDFContext *,UDFValue *);
-   void                           CL_Cause_EvaluationError(Environment *,UDFContext *,UDFValue *);
-   void                           CL_SetSORCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_GetSORCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_GetFunctionRestrictions(Environment *,UDFContext *,UDFValue *);
-   void                           CL_AproposCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_GensymStar(Environment *,UDFValue *);
-   void                           CL_GetFunctionListFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_FuncallFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_NewFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_CallFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_TimerFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_TimeFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_SystemCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_Local_TimeFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_GM_TimeFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_GetErrorFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_ClearErrorValue(Environment *);
-   void                           CL_ClearErrorFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_SetErrorFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_SetErrorValue(Environment *,TypeHeader *);
-   void                           CL_VoidFunction(Environment *,UDFContext *,UDFValue *);
+void CL_MiscFunctionDefinitions (Environment *);
+void CL_ExitCommand (Environment *, UDFContext *, UDFValue *);
+void CL_CreateFunction (Environment *, UDFContext *, UDFValue *);
+void CL_SetgenFunction (Environment *, UDFContext *, UDFValue *);
+void CL_GensymFunction (Environment *, UDFContext *, UDFValue *);
+void CL_GensymStarFunction (Environment *, UDFContext *, UDFValue *);
+void CL_RandomFunction (Environment *, UDFContext *, UDFValue *);
+void CL_SeedFunction (Environment *, UDFContext *, UDFValue *);
+void CL_LengthFunction (Environment *, UDFContext *, UDFValue *);
+void CL_ConserveMemCommand (Environment *, UDFContext *, UDFValue *);
+void CL_ReleaseMemCommand (Environment *, UDFContext *, UDFValue *);
+void CL_MemUsedCommand (Environment *, UDFContext *, UDFValue *);
+void CL_MemRequestsCommand (Environment *, UDFContext *, UDFValue *);
+void CL_OptionsCommand (Environment *, UDFContext *, UDFValue *);
+void CL_OperatingSystemFunction (Environment *, UDFContext *, UDFValue *);
+void CL_ExpandFuncCall (Environment *, UDFContext *, UDFValue *);
+void CL_DummyExpandFuncMultifield (Environment *, UDFContext *, UDFValue *);
+void CL_Cause_EvaluationError (Environment *, UDFContext *, UDFValue *);
+void CL_SetSORCommand (Environment *, UDFContext *, UDFValue *);
+void CL_GetSORCommand (Environment *, UDFContext *, UDFValue *);
+void CL_GetFunctionRestrictions (Environment *, UDFContext *, UDFValue *);
+void CL_AproposCommand (Environment *, UDFContext *, UDFValue *);
+void CL_GensymStar (Environment *, UDFValue *);
+void CL_GetFunctionListFunction (Environment *, UDFContext *, UDFValue *);
+void CL_FuncallFunction (Environment *, UDFContext *, UDFValue *);
+void CL_NewFunction (Environment *, UDFContext *, UDFValue *);
+void CL_CallFunction (Environment *, UDFContext *, UDFValue *);
+void CL_TimerFunction (Environment *, UDFContext *, UDFValue *);
+void CL_TimeFunction (Environment *, UDFContext *, UDFValue *);
+void CL_SystemCommand (Environment *, UDFContext *, UDFValue *);
+void CL_Local_TimeFunction (Environment *, UDFContext *, UDFValue *);
+void CL_GM_TimeFunction (Environment *, UDFContext *, UDFValue *);
+void CL_GetErrorFunction (Environment *, UDFContext *, UDFValue *);
+void CL_ClearErrorValue (Environment *);
+void CL_ClearErrorFunction (Environment *, UDFContext *, UDFValue *);
+void CL_SetErrorFunction (Environment *, UDFContext *, UDFValue *);
+void CL_SetErrorValue (Environment *, TypeHeader *);
+void CL_VoidFunction (Environment *, UDFContext *, UDFValue *);
 
 #endif /* _H_miscfun */
-
-
-
-
-
-

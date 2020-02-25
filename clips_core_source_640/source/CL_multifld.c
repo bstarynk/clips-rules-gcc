@@ -85,597 +85,656 @@
 /******************************/
 /* CL_CreateUnmanagedMultifield: */
 /******************************/
-Multifield *CL_CreateUnmanagedMultifield(
-  Environment *theEnv,
-  size_t size)
-  {
-   Multifield *theSegment;
-   size_t newSize = size;
+Multifield *
+CL_CreateUnmanagedMultifield (Environment * theEnv, size_t size)
+{
+  Multifield *theSegment;
+  size_t newSize = size;
 
-   if (size == 0) newSize = 1;
+  if (size == 0)
+    newSize = 1;
 
-   theSegment = get_var_struct(theEnv,multifield,sizeof(struct clipsValue) * (newSize - 1));
+  theSegment =
+    get_var_struct (theEnv, multifield,
+		    sizeof (struct clipsValue) * (newSize - 1));
 
-   theSegment->header.type = MULTIFIELD_TYPE;
-   theSegment->length = size;
-   theSegment->busyCount = 0;
-   theSegment->next = NULL;
+  theSegment->header.type = MULTIFIELD_TYPE;
+  theSegment->length = size;
+  theSegment->busyCount = 0;
+  theSegment->next = NULL;
 
-   return theSegment;
-  }
+  return theSegment;
+}
 
 /*********************/
 /* CL_ReturnMultifield: */
 /*********************/
-void CL_ReturnMultifield(
-  Environment *theEnv,
-  Multifield *theSegment)
-  {
-   size_t newSize;
+void
+CL_ReturnMultifield (Environment * theEnv, Multifield * theSegment)
+{
+  size_t newSize;
 
-   if (theSegment == NULL) return;
+  if (theSegment == NULL)
+    return;
 
-   if (theSegment->length == 0) newSize = 1;
-   else newSize = theSegment->length;
+  if (theSegment->length == 0)
+    newSize = 1;
+  else
+    newSize = theSegment->length;
 
-   rtn_var_struct(theEnv,multifield,sizeof(struct clipsValue) * (newSize - 1),theSegment);
-  }
+  rtn_var_struct (theEnv, multifield,
+		  sizeof (struct clipsValue) * (newSize - 1), theSegment);
+}
 
 /*********************/
 /* CL_RetainMultifield: */
 /*********************/
-void CL_RetainMultifield(
-  Environment *theEnv,
-  Multifield *theSegment)
-  {
-   size_t length, i;
-   CLIPSValue *contents;
+void
+CL_RetainMultifield (Environment * theEnv, Multifield * theSegment)
+{
+  size_t length, i;
+  CLIPSValue *contents;
 
-   if (theSegment == NULL) return;
+  if (theSegment == NULL)
+    return;
 
-   length = theSegment->length;
+  length = theSegment->length;
 
-   theSegment->busyCount++;
-   contents = theSegment->contents;
+  theSegment->busyCount++;
+  contents = theSegment->contents;
 
-   for (i = 0 ; i < length ; i++)
-     { CL_AtomInstall(theEnv,contents[i].header->type,contents[i].value); }
-  }
+  for (i = 0; i < length; i++)
+    {
+      CL_AtomInstall (theEnv, contents[i].header->type, contents[i].value);
+    }
+}
 
 /**********************/
 /* CL_ReleaseMultifield: */
 /**********************/
-void CL_ReleaseMultifield(
-  Environment *theEnv,
-  Multifield *theSegment)
-  {
-   size_t length, i;
-   CLIPSValue *contents;
+void
+CL_ReleaseMultifield (Environment * theEnv, Multifield * theSegment)
+{
+  size_t length, i;
+  CLIPSValue *contents;
 
-   if (theSegment == NULL) return;
+  if (theSegment == NULL)
+    return;
 
-   length = theSegment->length;
-   theSegment->busyCount--;
-   contents = theSegment->contents;
+  length = theSegment->length;
+  theSegment->busyCount--;
+  contents = theSegment->contents;
 
-   for (i = 0 ; i < length ; i++)
-     { CL_AtomDeinstall(theEnv,contents[i].header->type,contents[i].value); }
-  }
+  for (i = 0; i < length; i++)
+    {
+      CL_AtomDeinstall (theEnv, contents[i].header->type, contents[i].value);
+    }
+}
 
 /************************************************/
 /* CL_IncrementCLIPSValueMultifieldReferenceCount: */
 /************************************************/
-void CL_IncrementCLIPSValueMultifieldReferenceCount(
-  Environment *theEnv,
-  Multifield *theSegment)
-  {
-   size_t length, i;
-   CLIPSValue *contents;
+void
+CL_IncrementCLIPSValueMultifieldReferenceCount (Environment * theEnv,
+						Multifield * theSegment)
+{
+  size_t length, i;
+  CLIPSValue *contents;
 
-   if (theSegment == NULL) return;
+  if (theSegment == NULL)
+    return;
 
-   length = theSegment->length;
+  length = theSegment->length;
 
-   theSegment->busyCount++;
-   contents = theSegment->contents;
+  theSegment->busyCount++;
+  contents = theSegment->contents;
 
-   for (i = 0 ; i < length ; i++)
-     { CL_Retain(theEnv,contents[i].header); }
-  }
+  for (i = 0; i < length; i++)
+    {
+      CL_Retain (theEnv, contents[i].header);
+    }
+}
 
 /************************************************/
 /* CL_DecrementCLIPSValueMultifieldReferenceCount: */
 /************************************************/
-void CL_DecrementCLIPSValueMultifieldReferenceCount(
-  Environment *theEnv,
-  Multifield *theSegment)
-  {
-   size_t length, i;
-   CLIPSValue *contents;
+void
+CL_DecrementCLIPSValueMultifieldReferenceCount (Environment * theEnv,
+						Multifield * theSegment)
+{
+  size_t length, i;
+  CLIPSValue *contents;
 
-   if (theSegment == NULL) return;
+  if (theSegment == NULL)
+    return;
 
-   length = theSegment->length;
-   theSegment->busyCount--;
-   contents = theSegment->contents;
+  length = theSegment->length;
+  theSegment->busyCount--;
+  contents = theSegment->contents;
 
-   for (i = 0 ; i < length ; i++)
-     { CL_Release(theEnv,contents[i].header); }
-  }
+  for (i = 0; i < length; i++)
+    {
+      CL_Release (theEnv, contents[i].header);
+    }
+}
 
 /*******************************************************/
 /* CL_StringToMultifield: Returns a multifield structure  */
 /*    that represents the string sent as the argument. */
 /*******************************************************/
-Multifield *CL_StringToMultifield(
-  Environment *theEnv,
-  const char *theString)
-  {
-   struct token theToken;
-   Multifield *theSegment;
-   CLIPSValue *contents;
-   unsigned long numberOfFields = 0;
-   struct expr *topAtom = NULL, *lastAtom = NULL, *theAtom;
+Multifield *
+CL_StringToMultifield (Environment * theEnv, const char *theString)
+{
+  struct token theToken;
+  Multifield *theSegment;
+  CLIPSValue *contents;
+  unsigned long numberOfFields = 0;
+  struct expr *topAtom = NULL, *lastAtom = NULL, *theAtom;
 
    /*====================================================*/
-   /* Open the string as an input source and read in the */
-   /* list of values to be stored in the multifield.     */
+  /* Open the string as an input source and read in the */
+  /* list of values to be stored in the multifield.     */
    /*====================================================*/
 
-   CL_OpenStringSource(theEnv,"multifield-str",theString,0);
+  CL_OpenStringSource (theEnv, "multifield-str", theString, 0);
 
-   CL_GetToken(theEnv,"multifield-str",&theToken);
-   while (theToken.tknType != STOP_TOKEN)
-     {
-      if ((theToken.tknType == SYMBOL_TOKEN) || (theToken.tknType == STRING_TOKEN) ||
-          (theToken.tknType == FLOAT_TOKEN) || (theToken.tknType == INTEGER_TOKEN) ||
-          (theToken.tknType == INSTANCE_NAME_TOKEN))
-        { theAtom = CL_GenConstant(theEnv,CL_TokenTypeToType(theToken.tknType),theToken.value); }
+  CL_GetToken (theEnv, "multifield-str", &theToken);
+  while (theToken.tknType != STOP_TOKEN)
+    {
+      if ((theToken.tknType == SYMBOL_TOKEN)
+	  || (theToken.tknType == STRING_TOKEN)
+	  || (theToken.tknType == FLOAT_TOKEN)
+	  || (theToken.tknType == INTEGER_TOKEN)
+	  || (theToken.tknType == INSTANCE_NAME_TOKEN))
+	{
+	  theAtom =
+	    CL_GenConstant (theEnv, CL_TokenTypeToType (theToken.tknType),
+			    theToken.value);
+	}
       else
-        { theAtom = CL_GenConstant(theEnv,SYMBOL_TYPE,CL_CreateSymbol(theEnv,theToken.printFo_rm)); }
+	{
+	  theAtom =
+	    CL_GenConstant (theEnv, SYMBOL_TYPE,
+			    CL_CreateSymbol (theEnv, theToken.printFo_rm));
+	}
 
       numberOfFields++;
-      if (topAtom == NULL) topAtom = theAtom;
-      else lastAtom->nextArg = theAtom;
+      if (topAtom == NULL)
+	topAtom = theAtom;
+      else
+	lastAtom->nextArg = theAtom;
 
       lastAtom = theAtom;
-      CL_GetToken(theEnv,"multifield-str",&theToken);
-     }
+      CL_GetToken (theEnv, "multifield-str", &theToken);
+    }
 
-   CL_CloseStringSource(theEnv,"multifield-str");
+  CL_CloseStringSource (theEnv, "multifield-str");
 
    /*====================================================================*/
-   /* Create a multifield of the appropriate size for the values parsed. */
+  /* Create a multifield of the appropriate size for the values parsed. */
    /*====================================================================*/
 
-   theSegment = CL_CreateMultifield(theEnv,numberOfFields);
-   contents = theSegment->contents;
+  theSegment = CL_CreateMultifield (theEnv, numberOfFields);
+  contents = theSegment->contents;
 
    /*====================================*/
-   /* Copy the values to the multifield. */
+  /* Copy the values to the multifield. */
    /*====================================*/
 
-   theAtom = topAtom;
-   numberOfFields = 0;
-   while (theAtom != NULL)
-     {
+  theAtom = topAtom;
+  numberOfFields = 0;
+  while (theAtom != NULL)
+    {
       contents[numberOfFields].value = theAtom->value;
       numberOfFields++;
       theAtom = theAtom->nextArg;
-     }
+    }
 
    /*===========================*/
-   /* Return the parsed values. */
+  /* Return the parsed values. */
    /*===========================*/
 
-   CL_ReturnExpression(theEnv,topAtom);
+  CL_ReturnExpression (theEnv, topAtom);
 
    /*============================*/
-   /* Return the new multifield. */
+  /* Return the new multifield. */
    /*============================*/
 
-   return(theSegment);
-  }
+  return (theSegment);
+}
 
 /**********************/
 /* CL_ArrayToMultifield: */
 /**********************/
-Multifield *CL_ArrayToMultifield(
-  Environment *theEnv,
-  CLIPSValue *theArray,
-  unsigned long size) // TBD size_t
-  {
-   Multifield *rv;
-   unsigned int i;
-   
-   rv = CL_CreateMultifield(theEnv,size);
-   
-   for (i = 0; i < size; i++)
-     { rv->contents[i].value = theArray[i].value; }
-   
-   return rv;
-  }
+Multifield *
+CL_ArrayToMultifield (Environment * theEnv, CLIPSValue * theArray, unsigned long size)	// TBD size_t
+{
+  Multifield *rv;
+  unsigned int i;
+
+  rv = CL_CreateMultifield (theEnv, size);
+
+  for (i = 0; i < size; i++)
+    {
+      rv->contents[i].value = theArray[i].value;
+    }
+
+  return rv;
+}
 
 /***************************************************/
 /* CL_EmptyMultifield: Creates a multifield of length */
 /*   0 and adds it to the list of segments.        */
 /***************************************************/
-Multifield *CL_EmptyMultifield(
-  Environment *theEnv)
-  {
-   return CL_CreateMultifield(theEnv,0);
-  }
+Multifield *
+CL_EmptyMultifield (Environment * theEnv)
+{
+  return CL_CreateMultifield (theEnv, 0);
+}
 
 /***********************************************************/
 /* CL_CreateMultifield: Creates a multifield of the specified */
 /*   size and adds it to the list of segments.             */
 /***********************************************************/
-Multifield *CL_CreateMultifield(
-  Environment *theEnv,
-  size_t size)
-  {
-   Multifield *theSegment;
-   size_t newSize;
+Multifield *
+CL_CreateMultifield (Environment * theEnv, size_t size)
+{
+  Multifield *theSegment;
+  size_t newSize;
 
-   if (size == 0) newSize = 1;
-   else newSize = size;
+  if (size == 0)
+    newSize = 1;
+  else
+    newSize = size;
 
-   theSegment = get_var_struct(theEnv,multifield,sizeof(struct clipsValue) * (newSize - 1));
+  theSegment =
+    get_var_struct (theEnv, multifield,
+		    sizeof (struct clipsValue) * (newSize - 1));
 
-   theSegment->header.type = MULTIFIELD_TYPE;
-   theSegment->length = size;
-   theSegment->busyCount = 0;
-   theSegment->next = NULL;
+  theSegment->header.type = MULTIFIELD_TYPE;
+  theSegment->length = size;
+  theSegment->busyCount = 0;
+  theSegment->next = NULL;
 
-   theSegment->next = UtilityData(theEnv)->CurrentGarbageFrame->ListOfMultifields;
-   UtilityData(theEnv)->CurrentGarbageFrame->ListOfMultifields = theSegment;
-   UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
-   if (UtilityData(theEnv)->CurrentGarbageFrame->LastMultifield == NULL)
-     { UtilityData(theEnv)->CurrentGarbageFrame->LastMultifield = theSegment; }
+  theSegment->next =
+    UtilityData (theEnv)->CurrentGarbageFrame->ListOfMultifields;
+  UtilityData (theEnv)->CurrentGarbageFrame->ListOfMultifields = theSegment;
+  UtilityData (theEnv)->CurrentGarbageFrame->dirty = true;
+  if (UtilityData (theEnv)->CurrentGarbageFrame->LastMultifield == NULL)
+    {
+      UtilityData (theEnv)->CurrentGarbageFrame->LastMultifield = theSegment;
+    }
 
-   return theSegment;
-  }
+  return theSegment;
+}
 
 /*******************/
 /* CL_DOToMultifield: */
 /*******************/
-Multifield *CL_DOToMultifield(
-  Environment *theEnv,
-  UDFValue *theValue)
-  {
-   Multifield *dst, *src;
+Multifield *
+CL_DOToMultifield (Environment * theEnv, UDFValue * theValue)
+{
+  Multifield *dst, *src;
 
-   if (theValue->header->type != MULTIFIELD_TYPE) return NULL;
+  if (theValue->header->type != MULTIFIELD_TYPE)
+    return NULL;
 
-   dst = CL_CreateUnmanagedMultifield(theEnv,(unsigned long) theValue->range);
+  dst =
+    CL_CreateUnmanagedMultifield (theEnv, (unsigned long) theValue->range);
 
-   src = theValue->multifieldValue;
-   GenCopyMemory(struct clipsValue,dst->length,
-              &(dst->contents[0]),&(src->contents[theValue->begin]));
+  src = theValue->multifieldValue;
+  GenCopyMemory (struct clipsValue, dst->length,
+		 &(dst->contents[0]), &(src->contents[theValue->begin]));
 
-   return dst;
-  }
+  return dst;
+}
 
 /************************/
 /* CL_AddToMultifieldList: */
 /************************/
-void CL_AddToMultifieldList(
-  Environment *theEnv,
-  Multifield *theSegment)
-  {
-   theSegment->next = UtilityData(theEnv)->CurrentGarbageFrame->ListOfMultifields;
-   UtilityData(theEnv)->CurrentGarbageFrame->ListOfMultifields = theSegment;
-   UtilityData(theEnv)->CurrentGarbageFrame->dirty = true;
-   if (UtilityData(theEnv)->CurrentGarbageFrame->LastMultifield == NULL)
-     { UtilityData(theEnv)->CurrentGarbageFrame->LastMultifield = theSegment; }
-  }
+void
+CL_AddToMultifieldList (Environment * theEnv, Multifield * theSegment)
+{
+  theSegment->next =
+    UtilityData (theEnv)->CurrentGarbageFrame->ListOfMultifields;
+  UtilityData (theEnv)->CurrentGarbageFrame->ListOfMultifields = theSegment;
+  UtilityData (theEnv)->CurrentGarbageFrame->dirty = true;
+  if (UtilityData (theEnv)->CurrentGarbageFrame->LastMultifield == NULL)
+    {
+      UtilityData (theEnv)->CurrentGarbageFrame->LastMultifield = theSegment;
+    }
+}
 
 /*********************/
 /* CL_FlushMultifields: */
 /*********************/
-void CL_FlushMultifields(
-  Environment *theEnv)
-  {
-   Multifield *theSegment, *nextPtr, *lastPtr = NULL;
-   size_t newSize;
+void
+CL_FlushMultifields (Environment * theEnv)
+{
+  Multifield *theSegment, *nextPtr, *lastPtr = NULL;
+  size_t newSize;
 
-   theSegment = UtilityData(theEnv)->CurrentGarbageFrame->ListOfMultifields;
-   while (theSegment != NULL)
-     {
+  theSegment = UtilityData (theEnv)->CurrentGarbageFrame->ListOfMultifields;
+  while (theSegment != NULL)
+    {
       nextPtr = theSegment->next;
       if (theSegment->busyCount == 0)
-        {
-         if (theSegment->length == 0) newSize = 1;
-         else newSize = theSegment->length;
-         rtn_var_struct(theEnv,multifield,sizeof(struct clipsValue) * (newSize - 1),theSegment);
-         if (lastPtr == NULL) UtilityData(theEnv)->CurrentGarbageFrame->ListOfMultifields = nextPtr;
-         else lastPtr->next = nextPtr;
+	{
+	  if (theSegment->length == 0)
+	    newSize = 1;
+	  else
+	    newSize = theSegment->length;
+	  rtn_var_struct (theEnv, multifield,
+			  sizeof (struct clipsValue) * (newSize - 1),
+			  theSegment);
+	  if (lastPtr == NULL)
+	    UtilityData (theEnv)->CurrentGarbageFrame->ListOfMultifields =
+	      nextPtr;
+	  else
+	    lastPtr->next = nextPtr;
 
-         /*=================================================*/
-         /* If the multifield deleted was the last in the   */
-         /* list, update the pointer to the last multifield */
-         /* to the prior multifield.                        */
-         /*=================================================*/
+	 /*=================================================*/
+	  /* If the multifield deleted was the last in the   */
+	  /* list, update the pointer to the last multifield */
+	  /* to the prior multifield.                        */
+	 /*=================================================*/
 
-         if (nextPtr == NULL)
-           { UtilityData(theEnv)->CurrentGarbageFrame->LastMultifield = lastPtr; }
-        }
+	  if (nextPtr == NULL)
+	    {
+	      UtilityData (theEnv)->CurrentGarbageFrame->LastMultifield =
+		lastPtr;
+	    }
+	}
       else
-        { lastPtr = theSegment; }
+	{
+	  lastPtr = theSegment;
+	}
 
       theSegment = nextPtr;
-     }
-  }
+    }
+}
 
 /********************/
 /* CL_CLIPSToUDFValue: */
 /********************/
-void CL_CLIPSToUDFValue(
-  CLIPSValue *cv,
-  UDFValue *uv)
-  {
-   uv->value = cv->value;
-   if (cv->header->type == MULTIFIELD_TYPE)
-     {
+void
+CL_CLIPSToUDFValue (CLIPSValue * cv, UDFValue * uv)
+{
+  uv->value = cv->value;
+  if (cv->header->type == MULTIFIELD_TYPE)
+    {
       uv->begin = 0;
       uv->range = cv->multifieldValue->length;
-     }
-  }
+    }
+}
 
 /********************/
 /* CL_UDFToCLIPSValue: */
 /********************/
-void CL_UDFToCLIPSValue(
-  Environment *theEnv,
-  UDFValue *uv,
-  CLIPSValue *cv)
-  {
-   Multifield *copy;
-   
-   if (uv->header->type != MULTIFIELD_TYPE)
-     {
+void
+CL_UDFToCLIPSValue (Environment * theEnv, UDFValue * uv, CLIPSValue * cv)
+{
+  Multifield *copy;
+
+  if (uv->header->type != MULTIFIELD_TYPE)
+    {
       cv->value = uv->value;
       return;
-     }
-   
-   if ((uv->begin == 0) &&
-       (uv->range == uv->multifieldValue->length))
-     {
+    }
+
+  if ((uv->begin == 0) && (uv->range == uv->multifieldValue->length))
+    {
       cv->multifieldValue = uv->multifieldValue;
       return;
-     }
-     
-   copy = CL_CreateMultifield(theEnv,uv->range);
-   GenCopyMemory(struct clipsValue,uv->range,&copy->contents[0],
-                 &uv->multifieldValue->contents[uv->begin]);
-      
-   cv->multifieldValue = copy;
-  }
+    }
+
+  copy = CL_CreateMultifield (theEnv, uv->range);
+  GenCopyMemory (struct clipsValue, uv->range, &copy->contents[0],
+		 &uv->multifieldValue->contents[uv->begin]);
+
+  cv->multifieldValue = copy;
+}
 
 /************************************************/
 /* CL_No_rmalizeMultifield: Allocates a new segment */
 /*   and copies results from old value to new.  */
 /************************************************/
-void CL_No_rmalizeMultifield(
-  Environment *theEnv,
-  UDFValue *theMF)
-  {
-   Multifield *copy;
-   
-   if (theMF->header->type != MULTIFIELD_TYPE) return;
-   
-   if ((theMF->begin == 0) &&
-       (theMF->range == theMF->multifieldValue->length))
-     { return; }
+void
+CL_No_rmalizeMultifield (Environment * theEnv, UDFValue * theMF)
+{
+  Multifield *copy;
 
-   copy = CL_CreateMultifield(theEnv,theMF->range);
-   GenCopyMemory(struct clipsValue,theMF->range,&copy->contents[0],
-                 &theMF->multifieldValue->contents[theMF->begin]);
-   theMF->begin = 0;
-   theMF->value = copy;
-  }
+  if (theMF->header->type != MULTIFIELD_TYPE)
+    return;
+
+  if ((theMF->begin == 0) && (theMF->range == theMF->multifieldValue->length))
+    {
+      return;
+    }
+
+  copy = CL_CreateMultifield (theEnv, theMF->range);
+  GenCopyMemory (struct clipsValue, theMF->range, &copy->contents[0],
+		 &theMF->multifieldValue->contents[theMF->begin]);
+  theMF->begin = 0;
+  theMF->value = copy;
+}
 
 /************************************************************************/
 /* CL_DuplicateMultifield: Allocates a new segment and copies results from */
 /*   old value to new. This value is not put on the ListOfMultifields.  */
 /************************************************************************/
-void CL_DuplicateMultifield(
-  Environment *theEnv,
-  UDFValue *dst,
-  UDFValue *src)
-  {
-   dst->begin = 0;
-   dst->range = src->range;
-   dst->value = CL_CreateUnmanagedMultifield(theEnv,(unsigned long) dst->range);
-   GenCopyMemory(struct clipsValue,dst->range,&dst->multifieldValue->contents[0],
-                                         &src->multifieldValue->contents[src->begin]);
-  }
+void
+CL_DuplicateMultifield (Environment * theEnv, UDFValue * dst, UDFValue * src)
+{
+  dst->begin = 0;
+  dst->range = src->range;
+  dst->value =
+    CL_CreateUnmanagedMultifield (theEnv, (unsigned long) dst->range);
+  GenCopyMemory (struct clipsValue, dst->range,
+		 &dst->multifieldValue->contents[0],
+		 &src->multifieldValue->contents[src->begin]);
+}
 
 /*******************/
 /* CL_CopyMultifield: */
 /*******************/
-Multifield *CL_CopyMultifield(
-  Environment *theEnv,
-  Multifield *src)
-  {
-   Multifield *dst;
+Multifield *
+CL_CopyMultifield (Environment * theEnv, Multifield * src)
+{
+  Multifield *dst;
 
-   dst = CL_CreateUnmanagedMultifield(theEnv,src->length);
-   GenCopyMemory(struct clipsValue,src->length,&(dst->contents[0]),&(src->contents[0]));
-   return dst;
-  }
+  dst = CL_CreateUnmanagedMultifield (theEnv, src->length);
+  GenCopyMemory (struct clipsValue, src->length, &(dst->contents[0]),
+		 &(src->contents[0]));
+  return dst;
+}
 
 /**********************************************************/
 /* CL_EphemerateMultifield: Marks the values of a multifield */
 /*   as ephemeral if they have not already been marker.   */
 /**********************************************************/
-void CL_EphemerateMultifield(
-  Environment *theEnv,
-  Multifield *theSegment)
-  {
-   size_t length, i;
-   CLIPSValue *contents;
+void
+CL_EphemerateMultifield (Environment * theEnv, Multifield * theSegment)
+{
+  size_t length, i;
+  CLIPSValue *contents;
 
-   if (theSegment == NULL) return;
+  if (theSegment == NULL)
+    return;
 
-   length = theSegment->length;
+  length = theSegment->length;
 
-   contents = theSegment->contents;
+  contents = theSegment->contents;
 
-   for (i = 0 ; i < length ; i++)
-     { CL_EphemerateValue(theEnv,contents[i].value); }
-  }
+  for (i = 0; i < length; i++)
+    {
+      CL_EphemerateValue (theEnv, contents[i].value);
+    }
+}
 
 /*********************************************/
 /* CL_WriteMultifield: Prints out a multifield. */
 /*********************************************/
-void CL_WriteMultifield(
-  Environment *theEnv,
-  const char *fileid,
-  Multifield *segment)
-  {
-   CL_PrintMultifieldDriver(theEnv,fileid,segment,0,segment->length,true);
-  }
-  
+void
+CL_WriteMultifield (Environment * theEnv,
+		    const char *fileid, Multifield * segment)
+{
+  CL_PrintMultifieldDriver (theEnv, fileid, segment, 0, segment->length,
+			    true);
+}
+
 /***************************************************/
 /* CL_PrintMultifieldDriver: Prints out a multifield. */
 /***************************************************/
-void CL_PrintMultifieldDriver(
-  Environment *theEnv,
-  const char *fileid,
-  Multifield *segment,
-  size_t begin,
-  size_t range,
-  bool printParens)
-  {
-   CLIPSValue *theMultifield;
-   size_t i;
+void
+CL_PrintMultifieldDriver (Environment * theEnv,
+			  const char *fileid,
+			  Multifield * segment,
+			  size_t begin, size_t range, bool printParens)
+{
+  CLIPSValue *theMultifield;
+  size_t i;
 
-   theMultifield = segment->contents;
-   
-   if (printParens)
-     { CL_WriteString(theEnv,fileid,"("); }
+  theMultifield = segment->contents;
 
-   for (i = 0; i < range; i++)
-     {
-      CL_PrintAtom(theEnv,fileid,theMultifield[begin+i].header->type,theMultifield[begin+i].value);
-     
+  if (printParens)
+    {
+      CL_WriteString (theEnv, fileid, "(");
+    }
+
+  for (i = 0; i < range; i++)
+    {
+      CL_PrintAtom (theEnv, fileid, theMultifield[begin + i].header->type,
+		    theMultifield[begin + i].value);
+
       if ((i + 1) < range)
-        { CL_WriteString(theEnv,fileid," "); }
-     }
+	{
+	  CL_WriteString (theEnv, fileid, " ");
+	}
+    }
 
-   if (printParens)
-     { CL_WriteString(theEnv,fileid,")"); }
-  }
+  if (printParens)
+    {
+      CL_WriteString (theEnv, fileid, ")");
+    }
+}
 
 /****************************************************/
 /* CL_StoreInMultifield: Append function for segments. */
 /****************************************************/
-void CL_StoreInMultifield(
-  Environment *theEnv,
-  UDFValue *returnValue,
-  Expression *expptr,
-  bool garbageSegment)
-  {
-   UDFValue val_ptr;
-   UDFValue *val_arr;
-   Multifield *theMultifield;
-   Multifield *orig_ptr;
-   size_t start, range;
-   size_t i, j, k;
-   unsigned int argCount;
-   unsigned long seg_size;
+void
+CL_StoreInMultifield (Environment * theEnv,
+		      UDFValue * returnValue,
+		      Expression * expptr, bool garbageSegment)
+{
+  UDFValue val_ptr;
+  UDFValue *val_arr;
+  Multifield *theMultifield;
+  Multifield *orig_ptr;
+  size_t start, range;
+  size_t i, j, k;
+  unsigned int argCount;
+  unsigned long seg_size;
 
-   argCount = CL_CountArguments(expptr);
+  argCount = CL_CountArguments (expptr);
 
    /*=========================================*/
-   /* If no arguments are given return a NULL */
-   /* multifield of length zero.              */
+  /* If no arguments are given return a NULL */
+  /* multifield of length zero.              */
    /*=========================================*/
 
-   if (argCount == 0)
-     {
+  if (argCount == 0)
+    {
       returnValue->begin = 0;
       returnValue->range = 0;
-      if (garbageSegment) theMultifield = CL_CreateMultifield(theEnv,0L);
-      else theMultifield = CL_CreateUnmanagedMultifield(theEnv,0L);
+      if (garbageSegment)
+	theMultifield = CL_CreateMultifield (theEnv, 0L);
+      else
+	theMultifield = CL_CreateUnmanagedMultifield (theEnv, 0L);
       returnValue->value = theMultifield;
       return;
-     }
-   else
-     {
+    }
+  else
+    {
       /*========================================*/
       /* Get a new segment with length equal to */
       /* the total length of all the arguments. */
       /*========================================*/
 
-      val_arr = (UDFValue *) CL_gm2(theEnv,sizeof(UDFValue) * argCount);
+      val_arr = (UDFValue *) CL_gm2 (theEnv, sizeof (UDFValue) * argCount);
       seg_size = 0;
 
       for (i = 1; i <= argCount; i++, expptr = expptr->nextArg)
-        {
-         CL_EvaluateExpression(theEnv,expptr,&val_ptr);
-         if (CL_EvaluationData(theEnv)->CL_EvaluationError)
-           {
-            returnValue->begin = 0;
-            returnValue->range = 0;
-            if (garbageSegment)
-              { theMultifield = CL_CreateMultifield(theEnv,0L); }
-            else theMultifield = CL_CreateUnmanagedMultifield(theEnv,0L);
-            returnValue->value = theMultifield;
-            CL_rm(theEnv,val_arr,sizeof(UDFValue) * argCount);
-            return;
-           }
-         if (val_ptr.header->type == MULTIFIELD_TYPE)
-           {
-            (val_arr+i-1)->value = val_ptr.value;
-            start = val_ptr.begin;
-            range = val_ptr.range;
-           }
-         else if (val_ptr.header->type == VOID_TYPE)
-           {
-            (val_arr+i-1)->value = val_ptr.value;
-            start = 0;
-            range = 0;
-           }
-         else
-           {
-            (val_arr+i-1)->value = val_ptr.value;
-            start = 0;
-            range = 1;
-           }
+	{
+	  CL_EvaluateExpression (theEnv, expptr, &val_ptr);
+	  if (CL_EvaluationData (theEnv)->CL_EvaluationError)
+	    {
+	      returnValue->begin = 0;
+	      returnValue->range = 0;
+	      if (garbageSegment)
+		{
+		  theMultifield = CL_CreateMultifield (theEnv, 0L);
+		}
+	      else
+		theMultifield = CL_CreateUnmanagedMultifield (theEnv, 0L);
+	      returnValue->value = theMultifield;
+	      CL_rm (theEnv, val_arr, sizeof (UDFValue) * argCount);
+	      return;
+	    }
+	  if (val_ptr.header->type == MULTIFIELD_TYPE)
+	    {
+	      (val_arr + i - 1)->value = val_ptr.value;
+	      start = val_ptr.begin;
+	      range = val_ptr.range;
+	    }
+	  else if (val_ptr.header->type == VOID_TYPE)
+	    {
+	      (val_arr + i - 1)->value = val_ptr.value;
+	      start = 0;
+	      range = 0;
+	    }
+	  else
+	    {
+	      (val_arr + i - 1)->value = val_ptr.value;
+	      start = 0;
+	      range = 1;
+	    }
 
-         seg_size += (unsigned long) range;
-         (val_arr+i-1)->begin = start;
-         (val_arr+i-1)->range = range;
-        }
+	  seg_size += (unsigned long) range;
+	  (val_arr + i - 1)->begin = start;
+	  (val_arr + i - 1)->range = range;
+	}
 
       if (garbageSegment)
-        { theMultifield = CL_CreateMultifield(theEnv,seg_size); }
-      else theMultifield = CL_CreateUnmanagedMultifield(theEnv,seg_size);
+	{
+	  theMultifield = CL_CreateMultifield (theEnv, seg_size);
+	}
+      else
+	theMultifield = CL_CreateUnmanagedMultifield (theEnv, seg_size);
 
       /*========================================*/
       /* Copy each argument into new segment.  */
       /*========================================*/
 
       for (k = 0, j = 0; k < argCount; k++)
-        {
-         if ((val_arr+k)->header->type == MULTIFIELD_TYPE)
-           {
-            start = (val_arr+k)->begin;
-            range = (val_arr+k)->range;
-            orig_ptr = (val_arr+k)->multifieldValue;
-            for (i = start; i < (start + range); i++, j++)
-              {
-               theMultifield->contents[j].value = orig_ptr->contents[i].value;
-              }
-           }
-         else if ((val_arr+k)->header->type != VOID_TYPE)
-           {
-            theMultifield->contents[j].value = (val_arr+k)->value;
-            j++;
-           }
-        }
+	{
+	  if ((val_arr + k)->header->type == MULTIFIELD_TYPE)
+	    {
+	      start = (val_arr + k)->begin;
+	      range = (val_arr + k)->range;
+	      orig_ptr = (val_arr + k)->multifieldValue;
+	      for (i = start; i < (start + range); i++, j++)
+		{
+		  theMultifield->contents[j].value =
+		    orig_ptr->contents[i].value;
+		}
+	    }
+	  else if ((val_arr + k)->header->type != VOID_TYPE)
+	    {
+	      theMultifield->contents[j].value = (val_arr + k)->value;
+	      j++;
+	    }
+	}
 
       /*=========================*/
       /* Return the new segment. */
@@ -684,267 +743,291 @@ void CL_StoreInMultifield(
       returnValue->begin = 0;
       returnValue->range = seg_size;
       returnValue->value = theMultifield;
-      CL_rm(theEnv,val_arr,sizeof(UDFValue) * argCount);
+      CL_rm (theEnv, val_arr, sizeof (UDFValue) * argCount);
       return;
-     }
-  }
+    }
+}
 
 /*************************************************************/
 /* Multifield_DOsEqual: Dete_rmines if two segments are equal. */
 /*************************************************************/
-bool Multifield_DOsEqual(
-  UDFValue *dobj1,
-  UDFValue *dobj2)
-  {
-   size_t extent1, extent2;
-   CLIPSValue *e1, *e2;
+bool
+Multifield_DOsEqual (UDFValue * dobj1, UDFValue * dobj2)
+{
+  size_t extent1, extent2;
+  CLIPSValue *e1, *e2;
 
-   extent1 = dobj1->range;
-   extent2 = dobj2->range;
-   
-   if (extent1 != extent2)
-     { return false; }
+  extent1 = dobj1->range;
+  extent2 = dobj2->range;
 
-   e1 = &dobj1->multifieldValue->contents[dobj1->begin];
-   e2 = &dobj2->multifieldValue->contents[dobj2->begin];
+  if (extent1 != extent2)
+    {
+      return false;
+    }
 
-   while (extent1 > 0)
-     {
+  e1 = &dobj1->multifieldValue->contents[dobj1->begin];
+  e2 = &dobj2->multifieldValue->contents[dobj2->begin];
+
+  while (extent1 > 0)
+    {
       if (e1->value != e2->value)
-        { return false; }
+	{
+	  return false;
+	}
 
       extent1--;
 
       if (extent1 > 0)
-        {
-         e1++;
-         e2++;
-        }
-     }
-     
-   return true;
-  }
+	{
+	  e1++;
+	  e2++;
+	}
+    }
+
+  return true;
+}
 
 /******************************************************************/
 /* CL_MultifieldsEqual: Dete_rmines if two multifields are identical. */
 /******************************************************************/
-bool CL_MultifieldsEqual(
-  Multifield *segment1,
-  Multifield *segment2)
-  {
-   CLIPSValue *elem1;
-   CLIPSValue *elem2;
-   size_t length, i = 0;
+bool
+CL_MultifieldsEqual (Multifield * segment1, Multifield * segment2)
+{
+  CLIPSValue *elem1;
+  CLIPSValue *elem2;
+  size_t length, i = 0;
 
-   length = segment1->length;
-   if (length != segment2->length)
-     { return false; }
+  length = segment1->length;
+  if (length != segment2->length)
+    {
+      return false;
+    }
 
-   elem1 = segment1->contents;
-   elem2 = segment2->contents;
+  elem1 = segment1->contents;
+  elem2 = segment2->contents;
 
    /*==================================================*/
-   /* Compare each field of both facts until the facts */
-   /* match completely or the facts mismatch.          */
+  /* Compare each field of both facts until the facts */
+  /* match completely or the facts mismatch.          */
    /*==================================================*/
 
-   while (i < length)
-     {
+  while (i < length)
+    {
       if (elem1[i].header->type == MULTIFIELD_TYPE)
-        {
-         if (CL_MultifieldsEqual(elem1[i].multifieldValue,
-                              elem2[i].multifieldValue) == false)
-          { return false; }
-        }
+	{
+	  if (CL_MultifieldsEqual (elem1[i].multifieldValue,
+				   elem2[i].multifieldValue) == false)
+	    {
+	      return false;
+	    }
+	}
       else if (elem1[i].value != elem2[i].value)
-        { return false; }
+	{
+	  return false;
+	}
 
       i++;
-     }
-   return true;
-  }
+    }
+  return true;
+}
 
 /************************************************************/
 /* CL_HashMultifield: Returns the hash value for a multifield. */
 /************************************************************/
-size_t CL_HashMultifield(
-  Multifield *theSegment,
-  size_t theRange)
+size_t
+CL_HashMultifield (Multifield * theSegment, size_t theRange)
+{
+  size_t length, i;
+  size_t tvalue;
+  size_t count;
+  CLIPSValue *fieldPtr;
+  union
   {
-   size_t length, i;
-   size_t tvalue;
-   size_t count;
-   CLIPSValue *fieldPtr;
-   union
-     {
-      double fv;
-      void *vv;
-      unsigned long liv;
-     } fis;
+    double fv;
+    void *vv;
+    unsigned long liv;
+  } fis;
 
    /*================================================*/
-   /* Initialize variables for computing hash value. */
+  /* Initialize variables for computing hash value. */
    /*================================================*/
 
-   count = 0;
-   length = theSegment->length;
-   fieldPtr = theSegment->contents;
+  count = 0;
+  length = theSegment->length;
+  fieldPtr = theSegment->contents;
 
    /*====================================================*/
-   /* Loop through each value in the multifield, compute */
-   /* its hash value, and add it to the running total.   */
+  /* Loop through each value in the multifield, compute */
+  /* its hash value, and add it to the running total.   */
    /*====================================================*/
 
-   for (i = 0;
-        i < length;
-        i++)
-     {
-      switch(fieldPtr[i].header->type)
-         {
-          case MULTIFIELD_TYPE:
-            count += CL_HashMultifield(fieldPtr[i].multifieldValue,theRange);
-            break;
+  for (i = 0; i < length; i++)
+    {
+      switch (fieldPtr[i].header->type)
+	{
+	case MULTIFIELD_TYPE:
+	  count += CL_HashMultifield (fieldPtr[i].multifieldValue, theRange);
+	  break;
 
-          case FLOAT_TYPE:
-            fis.liv = 0;
-            fis.fv = fieldPtr[i].floatValue->contents;
-            count += (fis.liv * (i + 29))  +
-                     (unsigned long) fieldPtr[i].floatValue->contents;
-            break;
+	case FLOAT_TYPE:
+	  fis.liv = 0;
+	  fis.fv = fieldPtr[i].floatValue->contents;
+	  count += (fis.liv * (i + 29)) +
+	    (unsigned long) fieldPtr[i].floatValue->contents;
+	  break;
 
-          case INTEGER_TYPE:
-            count += (((unsigned long) fieldPtr[i].integerValue->contents) * (i + 29)) +
-                      ((unsigned long) fieldPtr[i].integerValue->contents);
-            break;
+	case INTEGER_TYPE:
+	  count +=
+	    (((unsigned long) fieldPtr[i].integerValue->contents) *
+	     (i + 29)) + ((unsigned long) fieldPtr[i].integerValue->contents);
+	  break;
 
-          case FACT_ADDRESS_TYPE:
+	case FACT_ADDRESS_TYPE:
 #if OBJECT_SYSTEM
-          case INSTANCE_ADDRESS_TYPE:
+	case INSTANCE_ADDRESS_TYPE:
 #endif
-            fis.liv = 0;
-            fis.vv = fieldPtr[i].value;
-            count += fis.liv * (i + 29);
-            break;
+	  fis.liv = 0;
+	  fis.vv = fieldPtr[i].value;
+	  count += fis.liv * (i + 29);
+	  break;
 
-          case EXTERNAL_ADDRESS_TYPE:
-            fis.liv = 0;
-            fis.vv = fieldPtr[i].externalAddressValue->contents;
-            count += fis.liv * (i + 29);
-            break;
+	case EXTERNAL_ADDRESS_TYPE:
+	  fis.liv = 0;
+	  fis.vv = fieldPtr[i].externalAddressValue->contents;
+	  count += fis.liv * (i + 29);
+	  break;
 
-          case SYMBOL_TYPE:
-          case STRING_TYPE:
+	case SYMBOL_TYPE:
+	case STRING_TYPE:
 #if OBJECT_SYSTEM
-          case INSTANCE_NAME_TYPE:
+	case INSTANCE_NAME_TYPE:
 #endif
-            tvalue = CL_HashSymbol(fieldPtr[i].lexemeValue->contents,theRange);
-            count += tvalue * (i + 29);
-            break;
-         }
-     }
+	  tvalue =
+	    CL_HashSymbol (fieldPtr[i].lexemeValue->contents, theRange);
+	  count += tvalue * (i + 29);
+	  break;
+	}
+    }
 
    /*========================*/
-   /* Return the hash value. */
+  /* Return the hash value. */
    /*========================*/
 
-   return count;
-  }
+  return count;
+}
 
 /**********************/
 /* CL_GetMultifieldList: */
 /**********************/
-Multifield *CL_GetMultifieldList(
-  Environment *theEnv)
-  {
-   return(UtilityData(theEnv)->CurrentGarbageFrame->ListOfMultifields);
-  }
+Multifield *
+CL_GetMultifieldList (Environment * theEnv)
+{
+  return (UtilityData (theEnv)->CurrentGarbageFrame->ListOfMultifields);
+}
 
 /***************************************/
 /* CL_ImplodeMultifield: C access routine */
 /*   for the implode$ function.        */
 /***************************************/
-CLIPSLexeme *CL_ImplodeMultifield(
-  Environment *theEnv,
-  UDFValue *value)
-  {
-   size_t strsize = 0;
-   size_t i, j;
-   const char *tmp_str;
-   char *ret_str;
-   CLIPSLexeme *rv;
-   Multifield *theMultifield;
-   UDFValue tempDO;
+CLIPSLexeme *
+CL_ImplodeMultifield (Environment * theEnv, UDFValue * value)
+{
+  size_t strsize = 0;
+  size_t i, j;
+  const char *tmp_str;
+  char *ret_str;
+  CLIPSLexeme *rv;
+  Multifield *theMultifield;
+  UDFValue tempDO;
 
    /*===================================================*/
-   /* Dete_rmine the size of the string to be allocated. */
+  /* Dete_rmine the size of the string to be allocated. */
    /*===================================================*/
 
-   theMultifield = value->multifieldValue;
-   for (i = value->begin ; i < (value->begin + value->range) ; i++)
-     {
+  theMultifield = value->multifieldValue;
+  for (i = value->begin; i < (value->begin + value->range); i++)
+    {
       if (theMultifield->contents[i].header->type == FLOAT_TYPE)
-        {
-         tmp_str = CL_FloatToString(theEnv,theMultifield->contents[i].floatValue->contents);
-         strsize += strlen(tmp_str) + 1;
-        }
+	{
+	  tmp_str =
+	    CL_FloatToString (theEnv,
+			      theMultifield->contents[i].floatValue->
+			      contents);
+	  strsize += strlen (tmp_str) + 1;
+	}
       else if (theMultifield->contents[i].header->type == INTEGER_TYPE)
-        {
-         tmp_str = CL_LongIntegerToString(theEnv,theMultifield->contents[i].integerValue->contents);
-         strsize += strlen(tmp_str) + 1;
-        }
+	{
+	  tmp_str =
+	    CL_LongIntegerToString (theEnv,
+				    theMultifield->contents[i].integerValue->
+				    contents);
+	  strsize += strlen (tmp_str) + 1;
+	}
       else if (theMultifield->contents[i].header->type == STRING_TYPE)
-        {
-         strsize += strlen(theMultifield->contents[i].lexemeValue->contents) + 3;
-         tmp_str = theMultifield->contents[i].lexemeValue->contents;
-         while(*tmp_str)
-           {
-            if (*tmp_str == '"')
-              { strsize++; }
-            else if (*tmp_str == '\\') /* GDR 111599 #835 */
-              { strsize++; }           /* GDR 111599 #835 */
-            tmp_str++;
-           }
-        }
+	{
+	  strsize +=
+	    strlen (theMultifield->contents[i].lexemeValue->contents) + 3;
+	  tmp_str = theMultifield->contents[i].lexemeValue->contents;
+	  while (*tmp_str)
+	    {
+	      if (*tmp_str == '"')
+		{
+		  strsize++;
+		}
+	      else if (*tmp_str == '\\')	/* GDR 111599 #835 */
+		{
+		  strsize++;
+		}		/* GDR 111599 #835 */
+	      tmp_str++;
+	    }
+	}
       else
-        {
-         tempDO.value = theMultifield->contents[i].value;
-         strsize += strlen(CL_DataObjectToString(theEnv,&tempDO)) + 1;
-        }
-     }
+	{
+	  tempDO.value = theMultifield->contents[i].value;
+	  strsize += strlen (CL_DataObjectToString (theEnv, &tempDO)) + 1;
+	}
+    }
 
    /*=============================================*/
-   /* Allocate the string and copy all components */
-   /* of the MULTIFIELD_TYPE variable to it.      */
+  /* Allocate the string and copy all components */
+  /* of the MULTIFIELD_TYPE variable to it.      */
    /*=============================================*/
 
-   if (strsize == 0) return(CL_CreateString(theEnv,""));
-   ret_str = (char *) CL_gm2(theEnv,strsize);
-   for(j = 0, i = value->begin ; i < (value->begin + value->range) ; i++)
-     {
+  if (strsize == 0)
+    return (CL_CreateString (theEnv, ""));
+  ret_str = (char *) CL_gm2 (theEnv, strsize);
+  for (j = 0, i = value->begin; i < (value->begin + value->range); i++)
+    {
       /*============================*/
       /* Convert numbers to strings */
       /*============================*/
 
       if (theMultifield->contents[i].header->type == FLOAT_TYPE)
-        {
-         tmp_str = CL_FloatToString(theEnv,theMultifield->contents[i].floatValue->contents);
-         while(*tmp_str)
-           {
-            *(ret_str+j) = *tmp_str;
-            j++;
-            tmp_str++;
-           }
-        }
+	{
+	  tmp_str =
+	    CL_FloatToString (theEnv,
+			      theMultifield->contents[i].floatValue->
+			      contents);
+	  while (*tmp_str)
+	    {
+	      *(ret_str + j) = *tmp_str;
+	      j++;
+	      tmp_str++;
+	    }
+	}
       else if (theMultifield->contents[i].header->type == INTEGER_TYPE)
-        {
-         tmp_str = CL_LongIntegerToString(theEnv,theMultifield->contents[i].integerValue->contents);
-         while(*tmp_str)
-           {
-            *(ret_str+j) = *tmp_str;
-            j++;
-            tmp_str++;
-           }
-        }
+	{
+	  tmp_str =
+	    CL_LongIntegerToString (theEnv,
+				    theMultifield->contents[i].integerValue->
+				    contents);
+	  while (*tmp_str)
+	    {
+	      *(ret_str + j) = *tmp_str;
+	      j++;
+	      tmp_str++;
+	    }
+	}
 
       /*=======================================*/
       /* Enclose strings in quotes and preceed */
@@ -952,453 +1035,487 @@ CLIPSLexeme *CL_ImplodeMultifield(
       /*=======================================*/
 
       else if (theMultifield->contents[i].header->type == STRING_TYPE)
-        {
-         tmp_str = theMultifield->contents[i].lexemeValue->contents;
-         *(ret_str+j) = '"';
-         j++;
-         while(*tmp_str)
-           {
-            if (*tmp_str == '"')
-              {
-               *(ret_str+j) = '\\';
-               j++;
-              }
-            else if (*tmp_str == '\\') /* GDR 111599 #835 */
-              {                        /* GDR 111599 #835 */
-               *(ret_str+j) = '\\';    /* GDR 111599 #835 */
-               j++;                    /* GDR 111599 #835 */
-              }                        /* GDR 111599 #835 */
+	{
+	  tmp_str = theMultifield->contents[i].lexemeValue->contents;
+	  *(ret_str + j) = '"';
+	  j++;
+	  while (*tmp_str)
+	    {
+	      if (*tmp_str == '"')
+		{
+		  *(ret_str + j) = '\\';
+		  j++;
+		}
+	      else if (*tmp_str == '\\')	/* GDR 111599 #835 */
+		{		/* GDR 111599 #835 */
+		  *(ret_str + j) = '\\';	/* GDR 111599 #835 */
+		  j++;		/* GDR 111599 #835 */
+		}		/* GDR 111599 #835 */
 
-            *(ret_str+j) = *tmp_str;
-            j++;
-            tmp_str++;
-           }
-         *(ret_str+j) = '"';
-         j++;
-        }
+	      *(ret_str + j) = *tmp_str;
+	      j++;
+	      tmp_str++;
+	    }
+	  *(ret_str + j) = '"';
+	  j++;
+	}
       else
-        {
-         tempDO.value = theMultifield->contents[i].value;
-         tmp_str = CL_DataObjectToString(theEnv,&tempDO);
-         while(*tmp_str)
-           {
-            *(ret_str+j) = *tmp_str;
-            j++;
-            tmp_str++;
-           }
-         }
-      *(ret_str+j) = ' ';
+	{
+	  tempDO.value = theMultifield->contents[i].value;
+	  tmp_str = CL_DataObjectToString (theEnv, &tempDO);
+	  while (*tmp_str)
+	    {
+	      *(ret_str + j) = *tmp_str;
+	      j++;
+	      tmp_str++;
+	    }
+	}
+      *(ret_str + j) = ' ';
       j++;
-     }
-   *(ret_str+j-1) = '\0';
+    }
+  *(ret_str + j - 1) = '\0';
 
    /*====================*/
-   /* Return the string. */
+  /* Return the string. */
    /*====================*/
 
-   rv = CL_CreateString(theEnv,ret_str);
-   CL_rm(theEnv,ret_str,strsize);
-   return rv;
-  }
+  rv = CL_CreateString (theEnv, ret_str);
+  CL_rm (theEnv, ret_str, strsize);
+  return rv;
+}
 
 /****************************/
 /* CL_CreateMultifield_Builder: */
 /****************************/
-Multifield_Builder *CL_CreateMultifield_Builder(
-  Environment *theEnv,
-  size_t theSize)
-  {
-   Multifield_Builder *theMB;
-   
-   theMB = get_struct(theEnv,multifield_Builder);
-   
-   theMB->mbEnv = theEnv;
-   theMB->buffer_Reset = theSize;
-   theMB->bufferMaximum = theSize;
-   theMB->length = 0;
-   
-   if (theSize == 0)
-     { theMB->contents = NULL; }
-   else
-     { theMB->contents = (CLIPSValue *) CL_gm2(theEnv,sizeof(CLIPSValue) * theSize); }
-   
-   return theMB;
-  }
+Multifield_Builder *
+CL_CreateMultifield_Builder (Environment * theEnv, size_t theSize)
+{
+  Multifield_Builder *theMB;
+
+  theMB = get_struct (theEnv, multifield_Builder);
+
+  theMB->mbEnv = theEnv;
+  theMB->buffer_Reset = theSize;
+  theMB->bufferMaximum = theSize;
+  theMB->length = 0;
+
+  if (theSize == 0)
+    {
+      theMB->contents = NULL;
+    }
+  else
+    {
+      theMB->contents =
+	(CLIPSValue *) CL_gm2 (theEnv, sizeof (CLIPSValue) * theSize);
+    }
+
+  return theMB;
+}
 
 /*********************/
 /* CL_MBAppendUDFValue: */
 /*********************/
-void CL_MBAppendUDFValue(
-  Multifield_Builder *theMB,
-  UDFValue *theValue)
-  {
-   Environment *theEnv = theMB->mbEnv;
-   size_t i, neededSize, newSize;
-   size_t j;
-   CLIPSValue *newArray;
+void
+CL_MBAppendUDFValue (Multifield_Builder * theMB, UDFValue * theValue)
+{
+  Environment *theEnv = theMB->mbEnv;
+  size_t i, neededSize, newSize;
+  size_t j;
+  CLIPSValue *newArray;
 
    /*==============================================*/
-   /* A void value can't be added to a multifield. */
+  /* A void value can't be added to a multifield. */
    /*==============================================*/
-   
-   if (theValue->header->type == VOID_TYPE)
-     { return; }
+
+  if (theValue->header->type == VOID_TYPE)
+    {
+      return;
+    }
 
    /*=======================================*/
-   /* Dete_rmine the amount of space needed. */
+  /* Dete_rmine the amount of space needed. */
    /*=======================================*/
-   
-   if (theValue->header->type == MULTIFIELD_TYPE)
-     {
+
+  if (theValue->header->type == MULTIFIELD_TYPE)
+    {
       if (theValue->range == 0)
-        { return; }
-        
+	{
+	  return;
+	}
+
       neededSize = theMB->length + theValue->range;
-     }
-   else
-     { neededSize = theMB->length + 1; }
+    }
+  else
+    {
+      neededSize = theMB->length + 1;
+    }
 
    /*============================================*/
-   /* Increase the size of the buffer if needed. */
+  /* Increase the size of the buffer if needed. */
    /*============================================*/
-   
-   if (neededSize > theMB->bufferMaximum)
-     {
+
+  if (neededSize > theMB->bufferMaximum)
+    {
       newSize = neededSize * 2;
-      
-      newArray = (CLIPSValue *) CL_gm2(theEnv,sizeof(CLIPSValue) * newSize);
-      
+
+      newArray =
+	(CLIPSValue *) CL_gm2 (theEnv, sizeof (CLIPSValue) * newSize);
+
       for (i = 0; i < theMB->length; i++)
-        { newArray[i] = theMB->contents[i]; }
-        
+	{
+	  newArray[i] = theMB->contents[i];
+	}
+
       if (theMB->bufferMaximum != 0)
-        { CL_rm(theMB->mbEnv,theMB->contents,sizeof(CLIPSValue) * theMB->bufferMaximum); }
-        
+	{
+	  CL_rm (theMB->mbEnv, theMB->contents,
+		 sizeof (CLIPSValue) * theMB->bufferMaximum);
+	}
+
       theMB->bufferMaximum = newSize;
       theMB->contents = newArray;
-     }
-     
+    }
+
    /*===================================*/
-   /* Copy the new values to the array. */
+  /* Copy the new values to the array. */
    /*===================================*/
 
-   if (theValue->header->type == MULTIFIELD_TYPE)
-     {
-      for (j = theValue->begin; j < (theValue->begin +theValue->range); j++)
-        {
-         theMB->contents[theMB->length].value = theValue->multifieldValue->contents[j].value;
-         CL_Retain(theEnv,theMB->contents[theMB->length].header);
-         theMB->length++;
-        }
-     }
-   else
-     {
+  if (theValue->header->type == MULTIFIELD_TYPE)
+    {
+      for (j = theValue->begin; j < (theValue->begin + theValue->range); j++)
+	{
+	  theMB->contents[theMB->length].value =
+	    theValue->multifieldValue->contents[j].value;
+	  CL_Retain (theEnv, theMB->contents[theMB->length].header);
+	  theMB->length++;
+	}
+    }
+  else
+    {
       theMB->contents[theMB->length].value = theValue->value;
-      CL_Retain(theEnv,theMB->contents[theMB->length].header);
+      CL_Retain (theEnv, theMB->contents[theMB->length].header);
       theMB->length++;
-     }
-  }
+    }
+}
 
 /*************/
 /* CL_MBAppend: */
 /*************/
-void CL_MBAppend(
-  Multifield_Builder *theMB,
-  CLIPSValue *theValue)
-  {
-   Environment *theEnv = theMB->mbEnv;
-   size_t i, neededSize, newSize;
-   size_t j;
-   CLIPSValue *newArray;
+void
+CL_MBAppend (Multifield_Builder * theMB, CLIPSValue * theValue)
+{
+  Environment *theEnv = theMB->mbEnv;
+  size_t i, neededSize, newSize;
+  size_t j;
+  CLIPSValue *newArray;
 
    /*==============================================*/
-   /* A void value can't be added to a multifield. */
+  /* A void value can't be added to a multifield. */
    /*==============================================*/
-   
-   if (theValue->header->type == VOID_TYPE)
-     { return; }
+
+  if (theValue->header->type == VOID_TYPE)
+    {
+      return;
+    }
 
    /*=======================================*/
-   /* Dete_rmine the amount of space needed. */
+  /* Dete_rmine the amount of space needed. */
    /*=======================================*/
-   
-   if (theValue->header->type == MULTIFIELD_TYPE)
-     {
+
+  if (theValue->header->type == MULTIFIELD_TYPE)
+    {
       if (theValue->multifieldValue->length == 0)
-        { return; }
-        
+	{
+	  return;
+	}
+
       neededSize = theMB->length + theValue->multifieldValue->length;
-     }
-   else
-     { neededSize = theMB->length + 1; }
+    }
+  else
+    {
+      neededSize = theMB->length + 1;
+    }
 
    /*============================================*/
-   /* Increase the size of the buffer if needed. */
+  /* Increase the size of the buffer if needed. */
    /*============================================*/
-   
-   if (neededSize > theMB->bufferMaximum)
-     {
+
+  if (neededSize > theMB->bufferMaximum)
+    {
       newSize = neededSize * 2;
-      
-      newArray = (CLIPSValue *) CL_gm2(theEnv,sizeof(CLIPSValue) * newSize);
-      
+
+      newArray =
+	(CLIPSValue *) CL_gm2 (theEnv, sizeof (CLIPSValue) * newSize);
+
       for (i = 0; i < theMB->length; i++)
-        { newArray[i] = theMB->contents[i]; }
-        
+	{
+	  newArray[i] = theMB->contents[i];
+	}
+
       if (theMB->bufferMaximum != 0)
-        { CL_rm(theMB->mbEnv,theMB->contents,sizeof(CLIPSValue) * theMB->bufferMaximum); }
-        
+	{
+	  CL_rm (theMB->mbEnv, theMB->contents,
+		 sizeof (CLIPSValue) * theMB->bufferMaximum);
+	}
+
       theMB->bufferMaximum = newSize;
       theMB->contents = newArray;
-     }
-     
+    }
+
    /*===================================*/
-   /* Copy the new values to the array. */
+  /* Copy the new values to the array. */
    /*===================================*/
 
-   if (theValue->header->type == MULTIFIELD_TYPE)
-     {
+  if (theValue->header->type == MULTIFIELD_TYPE)
+    {
       for (j = 0; j < theValue->multifieldValue->length; j++)
-        {
-         theMB->contents[theMB->length].value = theValue->multifieldValue->contents[j].value;
-         CL_Retain(theEnv,theMB->contents[theMB->length].header);
-         theMB->length++;
-        }
-     }
-   else
-     {
+	{
+	  theMB->contents[theMB->length].value =
+	    theValue->multifieldValue->contents[j].value;
+	  CL_Retain (theEnv, theMB->contents[theMB->length].header);
+	  theMB->length++;
+	}
+    }
+  else
+    {
       theMB->contents[theMB->length].value = theValue->value;
-      CL_Retain(theEnv,theMB->contents[theMB->length].header);
+      CL_Retain (theEnv, theMB->contents[theMB->length].header);
       theMB->length++;
-     }
-  }
+    }
+}
 
 /*************************/
 /* CL_MBAppendCLIPSInteger: */
 /*************************/
-void CL_MBAppendCLIPSInteger(
-  Multifield_Builder *theMB,
-  CLIPSInteger *pv)
-  {
-   CLIPSValue theValue;
-   
-   theValue.integerValue = pv;
-   CL_MBAppend(theMB,&theValue);
-  }
+void
+CL_MBAppendCLIPSInteger (Multifield_Builder * theMB, CLIPSInteger * pv)
+{
+  CLIPSValue theValue;
+
+  theValue.integerValue = pv;
+  CL_MBAppend (theMB, &theValue);
+}
 
 /********************/
 /* CL_MBAppendInteger: */
 /********************/
-void CL_MBAppendInteger(
-  Multifield_Builder *theMB,
-  long long intValue)
-  {
-   CLIPSValue theValue;
-   CLIPSInteger *pv = CL_CreateInteger(theMB->mbEnv,intValue);
-   
-   theValue.integerValue = pv;
-   CL_MBAppend(theMB,&theValue);
-  }
+void
+CL_MBAppendInteger (Multifield_Builder * theMB, long long intValue)
+{
+  CLIPSValue theValue;
+  CLIPSInteger *pv = CL_CreateInteger (theMB->mbEnv, intValue);
+
+  theValue.integerValue = pv;
+  CL_MBAppend (theMB, &theValue);
+}
 
 /***********************/
 /* CL_MBAppendCLIPSFloat: */
 /***********************/
-void CL_MBAppendCLIPSFloat(
-  Multifield_Builder *theMB,
-  CLIPSFloat *pv)
-  {
-   CLIPSValue theValue;
-   
-   theValue.floatValue = pv;
-   CL_MBAppend(theMB,&theValue);
-  }
+void
+CL_MBAppendCLIPSFloat (Multifield_Builder * theMB, CLIPSFloat * pv)
+{
+  CLIPSValue theValue;
+
+  theValue.floatValue = pv;
+  CL_MBAppend (theMB, &theValue);
+}
 
 /******************/
 /* CL_MBAppendFloat: */
 /******************/
-void CL_MBAppendFloat(
-  Multifield_Builder *theMB,
-  double floatValue)
-  {
-   CLIPSValue theValue;
-   CLIPSFloat *pv = CL_CreateFloat(theMB->mbEnv,floatValue);
-   
-   theValue.floatValue = pv;
-   CL_MBAppend(theMB,&theValue);
-  }
+void
+CL_MBAppendFloat (Multifield_Builder * theMB, double floatValue)
+{
+  CLIPSValue theValue;
+  CLIPSFloat *pv = CL_CreateFloat (theMB->mbEnv, floatValue);
+
+  theValue.floatValue = pv;
+  CL_MBAppend (theMB, &theValue);
+}
 
 /************************/
 /* CL_MBAppendCLIPSLexeme: */
 /************************/
-void CL_MBAppendCLIPSLexeme(
-  Multifield_Builder *theMB,
-  CLIPSLexeme *pv)
-  {
-   CLIPSValue theValue;
-   
-   theValue.lexemeValue = pv;
-   CL_MBAppend(theMB,&theValue);
-  }
+void
+CL_MBAppendCLIPSLexeme (Multifield_Builder * theMB, CLIPSLexeme * pv)
+{
+  CLIPSValue theValue;
+
+  theValue.lexemeValue = pv;
+  CL_MBAppend (theMB, &theValue);
+}
 
 /*******************/
 /* CL_MBAppendSymbol: */
 /*******************/
-void CL_MBAppendSymbol(
-  Multifield_Builder *theMB,
-  const char *strValue)
-  {
-   CLIPSValue theValue;
-   CLIPSLexeme *pv = CL_CreateSymbol(theMB->mbEnv,strValue);
-   
-   theValue.lexemeValue = pv;
-   CL_MBAppend(theMB,&theValue);
-  }
+void
+CL_MBAppendSymbol (Multifield_Builder * theMB, const char *strValue)
+{
+  CLIPSValue theValue;
+  CLIPSLexeme *pv = CL_CreateSymbol (theMB->mbEnv, strValue);
+
+  theValue.lexemeValue = pv;
+  CL_MBAppend (theMB, &theValue);
+}
 
 /*******************/
 /* CL_MBAppendString: */
 /*******************/
-void CL_MBAppendString(
-  Multifield_Builder *theMB,
-  const char *strValue)
-  {
-   CLIPSValue theValue;
-   CLIPSLexeme *pv = CL_CreateString(theMB->mbEnv,strValue);
-   
-   theValue.lexemeValue = pv;
-   CL_MBAppend(theMB,&theValue);
-  }
+void
+CL_MBAppendString (Multifield_Builder * theMB, const char *strValue)
+{
+  CLIPSValue theValue;
+  CLIPSLexeme *pv = CL_CreateString (theMB->mbEnv, strValue);
+
+  theValue.lexemeValue = pv;
+  CL_MBAppend (theMB, &theValue);
+}
 
 /*************************/
 /* CL_MBAppend_InstanceName: */
 /*************************/
-void CL_MBAppend_InstanceName(
-  Multifield_Builder *theMB,
-  const char *strValue)
-  {
-   CLIPSValue theValue;
-   CLIPSLexeme *pv = CL_Create_InstanceName(theMB->mbEnv,strValue);
-   
-   theValue.lexemeValue = pv;
-   CL_MBAppend(theMB,&theValue);
-  }
+void
+CL_MBAppend_InstanceName (Multifield_Builder * theMB, const char *strValue)
+{
+  CLIPSValue theValue;
+  CLIPSLexeme *pv = CL_Create_InstanceName (theMB->mbEnv, strValue);
+
+  theValue.lexemeValue = pv;
+  CL_MBAppend (theMB, &theValue);
+}
 
 /*********************************/
 /* CL_MBAppendCLIPSExternalAddress: */
 /*********************************/
-void CL_MBAppendCLIPSExternalAddress(
-  Multifield_Builder *theMB,
-  CLIPSExternalAddress *pv)
-  {
-   CLIPSValue theValue;
-   
-   theValue.externalAddressValue = pv;
-   CL_MBAppend(theMB,&theValue);
-  }
+void
+CL_MBAppendCLIPSExternalAddress (Multifield_Builder * theMB,
+				 CLIPSExternalAddress * pv)
+{
+  CLIPSValue theValue;
+
+  theValue.externalAddressValue = pv;
+  CL_MBAppend (theMB, &theValue);
+}
 
 /*****************/
 /* CL_MBAppendFact: */
 /*****************/
-void CL_MBAppendFact(
-  Multifield_Builder *theMB,
-  Fact *pv)
-  {
-   CLIPSValue theValue;
-   
-   theValue.factValue = pv;
-   CL_MBAppend(theMB,&theValue);
-  }
+void
+CL_MBAppendFact (Multifield_Builder * theMB, Fact * pv)
+{
+  CLIPSValue theValue;
+
+  theValue.factValue = pv;
+  CL_MBAppend (theMB, &theValue);
+}
 
 /*********************/
 /* CL_MBAppendInstance: */
 /*********************/
-void CL_MBAppendInstance(
-  Multifield_Builder *theMB,
-  Instance *pv)
-  {
-   CLIPSValue theValue;
-   
-   theValue.instanceValue = pv;
-   CL_MBAppend(theMB,&theValue);
-  }
+void
+CL_MBAppendInstance (Multifield_Builder * theMB, Instance * pv)
+{
+  CLIPSValue theValue;
+
+  theValue.instanceValue = pv;
+  CL_MBAppend (theMB, &theValue);
+}
 
 /***********************/
 /* CL_MBAppendMultifield: */
 /***********************/
-void CL_MBAppendMultifield(
-  Multifield_Builder *theMB,
-  Multifield *pv)
-  {
-   CLIPSValue theValue;
-   
-   theValue.multifieldValue = pv;
-   CL_MBAppend(theMB,&theValue);
-  }
+void
+CL_MBAppendMultifield (Multifield_Builder * theMB, Multifield * pv)
+{
+  CLIPSValue theValue;
+
+  theValue.multifieldValue = pv;
+  CL_MBAppend (theMB, &theValue);
+}
 
 /*************/
 /* CL_MBCreate: */
 /*************/
-Multifield *CL_MBCreate(
-  Multifield_Builder *theMB)
-  {
-   size_t i;
-   Multifield *rv;
-   
-   rv = CL_CreateMultifield(theMB->mbEnv,theMB->length);
-   
-   if (rv == NULL) return NULL;
-   
-   for (i = 0; i < theMB->length; i++)
-     {
-      rv->contents[i].value = theMB->contents[i].value;
-      CL_Release(theMB->mbEnv,rv->contents[i].header);
-     }
+Multifield *
+CL_MBCreate (Multifield_Builder * theMB)
+{
+  size_t i;
+  Multifield *rv;
 
-   theMB->length = 0;
-   
-   return rv;
-  }
+  rv = CL_CreateMultifield (theMB->mbEnv, theMB->length);
+
+  if (rv == NULL)
+    return NULL;
+
+  for (i = 0; i < theMB->length; i++)
+    {
+      rv->contents[i].value = theMB->contents[i].value;
+      CL_Release (theMB->mbEnv, rv->contents[i].header);
+    }
+
+  theMB->length = 0;
+
+  return rv;
+}
 
 /************/
 /* CL_MB_Reset: */
 /************/
-void CL_MB_Reset(
-  Multifield_Builder *theMB)
-  {
-   size_t i;
-   
-   for (i = 0; i < theMB->length; i++)
-     { CL_Release(theMB->mbEnv,theMB->contents[i].header); }
-     
-   if (theMB->buffer_Reset != theMB->bufferMaximum)
-     {
+void
+CL_MB_Reset (Multifield_Builder * theMB)
+{
+  size_t i;
+
+  for (i = 0; i < theMB->length; i++)
+    {
+      CL_Release (theMB->mbEnv, theMB->contents[i].header);
+    }
+
+  if (theMB->buffer_Reset != theMB->bufferMaximum)
+    {
       if (theMB->bufferMaximum != 0)
-        { CL_rm(theMB->mbEnv,theMB->contents,sizeof(CLIPSValue) * theMB->bufferMaximum); }
-      
+	{
+	  CL_rm (theMB->mbEnv, theMB->contents,
+		 sizeof (CLIPSValue) * theMB->bufferMaximum);
+	}
+
       if (theMB->buffer_Reset == 0)
-        { theMB->contents = NULL; }
+	{
+	  theMB->contents = NULL;
+	}
       else
-        { theMB->contents = (CLIPSValue *) CL_gm2(theMB->mbEnv,sizeof(CLIPSValue) * theMB->buffer_Reset); }
-      
+	{
+	  theMB->contents =
+	    (CLIPSValue *) CL_gm2 (theMB->mbEnv,
+				   sizeof (CLIPSValue) * theMB->buffer_Reset);
+	}
+
       theMB->bufferMaximum = theMB->buffer_Reset;
-     }
-     
-   theMB->length = 0;
-  }
+    }
+
+  theMB->length = 0;
+}
 
 /**************/
 /* CL_MBDispose: */
 /**************/
-void CL_MBDispose(
-  Multifield_Builder *theMB)
-  {
-   Environment *theEnv = theMB->mbEnv;
-   size_t i;
-   
-   for (i = 0; i < theMB->length; i++)
-     { CL_Release(theMB->mbEnv,theMB->contents[i].header); }
-   
-   if (theMB->bufferMaximum != 0)
-     { CL_rm(theMB->mbEnv,theMB->contents,sizeof(CLIPSValue) * theMB->bufferMaximum); }
-     
-   rtn_struct(theEnv,multifield_Builder,theMB);
-  }
+void
+CL_MBDispose (Multifield_Builder * theMB)
+{
+  Environment *theEnv = theMB->mbEnv;
+  size_t i;
+
+  for (i = 0; i < theMB->length; i++)
+    {
+      CL_Release (theMB->mbEnv, theMB->contents[i].header);
+    }
+
+  if (theMB->bufferMaximum != 0)
+    {
+      CL_rm (theMB->mbEnv, theMB->contents,
+	     sizeof (CLIPSValue) * theMB->bufferMaximum);
+    }
+
+  rtn_struct (theEnv, multifield_Builder, theMB);
+}

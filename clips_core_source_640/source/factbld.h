@@ -42,20 +42,20 @@ struct factPatternNode;
 #include "expressn.h"
 
 struct factPatternNode
-  {
-   struct patternNodeHeader header;
-   unsigned long bsaveID;
-   unsigned short whichField; // TBD seems to be 1 based rather than 0 based
-   unsigned short whichSlot;
-   unsigned short leaveFields;
-   struct expr *networkTest;
-   struct factPatternNode *nextLevel;
-   struct factPatternNode *lastLevel;
-   struct factPatternNode *leftNode;
-   struct factPatternNode *rightNode;
-  };
+{
+  struct patternNodeHeader header;
+  unsigned long bsaveID;
+  unsigned short whichField;	// TBD seems to be 1 based rather than 0 based
+  unsigned short whichSlot;
+  unsigned short leaveFields;
+  struct expr *networkTest;
+  struct factPatternNode *nextLevel;
+  struct factPatternNode *lastLevel;
+  struct factPatternNode *leftNode;
+  struct factPatternNode *rightNode;
+};
 
-   void                           CL_InitializeFactPatterns(Environment *);
-   void                           CL_DestroyFactPatternNetwork(Environment *,struct factPatternNode *);
+void CL_InitializeFactPatterns (Environment *);
+void CL_DestroyFactPatternNetwork (Environment *, struct factPatternNode *);
 
 #endif /* _H_factbld */

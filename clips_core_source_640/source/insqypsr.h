@@ -52,12 +52,9 @@
 
 #include "expressn.h"
 
-   Expression                    *CL_ParseQueryNoAction(Environment *,Expression *,const char *);
-   Expression                    *CL_ParseQueryAction(Environment *,Expression *,const char *);
+Expression *CL_ParseQueryNoAction (Environment *, Expression *, const char *);
+Expression *CL_ParseQueryAction (Environment *, Expression *, const char *);
 
 #endif /* INSTANCE_SET_QUERIES && (! RUN_TIME) */
 
 #endif /* _H_insqypsr */
-
-
-

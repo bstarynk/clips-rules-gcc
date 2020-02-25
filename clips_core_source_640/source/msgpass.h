@@ -63,38 +63,34 @@
 #include "object.h"
 
 typedef struct messageHandlerLink
-  {
-   DefmessageHandler *hnd;
-   struct messageHandlerLink *nxt;
-   struct messageHandlerLink *nxtInStack;
-  } HANDLER_LINK;
+{
+  DefmessageHandler *hnd;
+  struct messageHandlerLink *nxt;
+  struct messageHandlerLink *nxtInStack;
+} HANDLER_LINK;
 
-   bool             CL_DirectMessage(Environment *,CLIPSLexeme *,Instance *,
-                                  UDFValue *,Expression *);
-   void             CL_Send(Environment *,CLIPSValue *,const char *,const char *,CLIPSValue *);
-   void             CL_DestroyHandlerLinks(Environment *,HANDLER_LINK *);
-   void             CL_SendCommand(Environment *,UDFContext *,UDFValue *);
-   UDFValue        *CL_GetNthMessageArgument(Environment *,int);
+bool CL_DirectMessage (Environment *, CLIPSLexeme *, Instance *,
+		       UDFValue *, Expression *);
+void CL_Send (Environment *, CLIPSValue *, const char *, const char *,
+	      CLIPSValue *);
+void CL_DestroyHandlerLinks (Environment *, HANDLER_LINK *);
+void CL_SendCommand (Environment *, UDFContext *, UDFValue *);
+UDFValue *CL_GetNthMessageArgument (Environment *, int);
 
-   bool             CL_NextHandlerAvailable(Environment *);
-   void             CL_NextHandlerAvailableFunction(Environment *,UDFContext *,UDFValue *);
-   void             CL_CallNextHandler(Environment *,UDFContext *,UDFValue *);
-   void             CL_FindApplicableOfName(Environment *,Defclass *,HANDLER_LINK *[],
-                                         HANDLER_LINK *[],CLIPSLexeme *);
-   HANDLER_LINK    *CL_JoinHandlerLinks(Environment *,HANDLER_LINK *[],HANDLER_LINK *[],CLIPSLexeme *);
+bool CL_NextHandlerAvailable (Environment *);
+void CL_NextHandlerAvailableFunction (Environment *, UDFContext *,
+				      UDFValue *);
+void CL_CallNextHandler (Environment *, UDFContext *, UDFValue *);
+void CL_FindApplicableOfName (Environment *, Defclass *, HANDLER_LINK *[],
+			      HANDLER_LINK *[], CLIPSLexeme *);
+HANDLER_LINK *CL_JoinHandlerLinks (Environment *, HANDLER_LINK *[],
+				   HANDLER_LINK *[], CLIPSLexeme *);
 
-   void             Print_HandlerSlotGetFunction(Environment *,const char *,void *);
-   bool             CL_HandlerSlotGetFunction(Environment *,void *,UDFValue *);
-   void             Print_HandlerSlotPutFunction(Environment *,const char *,void *);
-   bool             CL_HandlerSlotPutFunction(Environment *,void *,UDFValue *);
-   void             CL_DynamicHandlerGetSlot(Environment *,UDFContext *,UDFValue *);
-   void             CL_DynamicHandlerPutSlot(Environment *,UDFContext *,UDFValue *);
+void Print_HandlerSlotGetFunction (Environment *, const char *, void *);
+bool CL_HandlerSlotGetFunction (Environment *, void *, UDFValue *);
+void Print_HandlerSlotPutFunction (Environment *, const char *, void *);
+bool CL_HandlerSlotPutFunction (Environment *, void *, UDFValue *);
+void CL_DynamicHandlerGetSlot (Environment *, UDFContext *, UDFValue *);
+void CL_DynamicHandlerPutSlot (Environment *, UDFContext *, UDFValue *);
 
 #endif /* _H_object */
-
-
-
-
-
-
-

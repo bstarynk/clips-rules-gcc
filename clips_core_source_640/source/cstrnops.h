@@ -38,10 +38,15 @@
 #include "evaluatn.h"
 #include "constrnt.h"
 
-   struct constraintRecord       *CL_IntersectConstraints(Environment *,struct constraintRecord *,struct constraintRecord *);
-   struct constraintRecord       *CL_UnionConstraints(Environment *,struct constraintRecord *,struct constraintRecord *);
+struct constraintRecord *CL_IntersectConstraints (Environment *,
+						  struct constraintRecord *,
+						  struct constraintRecord *);
+struct constraintRecord *CL_UnionConstraints (Environment *,
+					      struct constraintRecord *,
+					      struct constraintRecord *);
 #if (! BLOAD_ONLY)
-   void                           CL_RemoveConstantFromConstraint(Environment *,int,void *,CONSTRAINT_RECORD *);
+void CL_RemoveConstantFromConstraint (Environment *, int, void *,
+				      CONSTRAINT_RECORD *);
 #endif
 
 #endif /* _H_cstrnops */

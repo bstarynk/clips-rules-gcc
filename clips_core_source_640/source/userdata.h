@@ -31,42 +31,44 @@
 #define _H_userdata
 
 struct userData
-  {
-   unsigned char dataID;
-   struct userData *next;
-  };
+{
+  unsigned char dataID;
+  struct userData *next;
+};
 
 typedef struct userData USER_DATA;
-typedef struct userData * USER_DATA_PTR;
+typedef struct userData *USER_DATA_PTR;
 
 struct userDataRecord
-  {
-   unsigned char dataID;
-   void *(*createUserData)(Environment *);
-   void (*deleteUserData)(Environment *,void *);
-  };
+{
+  unsigned char dataID;
+  void *(*createUserData) (Environment *);
+  void (*deleteUserData) (Environment *, void *);
+};
 
 typedef struct userDataRecord USER_DATA_RECORD;
-typedef struct userDataRecord * USER_DATA_RECORD_PTR;
+typedef struct userDataRecord *USER_DATA_RECORD_PTR;
 
 #define MAXIMUM_USER_DATA_RECORDS 100
 
 #define USER_DATA_DATA 56
 
 struct userDataData
-  {
-   struct userDataRecord *UserDataRecordArray[MAXIMUM_USER_DATA_RECORDS];
-   unsigned char UserDataRecordCount;
-  };
+{
+  struct userDataRecord *UserDataRecordArray[MAXIMUM_USER_DATA_RECORDS];
+  unsigned char UserDataRecordCount;
+};
 
 #define UserDataData(theEnv) ((struct userDataData *) GetEnvironmentData(theEnv,USER_DATA_DATA))
 
-   void                           CL_InitializeUserDataData(Environment *);
-   unsigned char                  CL_InstallUserDataRecord(Environment *,struct userDataRecord *);
-   struct userData               *CL_FetchUserData(Environment *,unsigned char,struct userData **);
-   struct userData               *CL_TestUserData(unsigned char,struct userData *);
-   void                           CL_ClearUserDataList(Environment *,struct userData *);
-   struct userData               *CL_DeleteUserData(Environment *,unsigned char,struct userData *);
+void CL_InitializeUserDataData (Environment *);
+unsigned char CL_InstallUserDataRecord (Environment *,
+					struct userDataRecord *);
+struct userData *CL_FetchUserData (Environment *, unsigned char,
+				   struct userData **);
+struct userData *CL_TestUserData (unsigned char, struct userData *);
+void CL_ClearUserDataList (Environment *, struct userData *);
+struct userData *CL_DeleteUserData (Environment *, unsigned char,
+				    struct userData *);
 
 #endif
-

@@ -67,25 +67,23 @@
 
 #include "evaluatn.h"
 
-   void                           CL_DefruleBasicCommands(Environment *);
-   void                           CL_UndefruleCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           CL_Undefrule(Defrule *,Environment *);
-   void                           CL_GetDefruleListFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_GetDefruleList(Environment *,CLIPSValue *,Defmodule *);
-   void                           CL_DefruleModuleFunction(Environment *,UDFContext *,UDFValue *);
+void CL_DefruleBasicCommands (Environment *);
+void CL_UndefruleCommand (Environment *, UDFContext *, UDFValue *);
+bool CL_Undefrule (Defrule *, Environment *);
+void CL_GetDefruleListFunction (Environment *, UDFContext *, UDFValue *);
+void CL_GetDefruleList (Environment *, CLIPSValue *, Defmodule *);
+void CL_DefruleModuleFunction (Environment *, UDFContext *, UDFValue *);
 #if DEBUGGING_FUNCTIONS
-   void                           CL_PPDefruleCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           CL_PPDefrule(Environment *,const char *,const char *);
-   void                           CL_ListDefrulesCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_ListDefrules(Environment *,const char *,Defmodule *);
-   bool                           CL_DefruleGet_WatchFirings(Defrule *);
-   bool                           CL_DefruleGet_WatchActivations(Defrule *);
-   void                           CL_DefruleSet_WatchFirings(Defrule *,bool);
-   void                           CL_DefruleSet_WatchActivations(Defrule *,bool);
-   bool                           CL_Defrule_WatchAccess(Environment *,int,bool,struct expr *);
-   bool                           CL_Defrule_WatchPrint(Environment *,const char *,int,struct expr *);
+void CL_PPDefruleCommand (Environment *, UDFContext *, UDFValue *);
+bool CL_PPDefrule (Environment *, const char *, const char *);
+void CL_ListDefrulesCommand (Environment *, UDFContext *, UDFValue *);
+void CL_ListDefrules (Environment *, const char *, Defmodule *);
+bool CL_DefruleGet_WatchFirings (Defrule *);
+bool CL_DefruleGet_WatchActivations (Defrule *);
+void CL_DefruleSet_WatchFirings (Defrule *, bool);
+void CL_DefruleSet_WatchActivations (Defrule *, bool);
+bool CL_Defrule_WatchAccess (Environment *, int, bool, struct expr *);
+bool CL_Defrule_WatchPrint (Environment *, const char *, int, struct expr *);
 #endif
 
 #endif /* _H_rulebsc */
-
-

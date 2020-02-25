@@ -45,11 +45,12 @@
 #include "scanner.h"
 #include "symbol.h"
 
-   struct expr                   *CL_BuildRHS_Assert(Environment *,const char *,struct token *,bool *,bool,bool,const char *);
-   struct expr                   *Get_AssertArgument(Environment *,const char *,struct token *,bool *,TokenType,bool,bool *);
-   struct expr                   *CL_GetRHSPattern(Environment*,const char *,struct token *,bool *,bool,
-                                                       bool,bool,TokenType);
-   Fact                          *CL_StringToFact(Environment *,const char *);
+struct expr *CL_BuildRHS_Assert (Environment *, const char *, struct token *,
+				 bool *, bool, bool, const char *);
+struct expr *Get_AssertArgument (Environment *, const char *, struct token *,
+				 bool *, TokenType, bool, bool *);
+struct expr *CL_GetRHSPattern (Environment *, const char *, struct token *,
+			       bool *, bool, bool, bool, TokenType);
+Fact *CL_StringToFact (Environment *, const char *);
 
 #endif /* _H_factrhs */
-

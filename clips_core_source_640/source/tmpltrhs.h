@@ -46,10 +46,8 @@
 #include "scanner.h"
 #include "tmpltdef.h"
 
-   struct expr                   *Parse_AssertTemplate(Environment *,const char *,struct token *,bool *,
-                                                      TokenType,bool,Deftemplate *);
+struct expr *Parse_AssertTemplate (Environment *, const char *,
+				   struct token *, bool *, TokenType, bool,
+				   Deftemplate *);
 
 #endif /* _H_tmpltrhs */
-
-
-

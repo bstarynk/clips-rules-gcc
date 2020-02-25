@@ -64,41 +64,39 @@ typedef struct deffacts Deffacts;
 #define DEFFACTS_DATA 0
 
 struct deffactsData
-  {
-   Construct *DeffactsConstruct;
-   unsigned CL_DeffactsModuleIndex;
+{
+  Construct *DeffactsConstruct;
+  unsigned CL_DeffactsModuleIndex;
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
-   struct CodeGeneratorItem *DeffactsCodeItem;
+  struct CodeGeneratorItem *DeffactsCodeItem;
 #endif
-  };
+};
 
 struct deffacts
-  {
-   ConstructHeader header;
-   struct expr *assertList;
-  };
+{
+  ConstructHeader header;
+  struct expr *assertList;
+};
 
 struct deffactsModule
-  {
-   struct defmoduleItemHeader header;
-  };
+{
+  struct defmoduleItemHeader header;
+};
 
 #define DeffactsData(theEnv) ((struct deffactsData *) GetEnvironmentData(theEnv,DEFFACTS_DATA))
 
-   void                           CL_InitializeDeffacts(Environment *);
-   Deffacts                      *CL_FindDeffacts(Environment *,const char *);
-   Deffacts                      *CL_FindDeffactsInModule(Environment *,const char *);
-   Deffacts                      *CL_GetNextDeffacts(Environment *,Deffacts *);
-   void                           CreateInitialFactDeffacts(void);
-   bool                           CL_DeffactsIsDeletable(Deffacts *);
-   struct deffactsModule         *Get_DeffactsModuleItem(Environment *,Defmodule *);
-   const char                    *CL_DeffactsModule(Deffacts *);
-   const char                    *CL_DeffactsName(Deffacts *);
-   const char                    *CL_DeffactsPPFo_rm(Deffacts *);
+void CL_InitializeDeffacts (Environment *);
+Deffacts *CL_FindDeffacts (Environment *, const char *);
+Deffacts *CL_FindDeffactsInModule (Environment *, const char *);
+Deffacts *CL_GetNextDeffacts (Environment *, Deffacts *);
+void CreateInitialFactDeffacts (void);
+bool CL_DeffactsIsDeletable (Deffacts *);
+struct deffactsModule *Get_DeffactsModuleItem (Environment *, Defmodule *);
+const char *CL_DeffactsModule (Deffacts *);
+const char *CL_DeffactsName (Deffacts *);
+const char *CL_DeffactsPPFo_rm (Deffacts *);
 #if RUN_TIME
-   void                           Deffacts_RunTimeInitialize(Environment *);
+void Deffacts_RunTimeInitialize (Environment *);
 #endif
 
 #endif /* _H_dffctdef */
-
-

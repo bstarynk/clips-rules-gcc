@@ -50,12 +50,11 @@
 
 #include "symbol.h"
 
-   void                     CL_PrintSymbolReference(Environment *,FILE *,CLIPSLexeme *);
-   void                     CL_PrintFloatReference(Environment *,FILE *,CLIPSFloat *);
-   void                     CL_PrintIntegerReference(Environment *,FILE *,CLIPSInteger *);
-   void                     CL_PrintBitMapReference(Environment *,FILE *,CLIPSBitMap *);
-   void                     CL_AtomicValuesToCode(Environment *,const char *,const char *,char *);
+void CL_PrintSymbolReference (Environment *, FILE *, CLIPSLexeme *);
+void CL_PrintFloatReference (Environment *, FILE *, CLIPSFloat *);
+void CL_PrintIntegerReference (Environment *, FILE *, CLIPSInteger *);
+void CL_PrintBitMapReference (Environment *, FILE *, CLIPSBitMap *);
+void CL_AtomicValuesToCode (Environment *, const char *, const char *,
+			    char *);
 
 #endif /* _H_symblcmp */
-
-

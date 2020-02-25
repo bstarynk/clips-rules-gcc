@@ -52,22 +52,19 @@
 #include "expressn.h"
 #include "genrcfun.h"
 
-   void                           CL_GenericDispatch(Environment *,Defgeneric *,Defmethod *,Defmethod *,Expression *,UDFValue *);
-   void                           CL_UnboundMethodErr(Environment *,const char *);
-   bool                           CL_IsMethodApplicable(Environment *,Defmethod *);
+void CL_GenericDispatch (Environment *, Defgeneric *, Defmethod *,
+			 Defmethod *, Expression *, UDFValue *);
+void CL_UnboundMethodErr (Environment *, const char *);
+bool CL_IsMethodApplicable (Environment *, Defmethod *);
 
-   bool                           CL_NextMethodP(Environment *);
-   void                           CL_NextMethodPCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_CallNextMethod(Environment *,UDFContext *,UDFValue *);
-   void                           CL_CallSpecificMethod(Environment *,UDFContext *,UDFValue *);
-   void                           CL_OverrideNextMethod(Environment *,UDFContext *,UDFValue *);
+bool CL_NextMethodP (Environment *);
+void CL_NextMethodPCommand (Environment *, UDFContext *, UDFValue *);
+void CL_CallNextMethod (Environment *, UDFContext *, UDFValue *);
+void CL_CallSpecificMethod (Environment *, UDFContext *, UDFValue *);
+void CL_OverrideNextMethod (Environment *, UDFContext *, UDFValue *);
 
-   void                           CL_GetGenericCurrentArgument(Environment *,UDFContext *,UDFValue *);
+void CL_GetGenericCurrentArgument (Environment *, UDFContext *, UDFValue *);
 
 #endif /* DEFGENERIC_CONSTRUCT */
 
 #endif /* _H_genrcexe */
-
-
-
-

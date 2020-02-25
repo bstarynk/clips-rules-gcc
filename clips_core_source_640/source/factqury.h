@@ -54,55 +54,55 @@
 #include "factmngr.h"
 
 typedef struct query_template
-  {
-   Deftemplate *templatePtr;
-   struct query_template *chain, *nxt;
-  } QUERY_TEMPLATE;
+{
+  Deftemplate *templatePtr;
+  struct query_template *chain, *nxt;
+} QUERY_TEMPLATE;
 
 typedef struct query_soln
-  {
-   Fact **soln;
-   struct query_soln *nxt;
-  } QUERY_SOLN;
+{
+  Fact **soln;
+  struct query_soln *nxt;
+} QUERY_SOLN;
 
 typedef struct query_core
-  {
-   Fact **solns;
-   Expression *query,*action;
-   QUERY_SOLN *soln_set,*soln_bottom;
-   unsigned soln_size,soln_cnt;
-   UDFValue *result;
-  } QUERY_CORE;
+{
+  Fact **solns;
+  Expression *query, *action;
+  QUERY_SOLN *soln_set, *soln_bottom;
+  unsigned soln_size, soln_cnt;
+  UDFValue *result;
+} QUERY_CORE;
 
 typedef struct query_stack
-  {
-   QUERY_CORE *core;
-   struct query_stack *nxt;
-  } QUERY_STACK;
+{
+  QUERY_CORE *core;
+  struct query_stack *nxt;
+} QUERY_STACK;
 
 #define FACT_QUERY_DATA 63
 
 struct factQueryData
-  {
-   CLIPSLexeme *QUERY_DELIMITER_SYMBOL;
-   QUERY_CORE *QueryCore;
-   QUERY_STACK *QueryCoreStack;
-   bool AbortQuery;
-  };
+{
+  CLIPSLexeme *QUERY_DELIMITER_SYMBOL;
+  QUERY_CORE *QueryCore;
+  QUERY_STACK *QueryCoreStack;
+  bool AbortQuery;
+};
 
 #define FactQueryData(theEnv) ((struct factQueryData *) GetEnvironmentData(theEnv,FACT_QUERY_DATA))
 
 #define QUERY_DELIMITER_STRING     "(QDS)"
 
-   void                           CL_SetupFactQuery(Environment *);
-   void                           CL_GetQueryFact(Environment *,UDFContext *,UDFValue *);
-   void                           CL_GetQueryFactSlot(Environment *,UDFContext *,UDFValue *);
-   void                           CL_Any_Facts(Environment *,UDFContext *,UDFValue *);
-   void                           CL_QueryFindFact(Environment *,UDFContext *,UDFValue *);
-   void                           QueryFindAll_Facts(Environment *,UDFContext *,UDFValue *);
-   void                           CL_QueryDoForFact(Environment *,UDFContext *,UDFValue *);
-   void                           QueryDoForAll_Facts(Environment *,UDFContext *,UDFValue *);
-   void                           CL_DelayedQueryDoForAll_Facts(Environment *,UDFContext *,UDFValue *);
+void CL_SetupFactQuery (Environment *);
+void CL_GetQueryFact (Environment *, UDFContext *, UDFValue *);
+void CL_GetQueryFactSlot (Environment *, UDFContext *, UDFValue *);
+void CL_Any_Facts (Environment *, UDFContext *, UDFValue *);
+void CL_QueryFindFact (Environment *, UDFContext *, UDFValue *);
+void QueryFindAll_Facts (Environment *, UDFContext *, UDFValue *);
+void CL_QueryDoForFact (Environment *, UDFContext *, UDFValue *);
+void QueryDoForAll_Facts (Environment *, UDFContext *, UDFValue *);
+void CL_DelayedQueryDoForAll_Facts (Environment *, UDFContext *, UDFValue *);
 
 #endif /* FACT_SET_QUERIES */
 

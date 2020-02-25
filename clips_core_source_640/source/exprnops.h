@@ -48,20 +48,20 @@
 
 #include "expressn.h"
 
-   bool                           CL_ConstantExpression(struct expr *);
-   void                           CL_PrintExpression(Environment *,const char *,struct expr *);
-   unsigned long                  CL_ExpressionSize(struct expr *);
-   unsigned short                 CL_CountArguments(struct expr *);
-   struct expr                   *CL_CopyExpression(Environment *,struct expr *);
-   bool                           CL_ExpressionContainsVariables(struct expr *,bool);
-   bool                           CL_IdenticalExpression(struct expr *,struct expr *);
-   struct expr                   *CL_GenConstant(Environment *,unsigned short,void *);
-   bool                           CL_CheckArgumentAgainstRestriction(Environment *,struct expr *,unsigned);
-   bool                           CL_ConstantType(int);
-   struct expr                   *CL_CombineExpressions(Environment *,struct expr *,struct expr *);
-   struct expr                   *CL_AppendExpressions(struct expr *,struct expr *);
-   struct expr                   *CL_NegateExpression(Environment *,struct expr *);
+bool CL_ConstantExpression (struct expr *);
+void CL_PrintExpression (Environment *, const char *, struct expr *);
+unsigned long CL_ExpressionSize (struct expr *);
+unsigned short CL_CountArguments (struct expr *);
+struct expr *CL_CopyExpression (Environment *, struct expr *);
+bool CL_ExpressionContainsVariables (struct expr *, bool);
+bool CL_IdenticalExpression (struct expr *, struct expr *);
+struct expr *CL_GenConstant (Environment *, unsigned short, void *);
+bool CL_CheckArgumentAgainstRestriction (Environment *, struct expr *,
+					 unsigned);
+bool CL_ConstantType (int);
+struct expr *CL_CombineExpressions (Environment *, struct expr *,
+				    struct expr *);
+struct expr *CL_AppendExpressions (struct expr *, struct expr *);
+struct expr *CL_NegateExpression (Environment *, struct expr *);
 
 #endif /* _H_exprnops */
-
-

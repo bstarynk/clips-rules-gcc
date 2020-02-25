@@ -43,12 +43,12 @@
 
 #include "dffnxfun.h"
 
-   void                           CL_SetupDeffunctionCompiler(Environment *);
-   void                           CL_PrintDeffunctionReference(Environment *,FILE *,Deffunction *,unsigned,unsigned);
-   void                           CL_DeffunctionCModuleReference(Environment *,FILE *,unsigned long,unsigned int,unsigned int);
+void CL_SetupDeffunctionCompiler (Environment *);
+void CL_PrintDeffunctionReference (Environment *, FILE *, Deffunction *,
+				   unsigned, unsigned);
+void CL_DeffunctionCModuleReference (Environment *, FILE *, unsigned long,
+				     unsigned int, unsigned int);
 
 #endif /* DEFFUNCTION_CONSTRUCT && CONSTRUCT_COMPILER && (! RUN_TIME) */
 
 #endif /* _H_dffnxcmp */
-
-

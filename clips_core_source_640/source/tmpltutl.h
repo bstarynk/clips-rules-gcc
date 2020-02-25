@@ -60,19 +60,21 @@
 #include "factmngr.h"
 #include "symbol.h"
 
-   void                           CL_InvalidDeftemplateSlotMessage(Environment *,const char *,const char *,bool);
-   void                           CL_SingleField_SlotCardinalityError(Environment *,const char *);
-   void                           CL_MultiIntoSingleFieldSlotError(Environment *,struct templateSlot *,Deftemplate *);
-   void                           CL_CheckTemplateFact(Environment *,Fact *);
-   bool                           CL_CheckRHS_SlotTypes(Environment *,struct expr *,struct templateSlot *,const char *);
-   struct templateSlot           *CL_GetNthSlot(Deftemplate *,long long);
-   int                            CL_FindSlotPosition(Deftemplate *,CLIPSLexeme *);
-   void                           CL_PrintTemplateFact(Environment *,const char *,Fact *,bool,bool,const char *);
-   void                           CL_UpdateDeftemplateScope(Environment *);
-   struct templateSlot           *CL_FindSlot(Deftemplate *,CLIPSLexeme *,unsigned short *);
-   Deftemplate                   *CL_CreateImpliedDeftemplate(Environment *,CLIPSLexeme *,bool);
+void CL_InvalidDeftemplateSlotMessage (Environment *, const char *,
+				       const char *, bool);
+void CL_SingleField_SlotCardinalityError (Environment *, const char *);
+void CL_MultiIntoSingleFieldSlotError (Environment *, struct templateSlot *,
+				       Deftemplate *);
+void CL_CheckTemplateFact (Environment *, Fact *);
+bool CL_CheckRHS_SlotTypes (Environment *, struct expr *,
+			    struct templateSlot *, const char *);
+struct templateSlot *CL_GetNthSlot (Deftemplate *, long long);
+int CL_FindSlotPosition (Deftemplate *, CLIPSLexeme *);
+void CL_PrintTemplateFact (Environment *, const char *, Fact *, bool, bool,
+			   const char *);
+void CL_UpdateDeftemplateScope (Environment *);
+struct templateSlot *CL_FindSlot (Deftemplate *, CLIPSLexeme *,
+				  unsigned short *);
+Deftemplate *CL_CreateImpliedDeftemplate (Environment *, CLIPSLexeme *, bool);
 
 #endif /* _H_tmpltutl */
-
-
-

@@ -54,14 +54,13 @@
 
 #include "evaluatn.h"
 
-   void                           CL_DefmoduleBasicCommands(Environment *);
-   void                           CL_GetDefmoduleListFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_GetDefmoduleList(Environment *,CLIPSValue *);
-   void                           CL_PPDefmoduleCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           CL_PPDefmodule(Environment *,const char *,const char *);
-   const char                    *CL_PPDefmoduleNil(Environment *,const char *);
-   void                           CL_ListDefmodulesCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_ListDefmodules(Environment *,const char *);
+void CL_DefmoduleBasicCommands (Environment *);
+void CL_GetDefmoduleListFunction (Environment *, UDFContext *, UDFValue *);
+void CL_GetDefmoduleList (Environment *, CLIPSValue *);
+void CL_PPDefmoduleCommand (Environment *, UDFContext *, UDFValue *);
+bool CL_PPDefmodule (Environment *, const char *, const char *);
+const char *CL_PPDefmoduleNil (Environment *, const char *);
+void CL_ListDefmodulesCommand (Environment *, UDFContext *, UDFValue *);
+void CL_ListDefmodules (Environment *, const char *);
 
 #endif /* _H_modulbsc */
-

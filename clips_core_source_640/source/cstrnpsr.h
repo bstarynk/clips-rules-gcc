@@ -50,39 +50,36 @@
 #include "constrnt.h"
 
 struct constraintParseRecord
-  {
-   unsigned int type : 1;
-   unsigned int range : 1;
-   unsigned int allowedSymbols : 1;
-   unsigned int allowedStrings : 1;
-   unsigned int allowedLexemes : 1;
-   unsigned int allowedFloats : 1;
-   unsigned int allowedIntegers : 1;
-   unsigned int allowedNumbers : 1;
-   unsigned int allowedValues : 1;
-   unsigned int allowedClasses : 1;
-   unsigned int allowed_InstanceNames : 1;
-   unsigned int cardinality : 1;
-  };
+{
+  unsigned int type:1;
+  unsigned int range:1;
+  unsigned int allowedSymbols:1;
+  unsigned int allowedStrings:1;
+  unsigned int allowedLexemes:1;
+  unsigned int allowedFloats:1;
+  unsigned int allowedIntegers:1;
+  unsigned int allowedNumbers:1;
+  unsigned int allowedValues:1;
+  unsigned int allowedClasses:1;
+  unsigned int allowed_InstanceNames:1;
+  unsigned int cardinality:1;
+};
 
 typedef struct constraintParseRecord CONSTRAINT_PARSE_RECORD;
 
-   bool                           CL_CheckConstraintParseConflicts(Environment *,CONSTRAINT_RECORD *);
-   void                           CL_AttributeConflictErrorMessage(Environment *,const char *,const char *);
+bool CL_CheckConstraintParseConflicts (Environment *, CONSTRAINT_RECORD *);
+void CL_AttributeConflictErrorMessage (Environment *, const char *,
+				       const char *);
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   void                           CL_InitializeConstraintParseRecord(CONSTRAINT_PARSE_RECORD *);
-   bool                           CL_StandardConstraint(const char *);
-   bool                           CL_Parse_StandardConstraint(Environment *,const char *,const char *,
-                                                                 CONSTRAINT_RECORD *,
-                                                                 CONSTRAINT_PARSE_RECORD *,
-                                                                 bool);
-   void                           CL_OverlayConstraint(Environment *,CONSTRAINT_PARSE_RECORD *,
-                                                           CONSTRAINT_RECORD *,CONSTRAINT_RECORD *);
-   void                           CL_OverlayConstraintParseRecord(CONSTRAINT_PARSE_RECORD *,
-                                                                      CONSTRAINT_PARSE_RECORD *);
+void CL_InitializeConstraintParseRecord (CONSTRAINT_PARSE_RECORD *);
+bool CL_StandardConstraint (const char *);
+bool CL_Parse_StandardConstraint (Environment *, const char *, const char *,
+				  CONSTRAINT_RECORD *,
+				  CONSTRAINT_PARSE_RECORD *, bool);
+void CL_OverlayConstraint (Environment *, CONSTRAINT_PARSE_RECORD *,
+			   CONSTRAINT_RECORD *, CONSTRAINT_RECORD *);
+void CL_OverlayConstraintParseRecord (CONSTRAINT_PARSE_RECORD *,
+				      CONSTRAINT_PARSE_RECORD *);
 #endif /* (! RUN_TIME) && (! BLOAD_ONLY) */
 
 #endif /* _H_cstrnpsr */
-
-
-

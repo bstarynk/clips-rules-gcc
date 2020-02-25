@@ -50,10 +50,7 @@
 #include "symbol.h"
 #include "tmpltdef.h"
 
-   bool                           CL_ParseDeftemplate(Environment *,const char *);
-   void                           CL_InstallDeftemplate(Environment *,Deftemplate *);
+bool CL_ParseDeftemplate (Environment *, const char *);
+void CL_InstallDeftemplate (Environment *, Deftemplate *);
 
 #endif /* _H_tmpltpsr */
-
-
-

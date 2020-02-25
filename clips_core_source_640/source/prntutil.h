@@ -77,49 +77,50 @@
 #define PRINT_UTILITY_DATA 53
 
 struct printUtilityData
-  {
-   bool PreserveEscapedCharacters;
-   bool AddressesToStrings;
-   bool InstanceAddressesToNames;
-  };
+{
+  bool PreserveEscapedCharacters;
+  bool AddressesToStrings;
+  bool InstanceAddressesToNames;
+};
 
 #define PrintUtilityData(theEnv) ((struct printUtilityData *) GetEnvironmentData(theEnv,PRINT_UTILITY_DATA))
 
-   void                           CL_InitializePrintUtilityData(Environment *);
-   void                           CL_WriteFloat(Environment *,const char *,double);
-   void                           CL_WriteInteger(Environment *,const char *,long long);
-   void                           CL_PrintUnsignedInteger(Environment *,const char *,unsigned long long);
-   void                           CL_PrintAtom(Environment *,const char *,unsigned short,void *);
-   void                           CL_PrintTally(Environment *,const char *,unsigned long long,const char *,const char *);
-   const char                    *CL_FloatToString(Environment *,double);
-   const char                    *CL_LongIntegerToString(Environment *,long long);
-   const char                    *CL_DataObjectToString(Environment *,UDFValue *);
-   void                           CL_SyntaxErrorMessage(Environment *,const char *);
-   void                           CL_SystemError(Environment *,const char *,int);
-   void                           CL_PrintErrorID(Environment *,const char *,int,bool);
-   void                           CL_PrintWarningID(Environment *,const char *,int,bool);
-   void                           CL_CantFindItemErrorMessage(Environment *,const char *,const char *,bool);
-   void                           CL_CantDeleteItemErrorMessage(Environment *,const char *,const char *);
-   void                           CL_AlreadyParsedErrorMessage(Environment *,const char *,const char *);
-   void                           CL_LocalVariableErrorMessage(Environment *,const char *);
-   void                           CL_DivideByZeroErrorMessage(Environment *,const char *);
-   void                           SalienceInfo_rmationError(Environment *,const char *,const char *);
-   void                           CL_SalienceRangeError(Environment *,int,int);
-   void                           CL_SalienceNonIntegerError(Environment *);
-   void                           CL_CantFindItemInFunctionErrorMessage(Environment *,const char *,const char *,const char *,bool);
-   void                           CL_SlotExistError(Environment *,const char *,const char *);
-   void                           CL_Fact_RetractedErrorMessage(Environment *,Fact *);
-   void                           CL_FactVarSlotErrorMessage1(Environment *,Fact *,const char *);
-   void                           CL_FactVarSlotErrorMessage2(Environment *,Fact *,const char *);
-   void                           CL_InvalidVarSlotErrorMessage(Environment *,const char *);
-   void                           CL_InstanceVarSlotErrorMessage1(Environment *,Instance *,const char *);
-   void                           CL_InstanceVarSlotErrorMessage2(Environment *,Instance *,const char *);
-   void                           CL_ArgumentOverUnderflowErrorMessage(Environment *,const char *,bool);
+void CL_InitializePrintUtilityData (Environment *);
+void CL_WriteFloat (Environment *, const char *, double);
+void CL_WriteInteger (Environment *, const char *, long long);
+void CL_PrintUnsignedInteger (Environment *, const char *,
+			      unsigned long long);
+void CL_PrintAtom (Environment *, const char *, unsigned short, void *);
+void CL_PrintTally (Environment *, const char *, unsigned long long,
+		    const char *, const char *);
+const char *CL_FloatToString (Environment *, double);
+const char *CL_LongIntegerToString (Environment *, long long);
+const char *CL_DataObjectToString (Environment *, UDFValue *);
+void CL_SyntaxErrorMessage (Environment *, const char *);
+void CL_SystemError (Environment *, const char *, int);
+void CL_PrintErrorID (Environment *, const char *, int, bool);
+void CL_PrintWarningID (Environment *, const char *, int, bool);
+void CL_CantFindItemErrorMessage (Environment *, const char *, const char *,
+				  bool);
+void CL_CantDeleteItemErrorMessage (Environment *, const char *,
+				    const char *);
+void CL_AlreadyParsedErrorMessage (Environment *, const char *, const char *);
+void CL_LocalVariableErrorMessage (Environment *, const char *);
+void CL_DivideByZeroErrorMessage (Environment *, const char *);
+void SalienceInfo_rmationError (Environment *, const char *, const char *);
+void CL_SalienceRangeError (Environment *, int, int);
+void CL_SalienceNonIntegerError (Environment *);
+void CL_CantFindItemInFunctionErrorMessage (Environment *, const char *,
+					    const char *, const char *, bool);
+void CL_SlotExistError (Environment *, const char *, const char *);
+void CL_Fact_RetractedErrorMessage (Environment *, Fact *);
+void CL_FactVarSlotErrorMessage1 (Environment *, Fact *, const char *);
+void CL_FactVarSlotErrorMessage2 (Environment *, Fact *, const char *);
+void CL_InvalidVarSlotErrorMessage (Environment *, const char *);
+void CL_InstanceVarSlotErrorMessage1 (Environment *, Instance *,
+				      const char *);
+void CL_InstanceVarSlotErrorMessage2 (Environment *, Instance *,
+				      const char *);
+void CL_ArgumentOverUnderflowErrorMessage (Environment *, const char *, bool);
 
 #endif /* _H_prntutil */
-
-
-
-
-
-

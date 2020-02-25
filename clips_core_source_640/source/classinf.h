@@ -53,42 +53,39 @@
 
 #include "evaluatn.h"
 
-   void                           CL_ClassAbstractPCommand(Environment *,UDFContext *,UDFValue *);
+void CL_ClassAbstractPCommand (Environment *, UDFContext *, UDFValue *);
 #if DEFRULE_CONSTRUCT
-   void                           CL_ClassReactivePCommand(Environment *,UDFContext *,UDFValue *);
+void CL_ClassReactivePCommand (Environment *, UDFContext *, UDFValue *);
 #endif
-   Defclass                      *CL_ClassInfoFnxArgs(UDFContext *,const char *,bool *);
-   void                           CL_ClassSlotsCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_ClassSuperclassesCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_ClassSubclassesCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_GetDefmessageHandlersListCmd(Environment *,UDFContext *,UDFValue *);
-   void                           CL_SlotFacetsCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_SlotSourcesCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_SlotTypesCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_SlotAllowedValuesCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_SlotAllowedClassesCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_SlotRangeCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_SlotCardinalityCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           CL_ClassAbstractP(Defclass *);
+Defclass *CL_ClassInfoFnxArgs (UDFContext *, const char *, bool *);
+void CL_ClassSlotsCommand (Environment *, UDFContext *, UDFValue *);
+void CL_ClassSuperclassesCommand (Environment *, UDFContext *, UDFValue *);
+void CL_ClassSubclassesCommand (Environment *, UDFContext *, UDFValue *);
+void CL_GetDefmessageHandlersListCmd (Environment *, UDFContext *,
+				      UDFValue *);
+void CL_SlotFacetsCommand (Environment *, UDFContext *, UDFValue *);
+void CL_SlotSourcesCommand (Environment *, UDFContext *, UDFValue *);
+void CL_SlotTypesCommand (Environment *, UDFContext *, UDFValue *);
+void CL_SlotAllowedValuesCommand (Environment *, UDFContext *, UDFValue *);
+void CL_SlotAllowedClassesCommand (Environment *, UDFContext *, UDFValue *);
+void CL_SlotRangeCommand (Environment *, UDFContext *, UDFValue *);
+void CL_SlotCardinalityCommand (Environment *, UDFContext *, UDFValue *);
+bool CL_ClassAbstractP (Defclass *);
 #if DEFRULE_CONSTRUCT
-   bool                           CL_ClassReactiveP(Defclass *);
+bool CL_ClassReactiveP (Defclass *);
 #endif
-   void                           CL_ClassSlots(Defclass *,CLIPSValue *,bool);
-   void                           CL_GetDefmessageHandlerList(Environment *,Defclass *,CLIPSValue *,bool);
-   void                           CL_ClassSuperclasses(Defclass *,CLIPSValue *,bool);
-   void                           CL_ClassSubclasses(Defclass *,CLIPSValue *,bool);
-   void                           CL_ClassSubclassAddresses(Environment *,Defclass *,UDFValue *,bool);
-   bool                           CL_SlotFacets(Defclass *,const char *,CLIPSValue *);
-   bool                           CL_SlotSources(Defclass *,const char *,CLIPSValue *);
-   bool                           CL_SlotTypes(Defclass *,const char *,CLIPSValue *);
-   bool                           CL_SlotAllowedValues(Defclass *,const char *,CLIPSValue *);
-   bool                           CL_SlotAllowedClasses(Defclass *,const char *,CLIPSValue *);
-   bool                           CL_SlotRange(Defclass *,const char *,CLIPSValue *);
-   bool                           CL_SlotCardinality(Defclass *,const char *,CLIPSValue *);
+void CL_ClassSlots (Defclass *, CLIPSValue *, bool);
+void CL_GetDefmessageHandlerList (Environment *, Defclass *, CLIPSValue *,
+				  bool);
+void CL_ClassSuperclasses (Defclass *, CLIPSValue *, bool);
+void CL_ClassSubclasses (Defclass *, CLIPSValue *, bool);
+void CL_ClassSubclassAddresses (Environment *, Defclass *, UDFValue *, bool);
+bool CL_SlotFacets (Defclass *, const char *, CLIPSValue *);
+bool CL_SlotSources (Defclass *, const char *, CLIPSValue *);
+bool CL_SlotTypes (Defclass *, const char *, CLIPSValue *);
+bool CL_SlotAllowedValues (Defclass *, const char *, CLIPSValue *);
+bool CL_SlotAllowedClasses (Defclass *, const char *, CLIPSValue *);
+bool CL_SlotRange (Defclass *, const char *, CLIPSValue *);
+bool CL_SlotCardinality (Defclass *, const char *, CLIPSValue *);
 
 #endif /* _H_classinf */
-
-
-
-
-

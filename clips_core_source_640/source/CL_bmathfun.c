@@ -65,493 +65,570 @@
 /***************************************************************/
 /* CL_BasicMathFunctionDefinitions: Defines basic math functions. */
 /***************************************************************/
-void CL_BasicMathFunctionDefinitions(
-  Environment *theEnv)
-  {
+void
+CL_BasicMathFunctionDefinitions (Environment * theEnv)
+{
 #if ! RUN_TIME
-   CL_AddUDF(theEnv,"+","ld",2,UNBOUNDED,"ld",CL_AdditionFunction,"CL_AdditionFunction",NULL);
-   CL_AddUDF(theEnv,"*","ld",2,UNBOUNDED,"ld",CL_MultiplicationFunction,"CL_MultiplicationFunction",NULL);
-   CL_AddUDF(theEnv,"-","ld",2,UNBOUNDED,"ld",CL_SubtractionFunction,"CL_SubtractionFunction",NULL);
-   CL_AddUDF(theEnv,"/","d",2,UNBOUNDED,"ld",CL_DivisionFunction,"CL_DivisionFunction",NULL);
-   CL_AddUDF(theEnv,"div","l",2,UNBOUNDED,"ld",CL_DivFunction,"CL_DivFunction",NULL);
-   CL_AddUDF(theEnv,"integer","l",1,1,"ld",CL_IntegerFunction,"CL_IntegerFunction",NULL);
-   CL_AddUDF(theEnv,"float","d",1,1,"ld",CL_FloatFunction,"CL_FloatFunction",NULL);
-   CL_AddUDF(theEnv,"abs","ld",1,1,"ld",CL_AbsFunction,"CL_AbsFunction",NULL);
-   CL_AddUDF(theEnv,"min","ld",1,UNBOUNDED,"ld",CL_MinFunction,"CL_MinFunction",NULL);
-   CL_AddUDF(theEnv,"max","ld",1,UNBOUNDED,"ld",CL_MaxFunction,"CL_MaxFunction",NULL);
+  CL_AddUDF (theEnv, "+", "ld", 2, UNBOUNDED, "ld", CL_AdditionFunction,
+	     "CL_AdditionFunction", NULL);
+  CL_AddUDF (theEnv, "*", "ld", 2, UNBOUNDED, "ld", CL_MultiplicationFunction,
+	     "CL_MultiplicationFunction", NULL);
+  CL_AddUDF (theEnv, "-", "ld", 2, UNBOUNDED, "ld", CL_SubtractionFunction,
+	     "CL_SubtractionFunction", NULL);
+  CL_AddUDF (theEnv, "/", "d", 2, UNBOUNDED, "ld", CL_DivisionFunction,
+	     "CL_DivisionFunction", NULL);
+  CL_AddUDF (theEnv, "div", "l", 2, UNBOUNDED, "ld", CL_DivFunction,
+	     "CL_DivFunction", NULL);
+  CL_AddUDF (theEnv, "integer", "l", 1, 1, "ld", CL_IntegerFunction,
+	     "CL_IntegerFunction", NULL);
+  CL_AddUDF (theEnv, "float", "d", 1, 1, "ld", CL_FloatFunction,
+	     "CL_FloatFunction", NULL);
+  CL_AddUDF (theEnv, "abs", "ld", 1, 1, "ld", CL_AbsFunction,
+	     "CL_AbsFunction", NULL);
+  CL_AddUDF (theEnv, "min", "ld", 1, UNBOUNDED, "ld", CL_MinFunction,
+	     "CL_MinFunction", NULL);
+  CL_AddUDF (theEnv, "max", "ld", 1, UNBOUNDED, "ld", CL_MaxFunction,
+	     "CL_MaxFunction", NULL);
 #endif
-  }
+}
 
 /**********************************/
 /* CL_AdditionFunction: H/L access   */
 /*   routine for the + function.  */
 /**********************************/
-void CL_AdditionFunction(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
-   double ftotal = 0.0;
-   long long ltotal = 0LL;
-   bool useFloatTotal = false;
-   UDFValue theArg;
+void
+CL_AdditionFunction (Environment * theEnv,
+		     UDFContext * context, UDFValue * returnValue)
+{
+  double ftotal = 0.0;
+  long long ltotal = 0LL;
+  bool useFloatTotal = false;
+  UDFValue theArg;
 
    /*=================================================*/
-   /* Loop through each of the arguments adding it to */
-   /* a running total. If a floating point number is  */
-   /* encountered, then do all subsequent operations  */
-   /* using floating point values.                    */
+  /* Loop through each of the arguments adding it to */
+  /* a running total. If a floating point number is  */
+  /* encountered, then do all subsequent operations  */
+  /* using floating point values.                    */
    /*=================================================*/
 
-   while (UDFHasNextArgument(context))
-     {
-      if (! CL_UDFNextArgument(context,NUMBER_BITS,&theArg))
-        { return; }
+  while (UDFHasNextArgument (context))
+    {
+      if (!CL_UDFNextArgument (context, NUMBER_BITS, &theArg))
+	{
+	  return;
+	}
 
       if (useFloatTotal)
-        { ftotal += CVCoerceToFloat(&theArg); }
+	{
+	  ftotal += CVCoerceToFloat (&theArg);
+	}
       else
-        {
-         if (CVIsType(&theArg,INTEGER_BIT))
-           { ltotal += theArg.integerValue->contents; }
-         else
-           {
-            ftotal = (double) ltotal + CVCoerceToFloat(&theArg);
-            useFloatTotal = true;
-           }
-        }
-     }
+	{
+	  if (CVIsType (&theArg, INTEGER_BIT))
+	    {
+	      ltotal += theArg.integerValue->contents;
+	    }
+	  else
+	    {
+	      ftotal = (double) ltotal + CVCoerceToFloat (&theArg);
+	      useFloatTotal = true;
+	    }
+	}
+    }
 
    /*======================================================*/
-   /* If a floating point number was in the argument list, */
-   /* then return a float, otherwise return an integer.    */
+  /* If a floating point number was in the argument list, */
+  /* then return a float, otherwise return an integer.    */
    /*======================================================*/
 
-   if (useFloatTotal)
-     { returnValue->floatValue = CL_CreateFloat(theEnv,ftotal); }
-   else
-     { returnValue->integerValue = CL_CreateInteger(theEnv,ltotal); }
-  }
+  if (useFloatTotal)
+    {
+      returnValue->floatValue = CL_CreateFloat (theEnv, ftotal);
+    }
+  else
+    {
+      returnValue->integerValue = CL_CreateInteger (theEnv, ltotal);
+    }
+}
 
 /****************************************/
 /* CL_MultiplicationFunction: CLIPS access */
 /*   routine for the * function.        */
 /****************************************/
-void CL_MultiplicationFunction(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
-   double ftotal = 1.0;
-   long long ltotal = 1LL;
-   bool useFloatTotal = false;
-   UDFValue theArg;
+void
+CL_MultiplicationFunction (Environment * theEnv,
+			   UDFContext * context, UDFValue * returnValue)
+{
+  double ftotal = 1.0;
+  long long ltotal = 1LL;
+  bool useFloatTotal = false;
+  UDFValue theArg;
 
    /*===================================================*/
-   /* Loop through each of the arguments multiplying it */
-   /* by a running product. If a floating point number  */
-   /* is encountered, then do all subsequent operations */
-   /* using floating point values.                      */
+  /* Loop through each of the arguments multiplying it */
+  /* by a running product. If a floating point number  */
+  /* is encountered, then do all subsequent operations */
+  /* using floating point values.                      */
    /*===================================================*/
 
-   while (UDFHasNextArgument(context))
-     {
-      if (! CL_UDFNextArgument(context,NUMBER_BITS,&theArg))
-        { return; }
+  while (UDFHasNextArgument (context))
+    {
+      if (!CL_UDFNextArgument (context, NUMBER_BITS, &theArg))
+	{
+	  return;
+	}
 
       if (useFloatTotal)
-        { ftotal *= CVCoerceToFloat(&theArg); }
+	{
+	  ftotal *= CVCoerceToFloat (&theArg);
+	}
       else
-        {
-         if (CVIsType(&theArg,INTEGER_BIT))
-           { ltotal *= theArg.integerValue->contents; }
-         else
-           {
-            ftotal = (double) ltotal * CVCoerceToFloat(&theArg);
-            useFloatTotal = true;
-           }
-        }
-     }
+	{
+	  if (CVIsType (&theArg, INTEGER_BIT))
+	    {
+	      ltotal *= theArg.integerValue->contents;
+	    }
+	  else
+	    {
+	      ftotal = (double) ltotal *CVCoerceToFloat (&theArg);
+	      useFloatTotal = true;
+	    }
+	}
+    }
 
    /*======================================================*/
-   /* If a floating point number was in the argument list, */
-   /* then return a float, otherwise return an integer.    */
+  /* If a floating point number was in the argument list, */
+  /* then return a float, otherwise return an integer.    */
    /*======================================================*/
 
-   if (useFloatTotal)
-     { returnValue->floatValue = CL_CreateFloat(theEnv,ftotal); }
-   else
-     { returnValue->integerValue = CL_CreateInteger(theEnv,ltotal); }
-  }
+  if (useFloatTotal)
+    {
+      returnValue->floatValue = CL_CreateFloat (theEnv, ftotal);
+    }
+  else
+    {
+      returnValue->integerValue = CL_CreateInteger (theEnv, ltotal);
+    }
+}
 
 /*************************************/
 /* CL_SubtractionFunction: CLIPS access */
 /*   routine for the - function.     */
 /*************************************/
-void CL_SubtractionFunction(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
-   double ftotal = 0.0;
-   long long ltotal = 0LL;
-   bool useFloatTotal = false;
-   UDFValue theArg;
+void
+CL_SubtractionFunction (Environment * theEnv,
+			UDFContext * context, UDFValue * returnValue)
+{
+  double ftotal = 0.0;
+  long long ltotal = 0LL;
+  bool useFloatTotal = false;
+  UDFValue theArg;
 
    /*=================================================*/
-   /* Get the first argument. This number which will  */
-   /* be the starting total from which all subsequent */
-   /* arguments will subtracted.                      */
+  /* Get the first argument. This number which will  */
+  /* be the starting total from which all subsequent */
+  /* arguments will subtracted.                      */
    /*=================================================*/
 
-   if (! CL_UDFFirstArgument(context,NUMBER_BITS,&theArg))
-     { return; }
+  if (!CL_UDFFirstArgument (context, NUMBER_BITS, &theArg))
+    {
+      return;
+    }
 
-   if (CVIsType(&theArg,INTEGER_BIT))
-     { ltotal = theArg.integerValue->contents; }
-   else
-     {
-      ftotal = CVCoerceToFloat(&theArg);
+  if (CVIsType (&theArg, INTEGER_BIT))
+    {
+      ltotal = theArg.integerValue->contents;
+    }
+  else
+    {
+      ftotal = CVCoerceToFloat (&theArg);
       useFloatTotal = true;
-     }
+    }
 
    /*===================================================*/
-   /* Loop through each of the arguments subtracting it */
-   /* from a running total. If a floating point number  */
-   /* is encountered, then do all subsequent operations */
-   /* using floating point values.                      */
+  /* Loop through each of the arguments subtracting it */
+  /* from a running total. If a floating point number  */
+  /* is encountered, then do all subsequent operations */
+  /* using floating point values.                      */
    /*===================================================*/
 
-   while (UDFHasNextArgument(context))
-     {
-      if (! CL_UDFNextArgument(context,NUMBER_BITS,&theArg))
-        { return; }
+  while (UDFHasNextArgument (context))
+    {
+      if (!CL_UDFNextArgument (context, NUMBER_BITS, &theArg))
+	{
+	  return;
+	}
 
       if (useFloatTotal)
-        { ftotal -= CVCoerceToFloat(&theArg); }
+	{
+	  ftotal -= CVCoerceToFloat (&theArg);
+	}
       else
-        {
-         if (CVIsType(&theArg,INTEGER_BIT))
-           { ltotal -= theArg.integerValue->contents; }
-         else
-           {
-            ftotal = (double) ltotal - theArg.floatValue->contents;
-            useFloatTotal = true;
-           }
-        }
-     }
+	{
+	  if (CVIsType (&theArg, INTEGER_BIT))
+	    {
+	      ltotal -= theArg.integerValue->contents;
+	    }
+	  else
+	    {
+	      ftotal = (double) ltotal - theArg.floatValue->contents;
+	      useFloatTotal = true;
+	    }
+	}
+    }
 
    /*======================================================*/
-   /* If a floating point number was in the argument list, */
-   /* then return a float, otherwise return an integer.    */
+  /* If a floating point number was in the argument list, */
+  /* then return a float, otherwise return an integer.    */
    /*======================================================*/
 
-   if (useFloatTotal)
-     { returnValue->floatValue = CL_CreateFloat(theEnv,ftotal); }
-   else
-     { returnValue->integerValue = CL_CreateInteger(theEnv,ltotal); }
-  }
+  if (useFloatTotal)
+    {
+      returnValue->floatValue = CL_CreateFloat (theEnv, ftotal);
+    }
+  else
+    {
+      returnValue->integerValue = CL_CreateInteger (theEnv, ltotal);
+    }
+}
 
 /***********************************/
 /* CL_DivisionFunction:  CLIPS access */
 /*   routine for the / function.   */
 /***********************************/
-void CL_DivisionFunction(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
-   double ftotal = 1.0;
-   double theNumber;
-   UDFValue theArg;
+void
+CL_DivisionFunction (Environment * theEnv,
+		     UDFContext * context, UDFValue * returnValue)
+{
+  double ftotal = 1.0;
+  double theNumber;
+  UDFValue theArg;
 
    /*===================================================*/
-   /* Get the first argument. This number which will be */
-   /* the starting product from which all subsequent    */
-   /* arguments will divide. If the auto float dividend */
-   /* feature is enable, then this number is converted  */
-   /* to a float if it is an integer.                   */
+  /* Get the first argument. This number which will be */
+  /* the starting product from which all subsequent    */
+  /* arguments will divide. If the auto float dividend */
+  /* feature is enable, then this number is converted  */
+  /* to a float if it is an integer.                   */
    /*===================================================*/
 
-   if (! CL_UDFFirstArgument(context,NUMBER_BITS,&theArg))
-     { return; }
+  if (!CL_UDFFirstArgument (context, NUMBER_BITS, &theArg))
+    {
+      return;
+    }
 
-   ftotal = CVCoerceToFloat(&theArg);
+  ftotal = CVCoerceToFloat (&theArg);
 
    /*====================================================*/
-   /* Loop through each of the arguments dividing it     */
-   /* into a running product. If a floating point number */
-   /* is encountered, then do all subsequent operations  */
-   /* using floating point values. Each argument is      */
-   /* checked to prevent a divide by zero error.         */
+  /* Loop through each of the arguments dividing it     */
+  /* into a running product. If a floating point number */
+  /* is encountered, then do all subsequent operations  */
+  /* using floating point values. Each argument is      */
+  /* checked to prevent a divide by zero error.         */
    /*====================================================*/
 
-   while (UDFHasNextArgument(context))
-     {
-      if (! CL_UDFNextArgument(context,NUMBER_BITS,&theArg))
-        { return; }
+  while (UDFHasNextArgument (context))
+    {
+      if (!CL_UDFNextArgument (context, NUMBER_BITS, &theArg))
+	{
+	  return;
+	}
 
-      theNumber = CVCoerceToFloat(&theArg);
+      theNumber = CVCoerceToFloat (&theArg);
 
       if (theNumber == 0.0)
-        {
-         CL_DivideByZeroErrorMessage(theEnv,"/");
-         Set_EvaluationError(theEnv,true);
-         returnValue->floatValue = CL_CreateFloat(theEnv,1.0);
-         return;
-        }
+	{
+	  CL_DivideByZeroErrorMessage (theEnv, "/");
+	  Set_EvaluationError (theEnv, true);
+	  returnValue->floatValue = CL_CreateFloat (theEnv, 1.0);
+	  return;
+	}
 
       ftotal /= theNumber;
-     }
+    }
 
    /*======================================================*/
-   /* If a floating point number was in the argument list, */
-   /* then return a float, otherwise return an integer.    */
+  /* If a floating point number was in the argument list, */
+  /* then return a float, otherwise return an integer.    */
    /*======================================================*/
 
-   returnValue->floatValue = CL_CreateFloat(theEnv,ftotal);
-  }
+  returnValue->floatValue = CL_CreateFloat (theEnv, ftotal);
+}
 
 /*************************************/
 /* CL_DivFunction: H/L access routine   */
 /*   for the div function.           */
 /*************************************/
-void CL_DivFunction(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
-   long long total = 1LL;
-   UDFValue theArg;
-   long long theNumber;
+void
+CL_DivFunction (Environment * theEnv,
+		UDFContext * context, UDFValue * returnValue)
+{
+  long long total = 1LL;
+  UDFValue theArg;
+  long long theNumber;
 
    /*===================================================*/
-   /* Get the first argument. This number which will be */
-   /* the starting product from which all subsequent    */
-   /* arguments will divide.                            */
+  /* Get the first argument. This number which will be */
+  /* the starting product from which all subsequent    */
+  /* arguments will divide.                            */
    /*===================================================*/
 
-   if (! CL_UDFFirstArgument(context,NUMBER_BITS,&theArg))
-     { return; }
-   total = CVCoerceToInteger(&theArg);
+  if (!CL_UDFFirstArgument (context, NUMBER_BITS, &theArg))
+    {
+      return;
+    }
+  total = CVCoerceToInteger (&theArg);
 
    /*=====================================================*/
-   /* Loop through each of the arguments dividing it into */
-   /* a running product. Floats are converted to integers */
-   /* and each argument is checked to prevent a divide by */
-   /* zero error.                                         */
+  /* Loop through each of the arguments dividing it into */
+  /* a running product. Floats are converted to integers */
+  /* and each argument is checked to prevent a divide by */
+  /* zero error.                                         */
    /*=====================================================*/
 
-   while (UDFHasNextArgument(context))
-     {
-      if (! CL_UDFNextArgument(context,NUMBER_BITS,&theArg))
-        { return; }
+  while (UDFHasNextArgument (context))
+    {
+      if (!CL_UDFNextArgument (context, NUMBER_BITS, &theArg))
+	{
+	  return;
+	}
 
-      theNumber = CVCoerceToInteger(&theArg);
+      theNumber = CVCoerceToInteger (&theArg);
 
       if (theNumber == 0LL)
-        {
-         CL_DivideByZeroErrorMessage(theEnv,"div");
-         Set_EvaluationError(theEnv,true);
-         returnValue->integerValue = CL_CreateInteger(theEnv,1L);
-         return;
-        }
+	{
+	  CL_DivideByZeroErrorMessage (theEnv, "div");
+	  Set_EvaluationError (theEnv, true);
+	  returnValue->integerValue = CL_CreateInteger (theEnv, 1L);
+	  return;
+	}
 
       if ((total == LLONG_MIN) && (theNumber == -1))
-        {
-         CL_ArgumentOverUnderflowErrorMessage(theEnv,"div",true);
-         Set_EvaluationError(theEnv,true);
-         returnValue->integerValue = CL_CreateInteger(theEnv,1L);
-         return;
-        }
-      
+	{
+	  CL_ArgumentOverUnderflowErrorMessage (theEnv, "div", true);
+	  Set_EvaluationError (theEnv, true);
+	  returnValue->integerValue = CL_CreateInteger (theEnv, 1L);
+	  return;
+	}
+
       total /= theNumber;
-     }
+    }
 
    /*======================================================*/
-   /* The result of the div function is always an integer. */
+  /* The result of the div function is always an integer. */
    /*======================================================*/
 
-   returnValue->integerValue = CL_CreateInteger(theEnv,total);
-  }
+  returnValue->integerValue = CL_CreateInteger (theEnv, total);
+}
 
 /*****************************************/
 /* CL_IntegerFunction: H/L access routine   */
 /*   for the integer function.           */
 /*****************************************/
-void CL_IntegerFunction(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
+void
+CL_IntegerFunction (Environment * theEnv,
+		    UDFContext * context, UDFValue * returnValue)
+{
    /*======================================*/
-   /* Check that the argument is a number. */
+  /* Check that the argument is a number. */
    /*======================================*/
 
-   if (! CL_UDFNthArgument(context,1,NUMBER_BITS,returnValue))
-     { return; }
+  if (!CL_UDFNthArgument (context, 1, NUMBER_BITS, returnValue))
+    {
+      return;
+    }
 
    /*============================================*/
-   /* Convert a float type to integer, otherwise */
-   /* return the argument unchanged.             */
+  /* Convert a float type to integer, otherwise */
+  /* return the argument unchanged.             */
    /*============================================*/
 
-   if (CVIsType(returnValue,FLOAT_BIT))
-     { returnValue->integerValue = CL_CreateInteger(theEnv,CVCoerceToInteger(returnValue)); }
-  }
+  if (CVIsType (returnValue, FLOAT_BIT))
+    {
+      returnValue->integerValue =
+	CL_CreateInteger (theEnv, CVCoerceToInteger (returnValue));
+    }
+}
 
 /***************************************/
 /* CL_FloatFunction: H/L access routine   */
 /*   for the float function.           */
 /***************************************/
-void CL_FloatFunction(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
+void
+CL_FloatFunction (Environment * theEnv,
+		  UDFContext * context, UDFValue * returnValue)
+{
    /*======================================*/
-   /* Check that the argument is a number. */
+  /* Check that the argument is a number. */
    /*======================================*/
 
-   if (! CL_UDFNthArgument(context,1,NUMBER_BITS,returnValue))
-     { return; }
+  if (!CL_UDFNthArgument (context, 1, NUMBER_BITS, returnValue))
+    {
+      return;
+    }
 
    /*=============================================*/
-   /* Convert an integer type to float, otherwise */
-   /* return the argument unchanged.              */
+  /* Convert an integer type to float, otherwise */
+  /* return the argument unchanged.              */
    /*=============================================*/
 
-   if (CVIsType(returnValue,INTEGER_BIT))
-     { returnValue->floatValue = CL_CreateFloat(theEnv,CVCoerceToFloat(returnValue)); }
-  }
+  if (CVIsType (returnValue, INTEGER_BIT))
+    {
+      returnValue->floatValue =
+	CL_CreateFloat (theEnv, CVCoerceToFloat (returnValue));
+    }
+}
 
 /*************************************/
 /* CL_AbsFunction: H/L access routine   */
 /*   for the abs function.           */
 /*************************************/
-void CL_AbsFunction(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
+void
+CL_AbsFunction (Environment * theEnv,
+		UDFContext * context, UDFValue * returnValue)
+{
    /*======================================*/
-   /* Check that the argument is a number. */
+  /* Check that the argument is a number. */
    /*======================================*/
 
-   if (! CL_UDFNthArgument(context,1,NUMBER_BITS,returnValue))
-     { return; }
+  if (!CL_UDFNthArgument (context, 1, NUMBER_BITS, returnValue))
+    {
+      return;
+    }
 
    /*==========================================*/
-   /* Return the absolute value of the number. */
+  /* Return the absolute value of the number. */
    /*==========================================*/
 
-   if (CVIsType(returnValue,INTEGER_BIT))
-     {
+  if (CVIsType (returnValue, INTEGER_BIT))
+    {
       long long lv = returnValue->integerValue->contents;
       if (lv < 0L)
-        { returnValue->integerValue = CL_CreateInteger(theEnv,-lv); }
-     }
-   else
-     {
+	{
+	  returnValue->integerValue = CL_CreateInteger (theEnv, -lv);
+	}
+    }
+  else
+    {
       double dv = returnValue->floatValue->contents;
       if (dv < 0.0)
-        { returnValue->floatValue = CL_CreateFloat(theEnv,-dv); }
-     }
-  }
+	{
+	  returnValue->floatValue = CL_CreateFloat (theEnv, -dv);
+	}
+    }
+}
 
 /*************************************/
 /* CL_MinFunction: H/L access routine   */
 /*   for the min function.           */
 /*************************************/
-void CL_MinFunction(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
-   UDFValue nextPossible;
+void
+CL_MinFunction (Environment * theEnv,
+		UDFContext * context, UDFValue * returnValue)
+{
+  UDFValue nextPossible;
 
    /*============================================*/
-   /* Check that the first argument is a number. */
+  /* Check that the first argument is a number. */
    /*============================================*/
 
-   if (! CL_UDFFirstArgument(context,NUMBER_BITS,returnValue))
-     { return; }
+  if (!CL_UDFFirstArgument (context, NUMBER_BITS, returnValue))
+    {
+      return;
+    }
 
    /*===========================================================*/
-   /* Loop through the re_maining arguments, first checking each */
-   /* argument to see that it is a number, and then dete_rmining */
-   /* if the argument is less than the previous arguments and   */
-   /* is thus the minimum value.                                */
+  /* Loop through the re_maining arguments, first checking each */
+  /* argument to see that it is a number, and then dete_rmining */
+  /* if the argument is less than the previous arguments and   */
+  /* is thus the minimum value.                                */
    /*===========================================================*/
 
-   while (UDFHasNextArgument(context))
-     {
-      if (! CL_UDFNextArgument(context,NUMBER_BITS,&nextPossible))
-        { return; }
+  while (UDFHasNextArgument (context))
+    {
+      if (!CL_UDFNextArgument (context, NUMBER_BITS, &nextPossible))
+	{
+	  return;
+	}
 
       /*=============================================*/
       /* If either argument is a float, convert both */
       /* to floats. Otherwise compare two integers.  */
       /*=============================================*/
 
-      if (CVIsType(returnValue,FLOAT_BIT) || CVIsType(&nextPossible,FLOAT_BIT))
-        {
-         if (CVCoerceToFloat(returnValue) > CVCoerceToFloat(&nextPossible))
-           { returnValue->value = nextPossible.value; }
-        }
+      if (CVIsType (returnValue, FLOAT_BIT)
+	  || CVIsType (&nextPossible, FLOAT_BIT))
+	{
+	  if (CVCoerceToFloat (returnValue) > CVCoerceToFloat (&nextPossible))
+	    {
+	      returnValue->value = nextPossible.value;
+	    }
+	}
       else
-        {
-         if (returnValue->integerValue->contents > nextPossible.integerValue->contents)
-           { returnValue->value = nextPossible.value; }
-        }
-     }
-  }
+	{
+	  if (returnValue->integerValue->contents >
+	      nextPossible.integerValue->contents)
+	    {
+	      returnValue->value = nextPossible.value;
+	    }
+	}
+    }
+}
 
 /*************************************/
 /* CL_MaxFunction: H/L access routine   */
 /*   for the max function.           */
 /*************************************/
-void CL_MaxFunction(
-  Environment *theEnv,
-  UDFContext *context,
-  UDFValue *returnValue)
-  {
-   UDFValue nextPossible;
+void
+CL_MaxFunction (Environment * theEnv,
+		UDFContext * context, UDFValue * returnValue)
+{
+  UDFValue nextPossible;
 
    /*============================================*/
-   /* Check that the first argument is a number. */
+  /* Check that the first argument is a number. */
    /*============================================*/
 
-   if (! CL_UDFFirstArgument(context,NUMBER_BITS,returnValue))
-     { return; }
+  if (!CL_UDFFirstArgument (context, NUMBER_BITS, returnValue))
+    {
+      return;
+    }
 
    /*===========================================================*/
-   /* Loop through the re_maining arguments, first checking each */
-   /* argument to see that it is a number, and then dete_rmining */
-   /* if the argument is greater than the previous arguments    */
-   /* and is thus the maximum value.                            */
+  /* Loop through the re_maining arguments, first checking each */
+  /* argument to see that it is a number, and then dete_rmining */
+  /* if the argument is greater than the previous arguments    */
+  /* and is thus the maximum value.                            */
    /*===========================================================*/
 
-   while (UDFHasNextArgument(context))
-     {
-      if (! CL_UDFNextArgument(context,NUMBER_BITS,&nextPossible))
-        { return; }
+  while (UDFHasNextArgument (context))
+    {
+      if (!CL_UDFNextArgument (context, NUMBER_BITS, &nextPossible))
+	{
+	  return;
+	}
 
       /*=============================================*/
       /* If either argument is a float, convert both */
       /* to floats. Otherwise compare two integers.  */
       /*=============================================*/
 
-      if (CVIsType(returnValue,FLOAT_BIT) || CVIsType(&nextPossible,FLOAT_BIT))
-        {
-         if (CVCoerceToFloat(returnValue) < CVCoerceToFloat(&nextPossible))
-           { returnValue->value = nextPossible.value; }
-        }
+      if (CVIsType (returnValue, FLOAT_BIT)
+	  || CVIsType (&nextPossible, FLOAT_BIT))
+	{
+	  if (CVCoerceToFloat (returnValue) < CVCoerceToFloat (&nextPossible))
+	    {
+	      returnValue->value = nextPossible.value;
+	    }
+	}
       else
-        {
-         if (returnValue->integerValue->contents < nextPossible.integerValue->contents)
-           { returnValue->value = nextPossible.value; }
-        }
-     }
-  }
-
+	{
+	  if (returnValue->integerValue->contents <
+	      nextPossible.integerValue->contents)
+	    {
+	      returnValue->value = nextPossible.value;
+	    }
+	}
+    }
+}

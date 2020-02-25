@@ -105,45 +105,42 @@
 #include <stdio.h>
 #include <setjmp.h>
 
-   double                      CL_gentime(void);
-   int                         CL_gensystem(Environment *,const char *);
-   int                         CL_GenOpenReadBinary(Environment *,const char *,const char *);
-   void                        CL_GetSeekCurBinary(Environment *,long);
-   void                        CL_GetSeekSetBinary(Environment *,long);
-   void                        CL_GenTellBinary(Environment *,long *);
-   void                        CL_GenCloseBinary(Environment *);
-   void                        CL_GenReadBinary(Environment *,void *,size_t);
-   FILE                       *CL_GenOpen(Environment *,const char *,const char *);
-   int                         CL_GenClose(Environment *,FILE *);
-   int                         CL_GenFlush(Environment *,FILE *);
-   void                        CL_GenRewind(Environment *,FILE *);
-   long long                   CL_GenTell(Environment *,FILE *);
-   int                         CL_GenSeek(Environment *,FILE *,long,int);
-   void                        CL_genexit(Environment *,int);
-   int                         CL_genrand(void);
-   void                        CL_genseed(unsigned int);
-   bool                        CL_genremove(Environment *,const char *);
-   bool                        CL_genrename(Environment *,const char *,const char *);
-   char                       *CL_gengetcwd(char *,int);
-   void                        CL_Gen_Write(void *,size_t,FILE *);
-   int                       (*SetBefore_OpenFunction(Environment *,int (*)(Environment *)))(Environment *);
-   int                       (*SetAfter_OpenFunction(Environment *,int (*)(Environment *)))(Environment *);
-   int                         CL_gensprintf(char *,const char *,...);
-   char                       *CL_genstrcpy(char *,const char *);
-   char                       *CL_genstrncpy(char *,const char *,size_t);
-   char                       *CL_genstrcat(char *,const char *);
-   char                       *CL_genstrncat(char *,const char *,size_t);
-   int                         CL_genchdir(Environment *,const char *);
-   void                        CL_SetJmpBuffer(Environment *,jmp_buf *);
-   void                        CL_genprintfile(Environment *,FILE *,const char *);
-   int                         CL_gengetchar(Environment *);
-   int                         CL_genungetchar(Environment *,int);
-   void                        CL_InitializeSystemDependentData(Environment *);
-   void                        CL_InitializeNonportableFeatures(Environment *);
+double CL_gentime (void);
+int CL_gensystem (Environment *, const char *);
+int CL_GenOpenReadBinary (Environment *, const char *, const char *);
+void CL_GetSeekCurBinary (Environment *, long);
+void CL_GetSeekSetBinary (Environment *, long);
+void CL_GenTellBinary (Environment *, long *);
+void CL_GenCloseBinary (Environment *);
+void CL_GenReadBinary (Environment *, void *, size_t);
+FILE *CL_GenOpen (Environment *, const char *, const char *);
+int CL_GenClose (Environment *, FILE *);
+int CL_GenFlush (Environment *, FILE *);
+void CL_GenRewind (Environment *, FILE *);
+long long CL_GenTell (Environment *, FILE *);
+int CL_GenSeek (Environment *, FILE *, long, int);
+void CL_genexit (Environment *, int);
+int CL_genrand (void);
+void CL_genseed (unsigned int);
+bool CL_genremove (Environment *, const char *);
+bool CL_genrename (Environment *, const char *, const char *);
+char *CL_gengetcwd (char *, int);
+void CL_Gen_Write (void *, size_t, FILE *);
+int (*SetBefore_OpenFunction (Environment *, int (*)(Environment *)))
+  (Environment *);
+int (*SetAfter_OpenFunction (Environment *, int (*)(Environment *)))
+  (Environment *);
+int CL_gensprintf (char *, const char *, ...);
+char *CL_genstrcpy (char *, const char *);
+char *CL_genstrncpy (char *, const char *, size_t);
+char *CL_genstrcat (char *, const char *);
+char *CL_genstrncat (char *, const char *, size_t);
+int CL_genchdir (Environment *, const char *);
+void CL_SetJmpBuffer (Environment *, jmp_buf *);
+void CL_genprintfile (Environment *, FILE *, const char *);
+int CL_gengetchar (Environment *);
+int CL_genungetchar (Environment *, int);
+void CL_InitializeSystemDependentData (Environment *);
+void CL_InitializeNonportableFeatures (Environment *);
 
 #endif /* _H_sysdep */
-
-
-
-
-

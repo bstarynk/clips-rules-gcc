@@ -48,7 +48,7 @@
 
 #include "moduldef.h"
 
-   void                           CL_DefmoduleCompilerSetup(Environment *);
-   void                           CL_PrintDefmoduleReference(Environment *,FILE *,Defmodule *);
+void CL_DefmoduleCompilerSetup (Environment *);
+void CL_PrintDefmoduleReference (Environment *, FILE *, Defmodule *);
 
 #endif /* _H_modulcmp */

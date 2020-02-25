@@ -62,22 +62,20 @@
 #include "evaluatn.h"
 #include "globldef.h"
 
-   void                           CL_DefglobalBasicCommands(Environment *);
-   void                           CL_UndefglobalCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           CL_Undefglobal(Defglobal *,Environment *);
-   void                           CL_GetDefglobalListFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_GetDefglobalList(Environment *,CLIPSValue *,Defmodule *);
-   void                           CL_DefglobalModuleFunction(Environment *,UDFContext *,UDFValue *);
-   void                           CL_PPDefglobalCommand(Environment *,UDFContext *,UDFValue *);
-   bool                           CL_PPDefglobal(Environment *,const char *,const char *);
-   void                           CL_ListDefglobalsCommand(Environment *,UDFContext *,UDFValue *);
+void CL_DefglobalBasicCommands (Environment *);
+void CL_UndefglobalCommand (Environment *, UDFContext *, UDFValue *);
+bool CL_Undefglobal (Defglobal *, Environment *);
+void CL_GetDefglobalListFunction (Environment *, UDFContext *, UDFValue *);
+void CL_GetDefglobalList (Environment *, CLIPSValue *, Defmodule *);
+void CL_DefglobalModuleFunction (Environment *, UDFContext *, UDFValue *);
+void CL_PPDefglobalCommand (Environment *, UDFContext *, UDFValue *);
+bool CL_PPDefglobal (Environment *, const char *, const char *);
+void CL_ListDefglobalsCommand (Environment *, UDFContext *, UDFValue *);
 #if DEBUGGING_FUNCTIONS
-   bool                           CL_DefglobalGet_Watch(Defglobal *);
-   void                           CL_ListDefglobals(Environment *,const char *,Defmodule *);
-   void                           CL_DefglobalSet_Watch(Defglobal *,bool);
+bool CL_DefglobalGet_Watch (Defglobal *);
+void CL_ListDefglobals (Environment *, const char *, Defmodule *);
+void CL_DefglobalSet_Watch (Defglobal *, bool);
 #endif
-   void                           CL_ResetDefglobals(Environment *,void *);
+void CL_ResetDefglobals (Environment *, void *);
 
 #endif /* _H_globlbsc */
-
-

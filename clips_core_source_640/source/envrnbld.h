@@ -30,11 +30,10 @@
 #include "envrnmnt.h"
 #include "extnfunc.h"
 
-   Environment                   *CL_CreateEnvironment(void);
-   Environment                   *CL_Create_RuntimeEnvironment(CLIPSLexeme **,CLIPSFloat **,
-                                                           CLIPSInteger **,CLIPSBitMap **,
-                                                           struct functionDefinition *);
-   bool                           CL_DestroyEnvironment(Environment *);
+Environment *CL_CreateEnvironment (void);
+Environment *CL_Create_RuntimeEnvironment (CLIPSLexeme **, CLIPSFloat **,
+					   CLIPSInteger **, CLIPSBitMap **,
+					   struct functionDefinition *);
+bool CL_DestroyEnvironment (Environment *);
 
 #endif /* _H_envrnbld */
-

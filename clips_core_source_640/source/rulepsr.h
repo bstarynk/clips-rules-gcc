@@ -49,13 +49,10 @@
 
 #define _H_rulepsr
 
-   bool                           CL_ParseDefrule(Environment *,const char *);
-   struct lhsParseNode           *CL_FindVariable(CLIPSLexeme *,
-                                               struct lhsParseNode *);
+bool CL_ParseDefrule (Environment *, const char *);
+struct lhsParseNode *CL_FindVariable (CLIPSLexeme *, struct lhsParseNode *);
 #if DEVELOPER && DEBUGGING_FUNCTIONS
-   void                           DumpRuleAnalysis(Environment *,struct lhsParseNode *);
+void DumpRuleAnalysis (Environment *, struct lhsParseNode *);
 #endif
 
 #endif /* _H_rulepsr */
-
-

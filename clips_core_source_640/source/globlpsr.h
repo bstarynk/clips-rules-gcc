@@ -49,11 +49,8 @@
 
 #include "expressn.h"
 
-   bool                    CL_ParseDefglobal(Environment *,const char *);
-   bool                    CL_ReplaceGlobalVariable(Environment *,struct expr *);
-   void                    CL_GlobalReferenceErrorMessage(Environment *,const char *);
+bool CL_ParseDefglobal (Environment *, const char *);
+bool CL_ReplaceGlobalVariable (Environment *, struct expr *);
+void CL_GlobalReferenceErrorMessage (Environment *, const char *);
 
 #endif /* _H_globlpsr */
-
-
-

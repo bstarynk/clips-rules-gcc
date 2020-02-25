@@ -65,23 +65,23 @@ typedef struct moduleItem ModuleItem;
 typedef struct constructHeader ConstructHeader;
 typedef struct moduleStackItem ModuleStackItem;
 
-typedef void *AllocateModuleFunction(Environment *);
-typedef void FreeModuleFunction(Environment *,void *);
+typedef void *AllocateModuleFunction (Environment *);
+typedef void FreeModuleFunction (Environment *, void *);
 
 typedef enum
-  {
-   DEFMODULE,
-   DEFRULE,
-   DEFTEMPLATE,
-   DEFFACTS,
-   DEFGLOBAL,
-   DEFFUNCTION,
-   DEFGENERIC,
-   DEFMETHOD,
-   DEFCLASS,
-   DEFMESSAGE_HANDLER,
-   DEFINSTANCES
-  } ConstructType;
+{
+  DEFMODULE,
+  DEFRULE,
+  DEFTEMPLATE,
+  DEFFACTS,
+  DEFGLOBAL,
+  DEFFUNCTION,
+  DEFGENERIC,
+  DEFMETHOD,
+  DEFCLASS,
+  DEFMESSAGE_HANDLER,
+  DEFINSTANCES
+} ConstructType;
 
 #include <stdio.h>
 #include "entities.h"
@@ -89,29 +89,31 @@ typedef enum
 #include "utility.h"
 
 struct constructHeader
-  {
-   ConstructType constructType;
-   CLIPSLexeme *name;
-   const char *ppFo_rm;
-   DefmoduleItemHeader *whichModule;
-   unsigned long bsaveID;
-   ConstructHeader *next;
-   struct userData *usrData;
-   Environment *env;
-  };
+{
+  ConstructType constructType;
+  CLIPSLexeme *name;
+  const char *ppFo_rm;
+  DefmoduleItemHeader *whichModule;
+  unsigned long bsaveID;
+  ConstructHeader *next;
+  struct userData *usrData;
+  Environment *env;
+};
 
 struct defmoduleItemHeader
-  {
-   Defmodule *theModule;
-   ConstructHeader *firstItem;
-   ConstructHeader *lastItem;
-  };
+{
+  Defmodule *theModule;
+  ConstructHeader *firstItem;
+  ConstructHeader *lastItem;
+};
 
-typedef ConstructHeader *CL_FindConstructFunction(Environment *,const char *);
-typedef ConstructHeader *GetNextConstructFunction(Environment *,ConstructHeader *);
-typedef bool IsConstructDeletableFunction(ConstructHeader *);
-typedef bool DeleteConstructFunction(ConstructHeader *,Environment *);
-typedef void FreeConstructFunction(Environment *,ConstructHeader *);
+typedef ConstructHeader *CL_FindConstructFunction (Environment *,
+						   const char *);
+typedef ConstructHeader *GetNextConstructFunction (Environment *,
+						   ConstructHeader *);
+typedef bool IsConstructDeletableFunction (ConstructHeader *);
+typedef bool DeleteConstructFunction (ConstructHeader *, Environment *);
+typedef void FreeConstructFunction (Environment *, ConstructHeader *);
 
 /**********************************************************************/
 /* defmodule                                                          */
@@ -134,21 +136,21 @@ typedef void FreeConstructFunction(Environment *,ConstructHeader *);
 /**********************************************************************/
 
 struct defmodule
-  {
-   ConstructHeader header;
-   DefmoduleItemHeader **itemsArray;
-   PortItem *importList;
-   PortItem *exportList;
-   bool visitedFlag;
-  };
+{
+  ConstructHeader header;
+  DefmoduleItemHeader **itemsArray;
+  PortItem *importList;
+  PortItem *exportList;
+  bool visitedFlag;
+};
 
 struct portItem
-  {
-   CLIPSLexeme *moduleName;
-   CLIPSLexeme *constructType;
-   CLIPSLexeme *constructName;
-   PortItem *next;
-  };
+{
+  CLIPSLexeme *moduleName;
+  CLIPSLexeme *constructType;
+  CLIPSLexeme *constructName;
+  PortItem *next;
+};
 
 #define MIHS (DefmoduleItemHeader *)
 
@@ -184,88 +186,89 @@ struct portItem
 /**********************************************************************/
 
 struct moduleItem
-  {
-   const char *name;
-   unsigned moduleIndex;
-   void *(*allocateFunction)(Environment *);
-   void  (*freeFunction)(Environment *,void *);
-   void *(*bloadModuleReference)(Environment *,unsigned long);
-   void  (*constructsToCModuleReference)(Environment *,FILE *,unsigned long,unsigned int,unsigned int);
-   CL_FindConstructFunction *findFunction;
-   ModuleItem *next;
-  };
+{
+  const char *name;
+  unsigned moduleIndex;
+  void *(*allocateFunction) (Environment *);
+  void (*freeFunction) (Environment *, void *);
+  void *(*bloadModuleReference) (Environment *, unsigned long);
+  void (*constructsToCModuleReference) (Environment *, FILE *, unsigned long,
+					unsigned int, unsigned int);
+  CL_FindConstructFunction *findFunction;
+  ModuleItem *next;
+};
 
 struct moduleStackItem
-  {
-   bool changeFlag;
-   Defmodule *theModule;
-   ModuleStackItem *next;
-  };
+{
+  bool changeFlag;
+  Defmodule *theModule;
+  ModuleStackItem *next;
+};
 
 #define DEFMODULE_DATA 4
 
 struct defmoduleData
-  {
-   struct moduleItem *LastModuleItem;
-   struct void_CallFunctionItem *AfterModuleChangeFunctions;
-   ModuleStackItem *ModuleStack;
-   bool CallModuleChangeFunctions;
-   Defmodule *ListOfDefmodules;
-   Defmodule *CurrentModule;
-   Defmodule *LastDefmodule;
-   unsigned NumberOfModuleItems;
-   struct moduleItem *ListOfModuleItems;
-   long ModuleChangeIndex;
-   bool MainModuleRedefinable;
+{
+  struct moduleItem *LastModuleItem;
+  struct void_CallFunctionItem *AfterModuleChangeFunctions;
+  ModuleStackItem *ModuleStack;
+  bool CallModuleChangeFunctions;
+  Defmodule *ListOfDefmodules;
+  Defmodule *CurrentModule;
+  Defmodule *LastDefmodule;
+  unsigned NumberOfModuleItems;
+  struct moduleItem *ListOfModuleItems;
+  long ModuleChangeIndex;
+  bool MainModuleRedefinable;
 #if (! RUN_TIME) && (! BLOAD_ONLY)
-   struct portConstructItem *ListOfPortConstructItems;
-   unsigned short NumberOfDefmodules;
-   struct void_CallFunctionItem *AfterModuleDefinedFunctions;
+  struct portConstructItem *ListOfPortConstructItems;
+  unsigned short NumberOfDefmodules;
+  struct void_CallFunctionItem *AfterModuleDefinedFunctions;
 #endif
 #if CONSTRUCT_COMPILER && (! RUN_TIME)
-   struct CodeGeneratorItem *DefmoduleCodeItem;
+  struct CodeGeneratorItem *DefmoduleCodeItem;
 #endif
 #if (BLOAD || BLOAD_ONLY || BLOAD_AND_BSAVE) && (! RUN_TIME)
-   unsigned long BNumberOfDefmodules;
-   unsigned long NumberOfPortItems;
-   struct portItem *PortItemArray;
-   Defmodule *DefmoduleArray;
+  unsigned long BNumberOfDefmodules;
+  unsigned long NumberOfPortItems;
+  struct portItem *PortItemArray;
+  Defmodule *DefmoduleArray;
 #endif
-  };
+};
 
 #define DefmoduleData(theEnv) ((struct defmoduleData *) GetEnvironmentData(theEnv,DEFMODULE_DATA))
 
-   void                           CL_InitializeDefmodules(Environment *);
-   Defmodule                     *CL_FindDefmodule(Environment *,const char *);
-   const char                    *CL_DefmoduleName(Defmodule *);
-   const char                    *CL_DefmodulePPFo_rm(Defmodule *);
-   Defmodule                     *CL_GetNextDefmodule(Environment *,Defmodule *);
-   void                           CL_RemoveAllDefmodules(Environment *,void *);
-   int                            AllocateModuleStorage(void);
-   unsigned                       CL_RegisterModuleItem(Environment *,const char *,
-                                                     AllocateModuleFunction *,
-                                                     FreeModuleFunction *,
-                                                     void *(*)(Environment *,unsigned long),
-                                                     void (*)(Environment *,FILE *,unsigned long,unsigned int,unsigned int),
-                                                     CL_FindConstructFunction *);
-   void                          *CL_GetModuleItem(Environment *,Defmodule *,unsigned);
-   void                           CL_SetModuleItem(Environment *,Defmodule *,unsigned,void *);
-   Defmodule                     *CL_GetCurrentModule(Environment *);
-   Defmodule                     *CL_SetCurrentModule(Environment *,Defmodule *);
-   void                           CL_GetCurrentModuleCommand(Environment *,UDFContext *,UDFValue *);
-   void                           CL_SetCurrentModuleCommand(Environment *,UDFContext *,UDFValue *);
-   unsigned                       CL_GetNumberOfModuleItems(Environment *);
-   void                           CL_CreateMainModule(Environment *,void *);
-   void                           CL_SetListOfDefmodules(Environment *,Defmodule *);
-   struct moduleItem             *CL_GetListOfModuleItems(Environment *);
-   struct moduleItem             *CL_FindModuleItem(Environment *,const char *);
-   void                           CL_SaveCurrentModule(Environment *);
-   void                           CL_RestoreCurrentModule(Environment *);
-   void                           CL_AddAfterModuleChangeFunction(Environment *,const char *,Void_CallFunction *,int,void *);
-   void                           CL_IllegalModuleSpecifierMessage(Environment *);
-   void                           CL_AllocateDefmoduleGlobals(Environment *);
-   unsigned short                 CL_GetNumberOfDefmodules(Environment *);
+void CL_InitializeDefmodules (Environment *);
+Defmodule *CL_FindDefmodule (Environment *, const char *);
+const char *CL_DefmoduleName (Defmodule *);
+const char *CL_DefmodulePPFo_rm (Defmodule *);
+Defmodule *CL_GetNextDefmodule (Environment *, Defmodule *);
+void CL_RemoveAllDefmodules (Environment *, void *);
+int AllocateModuleStorage (void);
+unsigned CL_RegisterModuleItem (Environment *, const char *,
+				AllocateModuleFunction *,
+				FreeModuleFunction *,
+				void *(*)(Environment *, unsigned long),
+				void (*)(Environment *, FILE *, unsigned long,
+					 unsigned int, unsigned int),
+				CL_FindConstructFunction *);
+void *CL_GetModuleItem (Environment *, Defmodule *, unsigned);
+void CL_SetModuleItem (Environment *, Defmodule *, unsigned, void *);
+Defmodule *CL_GetCurrentModule (Environment *);
+Defmodule *CL_SetCurrentModule (Environment *, Defmodule *);
+void CL_GetCurrentModuleCommand (Environment *, UDFContext *, UDFValue *);
+void CL_SetCurrentModuleCommand (Environment *, UDFContext *, UDFValue *);
+unsigned CL_GetNumberOfModuleItems (Environment *);
+void CL_CreateMainModule (Environment *, void *);
+void CL_SetListOfDefmodules (Environment *, Defmodule *);
+struct moduleItem *CL_GetListOfModuleItems (Environment *);
+struct moduleItem *CL_FindModuleItem (Environment *, const char *);
+void CL_SaveCurrentModule (Environment *);
+void CL_RestoreCurrentModule (Environment *);
+void CL_AddAfterModuleChangeFunction (Environment *, const char *,
+				      Void_CallFunction *, int, void *);
+void CL_IllegalModuleSpecifierMessage (Environment *);
+void CL_AllocateDefmoduleGlobals (Environment *);
+unsigned short CL_GetNumberOfDefmodules (Environment *);
 
 #endif /* _H_moduldef */
-
-

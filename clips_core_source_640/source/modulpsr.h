@@ -51,19 +51,20 @@ struct portConstructItem;
 #include "scanner.h"
 
 struct portConstructItem
-  {
-   const char *constructName;
-   TokenType typeExpected;
-   struct portConstructItem *next;
-  };
+{
+  const char *constructName;
+  TokenType typeExpected;
+  struct portConstructItem *next;
+};
 
-   void                           CL_SetNumberOfDefmodules(Environment *,unsigned short);
-   void                           CL_AddAfterModuleDefinedFunction(Environment *,const char *,Void_CallFunction *,int,void *);
-   bool                           CL_ParseDefmodule(Environment *,const char *);
-   void                           CL_AddPortConstructItem(Environment *,const char *,TokenType);
-   struct portConstructItem      *CL_ValidPortConstructItem(Environment *,const char *);
-   bool                           CL_FindImportExportConflict(Environment *,const char *,Defmodule *,const char *);
+void CL_SetNumberOfDefmodules (Environment *, unsigned short);
+void CL_AddAfterModuleDefinedFunction (Environment *, const char *,
+				       Void_CallFunction *, int, void *);
+bool CL_ParseDefmodule (Environment *, const char *);
+void CL_AddPortConstructItem (Environment *, const char *, TokenType);
+struct portConstructItem *CL_ValidPortConstructItem (Environment *,
+						     const char *);
+bool CL_FindImportExportConflict (Environment *, const char *, Defmodule *,
+				  const char *);
 
 #endif /* _H_modulpsr */
-
-

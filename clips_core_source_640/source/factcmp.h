@@ -40,7 +40,8 @@
 #include "network.h"
 #include "pattern.h"
 
-   void                           CL_FactPatternsCompilerSetup(Environment *);
-   void                           CL_FactPatternNodeReference(Environment *,void *,FILE *,unsigned int,unsigned int);
+void CL_FactPatternsCompilerSetup (Environment *);
+void CL_FactPatternNodeReference (Environment *, void *, FILE *, unsigned int,
+				  unsigned int);
 
 #endif /* _H_factcmp */

@@ -48,18 +48,22 @@
 #include "match.h"
 #include "network.h"
 
-   void                           Network_Assert(Environment *,struct partialMatch *,struct joinNode *);
-   bool                           CL_EvaluateJoinExpression(Environment *,struct expr *,struct joinNode *);
-   void                           Network_AssertLeft(Environment *,struct partialMatch *,struct joinNode *,int);
-   void                           Network_AssertRight(Environment *,struct partialMatch *,struct joinNode *,int);
-   void                           CL_PPDrive(Environment *,struct partialMatch *,struct partialMatch *,struct joinNode *,int);
-   unsigned long                  CL_BetaMemoryHashValue(Environment *,struct expr *,struct partialMatch *,struct partialMatch *,struct joinNode *);
-   bool                           CL_EvaluateSecondaryNetworkTest(Environment *,struct partialMatch *,struct joinNode *);
-   void                           CL_EPMDrive(Environment *,struct partialMatch *,struct joinNode *,int);
+void Network_Assert (Environment *, struct partialMatch *, struct joinNode *);
+bool CL_EvaluateJoinExpression (Environment *, struct expr *,
+				struct joinNode *);
+void Network_AssertLeft (Environment *, struct partialMatch *,
+			 struct joinNode *, int);
+void Network_AssertRight (Environment *, struct partialMatch *,
+			  struct joinNode *, int);
+void CL_PPDrive (Environment *, struct partialMatch *, struct partialMatch *,
+		 struct joinNode *, int);
+unsigned long CL_BetaMemoryHashValue (Environment *, struct expr *,
+				      struct partialMatch *,
+				      struct partialMatch *,
+				      struct joinNode *);
+bool CL_EvaluateSecondaryNetworkTest (Environment *, struct partialMatch *,
+				      struct joinNode *);
+void CL_EPMDrive (Environment *, struct partialMatch *, struct joinNode *,
+		  int);
 
 #endif /* _H_drive */
-
-
-
-
-

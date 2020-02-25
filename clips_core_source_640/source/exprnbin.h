@@ -42,19 +42,12 @@
 #define ExpressionPointer(i) ((struct expr *) (((i) == ULONG_MAX) ? NULL : &ExpressionData(theEnv)->ExpressionArray[i]))
 #define HashedExpressionPointer(i) ExpressionPointer(i)
 
-   void                        CL_AllocateExpressions(Environment *);
-   void                        CL_RefreshExpressions(Environment *);
-   void                        CL_Clear_BloadedExpressions(Environment *);
-   void                        CL_FindHashedExpressions(Environment *);
-   void                        CL_BsaveHashedExpressions(Environment *,FILE *);
-   void                        CL_BsaveConstructExpressions(Environment *,FILE *);
-   void                        CL_BsaveExpression(Environment *,struct expr *,FILE *);
+void CL_AllocateExpressions (Environment *);
+void CL_RefreshExpressions (Environment *);
+void CL_Clear_BloadedExpressions (Environment *);
+void CL_FindHashedExpressions (Environment *);
+void CL_BsaveHashedExpressions (Environment *, FILE *);
+void CL_BsaveConstructExpressions (Environment *, FILE *);
+void CL_BsaveExpression (Environment *, struct expr *, FILE *);
 
 #endif /* _H_exprnbin */
-
-
-
-
-
-
-

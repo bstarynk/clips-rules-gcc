@@ -60,12 +60,9 @@
 
 #include "object.h"
 
-   bool             CL_ParseDefmessageHandler(Environment *,const char *);
-   void             CL_CreateGetAndPutHandlers(Environment *,SlotDescriptor *);
+bool CL_ParseDefmessageHandler (Environment *, const char *);
+void CL_CreateGetAndPutHandlers (Environment *, SlotDescriptor *);
 
 #endif /* OBJECT_SYSTEM && (! BLOAD_ONLY) && (! RUN_TIME) */
 
 #endif /* _H_msgpsr */
-
-
-
