@@ -80,7 +80,7 @@ CLGCC_finishing(void*gccdata __attribute__((unused)), void*userdata __attribute(
 
 
 void
-parse_plugin_arguments (const char*plugin_name, struct plugin_name_args* plargs)
+parse_plugin_arguments (const char*plugin_name, struct plugin_name_args* plargs, std::deque<std::function<void(void)>>& todoque)
 {
   int plargc = plargs->argc;
   int ix= 0;
@@ -92,6 +92,7 @@ parse_plugin_arguments (const char*plugin_name, struct plugin_name_args* plargs)
   assert (plargs->help == NULL);
   plargs->version = versbuf;
   plargs->help = "See https://github.com/bstarynk/clips-rules-gcc";
+  auto str_plugin_name = std::string(plugin_name);
   //
   for (struct plugin_argument* plcurarg = plargs->argv;
        (ix<plargc)?(plcurarg = plargs->argv+ix):nullptr; ix++)
@@ -104,14 +105,35 @@ parse_plugin_arguments (const char*plugin_name, struct plugin_name_args* plargs)
       if (CLGCC_GOT_OPTION("project"))
         {
           CLGCC_projectstr = std::string(curval);
-        }
+        } // end CLGCC_GOT_OPTION("project")
+      ////////////////
       else if (CLGCC_GOT_PLAIN_OPTION("help"))
         {
           inform (UNKNOWN_LOCATION,
                   "CLIPS-GCC plugin %s help:\n", plugin_name);
           printf("\t -fplugin-arg-%s-help #this help\n", plugin_name);
           printf("\t -fplugin-arg-%s-project=<projectname> or $CLIPSGCC_PROJECT\n", plugin_name);
-        }
+        } // end (CLGCC_GOT_PLAIN_OPTION("help")
+      ////////////////
+      else if (CLGCC_GOT_OPTION("load"))
+        {
+          if (access(curval, R_OK))
+            warning(UNKNOWN_LOCATION, "CLIPS-GCC: plugin %s with bad CLIPS file %s to load (%m)",
+                    plugin_name, curval);
+          else
+            {
+              std::string curpath(curval);
+              todoque.push_back([=]()
+              {
+                if (CL_Load(CLGCC_env, curpath.c_str()))
+                  warning(UNKNOWN_LOCATION,"CLIPS-GCC: plugin %s failed to load CLIPS file %s",
+                          str_plugin_name.c_str(), curpath.c_str());
+                else
+                  inform(UNKNOWN_LOCATION, "CLIPS-GCC plugin %s did load CLIPS file %s",
+                         str_plugin_name.c_str(), curpath.c_str());
+              });
+            }
+        } // end CLGCC_GOT_OPTION("load")
       else
         {
           if (curval)
@@ -133,6 +155,7 @@ plugin_init (struct plugin_name_args *plugin_info,
              struct plugin_gcc_version *version)
 {
   const char *plugin_name = plugin_info->base_name;
+  std::deque<std::function<void(void)>> todoque;
   if (!plugin_default_version_check (version, &gcc_version))
     {
       warning(UNKNOWN_LOCATION, "CLIPS-GCC plugin: fail version check for %s:\n"
@@ -144,7 +167,9 @@ plugin_init (struct plugin_name_args *plugin_info,
   register_callback (plugin_name, PLUGIN_START_UNIT, CLGCC_starting, NULL);
   register_callback (plugin_name, PLUGIN_FINISH_UNIT, CLGCC_finishing, NULL);
   /// initialize global state from arguments, and give information about this plugin
-  parse_plugin_arguments (plugin_name, plugin_info);
+  parse_plugin_arguments (plugin_name, plugin_info, todoque);
+  for (auto todof: todoque)
+    todof();
 
   warning(UNKNOWN_LOCATION, "CLIPS-GCC plugin: unimplemented plugin_init");
 #warning CLIPS-GCC plugin: unimplemented plugin_init

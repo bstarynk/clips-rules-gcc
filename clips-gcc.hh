@@ -34,6 +34,8 @@
 #include <unordered_set>
 #include <map>
 #include <set>
+#include <functional>
+#include <deque>
 
 #include <cstdio>
 #include <cassert>
