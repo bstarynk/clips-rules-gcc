@@ -850,9 +850,10 @@ ObjectPatternMatch (Environment * theEnv,
 	      offset = 0;
 	    }
 	  else if ((ObjectReteData (theEnv)->CurrentPatternObjectSlot == NULL)
-		   ? true : (ObjectReteData (theEnv)->
-			     CurrentPatternObjectSlot->desc->slotName->id !=
-			     patternTop->slotNameID))
+		   ? true
+		   : (ObjectReteData (theEnv)->
+		      CurrentPatternObjectSlot->desc->slotName->id !=
+		      patternTop->slotNameID))
 	    {
 	    /*=======================================================*/
 	      /* Need to reset the indices for the multifield          */
@@ -996,8 +997,9 @@ ProcessPatternNode (Environment * theEnv,
 	}
       else if ((patternNode->networkTest == NULL) ? true :
 	       (CL_EvaluateObjectPatternTest (theEnv, objectSlotField, NULL,
-					      (Expression *) patternNode->
-					      networkTest, patternNode)))
+					      (Expression *)
+					      patternNode->networkTest,
+					      patternNode)))
 	{
 	  if (patternNode->alphaNode != NULL)
 	    CreateObjectAlphaMatch (theEnv, patternNode->alphaNode);
@@ -1044,8 +1046,9 @@ ProcessPatternNode (Environment * theEnv,
 	}
       else if ((patternNode->networkTest == NULL) ? true :
 	       CL_EvaluateObjectPatternTest (theEnv, objectSlotField, NULL,
-					     (Expression *) patternNode->
-					     networkTest, patternNode))
+					     (Expression *)
+					     patternNode->networkTest,
+					     patternNode))
 	{
 	  if (patternNode->alphaNode != NULL)
 	    CreateObjectAlphaMatch (theEnv, patternNode->alphaNode);
@@ -1133,8 +1136,9 @@ ProcessPatternNode (Environment * theEnv,
 	  else if ((patternNode->networkTest == NULL) ? true :
 		   CL_EvaluateObjectPatternTest (theEnv, objectSlotField,
 						 newMark,
-						 (Expression *) patternNode->
-						 networkTest, patternNode))
+						 (Expression *)
+						 patternNode->networkTest,
+						 patternNode))
 	    {
 	      if (patternNode->alphaNode != NULL)
 		CreateObjectAlphaMatch (theEnv, patternNode->alphaNode);
@@ -1185,8 +1189,9 @@ ProcessPatternNode (Environment * theEnv,
 	}
       else if ((patternNode->networkTest == NULL) ? true :
 	       CL_EvaluateObjectPatternTest (theEnv, objectSlotField, newMark,
-					     (Expression *) patternNode->
-					     networkTest, patternNode))
+					     (Expression *)
+					     patternNode->networkTest,
+					     patternNode))
 	{
 	  if (patternNode->alphaNode != NULL)
 	    CreateObjectAlphaMatch (theEnv, patternNode->alphaNode);
@@ -1243,10 +1248,10 @@ CreateObjectAlphaMatch (Environment * theEnv, OBJECT_ALPHA_NODE * alphaPtr)
 	  ObjectReteData (theEnv)->CurrentPatternObject->busy++;
 	  theMatch =
 	    CL_CreateAlphaMatch (theEnv,
-				 ObjectReteData (theEnv)->
-				 CurrentPatternObject,
-				 ObjectReteData (theEnv)->
-				 CurrentPatternObjectMarks,
+				 ObjectReteData
+				 (theEnv)->CurrentPatternObject,
+				 ObjectReteData
+				 (theEnv)->CurrentPatternObjectMarks,
 				 (struct patternNodeHeader *) alphaPtr,
 				 hashValue);
 	  theMatch->owner = alphaPtr;
@@ -1257,8 +1262,8 @@ CreateObjectAlphaMatch (Environment * theEnv, OBJECT_ALPHA_NODE * alphaPtr)
 	     ====================================== */
 	  newMatch = get_struct (theEnv, patternMatch);
 	  newMatch->next =
-	    (struct patternMatch *) ObjectReteData (theEnv)->
-	    CurrentPatternObject->partialMatchList;
+	    (struct patternMatch *)
+	    ObjectReteData (theEnv)->CurrentPatternObject->partialMatchList;
 	  newMatch->matchingPattern = (struct patternNodeHeader *) alphaPtr;
 	  newMatch->theMatch = theMatch;
 	  ObjectReteData (theEnv)->CurrentPatternObject->partialMatchList =

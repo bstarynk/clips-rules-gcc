@@ -230,8 +230,8 @@ MarkDeffunctionItems (Environment * theEnv,
 #endif
 
   CL_MarkConstructHeaderNeededItems (theDeffunction,
-				     DeffunctionBinaryData (theEnv)->
-				     DeffunctionCount++);
+				     DeffunctionBinaryData
+				     (theEnv)->DeffunctionCount++);
   ExpressionData (theEnv)->ExpressionCount +=
     CL_ExpressionSize (((Deffunction *) theDeffunction)->code);
   CL_MarkNeededItems (theEnv, ((Deffunction *) theDeffunction)->code);
@@ -474,11 +474,10 @@ Update_DeffunctionModule (Environment * theEnv, void *buf, unsigned long obji)
 
   bdptr = (BSAVE_DEFFUNCTION_MODULE *) buf;
   CL_UpdateDefmoduleItemHeader (theEnv, &bdptr->header,
-				&DeffunctionBinaryData (theEnv)->
-				ModuleArray[obji].header,
-				sizeof (Deffunction),
-				DeffunctionBinaryData (theEnv)->
-				DeffunctionArray);
+				&DeffunctionBinaryData (theEnv)->ModuleArray
+				[obji].header, sizeof (Deffunction),
+				DeffunctionBinaryData
+				(theEnv)->DeffunctionArray);
 }
 
 /***************************************************
@@ -546,8 +545,8 @@ CL_ClearDeffunction_Bload (Environment * theEnv)
 
   for (i = 0; i < DeffunctionBinaryData (theEnv)->DeffunctionCount; i++)
     CL_UnmarkConstructHeader (theEnv,
-			      &DeffunctionBinaryData (theEnv)->
-			      DeffunctionArray[i].header);
+			      &DeffunctionBinaryData
+			      (theEnv)->DeffunctionArray[i].header);
   space =
     (sizeof (Deffunction) * DeffunctionBinaryData (theEnv)->DeffunctionCount);
   if (space == 0)

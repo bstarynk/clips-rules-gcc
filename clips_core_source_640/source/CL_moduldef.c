@@ -177,12 +177,12 @@ DeallocateDefmoduleData (Environment * theEnv)
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
   CL_DeallocateVoidCallList (theEnv,
-			     DefmoduleData (theEnv)->
-			     AfterModuleDefinedFunctions);
+			     DefmoduleData
+			     (theEnv)->AfterModuleDefinedFunctions);
 #endif
   CL_DeallocateVoidCallList (theEnv,
-			     DefmoduleData (theEnv)->
-			     AfterModuleChangeFunctions);
+			     DefmoduleData
+			     (theEnv)->AfterModuleChangeFunctions);
 }
 
 /**************************************************************/
@@ -833,8 +833,9 @@ CL_AddAfterModuleChangeFunction (Environment * theEnv,
 {
   DefmoduleData (theEnv)->AfterModuleChangeFunctions =
     CL_Add_VoidFunctionToCallList (theEnv, name, priority, func,
-				   DefmoduleData (theEnv)->
-				   AfterModuleChangeFunctions, context);
+				   DefmoduleData
+				   (theEnv)->AfterModuleChangeFunctions,
+				   context);
 }
 
 /************************************************/

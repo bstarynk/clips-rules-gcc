@@ -295,8 +295,8 @@ MarkDefgenericItems (Environment * theEnv,
   RESTRICTION *rptr;
 
   CL_MarkConstructHeaderNeededItems (&gfunc->header,
-				     DefgenericBinaryData (theEnv)->
-				     GenericCount++);
+				     DefgenericBinaryData
+				     (theEnv)->GenericCount++);
   DefgenericBinaryData (theEnv)->MethodCount += gfunc->mcnt;
   for (i = 0; i < gfunc->mcnt; i++)
     {
@@ -812,10 +812,10 @@ UpdateGenericModule (Environment * theEnv, void *buf, unsigned long obji)
 
   bdptr = (BSAVE_DEFGENERIC_MODULE *) buf;
   CL_UpdateDefmoduleItemHeader (theEnv, &bdptr->header,
-				&DefgenericBinaryData (theEnv)->
-				ModuleArray[obji].header, sizeof (Defgeneric),
-				DefgenericBinaryData (theEnv)->
-				DefgenericArray);
+				&DefgenericBinaryData (theEnv)->ModuleArray
+				[obji].header, sizeof (Defgeneric),
+				DefgenericBinaryData
+				(theEnv)->DefgenericArray);
 }
 
 static void
@@ -910,8 +910,8 @@ UpdateType (Environment * theEnv, void *buf, unsigned long obji)
   else
     DefgenericBinaryData (theEnv)->TypeArray[obji] =
       CL_CreateInteger (theEnv, *(long *) buf);
-  IncrementIntegerCount ((CLIPSInteger *) DefgenericBinaryData (theEnv)->
-			 TypeArray[obji]);
+  IncrementIntegerCount ((CLIPSInteger *)
+			 DefgenericBinaryData (theEnv)->TypeArray[obji]);
 #endif
 }
 
@@ -941,8 +941,8 @@ CL_Clear_BloadGenerics (Environment * theEnv)
 
   for (i = 0; i < DefgenericBinaryData (theEnv)->GenericCount; i++)
     CL_UnmarkConstructHeader (theEnv,
-			      &DefgenericBinaryData (theEnv)->
-			      DefgenericArray[i].header);
+			      &DefgenericBinaryData (theEnv)->DefgenericArray
+			      [i].header);
 
   space = (sizeof (Defgeneric) * DefgenericBinaryData (theEnv)->GenericCount);
   if (space == 0L)
@@ -969,8 +969,8 @@ CL_Clear_BloadGenerics (Environment * theEnv)
 #if ! OBJECT_SYSTEM
   for (i = 0; i < DefgenericBinaryData (theEnv)->TypeCount; i++)
     DecrementIntegerCount (theEnv,
-			   (CLIPSInteger *) DefgenericBinaryData (theEnv)->
-			   TypeArray[i]);
+			   (CLIPSInteger *)
+			   DefgenericBinaryData (theEnv)->TypeArray[i]);
 #endif
   space = (sizeof (void *) * DefgenericBinaryData (theEnv)->TypeCount);
   if (space == 0L)

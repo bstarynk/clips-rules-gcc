@@ -198,8 +198,8 @@ CL_EvaluateExpression (Environment * theEnv,
 #if PROFILING_FUNCTIONS
 	Start_Profile (theEnv, &profileFrame,
 		       &fptr->usrData,
-		       CL_ProfileFunctionData (theEnv)->
-		       CL_Profile_UserFunctions);
+		       CL_ProfileFunctionData
+		       (theEnv)->CL_Profile_UserFunctions);
 #endif
 
 	oldArgument = CL_EvaluationData (theEnv)->CurrentExpression;
@@ -342,9 +342,9 @@ CL_InstallExternalAddressType (Environment * theEnv,
 						sizeof (struct
 							externalAddressType));
   memcpy (copyEAT, theAddressType, sizeof (struct externalAddressType));
-  CL_EvaluationData (theEnv)->
-    ExternalAddressTypes[CL_EvaluationData (theEnv)->numberOfAddressTypes++] =
-    copyEAT;
+  CL_EvaluationData (theEnv)->ExternalAddressTypes[CL_EvaluationData
+						   (theEnv)->numberOfAddressTypes++]
+    = copyEAT;
 
   return rv;
 }

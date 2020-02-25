@@ -373,8 +373,8 @@ CL_PrintExpression (Environment * theEnv,
 	case FCALL:
 	  CL_WriteString (theEnv, fileid, "(");
 	  CL_WriteString (theEnv, fileid,
-			  ExpressionFunctionCallName (theExpression)->
-			  contents);
+			  ExpressionFunctionCallName
+			  (theExpression)->contents);
 	  if (theExpression->argList != NULL)
 	    {
 	      CL_WriteString (theEnv, fileid, " ");

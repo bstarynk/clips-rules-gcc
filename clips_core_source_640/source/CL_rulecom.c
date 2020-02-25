@@ -552,8 +552,8 @@ CL_AlphaJoinCountDriver (Environment * theEnv, struct joinNode *theJoin)
   if (theJoin->joinFromTheRight)
     {
       return CL_AlphaJoinCountDriver (theEnv,
-				      (struct joinNode *) theJoin->
-				      rightSideEntryStructure);
+				      (struct joinNode *)
+				      theJoin->rightSideEntryStructure);
     }
   else if (theJoin->lastLevel != NULL)
     {
@@ -593,8 +593,9 @@ CL_AlphaJoinsDriver (Environment * theEnv,
   if (theJoin->joinFromTheRight)
     {
       CL_AlphaJoinsDriver (theEnv,
-			   (struct joinNode *) theJoin->
-			   rightSideEntryStructure, alphaIndex, theInfo);
+			   (struct joinNode *)
+			   theJoin->rightSideEntryStructure, alphaIndex,
+			   theInfo);
       return;
     }
   else if (theJoin->lastLevel != NULL)
@@ -643,8 +644,8 @@ CL_BetaJoinCountDriver (Environment * theEnv, struct joinNode *theJoin)
     {
       betaCount +=
 	CL_BetaJoinCountDriver (theEnv,
-				(struct joinNode *) theJoin->
-				rightSideEntryStructure);
+				(struct joinNode *)
+				theJoin->rightSideEntryStructure);
     }
   else if (theJoin->lastLevel != NULL)
     {
@@ -724,8 +725,8 @@ CL_BetaJoinsDriver (Environment * theEnv,
   if (theJoin->joinFromTheRight)
     {
       CL_BetaJoinsDriver (theEnv,
-			  (struct joinNode *) theJoin->
-			  rightSideEntryStructure, betaIndex - 1,
+			  (struct joinNode *)
+			  theJoin->rightSideEntryStructure, betaIndex - 1,
 			  theJoinInfoArray, theJoin->rightMemory, theJoin);
     }
   else if (theJoin->lastLevel != NULL)
@@ -1629,8 +1630,8 @@ ShowJoins (Environment * theEnv, Defrule * theRule)
 			 joinList[numberOfJoins]->depth,
 			 (joinList[numberOfJoins]->firstJoin) ? 'f' : ' ',
 			 rhsType,
-			 (joinList[numberOfJoins]->
-			  joinFromTheRight) ? 'j' : ' ',
+			 (joinList[numberOfJoins]->joinFromTheRight) ? 'j' :
+			 ' ',
 			 (joinList[numberOfJoins]->logicalJoin) ? 'l' : ' ');
 	  CL_WriteString (theEnv, STDOUT, buffer);
 	  CL_PrintExpression (theEnv, STDOUT,
@@ -1641,7 +1642,8 @@ ShowJoins (Environment * theEnv, Defrule * theRule)
 	    {
 	      CL_WriteString (theEnv, STDOUT, "    RA : ");
 	      CL_WriteString (theEnv, STDOUT,
-			      CL_DefruleName (joinList[numberOfJoins]->
+			      CL_DefruleName (joinList
+					      [numberOfJoins]->
 					      ruleToActivate));
 	      CL_WriteString (theEnv, STDOUT, "\n");
 	    }
@@ -1650,8 +1652,8 @@ ShowJoins (Environment * theEnv, Defrule * theRule)
 	    {
 	      CL_WriteString (theEnv, STDOUT, "    SNT : ");
 	      CL_PrintExpression (theEnv, STDOUT,
-				  joinList[numberOfJoins]->
-				  secondaryNetworkTest);
+				  joinList
+				  [numberOfJoins]->secondaryNetworkTest);
 	      CL_WriteString (theEnv, STDOUT, "\n");
 	    }
 

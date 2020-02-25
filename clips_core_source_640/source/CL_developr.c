@@ -536,8 +536,8 @@ PrintOPNLevel (Environment * theEnv,
 	      {
 		CL_WriteString (theEnv, STDOUT, " ");
 		CL_WriteString (theEnv, STDOUT,
-				CL_DefclassName (DefclassData (theEnv)->
-						 ClassIDMap[i]));
+				CL_DefclassName (DefclassData
+						 (theEnv)->ClassIDMap[i]));
 	      }
 	  if (alphaPtr->slotbmp != NULL)
 	    {
@@ -684,8 +684,8 @@ TraverseBetaMemories (Environment * theEnv, struct joinNode *theJoin)
   if (theJoin->joinFromTheRight)
     {
       TraverseBetaMemories (theEnv,
-			    (struct joinNode *) theJoin->
-			    rightSideEntryStructure);
+			    (struct joinNode *)
+			    theJoin->rightSideEntryStructure);
     }
 
   if ((theJoin->joinFromTheRight) &&

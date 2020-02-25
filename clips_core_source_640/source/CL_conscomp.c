@@ -459,8 +459,8 @@ ConstructsToC (Environment * theEnv,
    /*=========================================================*/
 
   CL_WriteFunctionExternDeclarations (theEnv,
-				      ConstructCompilerData (theEnv)->
-				      HeaderFP);
+				      ConstructCompilerData
+				      (theEnv)->HeaderFP);
 
   fprintf (ConstructCompilerData (theEnv)->HeaderFP, "\n#endif\n\n");
   fprintf (ConstructCompilerData (theEnv)->HeaderFP,
@@ -523,11 +523,11 @@ ConstructsToC (Environment * theEnv,
 	{
 	  (*cgPtr->generateFunction) (theEnv, fileName, pathName,
 				      fileNameBuffer, fileVersion,
-				      ConstructCompilerData (theEnv)->
-				      HeaderFP,
+				      ConstructCompilerData
+				      (theEnv)->HeaderFP,
 				      ConstructCompilerData (theEnv)->ImageID,
-				      ConstructCompilerData (theEnv)->
-				      MaxIndices);
+				      ConstructCompilerData
+				      (theEnv)->MaxIndices);
 	  fileVersion++;
 	}
     }
@@ -1031,32 +1031,35 @@ DumpExpression (Environment * theEnv, struct expr *exprPtr)
 	{
 	case FCALL:
 	  CL_PrintFunctionReference (theEnv,
-				     ConstructCompilerData (theEnv)->
-				     ExpressionFP, exprPtr->functionValue);
+				     ConstructCompilerData
+				     (theEnv)->ExpressionFP,
+				     exprPtr->functionValue);
 	  break;
 
 	case INTEGER_TYPE:
 	  CL_PrintIntegerReference (theEnv,
-				    ConstructCompilerData (theEnv)->
-				    ExpressionFP, exprPtr->integerValue);
+				    ConstructCompilerData
+				    (theEnv)->ExpressionFP,
+				    exprPtr->integerValue);
 	  break;
 
 	case FLOAT_TYPE:
 	  CL_PrintFloatReference (theEnv,
-				  ConstructCompilerData (theEnv)->
-				  ExpressionFP, exprPtr->floatValue);
+				  ConstructCompilerData
+				  (theEnv)->ExpressionFP,
+				  exprPtr->floatValue);
 	  break;
 
 	case PCALL:
 #if DEFFUNCTION_CONSTRUCT
 	  CL_PrintDeffunctionReference (theEnv,
-					ConstructCompilerData (theEnv)->
-					ExpressionFP,
+					ConstructCompilerData
+					(theEnv)->ExpressionFP,
 					(Deffunction *) exprPtr->value,
-					ConstructCompilerData (theEnv)->
-					ImageID,
-					ConstructCompilerData (theEnv)->
-					MaxIndices);
+					ConstructCompilerData
+					(theEnv)->ImageID,
+					ConstructCompilerData
+					(theEnv)->MaxIndices);
 #else
 	  fprintf (ConstructCompilerData (theEnv)->ExpressionFP, "NULL");
 #endif
@@ -1065,13 +1068,13 @@ DumpExpression (Environment * theEnv, struct expr *exprPtr)
 	case GCALL:
 #if DEFGENERIC_CONSTRUCT
 	  CL_PrintGenericFunctionReference (theEnv,
-					    ConstructCompilerData (theEnv)->
-					    ExpressionFP,
+					    ConstructCompilerData
+					    (theEnv)->ExpressionFP,
 					    (Defgeneric *) exprPtr->value,
-					    ConstructCompilerData (theEnv)->
-					    ImageID,
-					    ConstructCompilerData (theEnv)->
-					    MaxIndices);
+					    ConstructCompilerData
+					    (theEnv)->ImageID,
+					    ConstructCompilerData
+					    (theEnv)->MaxIndices);
 #else
 	  fprintf (ConstructCompilerData (theEnv)->ExpressionFP, "NULL");
 #endif
@@ -1080,13 +1083,13 @@ DumpExpression (Environment * theEnv, struct expr *exprPtr)
 	case DEFTEMPLATE_PTR:
 #if DEFTEMPLATE_CONSTRUCT
 	  CL_DeftemplateCConstructReference (theEnv,
-					     ConstructCompilerData (theEnv)->
-					     ExpressionFP,
+					     ConstructCompilerData
+					     (theEnv)->ExpressionFP,
 					     (Deftemplate *) exprPtr->value,
-					     ConstructCompilerData (theEnv)->
-					     ImageID,
-					     ConstructCompilerData (theEnv)->
-					     MaxIndices);
+					     ConstructCompilerData
+					     (theEnv)->ImageID,
+					     ConstructCompilerData
+					     (theEnv)->MaxIndices);
 #else
 	  fprintf (ConstructCompilerData (theEnv)->ExpressionFP, "NULL");
 #endif
@@ -1095,13 +1098,13 @@ DumpExpression (Environment * theEnv, struct expr *exprPtr)
 	case DEFGLOBAL_PTR:
 #if DEFGLOBAL_CONSTRUCT
 	  CL_DefglobalCConstructReference (theEnv,
-					   ConstructCompilerData (theEnv)->
-					   ExpressionFP,
+					   ConstructCompilerData
+					   (theEnv)->ExpressionFP,
 					   (Defglobal *) exprPtr->value,
-					   ConstructCompilerData (theEnv)->
-					   ImageID,
-					   ConstructCompilerData (theEnv)->
-					   MaxIndices);
+					   ConstructCompilerData
+					   (theEnv)->ImageID,
+					   ConstructCompilerData
+					   (theEnv)->MaxIndices);
 #else
 	  fprintf (ConstructCompilerData (theEnv)->ExpressionFP, "NULL");
 #endif
@@ -1110,8 +1113,9 @@ DumpExpression (Environment * theEnv, struct expr *exprPtr)
 	case DEFCLASS_PTR:
 #if OBJECT_SYSTEM
 	  CL_PrintClassReference (theEnv,
-				  ConstructCompilerData (theEnv)->
-				  ExpressionFP, (Defclass *) exprPtr->value,
+				  ConstructCompilerData
+				  (theEnv)->ExpressionFP,
+				  (Defclass *) exprPtr->value,
 				  ConstructCompilerData (theEnv)->ImageID,
 				  ConstructCompilerData (theEnv)->MaxIndices);
 #else
@@ -1150,8 +1154,9 @@ DumpExpression (Environment * theEnv, struct expr *exprPtr)
 	case INSTANCE_NAME_TYPE:
 	case GBL_VARIABLE:
 	  CL_PrintSymbolReference (theEnv,
-				   ConstructCompilerData (theEnv)->
-				   ExpressionFP, exprPtr->lexemeValue);
+				   ConstructCompilerData
+				   (theEnv)->ExpressionFP,
+				   exprPtr->lexemeValue);
 	  break;
 
 	case VOID_TYPE:
@@ -1164,12 +1169,13 @@ DumpExpression (Environment * theEnv, struct expr *exprPtr)
 	    {
 	      fprintf (ConstructCompilerData (theEnv)->ExpressionFP, "NULL");
 	    }
-	  else if (CL_EvaluationData (theEnv)->
-		   PrimitivesArray[exprPtr->type]->bitMap)
+	  else
+	    if (CL_EvaluationData (theEnv)->
+		PrimitivesArray[exprPtr->type]->bitMap)
 	    {
 	      CL_PrintBitMapReference (theEnv,
-				       ConstructCompilerData (theEnv)->
-				       ExpressionFP,
+				       ConstructCompilerData
+				       (theEnv)->ExpressionFP,
 				       (CLIPSBitMap *) exprPtr->value);
 	    }
 	  else
@@ -1293,14 +1299,14 @@ CL_AddCodeGeneratorItem (Environment * theEnv,
 	      PRIMARY_LEN)
 	    {
 	      CL_gensprintf (theBuffer, "%c",
-			     PRIMARY_CODES[ConstructCompilerData (theEnv)->
-					   CodeGeneratorCount]);
+			     PRIMARY_CODES[ConstructCompilerData
+					   (theEnv)->CodeGeneratorCount]);
 	    }
 	  else
 	    {
 	      CL_gensprintf (theBuffer, "%s_",
-			     SecondaryCodes[ConstructCompilerData (theEnv)->
-					    CodeGeneratorCount -
+			     SecondaryCodes[ConstructCompilerData
+					    (theEnv)->CodeGeneratorCount -
 					    PRIMARY_LEN]);
 	    }
 	  ConstructCompilerData (theEnv)->CodeGeneratorCount++;

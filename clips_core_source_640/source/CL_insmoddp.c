@@ -849,8 +849,9 @@ ModifyMsgHandlerSupport (Environment * theEnv,
       if (insSlot == NULL)
 	{
 	  CL_SlotExistError (theEnv,
-			     ((CLIPSLexeme *) slotOverrides->
-			      supplementalInfo)->contents, "modify-instance");
+			     ((CLIPSLexeme *)
+			      slotOverrides->supplementalInfo)->contents,
+			     "modify-instance");
 	  Set_EvaluationError (theEnv, true);
 	  return;
 	}
@@ -985,8 +986,8 @@ DuplicateMsgHandlerSupport (Environment * theEnv,
       if (dstInsSlot == NULL)
 	{
 	  CL_SlotExistError (theEnv,
-			     ((CLIPSLexeme *) slotOverrides->
-			      supplementalInfo)->contents,
+			     ((CLIPSLexeme *)
+			      slotOverrides->supplementalInfo)->contents,
 			     "duplicate-instance");
 	  goto DuplicateError;
 	}

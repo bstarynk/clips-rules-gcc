@@ -616,8 +616,8 @@ InitializePartialOrderTable (Environment * theEnv,
 	     in the precedence list.
 	     ============================================================= */
 	  po_table = InitializePartialOrderTable (theEnv, po_table,
-						  &supers->classArray[i]->
-						  directSuperclasses);
+						  &supers->classArray
+						  [i]->directSuperclasses);
 	}
     }
   return (po_table);

@@ -147,8 +147,9 @@ ConstructToCode (Environment * theEnv,
 			     fileNameBuffer, fileID, imageID, &fileCount,
 			     moduleArrayVersion, headerFP,
 			     "struct defglobalModule",
-			     ModulePrefix (DefglobalData (theEnv)->
-					   DefglobalCodeItem), false, NULL);
+			     ModulePrefix (DefglobalData
+					   (theEnv)->DefglobalCodeItem),
+			     false, NULL);
 
       if (moduleFile == NULL)
 	{
@@ -170,7 +171,8 @@ ConstructToCode (Environment * theEnv,
 	    CL_OpenFileIfNeeded (theEnv, defglobalFile, fileName, pathName,
 				 fileNameBuffer, fileID, imageID, &fileCount,
 				 defglobalArrayVersion, headerFP, "Defglobal",
-				 ConstructPrefix (DefglobalData (theEnv)->
+				 ConstructPrefix (DefglobalData
+						  (theEnv)->
 						  DefglobalCodeItem), false,
 				 NULL);
 	  if (defglobalFile == NULL)
@@ -245,8 +247,8 @@ CL_DefglobalModuleToCode (Environment * theEnv,
 
   CL_ConstructModuleToCode (theEnv, theFile, theModule, imageID, maxIndices,
 			    DefglobalData (theEnv)->CL_DefglobalModuleIndex,
-			    ConstructPrefix (DefglobalData (theEnv)->
-					     DefglobalCodeItem));
+			    ConstructPrefix (DefglobalData
+					     (theEnv)->DefglobalCodeItem));
 
   fprintf (theFile, "}");
 }
@@ -270,10 +272,10 @@ DefglobalToCode (Environment * theEnv,
 
   CL_ConstructHeaderToCode (theEnv, theFile, &theDefglobal->header, imageID,
 			    maxIndices, moduleCount,
-			    ModulePrefix (DefglobalData (theEnv)->
-					  DefglobalCodeItem),
-			    ConstructPrefix (DefglobalData (theEnv)->
-					     DefglobalCodeItem));
+			    ModulePrefix (DefglobalData
+					  (theEnv)->DefglobalCodeItem),
+			    ConstructPrefix (DefglobalData
+					     (theEnv)->DefglobalCodeItem));
 
   fprintf (theFile, ",");
 

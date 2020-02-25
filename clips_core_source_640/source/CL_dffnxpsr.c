@@ -522,8 +522,8 @@ AddDeffunction (Environment * theEnv,
 
 #if DEBUGGING_FUNCTIONS
   CL_DeffunctionSet_Watch (dfuncPtr,
-			   DFHad_Watch ? true : DeffunctionData (theEnv)->
-			   CL_WatchDeffunctions);
+			   DFHad_Watch ? true :
+			   DeffunctionData (theEnv)->CL_WatchDeffunctions);
 
   if ((CL_GetConserveMemory (theEnv) == false) && (headerp == false))
     {

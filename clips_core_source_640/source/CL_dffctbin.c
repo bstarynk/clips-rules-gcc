@@ -161,8 +161,8 @@ CL_BsaveFind (Environment * theEnv)
 	 /*======================================================*/
 
 	  CL_MarkConstructHeaderNeededItems (&theDeffacts->header,
-					     DeffactsBinaryData (theEnv)->
-					     NumberOfDeffacts++);
+					     DeffactsBinaryData
+					     (theEnv)->NumberOfDeffacts++);
 
 	 /*============================================================*/
 	  /* Count the number of expressions contained in the deffacts' */
@@ -276,7 +276,8 @@ CL_BsaveBinaryItem (Environment * theEnv, FILE * fp)
 
       theModuleItem =
 	(struct deffactsModule *) CL_GetModuleItem (theEnv, NULL,
-						    DeffactsData (theEnv)->
+						    DeffactsData
+						    (theEnv)->
 						    CL_DeffactsModuleIndex);
       CL_Assign_BsaveDefmdlItemHdrVals (&temp_DeffactsModule.header,
 					&theModuleItem->header);
@@ -431,8 +432,8 @@ Update_DeffactsModule (Environment * theEnv, void *buf, unsigned long obji)
 
   bdmPtr = (struct bsave_DeffactsModule *) buf;
   CL_UpdateDefmoduleItemHeader (theEnv, &bdmPtr->header,
-				&DeffactsBinaryData (theEnv)->
-				ModuleArray[obji].header, sizeof (Deffacts),
+				&DeffactsBinaryData (theEnv)->ModuleArray
+				[obji].header, sizeof (Deffacts),
 				DeffactsBinaryData (theEnv)->DeffactsArray);
 }
 
@@ -474,8 +475,8 @@ CL_Clear_Bload (Environment * theEnv)
   for (i = 0; i < DeffactsBinaryData (theEnv)->NumberOfDeffacts; i++)
     {
       CL_UnmarkConstructHeader (theEnv,
-				&DeffactsBinaryData (theEnv)->
-				DeffactsArray[i].header);
+				&DeffactsBinaryData (theEnv)->DeffactsArray
+				[i].header);
     }
 
    /*=============================================================*/

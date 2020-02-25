@@ -253,7 +253,8 @@ CL_ParseInitializeInstance (Environment * theEnv,
 		       &DefclassData (theEnv)->ObjectParseToken);
 	  if ((DefclassData (theEnv)->ObjectParseToken.tknType !=
 	       SYMBOL_TOKEN) ? true : (strcmp (CLASS_RLN,
-					       DefclassData (theEnv)->
+					       DefclassData
+					       (theEnv)->
 					       ObjectParseToken.lexemeValue->
 					       contents) != 0))
 	    {
@@ -298,10 +299,10 @@ CL_ParseInitializeInstance (Environment * theEnv,
       if (fcalltype == DUPLICATE_TYPE)
 	{
 	  if ((DefclassData (theEnv)->ObjectParseToken.tknType !=
-	       SYMBOL_TOKEN) ? false : (strcmp (DefclassData (theEnv)->
-						ObjectParseToken.lexemeValue->
-						contents,
-						DUPLICATE_NAME_REF) == 0))
+	       SYMBOL_TOKEN) ? false
+	      : (strcmp
+		 (DefclassData (theEnv)->ObjectParseToken.lexemeValue->
+		  contents, DUPLICATE_NAME_REF) == 0))
 	    {
 	      CL_PPBackup (theEnv);
 	      CL_PPBackup (theEnv);
@@ -525,10 +526,10 @@ CL_ParseSimpleInstance (Environment * theEnv,
 	      CL_GetToken (theEnv, readSource,
 			   &DefclassData (theEnv)->ObjectParseToken);
 	      if ((DefclassData (theEnv)->ObjectParseToken.tknType !=
-		   SYMBOL_TOKEN) ? true : (strcmp (DefclassData (theEnv)->
-						   ObjectParseToken.
-						   lexemeValue->contents,
-						   "create$") != 0))
+		   SYMBOL_TOKEN) ? true
+		  : (strcmp
+		     (DefclassData (theEnv)->ObjectParseToken.
+		      lexemeValue->contents, "create$") != 0))
 		goto SlotOverrideError;
 	      CL_GetToken (theEnv, readSource,
 			   &DefclassData (theEnv)->ObjectParseToken);

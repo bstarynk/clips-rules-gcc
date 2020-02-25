@@ -1143,8 +1143,9 @@ CL_FindDOsInSegment (UDFValue * searchDOs,
 	      if (MVRangeCheck (i + 1, i + slen, excludes, epaircnt))
 		{
 		  for (k = 0L; (k < slen) && ((k + i) < mul_length); k++)
-		    if (searchDOs[j].multifieldValue->
-			contents[k + searchDOs[j].begin].value !=
+		    if (searchDOs[j].multifieldValue->contents[k +
+							       searchDOs[j].
+							       begin].value !=
 			value->multifieldValue->contents[k + i +
 							 value->begin].value)
 		      break;

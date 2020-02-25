@@ -153,8 +153,9 @@ CL_InitializeDeftemplates (Environment * theEnv)
 		     (FreeConstructFunction *) ReturnDeftemplate);
 
   CL_InstallPrimitive (theEnv,
-		       (EntityRecord *) & DeftemplateData (theEnv)->
-		       DeftemplatePtrRecord, DEFTEMPLATE_PTR);
+		       (EntityRecord *) &
+		       DeftemplateData (theEnv)->DeftemplatePtrRecord,
+		       DEFTEMPLATE_PTR);
 }
 
 /******************************************************/
@@ -183,8 +184,8 @@ DeallocateDeftemplateData (Environment * theEnv)
     {
       theModuleItem = (struct deftemplateModule *)
 	CL_GetModuleItem (theEnv, theModule,
-			  DeftemplateData (theEnv)->
-			  CL_DeftemplateModuleIndex);
+			  DeftemplateData
+			  (theEnv)->CL_DeftemplateModuleIndex);
       rtn_struct (theEnv, deftemplateModule, theModuleItem);
     }
 #endif
@@ -255,8 +256,8 @@ ReturnModule (Environment * theEnv, void *theItem)
 {
   CL_FreeConstructHeaderModule (theEnv,
 				(struct defmoduleItemHeader *) theItem,
-				DeftemplateData (theEnv)->
-				DeftemplateConstruct);
+				DeftemplateData
+				(theEnv)->DeftemplateConstruct);
   rtn_struct (theEnv, deftemplateModule, theItem);
 }
 
@@ -269,7 +270,8 @@ Get_DeftemplateModuleItem (Environment * theEnv, Defmodule * theModule)
 {
   return ((struct deftemplateModule *)
 	  CL_GetConstructModuleItemByIndex (theEnv, theModule,
-					    DeftemplateData (theEnv)->
+					    DeftemplateData
+					    (theEnv)->
 					    CL_DeftemplateModuleIndex));
 }
 
@@ -313,7 +315,8 @@ CL_GetNextDeftemplate (Environment * theEnv, Deftemplate * deftemplatePtr)
 {
   return (Deftemplate *) CL_GetNextConstructItem (theEnv,
 						  &deftemplatePtr->header,
-						  DeftemplateData (theEnv)->
+						  DeftemplateData
+						  (theEnv)->
 						  CL_DeftemplateModuleIndex);
 }
 

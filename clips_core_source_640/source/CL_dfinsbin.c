@@ -205,8 +205,8 @@ CL_BsaveDefinstancesFind (Environment * theEnv)
     CL_GetNumberOfDefmodules (theEnv);
 
   CL_DoForAllConstructs (theEnv, MarkDefinstancesItems,
-			 DefinstancesData (theEnv)->
-			 CL_DefinstancesModuleIndex, false, NULL);
+			 DefinstancesData
+			 (theEnv)->CL_DefinstancesModuleIndex, false, NULL);
 }
 
 
@@ -229,8 +229,8 @@ MarkDefinstancesItems (Environment * theEnv,
 #endif
 
   CL_MarkConstructHeaderNeededItems (theDefinstances,
-				     DefinstancesBinaryData (theEnv)->
-				     DefinstancesCount++);
+				     DefinstancesBinaryData
+				     (theEnv)->DefinstancesCount++);
   ExpressionData (theEnv)->ExpressionCount +=
     CL_ExpressionSize (((Definstances *) theDefinstances)->mkinstance);
   CL_MarkNeededItems (theEnv, ((Definstances *) theDefinstances)->mkinstance);
@@ -249,8 +249,8 @@ static void
 CL_BsaveDefinstancesExpressions (Environment * theEnv, FILE * fp)
 {
   CL_DoForAllConstructs (theEnv, CL_BsaveDefinstancesExpression,
-			 DefinstancesData (theEnv)->
-			 CL_DefinstancesModuleIndex, false, fp);
+			 DefinstancesData
+			 (theEnv)->CL_DefinstancesModuleIndex, false, fp);
 }
 
 /***************************************************
@@ -342,8 +342,8 @@ CL_BsaveDefinstancesDriver (Environment * theEnv, FILE * fp)
    /*==============================*/
 
   CL_DoForAllConstructs (theEnv, CL_BsaveDefinstances,
-			 DefinstancesData (theEnv)->
-			 CL_DefinstancesModuleIndex, false, fp);
+			 DefinstancesData
+			 (theEnv)->CL_DefinstancesModuleIndex, false, fp);
 
   Restore_BloadCount (theEnv, &DefinstancesBinaryData (theEnv)->ModuleCount);
   Restore_BloadCount (theEnv,
@@ -474,11 +474,10 @@ Update_DefinstancesModule (Environment * theEnv,
 
   bdptr = (BSAVE_DEFINSTANCES_MODULE *) buf;
   CL_UpdateDefmoduleItemHeader (theEnv, &bdptr->header,
-				&DefinstancesBinaryData (theEnv)->
-				ModuleArray[obji].header,
-				sizeof (Definstances),
-				DefinstancesBinaryData (theEnv)->
-				DefinstancesArray);
+				&DefinstancesBinaryData (theEnv)->ModuleArray
+				[obji].header, sizeof (Definstances),
+				DefinstancesBinaryData
+				(theEnv)->DefinstancesArray);
 }
 
 /***************************************************
@@ -501,15 +500,15 @@ UpdateDefinstances (Environment * theEnv, void *buf, unsigned long obji)
 
   bdptr = (BSAVE_DEFINSTANCES *) buf;
   dfiptr =
-    (Definstances *) & DefinstancesBinaryData (theEnv)->
-    DefinstancesArray[obji];
+    (Definstances *) &
+    DefinstancesBinaryData (theEnv)->DefinstancesArray[obji];
 
   CL_UpdateConstructHeader (theEnv, &bdptr->header, &dfiptr->header,
 			    DEFINSTANCES, sizeof (DEFINSTANCES_MODULE),
 			    DefinstancesBinaryData (theEnv)->ModuleArray,
 			    sizeof (Definstances),
-			    DefinstancesBinaryData (theEnv)->
-			    DefinstancesArray);
+			    DefinstancesBinaryData
+			    (theEnv)->DefinstancesArray);
   dfiptr->mkinstance = ExpressionPointer (bdptr->mkinstance);
   dfiptr->busy = 0;
 }
@@ -541,8 +540,8 @@ CL_ClearDefinstances_Bload (Environment * theEnv)
 
   for (i = 0; i < DefinstancesBinaryData (theEnv)->DefinstancesCount; i++)
     CL_UnmarkConstructHeader (theEnv,
-			      &DefinstancesBinaryData (theEnv)->
-			      DefinstancesArray[i].header);
+			      &DefinstancesBinaryData
+			      (theEnv)->DefinstancesArray[i].header);
   space =
     (sizeof (Definstances) *
      DefinstancesBinaryData (theEnv)->DefinstancesCount);

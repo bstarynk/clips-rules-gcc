@@ -227,7 +227,8 @@ UpdateExpression (Environment * theEnv, void *buf, unsigned long obji)
     case INSTANCE_ADDRESS_TYPE:
       ExpressionData (theEnv)->ExpressionArray[obji].value =
 	&InstanceData (theEnv)->DummyInstance;
-      CL_RetainInstance ((Instance *) ExpressionData (theEnv)->
+      CL_RetainInstance ((Instance *)
+			 ExpressionData (theEnv)->
 			 ExpressionArray[obji].value);
       break;
 #endif
@@ -246,8 +247,9 @@ UpdateExpression (Environment * theEnv, void *buf, unsigned long obji)
 	{
 	  ExpressionData (theEnv)->ExpressionArray[obji].value =
 	    SymbolData (theEnv)->BitMapArray[bexp->value];
-	  IncrementBitMapCount ((CLIPSBitMap *) ExpressionData (theEnv)->
-				ExpressionArray[obji].value);
+	  IncrementBitMapCount ((CLIPSBitMap *)
+				ExpressionData (theEnv)->ExpressionArray
+				[obji].value);
 	}
       break;
     }
@@ -314,14 +316,15 @@ CL_Clear_BloadedExpressions (Environment * theEnv)
 
 #if DEFTEMPLATE_CONSTRUCT
 	case FACT_ADDRESS_TYPE:
-	  CL_ReleaseFact ((Fact *) ExpressionData (theEnv)->
-			  ExpressionArray[i].value);
+	  CL_ReleaseFact ((Fact *)
+			  ExpressionData (theEnv)->ExpressionArray[i].value);
 	  break;
 #endif
 
 #if OBJECT_SYSTEM
 	case INSTANCE_ADDRESS_TYPE:
-	  CL_ReleaseInstance ((Instance *) ExpressionData (theEnv)->
+	  CL_ReleaseInstance ((Instance *)
+			      ExpressionData (theEnv)->
 			      ExpressionArray[i].value);
 	  break;
 #endif
@@ -330,17 +333,16 @@ CL_Clear_BloadedExpressions (Environment * theEnv)
 	  break;
 
 	default:
-	  if (CL_EvaluationData (theEnv)->
-	      PrimitivesArray[ExpressionData (theEnv)->ExpressionArray[i].
-			      type] == NULL)
+	  if (CL_EvaluationData (theEnv)->PrimitivesArray
+	      [ExpressionData (theEnv)->ExpressionArray[i].type] == NULL)
 	    break;
-	  if (CL_EvaluationData (theEnv)->
-	      PrimitivesArray[ExpressionData (theEnv)->ExpressionArray[i].
-			      type]->bitMap)
+	  if (CL_EvaluationData (theEnv)->PrimitivesArray
+	      [ExpressionData (theEnv)->ExpressionArray[i].type]->bitMap)
 	    {
 	      CL_DecrementBitMapReferenceCount (theEnv,
 						(CLIPSBitMap *)
-						ExpressionData (theEnv)->
+						ExpressionData
+						(theEnv)->
 						ExpressionArray[i].value);
 	    }
 	  break;

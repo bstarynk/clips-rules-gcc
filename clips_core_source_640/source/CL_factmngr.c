@@ -1556,8 +1556,8 @@ CL_DeftemplateSlotDefault (Environment * theEnv,
   else if (slotPtr->defaultDynamic)
     {
       if (!CL_EvaluateAndStoreInDataObject (theEnv, slotPtr->multislot,
-					    (Expression *) slotPtr->
-					    defaultList, theResult,
+					    (Expression *)
+					    slotPtr->defaultList, theResult,
 					    garbageMultifield))
 	{
 	  return false;
@@ -2106,8 +2106,9 @@ CL_Add_AssertFunction (Environment * theEnv,
 {
   FactData (theEnv)->ListOf_AssertFunctions =
     CL_AddFunctionToCallListWithArg (theEnv, name, priority, functionPtr,
-				     FactData (theEnv)->
-				     ListOf_AssertFunctions, context);
+				     FactData
+				     (theEnv)->ListOf_AssertFunctions,
+				     context);
   return true;
 }
 
@@ -2122,8 +2123,9 @@ Remove_AssertFunction (Environment * theEnv, const char *name)
 
   FactData (theEnv)->ListOf_AssertFunctions =
     CL_RemoveFunctionFromCallListWithArg (theEnv, name,
-					  FactData (theEnv)->
-					  ListOf_AssertFunctions, &found);
+					  FactData
+					  (theEnv)->ListOf_AssertFunctions,
+					  &found);
 
   if (found)
     return true;
@@ -2143,8 +2145,9 @@ CL_Add_RetractFunction (Environment * theEnv,
 {
   FactData (theEnv)->ListOf_RetractFunctions =
     CL_AddFunctionToCallListWithArg (theEnv, name, priority, functionPtr,
-				     FactData (theEnv)->
-				     ListOf_RetractFunctions, context);
+				     FactData
+				     (theEnv)->ListOf_RetractFunctions,
+				     context);
   return true;
 }
 
@@ -2159,8 +2162,9 @@ CL_Remove_RetractFunction (Environment * theEnv, const char *name)
 
   FactData (theEnv)->ListOf_RetractFunctions =
     CL_RemoveFunctionFromCallListWithArg (theEnv, name,
-					  FactData (theEnv)->
-					  ListOf_RetractFunctions, &found);
+					  FactData
+					  (theEnv)->ListOf_RetractFunctions,
+					  &found);
 
   if (found)
     return true;
@@ -2197,8 +2201,9 @@ CL_RemoveModifyFunction (Environment * theEnv, const char *name)
 
   FactData (theEnv)->ListOfModifyFunctions =
     CL_RemoveModifyFunctionFromCallList (theEnv, name,
-					 FactData (theEnv)->
-					 ListOfModifyFunctions, &found);
+					 FactData
+					 (theEnv)->ListOfModifyFunctions,
+					 &found);
 
   if (found)
     return true;

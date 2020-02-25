@@ -355,7 +355,8 @@ CL_GetNextActivation (Environment * theEnv, Activation * actPtr)
     {
       theModuleItem =
 	(struct defruleModule *) CL_GetModuleItem (theEnv, NULL,
-						   DefruleData (theEnv)->
+						   DefruleData
+						   (theEnv)->
 						   CL_DefruleModuleIndex);
       if (theModuleItem == NULL)
 	return NULL;

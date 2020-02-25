@@ -147,8 +147,8 @@ CL_BsaveFind (Environment * theEnv)
   CL_Save_BloadCount (theEnv,
 		      DeftemplateBinaryData (theEnv)->NumberOfTemplateSlots);
   CL_Save_BloadCount (theEnv,
-		      DeftemplateBinaryData (theEnv)->
-		      NumberOfTemplateModules);
+		      DeftemplateBinaryData
+		      (theEnv)->NumberOfTemplateModules);
 
    /*==================================================*/
   /* Set the count of deftemplates, deftemplate slots */
@@ -188,7 +188,8 @@ CL_BsaveFind (Environment * theEnv)
 	 /*======================================================*/
 
 	  CL_MarkConstructHeaderNeededItems (&theDeftemplate->header,
-					     DeftemplateBinaryData (theEnv)->
+					     DeftemplateBinaryData
+					     (theEnv)->
 					     NumberOfDeftemplates++);
 
 	 /*=============================================================*/
@@ -376,8 +377,8 @@ CL_BsaveBinaryItem (Environment * theEnv, FILE * fp)
   Restore_BloadCount (theEnv,
 		      &DeftemplateBinaryData (theEnv)->NumberOfTemplateSlots);
   Restore_BloadCount (theEnv,
-		      &DeftemplateBinaryData (theEnv)->
-		      NumberOfTemplateModules);
+		      &DeftemplateBinaryData
+		      (theEnv)->NumberOfTemplateModules);
 }
 
 #endif /* BLOAD_AND_BSAVE */
@@ -485,8 +486,8 @@ CL_BloadBinaryItem (Environment * theEnv)
    /*===============================================*/
 
   CL_Bloadand_Refresh (theEnv,
-		       DeftemplateBinaryData (theEnv)->
-		       NumberOfTemplateModules,
+		       DeftemplateBinaryData
+		       (theEnv)->NumberOfTemplateModules,
 		       sizeof (struct bsave_DeftemplateModule),
 		       Update_DeftemplateModule);
 
@@ -521,11 +522,11 @@ Update_DeftemplateModule (Environment * theEnv, void *buf, unsigned long obji)
 
   bdmPtr = (struct bsave_DeftemplateModule *) buf;
   CL_UpdateDefmoduleItemHeader (theEnv, &bdmPtr->header,
-				&DeftemplateBinaryData (theEnv)->
-				ModuleArray[obji].header,
-				sizeof (Deftemplate),
-				(void *) DeftemplateBinaryData (theEnv)->
-				DeftemplateArray);
+				&DeftemplateBinaryData (theEnv)->ModuleArray
+				[obji].header, sizeof (Deftemplate),
+				(void *)
+				DeftemplateBinaryData
+				(theEnv)->DeftemplateArray);
 }
 
 /********************************************/
@@ -550,8 +551,8 @@ UpdateDeftemplate (Environment * theEnv, void *buf, unsigned long obji)
   if (bdtPtr->slotList != ULONG_MAX)
     {
       theDeftemplate->slotList =
-	(struct templateSlot *) &DeftemplateBinaryData (theEnv)->
-	SlotArray[bdtPtr->slotList];
+	(struct templateSlot *)
+	&DeftemplateBinaryData (theEnv)->SlotArray[bdtPtr->slotList];
     }
   else
     {
@@ -561,8 +562,8 @@ UpdateDeftemplate (Environment * theEnv, void *buf, unsigned long obji)
   if (bdtPtr->patternNetwork != ULONG_MAX)
     {
       theDeftemplate->patternNetwork =
-	(struct factPatternNode *) CL_BloadFactPatternPointer (bdtPtr->
-							       patternNetwork);
+	(struct factPatternNode *)
+	CL_BloadFactPatternPointer (bdtPtr->patternNetwork);
     }
   else
     {
@@ -607,8 +608,8 @@ UpdateDeftemplateSlot (Environment * theEnv, void *buf, unsigned long obji)
   if (btsPtr->next != ULONG_MAX)
     {
       theSlot->next =
-	(struct templateSlot *) &DeftemplateBinaryData (theEnv)->
-	SlotArray[obji + 1];
+	(struct templateSlot *)
+	&DeftemplateBinaryData (theEnv)->SlotArray[obji + 1];
     }
   else
     {
@@ -634,8 +635,8 @@ CL_Clear_Bload (Environment * theEnv)
   for (i = 0; i < DeftemplateBinaryData (theEnv)->NumberOfDeftemplates; i++)
     {
       CL_UnmarkConstructHeader (theEnv,
-				&DeftemplateBinaryData (theEnv)->
-				DeftemplateArray[i].header);
+				&DeftemplateBinaryData
+				(theEnv)->DeftemplateArray[i].header);
     }
 
    /*=======================================*/

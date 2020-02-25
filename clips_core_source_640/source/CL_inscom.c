@@ -151,9 +151,8 @@ Setup_Instances (Environment * theEnv)
 					       Print_InstanceName,
 					       (Entity_PrintFunction *)
 					       CL_PrintInstanceLongFo_rm,
-					       (bool (*)
-						(void *,
-						 Environment *))
+					       (bool (*)(void *,
+							 Environment *))
 					       CL_UnmakeInstanceCallback,
 					       NULL,
 					       (void *(*)(void *, void *))
@@ -193,8 +192,9 @@ Setup_Instances (Environment * theEnv)
 
   CL_InitializeInstanceTable (theEnv);
   CL_InstallPrimitive (theEnv,
-		       (struct entityRecord *) &InstanceData (theEnv)->
-		       InstanceInfo, INSTANCE_ADDRESS_TYPE);
+		       (struct entityRecord *)
+		       &InstanceData (theEnv)->InstanceInfo,
+		       INSTANCE_ADDRESS_TYPE);
 
 #if ! RUN_TIME
 
@@ -1566,8 +1566,8 @@ CL_ClassCommand (Environment * theEnv,
 	case EXTERNAL_ADDRESS_TYPE:
 	case FACT_ADDRESS_TYPE:
 	  returnValue->value =
-	    Get_DefclassNamePointer (DefclassData (theEnv)->
-				     PrimitiveClassMap[temp.header->type]);
+	    Get_DefclassNamePointer (DefclassData (theEnv)->PrimitiveClassMap
+				     [temp.header->type]);
 	  return;
 
 	default:

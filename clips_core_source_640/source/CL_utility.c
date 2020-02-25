@@ -388,8 +388,8 @@ CL_AddCleanupFunction (Environment * theEnv,
 {
   UtilityData (theEnv)->ListOfCleanupFunctions =
     CL_Add_VoidFunctionToCallList (theEnv, name, priority, theFunction,
-				   UtilityData (theEnv)->
-				   ListOfCleanupFunctions, context);
+				   UtilityData
+				   (theEnv)->ListOfCleanupFunctions, context);
   return true;
 }
 
@@ -405,8 +405,9 @@ CL_AddPeriodicFunction (Environment * theEnv,
 {
   UtilityData (theEnv)->ListOfPeriodicFunctions =
     CL_Add_VoidFunctionToCallList (theEnv, name, priority, theFunction,
-				   UtilityData (theEnv)->
-				   ListOfPeriodicFunctions, context);
+				   UtilityData
+				   (theEnv)->ListOfPeriodicFunctions,
+				   context);
   return true;
 }
 
@@ -420,7 +421,8 @@ CL_GetPeriodicFunctionContext (Environment * theEnv, const char *name)
   struct void_CallFunctionItem *theItem;
 
   theItem = CL_Get_VoidFunctionFromCallList (theEnv, name,
-					     UtilityData (theEnv)->
+					     UtilityData
+					     (theEnv)->
 					     ListOfPeriodicFunctions);
 
   if (theItem == NULL)
@@ -441,8 +443,9 @@ CL_RemoveCleanupFunction (Environment * theEnv, const char *name)
 
   UtilityData (theEnv)->ListOfCleanupFunctions =
     CL_Remove_VoidFunctionFromCallList (theEnv, name,
-					UtilityData (theEnv)->
-					ListOfCleanupFunctions, &found);
+					UtilityData
+					(theEnv)->ListOfCleanupFunctions,
+					&found);
 
   return found;
 }
@@ -458,8 +461,9 @@ CL_RemovePeriodicFunction (Environment * theEnv, const char *name)
 
   UtilityData (theEnv)->ListOfPeriodicFunctions =
     CL_Remove_VoidFunctionFromCallList (theEnv, name,
-					UtilityData (theEnv)->
-					ListOfPeriodicFunctions, &found);
+					UtilityData
+					(theEnv)->ListOfPeriodicFunctions,
+					&found);
 
   return found;
 }
@@ -1239,8 +1243,9 @@ CL_ItemHashValue (Environment * theEnv,
 #endif
 
     case EXTERNAL_ADDRESS_TYPE:
-      return CL_HashExternalAddress (((CLIPSExternalAddress *) theValue)->
-				     contents, theRange);
+      return
+	CL_HashExternalAddress (((CLIPSExternalAddress *) theValue)->contents,
+				theRange);
 
 #if OBJECT_SYSTEM
     case INSTANCE_ADDRESS_TYPE:

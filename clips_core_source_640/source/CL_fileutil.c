@@ -229,12 +229,13 @@ PutcDribbleBuffer (Environment * theEnv, int rv)
       FileCommandData (theEnv)->DribbleBuffer =
 	CL_ExpandStringWithChar (theEnv, rv,
 				 FileCommandData (theEnv)->DribbleBuffer,
-				 &FileCommandData (theEnv)->
-				 DribbleCurrentPosition,
-				 &FileCommandData (theEnv)->
-				 DribbleMaximumPosition,
-				 FileCommandData (theEnv)->
-				 DribbleMaximumPosition + BUFFER_SIZE);
+				 &FileCommandData
+				 (theEnv)->DribbleCurrentPosition,
+				 &FileCommandData
+				 (theEnv)->DribbleMaximumPosition,
+				 FileCommandData
+				 (theEnv)->DribbleMaximumPosition +
+				 BUFFER_SIZE);
     }
 }
 
@@ -498,8 +499,8 @@ LLGetc_Batch (Environment * theEnv, const char *logicalName, bool returnOnEOF)
 	{
 	  if (FileCommandData (theEnv)->CL_BatchCurrentPosition > 0)
 	    CL_WriteString (theEnv, STDOUT,
-			    (char *) FileCommandData (theEnv)->
-			    CL_BatchBuffer);
+			    (char *)
+			    FileCommandData (theEnv)->CL_BatchBuffer);
 	  flag = Remove_Batch (theEnv);
 	}
     }
@@ -536,12 +537,13 @@ LLGetc_Batch (Environment * theEnv, const char *logicalName, bool returnOnEOF)
       FileCommandData (theEnv)->CL_BatchBuffer =
 	CL_ExpandStringWithChar (theEnv, (char) rv,
 				 FileCommandData (theEnv)->CL_BatchBuffer,
-				 &FileCommandData (theEnv)->
-				 CL_BatchCurrentPosition,
-				 &FileCommandData (theEnv)->
-				 CL_BatchMaximumPosition,
-				 FileCommandData (theEnv)->
-				 CL_BatchMaximumPosition + BUFFER_SIZE);
+				 &FileCommandData
+				 (theEnv)->CL_BatchCurrentPosition,
+				 &FileCommandData
+				 (theEnv)->CL_BatchMaximumPosition,
+				 FileCommandData
+				 (theEnv)->CL_BatchMaximumPosition +
+				 BUFFER_SIZE);
     }
 
    /*======================================*/
@@ -871,8 +873,8 @@ Remove_Batch (Environment * theEnv)
       if (file_Batch)
 	{
 	  CL_SetParsingFileName (theEnv,
-				 FileCommandData (theEnv)->
-				 batchPriorParsingFile);
+				 FileCommandData
+				 (theEnv)->batchPriorParsingFile);
 	  CL_DeleteString (theEnv,
 			   FileCommandData (theEnv)->batchPriorParsingFile);
 	  FileCommandData (theEnv)->batchPriorParsingFile = NULL;

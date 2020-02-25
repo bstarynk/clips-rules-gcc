@@ -1093,8 +1093,8 @@ CountPriorPatterns (struct joinNode *joinPtr)
       if (joinPtr->joinFromTheRight)
 	{
 	  count +=
-	    CountPriorPatterns ((struct joinNode *) joinPtr->
-				rightSideEntryStructure);
+	    CountPriorPatterns ((struct joinNode *)
+				joinPtr->rightSideEntryStructure);
 	}
       else
 	{
@@ -1169,8 +1169,8 @@ CL_MarkRuleJoins (struct joinNode *joinPtr, bool value)
     {
       if (joinPtr->joinFromTheRight)
 	{
-	  CL_MarkRuleJoins ((struct joinNode *) joinPtr->
-			    rightSideEntryStructure, value);
+	  CL_MarkRuleJoins ((struct joinNode *)
+			    joinPtr->rightSideEntryStructure, value);
 	}
 
       joinPtr->marked = value;
@@ -1923,8 +1923,8 @@ TagNetworkTraverseJoins (Environment * theEnv,
       if (joinPtr->joinFromTheRight)
 	{
 	  TagNetworkTraverseJoins (theEnv, joinCount, linkCount,
-				   (struct joinNode *) joinPtr->
-				   rightSideEntryStructure);
+				   (struct joinNode *)
+				   joinPtr->rightSideEntryStructure);
 	}
     }
 }

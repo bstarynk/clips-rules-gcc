@@ -438,8 +438,8 @@ CL_CallNextHandler (Environment * theEnv,
 #endif
 
 	      CL_EvaluateProcActions (theEnv,
-				      MessageHandlerData (theEnv)->
-				      CurrentCore->hnd->cls->header.
+				      MessageHandlerData
+				      (theEnv)->CurrentCore->hnd->cls->header.
 				      whichModule->theModule,
 				      MessageHandlerData (theEnv)->
 				      CurrentCore->hnd->actions,
@@ -935,8 +935,9 @@ CL_DynamicHandlerGetSlot (Environment * theEnv,
       (MessageHandlerData (theEnv)->CurrentCore->hnd->cls != sp->desc->cls))
     {
       CL_SlotVisibilityViolationError (theEnv, sp->desc,
-				       MessageHandlerData (theEnv)->
-				       CurrentCore->hnd->cls, false);
+				       MessageHandlerData
+				       (theEnv)->CurrentCore->hnd->cls,
+				       false);
       Set_EvaluationError (theEnv, true);
       return;
     }
@@ -995,8 +996,9 @@ CL_DynamicHandlerPutSlot (Environment * theEnv,
       (MessageHandlerData (theEnv)->CurrentCore->hnd->cls != sp->desc->cls))
     {
       CL_SlotVisibilityViolationError (theEnv, sp->desc,
-				       MessageHandlerData (theEnv)->
-				       CurrentCore->hnd->cls, false);
+				       MessageHandlerData
+				       (theEnv)->CurrentCore->hnd->cls,
+				       false);
       Set_EvaluationError (theEnv, true);
       return;
     }
@@ -1102,8 +1104,8 @@ Perfo_rmMessage (Environment * theEnv,
     {
       ins =
 	CL_FindInstanceBySymbol (theEnv,
-				 ProceduralPrimitiveData (theEnv)->
-				 ProcParamArray->lexemeValue);
+				 ProceduralPrimitiveData
+				 (theEnv)->ProcParamArray->lexemeValue);
       if (ins == NULL)
 	{
 	  CL_PrintErrorID (theEnv, "MSGPASS", 2, false);
@@ -1123,9 +1125,9 @@ Perfo_rmMessage (Environment * theEnv,
     }
   else
     if ((cls =
-	 DefclassData (theEnv)->
-	 PrimitiveClassMap[ProceduralPrimitiveData (theEnv)->ProcParamArray->
-			   header->type]) == NULL)
+	 DefclassData (theEnv)->PrimitiveClassMap[ProceduralPrimitiveData
+						  (theEnv)->ProcParamArray->
+						  header->type]) == NULL)
     {
       CL_SystemError (theEnv, "MSGPASS", 1);
       CL_ExitRouter (theEnv, EXIT_FAILURE);
@@ -1189,8 +1191,8 @@ Perfo_rmMessage (Environment * theEnv,
 
 
 	      CL_EvaluateProcActions (theEnv,
-				      MessageHandlerData (theEnv)->
-				      CurrentCore->hnd->cls->header.
+				      MessageHandlerData
+				      (theEnv)->CurrentCore->hnd->cls->header.
 				      whichModule->theModule,
 				      MessageHandlerData (theEnv)->
 				      CurrentCore->hnd->actions,

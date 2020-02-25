@@ -121,8 +121,8 @@ Deallocate_BloadData (Environment * theEnv)
   CL_DeallocateVoidCallList (theEnv,
 			     CL_BloadData (theEnv)->After_BloadFunctions);
   CL_DeallocateBoolCallList (theEnv,
-			     CL_BloadData (theEnv)->
-			     CL_Clear_BloadReadyFunctions);
+			     CL_BloadData
+			     (theEnv)->CL_Clear_BloadReadyFunctions);
   CL_DeallocateVoidCallList (theEnv,
 			     CL_BloadData (theEnv)->Abort_BloadFunctions);
   CL_genfree (theEnv, CL_BloadData (theEnv)->BinarySizes,
@@ -804,8 +804,8 @@ CL_AddBefore_BloadFunction (Environment * theEnv,
 {
   CL_BloadData (theEnv)->Before_BloadFunctions =
     CL_Add_VoidFunctionToCallList (theEnv, name, priority, func,
-				   CL_BloadData (theEnv)->
-				   Before_BloadFunctions, context);
+				   CL_BloadData
+				   (theEnv)->Before_BloadFunctions, context);
 }
 
 /*******************************************/
@@ -821,8 +821,8 @@ CL_AddAfter_BloadFunction (Environment * theEnv,
 {
   CL_BloadData (theEnv)->After_BloadFunctions =
     CL_Add_VoidFunctionToCallList (theEnv, name, priority, func,
-				   CL_BloadData (theEnv)->
-				   After_BloadFunctions, context);
+				   CL_BloadData
+				   (theEnv)->After_BloadFunctions, context);
 }
 
 /**************************************************/
@@ -838,8 +838,9 @@ CL_Add_Clear_BloadReadyFunction (Environment * theEnv,
 {
   CL_BloadData (theEnv)->CL_Clear_BloadReadyFunctions =
     CL_AddBoolFunctionToCallList (theEnv, name, priority, func,
-				  CL_BloadData (theEnv)->
-				  CL_Clear_BloadReadyFunctions, context);
+				  CL_BloadData
+				  (theEnv)->CL_Clear_BloadReadyFunctions,
+				  context);
 }
 
 /*********************************************/
@@ -855,8 +856,8 @@ CL_AddAbort_BloadFunction (Environment * theEnv,
 {
   CL_BloadData (theEnv)->Abort_BloadFunctions =
     CL_Add_VoidFunctionToCallList (theEnv, name, priority, func,
-				   CL_BloadData (theEnv)->
-				   Abort_BloadFunctions, context);
+				   CL_BloadData
+				   (theEnv)->Abort_BloadFunctions, context);
 }
 
 /*******************************************************

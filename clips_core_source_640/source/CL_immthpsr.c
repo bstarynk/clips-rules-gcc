@@ -462,8 +462,8 @@ GenTypeExpression (Environment * theEnv,
   if (primitiveCode != -1)
     tmp =
       CL_GenConstant (theEnv, 0,
-		      DefclassData (theEnv)->
-		      PrimitiveClassMap[primitiveCode]);
+		      DefclassData (theEnv)->PrimitiveClassMap
+		      [primitiveCode]);
   else
     tmp =
       CL_GenConstant (theEnv, 0,

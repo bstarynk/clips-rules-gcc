@@ -642,8 +642,8 @@ CL_BsaveTraverseJoins (Environment * theEnv,
       if (joinPtr->joinFromTheRight)
 	{
 	  CL_BsaveTraverseJoins (theEnv, fp,
-				 (struct joinNode *) joinPtr->
-				 rightSideEntryStructure);
+				 (struct joinNode *)
+				 joinPtr->rightSideEntryStructure);
 	}
     }
 }
@@ -782,8 +782,8 @@ CL_BsaveTraverseLinks (Environment * theEnv,
       if (joinPtr->joinFromTheRight)
 	{
 	  CL_BsaveTraverseLinks (theEnv, fp,
-				 (struct joinNode *) joinPtr->
-				 rightSideEntryStructure);
+				 (struct joinNode *)
+				 joinPtr->rightSideEntryStructure);
 	}
     }
 }
@@ -979,10 +979,10 @@ Update_DefruleModule (Environment * theEnv, void *buf, unsigned long obji)
 
   bdmPtr = (struct bsave_DefruleModule *) buf;
   CL_UpdateDefmoduleItemHeader (theEnv, &bdmPtr->header,
-				&DefruleBinaryData (theEnv)->
-				ModuleArray[obji].header, sizeof (Defrule),
-				(void *) DefruleBinaryData (theEnv)->
-				DefruleArray);
+				&DefruleBinaryData (theEnv)->ModuleArray
+				[obji].header, sizeof (Defrule),
+				(void *)
+				DefruleBinaryData (theEnv)->DefruleArray);
   DefruleBinaryData (theEnv)->ModuleArray[obji].agenda = NULL;
   DefruleBinaryData (theEnv)->ModuleArray[obji].groupings = NULL;
 

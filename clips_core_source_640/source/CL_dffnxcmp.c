@@ -160,8 +160,8 @@ static void
 ReadyDeffunctionsForCode (Environment * theEnv)
 {
   MarkConstruct_BsaveIDs (theEnv,
-			  DeffunctionData (theEnv)->
-			  CL_DeffunctionModuleIndex);
+			  DeffunctionData
+			  (theEnv)->CL_DeffunctionModuleIndex);
 }
 
 /**************************************************/
@@ -232,8 +232,9 @@ DeffunctionsToCode (Environment * theEnv,
 			     fileNameBuffer, fileID, imageID, &fileCount,
 			     moduleArrayVersion, headerFP,
 			     "CL_DeffunctionModuleData",
-			     ModulePrefix (DeffunctionData (theEnv)->
-					   DeffunctionCodeItem), false, NULL);
+			     ModulePrefix (DeffunctionData
+					   (theEnv)->DeffunctionCodeItem),
+			     false, NULL);
 
       if (moduleFile == NULL)
 	{
@@ -257,7 +258,8 @@ DeffunctionsToCode (Environment * theEnv,
 				 fileNameBuffer, fileID, imageID, &fileCount,
 				 deffunctionArrayVersion, headerFP,
 				 "Deffunction",
-				 ConstructPrefix (DeffunctionData (theEnv)->
+				 ConstructPrefix (DeffunctionData
+						  (theEnv)->
 						  DeffunctionCodeItem), false,
 				 NULL);
 	  if (deffunctionFile == NULL)
@@ -345,10 +347,10 @@ CL_DeffunctionModuleToCode (Environment * theEnv,
 {
   fprintf (theFile, "{");
   CL_ConstructModuleToCode (theEnv, theFile, theModule, imageID, maxIndices,
-			    DeffunctionData (theEnv)->
-			    CL_DeffunctionModuleIndex,
-			    ConstructPrefix (DeffunctionData (theEnv)->
-					     DeffunctionCodeItem));
+			    DeffunctionData
+			    (theEnv)->CL_DeffunctionModuleIndex,
+			    ConstructPrefix (DeffunctionData
+					     (theEnv)->DeffunctionCodeItem));
   fprintf (theFile, "}");
 }
 
@@ -380,10 +382,10 @@ SingleDeffunctionToCode (Environment * theEnv,
   fprintf (theFile, "{");
   CL_ConstructHeaderToCode (theEnv, theFile, &theDeffunction->header, imageID,
 			    maxIndices, moduleCount,
-			    ModulePrefix (DeffunctionData (theEnv)->
-					  DeffunctionCodeItem),
-			    ConstructPrefix (DeffunctionData (theEnv)->
-					     DeffunctionCodeItem));
+			    ModulePrefix (DeffunctionData
+					  (theEnv)->DeffunctionCodeItem),
+			    ConstructPrefix (DeffunctionData
+					     (theEnv)->DeffunctionCodeItem));
 
   /* =========================
      Deffunction specific data

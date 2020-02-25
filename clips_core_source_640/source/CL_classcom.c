@@ -382,7 +382,8 @@ Defclass *
 CL_GetNextDefclass (Environment * theEnv, Defclass * theDefclass)
 {
   return (Defclass *) CL_GetNextConstructItem (theEnv, &theDefclass->header,
-					       DefclassData (theEnv)->
+					       DefclassData
+					       (theEnv)->
 					       CL_DefclassModuleIndex);
 }
 
@@ -784,8 +785,8 @@ CL_SaveDefclasses (Environment * theEnv,
 {
 #if DEBUGGING_FUNCTIONS
   CL_DoForAllConstructsInModule (theEnv, theModule, CL_SaveDefclass,
-				 DefclassData (theEnv)->
-				 CL_DefclassModuleIndex, false,
+				 DefclassData
+				 (theEnv)->CL_DefclassModuleIndex, false,
 				 (void *) logName);
 #else
 #if MAC_XCD

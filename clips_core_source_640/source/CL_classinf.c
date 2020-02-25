@@ -557,8 +557,8 @@ CL_GetDefmessageHandlerList (Environment * theEnv,
 		supcls->handlers[j].header.name;
 	      returnValue->multifieldValue->contents[i++].value =
 		CL_CreateSymbol (theEnv,
-				 MessageHandlerData (theEnv)->
-				 hndquals[supcls->handlers[j].type]);
+				 MessageHandlerData (theEnv)->hndquals
+				 [supcls->handlers[j].type]);
 	    }
 
 	  sublen += supcls->handlerCount * 3;
@@ -994,8 +994,8 @@ CL_SlotTypes (Defclass * theDefclass,
       if (TestBitMap (typemap, j))
 	{
 	  returnValue->multifieldValue->contents[i].value =
-	    Get_DefclassNamePointer (DefclassData (theEnv)->
-				     PrimitiveClassMap[j]);
+	    Get_DefclassNamePointer (DefclassData (theEnv)->PrimitiveClassMap
+				     [j]);
 	  i++;
 	}
       j++;

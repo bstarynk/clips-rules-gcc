@@ -410,8 +410,8 @@ CL_FindInstanceBySymbol (Environment * theEnv,
 	}
 
       ins =
-	InstanceData (theEnv)->
-	InstanceTable[CL_HashInstance (moduleAnd_InstanceName)];
+	InstanceData (theEnv)->InstanceTable[CL_HashInstance
+					     (moduleAnd_InstanceName)];
       while (ins != NULL)
 	{
 	  if (ins->name == moduleAnd_InstanceName)

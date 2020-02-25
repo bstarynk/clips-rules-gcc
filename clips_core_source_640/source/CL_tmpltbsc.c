@@ -170,15 +170,15 @@ CL_Undeftemplate (Deftemplate * theDeftemplate, Environment * allEnv)
     {
       theEnv = allEnv;
       return CL_Undefconstruct (theEnv, NULL,
-				DeftemplateData (theEnv)->
-				DeftemplateConstruct);
+				DeftemplateData
+				(theEnv)->DeftemplateConstruct);
     }
   else
     {
       theEnv = theDeftemplate->header.env;
       return CL_Undefconstruct (theEnv, &theDeftemplate->header,
-				DeftemplateData (theEnv)->
-				DeftemplateConstruct);
+				DeftemplateData
+				(theEnv)->DeftemplateConstruct);
     }
 }
 
@@ -191,8 +191,8 @@ CL_GetDeftemplateListFunction (Environment * theEnv,
 			       UDFContext * context, UDFValue * returnValue)
 {
   CL_GetConstructListFunction (context, returnValue,
-			       DeftemplateData (theEnv)->
-			       DeftemplateConstruct);
+			       DeftemplateData
+			       (theEnv)->DeftemplateConstruct);
 }
 
 /********************************************/
@@ -222,8 +222,8 @@ CL_DeftemplateModuleFunction (Environment * theEnv,
 {
   returnValue->value =
     CL_GetConstructModuleCommand (context, "deftemplate-module",
-				  DeftemplateData (theEnv)->
-				  DeftemplateConstruct);
+				  DeftemplateData
+				  (theEnv)->DeftemplateConstruct);
 }
 
 #if DEBUGGING_FUNCTIONS
@@ -311,9 +311,9 @@ CL_Deftemplate_WatchAccess (Environment * theEnv,
 #endif
 
   return CL_ConstructSet_WatchAccess (theEnv,
-				      DeftemplateData (theEnv)->
-				      DeftemplateConstruct, newState,
-				      argExprs,
+				      DeftemplateData
+				      (theEnv)->DeftemplateConstruct,
+				      newState, argExprs,
 				      (ConstructGet_WatchFunction *)
 				      CL_DeftemplateGet_Watch,
 				      (ConstructSet_WatchFunction *)
@@ -334,9 +334,9 @@ CL_Deftemplate_WatchPrint (Environment * theEnv,
 #endif
 
   return CL_ConstructPrint_WatchAccess (theEnv,
-					DeftemplateData (theEnv)->
-					DeftemplateConstruct, logName,
-					argExprs,
+					DeftemplateData
+					(theEnv)->DeftemplateConstruct,
+					logName, argExprs,
 					(ConstructGet_WatchFunction *)
 					CL_DeftemplateGet_Watch,
 					(ConstructSet_WatchFunction *)

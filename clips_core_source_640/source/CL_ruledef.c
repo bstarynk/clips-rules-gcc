@@ -295,8 +295,8 @@ Get_DefruleModuleItem (Environment * theEnv, Defmodule * theModule)
 {
   return ((struct defruleModule *)
 	  CL_GetConstructModuleItemByIndex (theEnv, theModule,
-					    DefruleData (theEnv)->
-					    CL_DefruleModuleIndex));
+					    DefruleData
+					    (theEnv)->CL_DefruleModuleIndex));
 }
 
 /****************************************************************/
@@ -321,7 +321,8 @@ Defrule *
 CL_FindDefruleInModule (Environment * theEnv, const char *defruleName)
 {
   return (Defrule *) CL_FindNamedConstructInModule (theEnv, defruleName,
-						    DefruleData (theEnv)->
+						    DefruleData
+						    (theEnv)->
 						    DefruleConstruct);
 }
 
@@ -335,7 +336,8 @@ Defrule *
 CL_GetNextDefrule (Environment * theEnv, Defrule * defrulePtr)
 {
   return (Defrule *) CL_GetNextConstructItem (theEnv, &defrulePtr->header,
-					      DefruleData (theEnv)->
+					      DefruleData
+					      (theEnv)->
 					      CL_DefruleModuleIndex);
 }
 
@@ -459,8 +461,8 @@ AddBetaMemoriesToRule (Environment * theEnv, struct joinNode *theNode)
   if (theNode->joinFromTheRight)
     {
       AddBetaMemoriesToRule (theEnv,
-			     (struct joinNode *) theNode->
-			     rightSideEntryStructure);
+			     (struct joinNode *)
+			     theNode->rightSideEntryStructure);
     }
 }
 

@@ -477,8 +477,8 @@ Objects_RunTimeInitialize (Environment * theEnv,
       }
 
   SearchForHashedPatternNodes (theEnv,
-			       ObjectReteData (theEnv)->
-			       ObjectPatternNetworkPointer);
+			       ObjectReteData
+			       (theEnv)->ObjectPatternNetworkPointer);
 }
 
 /********************************/
@@ -578,39 +578,39 @@ CL_CreateSystemClasses (Environment * theEnv, void *context)
      and ADDRESS still need to be made.
      =============================================================================== */
   CL_AddClassLink (theEnv,
-		   &DefclassData (theEnv)->
-		   PrimitiveClassMap[INSTANCE_ADDRESS_TYPE]->
-		   directSuperclasses, address, true, 0);
+		   &DefclassData (theEnv)->PrimitiveClassMap
+		   [INSTANCE_ADDRESS_TYPE]->directSuperclasses, address, true,
+		   0);
   CL_AddClassLink (theEnv,
-		   &DefclassData (theEnv)->
-		   PrimitiveClassMap[INSTANCE_ADDRESS_TYPE]->allSuperclasses,
-		   address, false, 2);
+		   &DefclassData (theEnv)->PrimitiveClassMap
+		   [INSTANCE_ADDRESS_TYPE]->allSuperclasses, address, false,
+		   2);
   CL_AddClassLink (theEnv, &address->directSubclasses,
-		   DefclassData (theEnv)->
-		   PrimitiveClassMap[INSTANCE_ADDRESS_TYPE], true, 0);
+		   DefclassData (theEnv)->PrimitiveClassMap
+		   [INSTANCE_ADDRESS_TYPE], true, 0);
 
   /* =======================================================================
      The order of the class in the list MUST correspond to their type codes!
      See CONSTANT.H
      ======================================================================= */
-  CL_AddConstructToModule (&DefclassData (theEnv)->
-			   PrimitiveClassMap[FLOAT_TYPE]->header);
-  CL_AddConstructToModule (&DefclassData (theEnv)->
-			   PrimitiveClassMap[INTEGER_TYPE]->header);
-  CL_AddConstructToModule (&DefclassData (theEnv)->
-			   PrimitiveClassMap[SYMBOL_TYPE]->header);
-  CL_AddConstructToModule (&DefclassData (theEnv)->
-			   PrimitiveClassMap[STRING_TYPE]->header);
-  CL_AddConstructToModule (&DefclassData (theEnv)->
-			   PrimitiveClassMap[MULTIFIELD_TYPE]->header);
-  CL_AddConstructToModule (&DefclassData (theEnv)->
-			   PrimitiveClassMap[EXTERNAL_ADDRESS_TYPE]->header);
-  CL_AddConstructToModule (&DefclassData (theEnv)->
-			   PrimitiveClassMap[FACT_ADDRESS_TYPE]->header);
-  CL_AddConstructToModule (&DefclassData (theEnv)->
-			   PrimitiveClassMap[INSTANCE_ADDRESS_TYPE]->header);
-  CL_AddConstructToModule (&DefclassData (theEnv)->
-			   PrimitiveClassMap[INSTANCE_NAME_TYPE]->header);
+  CL_AddConstructToModule (&DefclassData (theEnv)->PrimitiveClassMap
+			   [FLOAT_TYPE]->header);
+  CL_AddConstructToModule (&DefclassData (theEnv)->PrimitiveClassMap
+			   [INTEGER_TYPE]->header);
+  CL_AddConstructToModule (&DefclassData (theEnv)->PrimitiveClassMap
+			   [SYMBOL_TYPE]->header);
+  CL_AddConstructToModule (&DefclassData (theEnv)->PrimitiveClassMap
+			   [STRING_TYPE]->header);
+  CL_AddConstructToModule (&DefclassData (theEnv)->PrimitiveClassMap
+			   [MULTIFIELD_TYPE]->header);
+  CL_AddConstructToModule (&DefclassData (theEnv)->PrimitiveClassMap
+			   [EXTERNAL_ADDRESS_TYPE]->header);
+  CL_AddConstructToModule (&DefclassData (theEnv)->PrimitiveClassMap
+			   [FACT_ADDRESS_TYPE]->header);
+  CL_AddConstructToModule (&DefclassData (theEnv)->PrimitiveClassMap
+			   [INSTANCE_ADDRESS_TYPE]->header);
+  CL_AddConstructToModule (&DefclassData (theEnv)->PrimitiveClassMap
+			   [INSTANCE_NAME_TYPE]->header);
   CL_AddConstructToModule (&any->header);
   CL_AddConstructToModule (&primitive->header);
   CL_AddConstructToModule (&number->header);

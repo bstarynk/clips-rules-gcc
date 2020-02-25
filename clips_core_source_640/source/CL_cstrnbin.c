@@ -246,8 +246,8 @@ CopyFrom_BsaveConstraintRecord (Environment * theEnv,
 
   bsaveConstraints = (BSAVE_CONSTRAINT_RECORD *) buf;
   constraints =
-    (CONSTRAINT_RECORD *) & ConstraintData (theEnv)->
-    ConstraintArray[theIndex];
+    (CONSTRAINT_RECORD *) &
+    ConstraintData (theEnv)->ConstraintArray[theIndex];
 
   constraints->anyAllowed = bsaveConstraints->anyAllowed;
   constraints->symbolsAllowed = bsaveConstraints->symbolsAllowed;

@@ -1438,8 +1438,8 @@ CL_FuncallFunction (Environment * theEnv,
 	  CL_WriteString (theEnv, STDERR,
 			  "Function 'funcall' called with the wrong number of arguments for deffunction '");
 	  CL_WriteString (theEnv, STDERR,
-			  CL_DeffunctionName ((Deffunction *) theReference.
-					      value));
+			  CL_DeffunctionName ((Deffunction *)
+					      theReference.value));
 	  CL_WriteString (theEnv, STDERR, "'.\n");
 	  CL_ExpressionDeinstall (theEnv, &theReference);
 	  CL_ReturnExpression (theEnv, theReference.argList);

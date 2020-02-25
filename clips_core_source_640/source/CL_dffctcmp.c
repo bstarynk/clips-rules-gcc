@@ -146,8 +146,9 @@ ConstructToCode (Environment * theEnv,
 			     fileNameBuffer, fileID, imageID, &fileCount,
 			     moduleArrayVersion, headerFP,
 			     "struct deffactsModule",
-			     ModulePrefix (DeffactsData (theEnv)->
-					   DeffactsCodeItem), false, NULL);
+			     ModulePrefix (DeffactsData
+					   (theEnv)->DeffactsCodeItem), false,
+			     NULL);
 
       if (moduleFile == NULL)
 	{
@@ -173,9 +174,9 @@ ConstructToCode (Environment * theEnv,
 	    CL_OpenFileIfNeeded (theEnv, deffactsFile, fileName, pathName,
 				 fileNameBuffer, fileID, imageID, &fileCount,
 				 deffactsArrayVersion, headerFP, "Deffacts",
-				 ConstructPrefix (DeffactsData (theEnv)->
-						  DeffactsCodeItem), false,
-				 NULL);
+				 ConstructPrefix (DeffactsData
+						  (theEnv)->DeffactsCodeItem),
+				 false, NULL);
 	  if (deffactsFile == NULL)
 	    {
 	      CloseDeffactsFiles (theEnv, moduleFile, deffactsFile,
@@ -248,8 +249,8 @@ CL_DeffactsModuleToCode (Environment * theEnv,
 
   CL_ConstructModuleToCode (theEnv, theFile, theModule, imageID, maxIndices,
 			    DeffactsData (theEnv)->CL_DeffactsModuleIndex,
-			    ConstructPrefix (DeffactsData (theEnv)->
-					     DeffactsCodeItem));
+			    ConstructPrefix (DeffactsData
+					     (theEnv)->DeffactsCodeItem));
 
   fprintf (theFile, "}");
 }
@@ -273,10 +274,10 @@ DeffactsToCode (Environment * theEnv,
 
   CL_ConstructHeaderToCode (theEnv, theFile, &theDeffacts->header, imageID,
 			    maxIndices, moduleCount,
-			    ModulePrefix (DeffactsData (theEnv)->
-					  DeffactsCodeItem),
-			    ConstructPrefix (DeffactsData (theEnv)->
-					     DeffactsCodeItem));
+			    ModulePrefix (DeffactsData
+					  (theEnv)->DeffactsCodeItem),
+			    ConstructPrefix (DeffactsData
+					     (theEnv)->DeffactsCodeItem));
 
   fprintf (theFile, ",");
 

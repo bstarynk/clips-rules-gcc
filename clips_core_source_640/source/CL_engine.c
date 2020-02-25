@@ -151,11 +151,11 @@ DeallocateEngineData (Environment * theEnv)
   FocalModule *tmpPtr, *nextPtr;
 
   CL_DeallocateRuleFiredCallList (theEnv,
-				  EngineData (theEnv)->
-				  ListOfAfterRuleFiresFunctions);
+				  EngineData
+				  (theEnv)->ListOfAfterRuleFiresFunctions);
   CL_DeallocateRuleFiredCallList (theEnv,
-				  EngineData (theEnv)->
-				  ListOfBeforeRuleFiresFunctions);
+				  EngineData
+				  (theEnv)->ListOfBeforeRuleFiresFunctions);
 
   tmpPtr = EngineData (theEnv)->Current_Focus;
   while (tmpPtr != NULL)
@@ -1067,7 +1067,8 @@ CL_AddAfterRuleFiresFunction (Environment * theEnv,
 {
   EngineData (theEnv)->ListOfAfterRuleFiresFunctions =
     CL_AddRuleFiredFunctionToCallList (theEnv, name, priority, functionPtr,
-				       EngineData (theEnv)->
+				       EngineData
+				       (theEnv)->
 				       ListOfAfterRuleFiresFunctions,
 				       context);
   return true;
@@ -1085,7 +1086,8 @@ CL_AddBeforeRuleFiresFunction (Environment * theEnv,
 {
   EngineData (theEnv)->ListOfBeforeRuleFiresFunctions =
     CL_AddRuleFiredFunctionToCallList (theEnv, name, priority, functionPtr,
-				       EngineData (theEnv)->
+				       EngineData
+				       (theEnv)->
 				       ListOfBeforeRuleFiresFunctions,
 				       context);
   return true;
@@ -1102,7 +1104,8 @@ CL_RemoveAfterRuleFiresFunction (Environment * theEnv, const char *name)
 
   EngineData (theEnv)->ListOfAfterRuleFiresFunctions =
     CL_RemoveRuleFiredFunctionFromCallList (theEnv, name,
-					    EngineData (theEnv)->
+					    EngineData
+					    (theEnv)->
 					    ListOfAfterRuleFiresFunctions,
 					    &found);
 
@@ -1120,7 +1123,8 @@ CL_RemoveBeforeRuleFiresFunction (Environment * theEnv, const char *name)
 
   EngineData (theEnv)->ListOfBeforeRuleFiresFunctions =
     CL_RemoveRuleFiredFunctionFromCallList (theEnv, name,
-					    EngineData (theEnv)->
+					    EngineData
+					    (theEnv)->
 					    ListOfBeforeRuleFiresFunctions,
 					    &found);
 

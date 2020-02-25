@@ -421,8 +421,8 @@ GetNextTemplateSlotToPrint (Environment * theEnv,
 		}
 	    }
 	  else if (CL_MultifieldsEqual ((Multifield *) tempDO.value,
-					(Multifield *) sublist[*position].
-					value))
+					(Multifield *)
+					sublist[*position].value))
 	    {
 	      (*position)++;
 	      slotPtr = slotPtr->next;
@@ -549,8 +549,8 @@ CL_UpdateDeftemplateScope (Environment * theEnv)
 
       theItem = (struct defmoduleItemHeader *)
 	CL_GetModuleItem (theEnv, theModule,
-			  DeftemplateData (theEnv)->
-			  CL_DeftemplateModuleIndex);
+			  DeftemplateData
+			  (theEnv)->CL_DeftemplateModuleIndex);
 
       for (theDeftemplate = (Deftemplate *) theItem->firstItem;
 	   theDeftemplate != NULL;

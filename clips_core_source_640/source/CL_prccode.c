@@ -223,8 +223,8 @@ CL_InstallProcedurePrimitives (Environment * theEnv)
   memcpy (&ProceduralPrimitiveData (theEnv)->DeffunctionEntityRecord,
 	  &deffunctionEntityRecord, sizeof (struct entityRecord));
   CL_InstallPrimitive (theEnv,
-		       &ProceduralPrimitiveData (theEnv)->
-		       DeffunctionEntityRecord, PCALL);
+		       &ProceduralPrimitiveData
+		       (theEnv)->DeffunctionEntityRecord, PCALL);
 #endif
 
 #if ! DEFGENERIC_CONSTRUCT
@@ -863,8 +863,8 @@ CL_ReleaseProcParameters (Environment * theEnv)
 	  ProceduralPrimitiveData (theEnv)->NoParamValue)
 	{
 	  CL_ReturnMultifield (theEnv,
-			       ProceduralPrimitiveData (theEnv)->
-			       WildcardValue->multifieldValue);
+			       ProceduralPrimitiveData
+			       (theEnv)->WildcardValue->multifieldValue);
 	}
 
       rtn_struct (theEnv, udfValue,
@@ -955,9 +955,8 @@ CL_GetProcParamExpressions (Environment * theEnv)
 	NULL;
       ProceduralPrimitiveData (theEnv)->ProcParamExpressions[i].nextArg =
 	((i + 1) !=
-	 ProceduralPrimitiveData (theEnv)->
-	 ProcParamArraySize) ? &ProceduralPrimitiveData (theEnv)->
-	ProcParamExpressions[i + 1] : NULL;
+	 ProceduralPrimitiveData (theEnv)->ProcParamArraySize) ?
+	&ProceduralPrimitiveData (theEnv)->ProcParamExpressions[i + 1] : NULL;
     }
   return (ProceduralPrimitiveData (theEnv)->ProcParamExpressions);
 }
@@ -1308,8 +1307,11 @@ RtnProcParam (Environment * theEnv, void *value, UDFValue * returnValue)
   UDFValue *src;
 
   src =
-    &ProceduralPrimitiveData (theEnv)->
-    ProcParamArray[*((int *) ((CLIPSBitMap *) value)->contents) - 1];
+    &ProceduralPrimitiveData (theEnv)->ProcParamArray[*
+						      ((int
+							*) ((CLIPSBitMap *)
+							    value)->contents)
+						      - 1];
   returnValue->value = src->value;
   returnValue->begin = src->begin;
   returnValue->range = src->range;
@@ -1399,8 +1401,10 @@ PutProcBind (Environment * theEnv, void *value, UDFValue * returnValue)
   UDFValue *dst;
 
   dst =
-    &ProceduralPrimitiveData (theEnv)->
-    LocalVarArray[*((int *) ((CLIPSBitMap *) value)->contents) - 1];
+    &ProceduralPrimitiveData (theEnv)->LocalVarArray[*
+						     ((int *) ((CLIPSBitMap *)
+							       value)->contents)
+						     - 1];
   if (GetFirstArgument () == NULL)
     {
       if (dst->supplementalInfo == TrueSymbol (theEnv))

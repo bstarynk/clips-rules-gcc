@@ -263,9 +263,9 @@ CL_GetToken (Environment * theEnv,
 #if DEFGLOBAL_CONSTRUCT
 	      if ((theToken->lexemeValue->contents[0] == '*') &&
 		  (strlen (theToken->lexemeValue->contents) > 1) &&
-		  (theToken->lexemeValue->
-		   contents[strlen (theToken->lexemeValue->contents) - 1] ==
-		   '*'))
+		  (theToken->lexemeValue->contents[strlen
+						   (theToken->lexemeValue->
+						    contents) - 1] == '*'))
 		{
 		  size_t count;
 

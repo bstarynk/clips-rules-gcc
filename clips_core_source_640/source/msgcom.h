@@ -97,7 +97,7 @@ void CL_SetupMessageHandlers (Environment *);
 const char *CL_DefmessageHandlerName (Defclass *, unsigned);
 const char *CL_Defmessage_HandlerType (Defclass *, unsigned);
 unsigned CL_GetNextDefmessageHandler (Defclass *, unsigned);
-DefmessageHandler * CL_GetDefmessageHandlerPointer (Defclass *, unsigned int);
+DefmessageHandler *CL_GetDefmessageHandlerPointer (Defclass *, unsigned int);
 #if DEBUGGING_FUNCTIONS
 bool CL_DefmessageHandlerGet_Watch (Defclass *, unsigned);
 void CL_DefmessageHandlerSet_Watch (Defclass *, unsigned, bool);

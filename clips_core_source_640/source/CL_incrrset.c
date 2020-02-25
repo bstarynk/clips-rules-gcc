@@ -252,8 +252,9 @@ CheckForPrimableJoins (Environment * theEnv,
 		{
 		  if ((joinPtr->rightSideEntryStructure == NULL) ||
 		      (joinPtr->patternIsNegated) ||
-		      (((struct patternNodeHeader *) joinPtr->
-			rightSideEntryStructure)->initialize == false))
+		      (((struct patternNodeHeader *)
+			joinPtr->rightSideEntryStructure)->initialize ==
+		       false))
 		    {
 		      PrimeJoinFromLeftMemory (theEnv, joinPtr);
 		      joinPtr->marked = true;
@@ -330,8 +331,9 @@ PrimeJoinFromLeftMemory (Environment * theEnv, struct joinNode *joinPtr)
 	    }
 
 	  for (listOfHashNodes =
-	       ((struct patternNodeHeader *) joinPtr->
-		rightSideEntryStructure)->firstHash; listOfHashNodes != NULL;
+	       ((struct patternNodeHeader *)
+		joinPtr->rightSideEntryStructure)->firstHash;
+	       listOfHashNodes != NULL;
 	       listOfHashNodes = listOfHashNodes->nextHash)
 	    {
 	      if (listOfHashNodes->alphaMemory != NULL)
@@ -346,8 +348,9 @@ PrimeJoinFromLeftMemory (Environment * theEnv, struct joinNode *joinPtr)
       else
 	{
 	  for (listOfHashNodes =
-	       ((struct patternNodeHeader *) joinPtr->
-		rightSideEntryStructure)->firstHash; listOfHashNodes != NULL;
+	       ((struct patternNodeHeader *)
+		joinPtr->rightSideEntryStructure)->firstHash;
+	       listOfHashNodes != NULL;
 	       listOfHashNodes = listOfHashNodes->nextHash)
 	    {
 	      for (theList = listOfHashNodes->alphaMemory;

@@ -1007,8 +1007,8 @@ CL_GetConstructList (Environment * theEnv,
 	 /*=================================================*/
 
 	  tempSize =
-	    strlen ((*constructClass->
-		     getConstructNameFunction) (theConstruct)->contents);
+	    strlen ((*constructClass->getConstructNameFunction)
+		    (theConstruct)->contents);
 	  if (tempSize > largestConstructNameSize)
 	    {
 	      largestConstructNameSize = tempSize;

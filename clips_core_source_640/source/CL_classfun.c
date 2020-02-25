@@ -684,8 +684,8 @@ CL_AddSlotName (Environment * theEnv,
       snp->hashTableIndex = hashTableIndex;
       snp->use = 1;
       snp->id =
-	(unsigned short) (usenewid ? newid : DefclassData (theEnv)->
-			  newSlotID++);
+	(unsigned short) (usenewid ? newid :
+			  DefclassData (theEnv)->newSlotID++);
       snp->nxt = DefclassData (theEnv)->SlotNameTable[hashTableIndex];
       DefclassData (theEnv)->SlotNameTable[hashTableIndex] = snp;
       IncrementLexemeCount (slotName);

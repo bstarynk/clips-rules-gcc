@@ -538,8 +538,8 @@ ReadTokenFromStdin (Environment * theEnv, struct token *theToken)
 	{
 	  inputString =
 	    CL_ExpandStringWithChar (theEnv, inchar, inputString,
-				     &RouterData (theEnv)->
-				     CommandBufferInputCount,
+				     &RouterData
+				     (theEnv)->CommandBufferInputCount,
 				     &inputStringSize, inputStringSize + 80);
 	  inchar = CL_ReadRouter (theEnv, STDIN);
 	}
@@ -552,8 +552,8 @@ ReadTokenFromStdin (Environment * theEnv, struct token *theToken)
 	{
 	  inputString =
 	    CL_ExpandStringWithChar (theEnv, inchar, inputString,
-				     &RouterData (theEnv)->
-				     CommandBufferInputCount,
+				     &RouterData
+				     (theEnv)->CommandBufferInputCount,
 				     &inputStringSize, inputStringSize + 80);
 	}
 
@@ -2108,9 +2108,9 @@ ReadNumber (Environment * theEnv,
     {
       inputString =
 	CL_ExpandStringWithChar (theEnv, inchar, inputString,
-				 &RouterData (theEnv)->
-				 CommandBufferInputCount, &inputStringSize,
-				 inputStringSize + 80);
+				 &RouterData
+				 (theEnv)->CommandBufferInputCount,
+				 &inputStringSize, inputStringSize + 80);
       inchar = CL_ReadRouter (theEnv, logicalName);
     }
 

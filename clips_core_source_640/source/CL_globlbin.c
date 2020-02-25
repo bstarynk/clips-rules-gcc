@@ -108,8 +108,8 @@ DeallocateDefglobal_BloadData (Environment * theEnv)
 	  type == MULTIFIELD_TYPE)
 	{
 	  CL_ReturnMultifield (theEnv,
-			       DefglobalBinaryData (theEnv)->
-			       DefglobalArray[i].current.multifieldValue);
+			       DefglobalBinaryData (theEnv)->DefglobalArray
+			       [i].current.multifieldValue);
 	}
     }
 
@@ -151,8 +151,8 @@ CL_BsaveFind (Environment * theEnv)
    /*=======================================================*/
 
   CL_Save_BloadCount (theEnv,
-		      DefglobalBinaryData (theEnv)->
-		      NumberOf_DefglobalModules);
+		      DefglobalBinaryData
+		      (theEnv)->NumberOf_DefglobalModules);
   CL_Save_BloadCount (theEnv,
 		      DefglobalBinaryData (theEnv)->NumberOfDefglobals);
 
@@ -189,8 +189,8 @@ CL_BsaveFind (Environment * theEnv)
 	 /*======================================================*/
 
 	  CL_MarkConstructHeaderNeededItems (&defglobalPtr->header,
-					     DefglobalBinaryData (theEnv)->
-					     NumberOfDefglobals++);
+					     DefglobalBinaryData
+					     (theEnv)->NumberOfDefglobals++);
 	}
     }
 }
@@ -295,8 +295,8 @@ CL_BsaveBinaryItem (Environment * theEnv, FILE * fp)
    /*=============================================================*/
 
   Restore_BloadCount (theEnv,
-		      &DefglobalBinaryData (theEnv)->
-		      NumberOf_DefglobalModules);
+		      &DefglobalBinaryData
+		      (theEnv)->NumberOf_DefglobalModules);
   Restore_BloadCount (theEnv,
 		      &DefglobalBinaryData (theEnv)->NumberOfDefglobals);
 }
@@ -381,8 +381,8 @@ CL_BloadBinaryItem (Environment * theEnv)
    /*=============================================*/
 
   CL_Bloadand_Refresh (theEnv,
-		       DefglobalBinaryData (theEnv)->
-		       NumberOf_DefglobalModules,
+		       DefglobalBinaryData
+		       (theEnv)->NumberOf_DefglobalModules,
 		       sizeof (struct bsave_DefglobalModule),
 		       Update_DefglobalModule);
 
@@ -408,8 +408,8 @@ Update_DefglobalModule (Environment * theEnv, void *buf, unsigned long obji)
   bdmPtr = (struct bsave_DefglobalModule *) buf;
 
   CL_UpdateDefmoduleItemHeader (theEnv, &bdmPtr->header,
-				&DefglobalBinaryData (theEnv)->
-				ModuleArray[obji].header, sizeof (Defglobal),
+				&DefglobalBinaryData (theEnv)->ModuleArray
+				[obji].header, sizeof (Defglobal),
 				DefglobalBinaryData (theEnv)->DefglobalArray);
 }
 
@@ -424,8 +424,8 @@ UpdateDefglobal (Environment * theEnv, void *buf, unsigned long obji)
 
   bdp = (struct bsaveDefglobal *) buf;
   CL_UpdateConstructHeader (theEnv, &bdp->header,
-			    &DefglobalBinaryData (theEnv)->
-			    DefglobalArray[obji].header, DEFGLOBAL,
+			    &DefglobalBinaryData (theEnv)->DefglobalArray
+			    [obji].header, DEFGLOBAL,
 			    sizeof (struct defglobalModule),
 			    DefglobalBinaryData (theEnv)->ModuleArray,
 			    sizeof (Defglobal),
@@ -460,8 +460,8 @@ CL_Clear_Bload (Environment * theEnv)
   for (i = 0; i < DefglobalBinaryData (theEnv)->NumberOfDefglobals; i++)
     {
       CL_UnmarkConstructHeader (theEnv,
-				&DefglobalBinaryData (theEnv)->
-				DefglobalArray[i].header);
+				&DefglobalBinaryData (theEnv)->DefglobalArray
+				[i].header);
 
       CL_Release (theEnv,
 		  DefglobalBinaryData (theEnv)->DefglobalArray[i].current.
@@ -470,8 +470,8 @@ CL_Clear_Bload (Environment * theEnv)
 	  type == MULTIFIELD_TYPE)
 	{
 	  CL_ReturnMultifield (theEnv,
-			       DefglobalBinaryData (theEnv)->
-			       DefglobalArray[i].current.multifieldValue);
+			       DefglobalBinaryData (theEnv)->DefglobalArray
+			       [i].current.multifieldValue);
 	}
     }
 

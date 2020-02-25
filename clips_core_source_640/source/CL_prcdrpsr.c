@@ -172,8 +172,8 @@ CL_ClearParsedBindNames (Environment * theEnv)
     {
       temp_bind = ProcedureParserData (theEnv)->ListOfParsedBindNames->next;
       CL_RemoveConstraint (theEnv,
-			   ProcedureParserData (theEnv)->
-			   ListOfParsedBindNames->constraints);
+			   ProcedureParserData
+			   (theEnv)->ListOfParsedBindNames->constraints);
       rtn_struct (theEnv, BindInfo,
 		  ProcedureParserData (theEnv)->ListOfParsedBindNames);
       ProcedureParserData (theEnv)->ListOfParsedBindNames = temp_bind;

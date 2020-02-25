@@ -170,8 +170,8 @@ CL_PrintAtom (Environment * theEnv,
 	{
 	  CL_WriteString (theEnv, logicalName,
 			  StringPrintFo_rm (theEnv,
-					    ((CLIPSLexeme *) value)->
-					    contents));
+					    ((CLIPSLexeme *)
+					     value)->contents));
 	}
       else
 	{
@@ -188,15 +188,15 @@ CL_PrintAtom (Environment * theEnv,
       if (PrintUtilityData (theEnv)->AddressesToStrings)
 	CL_WriteString (theEnv, logicalName, "\"");
 
-      if ((CL_EvaluationData (theEnv)->
-	   ExternalAddressTypes[theAddress->type] != NULL)
-	  && (CL_EvaluationData (theEnv)->
-	      ExternalAddressTypes[theAddress->type]->long_PrintFunction !=
-	      NULL))
+      if ((CL_EvaluationData (theEnv)->ExternalAddressTypes[theAddress->type]
+	   != NULL)
+	  &&
+	  (CL_EvaluationData (theEnv)->ExternalAddressTypes
+	   [theAddress->type]->long_PrintFunction != NULL))
 	{
-	  (*CL_EvaluationData (theEnv)->
-	   ExternalAddressTypes[theAddress->type]->
-	   long_PrintFunction) (theEnv, logicalName, value);
+	  (*CL_EvaluationData (theEnv)->ExternalAddressTypes
+	   [theAddress->type]->long_PrintFunction) (theEnv, logicalName,
+						    value);
 	}
       else
 	{
@@ -656,15 +656,15 @@ CL_DataObjectToString (Environment * theEnv, UDFValue * theDO)
 
       OpenString_BuilderDestination (theEnv, "DOTS", theSB);
 
-      if ((CL_EvaluationData (theEnv)->
-	   ExternalAddressTypes[theAddress->type] != NULL)
-	  && (CL_EvaluationData (theEnv)->
-	      ExternalAddressTypes[theAddress->type]->long_PrintFunction !=
-	      NULL))
+      if ((CL_EvaluationData (theEnv)->ExternalAddressTypes[theAddress->type]
+	   != NULL)
+	  &&
+	  (CL_EvaluationData (theEnv)->ExternalAddressTypes
+	   [theAddress->type]->long_PrintFunction != NULL))
 	{
-	  (*CL_EvaluationData (theEnv)->
-	   ExternalAddressTypes[theAddress->type]->
-	   long_PrintFunction) (theEnv, "DOTS", theAddress);
+	  (*CL_EvaluationData (theEnv)->ExternalAddressTypes
+	   [theAddress->type]->long_PrintFunction) (theEnv, "DOTS",
+						    theAddress);
 	}
       else
 	{

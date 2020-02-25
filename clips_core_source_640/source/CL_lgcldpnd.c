@@ -476,8 +476,8 @@ CL_ForceLogical_Retractions (Environment * theEnv)
       /*==========================================*/
 
       theEntity =
-	(struct patternEntity *) EngineData (theEnv)->
-	UnsupportedDataEntities->dPtr;
+	(struct patternEntity *)
+	EngineData (theEnv)->UnsupportedDataEntities->dPtr;
 
       /*================================================*/
       /* Remove the dependency structure from the list. */

@@ -959,8 +959,9 @@ CL_Evaluate_SlotDefaultValue (Environment * theEnv,
 	  Set_ExecutingConstruct (theEnv, true);
 	  olddcc = CL_SetDynamicConstraintChecking (theEnv, true);
 	  vPass = CL_EvaluateAndStoreInDataObject (theEnv, sd->multiple,
-						   (Expression *) sd->
-						   defaultValue, &temp, true);
+						   (Expression *)
+						   sd->defaultValue, &temp,
+						   true);
 	  if (vPass != false)
 	    vPass =
 	      (CL_ValidSlotValue

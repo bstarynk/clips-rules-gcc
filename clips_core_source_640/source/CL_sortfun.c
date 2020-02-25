@@ -115,8 +115,8 @@ DefaultCompareSwapFunction (Environment * theEnv,
 			 CL_SortFunctionData (theEnv)->SortComparisonFunction,
 			 &returnValue);
   CL_ExpressionDeinstall (theEnv,
-			  CL_SortFunctionData (theEnv)->
-			  SortComparisonFunction);
+			  CL_SortFunctionData
+			  (theEnv)->SortComparisonFunction);
   CL_ReturnExpression (theEnv,
 		       CL_SortFunctionData (theEnv)->SortComparisonFunction->
 		       argList);

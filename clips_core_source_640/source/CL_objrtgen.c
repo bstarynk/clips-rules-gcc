@@ -752,8 +752,8 @@ GenerateSlotComparisonTest (Environment * theEnv,
     {
       theExp =
 	CL_GenConstant (theEnv, FCALL,
-			selfNode->negated ? ExpressionData (theEnv)->
-			PTR_NEQ : ExpressionData (theEnv)->PTR_EQ);
+			selfNode->negated ? ExpressionData (theEnv)->PTR_NEQ :
+			ExpressionData (theEnv)->PTR_EQ);
       theExp->argList = CL_GenConstant (theEnv, 0, NULL);
 
       if (isNand)

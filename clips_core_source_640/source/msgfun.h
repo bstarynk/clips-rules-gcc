@@ -84,12 +84,12 @@ void CL_SlotVisibilityViolationError (Environment *, SlotDescriptor *,
 #if ! RUN_TIME
 void CL_NewSystemHandler (Environment *, const char *, const char *,
 			  const char *, unsigned short);
-DefmessageHandler * CL_InsertHandlerHeader (Environment *, Defclass *,
-					    CLIPSLexeme *, unsigned);
+DefmessageHandler *CL_InsertHandlerHeader (Environment *, Defclass *,
+					   CLIPSLexeme *, unsigned);
 #endif
 
 #if (! BLOAD_ONLY) && (! RUN_TIME)
-DefmessageHandler * NewHandler (void);
+DefmessageHandler *NewHandler (void);
 bool CL_HandlersExecuting (Defclass *);
 bool CL_DeleteHandler (Environment *, Defclass *, CLIPSLexeme *, int, bool);
 void CL_DeallocateMarkedHandlers (Environment *, Defclass *);
@@ -99,8 +99,8 @@ unsigned short CL_HandlerType (Environment *, const char *, bool,
 bool CL_CheckCurrentMessage (Environment *, const char *, bool);
 void CL_PrintHandler (Environment *, const char *, DefmessageHandler *, bool,
 		      bool);
-DefmessageHandler * CL_FindHandlerByAddress (Defclass *, CLIPSLexeme *,
-					     unsigned);
+DefmessageHandler *CL_FindHandlerByAddress (Defclass *, CLIPSLexeme *,
+					    unsigned);
 int CL_FindHandlerByIndex (Defclass *, CLIPSLexeme *, unsigned);
 int CL_FindHandlerNameGroup (Defclass *, CLIPSLexeme *);
 void CL_HandlerDeleteError (Environment *, const char *);

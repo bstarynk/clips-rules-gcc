@@ -484,8 +484,8 @@ CL_LookupDefgenericByMdlOrScope (Environment * theEnv,
 				 const char *defgenericName)
 {
   return (Defgeneric *) CL_LookupConstruct (theEnv,
-					    DefgenericData (theEnv)->
-					    DefgenericConstruct,
+					    DefgenericData
+					    (theEnv)->DefgenericConstruct,
 					    defgenericName, true);
 }
 
@@ -504,8 +504,8 @@ Defgeneric *
 CL_LookupDefgenericInScope (Environment * theEnv, const char *defgenericName)
 {
   return (Defgeneric *) CL_LookupConstruct (theEnv,
-					    DefgenericData (theEnv)->
-					    DefgenericConstruct,
+					    DefgenericData
+					    (theEnv)->DefgenericConstruct,
 					    defgenericName, false);
 }
 
@@ -524,7 +524,8 @@ CL_GetNextDefgeneric (Environment * theEnv, Defgeneric * theDefgeneric)
 {
   return (Defgeneric *) CL_GetNextConstructItem (theEnv,
 						 &theDefgeneric->header,
-						 DefgenericData (theEnv)->
+						 DefgenericData
+						 (theEnv)->
 						 CL_DefgenericModuleIndex);
 }
 
@@ -667,8 +668,8 @@ Get_DefgenericModuleCommand (Environment * theEnv,
 {
   returnValue->value =
     CL_GetConstructModuleCommand (context, "defgeneric-module",
-				  DefgenericData (theEnv)->
-				  DefgenericConstruct);
+				  DefgenericData
+				  (theEnv)->DefgenericConstruct);
 }
 
 /**************************************************************
@@ -1682,8 +1683,8 @@ CL_SaveDefmethods (Environment * theEnv,
 {
   CL_DoForAllConstructsInModule (theEnv, theModule,
 				 CL_SaveDefmethodsForDefgeneric,
-				 DefgenericData (theEnv)->
-				 CL_DefgenericModuleIndex, false,
+				 DefgenericData
+				 (theEnv)->CL_DefgenericModuleIndex, false,
 				 (void *) logName);
 }
 

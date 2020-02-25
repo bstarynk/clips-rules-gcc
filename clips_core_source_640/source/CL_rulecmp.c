@@ -195,8 +195,9 @@ ConstructToCode (Environment * theEnv,
 			     fileNameBuffer, fileID, imageID, &fileCount,
 			     moduleArrayVersion, headerFP,
 			     "struct defruleModule",
-			     ModulePrefix (DefruleData (theEnv)->
-					   DefruleCodeItem), false, NULL);
+			     ModulePrefix (DefruleData
+					   (theEnv)->DefruleCodeItem), false,
+			     NULL);
 
       if (moduleFile == NULL)
 	{
@@ -232,7 +233,8 @@ ConstructToCode (Environment * theEnv,
 				     fileNameBuffer, fileID, imageID,
 				     &fileCount, defruleArrayVersion,
 				     headerFP, "Defrule",
-				     ConstructPrefix (DefruleData (theEnv)->
+				     ConstructPrefix (DefruleData
+						      (theEnv)->
 						      DefruleCodeItem), false,
 				     NULL);
 	      if (defruleFile == NULL)
@@ -448,8 +450,8 @@ CL_DefruleModuleToCode (Environment * theEnv,
 
   CL_ConstructModuleToCode (theEnv, theFile, theModule, imageID, maxIndices,
 			    DefruleData (theEnv)->CL_DefruleModuleIndex,
-			    ConstructPrefix (DefruleData (theEnv)->
-					     DefruleCodeItem));
+			    ConstructPrefix (DefruleData
+					     (theEnv)->DefruleCodeItem));
 
   fprintf (theFile, ",NULL}");
 }
@@ -473,10 +475,10 @@ DefruleToCode (Environment * theEnv,
 
   CL_ConstructHeaderToCode (theEnv, theFile, &theDefrule->header, imageID,
 			    maxIndices, moduleCount,
-			    ModulePrefix (DefruleData (theEnv)->
-					  DefruleCodeItem),
-			    ConstructPrefix (DefruleData (theEnv)->
-					     DefruleCodeItem));
+			    ModulePrefix (DefruleData
+					  (theEnv)->DefruleCodeItem),
+			    ConstructPrefix (DefruleData
+					     (theEnv)->DefruleCodeItem));
 
    /*==========================*/
   /* Flags and Integer Values */

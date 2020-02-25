@@ -133,8 +133,8 @@ static void
 ReadyDefinstancesForCode (Environment * theEnv)
 {
   MarkConstruct_BsaveIDs (theEnv,
-			  DefinstancesData (theEnv)->
-			  CL_DefinstancesModuleIndex);
+			  DefinstancesData
+			  (theEnv)->CL_DefinstancesModuleIndex);
 }
 
 /***************************************************/
@@ -205,9 +205,9 @@ DefinstancesToCode (Environment * theEnv,
 			     fileNameBuffer, fileID, imageID, &fileCount,
 			     moduleArrayVersion, headerFP,
 			     "DEFINSTANCES_MODULE",
-			     ModulePrefix (DefinstancesData (theEnv)->
-					   DefinstancesCodeItem), false,
-			     NULL);
+			     ModulePrefix (DefinstancesData
+					   (theEnv)->DefinstancesCodeItem),
+			     false, NULL);
 
       if (moduleFile == NULL)
 	{
@@ -231,7 +231,8 @@ DefinstancesToCode (Environment * theEnv,
 				 fileNameBuffer, fileID, imageID, &fileCount,
 				 definstancesArrayVersion, headerFP,
 				 "Definstances",
-				 ConstructPrefix (DefinstancesData (theEnv)->
+				 ConstructPrefix (DefinstancesData
+						  (theEnv)->
 						  DefinstancesCodeItem),
 				 false, NULL);
 	  if (definstancesFile == NULL)
@@ -319,10 +320,10 @@ CL_DefinstancesModuleToCode (Environment * theEnv,
 {
   fprintf (theFile, "{");
   CL_ConstructModuleToCode (theEnv, theFile, theModule, imageID, maxIndices,
-			    DefinstancesData (theEnv)->
-			    CL_DefinstancesModuleIndex,
-			    ConstructPrefix (DefinstancesData (theEnv)->
-					     DefinstancesCodeItem));
+			    DefinstancesData
+			    (theEnv)->CL_DefinstancesModuleIndex,
+			    ConstructPrefix (DefinstancesData
+					     (theEnv)->DefinstancesCodeItem));
   fprintf (theFile, "}");
 }
 
@@ -354,10 +355,10 @@ SingleDefinstancesToCode (Environment * theEnv,
   fprintf (theFile, "{");
   CL_ConstructHeaderToCode (theEnv, theFile, &theDefinstances->header,
 			    imageID, maxIndices, moduleCount,
-			    ModulePrefix (DefinstancesData (theEnv)->
-					  DefinstancesCodeItem),
-			    ConstructPrefix (DefinstancesData (theEnv)->
-					     DefinstancesCodeItem));
+			    ModulePrefix (DefinstancesData
+					  (theEnv)->DefinstancesCodeItem),
+			    ConstructPrefix (DefinstancesData
+					     (theEnv)->DefinstancesCodeItem));
 
   /* ==========================
      Definstances specific data

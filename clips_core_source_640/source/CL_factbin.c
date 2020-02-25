@@ -402,14 +402,14 @@ CL_BloadBinaryItem (Environment * theEnv)
 	   selector))
 	{
 	  CL_AddHashedPatternNode (theEnv,
-				   FactBinaryData (theEnv)->
-				   FactPatternArray[i].lastLevel,
-				   &FactBinaryData (theEnv)->
-				   FactPatternArray[i],
-				   FactBinaryData (theEnv)->
-				   FactPatternArray[i].networkTest->type,
-				   FactBinaryData (theEnv)->
-				   FactPatternArray[i].networkTest->value);
+				   FactBinaryData (theEnv)->FactPatternArray
+				   [i].lastLevel,
+				   &FactBinaryData (theEnv)->FactPatternArray
+				   [i],
+				   FactBinaryData (theEnv)->FactPatternArray
+				   [i].networkTest->type,
+				   FactBinaryData (theEnv)->FactPatternArray
+				   [i].networkTest->value);
 	}
     }
 }
@@ -426,8 +426,8 @@ UpdateFactPatterns (Environment * theEnv, void *buf, unsigned long obji)
   bp = (struct bsaveFactPatternNode *) buf;
 
   CL_UpdatePatternNodeHeader (theEnv,
-			      &FactBinaryData (theEnv)->
-			      FactPatternArray[obji].header, &bp->header);
+			      &FactBinaryData (theEnv)->FactPatternArray
+			      [obji].header, &bp->header);
 
   FactBinaryData (theEnv)->FactPatternArray[obji].bsaveID = 0L;
   FactBinaryData (theEnv)->FactPatternArray[obji].whichField = bp->whichField;
@@ -464,11 +464,12 @@ CL_Clear_Bload (Environment * theEnv)
 	   selector))
 	{
 	  CL_RemoveHashedPatternNode (theEnv,
-				      FactBinaryData (theEnv)->
-				      FactPatternArray[i].lastLevel,
-				      &FactBinaryData (theEnv)->
-				      FactPatternArray[i],
-				      FactBinaryData (theEnv)->
+				      FactBinaryData
+				      (theEnv)->FactPatternArray[i].lastLevel,
+				      &FactBinaryData
+				      (theEnv)->FactPatternArray[i],
+				      FactBinaryData
+				      (theEnv)->
 				      FactPatternArray[i].networkTest->type,
 				      FactBinaryData (theEnv)->
 				      FactPatternArray[i].networkTest->value);

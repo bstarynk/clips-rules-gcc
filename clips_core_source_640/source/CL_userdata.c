@@ -76,9 +76,9 @@ CL_FetchUserData (Environment * theEnv,
     }
 
   theData =
-    (struct userData *) (*UserDataData (theEnv)->
-			 UserDataRecordArray[userDataID]->
-			 createUserData) (theEnv);
+    (struct userData
+     *) (*UserDataData (theEnv)->UserDataRecordArray
+	 [userDataID]->createUserData) (theEnv);
   theData->dataID = userDataID;
   theData->next = *theList;
   *theList = theData;

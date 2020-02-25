@@ -291,8 +291,8 @@ CL_UnboundMethodErr (Environment * theEnv, const char *logName)
 {
   CL_WriteString (theEnv, logName, "generic function '");
   CL_WriteString (theEnv, logName,
-		  CL_DefgenericName (DefgenericData (theEnv)->
-				     CurrentGeneric));
+		  CL_DefgenericName (DefgenericData
+				     (theEnv)->CurrentGeneric));
   CL_WriteString (theEnv, logName, "' method #");
   CL_PrintUnsignedInteger (theEnv, logName,
 			   DefgenericData (theEnv)->CurrentMethod->index);
@@ -333,8 +333,8 @@ CL_IsMethodApplicable (Environment * theEnv, Defmethod * meth)
 #if OBJECT_SYSTEM
 	  type =
 	    Dete_rmineRestrictionClass (theEnv,
-					&ProceduralPrimitiveData (theEnv)->
-					ProcParamArray[i]);
+					&ProceduralPrimitiveData
+					(theEnv)->ProcParamArray[i]);
 	  if (type == NULL)
 	    return false;
 	  for (j = 0; j < rp->tcnt; j++)
@@ -344,25 +344,26 @@ CL_IsMethodApplicable (Environment * theEnv, Defmethod * meth)
 	      if (CL_HasSuperclass (type, (Defclass *) rp->types[j]))
 		break;
 	      if (rp->types[j] ==
-		  (void *) DefclassData (theEnv)->
-		  PrimitiveClassMap[INSTANCE_ADDRESS_TYPE])
+		  (void *)
+		  DefclassData (theEnv)->PrimitiveClassMap
+		  [INSTANCE_ADDRESS_TYPE])
 		{
 		  if (ProceduralPrimitiveData (theEnv)->ProcParamArray[i].
 		      header->type == INSTANCE_ADDRESS_TYPE)
 		    break;
 		}
 	      else if (rp->types[j] ==
-		       (void *) DefclassData (theEnv)->
-		       PrimitiveClassMap[INSTANCE_NAME_TYPE])
+		       (void *)
+		       DefclassData (theEnv)->PrimitiveClassMap
+		       [INSTANCE_NAME_TYPE])
 		{
 		  if (ProceduralPrimitiveData (theEnv)->ProcParamArray[i].
 		      header->type == INSTANCE_NAME_TYPE)
 		    break;
 		}
 	      else if (rp->types[j] ==
-		       DefclassData (theEnv)->
-		       PrimitiveClassMap[INSTANCE_NAME_TYPE]->
-		       directSuperclasses.classArray[0])
+		       DefclassData (theEnv)->PrimitiveClassMap
+		       [INSTANCE_NAME_TYPE]->directSuperclasses.classArray[0])
 		{
 		  if ((ProceduralPrimitiveData (theEnv)->ProcParamArray[i].
 		       header->type == INSTANCE_NAME_TYPE)
@@ -684,8 +685,8 @@ CL_WatchGeneric (Environment * theEnv, const char *tstring)
       theModule != CL_GetCurrentModule (theEnv))
     {
       CL_WriteString (theEnv, STDOUT,
-		      CL_DefgenericModule (DefgenericData (theEnv)->
-					   CurrentGeneric));
+		      CL_DefgenericModule (DefgenericData
+					   (theEnv)->CurrentGeneric));
       CL_WriteString (theEnv, STDOUT, "::");
     }
   CL_WriteString (theEnv, STDOUT,
@@ -726,8 +727,8 @@ CL_WatchMethod (Environment * theEnv, const char *tstring)
       theModule != CL_GetCurrentModule (theEnv))
     {
       CL_WriteString (theEnv, STDOUT,
-		      CL_DefgenericModule (DefgenericData (theEnv)->
-					   CurrentGeneric));
+		      CL_DefgenericModule (DefgenericData
+					   (theEnv)->CurrentGeneric));
       CL_WriteString (theEnv, STDOUT, "::");
     }
   CL_WriteString (theEnv, STDOUT,
@@ -784,8 +785,8 @@ Dete_rmineRestrictionClass (Environment * theEnv, UDFValue * dobj)
       CL_WriteUDFValue (theEnv, STDERR, dobj);
       CL_WriteString (theEnv, STDERR, " in generic function '");
       CL_WriteString (theEnv, STDERR,
-		      CL_DefgenericName (DefgenericData (theEnv)->
-					 CurrentGeneric));
+		      CL_DefgenericName (DefgenericData
+					 (theEnv)->CurrentGeneric));
       CL_WriteString (theEnv, STDERR, "'.\n");
     }
   return (cls);

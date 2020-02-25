@@ -499,8 +499,8 @@ ObjectsToCode (Environment * theEnv,
 			     fileNameBuffer, fileID, imageID, &fileCount,
 			     itemArrayVersions[MODULEI], headerFP,
 			     "DEFCLASS_MODULE",
-			     ModulePrefix (ObjectCompilerData (theEnv)->
-					   ObjectCodeItem),
+			     ModulePrefix (ObjectCompilerData
+					   (theEnv)->ObjectCodeItem),
 			     itemReopenFlags[MODULEI],
 			     &itemCodeFiles[MODULEI]);
       if (itemFiles[MODULEI] == NULL)
@@ -650,9 +650,8 @@ ClassIDMapToCode (Environment * theEnv,
       if (classIDMapArrayCount > 0)
 	fprintf (classIDMapFile, ",\n");
       CL_PrintClassReference (theEnv, classIDMapFile,
-			      DefclassData (theEnv)->
-			      ClassIDMap[classIDMapArrayCount], imageID,
-			      maxIndices);
+			      DefclassData (theEnv)->ClassIDMap
+			      [classIDMapArrayCount], imageID, maxIndices);
     }
   fprintf (classIDMapFile, "};\n\n");
   fprintf (classIDMapFile, "unsigned %s%d = %u;\n",
@@ -701,9 +700,8 @@ ClassHashTableToCode (Environment * theEnv,
       if (classHashArrayCount > 0)
 	fprintf (classHashFile, ",\n");
       CL_PrintClassReference (theEnv, classHashFile,
-			      DefclassData (theEnv)->
-			      ClassTable[classHashArrayCount], imageID,
-			      maxIndices);
+			      DefclassData (theEnv)->ClassTable
+			      [classHashArrayCount], imageID, maxIndices);
     }
 
   CL_CloseFileIfNeeded (theEnv, classHashFile, &classHashArrayCount,
@@ -751,9 +749,9 @@ SlotNameHashTableToCode (Environment * theEnv,
       if (slotNameHashArrayCount > 0)
 	fprintf (slotNameHashFile, ",\n");
       CL_PrintSlotNameReference (theEnv, slotNameHashFile,
-				 DefclassData (theEnv)->
-				 SlotNameTable[slotNameHashArrayCount],
-				 imageID, maxIndices);
+				 DefclassData (theEnv)->SlotNameTable
+				 [slotNameHashArrayCount], imageID,
+				 maxIndices);
     }
   CL_CloseFileIfNeeded (theEnv, slotNameHashFile, &slotNameHashArrayCount,
 			&slotNameHashArrayVersion, slotNameHashArrayCount,
@@ -949,8 +947,9 @@ SingleDefclassToCode (Environment * theEnv,
   fprintf (theFile, "{");
   CL_ConstructHeaderToCode (theEnv, theFile, &theDefclass->header, imageID,
 			    maxIndices, moduleCount,
-			    ModulePrefix (ObjectCompilerData (theEnv)->
-					  ObjectCodeItem), ClassPrefix ());
+			    ModulePrefix (ObjectCompilerData
+					  (theEnv)->ObjectCodeItem),
+			    ClassPrefix ());
 
   /* =========================
      Defclass specific data
@@ -1486,8 +1485,8 @@ HandlersToCode (Environment * theEnv,
       fprintf (*handlerFile, "{");
       CL_ConstructHeaderToCode (theEnv, *handlerFile, &hnd->header, imageID,
 				maxIndices, moduleCount,
-				ModulePrefix (ObjectCompilerData (theEnv)->
-					      ObjectCodeItem),
+				ModulePrefix (ObjectCompilerData
+					      (theEnv)->ObjectCodeItem),
 				HandlerPrefix ());
 
       fprintf (*handlerFile, ",%u,%u,0,0,0,", hnd->system, hnd->type);

@@ -139,8 +139,9 @@ ConstructToCode (Environment * theEnv,
 			     fileNameBuffer, fileID, imageID, &fileCount,
 			     moduleArrayVersion, headerFP,
 			     "struct deftemplateModule",
-			     ModulePrefix (DeftemplateData (theEnv)->
-					   DeftemplateCodeItem), false, NULL);
+			     ModulePrefix (DeftemplateData
+					   (theEnv)->DeftemplateCodeItem),
+			     false, NULL);
 
       if (moduleFile == NULL)
 	{
@@ -168,7 +169,8 @@ ConstructToCode (Environment * theEnv,
 				 fileNameBuffer, fileID, imageID, &fileCount,
 				 templateArrayVersion, headerFP,
 				 "Deftemplate",
-				 ConstructPrefix (DeftemplateData (theEnv)->
+				 ConstructPrefix (DeftemplateData
+						  (theEnv)->
 						  DeftemplateCodeItem), false,
 				 NULL);
 	  if (templateFile == NULL)
@@ -286,10 +288,10 @@ CL_DeftemplateModuleToCode (Environment * theEnv,
   fprintf (theFile, "{");
 
   CL_ConstructModuleToCode (theEnv, theFile, theModule, imageID, maxIndices,
-			    DeftemplateData (theEnv)->
-			    CL_DeftemplateModuleIndex,
-			    ConstructPrefix (DeftemplateData (theEnv)->
-					     DeftemplateCodeItem));
+			    DeftemplateData
+			    (theEnv)->CL_DeftemplateModuleIndex,
+			    ConstructPrefix (DeftemplateData
+					     (theEnv)->DeftemplateCodeItem));
 
   fprintf (theFile, "}");
 }
@@ -314,10 +316,10 @@ DeftemplateToCode (Environment * theEnv,
 
   CL_ConstructHeaderToCode (theEnv, theFile, &theTemplate->header, imageID,
 			    maxIndices, moduleCount,
-			    ModulePrefix (DeftemplateData (theEnv)->
-					  DeftemplateCodeItem),
-			    ConstructPrefix (DeftemplateData (theEnv)->
-					     DeftemplateCodeItem));
+			    ModulePrefix (DeftemplateData
+					  (theEnv)->DeftemplateCodeItem),
+			    ConstructPrefix (DeftemplateData
+					     (theEnv)->DeftemplateCodeItem));
   fprintf (theFile, ",");
 
    /*===========*/
@@ -462,8 +464,8 @@ CL_DeftemplateCConstructReference (Environment * theEnv,
   else
     {
       fprintf (theFile, "&%s%u_%lu[%lu]",
-	       ConstructPrefix (DeftemplateData (theEnv)->
-				DeftemplateCodeItem), imageID,
+	       ConstructPrefix (DeftemplateData
+				(theEnv)->DeftemplateCodeItem), imageID,
 	       (theDeftemplate->header.bsaveID / maxIndices) + 1,
 	       theDeftemplate->header.bsaveID % maxIndices);
     }

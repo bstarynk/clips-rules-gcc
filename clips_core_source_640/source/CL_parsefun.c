@@ -407,10 +407,10 @@ CL_WriteErrorCaptureCallback (Environment * theEnv,
       ParseFunctionData (theEnv)->WarningString =
 	CL_AppendToString (theEnv, str,
 			   ParseFunctionData (theEnv)->WarningString,
-			   &ParseFunctionData (theEnv)->
-			   WarningCurrentPosition,
-			   &ParseFunctionData (theEnv)->
-			   WarningMaximumPosition);
+			   &ParseFunctionData
+			   (theEnv)->WarningCurrentPosition,
+			   &ParseFunctionData
+			   (theEnv)->WarningMaximumPosition);
     }
 }
 

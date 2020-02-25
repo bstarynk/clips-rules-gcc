@@ -103,8 +103,9 @@ CL_AddAfterModuleDefinedFunction (Environment * theEnv,
 {
   DefmoduleData (theEnv)->AfterModuleDefinedFunctions =
     CL_Add_VoidFunctionToCallList (theEnv, name, priority, func,
-				   DefmoduleData (theEnv)->
-				   AfterModuleDefinedFunctions, context);
+				   DefmoduleData
+				   (theEnv)->AfterModuleDefinedFunctions,
+				   context);
 }
 
 /******************************************************/
@@ -338,7 +339,8 @@ CL_ParseDefmodule (Environment * theEnv, const char *readSource)
       newDefmodule->itemsArray =
 	(struct defmoduleItemHeader **) CL_gm2 (theEnv,
 						sizeof (void *) *
-						DefmoduleData (theEnv)->
+						DefmoduleData
+						(theEnv)->
 						NumberOfModuleItems);
       for (i = 0, theItem = DefmoduleData (theEnv)->ListOfModuleItems;
 	   (i < DefmoduleData (theEnv)->NumberOfModuleItems)

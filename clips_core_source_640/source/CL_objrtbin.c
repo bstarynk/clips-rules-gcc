@@ -406,14 +406,14 @@ CL_BsaveObjectPatterns (Environment * theEnv, FILE * fp)
 	      if (patternPtr == NULL)
 		{
 		  Restore_BloadCount (theEnv,
-				      &ObjectReteBinaryData (theEnv)->
-				      AlphaNodeCount);
+				      &ObjectReteBinaryData
+				      (theEnv)->AlphaNodeCount);
 		  Restore_BloadCount (theEnv,
-				      &ObjectReteBinaryData (theEnv)->
-				      PatternNodeCount);
+				      &ObjectReteBinaryData
+				      (theEnv)->PatternNodeCount);
 		  Restore_BloadCount (theEnv,
-				      &ObjectReteBinaryData (theEnv)->
-				      AlphaLinkCount);
+				      &ObjectReteBinaryData
+				      (theEnv)->AlphaLinkCount);
 		  return;
 		}
 	    }
@@ -562,14 +562,14 @@ CL_BloadObjectPatterns (Environment * theEnv)
 	      selector))
 	{
 	  CL_AddHashedPatternNode (theEnv,
-				   ObjectReteBinaryData (theEnv)->
-				   PatternArray[i].lastLevel,
-				   &ObjectReteBinaryData (theEnv)->
-				   PatternArray[i],
-				   ObjectReteBinaryData (theEnv)->
-				   PatternArray[i].networkTest->type,
-				   ObjectReteBinaryData (theEnv)->
-				   PatternArray[i].networkTest->value);
+				   ObjectReteBinaryData (theEnv)->PatternArray
+				   [i].lastLevel,
+				   &ObjectReteBinaryData
+				   (theEnv)->PatternArray[i],
+				   ObjectReteBinaryData (theEnv)->PatternArray
+				   [i].networkTest->type,
+				   ObjectReteBinaryData (theEnv)->PatternArray
+				   [i].networkTest->value);
 	}
     }
 
@@ -578,8 +578,8 @@ CL_BloadObjectPatterns (Environment * theEnv)
      ======================= */
   SetCL_ObjectNetworkTe_rminalPointer (theEnv,
 				       (OBJECT_ALPHA_NODE *) &
-				       ObjectReteBinaryData (theEnv)->
-				       AlphaArray[0]);
+				       ObjectReteBinaryData
+				       (theEnv)->AlphaArray[0]);
   Set_ObjectNetworkPointer (theEnv,
 			    (OBJECT_PATTERN_NODE *) &
 			    ObjectReteBinaryData (theEnv)->PatternArray[0]);
@@ -646,8 +646,8 @@ UpdatePattern (Environment * theEnv, void *buf, unsigned long obji)
 
   bop = (BSAVE_OBJECT_PATTERN_NODE *) buf;
   op =
-    (OBJECT_PATTERN_NODE *) & ObjectReteBinaryData (theEnv)->
-    PatternArray[obji];
+    (OBJECT_PATTERN_NODE *) &
+    ObjectReteBinaryData (theEnv)->PatternArray[obji];
 
   op->blocked = false;
   op->multifieldNode = bop->multifieldNode;
@@ -687,8 +687,8 @@ UpdateLink (Environment * theEnv, void *buf, unsigned long obji)
 
   bal = (BSAVE_CLASS_ALPHA_LINK *) buf;
   al =
-    (CLASS_ALPHA_LINK *) & ObjectReteBinaryData (theEnv)->
-    AlphaLinkArray[obji];
+    (CLASS_ALPHA_LINK *) &
+    ObjectReteBinaryData (theEnv)->AlphaLinkArray[obji];
 
   al->alphaNode = ObjectAlphaPointer (bal->alphaNode);
   al->next = ClassAlphaPointer (bal->next);
@@ -718,12 +718,13 @@ CL_Clear_BloadObjectPatterns (Environment * theEnv)
 	      selector))
 	{
 	  CL_RemoveHashedPatternNode (theEnv,
-				      ObjectReteBinaryData (theEnv)->
-				      PatternArray[i].lastLevel,
-				      &ObjectReteBinaryData (theEnv)->
-				      PatternArray[i],
-				      ObjectReteBinaryData (theEnv)->
-				      PatternArray[i].networkTest->type,
+				      ObjectReteBinaryData
+				      (theEnv)->PatternArray[i].lastLevel,
+				      &ObjectReteBinaryData
+				      (theEnv)->PatternArray[i],
+				      ObjectReteBinaryData
+				      (theEnv)->PatternArray[i].
+				      networkTest->type,
 				      ObjectReteBinaryData (theEnv)->
 				      PatternArray[i].networkTest->value);
 	}
@@ -737,12 +738,12 @@ CL_Clear_BloadObjectPatterns (Environment * theEnv)
   for (i = 0L; i < ObjectReteBinaryData (theEnv)->AlphaNodeCount; i++)
     {
       CL_DecrementBitMapReferenceCount (theEnv,
-					ObjectReteBinaryData (theEnv)->
-					AlphaArray[i].classbmp);
+					ObjectReteBinaryData
+					(theEnv)->AlphaArray[i].classbmp);
       if (ObjectReteBinaryData (theEnv)->AlphaArray[i].slotbmp != NULL)
 	CL_DecrementBitMapReferenceCount (theEnv,
-					  ObjectReteBinaryData (theEnv)->
-					  AlphaArray[i].slotbmp);
+					  ObjectReteBinaryData
+					  (theEnv)->AlphaArray[i].slotbmp);
     }
 
   if (ObjectReteBinaryData (theEnv)->AlphaNodeCount != 0L)

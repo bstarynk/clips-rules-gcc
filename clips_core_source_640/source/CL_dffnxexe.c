@@ -201,8 +201,8 @@ UnboundDeffunctionErr (Environment * theEnv, const char *logName)
 {
   CL_WriteString (theEnv, logName, "deffunction '");
   CL_WriteString (theEnv, logName,
-		  CL_DeffunctionName (DeffunctionData (theEnv)->
-				      ExecutingDeffunction));
+		  CL_DeffunctionName (DeffunctionData
+				      (theEnv)->ExecutingDeffunction));
   CL_WriteString (theEnv, logName, "'.\n");
 }
 
@@ -235,8 +235,8 @@ CL_WatchDeffunction (Environment * theEnv, const char *tstring)
       theModule != CL_GetCurrentModule (theEnv))
     {
       CL_WriteString (theEnv, STDOUT,
-		      CL_DeffunctionModule (DeffunctionData (theEnv)->
-					    ExecutingDeffunction));;
+		      CL_DeffunctionModule (DeffunctionData
+					    (theEnv)->ExecutingDeffunction));;
       CL_WriteString (theEnv, STDOUT, "::");
     }
   CL_WriteString (theEnv, STDOUT,

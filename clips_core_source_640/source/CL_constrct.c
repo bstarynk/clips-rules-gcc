@@ -144,8 +144,8 @@ DeallocateConstructData (Environment * theEnv)
   CL_DeallocateVoidCallList (theEnv,
 			     ConstructData (theEnv)->ListOf_ClearFunctions);
   CL_DeallocateBoolCallList (theEnv,
-			     ConstructData (theEnv)->
-			     ListOf_ClearReadyFunctions);
+			     ConstructData
+			     (theEnv)->ListOf_ClearReadyFunctions);
 
 #if (! RUN_TIME) && (! BLOAD_ONLY)
   if (ConstructData (theEnv)->ErrorString != NULL)
@@ -387,8 +387,9 @@ CL_Remove_SaveFunction (Environment * theEnv, const char *name)
 
   ConstructData (theEnv)->ListOf_SaveFunctions =
     CL_Remove_SaveFunctionFromCallList (theEnv, name,
-					ConstructData (theEnv)->
-					ListOf_SaveFunctions, &found);
+					ConstructData
+					(theEnv)->ListOf_SaveFunctions,
+					&found);
 
   if (found)
     return true;
@@ -618,8 +619,8 @@ CL_Add_ResetFunction (Environment * theEnv,
 {
   ConstructData (theEnv)->ListOf_ResetFunctions =
     CL_Add_VoidFunctionToCallList (theEnv, name, priority, functionPtr,
-				   ConstructData (theEnv)->
-				   ListOf_ResetFunctions, context);
+				   ConstructData
+				   (theEnv)->ListOf_ResetFunctions, context);
   return true;
 }
 
@@ -634,8 +635,9 @@ CL_Remove_ResetFunction (Environment * theEnv, const char *name)
 
   ConstructData (theEnv)->ListOf_ResetFunctions =
     CL_Remove_VoidFunctionFromCallList (theEnv, name,
-					ConstructData (theEnv)->
-					ListOf_ResetFunctions, &found);
+					ConstructData
+					(theEnv)->ListOf_ResetFunctions,
+					&found);
 
   return found;
 }
@@ -782,8 +784,9 @@ CL_Add_ClearReadyFunction (Environment * theEnv,
 {
   ConstructData (theEnv)->ListOf_ClearReadyFunctions =
     CL_AddBoolFunctionToCallList (theEnv, name, priority, functionPtr,
-				  ConstructData (theEnv)->
-				  ListOf_ClearReadyFunctions, context);
+				  ConstructData
+				  (theEnv)->ListOf_ClearReadyFunctions,
+				  context);
   return true;
 }
 
@@ -798,8 +801,9 @@ Remove_ClearReadyFunction (Environment * theEnv, const char *name)
 
   ConstructData (theEnv)->ListOf_ClearReadyFunctions =
     CL_RemoveBoolFunctionFromCallList (theEnv, name,
-				       ConstructData (theEnv)->
-				       ListOf_ClearReadyFunctions, &found);
+				       ConstructData
+				       (theEnv)->ListOf_ClearReadyFunctions,
+				       &found);
 
   if (found)
     return true;
@@ -819,8 +823,8 @@ CL_Add_ClearFunction (Environment * theEnv,
 {
   ConstructData (theEnv)->ListOf_ClearFunctions =
     CL_Add_VoidFunctionToCallList (theEnv, name, priority, functionPtr,
-				   ConstructData (theEnv)->
-				   ListOf_ClearFunctions, context);
+				   ConstructData
+				   (theEnv)->ListOf_ClearFunctions, context);
   return true;
 }
 
@@ -835,8 +839,9 @@ Remove_ClearFunction (Environment * theEnv, const char *name)
 
   ConstructData (theEnv)->ListOf_ClearFunctions =
     CL_Remove_VoidFunctionFromCallList (theEnv, name,
-					ConstructData (theEnv)->
-					ListOf_ClearFunctions, &found);
+					ConstructData
+					(theEnv)->ListOf_ClearFunctions,
+					&found);
 
   if (found)
     return true;
@@ -983,8 +988,8 @@ CL_Add_SaveFunction (Environment * theEnv,
   ConstructData (theEnv)->ListOf_SaveFunctions =
     CL_Add_SaveFunctionToCallList (theEnv, name, priority,
 				   functionPtr,
-				   ConstructData (theEnv)->
-				   ListOf_SaveFunctions, context);
+				   ConstructData
+				   (theEnv)->ListOf_SaveFunctions, context);
 #else
 #if MAC_XCD
 #pragma unused(theEnv)

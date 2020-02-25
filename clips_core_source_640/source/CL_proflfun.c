@@ -125,8 +125,8 @@ CL_ConstructProfilingFunctionDefinitions (Environment * theEnv)
 
   CL_ProfileFunctionData (theEnv)->CL_ProfileDataID =
     CL_InstallUserDataRecord (theEnv,
-			      &CL_ProfileFunctionData (theEnv)->
-			      CL_ProfileDataInfo);
+			      &CL_ProfileFunctionData
+			      (theEnv)->CL_ProfileDataInfo);
 
   CL_Add_ClearFunction (theEnv, "profile", CL_Profile_ClearFunction, 0, NULL);
 #endif
@@ -520,8 +520,8 @@ CL_Profile_ResetCommand (Environment * theEnv,
        theFunction != NULL; theFunction = theFunction->next)
     {
       CL_Reset_ProfileInfo ((struct construct_ProfileInfo *)
-			    CL_TestUserData (CL_ProfileFunctionData (theEnv)->
-					     CL_ProfileDataID,
+			    CL_TestUserData (CL_ProfileFunctionData
+					     (theEnv)->CL_ProfileDataID,
 					     theFunction->usrData));
     }
 
@@ -532,9 +532,9 @@ CL_Profile_ResetCommand (Environment * theEnv,
 	  CL_Reset_ProfileInfo ((struct construct_ProfileInfo *)
 				CL_TestUserData (CL_ProfileFunctionData
 						 (theEnv)->CL_ProfileDataID,
-						 CL_EvaluationData (theEnv)->
-						 PrimitivesArray[i]->
-						 usrData));
+						 CL_EvaluationData
+						 (theEnv)->PrimitivesArray
+						 [i]->usrData));
 	}
     }
 
@@ -544,8 +544,8 @@ CL_Profile_ResetCommand (Environment * theEnv,
        theDeffunction = CL_GetNextDeffunction (theEnv, theDeffunction))
     {
       CL_Reset_ProfileInfo ((struct construct_ProfileInfo *)
-			    CL_TestUserData (CL_ProfileFunctionData (theEnv)->
-					     CL_ProfileDataID,
+			    CL_TestUserData (CL_ProfileFunctionData
+					     (theEnv)->CL_ProfileDataID,
 					     theDeffunction->header.usrData));
     }
 #endif
@@ -556,8 +556,8 @@ CL_Profile_ResetCommand (Environment * theEnv,
        theDefrule = CL_GetNextDefrule (theEnv, theDefrule))
     {
       CL_Reset_ProfileInfo ((struct construct_ProfileInfo *)
-			    CL_TestUserData (CL_ProfileFunctionData (theEnv)->
-					     CL_ProfileDataID,
+			    CL_TestUserData (CL_ProfileFunctionData
+					     (theEnv)->CL_ProfileDataID,
 					     theDefrule->header.usrData));
     }
 #endif
@@ -568,8 +568,8 @@ CL_Profile_ResetCommand (Environment * theEnv,
        theDefgeneric = CL_GetNextDefgeneric (theEnv, theDefgeneric))
     {
       CL_Reset_ProfileInfo ((struct construct_ProfileInfo *)
-			    CL_TestUserData (CL_ProfileFunctionData (theEnv)->
-					     CL_ProfileDataID,
+			    CL_TestUserData (CL_ProfileFunctionData
+					     (theEnv)->CL_ProfileDataID,
 					     theDefgeneric->header.usrData));
 
       for (methodIndex = CL_GetNextDefmethod (theDefgeneric, 0);
@@ -591,8 +591,8 @@ CL_Profile_ResetCommand (Environment * theEnv,
        theDefclass = CL_GetNextDefclass (theEnv, theDefclass))
     {
       CL_Reset_ProfileInfo ((struct construct_ProfileInfo *)
-			    CL_TestUserData (CL_ProfileFunctionData (theEnv)->
-					     CL_ProfileDataID,
+			    CL_TestUserData (CL_ProfileFunctionData
+					     (theEnv)->CL_ProfileDataID,
 					     theDefclass->header.usrData));
       for (handlerIndex = CL_GetNextDefmessageHandler (theDefclass, 0);
 	   handlerIndex != 0;
@@ -642,8 +642,8 @@ Output_UserFunctionsInfo (Environment * theEnv)
     {
       Output_ProfileInfo (theEnv, theFunction->callFunctionName->contents,
 			  (struct construct_ProfileInfo *)
-			  CL_TestUserData (CL_ProfileFunctionData (theEnv)->
-					   CL_ProfileDataID,
+			  CL_TestUserData (CL_ProfileFunctionData
+					   (theEnv)->CL_ProfileDataID,
 					   theFunction->usrData), NULL, NULL,
 			  NULL, NULL);
     }
@@ -705,8 +705,8 @@ OutputConstructsCodeInfo (Environment * theEnv)
     {
       Output_ProfileInfo (theEnv, CL_DeffunctionName (theDeffunction),
 			  (struct construct_ProfileInfo *)
-			  CL_TestUserData (CL_ProfileFunctionData (theEnv)->
-					   CL_ProfileDataID,
+			  CL_TestUserData (CL_ProfileFunctionData
+					   (theEnv)->CL_ProfileDataID,
 					   theDeffunction->header.usrData),
 			  NULL, NULL, NULL, &banner);
     }
@@ -766,9 +766,10 @@ OutputConstructsCodeInfo (Environment * theEnv)
 	  if (Output_ProfileInfo
 	      (theEnv, CL_DefmessageHandlerName (theDefclass, handlerIndex),
 	       (struct construct_ProfileInfo *)
-	       CL_TestUserData (CL_ProfileFunctionData (theEnv)->
-				CL_ProfileDataID, theHandler->header.usrData),
-	       prefixBefore, prefix, prefixAfter, &banner))
+	       CL_TestUserData (CL_ProfileFunctionData
+				(theEnv)->CL_ProfileDataID,
+				theHandler->header.usrData), prefixBefore,
+	       prefix, prefixAfter, &banner))
 	    {
 	      prefixBefore = NULL;
 	      prefix = NULL;
@@ -788,8 +789,8 @@ OutputConstructsCodeInfo (Environment * theEnv)
     {
       Output_ProfileInfo (theEnv, CL_DefruleName (theDefrule),
 			  (struct construct_ProfileInfo *)
-			  CL_TestUserData (CL_ProfileFunctionData (theEnv)->
-					   CL_ProfileDataID,
+			  CL_TestUserData (CL_ProfileFunctionData
+					   (theEnv)->CL_ProfileDataID,
 					   theDefrule->header.usrData), NULL,
 			  NULL, NULL, &banner);
     }
@@ -920,10 +921,10 @@ CL_Profile_ClearFunction (Environment * theEnv, void *context)
 	{
 	  CL_EvaluationData (theEnv)->PrimitivesArray[i]->usrData =
 	    CL_DeleteUserData (theEnv,
-			       CL_ProfileFunctionData (theEnv)->
-			       CL_ProfileDataID,
-			       CL_EvaluationData (theEnv)->
-			       PrimitivesArray[i]->usrData);
+			       CL_ProfileFunctionData
+			       (theEnv)->CL_ProfileDataID,
+			       CL_EvaluationData (theEnv)->PrimitivesArray
+			       [i]->usrData);
 	}
     }
 }

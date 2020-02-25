@@ -735,11 +735,12 @@ CL_FlushParsingMessages (Environment * theEnv)
       (*ConstructData (theEnv)->ParserErrorCallback) (theEnv,
 						      CL_GetErrorFileName
 						      (theEnv), NULL,
-						      ConstructData (theEnv)->
-						      ErrorString,
-						      ConstructData (theEnv)->
-						      ErrLineNumber,
-						      ConstructData (theEnv)->
+						      ConstructData
+						      (theEnv)->ErrorString,
+						      ConstructData
+						      (theEnv)->ErrLineNumber,
+						      ConstructData
+						      (theEnv)->
 						      ParserErrorContext);
     }
 
@@ -748,11 +749,13 @@ CL_FlushParsingMessages (Environment * theEnv)
       (*ConstructData (theEnv)->ParserErrorCallback) (theEnv,
 						      CL_GetWarningFileName
 						      (theEnv),
-						      ConstructData (theEnv)->
-						      WarningString, NULL,
-						      ConstructData (theEnv)->
-						      WrnLineNumber,
-						      ConstructData (theEnv)->
+						      ConstructData
+						      (theEnv)->WarningString,
+						      NULL,
+						      ConstructData
+						      (theEnv)->WrnLineNumber,
+						      ConstructData
+						      (theEnv)->
 						      ParserErrorContext);
     }
 

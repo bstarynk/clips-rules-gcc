@@ -264,16 +264,16 @@ DeallocateDefinstancesData (Environment * theEnv)
 #endif
 
   CL_DoForAllConstructs (theEnv, DestroyDefinstancesAction,
-			 DefinstancesData (theEnv)->
-			 CL_DefinstancesModuleIndex, false, NULL);
+			 DefinstancesData
+			 (theEnv)->CL_DefinstancesModuleIndex, false, NULL);
 
   for (theModule = CL_GetNextDefmodule (theEnv, NULL);
        theModule != NULL; theModule = CL_GetNextDefmodule (theEnv, theModule))
     {
       theModuleItem = (struct definstancesModule *)
 	CL_GetModuleItem (theEnv, theModule,
-			  DefinstancesData (theEnv)->
-			  CL_DefinstancesModuleIndex);
+			  DefinstancesData
+			  (theEnv)->CL_DefinstancesModuleIndex);
       rtn_struct (theEnv, definstancesModule, theModuleItem);
     }
 #else
@@ -340,8 +340,8 @@ void
 Definstances_RunTimeInitialize (Environment * theEnv)
 {
   CL_DoForAllConstructs (theEnv, CL_RuntimeDefinstancesAction,
-			 DefinstancesData (theEnv)->
-			 CL_DefinstancesModuleIndex, true, NULL);
+			 DefinstancesData
+			 (theEnv)->CL_DefinstancesModuleIndex, true, NULL);
 }
 
 #endif
@@ -361,7 +361,8 @@ CL_GetNextDefinstances (Environment * theEnv, Definstances * theDefinstances)
 {
   return (Definstances *) CL_GetNextConstructItem (theEnv,
 						   &theDefinstances->header,
-						   DefinstancesData (theEnv)->
+						   DefinstancesData
+						   (theEnv)->
 						   CL_DefinstancesModuleIndex);
 }
 
@@ -456,8 +457,8 @@ Get_DefinstancesModuleCommand (Environment * theEnv,
 {
   returnValue->value =
     CL_GetConstructModuleCommand (context, "definstances-module",
-				  DefinstancesData (theEnv)->
-				  DefinstancesConstruct);
+				  DefinstancesData
+				  (theEnv)->DefinstancesConstruct);
 }
 
 /***********************************************************
@@ -478,15 +479,15 @@ CL_Undefinstances (Definstances * theDefinstances, Environment * allEnv)
     {
       theEnv = allEnv;
       return CL_Undefconstruct (theEnv, NULL,
-				DefinstancesData (theEnv)->
-				DefinstancesConstruct);
+				DefinstancesData
+				(theEnv)->DefinstancesConstruct);
     }
   else
     {
       theEnv = theDefinstances->header.env;
       return CL_Undefconstruct (theEnv, &theDefinstances->header,
-				DefinstancesData (theEnv)->
-				DefinstancesConstruct);
+				DefinstancesData
+				(theEnv)->DefinstancesConstruct);
     }
 }
 
@@ -559,8 +560,8 @@ CL_GetDefinstancesListFunction (Environment * theEnv,
 				UDFContext * context, UDFValue * returnValue)
 {
   CL_GetConstructListFunction (context, returnValue,
-			       DefinstancesData (theEnv)->
-			       DefinstancesConstruct);
+			       DefinstancesData
+			       (theEnv)->DefinstancesConstruct);
 }
 
 /***************************************************************
@@ -754,9 +755,10 @@ Parse_DefinstancesName (Environment * theEnv,
 
 #if DEFRULE_CONSTRUCT
   if ((DefclassData (theEnv)->ObjectParseToken.tknType !=
-       SYMBOL_TOKEN) ? false : (strcmp (DefclassData (theEnv)->
-					ObjectParseToken.lexemeValue->
-					contents, ACTIVE_RLN) == 0))
+       SYMBOL_TOKEN) ? false
+      : (strcmp
+	 (DefclassData (theEnv)->ObjectParseToken.lexemeValue->contents,
+	  ACTIVE_RLN) == 0))
     {
       CL_PPBackup (theEnv);
       CL_PPBackup (theEnv);
@@ -854,8 +856,8 @@ ReturnModule (Environment * theEnv, void *theItem)
 #if (! BLOAD_ONLY)
   CL_FreeConstructHeaderModule (theEnv,
 				(struct defmoduleItemHeader *) theItem,
-				DefinstancesData (theEnv)->
-				DefinstancesConstruct);
+				DefinstancesData
+				(theEnv)->DefinstancesConstruct);
 #endif
   rtn_struct (theEnv, definstancesModule, theItem);
 }
@@ -878,8 +880,9 @@ CL_ClearDefinstancesReady (Environment * theEnv, void *context)
   bool flagBuffer = true;
 
   CL_DoForAllConstructs (theEnv, CheckDefinstancesBusy,
-			 DefinstancesData (theEnv)->
-			 CL_DefinstancesModuleIndex, false, &flagBuffer);
+			 DefinstancesData
+			 (theEnv)->CL_DefinstancesModuleIndex, false,
+			 &flagBuffer);
   return (flagBuffer);
 }
 
@@ -931,8 +934,8 @@ static void
 CL_ResetDefinstances (Environment * theEnv, void *context)
 {
   CL_DoForAllConstructs (theEnv, CL_ResetDefinstancesAction,
-			 DefinstancesData (theEnv)->
-			 CL_DefinstancesModuleIndex, true, NULL);
+			 DefinstancesData
+			 (theEnv)->CL_DefinstancesModuleIndex, true, NULL);
 }
 
 /***************************************************

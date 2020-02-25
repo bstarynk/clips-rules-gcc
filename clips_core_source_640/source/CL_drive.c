@@ -437,8 +437,8 @@ Network_AssertLeft (Environment * theEnv,
     {
       rhsBinds =
 	CL_GetAlphaMemory (theEnv,
-			   (struct patternNodeHeader *) join->
-			   rightSideEntryStructure, entryHashValue);
+			   (struct patternNodeHeader *)
+			   join->rightSideEntryStructure, entryHashValue);
     }
 
 #if DEVELOPER
@@ -706,8 +706,10 @@ CL_EvaluateJoinExpression (Environment * theEnv,
       /*================================*/
 
       if ((CL_EvaluationData (theEnv)->PrimitivesArray[joinExpr->type] ==
-	   NULL) ? false : CL_EvaluationData (theEnv)->
-	  PrimitivesArray[joinExpr->type]->evaluateFunction != NULL)
+	   NULL) ? false :
+	  CL_EvaluationData (theEnv)->PrimitivesArray[joinExpr->
+						      type]->evaluateFunction
+	  != NULL)
 	{
 	  struct expr *oldArgument;
 
@@ -907,8 +909,10 @@ CL_BetaMemoryHashValue (Environment * theEnv,
       /*================================*/
 
       if ((CL_EvaluationData (theEnv)->PrimitivesArray[hashExpr->type] ==
-	   NULL) ? false : CL_EvaluationData (theEnv)->
-	  PrimitivesArray[hashExpr->type]->evaluateFunction != NULL)
+	   NULL) ? false :
+	  CL_EvaluationData (theEnv)->PrimitivesArray[hashExpr->
+						      type]->evaluateFunction
+	  != NULL)
 	{
 	  struct expr *oldArgument;
 

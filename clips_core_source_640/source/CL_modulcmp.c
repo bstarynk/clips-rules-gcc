@@ -232,9 +232,10 @@ ConstructToCode (Environment * theEnv,
 
       CL_ConstructHeaderToCode (theEnv, moduleFile, &theConstruct->header,
 				imageID, maxIndices, moduleCount,
-				ModulePrefix (DefmoduleData (theEnv)->
-					      DefmoduleCodeItem),
-				ConstructPrefix (DefmoduleData (theEnv)->
+				ModulePrefix (DefmoduleData
+					      (theEnv)->DefmoduleCodeItem),
+				ConstructPrefix (DefmoduleData
+						 (theEnv)->
 						 DefmoduleCodeItem));
 
       fprintf (moduleFile, ",");

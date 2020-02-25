@@ -611,9 +611,8 @@ ReorderAndAnalyzeObjectPattern (Environment * theEnv,
 	  {
 	    cls = DefclassData (theEnv)->ClassIDMap[i];
 	    sd =
-	      cls->
-	      instanceTemplate[CL_FindInstanceTemplateSlot
-			       (theEnv, cls, tmpNode->slot)];
+	      cls->instanceTemplate[CL_FindInstanceTemplateSlot
+				    (theEnv, cls, tmpNode->slot)];
 
 	    /* =========================================
 	       Check the top-level lhsParseNode for type
@@ -943,8 +942,8 @@ FindObjectPatternNode (OBJECT_PATTERN_NODE * listOfNodes,
 
       if (((thePattern->pnType == MF_WILDCARD_NODE)
 	   || (thePattern->pnType ==
-	       MF_VARIABLE_NODE)) ? listOfNodes->
-	  multifieldNode : (listOfNodes->multifieldNode == 0))
+	       MF_VARIABLE_NODE)) ? listOfNodes->multifieldNode
+	  : (listOfNodes->multifieldNode == 0))
 	{
 	  if ((thePattern->slotNumber == listOfNodes->slotNameID) &&
 	      (thePattern->index == listOfNodes->whichField) &&

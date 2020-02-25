@@ -309,8 +309,8 @@ DeallocateDeffunctionData (Environment * theEnv)
     {
       theModuleItem = (struct deffunctionModuleData *)
 	CL_GetModuleItem (theEnv, theModule,
-			  DeffunctionData (theEnv)->
-			  CL_DeffunctionModuleIndex);
+			  DeffunctionData
+			  (theEnv)->CL_DeffunctionModuleIndex);
       rtn_struct (theEnv, deffunctionModuleData, theModuleItem);
     }
 #else
@@ -429,8 +429,8 @@ CL_LookupDeffunctionInScope (Environment * theEnv,
 			     const char *deffunctionName)
 {
   return (Deffunction *) CL_LookupConstruct (theEnv,
-					     DeffunctionData (theEnv)->
-					     DeffunctionConstruct,
+					     DeffunctionData
+					     (theEnv)->DeffunctionConstruct,
 					     deffunctionName, false);
 }
 
@@ -504,8 +504,8 @@ CL_GetNextDeffunction (Environment * theEnv, Deffunction * theDeffunction)
 {
   return (Deffunction *)
     CL_GetNextConstructItem (theEnv, &theDeffunction->header,
-			     DeffunctionData (theEnv)->
-			     CL_DeffunctionModuleIndex);
+			     DeffunctionData
+			     (theEnv)->CL_DeffunctionModuleIndex);
 }
 
 /***************************************************
@@ -589,8 +589,8 @@ Get_DeffunctionModuleCommand (Environment * theEnv,
 {
   returnValue->value =
     CL_GetConstructModuleCommand (context, "deffunction-module",
-				  DeffunctionData (theEnv)->
-				  DeffunctionConstruct);
+				  DeffunctionData
+				  (theEnv)->DeffunctionConstruct);
 }
 
 #if DEBUGGING_FUNCTIONS
@@ -664,8 +664,8 @@ CL_GetDeffunctionListFunction (Environment * theEnv,
 			       UDFContext * context, UDFValue * returnValue)
 {
   CL_GetConstructListFunction (context, returnValue,
-			       DeffunctionData (theEnv)->
-			       DeffunctionConstruct);
+			       DeffunctionData
+			       (theEnv)->DeffunctionConstruct);
 }
 
 /***************************************************************
@@ -880,8 +880,8 @@ ReturnModule (Environment * theEnv, void *theItem)
 #if (! BLOAD_ONLY)
   CL_FreeConstructHeaderModule (theEnv,
 				(struct defmoduleItemHeader *) theItem,
-				DeffunctionData (theEnv)->
-				DeffunctionConstruct);
+				DeffunctionData
+				(theEnv)->DeffunctionConstruct);
 #endif
   rtn_struct (theEnv, deffunctionModuleData, theItem);
 }
@@ -1045,8 +1045,8 @@ CL_SaveDeffunctionHeaders (Environment * theEnv,
 {
   CL_DoForAllConstructsInModule (theEnv, theModule,
 				 CL_SaveDeffunctionHeader,
-				 DeffunctionData (theEnv)->
-				 CL_DeffunctionModuleIndex, false,
+				 DeffunctionData
+				 (theEnv)->CL_DeffunctionModuleIndex, false,
 				 (void *) logicalName);
 }
 

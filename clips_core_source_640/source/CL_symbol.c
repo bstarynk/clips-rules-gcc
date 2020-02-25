@@ -1292,16 +1292,15 @@ RemoveHashNode (Environment * theEnv,
     {
       theAddress = (CLIPSExternalAddress *) theValue;
 
-      if ((CL_EvaluationData (theEnv)->
-	   ExternalAddressTypes[theAddress->type] != NULL)
-	  && (CL_EvaluationData (theEnv)->
-	      ExternalAddressTypes[theAddress->type]->discardFunction !=
-	      NULL))
+      if ((CL_EvaluationData (theEnv)->ExternalAddressTypes[theAddress->type]
+	   != NULL)
+	  &&
+	  (CL_EvaluationData (theEnv)->ExternalAddressTypes
+	   [theAddress->type]->discardFunction != NULL))
 	{
-	  (*CL_EvaluationData (theEnv)->
-	   ExternalAddressTypes[theAddress->type]->discardFunction) (theEnv,
-								     theAddress->
-								     contents);
+	  (*CL_EvaluationData (theEnv)->ExternalAddressTypes
+	   [theAddress->type]->discardFunction) (theEnv,
+						 theAddress->contents);
 	}
     }
 
@@ -1387,8 +1386,8 @@ CL_RemoveEphemeralAtoms (Environment * theEnv)
 			    AVERAGE_BITMAP_SIZE);
   RemoveEphemeralHashNodes (theEnv,
 			    &theGarbageFrame->ephemeralExternalAddressList,
-			    (GENERIC_HN **) SymbolData (theEnv)->
-			    ExternalAddressTable,
+			    (GENERIC_HN **)
+			    SymbolData (theEnv)->ExternalAddressTable,
 			    sizeof (CLIPSExternalAddress),
 			    EXTERNAL_ADDRESS_TYPE, 0);
 }

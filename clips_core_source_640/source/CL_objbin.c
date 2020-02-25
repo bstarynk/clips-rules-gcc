@@ -1423,8 +1423,8 @@ UpdateSlot (Environment * theEnv, void *buf, unsigned long obji)
 	{
 	  sp->defaultValue = get_struct (theEnv, udfValue);
 	  CL_EvaluateAndStoreInDataObject (theEnv, sp->multiple,
-					   ExpressionPointer (bsp->
-							      defaultValue),
+					   ExpressionPointer
+					   (bsp->defaultValue),
 					   (UDFValue *) sp->defaultValue,
 					   true);
 	  CL_RetainUDFV (theEnv, (UDFValue *) sp->defaultValue);
@@ -1531,16 +1531,17 @@ CL_Clear_BloadObjects (Environment * theEnv)
       for (i = 0; i < ObjectBinaryData (theEnv)->ClassCount; i++)
 	{
 	  CL_UnmarkConstructHeader (theEnv,
-				    &ObjectBinaryData (theEnv)->
-				    DefclassArray[i].header);
+				    &ObjectBinaryData (theEnv)->DefclassArray
+				    [i].header);
 #if DEFMODULE_CONSTRUCT
 	  CL_DecrementBitMapReferenceCount (theEnv,
-					    ObjectBinaryData (theEnv)->
+					    ObjectBinaryData
+					    (theEnv)->
 					    DefclassArray[i].scopeMap);
 #endif
 	  CL_RemoveClassFromTable (theEnv,
-				   &ObjectBinaryData (theEnv)->
-				   DefclassArray[i]);
+				   &ObjectBinaryData (theEnv)->DefclassArray
+				   [i]);
 	}
       for (i = 0; i < ObjectBinaryData (theEnv)->SlotCount; i++)
 	{
@@ -1552,7 +1553,8 @@ CL_Clear_BloadObjects (Environment * theEnv)
 		  0))
 	    {
 	      CL_ReleaseUDFV (theEnv,
-			      (UDFValue *) ObjectBinaryData (theEnv)->
+			      (UDFValue *)
+			      ObjectBinaryData (theEnv)->
 			      SlotArray[i].defaultValue);
 	      rtn_struct (theEnv, udfValue,
 			  ObjectBinaryData (theEnv)->SlotArray[i].

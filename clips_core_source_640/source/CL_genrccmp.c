@@ -293,8 +293,8 @@ DefgenericsToCode (Environment * theEnv,
 			     fileNameBuffer, fileID, imageID, &fileCount,
 			     itemArrayVersions[MODULEI], headerFP,
 			     "DEFGENERIC_MODULE",
-			     ModulePrefix (DefgenericData (theEnv)->
-					   DefgenericCodeItem),
+			     ModulePrefix (DefgenericData
+					   (theEnv)->DefgenericCodeItem),
 			     itemReopenFlags[MODULEI],
 			     &itemCodeFiles[MODULEI]);
       if (itemFiles[MODULEI] == NULL)
@@ -318,7 +318,8 @@ DefgenericsToCode (Environment * theEnv,
 				 pathName, fileNameBuffer, fileID, imageID,
 				 &fileCount, itemArrayVersions[GENERICI],
 				 headerFP, "Defgeneric",
-				 ConstructPrefix (DefgenericData (theEnv)->
+				 ConstructPrefix (DefgenericData
+						  (theEnv)->
 						  DefgenericCodeItem),
 				 itemReopenFlags[GENERICI],
 				 &itemCodeFiles[GENERICI]);
@@ -524,8 +525,8 @@ CL_DefgenericModuleToCode (Environment * theEnv,
   fprintf (theFile, "{");
   CL_ConstructModuleToCode (theEnv, theFile, theModule, imageID, maxIndices,
 			    DefgenericData (theEnv)->CL_DefgenericModuleIndex,
-			    ConstructPrefix (DefgenericData (theEnv)->
-					     DefgenericCodeItem));
+			    ConstructPrefix (DefgenericData
+					     (theEnv)->DefgenericCodeItem));
   fprintf (theFile, "}");
 }
 
@@ -563,10 +564,10 @@ SingleDefgenericToCode (Environment * theEnv,
   fprintf (theFile, "{");
   CL_ConstructHeaderToCode (theEnv, theFile, &theDefgeneric->header, imageID,
 			    maxIndices, moduleCount,
-			    ModulePrefix (DefgenericData (theEnv)->
-					  DefgenericCodeItem),
-			    ConstructPrefix (DefgenericData (theEnv)->
-					     DefgenericCodeItem));
+			    ModulePrefix (DefgenericData
+					  (theEnv)->DefgenericCodeItem),
+			    ConstructPrefix (DefgenericData
+					     (theEnv)->DefgenericCodeItem));
 
   /* =========================
      Defgeneric specific data
@@ -610,8 +611,8 @@ MethodToCode (Environment * theEnv,
   fprintf (theFile, "{");
   CL_ConstructHeaderToCode (theEnv, theFile, &theMethod->header, imageID,
 			    maxIndices, moduleCount,
-			    ModulePrefix (DefgenericData (theEnv)->
-					  DefgenericCodeItem), "");
+			    ModulePrefix (DefgenericData
+					  (theEnv)->DefgenericCodeItem), "");
 
   fprintf (theFile, ",%u,0,%hd,%hu,%hu,%hd,%u,0,",
 	   theMethod->index, theMethod->restrictionCount,

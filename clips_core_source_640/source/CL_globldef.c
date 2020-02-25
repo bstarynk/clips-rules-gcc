@@ -292,7 +292,8 @@ Get_DefglobalModuleItem (Environment * theEnv, Defmodule * theModule)
 {
   return ((struct defglobalModule *)
 	  CL_GetConstructModuleItemByIndex (theEnv, theModule,
-					    DefglobalData (theEnv)->
+					    DefglobalData
+					    (theEnv)->
 					    CL_DefglobalModuleIndex));
 }
 
@@ -320,7 +321,8 @@ Defglobal *
 CL_FindDefglobalInModule (Environment * theEnv, const char *defglobalName)
 {
   return (Defglobal *) CL_FindNamedConstructInModule (theEnv, defglobalName,
-						      DefglobalData (theEnv)->
+						      DefglobalData
+						      (theEnv)->
 						      DefglobalConstruct);
 }
 
@@ -333,7 +335,8 @@ Defglobal *
 CL_GetNextDefglobal (Environment * theEnv, Defglobal * defglobalPtr)
 {
   return (Defglobal *) CL_GetNextConstructItem (theEnv, &defglobalPtr->header,
-						DefglobalData (theEnv)->
+						DefglobalData
+						(theEnv)->
 						CL_DefglobalModuleIndex);
 }
 
@@ -654,8 +657,8 @@ EntityGetDefglobalValue (Environment * theEnv,
   if (count > 1)
     {
       CL_AmbiguousReferenceErrorMessage (theEnv, "defglobal",
-					 ((CLIPSLexeme *) theValue)->
-					 contents);
+					 ((CLIPSLexeme *)
+					  theValue)->contents);
       vPtr->value = FalseSymbol (theEnv);
       Set_EvaluationError (theEnv, true);
       return false;

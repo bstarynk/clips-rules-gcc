@@ -1878,8 +1878,8 @@ BufferedRead (Environment * theEnv, void *buf, size_t bufsz)
 	  (unsigned long) MAX_BLOCK_SIZE;
       InstanceFileData (theEnv)->CurrentReadBuffer =
 	(char *) CL_genalloc (theEnv,
-			      InstanceFileData (theEnv)->
-			      CurrentReadBufferSize);
+			      InstanceFileData
+			      (theEnv)->CurrentReadBufferSize);
       CL_GenReadBinary (theEnv, InstanceFileData (theEnv)->CurrentReadBuffer,
 			InstanceFileData (theEnv)->CurrentReadBufferSize);
       for (i = 0L; i < bufsz; i++)
