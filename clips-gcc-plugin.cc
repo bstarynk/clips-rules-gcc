@@ -76,9 +76,6 @@ CLGCC_starting(void*gccdata __attribute__((unused)), void*userdata __attribute((
          CLGCC_projectstr.c_str(),
          CLGCC_translationunitstr.c_str(),
          cputimbuf, __LINE__);
-  CLGCC_env = CL_CreateEnvironment();
-  if (!CLGCC_env)
-    fatal_error(UNKNOWN_LOCATION, "CLIPS-GCC: CL_CreateEnvironment failed");
 } // end CLGCC_starting
 
 
@@ -236,6 +233,11 @@ plugin_init (struct plugin_name_args *plugin_info,
         warning(UNKNOWN_LOCATION, "CLIPS-GCC plugin %s: CLIPSGCC_DEBUG is %s but disabled debugging",
                 plugin_name, dbgstr);
     }
+  /// the CLIPS environment needs to be created very early
+  CLGCC_env = CL_CreateEnvironment();
+  if (!CLGCC_env)
+    fatal_error(UNKNOWN_LOCATION, "CLIPS-GCC: CL_CreateEnvironment failed");
+  CLGCC_DBGPRINTF("plugin_init %s created CLGCC_env@%p", plugin_name, CLGCC_env);
   CLGCC_DBGPRINTF("plugin_init %s before registering", plugin_name);
   register_callback (plugin_name, PLUGIN_START_UNIT, CLGCC_starting, NULL);
   register_callback (plugin_name, PLUGIN_FINISH_UNIT, CLGCC_finishing, NULL);
