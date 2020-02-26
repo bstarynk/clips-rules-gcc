@@ -53,6 +53,18 @@ const char*CLGCC_basename(const char* path)
   return path;
 } // end of CLGCC_basename
 
+void
+CLGCC_dodbgprintf(const char*srcfil, int lin, const char*fmt, ...)
+{
+  va_list args;
+  va_start(args,fmt);
+  fprintf(stderr, "%s:%d: ", CLGCC_basename(srcfil), lin);
+  vfprintf(stderr, fmt, args);
+  va_end(args);
+  putc('\n', stderr);
+  fflush(NULL);
+} // end CLGCC_dodbgprintf
+
 /// GCC callback which gets called before processing a translation unit
 void
 CLGCC_starting(void*gccdata __attribute__((unused)), void*userdata __attribute((unused)))
@@ -224,6 +236,7 @@ plugin_init (struct plugin_name_args *plugin_info,
         warning(UNKNOWN_LOCATION, "CLIPS-GCC plugin %s: CLIPSGCC_DEBUG is %s but disabled debugging",
                 plugin_name, dbgstr);
     }
+  CLGCC_DBGPRINTF("plugin_init %s before registering", plugin_name);
   register_callback (plugin_name, PLUGIN_START_UNIT, CLGCC_starting, NULL);
   register_callback (plugin_name, PLUGIN_FINISH_UNIT, CLGCC_finishing, NULL);
   /// initialize global state from arguments, and give information about this plugin

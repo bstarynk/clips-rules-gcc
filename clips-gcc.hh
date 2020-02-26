@@ -44,6 +44,7 @@
 #include <time.h>
 #include <math.h>
 #include <string.h>
+#include <stdarg.h>
 
 #include "gcc-plugin.h"
 #include "config.h"

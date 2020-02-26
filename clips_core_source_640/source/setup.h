@@ -103,13 +103,13 @@
 #define CLGCC_UNLIKELY(Test) !__builtin_expect(!!(Test),0)
 extern int clgcc_debug;
 extern const char *CLGCC_basename (const char *);
+extern void CLGCC_dodbgprintf (const char *srcfil, int lin, const char *fmt,
+			       ...) __attribute__((format (printf, 3, 4)));
 
 // we could use CLGCC_DBGPRINTF and later replace it by CLGCC_NONPRINTF
 #define CLGCC_DBGPRINTFATBIS(Fil,Lin,Fmt,...) do {	\
-    if (CLGCC_UNLIKELY(clgcc_debug)) {			\
-      printf("%s:%d+ ", CLGCC_basename((Fil)),		\
-	     (Lin));					\
-      printf(Fmt "\n", ##__VA_ARGS__); fflush(NULL); }	\
+    if (CLGCC_UNLIKELY(clgcc_debug)) 			\
+      CLGCC_dodbgprintf(Fil,Lin,Fmt,##__VA_ARGS__);	\
   } while(0)
 
 #define CLGCC_DBGPRINTFAT(Fil,Lin,Fmt,...) \
