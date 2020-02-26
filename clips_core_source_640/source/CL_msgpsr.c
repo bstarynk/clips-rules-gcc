@@ -167,8 +167,9 @@ CL_ParseDefmessageHandler (Environment * theEnv, const char *readSource)
   if ((cls == DefclassData (theEnv)->PrimitiveClassMap[INSTANCE_NAME_TYPE]) ||
       (cls == DefclassData (theEnv)->PrimitiveClassMap[INSTANCE_ADDRESS_TYPE])
       || (cls ==
-	  DefclassData (theEnv)->PrimitiveClassMap[INSTANCE_NAME_TYPE]->
-	  directSuperclasses.classArray[0]))
+	  DefclassData (theEnv)->
+	  PrimitiveClassMap[INSTANCE_NAME_TYPE]->directSuperclasses.
+	  classArray[0]))
     {
       CL_PrintErrorID (theEnv, "MSGPSR", 8, false);
       CL_WriteString (theEnv, STDERR,
@@ -212,8 +213,8 @@ CL_ParseDefmessageHandler (Environment * theEnv, const char *readSource)
 	    }
 	  mtype =
 	    CL_HandlerType (theEnv, "defmessage-handler", false,
-			    DefclassData (theEnv)->ObjectParseToken.
-			    lexemeValue->contents);
+			    DefclassData (theEnv)->
+			    ObjectParseToken.lexemeValue->contents);
 	  if (mtype == MERROR)
 	    return true;
 

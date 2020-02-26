@@ -348,8 +348,8 @@ CL_SetNCommandString (Environment * theEnv, const char *str, unsigned length)
 		   CommandLineData (theEnv)->MaximumCharacters + length + 1);
 
   CL_genstrncpy (CommandLineData (theEnv)->CommandString, str, length);
-  CommandLineData (theEnv)->CommandString[CommandLineData (theEnv)->
-					  MaximumCharacters + length] = 0;
+  CommandLineData (theEnv)->
+    CommandString[CommandLineData (theEnv)->MaximumCharacters + length] = 0;
   CommandLineData (theEnv)->MaximumCharacters += (length + 1);
   RouterData (theEnv)->CommandBufferInputCount += length;
 }

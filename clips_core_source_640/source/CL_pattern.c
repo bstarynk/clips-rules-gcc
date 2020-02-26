@@ -415,8 +415,9 @@ CL_DetachPattern (Environment * theEnv,
   if (PatternData (theEnv)->PatternParserArray[rhsType - 1] != NULL)
     {
       CL_FlushAlphaMemory (theEnv, theHeader);
-      (*PatternData (theEnv)->PatternParserArray[rhsType - 1]->
-       removePatternFunction) (theEnv, theHeader);
+      (*PatternData (theEnv)->
+       PatternParserArray[rhsType - 1]->removePatternFunction) (theEnv,
+								theHeader);
     }
 }
 
@@ -443,8 +444,8 @@ CL_AddPatternParser (Environment * theEnv, struct patternParser *newPtr)
    /*================================*/
 
   newPtr->positionInArray = PatternData (theEnv)->NextPosition;
-  PatternData (theEnv)->PatternParserArray[PatternData (theEnv)->
-					   NextPosition - 1] = newPtr;
+  PatternData (theEnv)->
+    PatternParserArray[PatternData (theEnv)->NextPosition - 1] = newPtr;
   PatternData (theEnv)->NextPosition++;
 
    /*================================*/
@@ -822,8 +823,9 @@ CL_RestrictionParse (Environment * theEnv,
 	  tempConstraints->maxFields =
 	    CL_GenConstant (theEnv, INTEGER_TYPE,
 			    CL_CreateInteger (theEnv,
-					      theConstraints->maxFields->
-					      integerValue->contents -
+					      theConstraints->
+					      maxFields->integerValue->
+					      contents -
 					      numberOfSingleFields));
 	}
 
@@ -835,8 +837,9 @@ CL_RestrictionParse (Environment * theEnv,
 	  tempConstraints->minFields =
 	    CL_GenConstant (theEnv, INTEGER_TYPE,
 			    CL_CreateInteger (theEnv,
-					      theConstraints->minFields->
-					      integerValue->contents -
+					      theConstraints->
+					      minFields->integerValue->
+					      contents -
 					      numberOfSingleFields));
 	}
     }
@@ -1175,8 +1178,8 @@ CheckForVariableMixing (Environment * theEnv,
 	    {
 	      theConstraint =
 		CL_FunctionCallToConstraintRecord (theEnv,
-						   tempRestriction->
-						   expression->value);
+						   tempRestriction->expression->
+						   value);
 	      if (theConstraint->anyAllowed)
 		{		/* Do nothing. */
 		}

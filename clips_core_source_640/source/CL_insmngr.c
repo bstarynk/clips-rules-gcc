@@ -225,9 +225,8 @@ CL_MakeInstanceCommand (Environment * theEnv,
 	{
 	  CL_ClassExistError (theEnv,
 			      ExpressionFunctionCallName (CL_EvaluationData
-							  (theEnv)->
-							  CurrentExpression)->
-			      contents, temp.lexemeValue->contents);
+							  (theEnv)->CurrentExpression)->contents,
+			      temp.lexemeValue->contents);
 	  Set_EvaluationError (theEnv, true);
 	  InstanceData (theEnv)->makeInstanceError =
 	    MIE_COULD_NOT_CREATE_ERROR;
@@ -472,8 +471,8 @@ CL_BuildInstance (Environment * theEnv,
     InstanceData (theEnv)->CurrentInstance->cls->instanceList =
       InstanceData (theEnv)->CurrentInstance;
   else
-    InstanceData (theEnv)->CurrentInstance->cls->instanceListBottom->
-      nxtClass = InstanceData (theEnv)->CurrentInstance;
+    InstanceData (theEnv)->CurrentInstance->cls->
+      instanceListBottom->nxtClass = InstanceData (theEnv)->CurrentInstance;
   InstanceData (theEnv)->CurrentInstance->prvClass =
     InstanceData (theEnv)->CurrentInstance->cls->instanceListBottom;
   InstanceData (theEnv)->CurrentInstance->cls->instanceListBottom =
@@ -2352,11 +2351,11 @@ CL_IMPutSlot (InstanceModifier * theIM,
     {
       theIM->changeMap =
 	(char *) CL_gm2 (theIM->imEnv,
-			 CountToBitMapSize (theIM->imOldInstance->cls->
-					    slotCount));
+			 CountToBitMapSize (theIM->imOldInstance->
+					    cls->slotCount));
       CL_ClearBitString ((void *) theIM->changeMap,
-			 CountToBitMapSize (theIM->imOldInstance->cls->
-					    slotCount));
+			 CountToBitMapSize (theIM->imOldInstance->
+					    cls->slotCount));
     }
 
    /*=====================*/
@@ -2638,8 +2637,8 @@ CL_IMAbort (InstanceModifier * theIM)
   if (theIM->changeMap != NULL)
     {
       CL_ClearBitString ((void *) theIM->changeMap,
-			 CountToBitMapSize (theIM->imOldInstance->cls->
-					    slotCount));
+			 CountToBitMapSize (theIM->imOldInstance->
+					    cls->slotCount));
     }
 
   CL_GCBlockEnd (theEnv, &gcb);
@@ -2764,8 +2763,8 @@ CL_IMSetInstance (InstanceModifier * theIM, Instance * oldInstance)
   if (newSlotCount != 0)
     {
       CL_ClearBitString ((void *) theIM->changeMap,
-			 CountToBitMapSize (theIM->imOldInstance->cls->
-					    slotCount));
+			 CountToBitMapSize (theIM->imOldInstance->
+					    cls->slotCount));
     }
 
    /*================================================================*/

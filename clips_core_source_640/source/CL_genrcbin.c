@@ -870,8 +870,9 @@ UpdateMethod (Environment * theEnv, void *buf, unsigned long obji)
     ExpressionPointer (bmth->actions);
 
   CL_UpdateConstructHeader (theEnv, &bmth->header,
-			    &DefgenericBinaryData (theEnv)->MethodArray[obji].
-			    header, DEFMETHOD, sizeof (DEFGENERIC_MODULE),
+			    &DefgenericBinaryData (theEnv)->
+			    MethodArray[obji].header, DEFMETHOD,
+			    sizeof (DEFGENERIC_MODULE),
 			    DefgenericBinaryData (theEnv)->ModuleArray,
 			    sizeof (Defmethod),
 			    DefgenericBinaryData (theEnv)->MethodArray);

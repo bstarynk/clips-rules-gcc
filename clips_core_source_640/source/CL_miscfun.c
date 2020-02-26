@@ -1526,11 +1526,11 @@ CL_NewFunction (Environment * theEnv,
    /*====================================================*/
 
   if ((CL_EvaluationData (theEnv)->ExternalAddressTypes[theType] != NULL) &&
-      (CL_EvaluationData (theEnv)->ExternalAddressTypes[theType]->
-       newFunction != NULL))
+      (CL_EvaluationData (theEnv)->
+       ExternalAddressTypes[theType]->newFunction != NULL))
     {
-      (*CL_EvaluationData (theEnv)->ExternalAddressTypes[theType]->
-       newFunction) (context, returnValue);
+      (*CL_EvaluationData (theEnv)->
+       ExternalAddressTypes[theType]->newFunction) (context, returnValue);
     }
 }
 
@@ -1588,11 +1588,12 @@ CL_CallFunction (Environment * theEnv,
       /*====================================================================*/
 
       if ((CL_EvaluationData (theEnv)->ExternalAddressTypes[theType] != NULL)
-	  && (CL_EvaluationData (theEnv)->ExternalAddressTypes[theType]->
-	      callFunction != NULL))
+	  && (CL_EvaluationData (theEnv)->
+	      ExternalAddressTypes[theType]->callFunction != NULL))
 	{
-	  (*CL_EvaluationData (theEnv)->ExternalAddressTypes[theType]->
-	   callFunction) (context, &theValue, returnValue);
+	  (*CL_EvaluationData (theEnv)->
+	   ExternalAddressTypes[theType]->callFunction) (context, &theValue,
+							 returnValue);
 	}
 
       return;
@@ -1611,11 +1612,12 @@ CL_CallFunction (Environment * theEnv,
       theType = theEA->type;
 
       if ((CL_EvaluationData (theEnv)->ExternalAddressTypes[theType] != NULL)
-	  && (CL_EvaluationData (theEnv)->ExternalAddressTypes[theType]->
-	      callFunction != NULL))
+	  && (CL_EvaluationData (theEnv)->
+	      ExternalAddressTypes[theType]->callFunction != NULL))
 	{
-	  (*CL_EvaluationData (theEnv)->ExternalAddressTypes[theType]->
-	   callFunction) (context, &theValue, returnValue);
+	  (*CL_EvaluationData (theEnv)->
+	   ExternalAddressTypes[theType]->callFunction) (context, &theValue,
+							 returnValue);
 	}
 
       return;

@@ -681,8 +681,7 @@ CL_UndefconstructAll (Environment * theEnv, Construct * constructClass)
 	{
 	  CL_CantDeleteItemErrorMessage (theEnv,
 					 constructClass->constructName,
-					 (*constructClass->
-					  getConstructNameFunction)
+					 (*constructClass->getConstructNameFunction)
 					 (currentConstruct)->contents);
 	  success = false;
 	}
@@ -1743,8 +1742,9 @@ Construct_WatchSupport (Environment * theEnv,
 
       if ((constructName.header->type != SYMBOL_TYPE) ? true :
 	  ((theConstruct = CL_LookupConstruct (theEnv, constructClass,
-					       constructName.lexemeValue->
-					       contents, true)) == NULL))
+					       constructName.
+					       lexemeValue->contents,
+					       true)) == NULL))
 	{
 	  CL_ExpectedTypeError1 (theEnv, funcName, argIndex,
 				 constructClass->constructName);
@@ -1794,8 +1794,8 @@ ConstructPrint_Watch (Environment * theEnv,
 		      ConstructGet_WatchFunction * get_WatchFunc)
 {
   CL_WriteString (theEnv, logName,
-		  (*constructClass->getConstructNameFunction) (theConstruct)->
-		  contents);
+		  (*constructClass->
+		   getConstructNameFunction) (theConstruct)->contents);
   if ((*get_WatchFunc) (theConstruct))
     CL_WriteString (theEnv, logName, " = on\n");
   else

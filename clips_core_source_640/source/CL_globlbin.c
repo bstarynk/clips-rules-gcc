@@ -104,8 +104,8 @@ DeallocateDefglobal_BloadData (Environment * theEnv)
 
   for (i = 0; i < DefglobalBinaryData (theEnv)->NumberOfDefglobals; i++)
     {
-      if (DefglobalBinaryData (theEnv)->DefglobalArray[i].current.header->
-	  type == MULTIFIELD_TYPE)
+      if (DefglobalBinaryData (theEnv)->DefglobalArray[i].current.
+	  header->type == MULTIFIELD_TYPE)
 	{
 	  CL_ReturnMultifield (theEnv,
 			       DefglobalBinaryData (theEnv)->DefglobalArray
@@ -464,10 +464,10 @@ CL_Clear_Bload (Environment * theEnv)
 				[i].header);
 
       CL_Release (theEnv,
-		  DefglobalBinaryData (theEnv)->DefglobalArray[i].current.
-		  header);
-      if (DefglobalBinaryData (theEnv)->DefglobalArray[i].current.header->
-	  type == MULTIFIELD_TYPE)
+		  DefglobalBinaryData (theEnv)->DefglobalArray[i].
+		  current.header);
+      if (DefglobalBinaryData (theEnv)->DefglobalArray[i].current.
+	  header->type == MULTIFIELD_TYPE)
 	{
 	  CL_ReturnMultifield (theEnv,
 			       DefglobalBinaryData (theEnv)->DefglobalArray

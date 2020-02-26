@@ -186,15 +186,16 @@ CL_FactPatternMatch (Environment * theEnv,
 	  if (patternPtr->header.endSlot &&
 	      ((FactData (theEnv)->CurrentPatternMarks == NULL) ?
 	       false :
-	       (FactData (theEnv)->CurrentPatternMarks->where.
-		whichSlotNumber == patternPtr->whichSlot))
-	      && (FactData (theEnv)->CurrentPatternFact->theProposition.
-		  contents[patternPtr->whichSlot].header->type ==
-		  MULTIFIELD_TYPE))
+	       (FactData (theEnv)->CurrentPatternMarks->
+		where.whichSlotNumber == patternPtr->whichSlot))
+	      && (FactData (theEnv)->CurrentPatternFact->
+		  theProposition.contents[patternPtr->whichSlot].header->
+		  type == MULTIFIELD_TYPE))
 	    {
 	      if ((patternPtr->leaveFields + theSlotField) !=
-		  FactData (theEnv)->CurrentPatternFact->theProposition.
-		  contents[patternPtr->whichSlot].multifieldValue->length)
+		  FactData (theEnv)->CurrentPatternFact->
+		  theProposition.contents[patternPtr->whichSlot].
+		  multifieldValue->length)
 		{
 		  skipit = true;
 		}
@@ -358,8 +359,8 @@ ProcessMultifieldNode (Environment * theEnv,
    /*========================================*/
 
   theSlotValue =
-    FactData (theEnv)->CurrentPatternFact->theProposition.
-    contents[thePattern->whichSlot].multifieldValue;
+    FactData (theEnv)->CurrentPatternFact->
+    theProposition.contents[thePattern->whichSlot].multifieldValue;
 
    /*===============================================*/
   /* CL_Save the value of the markers already stored. */
@@ -424,11 +425,8 @@ ProcessMultifieldNode (Environment * theEnv,
 	      thePattern =
 		(struct factPatternNode *) CL_FindHashedPatternNode (theEnv,
 								     thePattern,
-								     theResult.
-								     header->
-								     type,
-								     theResult.
-								     value);
+								     theResult.header->type,
+								     theResult.value);
 	      if (thePattern != NULL)
 		{
 		  success = true;
@@ -533,11 +531,8 @@ ProcessMultifieldNode (Environment * theEnv,
 	      tempPtr =
 		(struct factPatternNode *) CL_FindHashedPatternNode (theEnv,
 								     thePattern,
-								     theResult.
-								     header->
-								     type,
-								     theResult.
-								     value);
+								     theResult.header->type,
+								     theResult.value);
 	      if (tempPtr != NULL)
 		{
 		  CL_FactPatternMatch (theEnv,

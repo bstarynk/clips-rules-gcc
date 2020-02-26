@@ -817,9 +817,8 @@ ExpressionComplexity (Environment * theEnv, struct expr *exprPtr)
 	}
       else
 	if ((CL_EvaluationData (theEnv)->PrimitivesArray[exprPtr->type] !=
-	     NULL) ? CL_EvaluationData (theEnv)->PrimitivesArray[exprPtr->
-								 type]->
-	    addsToRuleComplexity : false)
+	     NULL) ? CL_EvaluationData (theEnv)->
+	    PrimitivesArray[exprPtr->type]->addsToRuleComplexity : false)
 	{
 	  complexity++;
 	}

@@ -229,14 +229,15 @@ CL_PrintAtom (Environment * theEnv,
     default:
       if (CL_EvaluationData (theEnv)->PrimitivesArray[type] == NULL)
 	break;
-      if (CL_EvaluationData (theEnv)->PrimitivesArray[type]->
-	  long_PrintFunction == NULL)
+      if (CL_EvaluationData (theEnv)->
+	  PrimitivesArray[type]->long_PrintFunction == NULL)
 	{
 	  CL_WriteString (theEnv, logicalName, "<unknown atom type>");
 	  break;
 	}
-      (*CL_EvaluationData (theEnv)->PrimitivesArray[type]->
-       long_PrintFunction) (theEnv, logicalName, value);
+      (*CL_EvaluationData (theEnv)->
+       PrimitivesArray[type]->long_PrintFunction) (theEnv, logicalName,
+						   value);
       break;
     }
 }

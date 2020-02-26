@@ -513,8 +513,8 @@ CL_MarkNeededItems (Environment * theEnv, struct expr *testPtr)
 	  if (CL_EvaluationData (theEnv)->PrimitivesArray[testPtr->type] ==
 	      NULL)
 	    break;
-	  if (CL_EvaluationData (theEnv)->PrimitivesArray[testPtr->type]->
-	      bitMap)
+	  if (CL_EvaluationData (theEnv)->
+	      PrimitivesArray[testPtr->type]->bitMap)
 	    {
 	      ((CLIPSBitMap *) testPtr->value)->neededBitMap = true;
 	    }

@@ -740,8 +740,7 @@ CL_FlushParsingMessages (Environment * theEnv)
 						      ConstructData
 						      (theEnv)->ErrLineNumber,
 						      ConstructData
-						      (theEnv)->
-						      ParserErrorContext);
+						      (theEnv)->ParserErrorContext);
     }
 
   if (ConstructData (theEnv)->WarningString != NULL)
@@ -755,8 +754,7 @@ CL_FlushParsingMessages (Environment * theEnv)
 						      ConstructData
 						      (theEnv)->WrnLineNumber,
 						      ConstructData
-						      (theEnv)->
-						      ParserErrorContext);
+						      (theEnv)->ParserErrorContext);
     }
 
    /*===================================*/

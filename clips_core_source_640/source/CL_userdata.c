@@ -51,8 +51,9 @@ CL_InstallUserDataRecord (Environment * theEnv,
 			  struct userDataRecord *theRecord)
 {
   theRecord->dataID = UserDataData (theEnv)->UserDataRecordCount;
-  UserDataData (theEnv)->UserDataRecordArray[UserDataData (theEnv)->
-					     UserDataRecordCount] = theRecord;
+  UserDataData (theEnv)->
+    UserDataRecordArray[UserDataData (theEnv)->UserDataRecordCount] =
+    theRecord;
   return (UserDataData (theEnv)->UserDataRecordCount++);
 }
 
@@ -119,8 +120,9 @@ CL_ClearUserDataList (Environment * theEnv, struct userData *theList)
   while (theList != NULL)
     {
       nextData = theList->next;
-      (*UserDataData (theEnv)->UserDataRecordArray[theList->dataID]->
-       deleteUserData) (theEnv, theList);
+      (*UserDataData (theEnv)->
+       UserDataRecordArray[theList->dataID]->deleteUserData) (theEnv,
+							      theList);
       theList = nextData;
     }
 }
@@ -148,8 +150,8 @@ CL_DeleteUserData (Environment * theEnv,
 	      lastData->next = theData->next;
 	    }
 
-	  (*UserDataData (theEnv)->UserDataRecordArray[userDataID]->
-	   deleteUserData) (theEnv, theData);
+	  (*UserDataData (theEnv)->
+	   UserDataRecordArray[userDataID]->deleteUserData) (theEnv, theData);
 	  return (theList);
 	}
 

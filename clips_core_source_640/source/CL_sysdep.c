@@ -547,6 +547,14 @@ CL_GenOpen (Environment * theEnv,
   wchar_t *waccessType;
   int wfnlength, watlength;
 #endif
+
+  //+Basile adds checks
+  Bogus (theEnv == NULL);
+  Bogus (fileName == NULL);
+  Bogus (accessType == NULL);
+  Bogus (SystemDependentData (theEnv) == NULL);
+  //-Basile
+
    /*==================================*/
   /* Invoke the before open function. */
    /*==================================*/

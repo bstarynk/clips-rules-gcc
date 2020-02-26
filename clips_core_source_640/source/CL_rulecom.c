@@ -848,8 +848,8 @@ ListAlpha_Matches (Environment * theEnv,
     }
 
   listOfHashNodes =
-    ((struct patternNodeHeader *) theJoin->rightSideEntryStructure)->
-    firstHash;
+    ((struct patternNodeHeader *) theJoin->
+     rightSideEntryStructure)->firstHash;
 
   for (count = 0;
        listOfHashNodes != NULL; listOfHashNodes = listOfHashNodes->nextHash)
@@ -1643,8 +1643,7 @@ ShowJoins (Environment * theEnv, Defrule * theRule)
 	      CL_WriteString (theEnv, STDOUT, "    RA : ");
 	      CL_WriteString (theEnv, STDOUT,
 			      CL_DefruleName (joinList
-					      [numberOfJoins]->
-					      ruleToActivate));
+					      [numberOfJoins]->ruleToActivate));
 	      CL_WriteString (theEnv, STDOUT, "\n");
 	    }
 

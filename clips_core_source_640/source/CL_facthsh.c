@@ -133,10 +133,12 @@ FactExists (Environment * theEnv, Fact * theFact, size_t hashValue)
 	}
 
       if ((theFact->whichDeftemplate ==
-	   theFactHash->theFact->
-	   whichDeftemplate) ? CL_MultifieldsEqual (&theFact->theProposition,
-						    &theFactHash->theFact->
-						    theProposition) : false)
+	   theFactHash->
+	   theFact->whichDeftemplate) ? CL_MultifieldsEqual (&theFact->
+							     theProposition,
+							     &theFactHash->
+							     theFact->theProposition)
+	  : false)
 	{
 	  return (theFactHash->theFact);
 	}

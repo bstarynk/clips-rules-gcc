@@ -277,8 +277,7 @@ CL_BsaveBinaryItem (Environment * theEnv, FILE * fp)
       theModuleItem =
 	(struct deffactsModule *) CL_GetModuleItem (theEnv, NULL,
 						    DeffactsData
-						    (theEnv)->
-						    CL_DeffactsModuleIndex);
+						    (theEnv)->CL_DeffactsModuleIndex);
       CL_Assign_BsaveDefmdlItemHdrVals (&temp_DeffactsModule.header,
 					&theModuleItem->header);
       CL_Gen_Write (&temp_DeffactsModule,
@@ -448,8 +447,9 @@ UpdateDeffacts (Environment * theEnv, void *buf, unsigned long obji)
 
   bdp = (struct bsaveDeffacts *) buf;
   CL_UpdateConstructHeader (theEnv, &bdp->header,
-			    &DeffactsBinaryData (theEnv)->DeffactsArray[obji].
-			    header, DEFFACTS, sizeof (struct deffactsModule),
+			    &DeffactsBinaryData (theEnv)->
+			    DeffactsArray[obji].header, DEFFACTS,
+			    sizeof (struct deffactsModule),
 			    DeffactsBinaryData (theEnv)->ModuleArray,
 			    sizeof (Deffacts),
 			    DeffactsBinaryData (theEnv)->DeffactsArray);

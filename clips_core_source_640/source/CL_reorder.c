@@ -1004,8 +1004,7 @@ CompressCEs (Environment * theEnv,
 		{
 		  e1 =
 		    CL_LHSParseNodesToExpression (theEnv,
-						  argPtr->
-						  secondaryExpression);
+						  argPtr->secondaryExpression);
 		  e2 =
 		    CL_LHSParseNodesToExpression (theEnv,
 						  argPtr->bottom->expression);
@@ -1033,8 +1032,7 @@ CompressCEs (Environment * theEnv,
 		      argPtr->exists = true;
 		      e1 =
 			CL_LHSParseNodesToExpression (theEnv,
-						      argPtr->
-						      secondaryExpression);
+						      argPtr->secondaryExpression);
 		      e1 = CL_NegateExpression (theEnv, e1);
 		      CL_ReturnLHSParseNodes (theEnv,
 					      argPtr->secondaryExpression);
@@ -1048,8 +1046,7 @@ CompressCEs (Environment * theEnv,
 		      argPtr->exists = false;
 		      e1 =
 			CL_LHSParseNodesToExpression (theEnv,
-						      argPtr->
-						      secondaryExpression);
+						      argPtr->secondaryExpression);
 		      e1 = CL_NegateExpression (theEnv, e1);
 		      CL_ReturnLHSParseNodes (theEnv,
 					      argPtr->secondaryExpression);

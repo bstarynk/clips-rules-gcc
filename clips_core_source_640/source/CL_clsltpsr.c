@@ -666,13 +666,13 @@ ParseSimpleFacet (Environment * theEnv,
 	    rtnCode = 0;
 	  else
 	    if (strcmp
-		(DefclassData (theEnv)->ObjectParseToken.lexemeValue->
-		 contents, setRelation) == 0)
+		(DefclassData (theEnv)->ObjectParseToken.
+		 lexemeValue->contents, setRelation) == 0)
 	    rtnCode = 1;
 	  else if ((alternateRelation == NULL) ? false :
 		   (strcmp
-		    (DefclassData (theEnv)->ObjectParseToken.lexemeValue->
-		     contents, alternateRelation) == 0))
+		    (DefclassData (theEnv)->ObjectParseToken.
+		     lexemeValue->contents, alternateRelation) == 0))
 	    rtnCode = 2;
 	  else
 	    goto ParseSimpleFacetError;

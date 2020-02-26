@@ -232,8 +232,7 @@ DefinstancesToCode (Environment * theEnv,
 				 definstancesArrayVersion, headerFP,
 				 "Definstances",
 				 ConstructPrefix (DefinstancesData
-						  (theEnv)->
-						  DefinstancesCodeItem),
+						  (theEnv)->DefinstancesCodeItem),
 				 false, NULL);
 	  if (definstancesFile == NULL)
 	    {

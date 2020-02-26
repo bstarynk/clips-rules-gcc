@@ -356,8 +356,7 @@ CL_GetNextActivation (Environment * theEnv, Activation * actPtr)
       theModuleItem =
 	(struct defruleModule *) CL_GetModuleItem (theEnv, NULL,
 						   DefruleData
-						   (theEnv)->
-						   CL_DefruleModuleIndex);
+						   (theEnv)->CL_DefruleModuleIndex);
       if (theModuleItem == NULL)
 	return NULL;
       return theModuleItem->agenda;
@@ -1034,8 +1033,8 @@ CL_Refresh (Defrule * theRule)
 	      /* have an activation associated with it.                */
 	    /*=======================================================*/
 
-	      if (((struct joinNode *) listOf_Matches->owner)->
-		  ruleToActivate != NULL)
+	      if (((struct joinNode *) listOf_Matches->
+		   owner)->ruleToActivate != NULL)
 		{
 		  if (listOf_Matches->marker == NULL)
 		    {

@@ -278,8 +278,8 @@ CL_ReadRouter (Environment * theEnv, const char *logicalName)
     {
       inchar =
 	(unsigned char)
-	RouterData (theEnv)->
-	FastCharGetString[RouterData (theEnv)->FastCharGetIndex];
+	RouterData (theEnv)->FastCharGetString[RouterData (theEnv)->
+					       FastCharGetIndex];
 
       RouterData (theEnv)->FastCharGetIndex++;
 
@@ -458,7 +458,7 @@ CL_ExitRouter (Environment * theEnv, int num)
 }
 
 /********************************************/
-/* CL_AbortExit: Forces CL_ExitRouter to te_rminate */
+/* CL_AbortExit: Forces CL_ExitRouter to terminate */
 /*   after calling all closing routers.     */
 /********************************************/
 void

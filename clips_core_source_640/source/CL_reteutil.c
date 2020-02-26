@@ -1600,8 +1600,10 @@ CL_ComputeRightHashValue (Environment * theEnv,
 
       oldArgument = CL_EvaluationData (theEnv)->CurrentExpression;
       CL_EvaluationData (theEnv)->CurrentExpression = tempExpr;
-      (*CL_EvaluationData (theEnv)->PrimitivesArray[tempExpr->type]->
-       evaluateFunction) (theEnv, tempExpr->value, &theResult);
+      (*CL_EvaluationData (theEnv)->
+       PrimitivesArray[tempExpr->type]->evaluateFunction) (theEnv,
+							   tempExpr->value,
+							   &theResult);
       CL_EvaluationData (theEnv)->CurrentExpression = oldArgument;
 
       switch (theResult.header->type)

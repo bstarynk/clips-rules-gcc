@@ -181,8 +181,8 @@ CL_GetQueryInstance (Environment * theEnv,
   core = FindQueryCore (theEnv, GetFirstArgument ()->integerValue->contents);
   returnValue->value =
     CL_GetFull_InstanceName (theEnv,
-			     core->solns[GetFirstArgument ()->nextArg->
-					 integerValue->contents]);
+			     core->solns[GetFirstArgument ()->
+					 nextArg->integerValue->contents]);
 }
 
 /***************************************************************************
@@ -383,8 +383,8 @@ Query_FindInstance (Environment * theEnv,
 	{
 	  returnValue->multifieldValue->contents[i].lexemeValue =
 	    CL_GetFull_InstanceName (theEnv,
-				     InstanceQueryData (theEnv)->QueryCore->
-				     solns[i]);
+				     InstanceQueryData (theEnv)->
+				     QueryCore->solns[i]);
 	}
     }
   else
@@ -453,8 +453,8 @@ QueryFindAll_Instances (Environment * theEnv,
 	{
 	  returnValue->multifieldValue->contents[j].lexemeValue =
 	    CL_GetFull_InstanceName (theEnv,
-				     InstanceQueryData (theEnv)->QueryCore->
-				     soln_set->soln[i]);
+				     InstanceQueryData (theEnv)->
+				     QueryCore->soln_set->soln[i]);
 	}
       returnValue->range = j;
       PopQuerySoln (theEnv);
@@ -1246,16 +1246,16 @@ TestEntireClass (Environment * theEnv,
 		  ins->busy++;
 
 		  CL_ReleaseUDFV (theEnv,
-				  InstanceQueryData (theEnv)->QueryCore->
-				  result);
+				  InstanceQueryData (theEnv)->
+				  QueryCore->result);
 		  CL_EvaluateExpression (theEnv,
-					 InstanceQueryData (theEnv)->
-					 QueryCore->action,
-					 InstanceQueryData (theEnv)->
-					 QueryCore->result);
+					 InstanceQueryData
+					 (theEnv)->QueryCore->action,
+					 InstanceQueryData
+					 (theEnv)->QueryCore->result);
 		  CL_RetainUDFV (theEnv,
-				 InstanceQueryData (theEnv)->QueryCore->
-				 result);
+				 InstanceQueryData (theEnv)->
+				 QueryCore->result);
 
 		  ins->busy--;
 		  if (ProcedureFunctionData (theEnv)->BreakFlag

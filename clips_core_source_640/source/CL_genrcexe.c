@@ -228,19 +228,20 @@ CL_GenericDispatch (Environment * theEnv,
 	{
 #if PROFILING_FUNCTIONS
 	  Start_Profile (theEnv, &profileFrame,
-			 &DefgenericData (theEnv)->CurrentMethod->header.
-			 usrData,
-			 CL_ProfileFunctionData (theEnv)->
-			 CL_ProfileConstructs);
+			 &DefgenericData (theEnv)->CurrentMethod->
+			 header.usrData,
+			 CL_ProfileFunctionData
+			 (theEnv)->CL_ProfileConstructs);
 #endif
 
 	  CL_EvaluateProcActions (theEnv,
-				  DefgenericData (theEnv)->CurrentGeneric->
-				  header.whichModule->theModule,
-				  DefgenericData (theEnv)->CurrentMethod->
-				  actions,
-				  DefgenericData (theEnv)->CurrentMethod->
-				  localVarCount, returnValue,
+				  DefgenericData (theEnv)->
+				  CurrentGeneric->header.whichModule->
+				  theModule,
+				  DefgenericData (theEnv)->
+				  CurrentMethod->actions,
+				  DefgenericData (theEnv)->
+				  CurrentMethod->localVarCount, returnValue,
 				  CL_UnboundMethodErr);
 
 #if PROFILING_FUNCTIONS
@@ -348,8 +349,8 @@ CL_IsMethodApplicable (Environment * theEnv, Defmethod * meth)
 		  DefclassData (theEnv)->PrimitiveClassMap
 		  [INSTANCE_ADDRESS_TYPE])
 		{
-		  if (ProceduralPrimitiveData (theEnv)->ProcParamArray[i].
-		      header->type == INSTANCE_ADDRESS_TYPE)
+		  if (ProceduralPrimitiveData (theEnv)->
+		      ProcParamArray[i].header->type == INSTANCE_ADDRESS_TYPE)
 		    break;
 		}
 	      else if (rp->types[j] ==
@@ -357,18 +358,19 @@ CL_IsMethodApplicable (Environment * theEnv, Defmethod * meth)
 		       DefclassData (theEnv)->PrimitiveClassMap
 		       [INSTANCE_NAME_TYPE])
 		{
-		  if (ProceduralPrimitiveData (theEnv)->ProcParamArray[i].
-		      header->type == INSTANCE_NAME_TYPE)
+		  if (ProceduralPrimitiveData (theEnv)->
+		      ProcParamArray[i].header->type == INSTANCE_NAME_TYPE)
 		    break;
 		}
 	      else if (rp->types[j] ==
 		       DefclassData (theEnv)->PrimitiveClassMap
 		       [INSTANCE_NAME_TYPE]->directSuperclasses.classArray[0])
 		{
-		  if ((ProceduralPrimitiveData (theEnv)->ProcParamArray[i].
-		       header->type == INSTANCE_NAME_TYPE)
-		      || (ProceduralPrimitiveData (theEnv)->ProcParamArray[i].
-			  header->type == INSTANCE_ADDRESS_TYPE))
+		  if ((ProceduralPrimitiveData (theEnv)->
+		       ProcParamArray[i].header->type == INSTANCE_NAME_TYPE)
+		      || (ProceduralPrimitiveData (theEnv)->
+			  ProcParamArray[i].header->type ==
+			  INSTANCE_ADDRESS_TYPE))
 		    break;
 		}
 	    }
@@ -506,11 +508,11 @@ CL_CallNextMethod (Environment * theEnv,
 #endif
 
       CL_EvaluateProcActions (theEnv,
-			      DefgenericData (theEnv)->CurrentGeneric->header.
-			      whichModule->theModule,
+			      DefgenericData (theEnv)->CurrentGeneric->
+			      header.whichModule->theModule,
 			      DefgenericData (theEnv)->CurrentMethod->actions,
-			      DefgenericData (theEnv)->CurrentMethod->
-			      localVarCount, returnValue,
+			      DefgenericData (theEnv)->
+			      CurrentMethod->localVarCount, returnValue,
 			      CL_UnboundMethodErr);
 
 #if PROFILING_FUNCTIONS
@@ -681,8 +683,8 @@ CL_WatchGeneric (Environment * theEnv, const char *tstring)
   CL_WriteString (theEnv, STDOUT, "GNC ");
   CL_WriteString (theEnv, STDOUT, tstring);
   CL_WriteString (theEnv, STDOUT, " ");
-  if (DefgenericData (theEnv)->CurrentGeneric->header.whichModule->
-      theModule != CL_GetCurrentModule (theEnv))
+  if (DefgenericData (theEnv)->CurrentGeneric->header.
+      whichModule->theModule != CL_GetCurrentModule (theEnv))
     {
       CL_WriteString (theEnv, STDOUT,
 		      CL_DefgenericModule (DefgenericData
@@ -690,8 +692,8 @@ CL_WatchGeneric (Environment * theEnv, const char *tstring)
       CL_WriteString (theEnv, STDOUT, "::");
     }
   CL_WriteString (theEnv, STDOUT,
-		  DefgenericData (theEnv)->CurrentGeneric->header.name->
-		  contents);
+		  DefgenericData (theEnv)->CurrentGeneric->header.
+		  name->contents);
   CL_WriteString (theEnv, STDOUT, " ");
   CL_WriteString (theEnv, STDOUT, " ED:");
   CL_WriteInteger (theEnv, STDOUT,
@@ -723,8 +725,8 @@ CL_WatchMethod (Environment * theEnv, const char *tstring)
   CL_WriteString (theEnv, STDOUT, "MTH ");
   CL_WriteString (theEnv, STDOUT, tstring);
   CL_WriteString (theEnv, STDOUT, " ");
-  if (DefgenericData (theEnv)->CurrentGeneric->header.whichModule->
-      theModule != CL_GetCurrentModule (theEnv))
+  if (DefgenericData (theEnv)->CurrentGeneric->header.
+      whichModule->theModule != CL_GetCurrentModule (theEnv))
     {
       CL_WriteString (theEnv, STDOUT,
 		      CL_DefgenericModule (DefgenericData
@@ -732,8 +734,8 @@ CL_WatchMethod (Environment * theEnv, const char *tstring)
       CL_WriteString (theEnv, STDOUT, "::");
     }
   CL_WriteString (theEnv, STDOUT,
-		  DefgenericData (theEnv)->CurrentGeneric->header.name->
-		  contents);
+		  DefgenericData (theEnv)->CurrentGeneric->header.
+		  name->contents);
   CL_WriteString (theEnv, STDOUT, ":#");
   if (DefgenericData (theEnv)->CurrentMethod->system)
     CL_WriteString (theEnv, STDOUT, "SYS");

@@ -235,8 +235,7 @@ ConstructToCode (Environment * theEnv,
 				ModulePrefix (DefmoduleData
 					      (theEnv)->DefmoduleCodeItem),
 				ConstructPrefix (DefmoduleData
-						 (theEnv)->
-						 DefmoduleCodeItem));
+						 (theEnv)->DefmoduleCodeItem));
 
       fprintf (moduleFile, ",");
 
@@ -258,9 +257,9 @@ ConstructToCode (Environment * theEnv,
 	  else
 	    {
 	      (*theItem->constructsToCModuleReference) (theEnv, itemsFile,
-							theConstruct->header.
-							bsaveID, imageID,
-							maxIndices);
+							theConstruct->
+							header.bsaveID,
+							imageID, maxIndices);
 	    }
 
 	  if ((j + 1) < CL_GetNumberOfModuleItems (theEnv))

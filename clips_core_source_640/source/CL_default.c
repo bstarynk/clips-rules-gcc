@@ -252,8 +252,8 @@ FindDefaultValue (Environment * theEnv,
 	{
 	  return (CL_CreateInteger
 		  (theEnv,
-		   (long long) theConstraints->minValue->floatValue->
-		   contents));
+		   (long long) theConstraints->minValue->
+		   floatValue->contents));
 	}
       else if (theConstraints->maxValue->type == INTEGER_TYPE)
 	{
@@ -263,8 +263,8 @@ FindDefaultValue (Environment * theEnv,
 	{
 	  return (CL_CreateInteger
 		  (theEnv,
-		   (long long) theConstraints->maxValue->floatValue->
-		   contents));
+		   (long long) theConstraints->maxValue->
+		   floatValue->contents));
 	}
     }
   else if (theType == FLOAT_TYPE)
@@ -277,8 +277,8 @@ FindDefaultValue (Environment * theEnv,
 	{
 	  return (CL_CreateFloat
 		  (theEnv,
-		   (double) theConstraints->minValue->integerValue->
-		   contents));
+		   (double) theConstraints->minValue->
+		   integerValue->contents));
 	}
       else if (theConstraints->maxValue->type == FLOAT_TYPE)
 	{
@@ -288,8 +288,8 @@ FindDefaultValue (Environment * theEnv,
 	{
 	  return (CL_CreateFloat
 		  (theEnv,
-		   (double) theConstraints->maxValue->integerValue->
-		   contents));
+		   (double) theConstraints->maxValue->
+		   integerValue->contents));
 	}
     }
 

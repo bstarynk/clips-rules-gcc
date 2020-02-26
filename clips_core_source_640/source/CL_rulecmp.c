@@ -234,9 +234,8 @@ ConstructToCode (Environment * theEnv,
 				     &fileCount, defruleArrayVersion,
 				     headerFP, "Defrule",
 				     ConstructPrefix (DefruleData
-						      (theEnv)->
-						      DefruleCodeItem), false,
-				     NULL);
+						      (theEnv)->DefruleCodeItem),
+				     false, NULL);
 	      if (defruleFile == NULL)
 		{
 		  CloseDefruleFiles (theEnv, moduleFile, defruleFile,
@@ -632,8 +631,7 @@ JoinToCode (Environment * theEnv,
 	{
 	  fprintf (joinFile, "VS ");
 	  (*theParser->codeReferenceFunction) (theEnv,
-					       theJoin->
-					       rightSideEntryStructure,
+					       theJoin->rightSideEntryStructure,
 					       joinFile, imageID, maxIndices);
 	  fprintf (joinFile, ",");
 	}
@@ -642,10 +640,10 @@ JoinToCode (Environment * theEnv,
     {
       fprintf (joinFile, "&%s%u_%lu[%lu],", JoinPrefix (),
 	       imageID,
-	       (((struct joinNode *) theJoin->rightSideEntryStructure)->
-		bsaveID / maxIndices) + 1,
-	       ((struct joinNode *) theJoin->rightSideEntryStructure)->
-	       bsaveID % maxIndices);
+	       (((struct joinNode *) theJoin->
+		 rightSideEntryStructure)->bsaveID / maxIndices) + 1,
+	       ((struct joinNode *) theJoin->
+		rightSideEntryStructure)->bsaveID % maxIndices);
     }
 
    /*=================*/

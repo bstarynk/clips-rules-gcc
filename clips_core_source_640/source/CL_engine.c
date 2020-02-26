@@ -408,8 +408,8 @@ CL_Run (Environment * theEnv, long long runLimit)
 #endif
 
       CL_EvaluateProcActions (theEnv,
-			      EngineData (theEnv)->ExecutingRule->header.
-			      whichModule->theModule,
+			      EngineData (theEnv)->ExecutingRule->
+			      header.whichModule->theModule,
 			      EngineData (theEnv)->ExecutingRule->actions,
 			      EngineData (theEnv)->ExecutingRule->localVarCnt,
 			      &returnValue, NULL);
@@ -571,8 +571,8 @@ CL_Run (Environment * theEnv, long long runLimit)
       if (ProcedureFunctionData (theEnv)->ReturnFlag == true)
 	{
 	  Remove_Focus (theEnv,
-			EngineData (theEnv)->ExecutingRule->header.
-			whichModule->theModule);
+			EngineData (theEnv)->ExecutingRule->
+			header.whichModule->theModule);
 	}
       ProcedureFunctionData (theEnv)->ReturnFlag = false;
 
@@ -889,8 +889,8 @@ Remove_Focus (Environment * theEnv, Defmodule * theModule)
 	{
 	  CL_WriteString (theEnv, STDOUT, " to ");
 	  CL_WriteString (theEnv, STDOUT,
-			  EngineData (theEnv)->Current_Focus->theModule->
-			  header.name->contents);
+			  EngineData (theEnv)->Current_Focus->
+			  theModule->header.name->contents);
 	}
 
       CL_WriteString (theEnv, STDOUT, "\n");
@@ -1012,8 +1012,8 @@ CL_Focus (Defmodule * theModule)
 	{
 	  CL_WriteString (theEnv, STDOUT, " from ");
 	  CL_WriteString (theEnv, STDOUT,
-			  EngineData (theEnv)->Current_Focus->theModule->
-			  header.name->contents);
+			  EngineData (theEnv)->Current_Focus->
+			  theModule->header.name->contents);
 	}
       CL_WriteString (theEnv, STDOUT, "\n");
     }
@@ -1068,8 +1068,7 @@ CL_AddAfterRuleFiresFunction (Environment * theEnv,
   EngineData (theEnv)->ListOfAfterRuleFiresFunctions =
     CL_AddRuleFiredFunctionToCallList (theEnv, name, priority, functionPtr,
 				       EngineData
-				       (theEnv)->
-				       ListOfAfterRuleFiresFunctions,
+				       (theEnv)->ListOfAfterRuleFiresFunctions,
 				       context);
   return true;
 }
@@ -1087,8 +1086,7 @@ CL_AddBeforeRuleFiresFunction (Environment * theEnv,
   EngineData (theEnv)->ListOfBeforeRuleFiresFunctions =
     CL_AddRuleFiredFunctionToCallList (theEnv, name, priority, functionPtr,
 				       EngineData
-				       (theEnv)->
-				       ListOfBeforeRuleFiresFunctions,
+				       (theEnv)->ListOfBeforeRuleFiresFunctions,
 				       context);
   return true;
 }
@@ -1105,8 +1103,7 @@ CL_RemoveAfterRuleFiresFunction (Environment * theEnv, const char *name)
   EngineData (theEnv)->ListOfAfterRuleFiresFunctions =
     CL_RemoveRuleFiredFunctionFromCallList (theEnv, name,
 					    EngineData
-					    (theEnv)->
-					    ListOfAfterRuleFiresFunctions,
+					    (theEnv)->ListOfAfterRuleFiresFunctions,
 					    &found);
 
   return found;
@@ -1124,8 +1121,7 @@ CL_RemoveBeforeRuleFiresFunction (Environment * theEnv, const char *name)
   EngineData (theEnv)->ListOfBeforeRuleFiresFunctions =
     CL_RemoveRuleFiredFunctionFromCallList (theEnv, name,
 					    EngineData
-					    (theEnv)->
-					    ListOfBeforeRuleFiresFunctions,
+					    (theEnv)->ListOfBeforeRuleFiresFunctions,
 					    &found);
 
   return found;

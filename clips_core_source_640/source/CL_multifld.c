@@ -951,16 +951,16 @@ CL_ImplodeMultifield (Environment * theEnv, UDFValue * value)
 	{
 	  tmp_str =
 	    CL_FloatToString (theEnv,
-			      theMultifield->contents[i].floatValue->
-			      contents);
+			      theMultifield->contents[i].
+			      floatValue->contents);
 	  strsize += strlen (tmp_str) + 1;
 	}
       else if (theMultifield->contents[i].header->type == INTEGER_TYPE)
 	{
 	  tmp_str =
 	    CL_LongIntegerToString (theEnv,
-				    theMultifield->contents[i].integerValue->
-				    contents);
+				    theMultifield->contents[i].
+				    integerValue->contents);
 	  strsize += strlen (tmp_str) + 1;
 	}
       else if (theMultifield->contents[i].header->type == STRING_TYPE)
@@ -1006,8 +1006,8 @@ CL_ImplodeMultifield (Environment * theEnv, UDFValue * value)
 	{
 	  tmp_str =
 	    CL_FloatToString (theEnv,
-			      theMultifield->contents[i].floatValue->
-			      contents);
+			      theMultifield->contents[i].
+			      floatValue->contents);
 	  while (*tmp_str)
 	    {
 	      *(ret_str + j) = *tmp_str;
@@ -1019,8 +1019,8 @@ CL_ImplodeMultifield (Environment * theEnv, UDFValue * value)
 	{
 	  tmp_str =
 	    CL_LongIntegerToString (theEnv,
-				    theMultifield->contents[i].integerValue->
-				    contents);
+				    theMultifield->contents[i].
+				    integerValue->contents);
 	  while (*tmp_str)
 	    {
 	      *(ret_str + j) = *tmp_str;

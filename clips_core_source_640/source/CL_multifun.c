@@ -1097,10 +1097,11 @@ CL_FindValueInMultifield (UDFValue * valueSought,
       found = true;
       for (j = 0; j < valueSought->range; j++)
 	{
-	  if (valueSought->multifieldValue->contents[valueSought->begin + j].
-	      value !=
-	      multifieldToSearch->multifieldValue->
-	      contents[multifieldToSearch->begin + i + j].value)
+	  if (valueSought->multifieldValue->
+	      contents[valueSought->begin + j].value !=
+	      multifieldToSearch->
+	      multifieldValue->contents[multifieldToSearch->begin + i +
+					j].value)
 	    {
 	      found = false;
 	      break;
@@ -1144,8 +1145,9 @@ CL_FindDOsInSegment (UDFValue * searchDOs,
 		{
 		  for (k = 0L; (k < slen) && ((k + i) < mul_length); k++)
 		    if (searchDOs[j].multifieldValue->contents[k +
-							       searchDOs[j].
-							       begin].value !=
+							       searchDOs
+							       [j].begin].
+			value !=
 			value->multifieldValue->contents[k + i +
 							 value->begin].value)
 		      break;

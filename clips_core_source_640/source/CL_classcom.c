@@ -383,8 +383,7 @@ CL_GetNextDefclass (Environment * theEnv, Defclass * theDefclass)
 {
   return (Defclass *) CL_GetNextConstructItem (theEnv, &theDefclass->header,
 					       DefclassData
-					       (theEnv)->
-					       CL_DefclassModuleIndex);
+					       (theEnv)->CL_DefclassModuleIndex);
 }
 
 /***************************************************

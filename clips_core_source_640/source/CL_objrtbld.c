@@ -1103,8 +1103,8 @@ CreateNewObjectPatternNode (Environment * theEnv,
     {
       if ((curNode->networkTest == NULL) ? false :
 	  ((curNode->networkTest->type != OBJ_PN_CONSTANT) ? false :
-	   ((struct ObjectCmpPNConstant *) curNode->networkTest->bitMapValue->
-	    contents)->pass))
+	   ((struct ObjectCmpPNConstant *) curNode->networkTest->
+	    bitMapValue->contents)->pass))
 	break;
       prvNode = curNode;
       curNode = curNode->rightNode;

@@ -338,8 +338,7 @@ Start_Profile (Environment * theEnv,
   profileInfo =
     (struct construct_ProfileInfo *) CL_FetchUserData (theEnv,
 						       CL_ProfileFunctionData
-						       (theEnv)->
-						       CL_ProfileDataID,
+						       (theEnv)->CL_ProfileDataID,
 						       theList);
 
   theFrame->profileOnExit = true;
@@ -388,8 +387,8 @@ CL_End_Profile (Environment * theEnv, struct profileFrameInfo *theFrame)
   if (theFrame->parentCall)
     {
       addTime = endTime - theFrame->parentStartTime;
-      CL_ProfileFunctionData (theEnv)->Active_ProfileFrame->
-	totalWithChildrenTime += addTime;
+      CL_ProfileFunctionData (theEnv)->
+	Active_ProfileFrame->totalWithChildrenTime += addTime;
       CL_ProfileFunctionData (theEnv)->Active_ProfileFrame->childCall = false;
     }
 
@@ -653,14 +652,15 @@ Output_UserFunctionsInfo (Environment * theEnv)
       if (CL_EvaluationData (theEnv)->PrimitivesArray[i] != NULL)
 	{
 	  Output_ProfileInfo (theEnv,
-			      CL_EvaluationData (theEnv)->PrimitivesArray[i]->
-			      name,
+			      CL_EvaluationData (theEnv)->
+			      PrimitivesArray[i]->name,
 			      (struct construct_ProfileInfo *)
 			      CL_TestUserData (CL_ProfileFunctionData
 					       (theEnv)->CL_ProfileDataID,
-					       CL_EvaluationData (theEnv)->
-					       PrimitivesArray[i]->usrData),
-			      NULL, NULL, NULL, NULL);
+					       CL_EvaluationData
+					       (theEnv)->PrimitivesArray[i]->
+					       usrData), NULL, NULL, NULL,
+			      NULL);
 	}
     }
 }

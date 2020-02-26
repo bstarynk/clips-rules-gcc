@@ -258,8 +258,8 @@ CL_RemoveConstraint (Environment * theEnv,
 	    {
 	      if (prevPtr == NULL)
 		{
-		  ConstraintData (theEnv)->ConstraintHashtable[theConstraint->
-							       bucket] =
+		  ConstraintData (theEnv)->
+		    ConstraintHashtable[theConstraint->bucket] =
 		    theConstraint->next;
 		}
 	      else

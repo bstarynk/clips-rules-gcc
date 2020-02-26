@@ -309,8 +309,7 @@ CL_FindDefrule (Environment * theEnv, const char *defruleName)
   return (Defrule *) CL_FindNamedConstructInModuleOrImports (theEnv,
 							     defruleName,
 							     DefruleData
-							     (theEnv)->
-							     DefruleConstruct);
+							     (theEnv)->DefruleConstruct);
 }
 
 /************************************************************************/
@@ -322,8 +321,7 @@ CL_FindDefruleInModule (Environment * theEnv, const char *defruleName)
 {
   return (Defrule *) CL_FindNamedConstructInModule (theEnv, defruleName,
 						    DefruleData
-						    (theEnv)->
-						    DefruleConstruct);
+						    (theEnv)->DefruleConstruct);
 }
 
 /************************************************************/
@@ -337,8 +335,7 @@ CL_GetNextDefrule (Environment * theEnv, Defrule * defrulePtr)
 {
   return (Defrule *) CL_GetNextConstructItem (theEnv, &defrulePtr->header,
 					      DefruleData
-					      (theEnv)->
-					      CL_DefruleModuleIndex);
+					      (theEnv)->CL_DefruleModuleIndex);
 }
 
 /******************************************************/

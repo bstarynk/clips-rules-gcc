@@ -496,8 +496,9 @@ UpdateDefmodule (Environment * theEnv, void *buf, unsigned long obji)
   bdp = (struct bsaveDefmodule *) buf;
 
   CL_UpdateConstructHeader (theEnv, &bdp->header,
-			    &DefmoduleData (theEnv)->DefmoduleArray[obji].
-			    header, DEFMODULE, 0, NULL, sizeof (Defmodule),
+			    &DefmoduleData (theEnv)->
+			    DefmoduleArray[obji].header, DEFMODULE, 0, NULL,
+			    sizeof (Defmodule),
 			    DefmoduleData (theEnv)->DefmoduleArray);
 
   if (CL_GetNumberOfModuleItems (theEnv) == 0)
@@ -534,8 +535,8 @@ UpdateDefmodule (Environment * theEnv, void *buf, unsigned long obji)
   if (bdp->importList != ULONG_MAX)
     {
       DefmoduleData (theEnv)->DefmoduleArray[obji].importList =
-	(struct portItem *) &DefmoduleData (theEnv)->PortItemArray[bdp->
-								   importList];
+	(struct portItem *) &DefmoduleData (theEnv)->
+	PortItemArray[bdp->importList];
     }
   else
     {
@@ -545,8 +546,8 @@ UpdateDefmodule (Environment * theEnv, void *buf, unsigned long obji)
   if (bdp->exportList != ULONG_MAX)
     {
       DefmoduleData (theEnv)->DefmoduleArray[obji].exportList =
-	(struct portItem *) &DefmoduleData (theEnv)->PortItemArray[bdp->
-								   exportList];
+	(struct portItem *) &DefmoduleData (theEnv)->
+	PortItemArray[bdp->exportList];
     }
   else
     {
@@ -570,8 +571,8 @@ UpdatePortItem (Environment * theEnv, void *buf, unsigned long obji)
     {
       DefmoduleData (theEnv)->PortItemArray[obji].moduleName =
 	SymbolPointer (bdp->moduleName);
-      IncrementLexemeCount (DefmoduleData (theEnv)->PortItemArray[obji].
-			    moduleName);
+      IncrementLexemeCount (DefmoduleData (theEnv)->
+			    PortItemArray[obji].moduleName);
     }
   else
     {
@@ -582,8 +583,8 @@ UpdatePortItem (Environment * theEnv, void *buf, unsigned long obji)
     {
       DefmoduleData (theEnv)->PortItemArray[obji].constructType =
 	SymbolPointer (bdp->constructType);
-      IncrementLexemeCount (DefmoduleData (theEnv)->PortItemArray[obji].
-			    constructType);
+      IncrementLexemeCount (DefmoduleData (theEnv)->
+			    PortItemArray[obji].constructType);
     }
   else
     {
@@ -594,8 +595,8 @@ UpdatePortItem (Environment * theEnv, void *buf, unsigned long obji)
     {
       DefmoduleData (theEnv)->PortItemArray[obji].constructName =
 	SymbolPointer (bdp->constructName);
-      IncrementLexemeCount (DefmoduleData (theEnv)->PortItemArray[obji].
-			    constructName);
+      IncrementLexemeCount (DefmoduleData (theEnv)->
+			    PortItemArray[obji].constructName);
     }
   else
     {
@@ -632,8 +633,8 @@ CL_Clear_Bload (Environment * theEnv)
   for (i = 0; i < DefmoduleData (theEnv)->BNumberOfDefmodules; i++)
     {
       CL_ReleaseLexeme (theEnv,
-			DefmoduleData (theEnv)->DefmoduleArray[i].header.
-			name);
+			DefmoduleData (theEnv)->DefmoduleArray[i].
+			header.name);
       for (theList = DefmoduleData (theEnv)->DefmoduleArray[i].importList;
 	   theList != NULL; theList = theList->next)
 	{

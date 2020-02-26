@@ -1354,8 +1354,8 @@ CL_PutFactSlot (Fact * theFact, const char *slotName, CLIPSValue * theValue)
       if (theFact->theProposition.contents[0].header->type == MULTIFIELD_TYPE)
 	{
 	  CL_ReturnMultifield (theEnv,
-			       theFact->theProposition.contents[0].
-			       multifieldValue);
+			       theFact->theProposition.
+			       contents[0].multifieldValue);
 	}
 
       theFact->theProposition.contents[0].value =
@@ -1411,8 +1411,8 @@ CL_PutFactSlot (Fact * theFact, const char *slotName, CLIPSValue * theValue)
       MULTIFIELD_TYPE)
     {
       CL_ReturnMultifield (theEnv,
-			   theFact->theProposition.contents[whichSlot].
-			   multifieldValue);
+			   theFact->theProposition.
+			   contents[whichSlot].multifieldValue);
     }
 
   if (theValue->header->type == MULTIFIELD_TYPE)
@@ -1624,8 +1624,8 @@ CL_Copy_FactSlotValues (Environment * theEnv,
 	{
 	  theDestFact->theProposition.contents[i].value =
 	    CL_CopyMultifield (theEnv,
-			       theSourceFact->theProposition.contents[i].
-			       multifieldValue);
+			       theSourceFact->theProposition.
+			       contents[i].multifieldValue);
 	}
     }
 
@@ -2977,11 +2977,11 @@ CL_CreateFactModifier (Environment * theEnv, Fact * oldFact)
 
       theFM->changeMap =
 	(char *) CL_gm2 (theEnv,
-			 CountToBitMapSize (oldFact->whichDeftemplate->
-					    numberOfSlots));
+			 CountToBitMapSize (oldFact->
+					    whichDeftemplate->numberOfSlots));
       CL_ClearBitString ((void *) theFM->changeMap,
-			 CountToBitMapSize (oldFact->whichDeftemplate->
-					    numberOfSlots));
+			 CountToBitMapSize (oldFact->
+					    whichDeftemplate->numberOfSlots));
     }
 
   FactData (theEnv)->factModifierError = FME_NO_ERROR;
@@ -3281,8 +3281,8 @@ CL_FMPutSlot (FactModifier * theFM,
       theFM->fmValueArray =
 	(CLIPSValue *) CL_gm2 (theFM->fmEnv,
 			       sizeof (CLIPSValue) *
-			       theFM->fmOldFact->whichDeftemplate->
-			       numberOfSlots);
+			       theFM->fmOldFact->
+			       whichDeftemplate->numberOfSlots);
       for (i = 0; i < theFM->fmOldFact->whichDeftemplate->numberOfSlots; i++)
 	{
 	  theFM->fmValueArray[i].voidValue = theFM->fmEnv->VoidConstant;
@@ -3293,11 +3293,13 @@ CL_FMPutSlot (FactModifier * theFM,
     {
       theFM->changeMap =
 	(char *) CL_gm2 (theFM->fmEnv,
-			 CountToBitMapSize (theFM->fmOldFact->
-					    whichDeftemplate->numberOfSlots));
+			 CountToBitMapSize (theFM->
+					    fmOldFact->whichDeftemplate->
+					    numberOfSlots));
       CL_ClearBitString ((void *) theFM->changeMap,
-			 CountToBitMapSize (theFM->fmOldFact->
-					    whichDeftemplate->numberOfSlots));
+			 CountToBitMapSize (theFM->
+					    fmOldFact->whichDeftemplate->
+					    numberOfSlots));
     }
 
    /*=====================*/
@@ -3486,8 +3488,8 @@ CL_FMDispose (FactModifier * theFM)
   if (theFM->changeMap != NULL)
     {
       CL_rm (theEnv, (void *) theFM->changeMap,
-	     CountToBitMapSize (theFM->fmOldFact->whichDeftemplate->
-				numberOfSlots));
+	     CountToBitMapSize (theFM->fmOldFact->
+				whichDeftemplate->numberOfSlots));
     }
 
    /*====================================*/
@@ -3540,8 +3542,9 @@ CL_FMAbort (FactModifier * theFM)
   if (theFM->changeMap != NULL)
     {
       CL_ClearBitString ((void *) theFM->changeMap,
-			 CountToBitMapSize (theFM->fmOldFact->
-					    whichDeftemplate->numberOfSlots));
+			 CountToBitMapSize (theFM->
+					    fmOldFact->whichDeftemplate->
+					    numberOfSlots));
     }
 
   CL_GCBlockEnd (theEnv, &gcb);

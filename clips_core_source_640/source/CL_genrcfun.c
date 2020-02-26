@@ -623,8 +623,8 @@ CL_PrintMethod (Environment * theEnv,
 #else
 	  CL_SBAppend (theSB,
 		       TypeName (theEnv,
-				 ((CLIPSInteger *) rptr->types[k])->
-				 contents));
+				 ((CLIPSInteger *) rptr->
+				  types[k])->contents));
 #endif
 	  if ((k + 1) < rptr->tcnt)
 	    CL_SBAppend (theSB, " ");

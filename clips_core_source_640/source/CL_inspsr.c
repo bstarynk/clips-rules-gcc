@@ -254,9 +254,8 @@ CL_ParseInitializeInstance (Environment * theEnv,
 	  if ((DefclassData (theEnv)->ObjectParseToken.tknType !=
 	       SYMBOL_TOKEN) ? true : (strcmp (CLASS_RLN,
 					       DefclassData
-					       (theEnv)->
-					       ObjectParseToken.lexemeValue->
-					       contents) != 0))
+					       (theEnv)->ObjectParseToken.
+					       lexemeValue->contents) != 0))
 	    {
 	      CL_SyntaxErrorMessage (theEnv, "make-instance");
 	      goto CL_ParseInitializeInstanceError;
@@ -301,14 +300,14 @@ CL_ParseInitializeInstance (Environment * theEnv,
 	  if ((DefclassData (theEnv)->ObjectParseToken.tknType !=
 	       SYMBOL_TOKEN) ? false
 	      : (strcmp
-		 (DefclassData (theEnv)->ObjectParseToken.lexemeValue->
-		  contents, DUPLICATE_NAME_REF) == 0))
+		 (DefclassData (theEnv)->ObjectParseToken.
+		  lexemeValue->contents, DUPLICATE_NAME_REF) == 0))
 	    {
 	      CL_PPBackup (theEnv);
 	      CL_PPBackup (theEnv);
 	      CL_SavePPBuffer (theEnv,
-			       DefclassData (theEnv)->ObjectParseToken.
-			       printFo_rm);
+			       DefclassData (theEnv)->
+			       ObjectParseToken.printFo_rm);
 	      CL_SavePPBuffer (theEnv, " ");
 	      top->argList->nextArg =
 		CL_ArgumentParse (theEnv, readSource, &error);
@@ -479,15 +478,15 @@ CL_ParseSimpleInstance (Environment * theEnv,
   else
     {
       top->argList = CL_GenConstant (theEnv, INSTANCE_NAME_TYPE,
-				     DefclassData (theEnv)->ObjectParseToken.
-				     value);
+				     DefclassData (theEnv)->
+				     ObjectParseToken.value);
       CL_GetToken (theEnv, readSource,
 		   &DefclassData (theEnv)->ObjectParseToken);
       if ((DefclassData (theEnv)->ObjectParseToken.tknType !=
 	   SYMBOL_TOKEN) ? true : (strcmp (CLASS_RLN,
-					   DefclassData (theEnv)->
-					   ObjectParseToken.lexemeValue->
-					   contents) != 0))
+					   DefclassData
+					   (theEnv)->ObjectParseToken.
+					   lexemeValue->contents) != 0))
 	goto CL_MakeInstanceError;
     }
 
@@ -528,8 +527,8 @@ CL_ParseSimpleInstance (Environment * theEnv,
 	      if ((DefclassData (theEnv)->ObjectParseToken.tknType !=
 		   SYMBOL_TOKEN) ? true
 		  : (strcmp
-		     (DefclassData (theEnv)->ObjectParseToken.
-		      lexemeValue->contents, "create$") != 0))
+		     (DefclassData (theEnv)->ObjectParseToken.lexemeValue->
+		      contents, "create$") != 0))
 		goto SlotOverrideError;
 	      CL_GetToken (theEnv, readSource,
 			   &DefclassData (theEnv)->ObjectParseToken);
@@ -548,8 +547,8 @@ CL_ParseSimpleInstance (Environment * theEnv,
 		goto SlotOverrideError;
 	      tval =
 		CL_GenConstant (theEnv, CL_TokenTypeToType (type),
-				DefclassData (theEnv)->ObjectParseToken.
-				value);
+				DefclassData (theEnv)->
+				ObjectParseToken.value);
 	    }
 	  if (vals == NULL)
 	    vals = tval;

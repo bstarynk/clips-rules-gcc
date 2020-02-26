@@ -300,8 +300,8 @@ CL_PrintClassName (Environment * theEnv,
        CL_GetCurrentModule (theEnv)) && (theDefclass->system == 0))
     {
       CL_WriteString (theEnv, logicalName,
-		      CL_DefmoduleName (theDefclass->header.whichModule->
-					theModule));
+		      CL_DefmoduleName (theDefclass->header.
+					whichModule->theModule));
       CL_WriteString (theEnv, logicalName, "::");
     }
   CL_WriteString (theEnv, logicalName, theDefclass->header.name->contents);
@@ -789,8 +789,8 @@ CL_RemoveDefclass (Environment * theEnv, Defclass * cls)
 	{
 	  if (cls->slots[i].dynamicDefault)
 	    CL_ReturnPackedExpression (theEnv,
-				       (Expression *) cls->slots[i].
-				       defaultValue);
+				       (Expression *) cls->
+				       slots[i].defaultValue);
 	  else
 	    rtn_struct (theEnv, udfValue, cls->slots[i].defaultValue);
 	}
@@ -874,8 +874,8 @@ CL_DestroyDefclass (Environment * theEnv, Defclass * cls)
 #if ! RUN_TIME
 	  if (cls->slots[i].dynamicDefault)
 	    CL_ReturnPackedExpression (theEnv,
-				       (Expression *) cls->slots[i].
-				       defaultValue);
+				       (Expression *) cls->
+				       slots[i].defaultValue);
 	  else
 	    rtn_struct (theEnv, udfValue, cls->slots[i].defaultValue);
 #else

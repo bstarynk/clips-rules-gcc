@@ -321,8 +321,8 @@ DeallocateDefclassData (Environment * theEnv)
 		    && (cls->slots[i].dynamicDefault == 0))
 		  {
 		    tmpexp =
-		      ((UDFValue *) cls->slots[i].defaultValue)->
-		      supplementalInfo;
+		      ((UDFValue *) cls->slots[i].
+		       defaultValue)->supplementalInfo;
 		    rtn_struct (theEnv, udfValue, cls->slots[i].defaultValue);
 		    cls->slots[i].defaultValue = tmpexp;
 		  }
@@ -398,8 +398,8 @@ Objects_RunTimeInitialize (Environment * theEnv,
 		    && (cls->slots[i].dynamicDefault == 0))
 		  {
 		    tmpexp =
-		      ((UDFValue *) cls->slots[i].defaultValue)->
-		      supplementalInfo;
+		      ((UDFValue *) cls->slots[i].
+		       defaultValue)->supplementalInfo;
 		    CL_ReleaseUDFV (theEnv,
 				    (UDFValue *) cls->slots[i].defaultValue);
 		    rtn_struct (theEnv, udfValue, cls->slots[i].defaultValue);
@@ -466,8 +466,8 @@ Objects_RunTimeInitialize (Environment * theEnv,
 		CL_EvaluateAndStoreInDataObject (theEnv,
 						 cls->slots[i].multiple,
 						 (Expression *) tmpexp,
-						 (UDFValue *) cls->slots[i].
-						 defaultValue, true);
+						 (UDFValue *) cls->
+						 slots[i].defaultValue, true);
 		CL_RetainUDFV (theEnv,
 			       (UDFValue *) cls->slots[i].defaultValue);
 		((UDFValue *) cls->slots[i].defaultValue)->supplementalInfo =

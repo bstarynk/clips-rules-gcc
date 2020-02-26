@@ -261,15 +261,15 @@ CL_EvaluateExpression (Environment * theEnv,
 	  CL_ExitRouter (theEnv, EXIT_FAILURE);
 	}
 
-      if (CL_EvaluationData (theEnv)->PrimitivesArray[problem->type]->
-	  copyTo_Evaluate)
+      if (CL_EvaluationData (theEnv)->
+	  PrimitivesArray[problem->type]->copyTo_Evaluate)
 	{
 	  returnValue->value = problem->value;
 	  break;
 	}
 
-      if (CL_EvaluationData (theEnv)->PrimitivesArray[problem->type]->
-	  evaluateFunction == NULL)
+      if (CL_EvaluationData (theEnv)->
+	  PrimitivesArray[problem->type]->evaluateFunction == NULL)
 	{
 	  CL_SystemError (theEnv, "EVALUATN", 4);
 	  CL_ExitRouter (theEnv, EXIT_FAILURE);
@@ -280,15 +280,16 @@ CL_EvaluateExpression (Environment * theEnv,
 
 #if PROFILING_FUNCTIONS
       Start_Profile (theEnv, &profileFrame,
-		     &CL_EvaluationData (theEnv)->PrimitivesArray[problem->
-								  type]->
-		     usrData,
-		     CL_ProfileFunctionData (theEnv)->
-		     CL_Profile_UserFunctions);
+		     &CL_EvaluationData (theEnv)->
+		     PrimitivesArray[problem->type]->usrData,
+		     CL_ProfileFunctionData
+		     (theEnv)->CL_Profile_UserFunctions);
 #endif
 
-      (*CL_EvaluationData (theEnv)->PrimitivesArray[problem->type]->
-       evaluateFunction) (theEnv, problem->value, returnValue);
+      (*CL_EvaluationData (theEnv)->
+       PrimitivesArray[problem->type]->evaluateFunction) (theEnv,
+							  problem->value,
+							  returnValue);
 
 #if PROFILING_FUNCTIONS
       CL_End_Profile (theEnv, &profileFrame);
@@ -343,8 +344,9 @@ CL_InstallExternalAddressType (Environment * theEnv,
 							externalAddressType));
   memcpy (copyEAT, theAddressType, sizeof (struct externalAddressType));
   CL_EvaluationData (theEnv)->ExternalAddressTypes[CL_EvaluationData
-						   (theEnv)->numberOfAddressTypes++]
-    = copyEAT;
+						   (theEnv)->
+						   numberOfAddressTypes++] =
+    copyEAT;
 
   return rv;
 }
@@ -738,11 +740,11 @@ CL_AtomInstall (Environment * theEnv, unsigned short type, void *vPtr)
 	break;
       if (CL_EvaluationData (theEnv)->PrimitivesArray[type]->bitMap)
 	IncrementBitMapCount (vPtr);
-      else if (CL_EvaluationData (theEnv)->PrimitivesArray[type]->
-	       incrementBusyCount)
+      else if (CL_EvaluationData (theEnv)->
+	       PrimitivesArray[type]->incrementBusyCount)
 	{
-	  (*CL_EvaluationData (theEnv)->PrimitivesArray[type]->
-	   incrementBusyCount) (theEnv, vPtr);
+	  (*CL_EvaluationData (theEnv)->
+	   PrimitivesArray[type]->incrementBusyCount) (theEnv, vPtr);
 	}
       break;
     }
@@ -792,11 +794,11 @@ CL_AtomDeinstall (Environment * theEnv, unsigned short type, void *vPtr)
 	break;
       if (CL_EvaluationData (theEnv)->PrimitivesArray[type]->bitMap)
 	CL_DecrementBitMapReferenceCount (theEnv, (CLIPSBitMap *) vPtr);
-      else if (CL_EvaluationData (theEnv)->PrimitivesArray[type]->
-	       decrementBusyCount)
+      else if (CL_EvaluationData (theEnv)->
+	       PrimitivesArray[type]->decrementBusyCount)
 	{
-	  (*CL_EvaluationData (theEnv)->PrimitivesArray[type]->
-	   decrementBusyCount) (theEnv, vPtr);
+	  (*CL_EvaluationData (theEnv)->
+	   PrimitivesArray[type]->decrementBusyCount) (theEnv, vPtr);
 	}
     }
 }
@@ -1039,8 +1041,7 @@ CL_GetFunctionReference (Environment * theEnv,
       if (CL_ConstructExported
 	  (theEnv, "defgeneric", moduleName, constructName)
 	  || CL_GetCurrentModule (theEnv) == CL_FindDefmodule (theEnv,
-							       moduleName->
-							       contents))
+							       moduleName->contents))
 	{
 	  if ((gfunc = CL_FindDefgenericInModule (theEnv, name)) != NULL)
 	    {
@@ -1071,8 +1072,7 @@ CL_GetFunctionReference (Environment * theEnv,
       if (CL_ConstructExported
 	  (theEnv, "deffunction", moduleName, constructName)
 	  || CL_GetCurrentModule (theEnv) == CL_FindDefmodule (theEnv,
-							       moduleName->
-							       contents))
+							       moduleName->contents))
 	{
 	  if ((dptr = CL_FindDeffunctionInModule (theEnv, name)) != NULL)
 	    {
@@ -1614,10 +1614,10 @@ CL_FCBCall (FunctionCall_Builder * theFCB,
 	    {
 	      nextAdd =
 		CL_GenConstant (theEnv,
-				theFCB->contents[i].multifieldValue->
-				contents[j].header->type,
-				theFCB->contents[i].multifieldValue->
-				contents[j].value);
+				theFCB->contents[i].
+				multifieldValue->contents[j].header->type,
+				theFCB->contents[i].
+				multifieldValue->contents[j].value);
 
 	      if (multiAdd == NULL)
 		{

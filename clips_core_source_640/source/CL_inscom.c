@@ -1462,8 +1462,8 @@ CL_GetNextInstanceInClassAndSubclasses (Defclass ** cptr,
 	 (iterationInfo->begin < iterationInfo->range))
     {
       theClass =
-	(Defclass *) iterationInfo->multifieldValue->contents[iterationInfo->
-							      begin].value;
+	(Defclass *) iterationInfo->multifieldValue->
+	contents[iterationInfo->begin].value;
       *cptr = theClass;
       iterationInfo->begin = iterationInfo->begin + 1;
       nextInstance = theClass->instanceList;
@@ -1527,8 +1527,8 @@ CL_ClassCommand (Environment * theEnv,
   UDFValue temp;
 
   func =
-    CL_EvaluationData (theEnv)->CurrentExpression->functionValue->
-    callFunctionName->contents;
+    CL_EvaluationData (theEnv)->CurrentExpression->
+    functionValue->callFunctionName->contents;
 
   returnValue->lexemeValue = FalseSymbol (theEnv);
 

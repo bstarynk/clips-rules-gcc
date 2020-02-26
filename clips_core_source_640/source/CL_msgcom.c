@@ -327,8 +327,8 @@ CL_Defmessage_HandlerType (Defclass * theDefclass, unsigned theIndex)
 {
   Environment *theEnv = theDefclass->header.env;
 
-  return MessageHandlerData (theEnv)->hndquals[theDefclass->
-					       handlers[theIndex - 1].type];
+  return MessageHandlerData (theEnv)->
+    hndquals[theDefclass->handlers[theIndex - 1].type];
 }
 
 /**************************************************************

@@ -422,8 +422,7 @@ CL_GetPeriodicFunctionContext (Environment * theEnv, const char *name)
 
   theItem = CL_Get_VoidFunctionFromCallList (theEnv, name,
 					     UtilityData
-					     (theEnv)->
-					     ListOfPeriodicFunctions);
+					     (theEnv)->ListOfPeriodicFunctions);
 
   if (theItem == NULL)
     return NULL;

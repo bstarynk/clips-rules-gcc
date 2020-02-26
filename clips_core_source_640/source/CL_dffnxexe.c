@@ -231,8 +231,8 @@ CL_WatchDeffunction (Environment * theEnv, const char *tstring)
 
   CL_WriteString (theEnv, STDOUT, "DFN ");
   CL_WriteString (theEnv, STDOUT, tstring);
-  if (DeffunctionData (theEnv)->ExecutingDeffunction->header.whichModule->
-      theModule != CL_GetCurrentModule (theEnv))
+  if (DeffunctionData (theEnv)->ExecutingDeffunction->header.
+      whichModule->theModule != CL_GetCurrentModule (theEnv))
     {
       CL_WriteString (theEnv, STDOUT,
 		      CL_DeffunctionModule (DeffunctionData
@@ -240,8 +240,8 @@ CL_WatchDeffunction (Environment * theEnv, const char *tstring)
       CL_WriteString (theEnv, STDOUT, "::");
     }
   CL_WriteString (theEnv, STDOUT,
-		  DeffunctionData (theEnv)->ExecutingDeffunction->header.
-		  name->contents);
+		  DeffunctionData (theEnv)->ExecutingDeffunction->
+		  header.name->contents);
   CL_WriteString (theEnv, STDOUT, " ED:");
   CL_WriteInteger (theEnv, STDOUT,
 		   CL_EvaluationData (theEnv)->Current_EvaluationDepth);

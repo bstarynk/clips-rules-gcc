@@ -255,8 +255,8 @@ UnreadDribbleCallback (Environment * theEnv,
 
   if (FileCommandData (theEnv)->DribbleCurrentPosition > 0)
     FileCommandData (theEnv)->DribbleCurrentPosition--;
-  FileCommandData (theEnv)->DribbleBuffer[FileCommandData (theEnv)->
-					  DribbleCurrentPosition] = EOS;
+  FileCommandData (theEnv)->
+    DribbleBuffer[FileCommandData (theEnv)->DribbleCurrentPosition] = EOS;
 
    /*=============================================*/
   /* Deactivate the dribble router and pass the  */
@@ -598,8 +598,8 @@ Unread_BatchCallback (Environment * theEnv,
   if (FileCommandData (theEnv)->CL_BatchCurrentPosition > 0)
     FileCommandData (theEnv)->CL_BatchCurrentPosition--;
   if (FileCommandData (theEnv)->CL_BatchBuffer != NULL)
-    FileCommandData (theEnv)->CL_BatchBuffer[FileCommandData (theEnv)->
-					     CL_BatchCurrentPosition] = EOS;
+    FileCommandData (theEnv)->
+      CL_BatchBuffer[FileCommandData (theEnv)->CL_BatchCurrentPosition] = EOS;
   if (FileCommandData (theEnv)->CL_BatchType == FILE_BATCH)
     {
       return ungetc (ch, FileCommandData (theEnv)->CL_BatchFileSource);
@@ -827,8 +827,8 @@ Remove_Batch (Environment * theEnv)
   else
     {
       CL_CloseStringSource (theEnv,
-			    FileCommandData (theEnv)->TopOf_BatchList->
-			    logicalSource);
+			    FileCommandData (theEnv)->
+			    TopOf_BatchList->logicalSource);
       CL_rm (theEnv,
 	     (void *) FileCommandData (theEnv)->TopOf_BatchList->theString,
 	     strlen (FileCommandData (theEnv)->TopOf_BatchList->theString) +
@@ -840,8 +840,8 @@ Remove_Batch (Environment * theEnv)
    /*=================================*/
 
   CL_DeleteString (theEnv,
-		   (char *) FileCommandData (theEnv)->TopOf_BatchList->
-		   fileName);
+		   (char *) FileCommandData (theEnv)->
+		   TopOf_BatchList->fileName);
   bptr = FileCommandData (theEnv)->TopOf_BatchList;
   FileCommandData (theEnv)->TopOf_BatchList =
     FileCommandData (theEnv)->TopOf_BatchList->next;
@@ -900,8 +900,8 @@ Remove_Batch (Environment * theEnv)
       if (FileCommandData (theEnv)->TopOf_BatchList->batchType == FILE_BATCH)
 	{
 	  CL_SetParsingFileName (theEnv,
-				 FileCommandData (theEnv)->TopOf_BatchList->
-				 fileName);
+				 FileCommandData (theEnv)->
+				 TopOf_BatchList->fileName);
 	}
 
       CL_SetLineCount (theEnv,

@@ -1170,8 +1170,8 @@ DumpExpression (Environment * theEnv, struct expr *exprPtr)
 	      fprintf (ConstructCompilerData (theEnv)->ExpressionFP, "NULL");
 	    }
 	  else
-	    if (CL_EvaluationData (theEnv)->
-		PrimitivesArray[exprPtr->type]->bitMap)
+	    if (CL_EvaluationData (theEnv)->PrimitivesArray[exprPtr->type]->
+		bitMap)
 	    {
 	      CL_PrintBitMapReference (theEnv,
 				       ConstructCompilerData

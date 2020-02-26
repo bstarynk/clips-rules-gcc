@@ -338,8 +338,8 @@ CL_ParseProcParameters (Environment * theEnv,
 	  return NULL;
 	}
       if ((checkfunc != NULL) ? (*checkfunc) (theEnv,
-					      tkn->lexemeValue->
-					      contents) : false)
+					      tkn->
+					      lexemeValue->contents) : false)
 	{
 	  CL_ReturnExpression (theEnv, parameterList);
 	  return NULL;
@@ -823,13 +823,13 @@ CL_PopProcParameters (Environment * theEnv)
   if (ProceduralPrimitiveData (theEnv)->WildcardValue != NULL)
     {
       CL_ReleaseMultifield (theEnv,
-			    ProceduralPrimitiveData (theEnv)->WildcardValue->
-			    multifieldValue);
+			    ProceduralPrimitiveData (theEnv)->
+			    WildcardValue->multifieldValue);
       if (ProceduralPrimitiveData (theEnv)->WildcardValue->value !=
 	  ProceduralPrimitiveData (theEnv)->NoParamValue)
 	CL_AddToMultifieldList (theEnv,
-				ProceduralPrimitiveData (theEnv)->
-				WildcardValue->multifieldValue);
+				ProceduralPrimitiveData
+				(theEnv)->WildcardValue->multifieldValue);
       rtn_struct (theEnv, udfValue,
 		  ProceduralPrimitiveData (theEnv)->WildcardValue);
     }
@@ -1052,17 +1052,17 @@ CL_EvaluateProcActions (Environment * theEnv,
 
   if ((ProceduralPrimitiveData (theEnv)->WildcardValue !=
        NULL) ? (returnValue->value ==
-		ProceduralPrimitiveData (theEnv)->WildcardValue->
-		value) : false)
+		ProceduralPrimitiveData (theEnv)->
+		WildcardValue->value) : false)
     {
       CL_ReleaseMultifield (theEnv,
-			    ProceduralPrimitiveData (theEnv)->WildcardValue->
-			    multifieldValue);
+			    ProceduralPrimitiveData (theEnv)->
+			    WildcardValue->multifieldValue);
       if (ProceduralPrimitiveData (theEnv)->WildcardValue->value !=
 	  ProceduralPrimitiveData (theEnv)->NoParamValue)
 	CL_AddToMultifieldList (theEnv,
-				ProceduralPrimitiveData (theEnv)->
-				WildcardValue->multifieldValue);
+				ProceduralPrimitiveData
+				(theEnv)->WildcardValue->multifieldValue);
       rtn_struct (theEnv, udfValue,
 		  ProceduralPrimitiveData (theEnv)->WildcardValue);
       ProceduralPrimitiveData (theEnv)->WildcardValue = NULL;
@@ -1072,11 +1072,11 @@ CL_EvaluateProcActions (Environment * theEnv,
     {
       CL_RemoveTrackedMemory (theEnv, theTM);
       for (i = 0; i < lvarcnt; i++)
-	if (ProceduralPrimitiveData (theEnv)->LocalVarArray[i].
-	    supplementalInfo == TrueSymbol (theEnv))
+	if (ProceduralPrimitiveData (theEnv)->
+	    LocalVarArray[i].supplementalInfo == TrueSymbol (theEnv))
 	  CL_ReleaseUDFV (theEnv,
-			  &ProceduralPrimitiveData (theEnv)->
-			  LocalVarArray[i]);
+			  &ProceduralPrimitiveData (theEnv)->LocalVarArray
+			  [i]);
       CL_rm (theEnv, ProceduralPrimitiveData (theEnv)->LocalVarArray,
 	     (sizeof (UDFValue) * lvarcnt));
     }
@@ -1149,13 +1149,13 @@ CL_GrabProcWildargs (Environment * theEnv,
   else
     {
       CL_ReleaseMultifield (theEnv,
-			    ProceduralPrimitiveData (theEnv)->WildcardValue->
-			    multifieldValue);
+			    ProceduralPrimitiveData (theEnv)->
+			    WildcardValue->multifieldValue);
       if (ProceduralPrimitiveData (theEnv)->WildcardValue->value !=
 	  ProceduralPrimitiveData (theEnv)->NoParamValue)
 	CL_AddToMultifieldList (theEnv,
-				ProceduralPrimitiveData (theEnv)->
-				WildcardValue->multifieldValue);
+				ProceduralPrimitiveData
+				(theEnv)->WildcardValue->multifieldValue);
     }
   ProceduralPrimitiveData (theEnv)->Oldindex = theIndex;
   size = ProceduralPrimitiveData (theEnv)->ProcParamArraySize + 1 - theIndex;
@@ -1168,8 +1168,8 @@ CL_GrabProcWildargs (Environment * theEnv,
 	ProceduralPrimitiveData (theEnv)->WildcardValue->value =
 	ProceduralPrimitiveData (theEnv)->NoParamValue;
       CL_RetainMultifield (theEnv,
-			   ProceduralPrimitiveData (theEnv)->WildcardValue->
-			   multifieldValue);
+			   ProceduralPrimitiveData (theEnv)->
+			   WildcardValue->multifieldValue);
       return;
     }
   for (i = theIndex - 1;
@@ -1205,8 +1205,8 @@ CL_GrabProcWildargs (Environment * theEnv,
 	}
     }
   CL_RetainMultifield (theEnv,
-		       ProceduralPrimitiveData (theEnv)->WildcardValue->
-		       multifieldValue);
+		       ProceduralPrimitiveData (theEnv)->
+		       WildcardValue->multifieldValue);
 }
 
 /* =========================================
@@ -1403,8 +1403,8 @@ PutProcBind (Environment * theEnv, void *value, UDFValue * returnValue)
   dst =
     &ProceduralPrimitiveData (theEnv)->LocalVarArray[*
 						     ((int *) ((CLIPSBitMap *)
-							       value)->contents)
-						     - 1];
+							       value)->
+						      contents) - 1];
   if (GetFirstArgument () == NULL)
     {
       if (dst->supplementalInfo == TrueSymbol (theEnv))

@@ -417,10 +417,10 @@ CL_ModifyCommand (Environment * theEnv,
 	  if (!found)
 	    {
 	      CL_InvalidDeftemplateSlotMessage (theEnv,
-						testPtr->lexemeValue->
-						contents,
-						templatePtr->header.name->
-						contents, true);
+						testPtr->
+						lexemeValue->contents,
+						templatePtr->header.
+						name->contents, true);
 	      Set_EvaluationError (theEnv, true);
 	      FreeTemplateValueArray (theEnv, theValueArray, templatePtr);
 	      if (changeMap != NULL)
@@ -532,8 +532,9 @@ CL_ModifyCommand (Environment * theEnv,
 	       computeResult.header->type)
 	      ||
 	      (!CL_MultifieldsEqual
-	       ((Multifield *) oldFact->theProposition.contents[position].
-		value, (Multifield *) computeResult.value)))
+	       ((Multifield *) oldFact->theProposition.
+		contents[position].value,
+		(Multifield *) computeResult.value)))
 	    {
 	      theValueArray[position].value = computeResult.value;
 	      replacementCount++;
@@ -881,10 +882,10 @@ CL_DuplicateCommand (Environment * theEnv,
 	  if (!found)
 	    {
 	      CL_InvalidDeftemplateSlotMessage (theEnv,
-						testPtr->lexemeValue->
-						contents,
-						templatePtr->header.name->
-						contents, true);
+						testPtr->
+						lexemeValue->contents,
+						templatePtr->header.
+						name->contents, true);
 	      Set_EvaluationError (theEnv, true);
 	      CL_ReturnFact (theEnv, newFact);
 	      return;
@@ -989,8 +990,8 @@ CL_DuplicateCommand (Environment * theEnv,
 	{
 	  newFact->theProposition.contents[i].value =
 	    CL_CopyMultifield (theEnv,
-			       oldFact->theProposition.contents[i].
-			       multifieldValue);
+			       oldFact->theProposition.
+			       contents[i].multifieldValue);
 	}
     }
 
@@ -1182,8 +1183,8 @@ CL_Deftemplate_SlotDefaultP (Deftemplate * theDeftemplate,
 	{
 	  Set_EvaluationError (theEnv, true);
 	  CL_InvalidDeftemplateSlotMessage (theEnv, slotName,
-					    theDeftemplate->header.name->
-					    contents, false);
+					    theDeftemplate->header.
+					    name->contents, false);
 	  return NO_DEFAULT;
 	}
     }
@@ -1287,8 +1288,8 @@ CL_Deftemplate_SlotDefaultValue (Deftemplate * theDeftemplate,
 	{
 	  Set_EvaluationError (theEnv, true);
 	  CL_InvalidDeftemplateSlotMessage (theEnv, slotName,
-					    theDeftemplate->header.name->
-					    contents, false);
+					    theDeftemplate->header.
+					    name->contents, false);
 	  return false;
 	}
     }
@@ -1398,8 +1399,8 @@ CL_Deftemplate_SlotCardinality (Deftemplate * theDeftemplate,
 	  returnValue->multifieldValue = CL_CreateMultifield (theEnv, 0L);
 	  Set_EvaluationError (theEnv, true);
 	  CL_InvalidDeftemplateSlotMessage (theEnv, slotName,
-					    theDeftemplate->header.name->
-					    contents, false);
+					    theDeftemplate->header.
+					    name->contents, false);
 	  return false;
 	}
     }
@@ -1516,8 +1517,8 @@ CL_Deftemplate_SlotAllowedValues (Deftemplate * theDeftemplate,
 	  returnValue->multifieldValue = CL_CreateMultifield (theEnv, 0L);
 	  Set_EvaluationError (theEnv, true);
 	  CL_InvalidDeftemplateSlotMessage (theEnv, slotName,
-					    theDeftemplate->header.name->
-					    contents, false);
+					    theDeftemplate->header.
+					    name->contents, false);
 	  return false;
 	}
     }
@@ -1553,8 +1554,8 @@ CL_Deftemplate_SlotAllowedValues (Deftemplate * theDeftemplate,
 
   returnValue->value =
     CL_CreateMultifield (theEnv,
-			 CL_ExpressionSize (theSlot->constraints->
-					    restrictionList));
+			 CL_ExpressionSize (theSlot->
+					    constraints->restrictionList));
   i = 0;
 
   theExp = theSlot->constraints->restrictionList;
@@ -1632,8 +1633,8 @@ CL_Deftemplate_SlotRange (Deftemplate * theDeftemplate,
 	  returnValue->multifieldValue = CL_CreateMultifield (theEnv, 0L);
 	  Set_EvaluationError (theEnv, true);
 	  CL_InvalidDeftemplateSlotMessage (theEnv, slotName,
-					    theDeftemplate->header.name->
-					    contents, false);
+					    theDeftemplate->header.
+					    name->contents, false);
 	  return false;
 	}
     }
@@ -1735,8 +1736,8 @@ CL_Deftemplate_SlotTypes (Deftemplate * theDeftemplate,
 	  returnValue->multifieldValue = CL_CreateMultifield (theEnv, 0L);
 	  Set_EvaluationError (theEnv, true);
 	  CL_InvalidDeftemplateSlotMessage (theEnv, slotName,
-					    theDeftemplate->header.name->
-					    contents, false);
+					    theDeftemplate->header.
+					    name->contents, false);
 	  return false;
 	}
     }
@@ -1912,8 +1913,8 @@ CL_DeftemplateSlotMultiP (Deftemplate * theDeftemplate, const char *slotName)
 	{
 	  Set_EvaluationError (theEnv, true);
 	  CL_InvalidDeftemplateSlotMessage (theEnv, slotName,
-					    theDeftemplate->header.name->
-					    contents, false);
+					    theDeftemplate->header.
+					    name->contents, false);
 	  return false;
 	}
     }
@@ -2000,8 +2001,8 @@ CL_DeftemplateSlotSingleP (Deftemplate * theDeftemplate, const char *slotName)
 	{
 	  Set_EvaluationError (theEnv, true);
 	  CL_InvalidDeftemplateSlotMessage (theEnv, slotName,
-					    theDeftemplate->header.name->
-					    contents, false);
+					    theDeftemplate->header.
+					    name->contents, false);
 	  return false;
 	}
     }
@@ -2150,8 +2151,8 @@ CL_DeftemplateSlotFacetExistPFunction (Environment * theEnv,
     CL_CreateBoolean (theEnv,
 		      CL_DeftemplateSlotFacetExistP (theEnv, theDeftemplate,
 						     slotName->contents,
-						     facetName.lexemeValue->
-						     contents));
+						     facetName.
+						     lexemeValue->contents));
 }
 
 /****************************************************/
@@ -2433,8 +2434,8 @@ CL_UpdateModifyDuplicate (Environment * theEnv,
 	{
 	  CL_InvalidDeftemplateSlotMessage (theEnv,
 					    tempArg->lexemeValue->contents,
-					    theDeftemplate->header.name->
-					    contents, true);
+					    theDeftemplate->header.
+					    name->contents, true);
 	  return false;
 	}
 
@@ -2447,15 +2448,15 @@ CL_UpdateModifyDuplicate (Environment * theEnv,
 	  if (tempArg->argList == NULL)
 	    {
 	      CL_SingleField_SlotCardinalityError (theEnv,
-						   slotPtr->slotName->
-						   contents);
+						   slotPtr->
+						   slotName->contents);
 	      return false;
 	    }
 	  else if (tempArg->argList->nextArg != NULL)
 	    {
 	      CL_SingleField_SlotCardinalityError (theEnv,
-						   slotPtr->slotName->
-						   contents);
+						   slotPtr->
+						   slotName->contents);
 	      return false;
 	    }
 	  else if (tempArg->argList->type == FCALL)
@@ -2464,16 +2465,16 @@ CL_UpdateModifyDuplicate (Environment * theEnv,
 		   SINGLEFIELD_BITS) == 0)
 		{
 		  CL_SingleField_SlotCardinalityError (theEnv,
-						       slotPtr->slotName->
-						       contents);
+						       slotPtr->
+						       slotName->contents);
 		  return false;
 		}
 	    }
 	  else if (tempArg->argList->type == MF_VARIABLE)
 	    {
 	      CL_SingleField_SlotCardinalityError (theEnv,
-						   slotPtr->slotName->
-						   contents);
+						   slotPtr->
+						   slotName->contents);
 	      return false;
 	    }
 	}

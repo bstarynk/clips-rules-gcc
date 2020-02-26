@@ -173,8 +173,8 @@ DeallocateObjectReteBinaryData (Environment * theEnv)
   for (i = 0; i < ObjectReteBinaryData (theEnv)->AlphaNodeCount; i++)
     {
       CL_DestroyAlphaMemory (theEnv,
-			     &ObjectReteBinaryData (theEnv)->AlphaArray[i].
-			     header, false);
+			     &ObjectReteBinaryData (theEnv)->
+			     AlphaArray[i].header, false);
     }
 
   space =
@@ -558,8 +558,8 @@ CL_BloadObjectPatterns (Environment * theEnv)
   for (i = 0; i < ObjectReteBinaryData (theEnv)->PatternNodeCount; i++)
     {
       if ((ObjectReteBinaryData (theEnv)->PatternArray[i].lastLevel != NULL)
-	  && (ObjectReteBinaryData (theEnv)->PatternArray[i].lastLevel->
-	      selector))
+	  && (ObjectReteBinaryData (theEnv)->PatternArray[i].
+	      lastLevel->selector))
 	{
 	  CL_AddHashedPatternNode (theEnv,
 				   ObjectReteBinaryData (theEnv)->PatternArray
@@ -714,8 +714,8 @@ CL_Clear_BloadObjectPatterns (Environment * theEnv)
   for (i = 0; i < ObjectReteBinaryData (theEnv)->PatternNodeCount; i++)
     {
       if ((ObjectReteBinaryData (theEnv)->PatternArray[i].lastLevel != NULL)
-	  && (ObjectReteBinaryData (theEnv)->PatternArray[i].lastLevel->
-	      selector))
+	  && (ObjectReteBinaryData (theEnv)->PatternArray[i].
+	      lastLevel->selector))
 	{
 	  CL_RemoveHashedPatternNode (theEnv,
 				      ObjectReteBinaryData
@@ -723,10 +723,11 @@ CL_Clear_BloadObjectPatterns (Environment * theEnv)
 				      &ObjectReteBinaryData
 				      (theEnv)->PatternArray[i],
 				      ObjectReteBinaryData
-				      (theEnv)->PatternArray[i].
-				      networkTest->type,
-				      ObjectReteBinaryData (theEnv)->
-				      PatternArray[i].networkTest->value);
+				      (theEnv)->PatternArray[i].networkTest->
+				      type,
+				      ObjectReteBinaryData
+				      (theEnv)->PatternArray[i].networkTest->
+				      value);
 	}
     }
 

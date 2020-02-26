@@ -336,8 +336,8 @@ CL_ProcessConnectedConstraints (Environment * theEnv,
 		    {
 		      rvConstraints =
 			CL_FunctionCallToConstraintRecord (theEnv,
-							   andNode->
-							   expression->value);
+							   andNode->expression->
+							   value);
 		      tmpConstraints = andConstraints;
 		      andConstraints =
 			CL_IntersectConstraints (theEnv, andConstraints,

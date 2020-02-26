@@ -344,8 +344,8 @@ Parse_AssertSlotValues (Environment * theEnv,
 	    {
 	      *error = true;
 	      CL_SingleField_SlotCardinalityError (theEnv,
-						   slotPtr->slotName->
-						   contents);
+						   slotPtr->
+						   slotName->contents);
 	      CL_ReturnExpression (theEnv, newField);
 	      return NULL;
 	    }
@@ -524,7 +524,7 @@ GetSlot_AssertValues (Environment * theEnv,
   const char *nullBitMap = "\0";
 
    /*==================================================*/
-  /* Dete_rmine if the slot is assigned in the assert. */
+  /* Determine if the slot is assigned in the assert. */
    /*==================================================*/
 
   slotItem = Find_AssertSlotItem (slotPtr, firstSlot);
