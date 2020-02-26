@@ -561,7 +561,8 @@ CL_GenOpen (Environment * theEnv,
   /* Invoke the before open function. */
    /*==================================*/
 
-  if (SystemDependentData (theEnv)->Before_OpenFunction != NULL)
+  //!Basile check theEnv:
+  if (theEnv !=NULL && SystemDependentData (theEnv)->Before_OpenFunction != NULL)
     {
       (*SystemDependentData (theEnv)->Before_OpenFunction) (theEnv);
     }
@@ -625,7 +626,8 @@ CL_GenOpen (Environment * theEnv,
   /* Invoke the after open function. */
    /*=================================*/
 
-  if (SystemDependentData (theEnv)->After_OpenFunction != NULL)
+  //!Basile: check theEnv
+  if (theEnv && SystemDependentData (theEnv)->After_OpenFunction != NULL)
     {
       (*SystemDependentData (theEnv)->After_OpenFunction) (theEnv);
     }

@@ -240,6 +240,7 @@ plugin_init (struct plugin_name_args *plugin_info,
   register_callback (plugin_name, PLUGIN_START_UNIT, CLGCC_starting, NULL);
   register_callback (plugin_name, PLUGIN_FINISH_UNIT, CLGCC_finishing, NULL);
   /// initialize global state from arguments, and give information about this plugin
+  CLGCC_DBGPRINTF("plugin_init %s before parsing arguments", plugin_name);
   parse_plugin_arguments (plugin_name, plugin_info, todoque);
   CLGCC_DBGPRINTF("plugin_init %s before todo todoquelength=%zd", plugin_name, todoque.size());
   for (auto todof: todoque)
