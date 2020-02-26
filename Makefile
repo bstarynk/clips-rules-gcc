@@ -80,13 +80,16 @@ indent:
 	    $(INDENT) $(INDENTFLAGS) $$g ; \
 	done
 
-clipsgccplug.so: _timestamp.c $(CLGCC_PLUGIN_OBJECTS) $(CLIPS_OBJECTS)
-	$(CXX) $(CXXFLAGS) -shared _timestamp.c $(CLGCC_PLUGIN_OBJECTS) $(CLIPS_OBJECTS) -o $@
+clipsgccplug.so: _timestamp.o $(CLGCC_PLUGIN_OBJECTS) $(CLIPS_OBJECTS)
+	$(CXX) $(CXXFLAGS) -shared _timestamp.o $(CLGCC_PLUGIN_OBJECTS) $(CLIPS_OBJECTS) -o $@
 	@$(MV) _timestamp.c _timestamp.c~ > /dev/stderr
 
 _timestamp.c: generate-timestamp.sh Makefile $(CLGCC_PLUGIN_CXXSOURCES) $(CLGCC_PLUGIN_CXXHEADERS) $(CLIPS_CSOURCES) $(CLIPS_CHEADERS)
 	./generate-timestamp.sh $@ > $@-tmp
 	@$(MV) $@-tmp $@ > /dev/stderr
+
+_timestamp.o: _timestamp.c
+	$(CC) $(CFLAGS)  $< -c  -o $@
 
 CLIPS-source/%.o: CLIPS-source/%.c
 	$(CC) $(CFLAGS) -DCLIPS_SOURCE $< -c  -MMD -MF $(patsubst CLIPS-source/%.o, CLIPS-source/_%.mk, $@) -o $@
