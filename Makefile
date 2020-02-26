@@ -64,7 +64,7 @@ clean:
 	$(RM) _* *tmp CLIPS-source/_* CLIPS-source/*tmp
 	$(RM) *~ *% CLIPS-source/*~ CLIPS-source/*%
 
-plugin: clips-gcc-plugin.so
+plugin: clipsgccplug.so
 
 indent:
 	for f in $(CLGCC_PLUGIN_CXXSOURCES) ; do \
@@ -80,13 +80,13 @@ indent:
 	    $(INDENT) $(INDENTFLAGS) $$g ; \
 	done
 
-clips-gcc-plugin.so: _timestamp.c $(CLGCC_PLUGIN_OBJECTS) $(CLIPS_OBJECTS)
+clipsgccplug.so: _timestamp.c $(CLGCC_PLUGIN_OBJECTS) $(CLIPS_OBJECTS)
 	$(CXX) $(CXXFLAGS) -shared _timestamp.c $(CLGCC_PLUGIN_OBJECTS) $(CLIPS_OBJECTS) -o $@
-	$(MV) _timestamp.c _timestamp.c~
+	@$(MV) _timestamp.c _timestamp.c~ > /dev/stderr
 
 _timestamp.c: generate-timestamp.sh Makefile $(CLGCC_PLUGIN_CXXSOURCES) $(CLGCC_PLUGIN_CXXHEADERS) $(CLIPS_CSOURCES) $(CLIPS_CHEADERS)
 	./generate-timestamp.sh $@ > $@-tmp
-	$(MV) $@-tmp $@
+	@$(MV) $@-tmp $@ > /dev/stderr
 
 CLIPS-source/%.o: CLIPS-source/%.c
 	$(CC) $(CFLAGS) -DCLIPS_SOURCE $< -c  -MMD -MF $(patsubst CLIPS-source/%.o, CLIPS-source/_%.mk, $@) -o $@
@@ -95,9 +95,9 @@ CLIPS-source/%.o: CLIPS-source/%.c
 	$(CXX) $(CXXFLAGS) -I $(GCCPLUGIN_DIR)/include -DCLIPSGCC_SOURCE $< -c  -MMD -MF  $(patsubst %.o, _%.mk, $@) -o $@
 
 #### the print-test-settings target is called by test scripts testdir/T*/run.bash
-print-test-settings:
+print-test-settings: | plugin
 	@printf "TARGET_GCC=%s\n" $(TARGET_GCC)
-	@printf "CLIPS_GCC_PLUGIN=%s\n" $(realpath clips-gcc-plugin.so)
+	@printf "CLIPS_GCC_PLUGIN=%s\n" $(realpath clipsgccplug.so)
 
 -include $(wildcard _*.mk)
 

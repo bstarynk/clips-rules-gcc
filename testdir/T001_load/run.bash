@@ -21,19 +21,30 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
-printf "running %s in %s\n" $(realpath $(which $0)) $(pwd)
-parentdir=$(dirname $(realpath $(which $0)))
+this_script=$(realpath $(which $0))
+printf "running %s in %s\n" $this_script $(pwd)
+parentdir=$(dirname $this_script)
 printf "parentdir is %s\n" $parentdir
 /bin/ls -l $parentdir/../../Makefile $(realpath $parentdir/../../Makefile)
 tempsource=$(tempfile -p CLIPSGCCsrc -s .bash)
+tempasm=$(tempfile -p CLIPSGCCasm -s .s)
 (cd  $parentdir/../.. ; make   print-test-settings) > $tempsource
-function remove_tempsource() {
-    rm -vf $tempsource
+function perhaps_remove_temporary_files() {
+    if [ -z "$CLIPSGCC_KEEP_TEMPORARY" ]; then
+	rm -vf $tempsource $tempasm
+    else
+	printf '# %s keeping temporary files %s %s with $CLIPSGCC_KEEP_TEMPORARY \n' $0 $tempsource $tempasm
+    fi
 }
-trap remove_tempsource EXIT INT TERM ERR
+trap perhaps_remove_temporary_files EXIT INT TERM ERR
 printf "::::: %s :::::\n" $tempsource
 head $tempsource
 printf "===== end %s =====\n\n" $tempsource
 source $tempsource
-printf "using TARGET_GCC=%s\n" $TARGET_GCC
-printf "with CLIPS_GCC_PLUGIN=%s\n" $CLIPS_GCC_PLUGIN
+printf "# %s parentdir %s, cwd %s\n" $0 $parentdir $(pwd)
+printf "# %s using TARGET_GCC=%s\n" $0 $TARGET_GCC
+printf "# %s with CLIPS_GCC_PLUGIN=%s\n" $0 $CLIPS_GCC_PLUGIN
+printf "\n###### $0 running: ######\n" $0
+printf '# $TARGET_GCC -O1 -S -v -fplugin=$CLISP_GCC_PLUGIN \\\n'
+printf '#    -fplugin-arg-clipsgccplug-project=%s \\\n' $(basename $(dirname $parentdir))
+printf '#    -fplugin-arg-clipsgccplug-load=%s \\\n' $parentdir/
