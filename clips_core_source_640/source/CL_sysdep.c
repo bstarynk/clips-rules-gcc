@@ -541,7 +541,7 @@ FILE *
 CL_GenOpen (Environment * theEnv,
 	    const char *fileName, const char *accessType)
 {
-  FILE *theFile;
+  FILE *theFile = NULL;
 #if WIN_MVC
   wchar_t *wfileName;
   wchar_t *waccessType;
@@ -562,7 +562,8 @@ CL_GenOpen (Environment * theEnv,
    /*==================================*/
 
   //!Basile check theEnv:
-  if (theEnv !=NULL && SystemDependentData (theEnv)->Before_OpenFunction != NULL)
+  if (theEnv != NULL
+      && SystemDependentData (theEnv)->Before_OpenFunction != NULL)
     {
       (*SystemDependentData (theEnv)->Before_OpenFunction) (theEnv);
     }
@@ -637,7 +638,9 @@ CL_GenOpen (Environment * theEnv,
    /*===============================*/
 
   return theFile;
-}
+}				/* end function CL_GenOpen */
+
+
 
 /**********************************************/
 /* CL_GenClose: Trap routine for closing a file. */
