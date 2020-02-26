@@ -44,7 +44,13 @@ source $tempsource
 printf "# %s parentdir %s, cwd %s\n" $0 $parentdir $(pwd)
 printf "# %s using TARGET_GCC=%s\n" $0 $TARGET_GCC
 printf "# %s with CLIPS_GCC_PLUGIN=%s\n" $0 $CLIPS_GCC_PLUGIN
-printf "\n###### $0 running: ######\n" $0
+printf "\n###### %s running: ######\n" $0
 printf '# $TARGET_GCC -O1 -S -v -fplugin=$CLISP_GCC_PLUGIN \\\n'
 printf '#    -fplugin-arg-clipsgccplug-project=%s \\\n' $(basename $(dirname $parentdir))
 printf '#    -fplugin-arg-clipsgccplug-load=%s \\\n' $parentdir/clipsgccrules.clp
+printf '#    %s -o %s\n\n'  $parentdir/input.c $tempasm
+
+$TARGET_GCC -O1 -S -v -fplugin=$CLIPS_GCC_PLUGIN \
+	    -fplugin-arg-clipsgccplug-project=$(basename $(dirname $parentdir)) \
+	    -fplugin-arg-clipsgccplug-load=$parentdir/clipsgccrules.clp \
+	     $parentdir/input.c -o $tempasm
