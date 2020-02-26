@@ -73,8 +73,9 @@
 #include "diagnostic.h"
 #include "context.h"
 
-
+extern "C" {
 #include "clips.h"
+};				// end include clips.h as "C"
 
 // in generated _timestamp.c
 
