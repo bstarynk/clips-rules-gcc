@@ -26,7 +26,7 @@
 
 int plugin_is_GPL_compatible;
 
-
+int clgcc_debug;
 std::string CLGCC_projectstr;
 std::string CLGCC_translationunitstr;
 Environment* CLGCC_env;
@@ -43,6 +43,15 @@ CLGCC_cputime(void)
 
 
 
+const char*CLGCC_basename(const char* path)
+{
+  if (!path)
+    return NULL;
+  const char* lastsl = strrchr(path, '/');
+  if (lastsl && lastsl[1])
+    return lastsl+1;
+  return path;
+} // end of CLGCC_basename
 
 /// GCC callback which gets called before processing a translation unit
 void
@@ -124,16 +133,47 @@ parse_plugin_arguments (const char*plugin_name, struct plugin_name_args* plargs,
             {
               std::string curpath(curval);
               todoque.push_back([=]()
-              {
-                if (CL_Load(CLGCC_env, curpath.c_str()))
-                  warning(UNKNOWN_LOCATION,"CLIPS-GCC: plugin %s failed to load CLIPS file %s",
-                          str_plugin_name.c_str(), curpath.c_str());
-                else
-                  inform(UNKNOWN_LOCATION, "CLIPS-GCC plugin %s did load CLIPS file %s",
-                         str_plugin_name.c_str(), curpath.c_str());
-              });
+				{
+				  if (CL_Load(CLGCC_env, curpath.c_str()))
+				    warning(UNKNOWN_LOCATION,"CLIPS-GCC: plugin %s failed to load CLIPS file %s",
+					    str_plugin_name.c_str(), curpath.c_str());
+				  else
+				    inform(UNKNOWN_LOCATION, "CLIPS-GCC plugin %s did load CLIPS file %s",
+					   str_plugin_name.c_str(), curpath.c_str());
+				});
             }
         } // end CLGCC_GOT_OPTION("load")
+      ////////////////
+      else if (CLGCC_GOT_ANY_OPTION("debug"))
+        {
+	  const char*dbgstr = curval;
+	  if (dbgstr) {
+	    inform (UNKNOWN_LOCATION,
+		    "CLIPS-GCC plugin %s debug given %s:\n", plugin_name, dbgstr);
+	    if (!strcmp(dbgstr, "0") || !strcmp(dbgstr, "no")) {
+	      inform (UNKNOWN_LOCATION,
+		      "CLIPS-GCC plugin %s debug explicitly disabled", plugin_name);
+	      clgcc_debug = 0;
+	    }
+	    else if (clgcc_debug > 0) {
+	      int oldbg = clgcc_debug;
+	      clgcc_debug = atoi(dbgstr);
+	      if (oldbg != clgcc_debug)
+		inform (UNKNOWN_LOCATION,
+			"CLIPS-GCC plugin %s debug was %d now %d", plugin_name, oldbg, clgcc_debug);
+	    }
+	    else {
+	      clgcc_debug = atoi(dbgstr);
+	      inform (UNKNOWN_LOCATION,
+		      "CLIPS-GCC plugin %s debug set to #%d", plugin_name, clgcc_debug);
+	    }	      
+	  }
+	  else {
+	    clgcc_debug = 1;
+	    inform (UNKNOWN_LOCATION,
+		    "CLIPS-GCC plugin %s debug level set to one", plugin_name);
+	  }
+        } // end (CLGCC_GOT_ANY_OPTION("debug")
       else
         {
           if (curval)
@@ -164,6 +204,17 @@ plugin_init (struct plugin_name_args *plugin_info,
               gcc_version.basever, gcc_version.datestamp, gcc_version.devphase, gcc_version.revision);
       return 1;
     }
+  auto dbgstr = getenv("CLIPSGCC_DEBUG");
+  if (dbgstr) {
+    clgcc_debug = atoi(dbgstr);
+    if (clgcc_debug > 0) {
+      inform(UNKNOWN_LOCATION, "CLIPS-GCC plugin %s enabled debugging #%d with CLIPSGCC_DEBUG=%s",
+	     plugin_name, clgcc_debug, dbgstr);
+    }
+    else
+      warning(UNKNOWN_LOCATION, "CLIPS-GCC plugin %s: CLIPSGCC_DEBUG is %s but disabled debugging",
+	      plugin_name, dbgstr);      
+  }
   register_callback (plugin_name, PLUGIN_START_UNIT, CLGCC_starting, NULL);
   register_callback (plugin_name, PLUGIN_FINISH_UNIT, CLGCC_finishing, NULL);
   /// initialize global state from arguments, and give information about this plugin

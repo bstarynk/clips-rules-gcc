@@ -18,6 +18,7 @@
 /*      Brian L. Dantes                                      */
 /*                                                           */
 /* Contributing Programmer(s):                               */
+/*      http://starynkevitch.net/Basile/                     */
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
@@ -96,6 +97,31 @@
 
 #define _H_setup
 
+
+///Basile+ add debugging facilities
+#define CLGCC_LIKELY(Test) !__builtin_expect(!(Test),0)
+#define CLGCC_UNLIKELY(Test) !__builtin_expect(!!(Test),0)
+extern  int clgcc_debug;
+extern const char*CLGCC_basename(const char*);
+			
+// we could use CLGCC_DBGPRINTF and later replace it by CLGCC_NONPRINTF
+#define CLGCC_DBGPRINTFATBIS(Fil,Lin,Fmt,...) do {	\
+    if (CLGCC_UNLIKELY(clgcc_debug)) {			\
+      printf("%s:%d+ ", CLGCC_basename((Fil)),		\
+	     (Lin));					\
+      printf(Fmt "\n", ##__VA_ARGS__); }		\
+  } while(0)
+
+#define CLGCC_DBGPRINTFAT(Fil,Lin,Fmt,...) \
+  CLGCC_DBGPRINTFATBIS(Fil,Lin,Fmt,##__VA_ARGS__)
+
+#define CLGCC_DBGPRINTF(Fmt,...) \
+  CLGCC_DBGPRINTFAT(__FILE__,__LINE__,Fmt,##__VA_ARGS__)
+
+#define CLGCC_NONPRINTF(Fmt,...) do {		\
+    if (false) printf(Fmt "\n", ##__VA_ARGS__);	\
+} while(0)
+		
 /****************************************************************/
 /* -------------------- COMPILER FLAGS ------------------------ */
 /****************************************************************/

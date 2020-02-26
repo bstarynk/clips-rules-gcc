@@ -43,6 +43,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <math.h>
+#include <string.h>
 
 #include "gcc-plugin.h"
 #include "config.h"
@@ -76,6 +77,10 @@
 extern "C" {
 #include "clips.h"
 };				// end include clips.h as "C"
+
+// For our CLGCC_DBGPRINTF macro in setup.h we need:
+extern "C" int clgcc_debug;
+extern "C" const char*CLGCC_basename(const char*);
 
 // in generated _timestamp.c
 
