@@ -553,6 +553,8 @@ CL_GenOpen (Environment * theEnv,
   Bogus (fileName == NULL);
   Bogus (accessType == NULL);
   Bogus (SystemDependentData (theEnv) == NULL);
+  CLGCC_DBGPRINTF ("CL_GenOpen fileName=%s accessType=%s theEnv@%p", fileName,
+		   accessType, theEnv);
   //-Basile
 
    /*==================================*/
