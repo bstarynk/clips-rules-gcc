@@ -47,4 +47,4 @@ printf "# %s with CLIPS_GCC_PLUGIN=%s\n" $0 $CLIPS_GCC_PLUGIN
 printf "\n###### $0 running: ######\n" $0
 printf '# $TARGET_GCC -O1 -S -v -fplugin=$CLISP_GCC_PLUGIN \\\n'
 printf '#    -fplugin-arg-clipsgccplug-project=%s \\\n' $(basename $(dirname $parentdir))
-printf '#    -fplugin-arg-clipsgccplug-load=%s \\\n' $parentdir/
+printf '#    -fplugin-arg-clipsgccplug-load=%s \\\n' $parentdir/clipsgccrules.clp
