@@ -86,6 +86,9 @@ CLGCC_starting(void*gccdata __attribute__((unused)), void*userdata __attribute((
          CLGCC_translationunitstr.c_str(),
          cputimbuf,
          CLGCC_basename(__FILE__), __LINE__);
+  CLGCC_DBGPRINTF("CLGCC_starting before CL_CommandLoop_Batch");
+  CL_CommandLoop_Batch(CLGCC_env);
+  CLGCC_DBGPRINTF("CLGCC_starting after CL_CommandLoop_Batch");
 } // end CLGCC_starting
 
 
@@ -155,9 +158,9 @@ parse_plugin_arguments (const char*plugin_name, struct plugin_name_args* plargs,
               std::string curpath(curval);
               todoque.push_back([=]()
               {
-                CLGCC_DBGPRINTF("CLIPS-GCC: plugin %s loading %s",  str_plugin_name.c_str(), curpath.c_str());
-                if (CL_Load(CLGCC_env, curpath.c_str()))
-                  warning(UNKNOWN_LOCATION,"CLIPS-GCC: plugin %s failed to load CLIPS file %s",
+                CLGCC_DBGPRINTF("CLIPS-GCC: plugin %s loading batch %s",  str_plugin_name.c_str(), curpath.c_str());
+                if (CL_Batch(CLGCC_env, curpath.c_str()))
+                  warning(UNKNOWN_LOCATION,"CLIPS-GCC: plugin %s failed to batch CLIPS file %s",
                           str_plugin_name.c_str(), curpath.c_str());
                 else
                   inform(UNKNOWN_LOCATION, "CLIPS-GCC plugin %s did load CLIPS file %s",

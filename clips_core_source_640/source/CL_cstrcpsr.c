@@ -555,7 +555,7 @@ CL_FindConstructBeginning (Environment * theEnv,
 	      CL_PrintErrorID (theEnv, "CSTRCPSR", 1, true);
 	      CL_WriteString (theEnv, STDERR,
 			      "Expected the beginning of a construct.\n");
-	      CLGCC_DBGPRINTF("CSTRCPSR error");
+	      CLGCC_DBGPRINTF ("CSTRCPSR error");
 	    }
 
 	 /*======================================================*/
@@ -583,7 +583,7 @@ CL_FindConstructBeginning (Environment * theEnv,
 	      CL_PrintErrorID (theEnv, "CSTRCPSR", 1, true);
 	      CL_WriteString (theEnv, STDERR,
 			      "Expected the beginning of a construct.\n");
-	      CLGCC_DBGPRINTF("CSTRCPSR error");
+	      CLGCC_DBGPRINTF ("CSTRCPSR error");
 	    }
 
 	  firstAttempt = false;
