@@ -33,6 +33,7 @@
 #define _H_CLIPS_API
 
 #include <stdio.h>
+#include <stdbool.h>
 
 #include "setup.h"
 #include "argacces.h"

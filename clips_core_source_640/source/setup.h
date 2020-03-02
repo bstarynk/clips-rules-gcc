@@ -99,8 +99,8 @@
 
 
 ///Basile+ add debugging facilities
-#define CLGCC_LIKELY(Test) !__builtin_expect(!(Test),0)
-#define CLGCC_UNLIKELY(Test) !__builtin_expect(!!(Test),0)
+#define CLGCC_LIKELY(Test) !__builtin_expect(!(bool)(Test),0)
+#define CLGCC_UNLIKELY(Test) !__builtin_expect(!!(bool)(Test),0)
 extern int clgcc_debug;
 extern const char *CLGCC_basename (const char *);
 extern void CLGCC_dodbgprintf (const char *srcfil, int lin, const char *fmt,
@@ -108,8 +108,8 @@ extern void CLGCC_dodbgprintf (const char *srcfil, int lin, const char *fmt,
 
 // we could use CLGCC_DBGPRINTF and later replace it by CLGCC_NONPRINTF
 #define CLGCC_DBGPRINTFATBIS(Fil,Lin,Fmt,...) do {	\
-    if (CLGCC_UNLIKELY(clgcc_debug)) 			\
-      CLGCC_dodbgprintf(Fil,Lin,Fmt,##__VA_ARGS__);	\
+    if (clgcc_debug != 0)				\
+      CLGCC_dodbgprintf(Fil, Lin, Fmt, ##__VA_ARGS__);	\
   } while(0)
 
 #define CLGCC_DBGPRINTFAT(Fil,Lin,Fmt,...) \
