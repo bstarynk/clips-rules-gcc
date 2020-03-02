@@ -81,6 +81,7 @@ extern "C" {
 
 // For our CLGCC_DBGPRINTF macro in setup.h we need:
 extern "C" int clgcc_debug;
+extern "C" FILE* clgcc_dbgfile;
 extern "C" const char*CLGCC_basename(const char*);
 extern "C" void CLGCC_dodbgprintf(const char*srcfil, int lin, const char*fmt, ...);
 

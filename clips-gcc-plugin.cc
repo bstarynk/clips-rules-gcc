@@ -27,6 +27,7 @@
 int plugin_is_GPL_compatible;
 
 int clgcc_debug;
+FILE* clgcc_dbgfile;
 std::string CLGCC_projectstr;
 std::string CLGCC_translationunitstr;
 Environment* CLGCC_env;
@@ -56,13 +57,15 @@ const char*CLGCC_basename(const char* path)
 void
 CLGCC_dodbgprintf(const char*srcfil, int lin, const char*fmt, ...)
 {
+  if (!clgcc_dbgfile)
+    clgcc_dbgfile = stderr;
   va_list args;
-  va_start(args,fmt);
-  fprintf(stderr, "%s:%d: ", CLGCC_basename(srcfil), lin);
-  vfprintf(stderr, fmt, args);
+  va_start (args,fmt);
+  fprintf (clgcc_dbgfile, "%s:%d: ", CLGCC_basename(srcfil), lin);
+  vfprintf (clgcc_dbgfile, fmt, args);
   va_end(args);
-  putc('\n', stderr);
-  fflush(NULL);
+  putc ('\n', clgcc_dbgfile);
+  fflush (clgcc_dbgfile);
 } // end CLGCC_dodbgprintf
 
 /// GCC callback which gets called before processing a translation unit
@@ -155,6 +158,32 @@ parse_plugin_arguments (const char*plugin_name, struct plugin_name_args* plargs,
             }
         } // end CLGCC_GOT_OPTION("load")
       ////////////////
+      else if (CLGCC_GOT_OPTION("dbgfile"))
+        {
+          clgcc_dbgfile = fopen(curval, "w+");
+          if (!clgcc_dbgfile)
+            fatal_error(UNKNOWN_LOCATION, "CLIPS-GCC plugin %s - failed to open dbgfile %s (%m)",
+                        plugin_name, curval);
+          if (clgcc_debug == 0)
+            clgcc_debug = 1;
+          char hn[64];
+          memset (hn, 0, sizeof(hn));
+          gethostname(hn, sizeof(hn));
+          hn[sizeof(hn)-1] = '\0';
+          char timbuf[64];
+          memset(timbuf, 0, sizeof(timbuf));
+          time_t nowt = time(nullptr);
+          struct tm* nowtm = localtime(&nowt);
+          strftime(timbuf, sizeof(timbuf), "%c", nowtm);
+          CLGCC_DBGPRINTF("CLIPS-GCC: plugin %s - debug file %s on %s pid #%d host %s\n"
+                          "* git %s\n"
+                          "| built %s\n",
+                          plugin_name, curval, timbuf, (int)getpid(), hn,
+                          clgcc_lastgitcommit,
+                          clgcc_timestamp);
+        } // end CLGCC_GOT_OPTION("dbgfile")
+
+      ////////////////
       else if (CLGCC_GOT_ANY_OPTION("debug"))
         {
           const char*dbgstr = curval;
@@ -189,6 +218,21 @@ parse_plugin_arguments (const char*plugin_name, struct plugin_name_args* plargs,
               inform (UNKNOWN_LOCATION,
                       "CLIPS-GCC plugin %s debug level set to one", plugin_name);
             }
+          char hn[64];
+          memset (hn, 0, sizeof(hn));
+          gethostname(hn, sizeof(hn));
+          hn[sizeof(hn)-1] = '\0';
+          char timbuf[64];
+          memset(timbuf, 0, sizeof(timbuf));
+          time_t nowt = time(nullptr);
+          struct tm* nowtm = localtime(&nowt);
+          strftime(timbuf, sizeof(timbuf), "%c", nowtm);
+          CLGCC_DBGPRINTF("CLIPS-GCC: plugin %s - debug on %s pid #%d host %s\n"
+                          "* git %s\n"
+                          "| built %s\n",
+                          plugin_name,  timbuf, (int)getpid(), hn,
+                          clgcc_lastgitcommit,
+                          clgcc_timestamp);
         } // end (CLGCC_GOT_ANY_OPTION("debug")
       else
         {
