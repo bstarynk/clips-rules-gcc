@@ -24,6 +24,11 @@
 **/
 #include "clips-gcc.hh"
 
+#ifdef stderr
+#warning stderr is a macro
+#undef stderr
+#endif
+
 int plugin_is_GPL_compatible;
 
 int clgcc_debug;
@@ -75,10 +80,12 @@ CLGCC_starting(void*gccdata __attribute__((unused)), void*userdata __attribute((
   char cputimbuf[32];
   memset (cputimbuf, 0, sizeof(cputimbuf));
   snprintf(cputimbuf, sizeof (cputimbuf), "%.3f s", CLGCC_cputime());
-  inform(UNKNOWN_LOCATION, "CLIPS-GCC: ****starting project %s translunit %s, cputime %s (l@%d)",
+  inform(UNKNOWN_LOCATION,
+         "CLIPS-GCC: ****starting project %s translunit %s, cputime %s <%s:%d>",
          CLGCC_projectstr.c_str(),
          CLGCC_translationunitstr.c_str(),
-         cputimbuf, __LINE__);
+         cputimbuf,
+         CLGCC_basename(__FILE__), __LINE__);
 } // end CLGCC_starting
 
 
@@ -89,10 +96,10 @@ CLGCC_finishing(void*gccdata __attribute__((unused)), void*userdata __attribute(
   char cputimbuf[32];
   memset (cputimbuf, 0, sizeof(cputimbuf));
   snprintf(cputimbuf, sizeof (cputimbuf), "%.3f s", CLGCC_cputime());
-  inform(UNKNOWN_LOCATION, "CLIPS-GCC: ****finishing project %s translunit %s, cputime %s (l@%d)",
+  inform(UNKNOWN_LOCATION, "CLIPS-GCC: ****finishing project %s translunit %s, cputime %s <%s:%d>",
          CLGCC_projectstr.c_str(),
          CLGCC_translationunitstr.c_str(),
-         cputimbuf, __LINE__);
+         cputimbuf, CLGCC_basename(__FILE__), __LINE__);
   if (!CL_DestroyEnvironment(CLGCC_env))
     fatal_error(UNKNOWN_LOCATION, "CLIPS-GCC: CL_DestroyEnvironment failed");
 
@@ -181,6 +188,8 @@ parse_plugin_arguments (const char*plugin_name, struct plugin_name_args* plargs,
                           plugin_name, curval, timbuf, (int)getpid(), hn,
                           clgcc_lastgitcommit,
                           clgcc_timestamp);
+          inform(UNKNOWN_LOCATION, "CLIPS-GCC plugin %s enabled debugging #%d file %s <%s:%d>",
+                 plugin_name, clgcc_debug, curval, CLGCC_basename(__FILE__), __LINE__);
         } // end CLGCC_GOT_OPTION("dbgfile")
 
       ////////////////
@@ -203,20 +212,22 @@ parse_plugin_arguments (const char*plugin_name, struct plugin_name_args* plargs,
                   clgcc_debug = atoi(dbgstr);
                   if (oldbg != clgcc_debug)
                     inform (UNKNOWN_LOCATION,
-                            "CLIPS-GCC plugin %s debug was %d now %d", plugin_name, oldbg, clgcc_debug);
+                            "CLIPS-GCC plugin %s debug was %d now %d <%s:%d>", plugin_name, oldbg, clgcc_debug,
+                            CLGCC_basename(__FILE__), __LINE__);
                 }
               else
                 {
                   clgcc_debug = atoi(dbgstr);
                   inform (UNKNOWN_LOCATION,
-                          "CLIPS-GCC plugin %s debug set to #%d", plugin_name, clgcc_debug);
+                          "CLIPS-GCC plugin %s debug set to #%d <%s:%d>", plugin_name, clgcc_debug,
+                          CLGCC_basename(__FILE__), __LINE__);
                 }
             }
           else
             {
               clgcc_debug = 1;
               inform (UNKNOWN_LOCATION,
-                      "CLIPS-GCC plugin %s debug level set to one", plugin_name);
+                      "CLIPS-GCC plugin %s debug level set to one <%s:%d>", plugin_name, CLGCC_basename(__FILE__), __LINE__);
             }
           char hn[64];
           memset (hn, 0, sizeof(hn));
@@ -272,8 +283,8 @@ plugin_init (struct plugin_name_args *plugin_info,
       clgcc_debug = atoi(dbgstr);
       if (clgcc_debug > 0)
         {
-          inform(UNKNOWN_LOCATION, "CLIPS-GCC plugin %s enabled debugging #%d with CLIPSGCC_DEBUG=%s",
-                 plugin_name, clgcc_debug, dbgstr);
+          inform(UNKNOWN_LOCATION, "CLIPS-GCC plugin %s enabled debugging #%d with CLIPSGCC_DEBUG=%s <%s:%d>",
+                 plugin_name, clgcc_debug, dbgstr, CLGCC_basename(__FILE__), __LINE__);
         }
       else
         warning(UNKNOWN_LOCATION, "CLIPS-GCC plugin %s: CLIPSGCC_DEBUG is %s but disabled debugging",
