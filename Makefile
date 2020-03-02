@@ -49,12 +49,19 @@ CLGCC_CWARNFLAGS= -Wmissing-prototypes
 CLGCC_CXXWARNFLAGS=
 CLGCC_PREPROFLAGS= -I /usr/local/include -I CLIPS-source/
 
-CLGCC_TESTDIRS:=$(shell /bin/ls testdir/T[0-9]*[A-Za-z_]*[A-Za-z0-9])
+CLGCC_TESTDIRS:=$(shell /bin/ls -d testdir/T[0-9]*[A-Za-z_]*[A-Za-z0-9])
+CLGCC_TESTFILES= $(patsubst testdir/T%, test%, $(CLGCC_TESTDIRS))
+CLGCC_TESTS:=$(shell echo $(CLGCC_TESTFILES) | sed 's:\(test[0-9]*\)[a-zA-Z_]*:\1:g')
 
 CFLAGS= $(CLGCC_PREPROFLAGS) $(CLGCC_OPTIMFLAGS) $(CLGCC_WARNFLAGS) $(CLGCC_CWARNFLAGS) $(CLGCC_GENFLAGS)
 CXXFLAGS= $(CLGCC_PREPROFLAGS) $(CLGCC_OPTIMFLAGS) $(CLGCC_WARNFLAGS) $(CLGCC_CXXWARNFLAGS) $(CLGCC_GENFLAGS)
 
+.PHONY: $(CLGCC_TESTS)
+
 all: plugin
+	@echo CLGCC_TESTDIRS= $(CLGCC_TESTDIRS)
+	@echo CLGCC_TESTFILES= $(CLGCC_TESTFILES)
+	@echo CLGCC_TESTS= $(CLGCC_TESTS)
 
 ## conventionally, files starting with _ are generated
 ## so
@@ -97,13 +104,31 @@ CLIPS-source/%.o: CLIPS-source/%.c
 %.o: %.cc
 	$(CXX) $(CXXFLAGS) -I $(GCCPLUGIN_DIR)/include -DCLIPSGCC_SOURCE $< -c  -MMD -MF  $(patsubst %.o, _%.mk, $@) -o $@
 
+
+tests: _tests_.mk plugin
+	$(MAKE) $(CLGCC_TESTS)
+
+_tests_.mk: | $(CLGCC_TESTFILES)
+	@date +'#DO NOT EDIT generated file $@ at %c%n' > $@-tmp
+	@for d in $(CLGCC_TESTDIRS) ; do \
+	   printf "%s: %s/run.bash\n" $$(echo $$d | sed 's:\(test[0-9]*\)[a-zA-Z_]*:\1:g') $$d ; \
+	done >> $@-tmp
+	@mv $@-tmp $@
+
 #### the print-test-settings target is called by test scripts testdir/T*/run.bash
 print-test-settings: | plugin
 	@printf "TARGET_GCC=%s\n" $(TARGET_GCC)
 	@printf "CLIPS_GCC_PLUGIN=%s\n" $(realpath clipsgccplug.so)
 
--include $(wildcard _*.mk)
+-include  $(wildcard _*[a-zA-Z].mk)
 
 -include $(wildcard CLIPS-source/_*.mk)
 
+test%: | $(patsubst test%, $(wildcard testdir/T%*/run.bash), $@)
+	@echo TEST... $@ running $(wildcard $(patsubst test%, testdir/T%*/run.bash, $@))
+	/bin/bash -x  $(wildcard $(patsubst test%, testdir/T%*/run.bash, $@)) < /dev/null
+
+ifeq ($(MAKELEVEL),0)
+-include _tests_.mk
+endif
 ### end of Makefile for https://github.com/bstarynk/clips-rules-gcc
