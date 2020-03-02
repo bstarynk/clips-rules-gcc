@@ -140,9 +140,11 @@ parse_plugin_arguments (const char*plugin_name, struct plugin_name_args* plargs,
                     plugin_name, curval);
           else
             {
+              CLGCC_DBGPRINTF("CLIPS-GCC: plugin %s will load %s", plugin_name, curval);
               std::string curpath(curval);
               todoque.push_back([=]()
               {
+                CLGCC_DBGPRINTF("CLIPS-GCC: plugin %s loading %s",  str_plugin_name.c_str(), curpath.c_str());
                 if (CL_Load(CLGCC_env, curpath.c_str()))
                   warning(UNKNOWN_LOCATION,"CLIPS-GCC: plugin %s failed to load CLIPS file %s",
                           str_plugin_name.c_str(), curpath.c_str());

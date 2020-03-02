@@ -109,9 +109,12 @@ static bool CL_FindConstructBeginning (Environment *, const char *,
 CL_LoadError
 CL_Load (Environment * theEnv, const char *fileName)
 {
-  FILE *theFile;
-  char *oldParsingFileName;
-  int noErrorsDetected;
+  FILE *theFile = NULL;
+  char *oldParsingFileName = NULL;
+  int noErrorsDetected = 0;
+
+  /*+Basile added */
+  CLGCC_DBGPRINTF ("CL_Load fileName=%s", fileName);
 
    /*=======================================*/
   /* Open the file specified by file name. */
