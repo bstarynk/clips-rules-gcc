@@ -21,7 +21,7 @@
 #
 #
 
-.PHONY: all clean plugin indent tests print-test-settings
+.PHONY: all etags clean plugin indent tests print-test-settings
 
 CLGCC_GIT_ID := $(shell ./generate-gitid.sh)
 CC= gcc
@@ -127,6 +127,11 @@ print-test-settings: | plugin
 test%: | $(patsubst test%, $(wildcard testdir/T%*/run.bash), $@)
 	@echo TEST... $@ running $(wildcard $(patsubst test%, testdir/T%*/run.bash, $@))
 	/bin/bash -x  $(wildcard $(patsubst test%, testdir/T%*/run.bash, $@)) < /dev/null
+
+etags: TAGS
+
+TAGS:  $(CLGCC_PLUGIN_CXXSOURCES) $(CLGCC_PLUGIN_CXXHEADERS) $(CLIPS_CSOURCES) $(CLIPS_CHEADERS)
+	etags -o $@ $^
 
 ifeq ($(MAKELEVEL),0)
 -include _tests_.mk
