@@ -23,6 +23,8 @@
 
 .PHONY: all etags clean plugin indent tests print-test-settings
 
+export MAKE
+export MAKELEVEL
 CLGCC_GIT_ID := $(shell ./generate-gitid.sh)
 CC= gcc
 TARGET_GCC?= $(CC)

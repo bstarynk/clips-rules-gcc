@@ -22,13 +22,18 @@
 #
 #
 this_script=$(realpath $(which $0))
+if [ "$MAKELEVEL" -gt 2 ]; then
+    printf "recursive %s at level %s\n" $this_script "$MAKELEVEL"
+    exit 0
+fi
+
 printf "running %s in %s\n" $this_script $(pwd)
 parentdir=$(dirname $this_script)
 printf "parentdir is %s\n" $parentdir
 /bin/ls -l $parentdir/../../Makefile $(realpath $parentdir/../../Makefile)
 tempsource=$(tempfile -p CLIPSGCCsrc -s .bash)
 tempasm=$(tempfile -p CLIPSGCCasm -s .s)
-(cd  $parentdir/../.. ; make   print-test-settings) > $tempsource
+(cd  $parentdir/../.. ; make -j 5  print-test-settings) > $tempsource
 function perhaps_remove_temporary_files() {
     if [ -z "$CLIPSGCC_KEEP_TEMPORARY" ]; then
 	rm -vf $tempsource $tempasm
