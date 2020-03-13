@@ -276,8 +276,8 @@ CL_FactSlotValue (Environment * theEnv,
 	{
 	  Set_EvaluationError (theEnv, true);
 	  CL_InvalidDeftemplateSlotMessage (theEnv, theSlotName,
-					    theFact->whichDeftemplate->
-					    header.name->contents, false);
+					    theFact->whichDeftemplate->header.
+					    name->contents, false);
 	  returnValue->lexemeValue = FalseSymbol (theEnv);
 	  return;
 	}
@@ -290,8 +290,8 @@ CL_FactSlotValue (Environment * theEnv,
     {
       Set_EvaluationError (theEnv, true);
       CL_InvalidDeftemplateSlotMessage (theEnv, theSlotName,
-					theFact->whichDeftemplate->
-					header.name->contents, false);
+					theFact->whichDeftemplate->header.
+					name->contents, false);
       returnValue->lexemeValue = FalseSymbol (theEnv);
       return;
     }
@@ -654,7 +654,7 @@ CL_GetFactAddressOrIndexArgument (UDFContext * context, bool noFactError)
       else
 	return theArg.factValue;
     }
-  else if (theArg.header->type == INTEGER_TYPE)
+  else if (theArg.header->type == CL_INTEGER_TYPE)
     {
       factIndex = theArg.integerValue->contents;
       if (factIndex < 0)

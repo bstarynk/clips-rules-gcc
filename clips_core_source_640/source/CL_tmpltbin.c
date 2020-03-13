@@ -189,7 +189,8 @@ CL_BsaveFind (Environment * theEnv)
 
 	  CL_MarkConstructHeaderNeededItems (&theDeftemplate->header,
 					     DeftemplateBinaryData
-					     (theEnv)->NumberOfDeftemplates++);
+					     (theEnv)->
+					     NumberOfDeftemplates++);
 
 	 /*=============================================================*/
 	  /* Loop through each slot in the deftemplate, incrementing the */
@@ -646,8 +647,8 @@ CL_Clear_Bload (Environment * theEnv)
   for (i = 0; i < DeftemplateBinaryData (theEnv)->NumberOfTemplateSlots; i++)
     {
       CL_ReleaseLexeme (theEnv,
-			DeftemplateBinaryData (theEnv)->
-			SlotArray[i].slotName);
+			DeftemplateBinaryData (theEnv)->SlotArray[i].
+			slotName);
     }
 
    /*======================================================================*/

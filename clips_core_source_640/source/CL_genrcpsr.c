@@ -1293,61 +1293,64 @@ ValidType (Environment * theEnv, CLIPSLexeme * tname)
       return (CL_GenConstant (theEnv, DEFCLASS_PTR, cls));
     }
 #else
-  if (strcmp (tname->contents, INTEGER_TYPE_NAME) == 0)
+  if (strcmp (tname->contents, CL_INTEGER_TYPE_NAME) == 0)
     return (CL_GenConstant
-	    (theEnv, INTEGER_TYPE, CL_CreateInteger (theEnv, INTEGER_TYPE)));
+	    (theEnv, CL_INTEGER_TYPE,
+	     CL_CreateInteger (theEnv, CL_INTEGER_TYPE)));
   if (strcmp (tname->contents, FLOAT_TYPE_NAME) == 0)
     return (CL_GenConstant
-	    (theEnv, INTEGER_TYPE, CL_CreateInteger (theEnv, FLOAT_TYPE)));
+	    (theEnv, CL_INTEGER_TYPE, CL_CreateInteger (theEnv, FLOAT_TYPE)));
   if (strcmp (tname->contents, SYMBOL_TYPE_NAME) == 0)
     return (CL_GenConstant
-	    (theEnv, INTEGER_TYPE, CL_CreateInteger (theEnv, SYMBOL_TYPE)));
+	    (theEnv, CL_INTEGER_TYPE,
+	     CL_CreateInteger (theEnv, SYMBOL_TYPE)));
   if (strcmp (tname->contents, STRING_TYPE_NAME) == 0)
     return (CL_GenConstant
-	    (theEnv, INTEGER_TYPE, CL_CreateInteger (theEnv, STRING_TYPE)));
+	    (theEnv, CL_INTEGER_TYPE,
+	     CL_CreateInteger (theEnv, STRING_TYPE)));
   if (strcmp (tname->contents, MULTIFIELD_TYPE_NAME) == 0)
     return (CL_GenConstant
-	    (theEnv, INTEGER_TYPE,
+	    (theEnv, CL_INTEGER_TYPE,
 	     CL_CreateInteger (theEnv, MULTIFIELD_TYPE)));
   if (strcmp (tname->contents, EXTERNAL_ADDRESS_TYPE_NAME) == 0)
     return (CL_GenConstant
-	    (theEnv, INTEGER_TYPE,
+	    (theEnv, CL_INTEGER_TYPE,
 	     CL_CreateInteger (theEnv, EXTERNAL_ADDRESS_TYPE)));
   if (strcmp (tname->contents, FACT_ADDRESS_TYPE_NAME) == 0)
     return (CL_GenConstant
-	    (theEnv, INTEGER_TYPE,
+	    (theEnv, CL_INTEGER_TYPE,
 	     CL_CreateInteger (theEnv, FACT_ADDRESS_TYPE)));
   if (strcmp (tname->contents, NUMBER_TYPE_NAME) == 0)
     return (CL_GenConstant
-	    (theEnv, INTEGER_TYPE,
+	    (theEnv, CL_INTEGER_TYPE,
 	     CL_CreateInteger (theEnv, NUMBER_TYPE_CODE)));
   if (strcmp (tname->contents, LEXEME_TYPE_NAME) == 0)
     return (CL_GenConstant
-	    (theEnv, INTEGER_TYPE,
+	    (theEnv, CL_INTEGER_TYPE,
 	     CL_CreateInteger (theEnv, LEXEME_TYPE_CODE)));
   if (strcmp (tname->contents, ADDRESS_TYPE_NAME) == 0)
     return (CL_GenConstant
-	    (theEnv, INTEGER_TYPE,
+	    (theEnv, CL_INTEGER_TYPE,
 	     CL_CreateInteger (theEnv, ADDRESS_TYPE_CODE)));
   if (strcmp (tname->contents, PRIMITIVE_TYPE_NAME) == 0)
     return (CL_GenConstant
-	    (theEnv, INTEGER_TYPE,
+	    (theEnv, CL_INTEGER_TYPE,
 	     CL_CreateInteger (theEnv, PRIMITIVE_TYPE_CODE)));
   if (strcmp (tname->contents, OBJECT_TYPE_NAME) == 0)
     return (CL_GenConstant
-	    (theEnv, INTEGER_TYPE,
+	    (theEnv, CL_INTEGER_TYPE,
 	     CL_CreateInteger (theEnv, OBJECT_TYPE_CODE)));
   if (strcmp (tname->contents, INSTANCE_TYPE_NAME) == 0)
     return (CL_GenConstant
-	    (theEnv, INTEGER_TYPE,
+	    (theEnv, CL_INTEGER_TYPE,
 	     CL_CreateInteger (theEnv, INSTANCE_TYPE_CODE)));
   if (strcmp (tname->contents, INSTANCE_NAME_TYPE_NAME) == 0)
     return (CL_GenConstant
-	    (theEnv, INTEGER_TYPE,
+	    (theEnv, CL_INTEGER_TYPE,
 	     CL_CreateInteger (theEnv, INSTANCE_NAME_TYPE)));
   if (strcmp (tname->contents, INSTANCE_ADDRESS_TYPE_NAME) == 0)
     return (CL_GenConstant
-	    (theEnv, INTEGER_TYPE,
+	    (theEnv, CL_INTEGER_TYPE,
 	     CL_CreateInteger (theEnv, INSTANCE_ADDRESS_TYPE)));
 
   CL_PrintErrorID (theEnv, "GENRCPSR", 14, false);

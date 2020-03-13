@@ -293,7 +293,8 @@ Get_DefglobalModuleItem (Environment * theEnv, Defmodule * theModule)
   return ((struct defglobalModule *)
 	  CL_GetConstructModuleItemByIndex (theEnv, theModule,
 					    DefglobalData
-					    (theEnv)->CL_DefglobalModuleIndex));
+					    (theEnv)->
+					    CL_DefglobalModuleIndex));
 }
 
 /**************************************************/
@@ -307,7 +308,8 @@ CL_FindDefglobal (Environment * theEnv, const char *defglobalName)
   return (Defglobal *) CL_FindNamedConstructInModuleOrImports (theEnv,
 							       defglobalName,
 							       DefglobalData
-							       (theEnv)->DefglobalConstruct);
+							       (theEnv)->
+							       DefglobalConstruct);
 }
 
 /******************************************************/
@@ -320,7 +322,8 @@ CL_FindDefglobalInModule (Environment * theEnv, const char *defglobalName)
 {
   return (Defglobal *) CL_FindNamedConstructInModule (theEnv, defglobalName,
 						      DefglobalData
-						      (theEnv)->DefglobalConstruct);
+						      (theEnv)->
+						      DefglobalConstruct);
 }
 
 /*****************************************************************/
@@ -333,7 +336,8 @@ CL_GetNextDefglobal (Environment * theEnv, Defglobal * defglobalPtr)
 {
   return (Defglobal *) CL_GetNextConstructItem (theEnv, &defglobalPtr->header,
 						DefglobalData
-						(theEnv)->CL_DefglobalModuleIndex);
+						(theEnv)->
+						CL_DefglobalModuleIndex);
 }
 
 /********************************************************/
@@ -1003,9 +1007,11 @@ CL_GetNextDefglobalInScope (Environment * theEnv, Defglobal * theGlobal)
       theItem =
 	(struct defmoduleItemHeader *) CL_GetModuleItem (theEnv,
 							 DefglobalData
-							 (theEnv)->TheDefmodule,
+							 (theEnv)->
+							 TheDefmodule,
 							 DefglobalData
-							 (theEnv)->CL_DefglobalModuleIndex);
+							 (theEnv)->
+							 CL_DefglobalModuleIndex);
       theGlobal = (Defglobal *) theItem->firstItem;
     }
 
@@ -1049,9 +1055,11 @@ CL_GetNextDefglobalInScope (Environment * theEnv, Defglobal * theGlobal)
       theItem =
 	(struct defmoduleItemHeader *) CL_GetModuleItem (theEnv,
 							 DefglobalData
-							 (theEnv)->TheDefmodule,
+							 (theEnv)->
+							 TheDefmodule,
 							 DefglobalData
-							 (theEnv)->CL_DefglobalModuleIndex);
+							 (theEnv)->
+							 CL_DefglobalModuleIndex);
       theGlobal = (Defglobal *) theItem->firstItem;
     }
 

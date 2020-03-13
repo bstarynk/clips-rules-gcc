@@ -422,7 +422,8 @@ CL_GetPeriodicFunctionContext (Environment * theEnv, const char *name)
 
   theItem = CL_Get_VoidFunctionFromCallList (theEnv, name,
 					     UtilityData
-					     (theEnv)->ListOfPeriodicFunctions);
+					     (theEnv)->
+					     ListOfPeriodicFunctions);
 
   if (theItem == NULL)
     return NULL;
@@ -1223,7 +1224,7 @@ CL_ItemHashValue (Environment * theEnv,
     case FLOAT_TYPE:
       return CL_HashFloat (((CLIPSFloat *) theValue)->contents, theRange);
 
-    case INTEGER_TYPE:
+    case CL_INTEGER_TYPE:
       return CL_HashInteger (((CLIPSInteger *) theValue)->contents, theRange);
 
     case SYMBOL_TYPE:

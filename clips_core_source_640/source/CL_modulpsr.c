@@ -340,7 +340,8 @@ CL_ParseDefmodule (Environment * theEnv, const char *readSource)
 	(struct defmoduleItemHeader **) CL_gm2 (theEnv,
 						sizeof (void *) *
 						DefmoduleData
-						(theEnv)->NumberOfModuleItems);
+						(theEnv)->
+						NumberOfModuleItems);
       for (i = 0, theItem = DefmoduleData (theEnv)->ListOfModuleItems;
 	   (i < DefmoduleData (theEnv)->NumberOfModuleItems)
 	   && (theItem != NULL); i++, theItem = theItem->next)
@@ -659,16 +660,16 @@ ParseImportSpec (Environment * theEnv,
 	  if (newModule->importList->constructName == NULL)
 	    {
 	      NotExportedErrorMessage (theEnv, CL_DefmoduleName (theModule),
-				       newModule->importList->
-				       constructType->contents, NULL);
+				       newModule->importList->constructType->
+				       contents, NULL);
 	    }
 	  else
 	    {
 	      NotExportedErrorMessage (theEnv, CL_DefmoduleName (theModule),
-				       newModule->importList->
-				       constructType->contents,
-				       newModule->importList->
-				       constructName->contents);
+				       newModule->importList->constructType->
+				       contents,
+				       newModule->importList->constructName->
+				       contents);
 	    }
 	  return true;
 	}
@@ -1078,7 +1079,8 @@ FindMultiImportConflict (Environment * theEnv, Defmodule * theModule)
 	      CL_SetCurrentModule (theEnv, theModule);
 	      CL_FindImportedConstruct (theEnv, thePCItem->constructName,
 					NULL,
-					(*theConstruct->getConstructNameFunction)
+					(*theConstruct->
+					 getConstructNameFunction)
 					(theCItem)->contents, &count, false,
 					NULL);
 	      if (count > 1)
@@ -1087,7 +1089,8 @@ FindMultiImportConflict (Environment * theEnv, Defmodule * theModule)
 						  CL_DefmoduleName
 						  (theModule),
 						  thePCItem->constructName,
-						  (*theConstruct->getConstructNameFunction)
+						  (*theConstruct->
+						   getConstructNameFunction)
 						  (theCItem)->contents);
 		  CL_RestoreCurrentModule (theEnv);
 		  return true;

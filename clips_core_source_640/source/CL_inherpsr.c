@@ -142,8 +142,8 @@ CL_ParseSuperclasses (Environment * theEnv,
     }
   CL_GetToken (theEnv, readSource, &DefclassData (theEnv)->ObjectParseToken);
   if ((DefclassData (theEnv)->ObjectParseToken.tknType !=
-       SYMBOL_TOKEN) ? true : (DefclassData (theEnv)->
-			       ObjectParseToken.value !=
+       SYMBOL_TOKEN) ? true : (DefclassData (theEnv)->ObjectParseToken.
+			       value !=
 			       (void *) DefclassData (theEnv)->ISA_SYMBOL))
     {
       CL_SyntaxErrorMessage (theEnv, "defclass inheritance");
@@ -185,8 +185,8 @@ CL_ParseSuperclasses (Environment * theEnv,
 	}
       sclass =
 	Lookup_DefclassInScope (theEnv,
-				DefclassData (theEnv)->
-				ObjectParseToken.lexemeValue->contents);
+				DefclassData (theEnv)->ObjectParseToken.
+				lexemeValue->contents);
       if (sclass == NULL)
 	{
 	  CL_PrintErrorID (theEnv, "INHERPSR", 3, false);
@@ -199,9 +199,8 @@ CL_ParseSuperclasses (Environment * theEnv,
 	  || (sclass ==
 	      DefclassData (theEnv)->PrimitiveClassMap[INSTANCE_ADDRESS_TYPE])
 	  || (sclass ==
-	      DefclassData (theEnv)->
-	      PrimitiveClassMap[INSTANCE_NAME_TYPE]->directSuperclasses.
-	      classArray[0]))
+	      DefclassData (theEnv)->PrimitiveClassMap[INSTANCE_NAME_TYPE]->
+	      directSuperclasses.classArray[0]))
 	{
 	  CL_PrintErrorID (theEnv, "INHERPSR", 6, false);
 	  CL_WriteString (theEnv, STDERR,

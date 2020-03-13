@@ -247,7 +247,8 @@ CL_ShowDefglobals (Environment * theEnv,
       theModuleItem =
 	(struct defmoduleItemHeader *) CL_GetModuleItem (theEnv, theModule,
 							 DefglobalData
-							 (theEnv)->CL_DefglobalModuleIndex);
+							 (theEnv)->
+							 CL_DefglobalModuleIndex);
 
       for (constructPtr = theModuleItem->firstItem;
 	   constructPtr != NULL; constructPtr = constructPtr->next)

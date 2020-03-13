@@ -108,17 +108,16 @@ CL_GetLogicalName (UDFContext * context, const char *defaultLogicalName)
       logicalName =
 	CL_CreateSymbol (theEnv,
 			 CL_FloatToString (theEnv,
-					   theArg.floatValue->
-					   contents))->contents;
+					   theArg.floatValue->contents))->
+	contents;
     }
   else if (CVIsType (&theArg, INTEGER_BIT))
     {
       logicalName =
 	CL_CreateSymbol (theEnv,
 			 CL_LongIntegerToString (theEnv,
-						 theArg.
-						 integerValue->contents))->
-	contents;
+						 theArg.integerValue->
+						 contents))->contents;
     }
   else
     {
@@ -489,7 +488,7 @@ CL_GetFactOrInstanceArgument (UDFContext * context,
    /*==================================================*/
 
 #if DEFTEMPLATE_CONSTRUCT
-  else if (item->header->type == INTEGER_TYPE)
+  else if (item->header->type == CL_INTEGER_TYPE)
     {
       if ((ptr =
 	   (void *) CL_FindIndexedFact (theEnv,

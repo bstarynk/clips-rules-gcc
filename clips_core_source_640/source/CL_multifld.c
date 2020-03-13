@@ -687,7 +687,7 @@ CL_StoreInMultifield (Environment * theEnv,
 	      start = val_ptr.begin;
 	      range = val_ptr.range;
 	    }
-	  else if (val_ptr.header->type == VOID_TYPE)
+	  else if (val_ptr.header->type == CL_VOID_TYPE)
 	    {
 	      (val_arr + i - 1)->value = val_ptr.value;
 	      start = 0;
@@ -729,7 +729,7 @@ CL_StoreInMultifield (Environment * theEnv,
 		    orig_ptr->contents[i].value;
 		}
 	    }
-	  else if ((val_arr + k)->header->type != VOID_TYPE)
+	  else if ((val_arr + k)->header->type != CL_VOID_TYPE)
 	    {
 	      theMultifield->contents[j].value = (val_arr + k)->value;
 	      j++;
@@ -876,7 +876,7 @@ CL_HashMultifield (Multifield * theSegment, size_t theRange)
 	    (unsigned long) fieldPtr[i].floatValue->contents;
 	  break;
 
-	case INTEGER_TYPE:
+	case CL_INTEGER_TYPE:
 	  count +=
 	    (((unsigned long) fieldPtr[i].integerValue->contents) *
 	     (i + 29)) + ((unsigned long) fieldPtr[i].integerValue->contents);
@@ -951,16 +951,16 @@ CL_ImplodeMultifield (Environment * theEnv, UDFValue * value)
 	{
 	  tmp_str =
 	    CL_FloatToString (theEnv,
-			      theMultifield->contents[i].
-			      floatValue->contents);
+			      theMultifield->contents[i].floatValue->
+			      contents);
 	  strsize += strlen (tmp_str) + 1;
 	}
-      else if (theMultifield->contents[i].header->type == INTEGER_TYPE)
+      else if (theMultifield->contents[i].header->type == CL_INTEGER_TYPE)
 	{
 	  tmp_str =
 	    CL_LongIntegerToString (theEnv,
-				    theMultifield->contents[i].
-				    integerValue->contents);
+				    theMultifield->contents[i].integerValue->
+				    contents);
 	  strsize += strlen (tmp_str) + 1;
 	}
       else if (theMultifield->contents[i].header->type == STRING_TYPE)
@@ -1006,8 +1006,8 @@ CL_ImplodeMultifield (Environment * theEnv, UDFValue * value)
 	{
 	  tmp_str =
 	    CL_FloatToString (theEnv,
-			      theMultifield->contents[i].
-			      floatValue->contents);
+			      theMultifield->contents[i].floatValue->
+			      contents);
 	  while (*tmp_str)
 	    {
 	      *(ret_str + j) = *tmp_str;
@@ -1015,12 +1015,12 @@ CL_ImplodeMultifield (Environment * theEnv, UDFValue * value)
 	      tmp_str++;
 	    }
 	}
-      else if (theMultifield->contents[i].header->type == INTEGER_TYPE)
+      else if (theMultifield->contents[i].header->type == CL_INTEGER_TYPE)
 	{
 	  tmp_str =
 	    CL_LongIntegerToString (theEnv,
-				    theMultifield->contents[i].
-				    integerValue->contents);
+				    theMultifield->contents[i].integerValue->
+				    contents);
 	  while (*tmp_str)
 	    {
 	      *(ret_str + j) = *tmp_str;
@@ -1127,7 +1127,7 @@ CL_MBAppendUDFValue (Multifield_Builder * theMB, UDFValue * theValue)
   /* A void value can't be added to a multifield. */
    /*==============================================*/
 
-  if (theValue->header->type == VOID_TYPE)
+  if (theValue->header->type == CL_VOID_TYPE)
     {
       return;
     }
@@ -1213,7 +1213,7 @@ CL_MBAppend (Multifield_Builder * theMB, CLIPSValue * theValue)
   /* A void value can't be added to a multifield. */
    /*==============================================*/
 
-  if (theValue->header->type == VOID_TYPE)
+  if (theValue->header->type == CL_VOID_TYPE)
     {
       return;
     }

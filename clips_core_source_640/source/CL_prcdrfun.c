@@ -638,9 +638,9 @@ CL_SwitchFunction (Environment * theEnv,
        theExp = theExp->nextArg->nextArg)
     {
       /* =================================================
-         VOID_TYPE is the default case (if any) for the switch
+         CL_VOID_TYPE is the default case (if any) for the switch
          ================================================= */
-      if (theExp->type == VOID_TYPE)
+      if (theExp->type == CL_VOID_TYPE)
 	{
 	  CL_EvaluateExpression (theEnv, theExp->nextArg, returnValue);
 	  return;

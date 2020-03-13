@@ -656,15 +656,15 @@ AssignErrorValue (UDFContext * context)
 	&FactData (context->environment)->DummyFact;
     }
 #if OBJECT_SYSTEM
-  else if (context->
-	   theFunction->unknownReturnValueType & INSTANCE_ADDRESS_BIT)
+  else if (context->theFunction->
+	   unknownReturnValueType & INSTANCE_ADDRESS_BIT)
     {
       context->returnValue->value =
 	&InstanceData (context->environment)->DummyInstance;
     }
 #endif
-  else if (context->
-	   theFunction->unknownReturnValueType & EXTERNAL_ADDRESS_BIT)
+  else if (context->theFunction->
+	   unknownReturnValueType & EXTERNAL_ADDRESS_BIT)
     {
       context->returnValue->value =
 	CL_CreateExternalAddress (context->environment, NULL, 0);
@@ -730,7 +730,7 @@ CL_UDFNextArgument (UDFContext * context,
 
   switch (argPtr->type)
     {
-    case INTEGER_TYPE:
+    case CL_INTEGER_TYPE:
       returnValue->value = argPtr->value;
       if (expectedType & INTEGER_BIT)
 	return true;
@@ -808,7 +808,7 @@ CL_UDFNextArgument (UDFContext * context,
 
   switch (returnValue->header->type)
     {
-    case VOID_TYPE:
+    case CL_VOID_TYPE:
       if (expectedType & VOID_BIT)
 	{
 	  if (CL_EvaluationData (theEnv)->CL_EvaluationError)
@@ -821,7 +821,7 @@ CL_UDFNextArgument (UDFContext * context,
 	}
       break;
 
-    case INTEGER_TYPE:
+    case CL_INTEGER_TYPE:
       if (expectedType & INTEGER_BIT)
 	{
 	  if (CL_EvaluationData (theEnv)->CL_EvaluationError)

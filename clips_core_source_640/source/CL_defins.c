@@ -362,7 +362,8 @@ CL_GetNextDefinstances (Environment * theEnv, Definstances * theDefinstances)
   return (Definstances *) CL_GetNextConstructItem (theEnv,
 						   &theDefinstances->header,
 						   DefinstancesData
-						   (theEnv)->CL_DefinstancesModuleIndex);
+						   (theEnv)->
+						   CL_DefinstancesModuleIndex);
 }
 
 /***************************************************
@@ -381,7 +382,8 @@ CL_FindDefinstances (Environment * theEnv, const char *name)
   return (Definstances *) CL_FindNamedConstructInModuleOrImports (theEnv,
 								  name,
 								  DefinstancesData
-								  (theEnv)->DefinstancesConstruct);
+								  (theEnv)->
+								  DefinstancesConstruct);
 }
 
 /***************************************************
@@ -399,7 +401,8 @@ CL_FindDefinstancesInModule (Environment * theEnv, const char *name)
 {
   return (Definstances *) CL_FindNamedConstructInModule (theEnv, name,
 							 DefinstancesData
-							 (theEnv)->DefinstancesConstruct);
+							 (theEnv)->
+							 DefinstancesConstruct);
 }
 
 /***************************************************

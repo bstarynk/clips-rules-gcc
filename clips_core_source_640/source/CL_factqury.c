@@ -517,8 +517,8 @@ CL_QueryDoForFact (Environment * theEnv,
     {
       for (i = 0; i < rcnt; i++)
 	{
-	  FactQueryData (theEnv)->QueryCore->solns[i]->
-	    patternHeader.busyCount++;
+	  FactQueryData (theEnv)->QueryCore->solns[i]->patternHeader.
+	    busyCount++;
 	}
 
       CL_EvaluateExpression (theEnv,
@@ -527,8 +527,8 @@ CL_QueryDoForFact (Environment * theEnv,
 
       for (i = 0; i < rcnt; i++)
 	{
-	  FactQueryData (theEnv)->QueryCore->solns[i]->
-	    patternHeader.busyCount--;
+	  FactQueryData (theEnv)->QueryCore->solns[i]->patternHeader.
+	    busyCount--;
 	}
     }
 
@@ -1260,10 +1260,10 @@ TestEntireTemplate (Environment * theEnv,
 		  CL_ReleaseUDFV (theEnv,
 				  FactQueryData (theEnv)->QueryCore->result);
 		  CL_EvaluateExpression (theEnv,
-					 FactQueryData (theEnv)->
-					 QueryCore->action,
-					 FactQueryData (theEnv)->
-					 QueryCore->result);
+					 FactQueryData (theEnv)->QueryCore->
+					 action,
+					 FactQueryData (theEnv)->QueryCore->
+					 result);
 		  CL_RetainUDFV (theEnv,
 				 FactQueryData (theEnv)->QueryCore->result);
 

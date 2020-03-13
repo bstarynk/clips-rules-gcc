@@ -187,18 +187,18 @@ UpdateExpression (Environment * theEnv, void *buf, unsigned long obji)
       break;
 
 
-    case INTEGER_TYPE:
+    case CL_INTEGER_TYPE:
       ExpressionData (theEnv)->ExpressionArray[obji].value =
 	SymbolData (theEnv)->IntegerArray[bexp->value];
-      IncrementIntegerCount (ExpressionData (theEnv)->
-			     ExpressionArray[obji].integerValue);
+      IncrementIntegerCount (ExpressionData (theEnv)->ExpressionArray[obji].
+			     integerValue);
       break;
 
     case FLOAT_TYPE:
       ExpressionData (theEnv)->ExpressionArray[obji].value =
 	SymbolData (theEnv)->FloatArray[bexp->value];
-      IncrementFloatCount (ExpressionData (theEnv)->
-			   ExpressionArray[obji].floatValue);
+      IncrementFloatCount (ExpressionData (theEnv)->ExpressionArray[obji].
+			   floatValue);
       break;
 
     case INSTANCE_NAME_TYPE:
@@ -210,16 +210,16 @@ UpdateExpression (Environment * theEnv, void *buf, unsigned long obji)
     case STRING_TYPE:
       ExpressionData (theEnv)->ExpressionArray[obji].value =
 	SymbolData (theEnv)->SymbolArray[bexp->value];
-      IncrementLexemeCount (ExpressionData (theEnv)->
-			    ExpressionArray[obji].lexemeValue);
+      IncrementLexemeCount (ExpressionData (theEnv)->ExpressionArray[obji].
+			    lexemeValue);
       break;
 
 #if DEFTEMPLATE_CONSTRUCT
     case FACT_ADDRESS_TYPE:
       ExpressionData (theEnv)->ExpressionArray[obji].value =
 	&FactData (theEnv)->DummyFact;
-      CL_RetainFact ((Fact *) ExpressionData (theEnv)->
-		     ExpressionArray[obji].value);
+      CL_RetainFact ((Fact *) ExpressionData (theEnv)->ExpressionArray[obji].
+		     value);
       break;
 #endif
 
@@ -228,8 +228,8 @@ UpdateExpression (Environment * theEnv, void *buf, unsigned long obji)
       ExpressionData (theEnv)->ExpressionArray[obji].value =
 	&InstanceData (theEnv)->DummyInstance;
       CL_RetainInstance ((Instance *)
-			 ExpressionData (theEnv)->ExpressionArray[obji].
-			 value);
+			 ExpressionData (theEnv)->
+			 ExpressionArray[obji].value);
       break;
 #endif
 
@@ -237,7 +237,7 @@ UpdateExpression (Environment * theEnv, void *buf, unsigned long obji)
       ExpressionData (theEnv)->ExpressionArray[obji].value = NULL;
       break;
 
-    case VOID_TYPE:
+    case CL_VOID_TYPE:
       break;
 
     default:
@@ -300,18 +300,18 @@ CL_Clear_BloadedExpressions (Environment * theEnv)
 	case INSTANCE_NAME_TYPE:
 	case GBL_VARIABLE:
 	  CL_ReleaseLexeme (theEnv,
-			    ExpressionData (theEnv)->
-			    ExpressionArray[i].lexemeValue);
+			    ExpressionData (theEnv)->ExpressionArray[i].
+			    lexemeValue);
 	  break;
 	case FLOAT_TYPE:
 	  CL_ReleaseFloat (theEnv,
-			   ExpressionData (theEnv)->
-			   ExpressionArray[i].floatValue);
+			   ExpressionData (theEnv)->ExpressionArray[i].
+			   floatValue);
 	  break;
-	case INTEGER_TYPE:
+	case CL_INTEGER_TYPE:
 	  CL_ReleaseInteger (theEnv,
-			     ExpressionData (theEnv)->
-			     ExpressionArray[i].integerValue);
+			     ExpressionData (theEnv)->ExpressionArray[i].
+			     integerValue);
 	  break;
 
 #if DEFTEMPLATE_CONSTRUCT
@@ -324,12 +324,12 @@ CL_Clear_BloadedExpressions (Environment * theEnv)
 #if OBJECT_SYSTEM
 	case INSTANCE_ADDRESS_TYPE:
 	  CL_ReleaseInstance ((Instance *)
-			      ExpressionData (theEnv)->ExpressionArray[i].
-			      value);
+			      ExpressionData (theEnv)->
+			      ExpressionArray[i].value);
 	  break;
 #endif
 
-	case VOID_TYPE:
+	case CL_VOID_TYPE:
 	  break;
 
 	default:
@@ -342,8 +342,8 @@ CL_Clear_BloadedExpressions (Environment * theEnv)
 	      CL_DecrementBitMapReferenceCount (theEnv,
 						(CLIPSBitMap *)
 						ExpressionData
-						(theEnv)->ExpressionArray[i].
-						value);
+						(theEnv)->
+						ExpressionArray[i].value);
 	    }
 	  break;
 	}
@@ -488,7 +488,7 @@ CL_BsaveExpression (Environment * theEnv, struct expr *testPtr, FILE * fp)
 	  newTest.value = testPtr->floatValue->bucket;
 	  break;
 
-	case INTEGER_TYPE:
+	case CL_INTEGER_TYPE:
 	  newTest.value = testPtr->integerValue->bucket;
 	  break;
 
@@ -556,15 +556,15 @@ CL_BsaveExpression (Environment * theEnv, struct expr *testPtr, FILE * fp)
 	  newTest.value = ULONG_MAX;
 	  break;
 
-	case VOID_TYPE:
+	case CL_VOID_TYPE:
 	  break;
 
 	default:
 	  if (CL_EvaluationData (theEnv)->PrimitivesArray[testPtr->type] ==
 	      NULL)
 	    break;
-	  if (CL_EvaluationData (theEnv)->
-	      PrimitivesArray[testPtr->type]->bitMap)
+	  if (CL_EvaluationData (theEnv)->PrimitivesArray[testPtr->type]->
+	      bitMap)
 	    {
 	      newTest.value = ((CLIPSBitMap *) testPtr->value)->bucket;
 	    }

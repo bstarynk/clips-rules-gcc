@@ -401,9 +401,8 @@ CL_CallNextHandler (Environment * theEnv,
       args.nextArg = GetFirstArgument ();
       args.argList = NULL;
       CL_PushProcParameters (theEnv, &args, CL_CountArguments (&args),
-			     MessageHandlerData (theEnv)->
-			     CurrentMessageName->contents, "message",
-			     CL_UnboundHandlerErr);
+			     MessageHandlerData (theEnv)->CurrentMessageName->
+			     contents, "message", CL_UnboundHandlerErr);
       if (CL_EvaluationData (theEnv)->CL_EvaluationError)
 	{
 	  ProcedureFunctionData (theEnv)->ReturnFlag = false;
@@ -432,22 +431,21 @@ CL_CallNextHandler (Environment * theEnv,
 	    {
 #if PROFILING_FUNCTIONS
 	      Start_Profile (theEnv, &profileFrame,
-			     &MessageHandlerData (theEnv)->CurrentCore->
-			     hnd->header.usrData,
-			     CL_ProfileFunctionData
-			     (theEnv)->CL_ProfileConstructs);
+			     &MessageHandlerData (theEnv)->CurrentCore->hnd->
+			     header.usrData,
+			     CL_ProfileFunctionData (theEnv)->
+			     CL_ProfileConstructs);
 #endif
 
 	      CL_EvaluateProcActions (theEnv,
 				      MessageHandlerData
-				      (theEnv)->CurrentCore->hnd->cls->
-				      header.whichModule->theModule,
-				      MessageHandlerData
-				      (theEnv)->CurrentCore->hnd->actions,
-				      MessageHandlerData
-				      (theEnv)->CurrentCore->hnd->
-				      localVarCount, returnValue,
-				      CL_UnboundHandlerErr);
+				      (theEnv)->CurrentCore->hnd->cls->header.
+				      whichModule->theModule,
+				      MessageHandlerData (theEnv)->
+				      CurrentCore->hnd->actions,
+				      MessageHandlerData (theEnv)->
+				      CurrentCore->hnd->localVarCount,
+				      returnValue, CL_UnboundHandlerErr);
 #if PROFILING_FUNCTIONS
 	      CL_End_Profile (theEnv, &profileFrame);
 #endif
@@ -478,21 +476,20 @@ CL_CallNextHandler (Environment * theEnv,
 	{
 #if PROFILING_FUNCTIONS
 	  Start_Profile (theEnv, &profileFrame,
-			 &MessageHandlerData (theEnv)->CurrentCore->
-			 hnd->header.usrData,
-			 CL_ProfileFunctionData
-			 (theEnv)->CL_ProfileConstructs);
+			 &MessageHandlerData (theEnv)->CurrentCore->hnd->
+			 header.usrData,
+			 CL_ProfileFunctionData (theEnv)->
+			 CL_ProfileConstructs);
 #endif
 
 	  CL_EvaluateProcActions (theEnv,
-				  MessageHandlerData (theEnv)->
-				  CurrentCore->hnd->cls->header.whichModule->
-				  theModule,
-				  MessageHandlerData (theEnv)->
-				  CurrentCore->hnd->actions,
-				  MessageHandlerData (theEnv)->
-				  CurrentCore->hnd->localVarCount,
-				  returnValue, CL_UnboundHandlerErr);
+				  MessageHandlerData (theEnv)->CurrentCore->
+				  hnd->cls->header.whichModule->theModule,
+				  MessageHandlerData (theEnv)->CurrentCore->
+				  hnd->actions,
+				  MessageHandlerData (theEnv)->CurrentCore->
+				  hnd->localVarCount, returnValue,
+				  CL_UnboundHandlerErr);
 #if PROFILING_FUNCTIONS
 	  CL_End_Profile (theEnv, &profileFrame);
 #endif
@@ -646,8 +643,8 @@ Print_HandlerSlotGetFunction (Environment * theEnv,
   CL_WriteString (theEnv, logicalName, theDefclass->header.name->contents);
   CL_WriteString (theEnv, logicalName, "]");
   sd =
-    theDefclass->
-    instanceTemplate[theDefclass->slotNameMap[theReference->slotID] - 1];
+    theDefclass->instanceTemplate[theDefclass->
+				  slotNameMap[theReference->slotID] - 1];
   CL_WriteString (theEnv, logicalName, sd->slotName->name->contents);
 #else
 #if MAC_XCD
@@ -768,8 +765,8 @@ Print_HandlerSlotPutFunction (Environment * theEnv,
   CL_WriteString (theEnv, logicalName, theDefclass->header.name->contents);
   CL_WriteString (theEnv, logicalName, "]");
   sd =
-    theDefclass->
-    instanceTemplate[theDefclass->slotNameMap[theReference->slotID] - 1];
+    theDefclass->instanceTemplate[theDefclass->
+				  slotNameMap[theReference->slotID] - 1];
   CL_WriteString (theEnv, logicalName, sd->slotName->name->contents);
   if (GetFirstArgument () != NULL)
     {
@@ -1071,9 +1068,8 @@ Perfo_rmMessage (Environment * theEnv,
   CL_EvaluationData (theEnv)->Current_EvaluationDepth++;
 
   CL_PushProcParameters (theEnv, args, CL_CountArguments (args),
-			 MessageHandlerData (theEnv)->
-			 CurrentMessageName->contents, "message",
-			 CL_UnboundHandlerErr);
+			 MessageHandlerData (theEnv)->CurrentMessageName->
+			 contents, "message", CL_UnboundHandlerErr);
 
 
   if (CL_EvaluationData (theEnv)->CL_EvaluationError)
@@ -1115,8 +1111,8 @@ Perfo_rmMessage (Environment * theEnv,
 	  CL_PrintErrorID (theEnv, "MSGPASS", 2, false);
 	  CL_WriteString (theEnv, STDERR, "No such instance [");
 	  CL_WriteString (theEnv, STDERR,
-			  ProceduralPrimitiveData (theEnv)->
-			  ProcParamArray->lexemeValue->contents);
+			  ProceduralPrimitiveData (theEnv)->ProcParamArray->
+			  lexemeValue->contents);
 	  CL_WriteString (theEnv, STDERR, "] in function 'send'.\n");
 	  Set_EvaluationError (theEnv, true);
 	}
@@ -1130,9 +1126,8 @@ Perfo_rmMessage (Environment * theEnv,
   else
     if ((cls =
 	 DefclassData (theEnv)->PrimitiveClassMap[ProceduralPrimitiveData
-						  (theEnv)->
-						  ProcParamArray->header->
-						  type]) == NULL)
+						  (theEnv)->ProcParamArray->
+						  header->type]) == NULL)
     {
       CL_SystemError (theEnv, "MSGPASS", 1);
       CL_ExitRouter (theEnv, EXIT_FAILURE);
@@ -1188,23 +1183,22 @@ Perfo_rmMessage (Environment * theEnv,
 	    {
 #if PROFILING_FUNCTIONS
 	      Start_Profile (theEnv, &profileFrame,
-			     &MessageHandlerData (theEnv)->CurrentCore->
-			     hnd->header.usrData,
-			     CL_ProfileFunctionData
-			     (theEnv)->CL_ProfileConstructs);
+			     &MessageHandlerData (theEnv)->CurrentCore->hnd->
+			     header.usrData,
+			     CL_ProfileFunctionData (theEnv)->
+			     CL_ProfileConstructs);
 #endif
 
 
 	      CL_EvaluateProcActions (theEnv,
 				      MessageHandlerData
-				      (theEnv)->CurrentCore->hnd->cls->
-				      header.whichModule->theModule,
-				      MessageHandlerData
-				      (theEnv)->CurrentCore->hnd->actions,
-				      MessageHandlerData
-				      (theEnv)->CurrentCore->hnd->
-				      localVarCount, returnValue,
-				      CL_UnboundHandlerErr);
+				      (theEnv)->CurrentCore->hnd->cls->header.
+				      whichModule->theModule,
+				      MessageHandlerData (theEnv)->
+				      CurrentCore->hnd->actions,
+				      MessageHandlerData (theEnv)->
+				      CurrentCore->hnd->localVarCount,
+				      returnValue, CL_UnboundHandlerErr);
 
 
 #if PROFILING_FUNCTIONS
@@ -1365,20 +1359,19 @@ CallHandlers (Environment * theEnv, UDFValue * returnValue)
 	{
 #if PROFILING_FUNCTIONS
 	  Start_Profile (theEnv, &profileFrame,
-			 &MessageHandlerData (theEnv)->CurrentCore->
-			 hnd->header.usrData,
-			 CL_ProfileFunctionData
-			 (theEnv)->CL_ProfileConstructs);
+			 &MessageHandlerData (theEnv)->CurrentCore->hnd->
+			 header.usrData,
+			 CL_ProfileFunctionData (theEnv)->
+			 CL_ProfileConstructs);
 #endif
 
 	  CL_EvaluateProcActions (theEnv,
-				  MessageHandlerData (theEnv)->
-				  CurrentCore->hnd->cls->header.whichModule->
-				  theModule,
-				  MessageHandlerData (theEnv)->
-				  CurrentCore->hnd->actions,
-				  MessageHandlerData (theEnv)->
-				  CurrentCore->hnd->localVarCount, &temp,
+				  MessageHandlerData (theEnv)->CurrentCore->
+				  hnd->cls->header.whichModule->theModule,
+				  MessageHandlerData (theEnv)->CurrentCore->
+				  hnd->actions,
+				  MessageHandlerData (theEnv)->CurrentCore->
+				  hnd->localVarCount, &temp,
 				  CL_UnboundHandlerErr);
 
 
@@ -1417,22 +1410,21 @@ CallHandlers (Environment * theEnv, UDFValue * returnValue)
 	{
 #if PROFILING_FUNCTIONS
 	  Start_Profile (theEnv, &profileFrame,
-			 &MessageHandlerData (theEnv)->CurrentCore->
-			 hnd->header.usrData,
-			 CL_ProfileFunctionData
-			 (theEnv)->CL_ProfileConstructs);
+			 &MessageHandlerData (theEnv)->CurrentCore->hnd->
+			 header.usrData,
+			 CL_ProfileFunctionData (theEnv)->
+			 CL_ProfileConstructs);
 #endif
 
 
 	  CL_EvaluateProcActions (theEnv,
-				  MessageHandlerData (theEnv)->
-				  CurrentCore->hnd->cls->header.whichModule->
-				  theModule,
-				  MessageHandlerData (theEnv)->
-				  CurrentCore->hnd->actions,
-				  MessageHandlerData (theEnv)->
-				  CurrentCore->hnd->localVarCount,
-				  returnValue, CL_UnboundHandlerErr);
+				  MessageHandlerData (theEnv)->CurrentCore->
+				  hnd->cls->header.whichModule->theModule,
+				  MessageHandlerData (theEnv)->CurrentCore->
+				  hnd->actions,
+				  MessageHandlerData (theEnv)->CurrentCore->
+				  hnd->localVarCount, returnValue,
+				  CL_UnboundHandlerErr);
 
 #if PROFILING_FUNCTIONS
 	  CL_End_Profile (theEnv, &profileFrame);
@@ -1482,21 +1474,20 @@ CallHandlers (Environment * theEnv, UDFValue * returnValue)
 	{
 #if PROFILING_FUNCTIONS
 	  Start_Profile (theEnv, &profileFrame,
-			 &MessageHandlerData (theEnv)->CurrentCore->
-			 hnd->header.usrData,
-			 CL_ProfileFunctionData
-			 (theEnv)->CL_ProfileConstructs);
+			 &MessageHandlerData (theEnv)->CurrentCore->hnd->
+			 header.usrData,
+			 CL_ProfileFunctionData (theEnv)->
+			 CL_ProfileConstructs);
 #endif
 
 
 	  CL_EvaluateProcActions (theEnv,
-				  MessageHandlerData (theEnv)->
-				  CurrentCore->hnd->cls->header.whichModule->
-				  theModule,
-				  MessageHandlerData (theEnv)->
-				  CurrentCore->hnd->actions,
-				  MessageHandlerData (theEnv)->
-				  CurrentCore->hnd->localVarCount, &temp,
+				  MessageHandlerData (theEnv)->CurrentCore->
+				  hnd->cls->header.whichModule->theModule,
+				  MessageHandlerData (theEnv)->CurrentCore->
+				  hnd->actions,
+				  MessageHandlerData (theEnv)->CurrentCore->
+				  hnd->localVarCount, &temp,
 				  CL_UnboundHandlerErr);
 
 #if PROFILING_FUNCTIONS

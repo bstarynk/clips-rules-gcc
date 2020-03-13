@@ -321,8 +321,8 @@ DeallocateDefclassData (Environment * theEnv)
 		    && (cls->slots[i].dynamicDefault == 0))
 		  {
 		    tmpexp =
-		      ((UDFValue *) cls->slots[i].
-		       defaultValue)->supplementalInfo;
+		      ((UDFValue *) cls->slots[i].defaultValue)->
+		      supplementalInfo;
 		    rtn_struct (theEnv, udfValue, cls->slots[i].defaultValue);
 		    cls->slots[i].defaultValue = tmpexp;
 		  }
@@ -398,8 +398,8 @@ Objects_RunTimeInitialize (Environment * theEnv,
 		    && (cls->slots[i].dynamicDefault == 0))
 		  {
 		    tmpexp =
-		      ((UDFValue *) cls->slots[i].
-		       defaultValue)->supplementalInfo;
+		      ((UDFValue *) cls->slots[i].defaultValue)->
+		      supplementalInfo;
 		    CL_ReleaseUDFV (theEnv,
 				    (UDFValue *) cls->slots[i].defaultValue);
 		    rtn_struct (theEnv, udfValue, cls->slots[i].defaultValue);
@@ -428,8 +428,8 @@ Objects_RunTimeInitialize (Environment * theEnv,
   DefclassData (theEnv)->MaxClassID = mid;
   DefclassData (theEnv)->PrimitiveClassMap[FLOAT_TYPE] =
     CL_LookupDefclassByMdlOrScope (theEnv, FLOAT_TYPE_NAME);
-  DefclassData (theEnv)->PrimitiveClassMap[INTEGER_TYPE] =
-    CL_LookupDefclassByMdlOrScope (theEnv, INTEGER_TYPE_NAME);
+  DefclassData (theEnv)->PrimitiveClassMap[CL_INTEGER_TYPE] =
+    CL_LookupDefclassByMdlOrScope (theEnv, CL_INTEGER_TYPE_NAME);
   DefclassData (theEnv)->PrimitiveClassMap[STRING_TYPE] =
     CL_LookupDefclassByMdlOrScope (theEnv, STRING_TYPE_NAME);
   DefclassData (theEnv)->PrimitiveClassMap[SYMBOL_TYPE] =
@@ -466,8 +466,8 @@ Objects_RunTimeInitialize (Environment * theEnv,
 		CL_EvaluateAndStoreInDataObject (theEnv,
 						 cls->slots[i].multiple,
 						 (Expression *) tmpexp,
-						 (UDFValue *) cls->
-						 slots[i].defaultValue, true);
+						 (UDFValue *) cls->slots[i].
+						 defaultValue, true);
 		CL_RetainUDFV (theEnv,
 			       (UDFValue *) cls->slots[i].defaultValue);
 		((UDFValue *) cls->slots[i].defaultValue)->supplementalInfo =
@@ -551,8 +551,8 @@ CL_CreateSystemClasses (Environment * theEnv, void *context)
   user = AddSystemClass (theEnv, USER_TYPE_NAME, any);
 
   number = AddSystemClass (theEnv, NUMBER_TYPE_NAME, primitive);
-  DefclassData (theEnv)->PrimitiveClassMap[INTEGER_TYPE] =
-    AddSystemClass (theEnv, INTEGER_TYPE_NAME, number);
+  DefclassData (theEnv)->PrimitiveClassMap[CL_INTEGER_TYPE] =
+    AddSystemClass (theEnv, CL_INTEGER_TYPE_NAME, number);
   DefclassData (theEnv)->PrimitiveClassMap[FLOAT_TYPE] =
     AddSystemClass (theEnv, FLOAT_TYPE_NAME, number);
   lexeme = AddSystemClass (theEnv, LEXEME_TYPE_NAME, primitive);
@@ -596,7 +596,7 @@ CL_CreateSystemClasses (Environment * theEnv, void *context)
   CL_AddConstructToModule (&DefclassData (theEnv)->PrimitiveClassMap
 			   [FLOAT_TYPE]->header);
   CL_AddConstructToModule (&DefclassData (theEnv)->PrimitiveClassMap
-			   [INTEGER_TYPE]->header);
+			   [CL_INTEGER_TYPE]->header);
   CL_AddConstructToModule (&DefclassData (theEnv)->PrimitiveClassMap
 			   [SYMBOL_TYPE]->header);
   CL_AddConstructToModule (&DefclassData (theEnv)->PrimitiveClassMap

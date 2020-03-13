@@ -999,13 +999,12 @@ UpdateDefrule (Environment * theEnv, void *buf, unsigned long obji)
 
   br = (struct bsaveDefrule *) buf;
   CL_UpdateConstructHeader (theEnv, &br->header,
-			    &DefruleBinaryData (theEnv)->
-			    DefruleArray[obji].header, DEFRULE,
-			    sizeof (struct defruleModule),
+			    &DefruleBinaryData (theEnv)->DefruleArray[obji].
+			    header, DEFRULE, sizeof (struct defruleModule),
 			    (void *) DefruleBinaryData (theEnv)->ModuleArray,
 			    sizeof (Defrule),
-			    (void *)
-			    DefruleBinaryData (theEnv)->DefruleArray);
+			    (void *) DefruleBinaryData (theEnv)->
+			    DefruleArray);
 
   DefruleBinaryData (theEnv)->DefruleArray[obji].dynamicSalience =
     ExpressionPointer (br->dynamicSalience);
@@ -1208,8 +1207,8 @@ CL_Clear_Bload (Environment * theEnv)
   for (i = 0; i < DefruleBinaryData (theEnv)->NumberOfDefrules; i++)
     {
       CL_UnmarkConstructHeader (theEnv,
-				&DefruleBinaryData (theEnv)->
-				DefruleArray[i].header);
+				&DefruleBinaryData (theEnv)->DefruleArray[i].
+				header);
     }
 
    /*==================================================*/

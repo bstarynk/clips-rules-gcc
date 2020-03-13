@@ -319,7 +319,8 @@ DefgenericsToCode (Environment * theEnv,
 				 &fileCount, itemArrayVersions[GENERICI],
 				 headerFP, "Defgeneric",
 				 ConstructPrefix (DefgenericData
-						  (theEnv)->DefgenericCodeItem),
+						  (theEnv)->
+						  DefgenericCodeItem),
 				 itemReopenFlags[GENERICI],
 				 &itemCodeFiles[GENERICI]);
 	  if (itemFiles[GENERICI] == NULL)

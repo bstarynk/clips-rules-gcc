@@ -259,8 +259,9 @@ DeffunctionsToCode (Environment * theEnv,
 				 deffunctionArrayVersion, headerFP,
 				 "Deffunction",
 				 ConstructPrefix (DeffunctionData
-						  (theEnv)->DeffunctionCodeItem),
-				 false, NULL);
+						  (theEnv)->
+						  DeffunctionCodeItem), false,
+				 NULL);
 	  if (deffunctionFile == NULL)
 	    {
 	      CloseDeffunctionFiles (theEnv, moduleFile, deffunctionFile,

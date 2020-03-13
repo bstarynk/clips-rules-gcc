@@ -172,7 +172,7 @@ CheckFunctionReturnType (unsigned functionReturnType,
 static bool
 CheckTypeConstraint (int type, CONSTRAINT_RECORD * constraints)
 {
-  if (type == VOID_TYPE)
+  if (type == CL_VOID_TYPE)
     return false;
 
   if (constraints == NULL)
@@ -196,7 +196,7 @@ CheckTypeConstraint (int type, CONSTRAINT_RECORD * constraints)
       return false;
     }
 
-  if ((type == INTEGER_TYPE) && (constraints->integersAllowed != true))
+  if ((type == CL_INTEGER_TYPE) && (constraints->integersAllowed != true))
     {
       return false;
     }
@@ -221,7 +221,7 @@ CheckTypeConstraint (int type, CONSTRAINT_RECORD * constraints)
       return false;
     }
 
-  if ((type == VOID_TYPE) && (constraints->voidAllowed != true))
+  if ((type == CL_VOID_TYPE) && (constraints->voidAllowed != true))
     {
       return false;
     }
@@ -416,7 +416,7 @@ CL_CheckAllowedValuesConstraint (int type,
 	}
       break;
 
-    case INTEGER_TYPE:
+    case CL_INTEGER_TYPE:
       if ((constraints->integerRestriction == false) &&
 	  (constraints->anyRestriction == false))
 	{
@@ -580,7 +580,7 @@ CheckRangeConstraint (Environment * theEnv,
   /* then the range restrictions don't apply.   */
    /*============================================*/
 
-  if ((type != INTEGER_TYPE) && (type != FLOAT_TYPE))
+  if ((type != CL_INTEGER_TYPE) && (type != FLOAT_TYPE))
     return true;
 
    /*=====================================================*/

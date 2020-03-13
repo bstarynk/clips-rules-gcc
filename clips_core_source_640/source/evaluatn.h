@@ -109,9 +109,9 @@ struct externalAddressType
   bool (*callFunction) (UDFContext *, UDFValue *, UDFValue *);
 };
 
-#define CoerceToLongInteger(t,v) ((t == INTEGER_TYPE) ? ValueToLong(v) : (long) ValueToDouble(v))
-#define CoerceToInteger(t,v) ((t == INTEGER_TYPE) ? (int) ValueToLong(v) : (int) ValueToDouble(v))
-#define CoerceToDouble(t,v) ((t == INTEGER_TYPE) ? (double) ValueToLong(v) : ValueToDouble(v))
+#define CoerceToLongInteger(t,v) ((t == CL_INTEGER_TYPE) ? ValueToLong(v) : (long) ValueToDouble(v))
+#define CoerceToInteger(t,v) ((t == CL_INTEGER_TYPE) ? (int) ValueToLong(v) : (int) ValueToDouble(v))
+#define CoerceToDouble(t,v) ((t == CL_INTEGER_TYPE) ? (double) ValueToLong(v) : ValueToDouble(v))
 
 #define GetFirstArgument()           (CL_EvaluationData(theEnv)->CurrentExpression->argList)
 #define GetNextArgument(ep)          (ep->nextArg)
@@ -206,7 +206,7 @@ FunctionCall_BuilderError CL_FCBCall (FunctionCall_Builder *, const char *,
                              ((cv)->floatValue->contents) : \
                              ((double) (cv)->integerValue->contents))
 
-#define CVCoerceToInteger(cv) (((cv)->header->type == INTEGER_TYPE) ? \
+#define CVCoerceToInteger(cv) (((cv)->header->type == CL_INTEGER_TYPE) ? \
                                ((cv)->integerValue->contents) : \
                                ((long long) (cv)->floatValue->contents))
 

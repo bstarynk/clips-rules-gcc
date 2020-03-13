@@ -166,7 +166,7 @@ CL_CheckConstraintParseConflicts (Environment * theEnv,
 
   if ((constraints->maxValue != NULL) && (constraints->anyAllowed == false))
     {
-      if (((constraints->maxValue->type == INTEGER_TYPE) &&
+      if (((constraints->maxValue->type == CL_INTEGER_TYPE) &&
 	   (constraints->integersAllowed == false)) ||
 	  ((constraints->maxValue->type == FLOAT_TYPE) &&
 	   (constraints->floatsAllowed == false)))
@@ -178,7 +178,7 @@ CL_CheckConstraintParseConflicts (Environment * theEnv,
 
   if ((constraints->minValue != NULL) && (constraints->anyAllowed == false))
     {
-      if (((constraints->minValue->type == INTEGER_TYPE) &&
+      if (((constraints->minValue->type == CL_INTEGER_TYPE) &&
 	   (constraints->integersAllowed == false)) ||
 	  ((constraints->minValue->type == FLOAT_TYPE) &&
 	   (constraints->floatsAllowed == false)))
@@ -444,7 +444,7 @@ CL_OverlayConstraint (Environment * theEnv,
 	  if ((pc->allowedIntegers == 0) && csrc->integerRestriction)
 	    {
 	      cdst->integerRestriction = 1;
-	      AddToRestrictionList (theEnv, INTEGER_TYPE, cdst, csrc);
+	      AddToRestrictionList (theEnv, CL_INTEGER_TYPE, cdst, csrc);
 	    }
 	  if ((pc->allowedFloats == 0) && csrc->floatRestriction)
 	    {
@@ -456,7 +456,7 @@ CL_OverlayConstraint (Environment * theEnv,
 	    {
 	      cdst->integerRestriction = 1;
 	      cdst->floatRestriction = 1;
-	      AddToRestrictionList (theEnv, INTEGER_TYPE, cdst, csrc);
+	      AddToRestrictionList (theEnv, CL_INTEGER_TYPE, cdst, csrc);
 	      AddToRestrictionList (theEnv, FLOAT_TYPE, cdst, csrc);
 	    }
 	  if ((pc->allowed_InstanceNames == 0)
@@ -730,11 +730,11 @@ ParseAllowedValuesAttribute (Environment * theEnv,
 	{
 	case INTEGER_TOKEN:
 	  if ((expectedType != UNKNOWN_VALUE) &&
-	      (expectedType != INTEGER_TYPE) &&
+	      (expectedType != CL_INTEGER_TYPE) &&
 	      (expectedType != INTEGER_OR_FLOAT))
 	    error = true;
 	  constantParsed = true;
-	  genType = INTEGER_TYPE;
+	  genType = CL_INTEGER_TYPE;
 	  break;
 
 	case FLOAT_TOKEN:
@@ -891,7 +891,7 @@ ParseAllowedValuesAttribute (Environment * theEnv,
 	  constraints->stringRestriction = false;
 	  break;
 
-	case INTEGER_TYPE:
+	case CL_INTEGER_TYPE:
 	  constraints->integerRestriction = false;
 	  break;
 
@@ -994,7 +994,7 @@ ParseTypeAttribute (Environment * theEnv,
 
 	 /*========================================*/
 	  /* Check for an appropriate type constant */
-	  /* (e.g. SYMBOL_TYPE, FLOAT_TYPE, INTEGER_TYPE, etc.).   */
+	  /* (e.g. SYMBOL_TYPE, FLOAT_TYPE, CL_INTEGER_TYPE, etc.).   */
 	 /*========================================*/
 
 	  theType =
@@ -1180,7 +1180,7 @@ ParseRangeCardinalityAttribute (Environment * theEnv,
 	  if (inputToken.tknType == INTEGER_TOKEN)
 	    {
 	      constraints->minValue =
-		CL_GenConstant (theEnv, INTEGER_TYPE, inputToken.value);
+		CL_GenConstant (theEnv, CL_INTEGER_TYPE, inputToken.value);
 	    }
 	  else
 	    {
@@ -1202,7 +1202,7 @@ ParseRangeCardinalityAttribute (Environment * theEnv,
 	  if (inputToken.tknType == INTEGER_TOKEN)
 	    {
 	      constraints->minFields =
-		CL_GenConstant (theEnv, INTEGER_TYPE, inputToken.value);
+		CL_GenConstant (theEnv, CL_INTEGER_TYPE, inputToken.value);
 	    }
 	  else
 	    {
@@ -1238,7 +1238,7 @@ ParseRangeCardinalityAttribute (Environment * theEnv,
 	  if (inputToken.tknType == INTEGER_TOKEN)
 	    {
 	      constraints->maxValue =
-		CL_GenConstant (theEnv, INTEGER_TYPE, inputToken.value);
+		CL_GenConstant (theEnv, CL_INTEGER_TYPE, inputToken.value);
 	    }
 	  else
 	    {
@@ -1252,7 +1252,7 @@ ParseRangeCardinalityAttribute (Environment * theEnv,
 	  if (inputToken.tknType == INTEGER_TOKEN)
 	    {
 	      constraints->maxFields =
-		CL_GenConstant (theEnv, INTEGER_TYPE, inputToken.value);
+		CL_GenConstant (theEnv, CL_INTEGER_TYPE, inputToken.value);
 	    }
 	  else
 	    {
@@ -1343,7 +1343,7 @@ GetConstraintTypeFromAllowedName (const char *constraintName)
   else if (strcmp (constraintName, "allowed-lexemes") == 0)
     return (SYMBOL_OR_STRING);
   else if (strcmp (constraintName, "allowed-integers") == 0)
-    return (INTEGER_TYPE);
+    return (CL_INTEGER_TYPE);
   else if (strcmp (constraintName, "allowed-numbers") == 0)
     return (INTEGER_OR_FLOAT);
   else if (strcmp (constraintName, "allowed-instance-names") == 0)
@@ -1370,7 +1370,7 @@ GetConstraintTypeFromTypeName (const char *constraintName)
   else if (strcmp (constraintName, "LEXEME") == 0)
     return (SYMBOL_OR_STRING);
   else if (strcmp (constraintName, "INTEGER") == 0)
-    return (INTEGER_TYPE);
+    return (CL_INTEGER_TYPE);
   else if (strcmp (constraintName, "FLOAT") == 0)
     return (FLOAT_TYPE);
   else if (strcmp (constraintName, "NUMBER") == 0)
@@ -1472,7 +1472,7 @@ SetRestrictionFlag (int restriction,
       constraints->stringRestriction = value;
       break;
 
-    case INTEGER_TYPE:
+    case CL_INTEGER_TYPE:
       constraints->integerRestriction = value;
       break;
 

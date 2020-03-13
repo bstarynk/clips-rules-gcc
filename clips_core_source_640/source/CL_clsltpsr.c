@@ -666,13 +666,13 @@ ParseSimpleFacet (Environment * theEnv,
 	    rtnCode = 0;
 	  else
 	    if (strcmp
-		(DefclassData (theEnv)->ObjectParseToken.
-		 lexemeValue->contents, setRelation) == 0)
+		(DefclassData (theEnv)->ObjectParseToken.lexemeValue->
+		 contents, setRelation) == 0)
 	    rtnCode = 1;
 	  else if ((alternateRelation == NULL) ? false :
 		   (strcmp
-		    (DefclassData (theEnv)->ObjectParseToken.
-		     lexemeValue->contents, alternateRelation) == 0))
+		    (DefclassData (theEnv)->ObjectParseToken.lexemeValue->
+		     contents, alternateRelation) == 0))
 	    rtnCode = 2;
 	  else
 	    goto ParseSimpleFacetError;
@@ -886,10 +886,10 @@ CheckForFacetConflicts (Environment * theEnv,
 	  CL_ReturnExpression (theEnv, sd->constraint->minFields);
 	  CL_ReturnExpression (theEnv, sd->constraint->maxFields);
 	  sd->constraint->minFields =
-	    CL_GenConstant (theEnv, INTEGER_TYPE,
+	    CL_GenConstant (theEnv, CL_INTEGER_TYPE,
 			    CL_CreateInteger (theEnv, 1LL));
 	  sd->constraint->maxFields =
-	    CL_GenConstant (theEnv, INTEGER_TYPE,
+	    CL_GenConstant (theEnv, CL_INTEGER_TYPE,
 			    CL_CreateInteger (theEnv, 1LL));
 	}
     }

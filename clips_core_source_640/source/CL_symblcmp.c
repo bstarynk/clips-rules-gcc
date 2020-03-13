@@ -745,7 +745,7 @@ IntegerHashNodesToCode (Environment * theEnv,
 	      newHeader = false;
 	    }
 
-	  fprintf (fp, "{{INTEGER_TYPE},");
+	  fprintf (fp, "{{CL_INTEGER_TYPE},");
 
 	  if (hashPtr->next == NULL)
 	    {

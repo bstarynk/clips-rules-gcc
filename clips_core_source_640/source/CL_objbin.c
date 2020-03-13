@@ -281,8 +281,8 @@ DeallocateObjectBinaryData (Environment * theEnv)
 		  0))
 	    {
 	      rtn_struct (theEnv, udfValue,
-			  ObjectBinaryData (theEnv)->
-			  SlotArray[i].defaultValue);
+			  ObjectBinaryData (theEnv)->SlotArray[i].
+			  defaultValue);
 	    }
 	}
 
@@ -492,8 +492,8 @@ MarkDefclassItems (Environment * theEnv,
 	         ================================================= */
 	      tmpexp =
 		CL_ConvertValueToExpression (theEnv,
-					     (UDFValue *) cls->
-					     slots[i].defaultValue);
+					     (UDFValue *) cls->slots[i].
+					     defaultValue);
 	      ExpressionData (theEnv)->ExpressionCount +=
 		CL_ExpressionSize (tmpexp);
 	      CL_MarkNeededItems (theEnv, tmpexp);
@@ -587,8 +587,8 @@ CL_BsaveDefaultSlotExpressions (Environment * theEnv,
 	         ================================================= */
 	      tmpexp =
 		CL_ConvertValueToExpression (theEnv,
-					     (UDFValue *) cls->
-					     slots[i].defaultValue);
+					     (UDFValue *) cls->slots[i].
+					     defaultValue);
 	      CL_BsaveExpression (theEnv, tmpexp, (FILE *) buf);
 	      CL_ReturnExpression (theEnv, tmpexp);
 	    }
@@ -1319,8 +1319,8 @@ Update_DefclassModule (Environment * theEnv, void *buf, unsigned long obji)
 
   bdptr = (BSAVE_DEFCLASS_MODULE *) buf;
   CL_UpdateDefmoduleItemHeader (theEnv, &bdptr->header,
-				&ObjectBinaryData (theEnv)->
-				ModuleArray[obji].header, sizeof (Defclass),
+				&ObjectBinaryData (theEnv)->ModuleArray[obji].
+				header, sizeof (Defclass),
 				ObjectBinaryData (theEnv)->DefclassArray);
 }
 
@@ -1536,8 +1536,8 @@ CL_Clear_BloadObjects (Environment * theEnv)
 #if DEFMODULE_CONSTRUCT
 	  CL_DecrementBitMapReferenceCount (theEnv,
 					    ObjectBinaryData
-					    (theEnv)->DefclassArray[i].
-					    scopeMap);
+					    (theEnv)->
+					    DefclassArray[i].scopeMap);
 #endif
 	  CL_RemoveClassFromTable (theEnv,
 				   &ObjectBinaryData (theEnv)->DefclassArray
@@ -1546,31 +1546,31 @@ CL_Clear_BloadObjects (Environment * theEnv)
       for (i = 0; i < ObjectBinaryData (theEnv)->SlotCount; i++)
 	{
 	  CL_ReleaseLexeme (theEnv,
-			    ObjectBinaryData (theEnv)->
-			    SlotArray[i].overrideMessage);
+			    ObjectBinaryData (theEnv)->SlotArray[i].
+			    overrideMessage);
 	  if ((ObjectBinaryData (theEnv)->SlotArray[i].defaultValue != NULL)
 	      && (ObjectBinaryData (theEnv)->SlotArray[i].dynamicDefault ==
 		  0))
 	    {
 	      CL_ReleaseUDFV (theEnv,
 			      (UDFValue *)
-			      ObjectBinaryData (theEnv)->SlotArray[i].
-			      defaultValue);
+			      ObjectBinaryData (theEnv)->
+			      SlotArray[i].defaultValue);
 	      rtn_struct (theEnv, udfValue,
-			  ObjectBinaryData (theEnv)->
-			  SlotArray[i].defaultValue);
+			  ObjectBinaryData (theEnv)->SlotArray[i].
+			  defaultValue);
 	    }
 	}
       for (i = 0; i < ObjectBinaryData (theEnv)->SlotNameCount; i++)
 	{
-	  DefclassData (theEnv)->
-	    SlotNameTable[ObjectBinaryData (theEnv)->SlotNameArray
-			  [i].hashTableIndex] = NULL;
+	  DefclassData (theEnv)->SlotNameTable[ObjectBinaryData (theEnv)->
+					       SlotNameArray[i].
+					       hashTableIndex] = NULL;
 	  CL_ReleaseLexeme (theEnv,
 			    ObjectBinaryData (theEnv)->SlotNameArray[i].name);
 	  CL_ReleaseLexeme (theEnv,
-			    ObjectBinaryData (theEnv)->
-			    SlotNameArray[i].putHandlerName);
+			    ObjectBinaryData (theEnv)->SlotNameArray[i].
+			    putHandlerName);
 	}
 
       space = (sizeof (Defclass) * ObjectBinaryData (theEnv)->ClassCount);
@@ -1632,8 +1632,8 @@ CL_Clear_BloadObjects (Environment * theEnv)
     {
       for (i = 0L; i < ObjectBinaryData (theEnv)->HandlerCount; i++)
 	CL_ReleaseLexeme (theEnv,
-			  ObjectBinaryData (theEnv)->HandlerArray[i].
-			  header.name);
+			  ObjectBinaryData (theEnv)->HandlerArray[i].header.
+			  name);
 
       space =
 	(sizeof (DefmessageHandler) *

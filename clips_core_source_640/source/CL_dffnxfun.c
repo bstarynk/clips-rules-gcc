@@ -367,7 +367,8 @@ CL_FindDeffunction (Environment * theEnv, const char *dfnxModuleAndName)
   return (Deffunction *) CL_FindNamedConstructInModuleOrImports (theEnv,
 								 dfnxModuleAndName,
 								 DeffunctionData
-								 (theEnv)->DeffunctionConstruct);
+								 (theEnv)->
+								 DeffunctionConstruct);
 }
 
 /***************************************************
@@ -387,7 +388,8 @@ CL_FindDeffunctionInModule (Environment * theEnv,
   return (Deffunction *) CL_FindNamedConstructInModule (theEnv,
 							dfnxModuleAndName,
 							DeffunctionData
-							(theEnv)->DeffunctionConstruct);
+							(theEnv)->
+							DeffunctionConstruct);
 }
 
 /***************************************************

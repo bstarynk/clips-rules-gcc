@@ -124,7 +124,7 @@ CL_ConstantExpression (struct expr *testPtr)
 	  (testPtr->type != INSTANCE_NAME_TYPE)
 	  && (testPtr->type != INSTANCE_ADDRESS_TYPE) &&
 #endif
-	  (testPtr->type != INTEGER_TYPE) && (testPtr->type != FLOAT_TYPE))
+	  (testPtr->type != CL_INTEGER_TYPE) && (testPtr->type != FLOAT_TYPE))
 	{
 	  return false;
 	}
@@ -145,7 +145,7 @@ CL_ConstantType (int theType)
     {
     case SYMBOL_TYPE:
     case STRING_TYPE:
-    case INTEGER_TYPE:
+    case CL_INTEGER_TYPE:
     case FLOAT_TYPE:
 #if OBJECT_SYSTEM
     case INSTANCE_NAME_TYPE:

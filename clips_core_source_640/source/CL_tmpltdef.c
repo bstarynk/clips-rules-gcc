@@ -271,7 +271,8 @@ Get_DeftemplateModuleItem (Environment * theEnv, Defmodule * theModule)
   return ((struct deftemplateModule *)
 	  CL_GetConstructModuleItemByIndex (theEnv, theModule,
 					    DeftemplateData
-					    (theEnv)->CL_DeftemplateModuleIndex));
+					    (theEnv)->
+					    CL_DeftemplateModuleIndex));
 }
 
 /***************************************************/
@@ -285,7 +286,8 @@ CL_FindDeftemplate (Environment * theEnv, const char *deftemplateName)
   return (Deftemplate *) CL_FindNamedConstructInModuleOrImports (theEnv,
 								 deftemplateName,
 								 DeftemplateData
-								 (theEnv)->DeftemplateConstruct);
+								 (theEnv)->
+								 DeftemplateConstruct);
 }
 
 /*******************************************************/
@@ -299,7 +301,8 @@ CL_FindDeftemplateInModule (Environment * theEnv, const char *deftemplateName)
   return (Deftemplate *) CL_FindNamedConstructInModule (theEnv,
 							deftemplateName,
 							DeftemplateData
-							(theEnv)->DeftemplateConstruct);
+							(theEnv)->
+							DeftemplateConstruct);
 }
 
 /***********************************************************************/
@@ -313,7 +316,8 @@ CL_GetNextDeftemplate (Environment * theEnv, Deftemplate * deftemplatePtr)
   return (Deftemplate *) CL_GetNextConstructItem (theEnv,
 						  &deftemplatePtr->header,
 						  DeftemplateData
-						  (theEnv)->CL_DeftemplateModuleIndex);
+						  (theEnv)->
+						  CL_DeftemplateModuleIndex);
 }
 
 /**********************************************************/

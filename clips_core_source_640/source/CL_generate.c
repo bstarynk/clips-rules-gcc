@@ -318,10 +318,9 @@ CL_FieldConversion (Environment * theEnv,
 	  if (theField->referringNode->patternType->genGetJNValueFunction)
 	    {
 	      tempExpression =
-		(*theField->referringNode->
-		 patternType->genGetJNValueFunction) (theEnv,
-						      theField->referringNode,
-						      LHS);
+		(*theField->referringNode->patternType->
+		 genGetJNValueFunction) (theEnv, theField->referringNode,
+					 LHS);
 	      thePattern->leftHash =
 		CL_AppendExpressions (tempExpression, thePattern->leftHash);
 	    }
@@ -880,19 +879,15 @@ CL_AddNandUnification (Environment * theEnv,
 				   tempExpression);
 
 	  tempExpression =
-	    (*nodeList->referringNode->
-	     patternType->genGetJNValueFunction) (theEnv,
-						  nodeList->referringNode,
-						  LHS);
+	    (*nodeList->referringNode->patternType->
+	     genGetJNValueFunction) (theEnv, nodeList->referringNode, LHS);
 	  theFrame->nandCE->externalRightHash =
 	    CL_AppendExpressions (theFrame->nandCE->externalRightHash,
 				  tempExpression);
 
 	  tempExpression =
-	    (*nodeList->referringNode->
-	     patternType->genGetJNValueFunction) (theEnv,
-						  nodeList->referringNode,
-						  LHS);
+	    (*nodeList->referringNode->patternType->
+	     genGetJNValueFunction) (theEnv, nodeList->referringNode, LHS);
 	  theFrame->nandCE->externalLeftHash =
 	    CL_AppendExpressions (theFrame->nandCE->externalLeftHash,
 				  tempExpression);
@@ -957,35 +952,31 @@ CL_GetvarReplace (Environment * theEnv,
 	  if (nodeList->beginNandDepth >
 	      nodeList->referringNode->beginNandDepth)
 	    {
-	      (*nodeList->referringNode->
-	       patternType->replaceGetJNValueFunction) (theEnv, newList,
-							nodeList->
-							referringNode, LHS);
+	      (*nodeList->referringNode->patternType->
+	       replaceGetJNValueFunction) (theEnv, newList,
+					   nodeList->referringNode, LHS);
 	    }
 	  else
 	    {
-	      (*nodeList->referringNode->
-	       patternType->replaceGetJNValueFunction) (theEnv, newList,
-							nodeList->
-							referringNode,
-							NESTED_RHS);
+	      (*nodeList->referringNode->patternType->
+	       replaceGetJNValueFunction) (theEnv, newList,
+					   nodeList->referringNode,
+					   NESTED_RHS);
 	    }
 	}
       else
 	{
 	  if (nodeList->joinDepth != nodeList->referringNode->joinDepth)
 	    {
-	      (*nodeList->referringNode->
-	       patternType->replaceGetJNValueFunction) (theEnv, newList,
-							nodeList->
-							referringNode, LHS);
+	      (*nodeList->referringNode->patternType->
+	       replaceGetJNValueFunction) (theEnv, newList,
+					   nodeList->referringNode, LHS);
 	    }
 	  else
 	    {
-	      (*nodeList->referringNode->
-	       patternType->replaceGetJNValueFunction) (theEnv, newList,
-							nodeList->
-							referringNode, RHS);
+	      (*nodeList->referringNode->patternType->
+	       replaceGetJNValueFunction) (theEnv, newList,
+					   nodeList->referringNode, RHS);
 	    }
 	}
     }

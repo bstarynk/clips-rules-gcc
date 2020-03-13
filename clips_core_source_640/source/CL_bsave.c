@@ -498,7 +498,7 @@ CL_MarkNeededItems (Environment * theEnv, struct expr *testPtr)
 	  testPtr->floatValue->neededFloat = true;
 	  break;
 
-	case INTEGER_TYPE:
+	case CL_INTEGER_TYPE:
 	  testPtr->integerValue->neededInteger = true;
 	  break;
 
@@ -506,15 +506,15 @@ CL_MarkNeededItems (Environment * theEnv, struct expr *testPtr)
 	  testPtr->functionValue->neededFunction = true;
 	  break;
 
-	case VOID_TYPE:
+	case CL_VOID_TYPE:
 	  break;
 
 	default:
 	  if (CL_EvaluationData (theEnv)->PrimitivesArray[testPtr->type] ==
 	      NULL)
 	    break;
-	  if (CL_EvaluationData (theEnv)->
-	      PrimitivesArray[testPtr->type]->bitMap)
+	  if (CL_EvaluationData (theEnv)->PrimitivesArray[testPtr->type]->
+	      bitMap)
 	    {
 	      ((CLIPSBitMap *) testPtr->value)->neededBitMap = true;
 	    }

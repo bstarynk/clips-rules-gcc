@@ -443,7 +443,8 @@ CL_FindDefgeneric (Environment * theEnv, const char *genericModuleAndName)
   return (Defgeneric *) CL_FindNamedConstructInModuleOrImports (theEnv,
 								genericModuleAndName,
 								DefgenericData
-								(theEnv)->DefgenericConstruct);
+								(theEnv)->
+								DefgenericConstruct);
 }
 
 /***************************************************
@@ -463,7 +464,8 @@ CL_FindDefgenericInModule (Environment * theEnv,
   return (Defgeneric *) CL_FindNamedConstructInModule (theEnv,
 						       genericModuleAndName,
 						       DefgenericData
-						       (theEnv)->DefgenericConstruct);
+						       (theEnv)->
+						       DefgenericConstruct);
 }
 
 /***************************************************
@@ -523,7 +525,8 @@ CL_GetNextDefgeneric (Environment * theEnv, Defgeneric * theDefgeneric)
   return (Defgeneric *) CL_GetNextConstructItem (theEnv,
 						 &theDefgeneric->header,
 						 DefgenericData
-						 (theEnv)->CL_DefgenericModuleIndex);
+						 (theEnv)->
+						 CL_DefgenericModuleIndex);
 }
 
 /***********************************************************
@@ -1526,8 +1529,8 @@ CL_GetMethodRestrictions (Defgeneric * theDefgeneric,
 	  theList->contents[roffset++].lexemeValue =
 	    CL_CreateSymbol (theEnv,
 			     TypeName (theEnv,
-				       ((CLIPSInteger *) rptr->
-					types[j])->contents));
+				       ((CLIPSInteger *) rptr->types[j])->
+				       contents));
 #endif
 	}
     }
@@ -1994,8 +1997,8 @@ Defmethod_WatchSupport (Environment * theEnv,
       if ((genericName.header->type != SYMBOL_TYPE) ? true :
 	  ((theGeneric =
 	    CL_LookupDefgenericByMdlOrScope (theEnv,
-					     genericName.
-					     lexemeValue->contents)) == NULL))
+					     genericName.lexemeValue->
+					     contents)) == NULL))
 	{
 	  CL_ExpectedTypeError1 (theEnv, funcName, argIndex,
 				 "'generic function name'");
@@ -2009,7 +2012,7 @@ Defmethod_WatchSupport (Environment * theEnv,
 	  argIndex++;
 	  if (CL_EvaluateExpression (theEnv, argExprs, &methodIndex))
 	    return false;
-	  if ((methodIndex.header->type != INTEGER_TYPE) ? false :
+	  if ((methodIndex.header->type != CL_INTEGER_TYPE) ? false :
 	      ((methodIndex.integerValue->contents <= 0) ? false :
 	       (CL_FindMethodByIndex (theGeneric, theMethod) !=
 		METHOD_NOT_FOUND)))

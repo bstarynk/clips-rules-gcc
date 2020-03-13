@@ -733,8 +733,8 @@ MarkObjectPatternNetwork (Environment * theEnv, SLOT_BITMAP * slotNameIDs)
       else if (alphaPtr->slotbmp != NULL)
 	{
 	  if (CompareSlotBitMaps (slotNameIDs,
-				  (SLOT_BITMAP *) alphaPtr->
-				  slotbmp->contents))
+				  (SLOT_BITMAP *) alphaPtr->slotbmp->
+				  contents))
 	    {
 	      alphaPtr->matchTimeTag =
 		ObjectReteData (theEnv)->CurrentObjectMatchTimeTag;
@@ -851,8 +851,9 @@ ObjectPatternMatch (Environment * theEnv,
 	    }
 	  else if ((ObjectReteData (theEnv)->CurrentPatternObjectSlot == NULL)
 		   ? true
-		   : (ObjectReteData (theEnv)->CurrentPatternObjectSlot->
-		      desc->slotName->id != patternTop->slotNameID))
+		   : (ObjectReteData (theEnv)->
+		      CurrentPatternObjectSlot->desc->slotName->id !=
+		      patternTop->slotNameID))
 	    {
 	    /*=======================================================*/
 	      /* Need to reset the indices for the multifield          */
@@ -860,18 +861,15 @@ ObjectPatternMatch (Environment * theEnv,
 	    /*=======================================================*/
 
 	      ObjectReteData (theEnv)->CurrentPatternObjectSlot =
-		ObjectReteData (theEnv)->
-		CurrentPatternObject->slotAddresses[ObjectReteData (theEnv)->
-						    CurrentPatternObject->cls->
-						    slotNameMap[patternTop->
-								slotNameID] -
-						    1];
+		ObjectReteData (theEnv)->CurrentPatternObject->
+		slotAddresses[ObjectReteData (theEnv)->CurrentPatternObject->
+			      cls->slotNameMap[patternTop->slotNameID] - 1];
 	      offset = 0;
-	      if (ObjectReteData (theEnv)->CurrentPatternObjectSlot->
-		  desc->multiple)
+	      if (ObjectReteData (theEnv)->CurrentPatternObjectSlot->desc->
+		  multiple)
 		ObjectReteData (theEnv)->CurrentObjectSlotLength =
-		  ObjectReteData (theEnv)->
-		  CurrentPatternObjectSlot->multifieldValue->length;
+		  ObjectReteData (theEnv)->CurrentPatternObjectSlot->
+		  multifieldValue->length;
 	      else
 		ObjectReteData (theEnv)->CurrentObjectSlotLength = 1;
 	    }
@@ -980,8 +978,11 @@ ProcessPatternNode (Environment * theEnv,
 	      tempPtr =
 		(OBJECT_PATTERN_NODE *) CL_FindHashedPatternNode (theEnv,
 								  patternNode,
-								  theResult.header->type,
-								  theResult.value);
+								  theResult.
+								  header->
+								  type,
+								  theResult.
+								  value);
 
 	      if (tempPtr != NULL)
 		{
@@ -1026,8 +1027,11 @@ ProcessPatternNode (Environment * theEnv,
 	      tempPtr =
 		(OBJECT_PATTERN_NODE *) CL_FindHashedPatternNode (theEnv,
 								  patternNode,
-								  theResult.header->type,
-								  theResult.value);
+								  theResult.
+								  header->
+								  type,
+								  theResult.
+								  value);
 
 	      if (tempPtr != NULL)
 		{
@@ -1063,8 +1067,8 @@ ProcessPatternNode (Environment * theEnv,
   newMark = get_struct (theEnv, multifieldMarker);
   newMark->whichField = patternSlotField;
   newMark->where.whichSlot =
-    (void *) ObjectReteData (theEnv)->CurrentPatternObjectSlot->
-    desc->slotName->name;
+    (void *) ObjectReteData (theEnv)->CurrentPatternObjectSlot->desc->
+    slotName->name;
   newMark->startPosition = objectSlotField;
 
   newMark->next = NULL;
@@ -1105,8 +1109,11 @@ ProcessPatternNode (Environment * theEnv,
 		  tempPtr =
 		    (OBJECT_PATTERN_NODE *) CL_FindHashedPatternNode (theEnv,
 								      patternNode,
-								      theResult.header->type,
-								      theResult.value);
+								      theResult.
+								      header->
+								      type,
+								      theResult.
+								      value);
 
 		  if (tempPtr != NULL)
 		    {
@@ -1165,8 +1172,11 @@ ProcessPatternNode (Environment * theEnv,
 	      tempPtr =
 		(OBJECT_PATTERN_NODE *) CL_FindHashedPatternNode (theEnv,
 								  patternNode,
-								  theResult.header->type,
-								  theResult.value);
+								  theResult.
+								  header->
+								  type,
+								  theResult.
+								  value);
 
 	      if (tempPtr != NULL)
 		{
@@ -1490,8 +1500,8 @@ Object_RetractAction (Environment * theEnv,
 	  if (alphaPtr->slotbmp != NULL)
 	    {
 	      if (CompareSlotBitMaps (slotNameIDs,
-				      (SLOT_BITMAP *) alphaPtr->
-				      slotbmp->contents))
+				      (SLOT_BITMAP *) alphaPtr->slotbmp->
+				      contents))
 		{
 		  ins->busy--;
 		  if (prvMatch == NULL)
@@ -1557,8 +1567,8 @@ ObjectPatternNetErrorMessage (Environment * theEnv,
 		  "This error occurred in the object pattern network\n");
   CL_WriteString (theEnv, STDERR, "   Currently active instance: [");
   CL_WriteString (theEnv, STDERR,
-		  ObjectReteData (theEnv)->CurrentPatternObject->
-		  name->contents);
+		  ObjectReteData (theEnv)->CurrentPatternObject->name->
+		  contents);
   CL_WriteString (theEnv, STDERR, "]\n");
   CL_WriteString (theEnv, STDERR, "   Problem resides in slot '");
   CL_WriteString (theEnv, STDERR,

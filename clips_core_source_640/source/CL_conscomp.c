@@ -1036,7 +1036,7 @@ DumpExpression (Environment * theEnv, struct expr *exprPtr)
 				     exprPtr->functionValue);
 	  break;
 
-	case INTEGER_TYPE:
+	case CL_INTEGER_TYPE:
 	  CL_PrintIntegerReference (theEnv,
 				    ConstructCompilerData
 				    (theEnv)->ExpressionFP,
@@ -1159,7 +1159,7 @@ DumpExpression (Environment * theEnv, struct expr *exprPtr)
 				   exprPtr->lexemeValue);
 	  break;
 
-	case VOID_TYPE:
+	case CL_VOID_TYPE:
 	  fprintf (ConstructCompilerData (theEnv)->ExpressionFP, "NULL");
 	  break;
 
@@ -1170,8 +1170,8 @@ DumpExpression (Environment * theEnv, struct expr *exprPtr)
 	      fprintf (ConstructCompilerData (theEnv)->ExpressionFP, "NULL");
 	    }
 	  else
-	    if (CL_EvaluationData (theEnv)->PrimitivesArray[exprPtr->type]->
-		bitMap)
+	    if (CL_EvaluationData (theEnv)->
+		PrimitivesArray[exprPtr->type]->bitMap)
 	    {
 	      CL_PrintBitMapReference (theEnv,
 				       ConstructCompilerData

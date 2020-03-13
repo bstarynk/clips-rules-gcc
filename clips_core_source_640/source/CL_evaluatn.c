@@ -181,7 +181,7 @@ CL_EvaluateExpression (Environment * theEnv,
     case STRING_TYPE:
     case SYMBOL_TYPE:
     case FLOAT_TYPE:
-    case INTEGER_TYPE:
+    case CL_INTEGER_TYPE:
 #if OBJECT_SYSTEM
     case INSTANCE_NAME_TYPE:
     case INSTANCE_ADDRESS_TYPE:
@@ -261,15 +261,15 @@ CL_EvaluateExpression (Environment * theEnv,
 	  CL_ExitRouter (theEnv, EXIT_FAILURE);
 	}
 
-      if (CL_EvaluationData (theEnv)->
-	  PrimitivesArray[problem->type]->copyTo_Evaluate)
+      if (CL_EvaluationData (theEnv)->PrimitivesArray[problem->type]->
+	  copyTo_Evaluate)
 	{
 	  returnValue->value = problem->value;
 	  break;
 	}
 
-      if (CL_EvaluationData (theEnv)->
-	  PrimitivesArray[problem->type]->evaluateFunction == NULL)
+      if (CL_EvaluationData (theEnv)->PrimitivesArray[problem->type]->
+	  evaluateFunction == NULL)
 	{
 	  CL_SystemError (theEnv, "EVALUATN", 4);
 	  CL_ExitRouter (theEnv, EXIT_FAILURE);
@@ -280,16 +280,15 @@ CL_EvaluateExpression (Environment * theEnv,
 
 #if PROFILING_FUNCTIONS
       Start_Profile (theEnv, &profileFrame,
-		     &CL_EvaluationData (theEnv)->
-		     PrimitivesArray[problem->type]->usrData,
-		     CL_ProfileFunctionData
-		     (theEnv)->CL_Profile_UserFunctions);
+		     &CL_EvaluationData (theEnv)->PrimitivesArray[problem->
+								  type]->
+		     usrData,
+		     CL_ProfileFunctionData (theEnv)->
+		     CL_Profile_UserFunctions);
 #endif
 
-      (*CL_EvaluationData (theEnv)->
-       PrimitivesArray[problem->type]->evaluateFunction) (theEnv,
-							  problem->value,
-							  returnValue);
+      (*CL_EvaluationData (theEnv)->PrimitivesArray[problem->type]->
+       evaluateFunction) (theEnv, problem->value, returnValue);
 
 #if PROFILING_FUNCTIONS
       CL_End_Profile (theEnv, &profileFrame);
@@ -344,9 +343,8 @@ CL_InstallExternalAddressType (Environment * theEnv,
 							externalAddressType));
   memcpy (copyEAT, theAddressType, sizeof (struct externalAddressType));
   CL_EvaluationData (theEnv)->ExternalAddressTypes[CL_EvaluationData
-						   (theEnv)->
-						   numberOfAddressTypes++] =
-    copyEAT;
+						   (theEnv)->numberOfAddressTypes++]
+    = copyEAT;
 
   return rv;
 }
@@ -435,10 +433,10 @@ CL_WriteCLIPSValue (Environment * theEnv,
 {
   switch (argPtr->header->type)
     {
-    case VOID_TYPE:
+    case CL_VOID_TYPE:
     case SYMBOL_TYPE:
     case STRING_TYPE:
-    case INTEGER_TYPE:
+    case CL_INTEGER_TYPE:
     case FLOAT_TYPE:
     case EXTERNAL_ADDRESS_TYPE:
     case FACT_ADDRESS_TYPE:
@@ -473,10 +471,10 @@ CL_WriteUDFValue (Environment * theEnv, const char *fileid, UDFValue * argPtr)
 {
   switch (argPtr->header->type)
     {
-    case VOID_TYPE:
+    case CL_VOID_TYPE:
     case SYMBOL_TYPE:
     case STRING_TYPE:
-    case INTEGER_TYPE:
+    case CL_INTEGER_TYPE:
     case FLOAT_TYPE:
     case EXTERNAL_ADDRESS_TYPE:
     case FACT_ADDRESS_TYPE:
@@ -607,7 +605,7 @@ CL_Retain (Environment * theEnv, TypeHeader * th)
       IncrementFloatCount (th);
       break;
 
-    case INTEGER_TYPE:
+    case CL_INTEGER_TYPE:
       IncrementIntegerCount (th);
       break;
 
@@ -631,7 +629,7 @@ CL_Retain (Environment * theEnv, TypeHeader * th)
       break;
 #endif
 
-    case VOID_TYPE:
+    case CL_VOID_TYPE:
       break;
 
     default:
@@ -662,7 +660,7 @@ CL_Release (Environment * theEnv, TypeHeader * th)
       CL_ReleaseFloat (theEnv, (CLIPSFloat *) th);
       break;
 
-    case INTEGER_TYPE:
+    case CL_INTEGER_TYPE:
       CL_ReleaseInteger (theEnv, (CLIPSInteger *) th);
       break;
 
@@ -686,7 +684,7 @@ CL_Release (Environment * theEnv, TypeHeader * th)
       break;
 #endif
 
-    case VOID_TYPE:
+    case CL_VOID_TYPE:
       break;
 
     default:
@@ -720,7 +718,7 @@ CL_AtomInstall (Environment * theEnv, unsigned short type, void *vPtr)
       IncrementFloatCount (vPtr);
       break;
 
-    case INTEGER_TYPE:
+    case CL_INTEGER_TYPE:
       IncrementIntegerCount (vPtr);
       break;
 
@@ -732,7 +730,7 @@ CL_AtomInstall (Environment * theEnv, unsigned short type, void *vPtr)
       CL_RetainMultifield (theEnv, (Multifield *) vPtr);
       break;
 
-    case VOID_TYPE:
+    case CL_VOID_TYPE:
       break;
 
     default:
@@ -740,11 +738,11 @@ CL_AtomInstall (Environment * theEnv, unsigned short type, void *vPtr)
 	break;
       if (CL_EvaluationData (theEnv)->PrimitivesArray[type]->bitMap)
 	IncrementBitMapCount (vPtr);
-      else if (CL_EvaluationData (theEnv)->
-	       PrimitivesArray[type]->incrementBusyCount)
+      else if (CL_EvaluationData (theEnv)->PrimitivesArray[type]->
+	       incrementBusyCount)
 	{
-	  (*CL_EvaluationData (theEnv)->
-	   PrimitivesArray[type]->incrementBusyCount) (theEnv, vPtr);
+	  (*CL_EvaluationData (theEnv)->PrimitivesArray[type]->
+	   incrementBusyCount) (theEnv, vPtr);
 	}
       break;
     }
@@ -774,7 +772,7 @@ CL_AtomDeinstall (Environment * theEnv, unsigned short type, void *vPtr)
       CL_ReleaseFloat (theEnv, (CLIPSFloat *) vPtr);
       break;
 
-    case INTEGER_TYPE:
+    case CL_INTEGER_TYPE:
       CL_ReleaseInteger (theEnv, (CLIPSInteger *) vPtr);
       break;
 
@@ -786,7 +784,7 @@ CL_AtomDeinstall (Environment * theEnv, unsigned short type, void *vPtr)
       CL_ReleaseMultifield (theEnv, (Multifield *) vPtr);
       break;
 
-    case VOID_TYPE:
+    case CL_VOID_TYPE:
       break;
 
     default:
@@ -794,11 +792,11 @@ CL_AtomDeinstall (Environment * theEnv, unsigned short type, void *vPtr)
 	break;
       if (CL_EvaluationData (theEnv)->PrimitivesArray[type]->bitMap)
 	CL_DecrementBitMapReferenceCount (theEnv, (CLIPSBitMap *) vPtr);
-      else if (CL_EvaluationData (theEnv)->
-	       PrimitivesArray[type]->decrementBusyCount)
+      else if (CL_EvaluationData (theEnv)->PrimitivesArray[type]->
+	       decrementBusyCount)
 	{
-	  (*CL_EvaluationData (theEnv)->
-	   PrimitivesArray[type]->decrementBusyCount) (theEnv, vPtr);
+	  (*CL_EvaluationData (theEnv)->PrimitivesArray[type]->
+	   decrementBusyCount) (theEnv, vPtr);
 	}
     }
 }
@@ -902,7 +900,7 @@ CL_GetAtomicHashValue (unsigned short type,
       tvalue = fis.liv;
       break;
 
-    case INTEGER_TYPE:
+    case CL_INTEGER_TYPE:
       tvalue = (unsigned long) ((CLIPSInteger *) value)->contents;
       break;
 
@@ -1016,7 +1014,7 @@ CL_GetFunctionReference (Environment * theEnv,
 
   theReference->nextArg = NULL;
   theReference->argList = NULL;
-  theReference->type = VOID_TYPE;
+  theReference->type = CL_VOID_TYPE;
   theReference->value = NULL;
 
    /*==============================*/
@@ -1041,7 +1039,8 @@ CL_GetFunctionReference (Environment * theEnv,
       if (CL_ConstructExported
 	  (theEnv, "defgeneric", moduleName, constructName)
 	  || CL_GetCurrentModule (theEnv) == CL_FindDefmodule (theEnv,
-							       moduleName->contents))
+							       moduleName->
+							       contents))
 	{
 	  if ((gfunc = CL_FindDefgenericInModule (theEnv, name)) != NULL)
 	    {
@@ -1072,7 +1071,8 @@ CL_GetFunctionReference (Environment * theEnv,
       if (CL_ConstructExported
 	  (theEnv, "deffunction", moduleName, constructName)
 	  || CL_GetCurrentModule (theEnv) == CL_FindDefmodule (theEnv,
-							       moduleName->contents))
+							       moduleName->
+							       contents))
 	{
 	  if ((dptr = CL_FindDeffunctionInModule (theEnv, name)) != NULL)
 	    {
@@ -1264,7 +1264,7 @@ CL_FCBAppendUDFValue (FunctionCall_Builder * theFCB, UDFValue * theValue)
   /* A void value can't be added to a multifield. */
    /*==============================================*/
 
-  if (theValue->header->type == VOID_TYPE)
+  if (theValue->header->type == CL_VOID_TYPE)
     {
       return;
     }
@@ -1335,7 +1335,7 @@ CL_FCBAppend (FunctionCall_Builder * theFCB, CLIPSValue * theValue)
   /* A void value can't be added to a multifield. */
    /*==============================================*/
 
-  if (theValue->header->type == VOID_TYPE)
+  if (theValue->header->type == CL_VOID_TYPE)
     {
       return;
     }
@@ -1614,10 +1614,10 @@ CL_FCBCall (FunctionCall_Builder * theFCB,
 	    {
 	      nextAdd =
 		CL_GenConstant (theEnv,
-				theFCB->contents[i].
-				multifieldValue->contents[j].header->type,
-				theFCB->contents[i].
-				multifieldValue->contents[j].value);
+				theFCB->contents[i].multifieldValue->
+				contents[j].header->type,
+				theFCB->contents[i].multifieldValue->
+				contents[j].value);
 
 	      if (multiAdd == NULL)
 		{

@@ -89,7 +89,7 @@ CL_GetConstraintRecord (Environment * theEnv)
     CL_GenConstant (theEnv, SYMBOL_TYPE,
 		    SymbolData (theEnv)->PositiveInfinity);
   constraints->minFields =
-    CL_GenConstant (theEnv, INTEGER_TYPE, SymbolData (theEnv)->Zero);
+    CL_GenConstant (theEnv, CL_INTEGER_TYPE, SymbolData (theEnv)->Zero);
   constraints->maxFields =
     CL_GenConstant (theEnv, SYMBOL_TYPE,
 		    SymbolData (theEnv)->PositiveInfinity);
@@ -264,7 +264,7 @@ CL_SetConstraintType (int theType, CONSTRAINT_RECORD * constraints)
       constraints->stringsAllowed = true;
       break;
 
-    case INTEGER_TYPE:
+    case CL_INTEGER_TYPE:
       rv = constraints->integersAllowed;
       constraints->integersAllowed = true;
       break;
@@ -302,7 +302,7 @@ CL_SetConstraintType (int theType, CONSTRAINT_RECORD * constraints)
       constraints->externalAddressesAllowed = true;
       break;
 
-    case VOID_TYPE:
+    case CL_VOID_TYPE:
       rv = constraints->voidAllowed;
       constraints->voidAllowed = true;
       break;
@@ -364,7 +364,7 @@ CL_CompareNumbers (Environment * theEnv,
   /* Compare two integers. */
    /*=======================*/
 
-  if ((type1 == INTEGER_TYPE) && (type2 == INTEGER_TYPE))
+  if ((type1 == CL_INTEGER_TYPE) && (type2 == CL_INTEGER_TYPE))
     {
       if (((CLIPSInteger *) vptr1)->contents <
 	  ((CLIPSInteger *) vptr2)->contents)
@@ -403,7 +403,7 @@ CL_CompareNumbers (Environment * theEnv,
   /* Compare an integer to a float. */
    /*================================*/
 
-  if ((type1 == INTEGER_TYPE) && (type2 == FLOAT_TYPE))
+  if ((type1 == CL_INTEGER_TYPE) && (type2 == FLOAT_TYPE))
     {
       if (((double) ((CLIPSInteger *) vptr1)->contents) <
 	  ((CLIPSFloat *) vptr2)->contents)
@@ -423,7 +423,7 @@ CL_CompareNumbers (Environment * theEnv,
   /* Compare a float to an integer. */
    /*================================*/
 
-  if ((type1 == FLOAT_TYPE) && (type2 == INTEGER_TYPE))
+  if ((type1 == FLOAT_TYPE) && (type2 == CL_INTEGER_TYPE))
     {
       if (((CLIPSFloat *) vptr1)->contents <
 	  ((double) ((CLIPSInteger *) vptr2)->contents))
@@ -510,7 +510,7 @@ CL_ExpressionToConstraintRecord (Environment * theEnv,
       rv->floatsAllowed = true;
       break;
 
-    case INTEGER_TYPE:
+    case CL_INTEGER_TYPE:
       rv->integerRestriction = true;
       rv->integersAllowed = true;
       break;
@@ -552,7 +552,7 @@ CL_ExpressionToConstraintRecord (Environment * theEnv,
 /* CL_FunctionCallToConstraintRecord: Converts a function */
 /*   call to a constraint record. For example, the +   */
 /*   function when converted would be a constraint     */
-/*   record with allowed types INTEGER_TYPE and FLOAT_TYPE.      */
+/*   record with allowed types CL_INTEGER_TYPE and FLOAT_TYPE.      */
 /*******************************************************/
 CONSTRAINT_RECORD *
 CL_FunctionCallToConstraintRecord (Environment * theEnv, void *theFunction)

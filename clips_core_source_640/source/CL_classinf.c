@@ -962,7 +962,7 @@ CL_SlotTypes (Defclass * theDefclass,
       if (sp->constraint->integersAllowed)
 	{
 	  msize++;
-	  SetBitMap (typemap, INTEGER_TYPE);
+	  SetBitMap (typemap, CL_INTEGER_TYPE);
 	}
       if (sp->constraint->instanceNamesAllowed)
 	{

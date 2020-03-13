@@ -278,8 +278,8 @@ CL_ReadRouter (Environment * theEnv, const char *logicalName)
     {
       inchar =
 	(unsigned char)
-	RouterData (theEnv)->FastCharGetString[RouterData (theEnv)->
-					       FastCharGetIndex];
+	RouterData (theEnv)->
+	FastCharGetString[RouterData (theEnv)->FastCharGetIndex];
 
       RouterData (theEnv)->FastCharGetIndex++;
 

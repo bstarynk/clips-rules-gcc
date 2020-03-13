@@ -348,8 +348,8 @@ CL_SetNCommandString (Environment * theEnv, const char *str, unsigned length)
 		   CommandLineData (theEnv)->MaximumCharacters + length + 1);
 
   CL_genstrncpy (CommandLineData (theEnv)->CommandString, str, length);
-  CommandLineData (theEnv)->
-    CommandString[CommandLineData (theEnv)->MaximumCharacters + length] = 0;
+  CommandLineData (theEnv)->CommandString[CommandLineData (theEnv)->
+					  MaximumCharacters + length] = 0;
   CommandLineData (theEnv)->MaximumCharacters += (length + 1);
   RouterData (theEnv)->CommandBufferInputCount += length;
 }
@@ -1117,7 +1117,7 @@ CL_RouteCommand (Environment * theEnv, const char *command, bool printResult)
   /* Print the return value of the function/command. */
    /*=================================================*/
 
-  if ((returnValue.header->type != VOID_TYPE) && printResult)
+  if ((returnValue.header->type != CL_VOID_TYPE) && printResult)
     {
       CL_WriteUDFValue (theEnv, STDOUT, &returnValue);
       CL_WriteString (theEnv, STDOUT, "\n");

@@ -124,8 +124,8 @@ DeallocateFact_BloadData (Environment * theEnv)
   for (i = 0; i < FactBinaryData (theEnv)->NumberOfPatterns; i++)
     {
       CL_DestroyAlphaMemory (theEnv,
-			     &FactBinaryData (theEnv)->
-			     FactPatternArray[i].header, false);
+			     &FactBinaryData (theEnv)->FactPatternArray[i].
+			     header, false);
     }
 
   space =
@@ -398,8 +398,8 @@ CL_BloadBinaryItem (Environment * theEnv)
   for (i = 0; i < FactBinaryData (theEnv)->NumberOfPatterns; i++)
     {
       if ((FactBinaryData (theEnv)->FactPatternArray[i].lastLevel != NULL) &&
-	  (FactBinaryData (theEnv)->FactPatternArray[i].lastLevel->
-	   header.selector))
+	  (FactBinaryData (theEnv)->FactPatternArray[i].lastLevel->header.
+	   selector))
 	{
 	  CL_AddHashedPatternNode (theEnv,
 				   FactBinaryData (theEnv)->FactPatternArray
@@ -460,8 +460,8 @@ CL_Clear_Bload (Environment * theEnv)
   for (i = 0; i < FactBinaryData (theEnv)->NumberOfPatterns; i++)
     {
       if ((FactBinaryData (theEnv)->FactPatternArray[i].lastLevel != NULL) &&
-	  (FactBinaryData (theEnv)->FactPatternArray[i].lastLevel->
-	   header.selector))
+	  (FactBinaryData (theEnv)->FactPatternArray[i].lastLevel->header.
+	   selector))
 	{
 	  CL_RemoveHashedPatternNode (theEnv,
 				      FactBinaryData
@@ -469,11 +469,10 @@ CL_Clear_Bload (Environment * theEnv)
 				      &FactBinaryData
 				      (theEnv)->FactPatternArray[i],
 				      FactBinaryData
-				      (theEnv)->FactPatternArray[i].
-				      networkTest->type,
-				      FactBinaryData
-				      (theEnv)->FactPatternArray[i].
-				      networkTest->value);
+				      (theEnv)->
+				      FactPatternArray[i].networkTest->type,
+				      FactBinaryData (theEnv)->
+				      FactPatternArray[i].networkTest->value);
 	}
     }
 

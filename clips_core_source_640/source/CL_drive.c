@@ -707,19 +707,17 @@ CL_EvaluateJoinExpression (Environment * theEnv,
 
       if ((CL_EvaluationData (theEnv)->PrimitivesArray[joinExpr->type] ==
 	   NULL) ? false :
-	  CL_EvaluationData (theEnv)->PrimitivesArray[joinExpr->type]->
-	  evaluateFunction != NULL)
+	  CL_EvaluationData (theEnv)->PrimitivesArray[joinExpr->
+						      type]->evaluateFunction
+	  != NULL)
 	{
 	  struct expr *oldArgument;
 
 	  oldArgument = CL_EvaluationData (theEnv)->CurrentExpression;
 	  CL_EvaluationData (theEnv)->CurrentExpression = joinExpr;
 	  result =
-	    (*CL_EvaluationData (theEnv)->
-	     PrimitivesArray[joinExpr->type]->evaluateFunction) (theEnv,
-								 joinExpr->
-								 value,
-								 &theResult);
+	    (*CL_EvaluationData (theEnv)->PrimitivesArray[joinExpr->type]->
+	     evaluateFunction) (theEnv, joinExpr->value, &theResult);
 	  CL_EvaluationData (theEnv)->CurrentExpression = oldArgument;
 	}
 
@@ -912,18 +910,16 @@ CL_BetaMemoryHashValue (Environment * theEnv,
 
       if ((CL_EvaluationData (theEnv)->PrimitivesArray[hashExpr->type] ==
 	   NULL) ? false :
-	  CL_EvaluationData (theEnv)->PrimitivesArray[hashExpr->type]->
-	  evaluateFunction != NULL)
+	  CL_EvaluationData (theEnv)->PrimitivesArray[hashExpr->
+						      type]->evaluateFunction
+	  != NULL)
 	{
 	  struct expr *oldArgument;
 
 	  oldArgument = CL_EvaluationData (theEnv)->CurrentExpression;
 	  CL_EvaluationData (theEnv)->CurrentExpression = hashExpr;
-	  (*CL_EvaluationData (theEnv)->
-	   PrimitivesArray[hashExpr->type]->evaluateFunction) (theEnv,
-							       hashExpr->
-							       value,
-							       &theResult);
+	  (*CL_EvaluationData (theEnv)->PrimitivesArray[hashExpr->type]->
+	   evaluateFunction) (theEnv, hashExpr->value, &theResult);
 	  CL_EvaluationData (theEnv)->CurrentExpression = oldArgument;
 	}
 
@@ -944,7 +940,7 @@ CL_BetaMemoryHashValue (Environment * theEnv,
 	  hashValue += theResult.lexemeValue->bucket * multiplier;
 	  break;
 
-	case INTEGER_TYPE:
+	case CL_INTEGER_TYPE:
 	  hashValue += (theResult.integerValue->bucket * multiplier);
 	  break;
 

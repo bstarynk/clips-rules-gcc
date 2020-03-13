@@ -515,7 +515,7 @@ CL_MethodsExecuting (Defgeneric * gfunc)
   NAME         : SubsumeType
   DESCRIPTION  : Dete_rmines if the second type subsumes
                  the first type
-                 (e.g. INTEGER_TYPE is subsumed by NUMBER_TYPE_CODE)
+                 (e.g. CL_INTEGER_TYPE is subsumed by NUMBER_TYPE_CODE)
   INPUTS       : Two type codes
   RETURNS      : True if type 2 subsumes type 1, false
                  otherwise
@@ -528,7 +528,7 @@ SubsumeType (int t1, int t2)
   if ((t2 == OBJECT_TYPE_CODE) || (t2 == PRIMITIVE_TYPE_CODE))
     return true;
   if ((t2 == NUMBER_TYPE_CODE)
-      && ((t1 == INTEGER_TYPE) || (t1 == FLOAT_TYPE)))
+      && ((t1 == CL_INTEGER_TYPE) || (t1 == FLOAT_TYPE)))
     return true;
   if ((t2 == LEXEME_TYPE_CODE)
       && ((t1 == STRING_TYPE) || (t1 == SYMBOL_TYPE)))
@@ -623,8 +623,8 @@ CL_PrintMethod (Environment * theEnv,
 #else
 	  CL_SBAppend (theSB,
 		       TypeName (theEnv,
-				 ((CLIPSInteger *) rptr->
-				  types[k])->contents));
+				 ((CLIPSInteger *) rptr->types[k])->
+				 contents));
 #endif
 	  if ((k + 1) < rptr->tcnt)
 	    CL_SBAppend (theSB, " ");
@@ -796,8 +796,8 @@ TypeName (Environment * theEnv, int tcode)
 {
   switch (tcode)
     {
-    case INTEGER_TYPE:
-      return (INTEGER_TYPE_NAME);
+    case CL_INTEGER_TYPE:
+      return (CL_INTEGER_TYPE_NAME);
     case FLOAT_TYPE:
       return (FLOAT_TYPE_NAME);
     case SYMBOL_TYPE:

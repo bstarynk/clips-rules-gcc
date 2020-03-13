@@ -265,7 +265,8 @@ Get_DeffactsModuleItem (Environment * theEnv, Defmodule * theModule)
   return ((struct deffactsModule *)
 	  CL_GetConstructModuleItemByIndex (theEnv, theModule,
 					    DeffactsData
-					    (theEnv)->CL_DeffactsModuleIndex));
+					    (theEnv)->
+					    CL_DeffactsModuleIndex));
 }
 
 /************************************************/
@@ -279,7 +280,8 @@ CL_FindDeffacts (Environment * theEnv, const char *deffactsName)
   return (Deffacts *) CL_FindNamedConstructInModuleOrImports (theEnv,
 							      deffactsName,
 							      DeffactsData
-							      (theEnv)->DeffactsConstruct);
+							      (theEnv)->
+							      DeffactsConstruct);
 }
 
 /************************************************/
@@ -292,7 +294,8 @@ CL_FindDeffactsInModule (Environment * theEnv, const char *deffactsName)
 {
   return (Deffacts *) CL_FindNamedConstructInModule (theEnv, deffactsName,
 						     DeffactsData
-						     (theEnv)->DeffactsConstruct);
+						     (theEnv)->
+						     DeffactsConstruct);
 }
 
 /*********************************************************/
@@ -306,7 +309,8 @@ CL_GetNextDeffacts (Environment * theEnv, Deffacts * deffactsPtr)
 {
   return (Deffacts *) CL_GetNextConstructItem (theEnv, &deffactsPtr->header,
 					       DeffactsData
-					       (theEnv)->CL_DeffactsModuleIndex);
+					       (theEnv)->
+					       CL_DeffactsModuleIndex);
 }
 
 /*******************************************************/

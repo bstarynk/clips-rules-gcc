@@ -170,8 +170,9 @@ ConstructToCode (Environment * theEnv,
 				 templateArrayVersion, headerFP,
 				 "Deftemplate",
 				 ConstructPrefix (DeftemplateData
-						  (theEnv)->DeftemplateCodeItem),
-				 false, NULL);
+						  (theEnv)->
+						  DeftemplateCodeItem), false,
+				 NULL);
 	  if (templateFile == NULL)
 	    {
 	      CloseDeftemplateFiles (theEnv, moduleFile, templateFile,

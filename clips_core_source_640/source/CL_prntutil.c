@@ -158,7 +158,7 @@ CL_PrintAtom (Environment * theEnv,
     case FLOAT_TYPE:
       CL_WriteFloat (theEnv, logicalName, ((CLIPSFloat *) value)->contents);
       break;
-    case INTEGER_TYPE:
+    case CL_INTEGER_TYPE:
       CL_WriteInteger (theEnv, logicalName,
 		       ((CLIPSInteger *) value)->contents);
       break;
@@ -223,21 +223,20 @@ CL_PrintAtom (Environment * theEnv,
       break;
 #endif
 
-    case VOID_TYPE:
+    case CL_VOID_TYPE:
       break;
 
     default:
       if (CL_EvaluationData (theEnv)->PrimitivesArray[type] == NULL)
 	break;
-      if (CL_EvaluationData (theEnv)->
-	  PrimitivesArray[type]->long_PrintFunction == NULL)
+      if (CL_EvaluationData (theEnv)->PrimitivesArray[type]->
+	  long_PrintFunction == NULL)
 	{
 	  CL_WriteString (theEnv, logicalName, "<unknown atom type>");
 	  break;
 	}
-      (*CL_EvaluationData (theEnv)->
-       PrimitivesArray[type]->long_PrintFunction) (theEnv, logicalName,
-						   value);
+      (*CL_EvaluationData (theEnv)->PrimitivesArray[type]->
+       long_PrintFunction) (theEnv, logicalName, value);
       break;
     }
 }
@@ -620,10 +619,10 @@ CL_DataObjectToString (Environment * theEnv, UDFValue * theDO)
     case FLOAT_TYPE:
       return (CL_FloatToString (theEnv, theDO->floatValue->contents));
 
-    case INTEGER_TYPE:
+    case CL_INTEGER_TYPE:
       return (CL_LongIntegerToString (theEnv, theDO->integerValue->contents));
 
-    case VOID_TYPE:
+    case CL_VOID_TYPE:
       return ("");
 
 #if OBJECT_SYSTEM

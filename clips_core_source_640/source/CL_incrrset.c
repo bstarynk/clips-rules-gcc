@@ -272,8 +272,8 @@ CheckForPrimableJoins (Environment * theEnv,
 	      joinPtr->marked = true;
 	    }
 	  else if ((joinPtr->joinFromTheRight) &&
-		   (((struct joinNode *) joinPtr->
-		     rightSideEntryStructure)->initialize == false))
+		   (((struct joinNode *) joinPtr->rightSideEntryStructure)->
+		    initialize == false))
 	    {
 	      PrimeJoinFromRightMemory (theEnv, joinPtr);
 	      joinPtr->marked = true;

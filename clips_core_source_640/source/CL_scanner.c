@@ -210,9 +210,8 @@ CL_GetToken (Environment * theEnv,
 #if DEFGLOBAL_CONSTRUCT
 	  if ((theToken->lexemeValue->contents[0] == '*') &&
 	      ((strlen (theToken->lexemeValue->contents)) > 1) &&
-	      (theToken->
-	       lexemeValue->contents[strlen (theToken->lexemeValue->contents)
-				     - 1] == '*'))
+	      (theToken->lexemeValue->
+	       contents[strlen (theToken->lexemeValue->contents) - 1] == '*'))
 	    {
 	      size_t count;
 
@@ -265,9 +264,8 @@ CL_GetToken (Environment * theEnv,
 	      if ((theToken->lexemeValue->contents[0] == '*') &&
 		  (strlen (theToken->lexemeValue->contents) > 1) &&
 		  (theToken->lexemeValue->contents[strlen
-						   (theToken->
-						    lexemeValue->contents) -
-						   1] == '*'))
+						   (theToken->lexemeValue->
+						    contents) - 1] == '*'))
 		{
 		  size_t count;
 
@@ -1010,7 +1008,7 @@ CL_TokenTypeToType (TokenType theType)
     case FLOAT_TOKEN:
       return FLOAT_TYPE;
     case INTEGER_TOKEN:
-      return INTEGER_TYPE;
+      return CL_INTEGER_TYPE;
     case SYMBOL_TOKEN:
       return SYMBOL_TYPE;
     case STRING_TOKEN:
@@ -1026,6 +1024,6 @@ CL_TokenTypeToType (TokenType theType)
     case MF_GBL_VARIABLE_TOKEN:
       return MF_GBL_VARIABLE;
     default:
-      return VOID_TYPE;
+      return CL_VOID_TYPE;
     }
 }

@@ -1708,7 +1708,7 @@ PrintFo_rmatFlag (UDFContext * context,
 	  CL_gensprintf (printBuffer, fo_rmatString,
 			 theResult.lexemeValue->contents[0]);
 	}
-      else if (theResult.header->type == INTEGER_TYPE)
+      else if (theResult.header->type == CL_INTEGER_TYPE)
 	{
 	  theLength = strlen (fo_rmatString) + 200;
 	  printBuffer = (char *) CL_gm2 (theEnv, (sizeof (char) * theLength));

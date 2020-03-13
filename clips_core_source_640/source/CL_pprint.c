@@ -210,8 +210,8 @@ CL_PPBackup (Environment * theEnv)
     PrettyPrintData (theEnv)->CL_PPBackupOnce;
   PrettyPrintData (theEnv)->CL_PPBackupOnce =
     PrettyPrintData (theEnv)->CL_PPBackupTwice;
-  PrettyPrintData (theEnv)->
-    PrettyPrintBuffer[PrettyPrintData (theEnv)->PPBufferPos] = EOS;
+  PrettyPrintData (theEnv)->PrettyPrintBuffer[PrettyPrintData (theEnv)->
+					      PPBufferPos] = EOS;
 }
 
 /**************************************************/

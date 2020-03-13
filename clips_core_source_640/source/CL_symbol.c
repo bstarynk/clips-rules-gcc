@@ -210,7 +210,7 @@ CL_InitializeAtomTables (Environment * theEnv,
 #endif
 
   theEnv->VoidConstant = get_struct (theEnv, clipsVoid);
-  theEnv->VoidConstant->header.type = VOID_TYPE;
+  theEnv->VoidConstant->header.type = CL_VOID_TYPE;
 }
 
 /*************************************************/
@@ -472,9 +472,9 @@ CL_AddSymbol (Environment * theEnv, const char *str, unsigned short theType)
     /*================================================*/
 
   AddEphemeralHashNode (theEnv, (GENERIC_HN *) peek,
-			&UtilityData (theEnv)->
-			CurrentGarbageFrame->ephemeralSymbolList,
-			sizeof (CLIPSLexeme), AVERAGE_STRING_SIZE, true);
+			&UtilityData (theEnv)->CurrentGarbageFrame->
+			ephemeralSymbolList, sizeof (CLIPSLexeme),
+			AVERAGE_STRING_SIZE, true);
   UtilityData (theEnv)->CurrentGarbageFrame->dirty = true;
 
     /*===================================*/
@@ -569,9 +569,8 @@ CL_CreateFloat (Environment * theEnv, double number)
     /*===============================================*/
 
   AddEphemeralHashNode (theEnv, (GENERIC_HN *) peek,
-			&UtilityData (theEnv)->
-			CurrentGarbageFrame->ephemeralFloatList,
-			sizeof (CLIPSFloat), 0, true);
+			&UtilityData (theEnv)->CurrentGarbageFrame->
+			ephemeralFloatList, sizeof (CLIPSFloat), 0, true);
   UtilityData (theEnv)->CurrentGarbageFrame->dirty = true;
 
     /*==================================*/
@@ -632,16 +631,15 @@ CL_CreateInteger (Environment * theEnv, long long number)
   peek->bucket = (unsigned int) tally;
   peek->count = 0;
   peek->pe_rmanent = false;
-  peek->header.type = INTEGER_TYPE;
+  peek->header.type = CL_INTEGER_TYPE;
 
     /*=================================================*/
   /* Add the integer to the list of ephemeral items. */
     /*=================================================*/
 
   AddEphemeralHashNode (theEnv, (GENERIC_HN *) peek,
-			&UtilityData (theEnv)->
-			CurrentGarbageFrame->ephemeralIntegerList,
-			sizeof (CLIPSInteger), 0, true);
+			&UtilityData (theEnv)->CurrentGarbageFrame->
+			ephemeralIntegerList, sizeof (CLIPSInteger), 0, true);
   UtilityData (theEnv)->CurrentGarbageFrame->dirty = true;
 
     /*====================================*/
@@ -752,9 +750,9 @@ CL_AddBitMap (Environment * theEnv, void *vTheBitMap, unsigned short size)
     /*================================================*/
 
   AddEphemeralHashNode (theEnv, (GENERIC_HN *) peek,
-			&UtilityData (theEnv)->
-			CurrentGarbageFrame->ephemeralBitMapList,
-			sizeof (CLIPSBitMap), sizeof (long), true);
+			&UtilityData (theEnv)->CurrentGarbageFrame->
+			ephemeralBitMapList, sizeof (CLIPSBitMap),
+			sizeof (long), true);
   UtilityData (theEnv)->CurrentGarbageFrame->dirty = true;
 
     /*===================================*/
@@ -839,8 +837,8 @@ CL_CreateExternalAddress (Environment * theEnv,
     /*================================================*/
 
   AddEphemeralHashNode (theEnv, (GENERIC_HN *) peek,
-			&UtilityData (theEnv)->
-			CurrentGarbageFrame->ephemeralExternalAddressList,
+			&UtilityData (theEnv)->CurrentGarbageFrame->
+			ephemeralExternalAddressList,
 			sizeof (CLIPSExternalAddress), sizeof (long), true);
   UtilityData (theEnv)->CurrentGarbageFrame->dirty = true;
 
@@ -1036,9 +1034,9 @@ CL_ReleaseLexeme (Environment * theEnv, CLIPSLexeme * theValue)
   if (theValue->markedEphemeral == false)
     {
       AddEphemeralHashNode (theEnv, (GENERIC_HN *) theValue,
-			    &UtilityData (theEnv)->
-			    CurrentGarbageFrame->ephemeralSymbolList,
-			    sizeof (CLIPSLexeme), AVERAGE_STRING_SIZE, true);
+			    &UtilityData (theEnv)->CurrentGarbageFrame->
+			    ephemeralSymbolList, sizeof (CLIPSLexeme),
+			    AVERAGE_STRING_SIZE, true);
       UtilityData (theEnv)->CurrentGarbageFrame->dirty = true;
     }
 
@@ -1078,9 +1076,8 @@ CL_ReleaseFloat (Environment * theEnv, CLIPSFloat * theValue)
   if (theValue->markedEphemeral == false)
     {
       AddEphemeralHashNode (theEnv, (GENERIC_HN *) theValue,
-			    &UtilityData (theEnv)->
-			    CurrentGarbageFrame->ephemeralFloatList,
-			    sizeof (CLIPSFloat), 0, true);
+			    &UtilityData (theEnv)->CurrentGarbageFrame->
+			    ephemeralFloatList, sizeof (CLIPSFloat), 0, true);
       UtilityData (theEnv)->CurrentGarbageFrame->dirty = true;
     }
 
@@ -1120,9 +1117,9 @@ CL_ReleaseInteger (Environment * theEnv, CLIPSInteger * theValue)
   if (theValue->markedEphemeral == false)
     {
       AddEphemeralHashNode (theEnv, (GENERIC_HN *) theValue,
-			    &UtilityData (theEnv)->
-			    CurrentGarbageFrame->ephemeralIntegerList,
-			    sizeof (CLIPSInteger), 0, true);
+			    &UtilityData (theEnv)->CurrentGarbageFrame->
+			    ephemeralIntegerList, sizeof (CLIPSInteger), 0,
+			    true);
       UtilityData (theEnv)->CurrentGarbageFrame->dirty = true;
     }
 
@@ -1170,9 +1167,9 @@ CL_DecrementBitMapReferenceCount (Environment * theEnv,
   if (theValue->markedEphemeral == false)
     {
       AddEphemeralHashNode (theEnv, (GENERIC_HN *) theValue,
-			    &UtilityData (theEnv)->
-			    CurrentGarbageFrame->ephemeralBitMapList,
-			    sizeof (CLIPSBitMap), sizeof (long), true);
+			    &UtilityData (theEnv)->CurrentGarbageFrame->
+			    ephemeralBitMapList, sizeof (CLIPSBitMap),
+			    sizeof (long), true);
       UtilityData (theEnv)->CurrentGarbageFrame->dirty = true;
     }
 
@@ -1220,8 +1217,8 @@ CL_ReleaseExternalAddress (Environment * theEnv,
   if (theValue->markedEphemeral == false)
     {
       AddEphemeralHashNode (theEnv, (GENERIC_HN *) theValue,
-			    &UtilityData (theEnv)->
-			    CurrentGarbageFrame->ephemeralExternalAddressList,
+			    &UtilityData (theEnv)->CurrentGarbageFrame->
+			    ephemeralExternalAddressList,
 			    sizeof (CLIPSExternalAddress), sizeof (long),
 			    true);
       UtilityData (theEnv)->CurrentGarbageFrame->dirty = true;
@@ -1382,7 +1379,7 @@ CL_RemoveEphemeralAtoms (Environment * theEnv)
 			    sizeof (CLIPSFloat), FLOAT_TYPE, 0);
   RemoveEphemeralHashNodes (theEnv, &theGarbageFrame->ephemeralIntegerList,
 			    (GENERIC_HN **) SymbolData (theEnv)->IntegerTable,
-			    sizeof (CLIPSInteger), INTEGER_TYPE, 0);
+			    sizeof (CLIPSInteger), CL_INTEGER_TYPE, 0);
   RemoveEphemeralHashNodes (theEnv, &theGarbageFrame->ephemeralBitMapList,
 			    (GENERIC_HN **) SymbolData (theEnv)->BitMapTable,
 			    sizeof (CLIPSBitMap), BITMAPARRAY,
@@ -1418,9 +1415,9 @@ CL_EphemerateValue (Environment * theEnv, void *theValue)
       if (theSymbol->markedEphemeral)
 	return;
       AddEphemeralHashNode (theEnv, (GENERIC_HN *) theValue,
-			    &UtilityData (theEnv)->
-			    CurrentGarbageFrame->ephemeralSymbolList,
-			    sizeof (CLIPSLexeme), AVERAGE_STRING_SIZE, false);
+			    &UtilityData (theEnv)->CurrentGarbageFrame->
+			    ephemeralSymbolList, sizeof (CLIPSLexeme),
+			    AVERAGE_STRING_SIZE, false);
       UtilityData (theEnv)->CurrentGarbageFrame->dirty = true;
       break;
 
@@ -1429,20 +1426,20 @@ CL_EphemerateValue (Environment * theEnv, void *theValue)
       if (theFloat->markedEphemeral)
 	return;
       AddEphemeralHashNode (theEnv, (GENERIC_HN *) theValue,
-			    &UtilityData (theEnv)->
-			    CurrentGarbageFrame->ephemeralFloatList,
-			    sizeof (CLIPSFloat), 0, false);
+			    &UtilityData (theEnv)->CurrentGarbageFrame->
+			    ephemeralFloatList, sizeof (CLIPSFloat), 0,
+			    false);
       UtilityData (theEnv)->CurrentGarbageFrame->dirty = true;
       break;
 
-    case INTEGER_TYPE:
+    case CL_INTEGER_TYPE:
       theInteger = (CLIPSInteger *) theValue;
       if (theInteger->markedEphemeral)
 	return;
       AddEphemeralHashNode (theEnv, (GENERIC_HN *) theValue,
-			    &UtilityData (theEnv)->
-			    CurrentGarbageFrame->ephemeralIntegerList,
-			    sizeof (CLIPSInteger), 0, false);
+			    &UtilityData (theEnv)->CurrentGarbageFrame->
+			    ephemeralIntegerList, sizeof (CLIPSInteger), 0,
+			    false);
       UtilityData (theEnv)->CurrentGarbageFrame->dirty = true;
       break;
 
@@ -1451,8 +1448,8 @@ CL_EphemerateValue (Environment * theEnv, void *theValue)
       if (theExternalAddress->markedEphemeral)
 	return;
       AddEphemeralHashNode (theEnv, (GENERIC_HN *) theValue,
-			    &UtilityData (theEnv)->
-			    CurrentGarbageFrame->ephemeralExternalAddressList,
+			    &UtilityData (theEnv)->CurrentGarbageFrame->
+			    ephemeralExternalAddressList,
 			    sizeof (CLIPSExternalAddress), sizeof (long),
 			    false);
       UtilityData (theEnv)->CurrentGarbageFrame->dirty = true;

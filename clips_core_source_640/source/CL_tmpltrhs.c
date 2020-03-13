@@ -344,8 +344,8 @@ Parse_AssertSlotValues (Environment * theEnv,
 	    {
 	      *error = true;
 	      CL_SingleField_SlotCardinalityError (theEnv,
-						   slotPtr->
-						   slotName->contents);
+						   slotPtr->slotName->
+						   contents);
 	      CL_ReturnExpression (theEnv, newField);
 	      return NULL;
 	    }

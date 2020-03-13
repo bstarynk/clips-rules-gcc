@@ -309,7 +309,8 @@ LoopForCountParse (Environment * theEnv,
   if (theToken.tknType != LEFT_PARENTHESIS_TOKEN)
     {
       parse->argList =
-	CL_GenConstant (theEnv, INTEGER_TYPE, CL_CreateInteger (theEnv, 1LL));
+	CL_GenConstant (theEnv, CL_INTEGER_TYPE,
+			CL_CreateInteger (theEnv, 1LL));
       parse->argList->nextArg =
 	CL_ParseAtomOrExpression (theEnv, infile, &theToken);
       if (parse->argList->nextArg == NULL)
@@ -326,7 +327,7 @@ LoopForCountParse (Environment * theEnv,
 	  if (theToken.tknType != SYMBOL_TOKEN)
 	    goto LoopForCountParseError;
 	  parse->argList =
-	    CL_GenConstant (theEnv, INTEGER_TYPE,
+	    CL_GenConstant (theEnv, CL_INTEGER_TYPE,
 			    CL_CreateInteger (theEnv, 1LL));
 	  parse->argList->nextArg =
 	    CL_Function2Parse (theEnv, infile,
@@ -364,7 +365,7 @@ LoopForCountParse (Environment * theEnv,
 	      CL_PPBackup (theEnv);
 	      CL_SavePPBuffer (theEnv, theToken.printFo_rm);
 	      tmpexp =
-		CL_GenConstant (theEnv, INTEGER_TYPE,
+		CL_GenConstant (theEnv, CL_INTEGER_TYPE,
 				CL_CreateInteger (theEnv, 1LL));
 	      tmpexp->nextArg = parse->argList;
 	      parse->argList = tmpexp;
@@ -499,7 +500,7 @@ ReplaceLoopCountVars (Environment * theEnv,
 	  theExp->type = FCALL;
 	  theExp->value = CL_FindFunction (theEnv, "(get-loop-count)");
 	  theExp->argList =
-	    CL_GenConstant (theEnv, INTEGER_TYPE,
+	    CL_GenConstant (theEnv, CL_INTEGER_TYPE,
 			    CL_CreateInteger (theEnv, depth));
 	}
       else if (theExp->argList != NULL)
@@ -905,7 +906,7 @@ SwitchParse (Environment * theEnv, struct expr *top, const char *infile)
 	{
 	  if (default_count)
 	    goto SwitchParseErrorAndMessage;
-	  theExp->nextArg = CL_GenConstant (theEnv, VOID_TYPE, NULL);
+	  theExp->nextArg = CL_GenConstant (theEnv, CL_VOID_TYPE, NULL);
 	  default_count = 1;
 	}
       else

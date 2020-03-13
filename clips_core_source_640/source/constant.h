@@ -6,36 +6,16 @@
    /*                CONSTANTS HEADER FILE                */
    /*******************************************************/
 
-/*************************************************************/
-/* Purpose:                                                  */
-/*                                                           */
-/* Principal Programmer(s):                                  */
-/*      Gary D. Riley                                        */
-/*                                                           */
-/* Contributing Programmer(s):                               */
-/*                                                           */
-/* Revision History:                                         */
-/*                                                           */
-/*      6.30: Moved default type constants (NO_DEFAULT,      */
-/*            STATIC_DEFAULT, and DYNAMIC_DEFAULT) to        */
-/*            constant.h                                     */
-/*                                                           */
-/*            Added DATA_OBJECT_ARRAY primitive type.        */
-/*                                                           */
-/*            Added NESTED_RHS constant.                     */
-/*                                                           */
-/*      6.40: Pragma once and other inclusion changes.       */
-/*                                                           */
-/*            Added support for booleans with <stdbool.h>.   */
-/*                                                           */
-/*            Removed use of void pointers for specific      */
-/*            data structures.                               */
-/*                                                           */
-/*            UDF redesign.                                  */
-/*                                                           */
-/*            Removed DATA_OBJECT_ARRAY primitive type.      */
-/*                                                           */
-/*************************************************************/
+/*************************************************************
+ * Purpose:                                                  *
+ *                                                           *
+ * Principal Programmer(s):                                  *
+ *      Gary D. Riley                                        *
+ *                                                           *
+ * Contributing Programmer(s):                               *
+ *      Basile Starynkevitch                                 *
+ *                                                           *
+ *************************************************************/
 
 #ifndef _H_constant
 
@@ -132,7 +112,7 @@ typedef enum
 #define USER_TYPE_NAME                 "USER"
 #define PRIMITIVE_TYPE_NAME            "PRIMITIVE"
 #define NUMBER_TYPE_NAME               "NUMBER"
-#define INTEGER_TYPE_NAME              "INTEGER"
+#define CL_INTEGER_TYPE_NAME              "INTEGER"
 #define FLOAT_TYPE_NAME                "FLOAT"
 #define SYMBOL_TYPE_NAME               "SYMBOL"
 #define STRING_TYPE_NAME               "STRING"
@@ -186,79 +166,76 @@ typedef enum
 /* values!! Sorted arrays depend on their values!!  */
 /****************************************************/
 
-#define FLOAT_TYPE                      0
-#define INTEGER_TYPE                    1
-#define SYMBOL_TYPE                     2
-#define STRING_TYPE                     3
-#define MULTIFIELD_TYPE                 4
-#define EXTERNAL_ADDRESS_TYPE           5
-#define FACT_ADDRESS_TYPE               6
-#define INSTANCE_ADDRESS_TYPE           7
-#define INSTANCE_NAME_TYPE              8
+/*!Basile make that an enum, it was a sequence of #define-s*/
+enum CL_value_type
+{
+  FLOAT_TYPE = 0,
+  CL_INTEGER_TYPE = 1,
+  SYMBOL_TYPE = 2,
+  STRING_TYPE = 3,
+  MULTIFIELD_TYPE = 4,
+  EXTERNAL_ADDRESS_TYPE = 5,
+  FACT_ADDRESS_TYPE = 6,
+  INSTANCE_ADDRESS_TYPE = 7,
+  INSTANCE_NAME_TYPE = 8,
 
-#define VOID_TYPE                       9
+  CL_VOID_TYPE = 9,
 
-#define BITMAP_TYPE                    11
+  BITMAP_TYPE = 11,
 
-#define FCALL                          30
-#define GCALL                          31
-#define PCALL                          32
-#define GBL_VARIABLE                   33
-#define MF_GBL_VARIABLE                34
+  FCALL = 30,
+  GCALL = 31,
+  PCALL = 32,
+  GBL_VARIABLE = 33,
+  MF_GBL_VARIABLE = 34,
 
-#define SF_VARIABLE                    35
-#define MF_VARIABLE                    36
-#define BITMAPARRAY                    39
+  SF_VARIABLE = 35,
+  MF_VARIABLE = 36,
+  BITMAPARRAY = 39,
 
-#define FACT_PN_CMP1                   50
-#define FACT_JN_CMP1                   51
-#define FACT_JN_CMP2                   52
-#define FACT_SLOT_LENGTH               53
-#define FACT_PN_VAR1                   54
-#define FACT_PN_VAR2                   55
-#define FACT_PN_VAR3                   56
-#define FACT_JN_VAR1                   57
-#define FACT_JN_VAR2                   58
-#define FACT_JN_VAR3                   59
-#define FACT_PN_CONSTANT1              60
-#define FACT_PN_CONSTANT2              61
-#define FACT_STORE_MULTIFIELD          62
-#define DEFTEMPLATE_PTR                63
+  FACT_PN_CMP1 = 50,
+  FACT_JN_CMP1 = 51,
+  FACT_JN_CMP2 = 52,
+  FACT_SLOT_LENGTH = 53,
+  FACT_PN_VAR1 = 54,
+  FACT_PN_VAR2 = 55,
+  FACT_PN_VAR3 = 56,
+  FACT_JN_VAR1 = 57,
+  FACT_JN_VAR2 = 58,
+  FACT_JN_VAR3 = 59,
+  FACT_PN_CONSTANT1 = 60,
+  FACT_PN_CONSTANT2 = 61,
+  FACT_STORE_MULTIFIELD = 62,
+  DEFTEMPLATE_PTR = 63,
 
-#define OBJ_GET_SLOT_PNVAR1            70
-#define OBJ_GET_SLOT_PNVAR2            71
-#define OBJ_GET_SLOT_JNVAR1            72
-#define OBJ_GET_SLOT_JNVAR2            73
-#define OBJ_SLOT_LENGTH                74
-#define OBJ_PN_CONSTANT                75
-#define OBJ_PN_CMP1                    76
-#define OBJ_JN_CMP1                    77
-#define OBJ_PN_CMP2                    78
-#define OBJ_JN_CMP2                    79
-#define OBJ_PN_CMP3                    80
-#define OBJ_JN_CMP3                    81
-#define DEFCLASS_PTR                   82
-#define HANDLER_GET                    83
-#define HANDLER_PUT                    84
+  OBJ_GET_SLOT_PNVAR1 = 70,
+  OBJ_GET_SLOT_PNVAR2 = 71,
+  OBJ_GET_SLOT_JNVAR1 = 72,
+  OBJ_GET_SLOT_JNVAR2 = 73,
+  OBJ_SLOT_LENGTH = 74,
+  OBJ_PN_CONSTANT = 75,
+  OBJ_PN_CMP1 = 76,
+  OBJ_JN_CMP1 = 77,
+  OBJ_PN_CMP2 = 78,
+  OBJ_JN_CMP2 = 79,
+  OBJ_PN_CMP3 = 80,
+  OBJ_JN_CMP3 = 81,
+  DEFCLASS_PTR = 82,
+  HANDLER_GET = 83,
+  HANDLER_PUT = 84,
 
-#define DEFGLOBAL_PTR                  90
+  DEFGLOBAL_PTR = 90,
 
-#define PROC_PARAM                     95
-#define PROC_WILD_PARAM                96
-#define PROC_GET_BIND                  97
-#define PROC_BIND                      98
+  PROC_PARAM = 95,
+  PROC_WILD_PARAM = 96,
+  PROC_GET_BIND = 97,
+  PROC_BIND = 98,
 
-#define UNKNOWN_VALUE                 173
+  UNKNOWN_VALUE = 173,
 
-#define INTEGER_OR_FLOAT              180
-#define SYMBOL_OR_STRING              181
-#define INSTANCE_OR_INSTANCE_NAME     182
-
-/*************************/
-/* Macintosh Definitions */
-/*************************/
-
-#define CREATOR_STRING "CLIS"
-#define CREATOR_CODE   'CLIS'
+  INTEGER_OR_FLOAT = 180,
+  SYMBOL_OR_STRING = 181,
+  INSTANCE_OR_INSTANCE_NAME = 182,
+};
 
 #endif

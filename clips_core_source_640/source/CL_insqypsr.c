@@ -605,10 +605,10 @@ ReplaceInstanceVariables (Environment * theEnv,
 	      bexp->type = FCALL;
 	      bexp->value = rindx_func;
 	      eptr =
-		CL_GenConstant (theEnv, INTEGER_TYPE,
+		CL_GenConstant (theEnv, CL_INTEGER_TYPE,
 				CL_CreateInteger (theEnv, ndepth));
 	      eptr->nextArg =
-		CL_GenConstant (theEnv, INTEGER_TYPE,
+		CL_GenConstant (theEnv, CL_INTEGER_TYPE,
 				CL_CreateInteger (theEnv, posn));
 	      bexp->argList = eptr;
 	    }
@@ -714,10 +714,10 @@ ReplaceSlotReference (Environment * theEnv,
 	      theExp->type = FCALL;
 	      theExp->value = func;
 	      theExp->argList =
-		CL_GenConstant (theEnv, INTEGER_TYPE,
+		CL_GenConstant (theEnv, CL_INTEGER_TYPE,
 				CL_CreateInteger (theEnv, ndepth));
 	      theExp->argList->nextArg =
-		CL_GenConstant (theEnv, INTEGER_TYPE,
+		CL_GenConstant (theEnv, CL_INTEGER_TYPE,
 				CL_CreateInteger (theEnv, posn));
 	      theExp->argList->nextArg->nextArg =
 		CL_GenConstant (theEnv, CL_TokenTypeToType (itkn.tknType),

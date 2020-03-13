@@ -635,7 +635,8 @@ UpdateRestrictionFlags (CONSTRAINT_RECORD * rv)
   if ((rv->integerRestriction) && (rv->integersAllowed))
     {
       rv->integersAllowed =
-	FindItemInExpression (INTEGER_TYPE, NULL, false, rv->restrictionList);
+	FindItemInExpression (CL_INTEGER_TYPE, NULL, false,
+			      rv->restrictionList);
     }
 
   if ((rv->instanceNameRestriction) && (rv->instanceNamesAllowed))
@@ -687,7 +688,7 @@ RestrictionOnType (int theType, CONSTRAINT_RECORD * theConstraint)
       (theConstraint->symbolRestriction && (theType == SYMBOL_TYPE)) ||
       (theConstraint->stringRestriction && (theType == STRING_TYPE)) ||
       (theConstraint->floatRestriction && (theType == FLOAT_TYPE)) ||
-      (theConstraint->integerRestriction && (theType == INTEGER_TYPE)) ||
+      (theConstraint->integerRestriction && (theType == CL_INTEGER_TYPE)) ||
       (theConstraint->classRestriction
        && ((theType == INSTANCE_ADDRESS_TYPE)
 	   || (theType == INSTANCE_NAME_TYPE)))

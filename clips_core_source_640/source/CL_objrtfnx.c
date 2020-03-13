@@ -414,8 +414,8 @@ CL_ObjectCmpConstantFunction (Environment * theEnv,
 	  MULTIFIELD_TYPE)
 	{
 	  theSegment =
-	    ObjectReteData (theEnv)->
-	    CurrentPatternObjectSlot->multifieldValue;
+	    ObjectReteData (theEnv)->CurrentPatternObjectSlot->
+	    multifieldValue;
 	  if (hack->fromBeginning)
 	    {
 	      theVar.value = theSegment->contents[hack->offset].value;

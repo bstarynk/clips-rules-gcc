@@ -273,7 +273,7 @@ Fo_rmMethodsFromRestrictions (Environment * theEnv,
 	  rptr->query->argList->argList =
 	    CL_GenProcWildcardReference (theEnv, min + i + 1);
 	  rptr->query->argList->nextArg =
-	    CL_GenConstant (theEnv, INTEGER_TYPE,
+	    CL_GenConstant (theEnv, CL_INTEGER_TYPE,
 			    CL_CreateInteger (theEnv,
 					      (long long) (max - min - i)));
 	}
@@ -345,7 +345,8 @@ ParseRestrictionCreateTypes (Environment * theEnv, CONSTRAINT_RECORD * rv)
 			     NUMBER_TYPE_NAME);
       else if (rv->integersAllowed)
 	types =
-	  GenTypeExpression (theEnv, types, INTEGER_TYPE, INTEGER_TYPE, NULL);
+	  GenTypeExpression (theEnv, types, CL_INTEGER_TYPE, CL_INTEGER_TYPE,
+			     NULL);
       else if (rv->floatsAllowed)
 	types =
 	  GenTypeExpression (theEnv, types, FLOAT_TYPE, FLOAT_TYPE, NULL);

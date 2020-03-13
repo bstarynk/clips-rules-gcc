@@ -427,7 +427,7 @@ ParseSalience (Environment * theEnv,
       return;
     }
 
-  if (salienceValue.header->type != INTEGER_TYPE)
+  if (salienceValue.header->type != CL_INTEGER_TYPE)
     {
       CL_SalienceNonIntegerError (theEnv);
       *error = true;
@@ -453,7 +453,7 @@ ParseSalience (Environment * theEnv,
   /* don't bother storing the expression.     */
    /*==========================================*/
 
-  if (PatternData (theEnv)->SalienceExpression->type == INTEGER_TYPE)
+  if (PatternData (theEnv)->SalienceExpression->type == CL_INTEGER_TYPE)
     {
       CL_ReturnExpression (theEnv, PatternData (theEnv)->SalienceExpression);
       PatternData (theEnv)->SalienceExpression = NULL;

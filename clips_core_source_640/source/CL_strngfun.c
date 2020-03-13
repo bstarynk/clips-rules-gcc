@@ -243,12 +243,12 @@ StrOr_SymCatFunction (UDFContext * context,
 	  IncrementLexemeCount (hashPtr);
 	  break;
 
-	case INTEGER_TYPE:
+	case CL_INTEGER_TYPE:
 	  hashPtr =
 	    CL_CreateString (theEnv,
 			     CL_LongIntegerToString (theEnv,
-						     theArg.
-						     integerValue->contents));
+						     theArg.integerValue->
+						     contents));
 	  arrayOfStrings[i - 1] = hashPtr;
 	  IncrementLexemeCount (hashPtr);
 	  break;
@@ -353,8 +353,8 @@ Str_LengthFunction (Environment * theEnv,
 
   returnValue->integerValue =
     CL_CreateInteger (theEnv,
-		      (long long) CL_UTF8Length (theArg.
-						 lexemeValue->contents));
+		      (long long) CL_UTF8Length (theArg.lexemeValue->
+						 contents));
 }
 
 /****************************************/

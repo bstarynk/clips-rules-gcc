@@ -172,8 +172,9 @@ ConstructToCode (Environment * theEnv,
 				 fileNameBuffer, fileID, imageID, &fileCount,
 				 defglobalArrayVersion, headerFP, "Defglobal",
 				 ConstructPrefix (DefglobalData
-						  (theEnv)->DefglobalCodeItem),
-				 false, NULL);
+						  (theEnv)->
+						  DefglobalCodeItem), false,
+				 NULL);
 	  if (defglobalFile == NULL)
 	    {
 	      CloseDefglobalFiles (theEnv, moduleFile, defglobalFile,

@@ -118,8 +118,8 @@ DefaultCompareSwapFunction (Environment * theEnv,
 			  CL_SortFunctionData
 			  (theEnv)->SortComparisonFunction);
   CL_ReturnExpression (theEnv,
-		       CL_SortFunctionData (theEnv)->
-		       SortComparisonFunction->argList);
+		       CL_SortFunctionData (theEnv)->SortComparisonFunction->
+		       argList);
   CL_SortFunctionData (theEnv)->SortComparisonFunction->argList = NULL;
 
   if (returnValue.value == FalseSymbol (theEnv))

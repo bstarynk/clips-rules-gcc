@@ -196,8 +196,8 @@ GetLHSSlots (Environment * theEnv,
 	  *error = true;
 	  CL_InvalidDeftemplateSlotMessage (theEnv,
 					    tempToken->lexemeValue->contents,
-					    theDeftemplate->header.
-					    name->contents, true);
+					    theDeftemplate->header.name->
+					    contents, true);
 	  CL_ReturnLHSParseNodes (theEnv, firstSlot);
 	  return NULL;
 	}

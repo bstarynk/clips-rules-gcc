@@ -295,8 +295,8 @@ CL_FactPNConstant1 (Environment * theEnv,
    /*============================================*/
 
   fieldPtr =
-    &FactData (theEnv)->CurrentPatternFact->theProposition.
-    contents[hack->whichSlot];
+    &FactData (theEnv)->CurrentPatternFact->theProposition.contents[hack->
+								    whichSlot];
 
    /*====================================*/
   /* Compare the value to the constant. */
@@ -358,8 +358,8 @@ CL_FactPNConstant2 (Environment * theEnv,
    /*==========================================================*/
 
   fieldPtr =
-    &FactData (theEnv)->CurrentPatternFact->theProposition.
-    contents[hack->whichSlot];
+    &FactData (theEnv)->CurrentPatternFact->theProposition.contents[hack->
+								    whichSlot];
 
   if (fieldPtr->header->type == MULTIFIELD_TYPE)
     {
@@ -773,8 +773,9 @@ CL_FactSlotLength (Environment * theEnv,
     }
 
   segmentPtr =
-    FactData (theEnv)->CurrentPatternFact->theProposition.
-    contents[hack->whichSlot].multifieldValue;
+    FactData (theEnv)->CurrentPatternFact->theProposition.contents[hack->
+								   whichSlot].
+    multifieldValue;
 
   if (segmentPtr->length < (hack->minLength + extraOffset))
     {
@@ -819,20 +820,20 @@ CL_FactJNCompVars1 (Environment * theEnv,
   p2 = hack->pattern2;
 
   fact1 =
-    (Fact *) EngineData (theEnv)->GlobalRHSBinds->binds[p1].gm.
-    theMatch->matchingItem;
+    (Fact *) EngineData (theEnv)->GlobalRHSBinds->binds[p1].gm.theMatch->
+    matchingItem;
 
   if (hack->p2rhs)
     {
       fact2 =
-	(Fact *) EngineData (theEnv)->GlobalRHSBinds->binds[p2].gm.
-	theMatch->matchingItem;
+	(Fact *) EngineData (theEnv)->GlobalRHSBinds->binds[p2].gm.theMatch->
+	matchingItem;
     }
   else
     {
       fact2 =
-	(Fact *) EngineData (theEnv)->GlobalLHSBinds->binds[p2].gm.
-	theMatch->matchingItem;
+	(Fact *) EngineData (theEnv)->GlobalLHSBinds->binds[p2].gm.theMatch->
+	matchingItem;
     }
 
    /*=====================*/
@@ -887,20 +888,20 @@ CL_FactJNCompVars2 (Environment * theEnv,
   s2 = hack->slot2;
 
   fact1 =
-    (Fact *) EngineData (theEnv)->GlobalRHSBinds->binds[p1].gm.
-    theMatch->matchingItem;
+    (Fact *) EngineData (theEnv)->GlobalRHSBinds->binds[p1].gm.theMatch->
+    matchingItem;
 
   if (hack->p2rhs)
     {
       fact2 =
-	(Fact *) EngineData (theEnv)->GlobalRHSBinds->binds[p2].gm.
-	theMatch->matchingItem;
+	(Fact *) EngineData (theEnv)->GlobalRHSBinds->binds[p2].gm.theMatch->
+	matchingItem;
     }
   else
     {
       fact2 =
-	(Fact *) EngineData (theEnv)->GlobalLHSBinds->binds[p2].gm.
-	theMatch->matchingItem;
+	(Fact *) EngineData (theEnv)->GlobalLHSBinds->binds[p2].gm.theMatch->
+	matchingItem;
     }
 
    /*======================*/
@@ -975,11 +976,11 @@ CL_FactPNCompVars1 (Environment * theEnv,
 
   hack = (struct factCompVarsPN1Call *) ((CLIPSBitMap *) theValue)->contents;
   fieldPtr1 =
-    &FactData (theEnv)->CurrentPatternFact->theProposition.
-    contents[hack->field1];
+    &FactData (theEnv)->CurrentPatternFact->theProposition.contents[hack->
+								    field1];
   fieldPtr2 =
-    &FactData (theEnv)->CurrentPatternFact->theProposition.
-    contents[hack->field2];
+    &FactData (theEnv)->CurrentPatternFact->theProposition.contents[hack->
+								    field2];
 
    /*=====================*/
   /* Compare the values. */

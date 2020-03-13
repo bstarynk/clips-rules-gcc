@@ -1260,7 +1260,7 @@ GetCommandLineTopics (UDFContext * context)
 	CL_genstrncpy (tnode->name,
 		       CL_FloatToString (theEnv, val.floatValue->contents),
 		       NAMESIZE - 1);
-      else if (val.header->type == INTEGER_TYPE)
+      else if (val.header->type == CL_INTEGER_TYPE)
 	CL_genstrncpy (tnode->name,
 		       CL_LongIntegerToString (theEnv,
 					       val.integerValue->contents),

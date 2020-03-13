@@ -129,7 +129,7 @@ CL_DeriveDefaultFromConstraints (Environment * theEnv,
   else if (constraints->integersAllowed)
     {
       theValue =
-	FindDefaultValue (theEnv, INTEGER_TYPE, constraints,
+	FindDefaultValue (theEnv, CL_INTEGER_TYPE, constraints,
 			  CL_CreateInteger (theEnv, 0LL));
     }
 
@@ -242,9 +242,9 @@ FindDefaultValue (Environment * theEnv,
   /* range attribute to select a default value.                  */
    /*=============================================================*/
 
-  if (theType == INTEGER_TYPE)
+  if (theType == CL_INTEGER_TYPE)
     {
-      if (theConstraints->minValue->type == INTEGER_TYPE)
+      if (theConstraints->minValue->type == CL_INTEGER_TYPE)
 	{
 	  return (theConstraints->minValue->value);
 	}
@@ -252,10 +252,10 @@ FindDefaultValue (Environment * theEnv,
 	{
 	  return (CL_CreateInteger
 		  (theEnv,
-		   (long long) theConstraints->minValue->
-		   floatValue->contents));
+		   (long long) theConstraints->minValue->floatValue->
+		   contents));
 	}
-      else if (theConstraints->maxValue->type == INTEGER_TYPE)
+      else if (theConstraints->maxValue->type == CL_INTEGER_TYPE)
 	{
 	  return (theConstraints->maxValue->value);
 	}
@@ -263,8 +263,8 @@ FindDefaultValue (Environment * theEnv,
 	{
 	  return (CL_CreateInteger
 		  (theEnv,
-		   (long long) theConstraints->maxValue->
-		   floatValue->contents));
+		   (long long) theConstraints->maxValue->floatValue->
+		   contents));
 	}
     }
   else if (theType == FLOAT_TYPE)
@@ -273,23 +273,23 @@ FindDefaultValue (Environment * theEnv,
 	{
 	  return (theConstraints->minValue->value);
 	}
-      else if (theConstraints->minValue->type == INTEGER_TYPE)
+      else if (theConstraints->minValue->type == CL_INTEGER_TYPE)
 	{
 	  return (CL_CreateFloat
 		  (theEnv,
-		   (double) theConstraints->minValue->
-		   integerValue->contents));
+		   (double) theConstraints->minValue->integerValue->
+		   contents));
 	}
       else if (theConstraints->maxValue->type == FLOAT_TYPE)
 	{
 	  return (theConstraints->maxValue->value);
 	}
-      else if (theConstraints->maxValue->type == INTEGER_TYPE)
+      else if (theConstraints->maxValue->type == CL_INTEGER_TYPE)
 	{
 	  return (CL_CreateFloat
 		  (theEnv,
-		   (double) theConstraints->maxValue->
-		   integerValue->contents));
+		   (double) theConstraints->maxValue->integerValue->
+		   contents));
 	}
     }
 

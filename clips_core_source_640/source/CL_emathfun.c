@@ -1197,8 +1197,8 @@ CL_RoundFunction (Environment * theEnv,
     {
       returnValue->integerValue =
 	CL_CreateInteger (theEnv,
-			  (long long) ceil (returnValue->
-					    floatValue->contents - 0.5));
+			  (long long) ceil (returnValue->floatValue->
+					    contents - 0.5));
     }
 }
 

@@ -1225,7 +1225,7 @@ MarkNeededAtom (Environment * theEnv, unsigned short type, void *value)
     case FLOAT_TYPE:
       ((CLIPSFloat *) value)->neededFloat = true;
       break;
-    case INTEGER_TYPE:
+    case CL_INTEGER_TYPE:
       ((CLIPSInteger *) value)->neededInteger = true;
       break;
     case INSTANCE_ADDRESS_TYPE:
@@ -1289,8 +1289,8 @@ CL_SaveSingleInstanceBinary (Environment * theEnv,
          =============================================== */
       bs.slotName = sp->desc->slotName->name->bucket;
       bs.valueCount =
-	(unsigned long) (sp->desc->multiple ? sp->
-			 multifieldValue->length : 1);
+	(unsigned long) (sp->desc->multiple ? sp->multifieldValue->
+			 length : 1);
       fwrite (&bs, sizeof (struct bsaveSlotValue), 1, bsaveFP);
       totalValueCount += bs.valueCount;
     }
@@ -1360,7 +1360,7 @@ CL_SaveAtomBinary (Environment * theEnv,
     case FLOAT_TYPE:
       bsa.value = ((CLIPSFloat *) value)->bucket;
       break;
-    case INTEGER_TYPE:
+    case CL_INTEGER_TYPE:
       bsa.value = ((CLIPSInteger *) value)->bucket;
       break;
     case INSTANCE_ADDRESS_TYPE:
@@ -1780,7 +1780,7 @@ GetBinaryAtomValue (Environment * theEnv, struct bsaveSlotValueAtom *ba)
     case FLOAT_TYPE:
       return ((void *) FloatPointer (ba->value));
 
-    case INTEGER_TYPE:
+    case CL_INTEGER_TYPE:
       return ((void *) IntegerPointer (ba->value));
 
     case FACT_ADDRESS_TYPE:
@@ -1829,7 +1829,8 @@ BufferedRead (Environment * theEnv, void *buf, size_t bufsz)
 	    ((char *) buf)[i] =
 	      InstanceFileData (theEnv)->CurrentReadBuffer[i +
 							   InstanceFileData
-							   (theEnv)->CurrentReadBufferOffset];
+							   (theEnv)->
+							   CurrentReadBufferOffset];
 	  InstanceFileData (theEnv)->CurrentReadBufferOffset += bufsz;
 	  if (InstanceFileData (theEnv)->CurrentReadBufferOffset ==
 	      InstanceFileData (theEnv)->CurrentReadBufferSize)
@@ -1844,7 +1845,8 @@ BufferedRead (Environment * theEnv, void *buf, size_t bufsz)
 		((char *) buf)[i] =
 		  InstanceFileData (theEnv)->CurrentReadBuffer[i +
 							       InstanceFileData
-							       (theEnv)->CurrentReadBufferOffset];
+							       (theEnv)->
+							       CurrentReadBufferOffset];
 	      bufsz -= amountLeftToRead;
 	      buf = (void *) (((char *) buf) + amountLeftToRead);
 	    }

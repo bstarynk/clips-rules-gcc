@@ -733,8 +733,9 @@ CL_EvaluateSlotOverrides (Environment * theEnv,
 	{
 	  CL_ExpectedTypeError1 (theEnv,
 				 ExpressionFunctionCallName (CL_EvaluationData
-							     (theEnv)->CurrentExpression)->contents,
-				 ovi + 1, "slot name");
+							     (theEnv)->
+							     CurrentExpression)->
+				 contents, ovi + 1, "slot name");
 	  Set_EvaluationError (theEnv, true);
 	  goto CL_EvaluateOverridesError;
 	}

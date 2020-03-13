@@ -269,15 +269,15 @@ CL_DescribeClass (Defclass * theDefclass, const char *logicalName)
       for (i = 0; i < theDefclass->instanceSlotCount; i++)
 	{
 	  slotNameLength =
-	    strlen (theDefclass->instanceTemplate[i]->slotName->
-		    name->contents);
+	    strlen (theDefclass->instanceTemplate[i]->slotName->name->
+		    contents);
 	  if (slotNameLength > maxSlotNameLength)
 	    maxSlotNameLength = slotNameLength;
 	  if (theDefclass->instanceTemplate[i]->no_Write == 0)
 	    {
 	      overrideMessageLength =
-		strlen (theDefclass->instanceTemplate[i]->
-			overrideMessage->contents);
+		strlen (theDefclass->instanceTemplate[i]->overrideMessage->
+			contents);
 	      if (overrideMessageLength > maxOverrideMessageLength)
 		maxOverrideMessageLength = overrideMessageLength;
 	    }

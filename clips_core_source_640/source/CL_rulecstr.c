@@ -263,7 +263,7 @@ MultifieldCardinalityViolation (Environment * theEnv,
   CL_ReturnExpression (theEnv, tempConstraint->minFields);
   CL_ReturnExpression (theEnv, tempConstraint->maxFields);
   tempConstraint->minFields =
-    CL_GenConstant (theEnv, INTEGER_TYPE,
+    CL_GenConstant (theEnv, CL_INTEGER_TYPE,
 		    CL_CreateInteger (theEnv, minFields));
   if (posInfinity)
     tempConstraint->maxFields =
@@ -271,7 +271,7 @@ MultifieldCardinalityViolation (Environment * theEnv,
 		      SymbolData (theEnv)->PositiveInfinity);
   else
     tempConstraint->maxFields =
-      CL_GenConstant (theEnv, INTEGER_TYPE,
+      CL_GenConstant (theEnv, CL_INTEGER_TYPE,
 		      CL_CreateInteger (theEnv, maxFields));
 
    /*================================================================*/
@@ -336,8 +336,8 @@ CL_ProcessConnectedConstraints (Environment * theEnv,
 		    {
 		      rvConstraints =
 			CL_FunctionCallToConstraintRecord (theEnv,
-							   andNode->expression->
-							   value);
+							   andNode->
+							   expression->value);
 		      tmpConstraints = andConstraints;
 		      andConstraints =
 			CL_IntersectConstraints (theEnv, andConstraints,

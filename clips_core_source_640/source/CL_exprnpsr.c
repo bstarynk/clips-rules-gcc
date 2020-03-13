@@ -209,7 +209,8 @@ CL_Function2Parse (Environment * theEnv,
       if (CL_ConstructExported
 	  (theEnv, "defgeneric", moduleName, constructName)
 	  || CL_GetCurrentModule (theEnv) == CL_FindDefmodule (theEnv,
-							       moduleName->contents))
+							       moduleName->
+							       contents))
 	{
 	  gfunc = CL_FindDefgenericInModule (theEnv, name);
 	}
@@ -235,7 +236,8 @@ CL_Function2Parse (Environment * theEnv,
 	if (CL_ConstructExported
 	    (theEnv, "deffunction", moduleName, constructName)
 	    || CL_GetCurrentModule (theEnv) == CL_FindDefmodule (theEnv,
-								 moduleName->contents))
+								 moduleName->
+								 contents))
 	  {
 	    dptr = CL_FindDeffunctionInModule (theEnv, name);
 	  }
@@ -423,8 +425,8 @@ CL_ReplaceSequenceExpansionOps (Environment * theEnv,
 	      CL_WriteString (theEnv, STDERR,
 			      "$ Sequence operator not a valid argument for function '");
 	      CL_WriteString (theEnv, STDERR,
-			      fcallexp->functionValue->
-			      callFunctionName->contents);
+			      fcallexp->functionValue->callFunctionName->
+			      contents);
 	      CL_WriteString (theEnv, STDERR, "'.\n");
 	      return true;
 	    }

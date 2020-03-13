@@ -1004,7 +1004,8 @@ CompressCEs (Environment * theEnv,
 		{
 		  e1 =
 		    CL_LHSParseNodesToExpression (theEnv,
-						  argPtr->secondaryExpression);
+						  argPtr->
+						  secondaryExpression);
 		  e2 =
 		    CL_LHSParseNodesToExpression (theEnv,
 						  argPtr->bottom->expression);
@@ -1032,7 +1033,8 @@ CompressCEs (Environment * theEnv,
 		      argPtr->exists = true;
 		      e1 =
 			CL_LHSParseNodesToExpression (theEnv,
-						      argPtr->secondaryExpression);
+						      argPtr->
+						      secondaryExpression);
 		      e1 = CL_NegateExpression (theEnv, e1);
 		      CL_ReturnLHSParseNodes (theEnv,
 					      argPtr->secondaryExpression);
@@ -1046,7 +1048,8 @@ CompressCEs (Environment * theEnv,
 		      argPtr->exists = false;
 		      e1 =
 			CL_LHSParseNodesToExpression (theEnv,
-						      argPtr->secondaryExpression);
+						      argPtr->
+						      secondaryExpression);
 		      e1 = CL_NegateExpression (theEnv, e1);
 		      CL_ReturnLHSParseNodes (theEnv,
 					      argPtr->secondaryExpression);
@@ -1480,7 +1483,7 @@ CL_NodeTypeToType (struct lhsParseNode *theNode)
     case FLOAT_NODE:
       return FLOAT_TYPE;
     case INTEGER_NODE:
-      return INTEGER_TYPE;
+      return CL_INTEGER_TYPE;
     case SYMBOL_NODE:
       return SYMBOL_TYPE;
     case STRING_NODE:
@@ -1507,7 +1510,7 @@ CL_NodeTypeToType (struct lhsParseNode *theNode)
       return DEFCLASS_PTR;
 
     default:
-      return VOID_TYPE;
+      return CL_VOID_TYPE;
     }
 }
 
@@ -1521,7 +1524,7 @@ CL_TypeToNodeType (unsigned short theType)
     {
     case FLOAT_TYPE:
       return FLOAT_NODE;
-    case INTEGER_TYPE:
+    case CL_INTEGER_TYPE:
       return INTEGER_NODE;
     case SYMBOL_TYPE:
       return SYMBOL_NODE;

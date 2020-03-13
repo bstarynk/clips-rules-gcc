@@ -820,7 +820,7 @@ CheckMultifieldSlotModify (Environment * theEnv,
       return NULL;
     }
   CL_EvaluateExpression (theEnv, args->nextArg, &temp);
-  if (temp.header->type != INTEGER_TYPE)
+  if (temp.header->type != CL_INTEGER_TYPE)
     {
       CL_ExpectedTypeError1 (theEnv, func, start + 1, "integer");
       Set_EvaluationError (theEnv, true);
@@ -831,7 +831,7 @@ CheckMultifieldSlotModify (Environment * theEnv,
   if ((code == REPLACE) || (code == DELETE_OP))
     {
       CL_EvaluateExpression (theEnv, args, &temp);
-      if (temp.header->type != INTEGER_TYPE)
+      if (temp.header->type != CL_INTEGER_TYPE)
 	{
 	  CL_ExpectedTypeError1 (theEnv, func, start + 2, "integer");
 	  Set_EvaluationError (theEnv, true);

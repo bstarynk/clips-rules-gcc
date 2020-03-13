@@ -650,9 +650,8 @@ CL_Direct_PutSlotValue (Environment * theEnv,
 	{
 	  val = &tmpVal;
 	  if (!CL_EvaluateAndStoreInDataObject (theEnv, sp->desc->multiple,
-						(Expression *) sp->
-						desc->defaultValue, val,
-						true))
+						(Expression *) sp->desc->
+						defaultValue, val, true))
 	    return PSE_EVALUATION_ERROR;
 	}
       else if (sp->desc->defaultValue != NULL)
@@ -865,7 +864,7 @@ CL_ValidSlotValue (Environment * theEnv,
       Set_EvaluationError (theEnv, true);
       return PSE_CARDINALITY_ERROR;
     }
-  if (val->header->type == VOID_TYPE)
+  if (val->header->type == CL_VOID_TYPE)
     {
       CL_PrintErrorID (theEnv, "INSFUN", 8, false);
       CL_WriteString (theEnv, STDERR, "Void function illegal value for ");
@@ -884,8 +883,8 @@ CL_ValidSlotValue (Environment * theEnv,
 	  CL_WriteString (theEnv, STDERR, "The value ");
 	  if ((val->header->type == MULTIFIELD_TYPE) && (sd->multiple == 0))
 	    CL_PrintAtom (theEnv, STDERR,
-			  val->multifieldValue->contents[val->begin].
-			  header->type,
+			  val->multifieldValue->contents[val->begin].header->
+			  type,
 			  val->multifieldValue->contents[val->begin].value);
 	  else
 	    CL_WriteUDFValue (theEnv, STDERR, val);
@@ -1247,8 +1246,8 @@ CL_DecrementObjectBasisCount (Environment * theEnv, Instance * theInstance)
 	      {
 		if (theInstance->basisSlots[i].desc->multiple)
 		  CL_ReleaseMultifield (theEnv,
-					theInstance->
-					basisSlots[i].multifieldValue);
+					theInstance->basisSlots[i].
+					multifieldValue);
 		else
 		  CL_AtomDeinstall (theEnv, theInstance->basisSlots[i].type,
 				    theInstance->basisSlots[i].value);
