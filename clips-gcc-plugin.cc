@@ -73,6 +73,9 @@ CLGCC_dodbgprintf(const char*srcfil, int lin, const char*fmt, ...)
   fflush (clgcc_dbgfile);
 } // end CLGCC_dodbgprintf
 
+
+
+
 /// GCC callback which gets called before processing a translation unit
 void
 CLGCC_starting(void*gccdata __attribute__((unused)), void*userdata __attribute((unused)))
@@ -86,10 +89,23 @@ CLGCC_starting(void*gccdata __attribute__((unused)), void*userdata __attribute((
          CLGCC_translationunitstr.c_str(),
          cputimbuf,
          CLGCC_basename(__FILE__), __LINE__);
+  {
+    bool ok = CL_ParseDeftemplate (CLGCC_env,
+                                   R"clipsstr(
+ (deftemplate gcc-translation-unit 
+  "the source file compiled by GCC"
+  (slot file-path
+   (type STRING)
+ ))
+)clipsstr");
+    CLGCC_DBGPRINTF("CLGCC_starting after deftemplate gcc-translation-unit ok=%s", ok?"true":"false");
+  }
   CLGCC_DBGPRINTF("CLGCC_starting before CL_CommandLoop_Batch");
   CL_CommandLoop_Batch(CLGCC_env);
   CLGCC_DBGPRINTF("CLGCC_starting after CL_CommandLoop_Batch");
 } // end CLGCC_starting
+
+
 
 
 /// GCC callback which gets called near end, and may be useful for summary processing.

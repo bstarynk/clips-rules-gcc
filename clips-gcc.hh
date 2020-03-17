@@ -30,6 +30,7 @@
 #endif
 
 #include <iostream>
+#include <sstream>
 #include <unordered_map>
 #include <unordered_set>
 #include <map>
@@ -77,6 +78,7 @@
 
 extern "C" {
 #include "clips.h"
+#include "tmpltpsr.h"
 };				// end include clips.h as "C"
 
 // For our CLGCC_DBGPRINTF macro in setup.h we need:
