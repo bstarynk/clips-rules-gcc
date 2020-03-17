@@ -9,3 +9,5 @@
 
 * `CL_CreateFact` wants a `Deftemplate`, which could be made using
   `CL_FindDeftemplate` ...
+
+See also `CL_AssertString` 
