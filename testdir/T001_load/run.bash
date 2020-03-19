@@ -36,6 +36,9 @@ tempasm=$(tempfile -p CLIPSGCCasm -s .s)
 (cd  $parentdir/../.. ; make -j 5  print-test-settings) > $tempsource
 function perhaps_remove_temporary_files() {
     if [ -z "$CLIPSGCC_KEEP_TEMPORARY" ]; then
+	printf '# %s removing temporary files %s %s\n' $0 $tempsource $tempasm
+	[ -f "$tempsource" ] && head -100 $tempsource /dev/null
+	[ -f "tempasm" ] && head -100 $tempasm /dev/null
 	rm -vf $tempsource $tempasm
     else
 	printf '# %s keeping temporary files %s %s with $CLIPSGCC_KEEP_TEMPORARY \n' $0 $tempsource $tempasm
@@ -55,7 +58,22 @@ printf '#    -fplugin-arg-clipsgccplug-project=%s \\\n' $(basename $(dirname $pa
 printf '#    -fplugin-arg-clipsgccplug-load=%s \\\n' $parentdir/clipsgccrules.clp
 printf '#    %s -o %s\n\n'  $parentdir/input.c $tempasm
 
-exec $TARGET_GCC -O1 -S -v -fplugin=$CLIPS_GCC_PLUGIN \
+$TARGET_GCC -O1 -S -v -fplugin=$CLIPS_GCC_PLUGIN \
 	    -fplugin-arg-clipsgccplug-project=$(basename $(dirname $parentdir)) \
 	    -fplugin-arg-clipsgccplug-load=$parentdir/clipsgccrules.clp \
 	     $parentdir/input.c -o $tempasm
+
+testok=$?
+
+if [ "$testok" -eq 0 ]; then
+    printf "# %s clips-rules-gcc TEST succeeded\n" $0
+    exit 0
+else
+    printf " %s clips-rules-gcc TEST FAILED in %s (%s) *******\n" $0 $(pwd) "$testok"
+    printf "::::: %s :::::\n" $tempsource
+    head $tempsource
+    printf "===== end %s =====\n\n" $tempsource
+    exit $testok
+fi
+
+### eof testdir/T001_load/run.bash from github.com/bstarynk/clips-rules-gcc

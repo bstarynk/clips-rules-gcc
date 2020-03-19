@@ -79,7 +79,7 @@ clean:
 
 plugin:
 	@echo $(MAKE) $@ with MAKE= $(MAKE) and MAKELEVEL= $(MAKELEVEL) and MAKEFLAGS= $(MAKEFLAGS)
-	if [ "$(MAKELEVEL)" -lt 2 ]; then $(MAKE) clipsgccplug.so ; fi
+	if [ '$(MAKELEVEL)' -lt 2 ]; then $(MAKE) clipsgccplug.so ; fi
 	@echo made $@ with  MAKELEVEL= $(MAKELEVEL)
 
 indent:
@@ -136,6 +136,7 @@ print-test-settings: | plugin
 test%: | $(patsubst test%, $(wildcard testdir/T%*/run.bash), $@)
 	@echo TEST... $@ running $(wildcard $(patsubst test%, testdir/T%*/run.bash, $@))
 	/bin/bash -x  $(wildcard $(patsubst test%, testdir/T%*/run.bash, $@)) < /dev/null
+	@echo TEST... done $@
 
 etags: TAGS
 
