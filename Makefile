@@ -73,7 +73,8 @@ clean:
 	$(RM) _* *tmp CLIPS-source/_* CLIPS-source/*tmp
 	$(RM) *~ *% CLIPS-source/*~ CLIPS-source/*%
 
-plugin: clipsgccplug.so
+plugin:
+	if [ "$(MAKELEVEL)" -lt 2 ]; then $(MAKE) clipsgccplug.so ; fi
 
 indent:
 	for f in $(CLGCC_PLUGIN_CXXSOURCES) ; do \
