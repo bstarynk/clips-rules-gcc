@@ -25,6 +25,10 @@
 
 export MAKE
 export MAKELEVEL
+export MAKEFLAGS
+
+
+
 CLGCC_GIT_ID := $(shell ./generate-gitid.sh)
 CC= gcc
 TARGET_GCC?= $(CC)
@@ -74,7 +78,9 @@ clean:
 	$(RM) *~ *% CLIPS-source/*~ CLIPS-source/*%
 
 plugin:
+	@echo $(MAKE) $@ with MAKE= $(MAKE) and MAKELEVEL= $(MAKELEVEL) and MAKEFLAGS= $(MAKEFLAGS)
 	if [ "$(MAKELEVEL)" -lt 2 ]; then $(MAKE) clipsgccplug.so ; fi
+	@echo made $@ with  MAKELEVEL= $(MAKELEVEL)
 
 indent:
 	for f in $(CLGCC_PLUGIN_CXXSOURCES) ; do \
