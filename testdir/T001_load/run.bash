@@ -55,7 +55,7 @@ printf '#    -fplugin-arg-clipsgccplug-project=%s \\\n' $(basename $(dirname $pa
 printf '#    -fplugin-arg-clipsgccplug-load=%s \\\n' $parentdir/clipsgccrules.clp
 printf '#    %s -o %s\n\n'  $parentdir/input.c $tempasm
 
-$TARGET_GCC -O1 -S -v -fplugin=$CLIPS_GCC_PLUGIN \
+exec $TARGET_GCC -O1 -S -v -fplugin=$CLIPS_GCC_PLUGIN \
 	    -fplugin-arg-clipsgccplug-project=$(basename $(dirname $parentdir)) \
 	    -fplugin-arg-clipsgccplug-load=$parentdir/clipsgccrules.clp \
 	     $parentdir/input.c -o $tempasm
